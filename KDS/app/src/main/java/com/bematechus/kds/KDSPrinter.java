@@ -1079,7 +1079,7 @@ return the ascii string len, it is unicode len
             if (pItem instanceof KDSDataCategoryIndicator)
             {//2.0.48
                 s = KDSDataCategoryIndicator.makeDisplayString ( (KDSDataCategoryIndicator)pItem);
-                String ch;//2.0.50
+                String ch;//2.0.49
                 ch = ("\r\n");
                 s += ch;
 
