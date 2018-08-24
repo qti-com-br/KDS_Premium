@@ -1,0 +1,11 @@
+<resources>
+
+    <declare-styleable name="KDSTextview">
+        <attr name="leftcolor" format="color" />
+        <attr name="rightcolor" format="color" />
+        <attr name="topcolor" format="color" />
+        <attr name="bottomcolor" format="color" />
+        <attr name="bordersize" format="dimension" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtHolderID"
+            android:inputType="text"
+
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+        <View
+            android:layout_width="@dimen/relations_headers_separator"
+            android:layout_height="fill_parent"
+            android:background="#B8B8B8"
+            android:visibility="visible" />
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtTableName"
+            android:inputType="text"
+
+            android:enabled="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </LinearLayout>
+</LinearLayout>

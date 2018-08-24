@@ -1,0 +1,78 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <!--<item name="android:windowTitleSize">38dip</item>-->
+        <item name="windowActionBar">false</item>
+        <!--<item name="android:textColor">#000000</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
+    </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <!--<item name="windowNoTitle">true</item>-->
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="titlebarstyle" parent="android:Theme">
+        <item name="android:windowTitleSize">38dip</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="AppTheme.WithColoredSpinners" parent="AppTheme">
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem.DropDownItem</item>
+    </style>
+
+    <style name="SpinnerItem" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textColor">#00FF00</item>
+    </style>
+
+    <style name="SpinnerItem.DropDownItem" parent="@android:style/Widget.DropDownItem.Spinner">
+        <item name="android:textColor">#FF0000</item>
+    </style>
+
+    <style name="settingsWindowTitleStyle">
+        <!--<item name="android:textColor">@color/kds_title_fg</item>-->
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:textSize">20sp</item>
+
+    </style>
+    <style name="settingsWindowTitleBackgroundStyle">
+        <item name="android:background">@color/kds_title_bg</item>
+    </style>
+
+    <style name="settings_style" parent="AppTheme">
+        <item name="android:windowTitleSize">30dp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/settingsWindowTitleBackgroundStyle</item>
+        <item name="android:windowTitleStyle">@style/settingsWindowTitleStyle</item>
+        <!--<item name="android:colorBackground">@drawable/settings_page_bg</item>-->
+        <!--<item name="android:focusable">false</item>-->
+        <!--<item name="android:listSelector">@drawable/kdslistselector</item>-->
+        <!--<item name="android:textColor">#ff000000</item>-->
+        <!--<item name="android:cacheColorHint">#ffffffff</item>-->
+        <item name="android:windowNoTitle">false</item>  <!-- 用来设定是否显示标题  -->
+        <!--<item name="android:windowBackground">@color/settings_page_bg</item>-->
+    </style>
+
+    <declare-styleable name="KDSTextview">
+        <attr name="leftcolor" format="color" />
+        <attr name="rightcolor" format="color" />
+        <attr name="topcolor" format="color" />
+        <attr name="bottomcolor" format="color" />
+        <attr name="bordersize" format="dimension" />
+    </declare-styleable>
+
+    <style name="TabCheckBox">
+        <item name="colorControlNormal">@android:color/black</item>
+        <item name="colorControlActivated">@android:color/holo_red_dark</item>
+    </style>
+    <!--<selector xmlns:android="http://schemas.android.com/apk/res/android">-->
+        <!--<item android:state_pressed="true" android:color="#fff"/>-->
+        <!--<item android:state_focused="true" android:color="#fff"/>-->
+        <!--<item android:color="#000" />-->
+    <!--</selector>-->
+
+</resources>

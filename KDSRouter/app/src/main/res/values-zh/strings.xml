@@ -1,0 +1,365 @@
+<resources>
+    <string name="app_name">KitchenGo 路由</string>
+    <string name="main_title">KitchenGo Premium 路由</string>
+
+
+    <string name="pref_header_general">一般</string>
+    <string name="pref_general_title_name">终端ID</string>
+
+    <string name="pref_general_router_backup_title">备份</string>
+    <string name="pref_general_router_sum_backup">备份模式允许多个路由， 请在【我的主路由】中输入主路由</string>
+    <string name="pref_general_sum_router_enabled">是否启动订单路由</string>
+    <string name="pref_general_router_enabled">启动订单路由</string>
+
+    <string name="pref_general_data_source">订单来源</string>
+    <string-array name="pref_general_data_source_titles">
+        <item>TCP/IP</item>
+        <item>远程共享目录</item>
+    </string-array>
+
+    <!-- TCP/IP port number -->
+    <string name="pref_general_title_tcp_port">数据来源POS IP 端口</string>
+    <!-- remote folder path -->
+    <string name="pref_general_title_remote_folder">数据来源远程目录</string>
+    <string name="pref_general_title_notification_folder">保存通知文件到目录</string>
+    <string name="pref_router_database_title">数据设置</string>
+    <string name="pref_router_relations_title">终端关系</string>
+
+    <!-- TCP/IP port number -->
+    <string name="pref_general_title_backup_port">备份终端间IP端口</string>
+    <string name="pref_general_connection_station_ipport">连接终端的IP端口</string>
+    <string name="pref_general_title_default_station">菜名默认送达的终端</string>
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_database">菜名设置</string>
+    <string name="pref_header_relations">终端关系设置</string>
+
+
+    <!---->
+    <string name="title_activity_filter">过滤程序</string>
+    <string name="title_activity_stations_relation">终端间关系</string>
+    <string name="title_activity_main">主程序</string>
+    <string name="title_activity_retrieve_config">取得设置</string>
+
+    <string name="menu_activity_settings">设置</string>
+    <string name="menu_activity_cleardb">清除数据库</string>
+    <string name="menu_activity_showip">显示我的IP</string>
+    <string name="menu_activity_schedule">计划</string>
+    <string name="menu_activity_clearlog">清除日志</string>
+
+    <string name="confirm">确认</string>
+    <string name="confirm_broadcast_relations_changes">关系发生了改变， 是否保存并更新所有终端?</string>
+    <string name="confirm_remove_relations_expo">是否要将总台终端 # 从总台列中删除?</string>
+    <string name="confirm_fix_errors">关系设置中有错误, 请改正.</string>
+
+    <string name="confirm_broadcast_relations">您是否要把新的设置用于所有终端?</string>
+    <string name="confirm_clear_db">您是否要清除数据库?</string>
+    <string name="update_to_all">保存和更新所有</string>
+    <string name="delete">删除</string>
+    <string name="save">保存</string>
+    <string name="show_id">显示终端ID</string>
+    <string name="confirm_remove_relation_station">是否要删除终端 #</string>
+    <string name="confirm_remove_category">是否要删除类别: </string>
+    <string name="confirm_remove_fooditem">是否要删除菜名: </string>
+
+    <string name="about">关于</string>
+
+    <string-array name="station_function">
+        <item>正常</item>
+        <item>总台</item>
+        <item>排队</item>
+        <item>镜像</item>
+        <item>备份</item>
+        <item>工作量</item>
+        <item>副本</item>
+        <item>跟踪</item>
+    </string-array>
+    <string-array name="station_status">
+        <item>启用</item>
+        <item>停止</item>
+    </string-array>
+
+    <string name="id">ID</string>
+    <string name="ip">IP</string>
+    <string name="port">端口</string>
+    <string name="func">功能</string>
+    <string name="mirror">镜像</string>
+    <string name="backup">备份</string>
+    <string name="status">状态</string>
+    <string name="expo">总台</string>
+
+    <string name="error">错误</string>
+    <string name="question">询问</string>
+
+    <string name="new_item">新菜名</string>
+    <string name="new_category">新的类别</string>
+
+    <string name="description">描述</string>
+    <string name="delay">暂缓/准备(分)</string>
+    <string name="printable">可打印</string>
+    <string name="add_new">新的</string>
+    <string name="preptime">暂缓/准备(分)</string>
+    <string name="delayprep">暂缓/准备(分)</string>
+
+    <string name="retrieve_config_waiting_data">等待数据 ...</string>
+    <string name="retrieve_config_done">完成! 请关闭设置.</string>
+
+    <string name="select_station">请先选择终端.</string>
+    <string name="confirm_retrieve_config">是否从 # 得到设置 ?</string>
+    <string name="receive_new_relations">已接收到新的关系设置.</string>
+    <string name="select_retrieve_station">选择终端</string>
+    <string name="error_isnot_unique_id">ID # 已被占用，请改正.</string>
+    <string name="error_id_out_range">请输入ID 值，范围0到99.</string>
+    <string name="error_id_is_empty">请输入ID</string>
+    <string name="active_stations_list">终端</string>
+    <string name="no_active_stations">无在线终端</string>
+    <string name="searching_active_stations">查询在线终端 …</string>
+    <string name="smb_folder_lost">不能打开远程文件夹 #</string>
+    <string name="error_different_relations">终端关系与其它不同, 请改正.</string>
+    <string name="error_match_mac">请在bematech 设备上运行.</string>
+
+    <string name="find">查找</string>
+    <string name="pc_name">PC IP:</string>
+    <string name="user_id">User ID:</string>
+    <string name="password">密码</string>
+    <string name="shared_folder">共享目录</string>
+
+    <string name="category">类别</string>
+    <string name="item">菜名描述</string>
+    <string name="router_disabled">路由未启动, 请启动路由</string>
+    <string name="router_disabled_warning">路由未启动, 请启动路由</string>
+    <string name="anonymous">匿名</string>
+
+    <string name="error_relations_repeat_backup_mirror">终端 # 工作为备份和镜像模式</string>
+    <string name="error_relations_mirror_dead_loop">终端 # 镜像死循环.</string>
+    <string name="error_relations_backup_dead_loop">终端 # 备份死循环.</string>
+    <string name="network_lost">网络丢失</string>
+    <string name="network_restore">网络恢复了</string>
+
+    <string name="input_internet_file">输入国际网文件</string>
+    <string name="remove">删除</string>
+    <string name="local">本地</string>
+    <string name="ethernet">网络</string>
+    <string name="internet">网络文件</string>
+    <string name="up">向上</string>
+    <string name="down">向下</string>
+    <string name="bg">背景</string>
+    <string name="fg">前景</string>
+
+    <string name="input">输入</string>
+
+    <string-array name="slave_function">
+        <item>无副终端</item>
+        <item>备份</item>
+        <item>镜像</item>
+        <item>工作量分配</item>
+        <item>副本</item>
+        <item>排队</item>
+    </string-array>
+
+    <string name="slave_func">副终端功能</string>
+    <string name="slave">副终端ID</string>
+    <string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>
+
+    <string name="check_new_version">检查新版本</string>
+    <string name="current_version">当前版本</string>
+    <string name="update_canceled">更新被取消</string>
+    <string name="found_new_version">发现新版本</string>
+    <string name="update_now">现在更新</string>
+    <string name="update">更新</string>
+    <string name="checking">检查中 ...</string>
+    <string name="update_error_download_error">不能下载apk文件</string>
+    <string name="update_error_download_apk_error">不能下载apk文件</string>
+    <string name="update_error_apk_error">Apk文件错误</string>
+    <string name="update_error_xml_error">不能下载更新文件</string>
+    <string name="do_you_update">有新版本， 要现在更新吗?</string>
+    <string name="invalid_update_file">无效的更新文件</string>
+    <string name="update_new_version">新版本: #, 推荐指数: $</string>
+
+    <string name="add">添加</string>
+    <string name="edit">编辑</string>
+    <string name="clear">清除所有</string>
+
+    <string name="mon">星期一</string>
+    <string name="tue">星期三</string>
+    <string name="wed">星期二</string>
+    <string name="fri">星期五</string>
+    <string name="sat">星期六</string>
+
+    <string name="schedule_help">点击时间段添加计划</string>
+
+    <string name="event_help_for_description">在这添加描述</string>
+    <string name="event_help_for_orderid">在这添加订单ID</string>
+    <string name="fill_description">保存前请填写描述</string>
+    <string name="fill_order_id">保存前请填写订单ID</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="pref_kds_password_enabled">进入设置时启用密码</string>
+    <string name="password_incorrect">无效的密码</string>
+    <string name="pref_kds_password_text">密码</string>
+
+    <string name="add_item">加菜名</string>
+    <string name="qty_increase">数量 +</string>
+    <string name="qty_decrease">数量 -</string>
+    <string name="qty">数量</string>
+    <string name="item_description">菜名描述</string>
+    <string name="to_station">目的终端</string>
+    <string name="order_id">订单ID</string>
+    <string name="duration_mins">持续时间(分)</string>
+    <string name="start_time">开始时间</string>
+    <string name="week_day">周几</string>
+    <string name="schedule">Schedule</string>
+    <string name="clear_log">清除</string>
+    <string name="station">终端</string>
+    <string name="screen">屏幕</string>
+    <string name="summary_translate">统计转换</string>
+    <string name="build_cards">菜谱</string>
+    <string name="training_video">培训视频</string>
+
+    <string name="local_file">本地文件</string>
+    <string name="ethernet_file">局域网文件</string>
+    <string name="internet_file">网络文件</string>
+    <string name="move_up">上移</string>
+    <string name="move_down">下移</string>
+
+    <string name="menu_schedule_add">新计划</string>
+    <string name="menu_schedule_edit">编辑</string>
+    <string name="menu_schedule_clear_all">清除所有</string>
+    <string name="menu_schedule_remove">删除</string>
+    <string name="new_schedule">新计划</string>
+    <string name="dialog_time_picker">时间</string>
+
+    <string name="please_input_primary_station">请输入终端 # 的主终端</string>
+    <string name="relation_error_expo_as_slave">不允许副终端是总台. 请改正.</string>
+    <string name="remove_relations_expo">总台终端 # 从总台列中删除.</string>
+
+    <string name="expo_backup">总台/备份</string>
+    <string name="prep_backup">正常/备份</string>
+    <string name="error_slave">错误, 请改为其它终端</string>
+    <string name="error_slave_myself">错误, 用自己作为副终端. 请改正</string>
+    <string name="error_primary_myself">错误,用自己作为主终端. 请改正</string>
+    <string name="error_not_expo">错误, 终端不是总台终端.</string>
+    <string name="error_not_prep">错误,终端不是正常终端.</string>
+    <string name="error_not_expo_prep_backup">错误,只允许总台,正常和排序终端.</string>
+
+    <string name="error_other_router_enabled">错误,只允许一个路由.有其它路由已启动. 请改正!</string>
+    <string name="primary_router">我的主终端</string>
+    <string name="slave_router">我的备份</string>
+    <string name="retrieve_settings">从远程路由得到设置</string>
+
+    <string name="backup_of">(备份 # )</string>
+
+    <string name="wait_for_config_data">等待设置数据 ...</string>
+    <string name="wait_for_connection">等待新的连接 ...</string>
+    <string name="station_is_inactive">终端不在线 ...</string>
+    <string name="waiting_for_connecting">等待连接中 ...</string>
+
+    <string name="pref_tracker_title">座位跟踪</string>
+    <string name="pref_tracker_enabled">启动座位跟踪</string>
+    <string name="pref_tracker_enabled_summary">利用座位跟踪得到客户位置</string>
+
+    <string name="pref_tracker_number_from_userinfo">跟踪器号来自 \"UserInfo\" 标签</string>
+    <string name="pref_tracker_number_from_userinfo_summary">POS程序用 \"UserInfo\" 标签传递跟踪器号</string>
+    <string name="tracker_only_one_allowed">只允许一个座位跟踪终端</string>
+    <string name="tt_authen_press_button">按跟踪器服务器按钮以便接受KDS连接.</string>
+    <string name="tt_connect_error">不能连接到 TT 服务器</string>
+
+
+    <string name="restart_kds_as_language">改变语言为 # 需要重新启动，要现在重启吗?</string>
+    <string name="update_later">以后再说</string>
+    <string name="sun">星期日</string>
+    <string name="thu">星期四</string>
+    <string name="it_is_latest_version">这是最新版本</string>
+    <string name="menu_activity_stations">显示在线终端</string>
+    <string name="message">消息</string>
+    <string name="station_connected">终端 [#] 建立了连接.</string>
+    <string name="station_disconnected">终端 [#] 断开连接</string>
+    <string name="pos_connected">POS [#] 建立了连接</string>
+
+    <string name="receive_order">得到订单 #</string>
+    <string name="receive_order_from_folder">从远程目录得到订单 #</string>
+    <string name="receive_order_from_ip">从 $ 得到订单 # </string>
+
+    <string name="new_folder">新目录</string>
+    <string name="new_folder_name">新目录名</string>
+    <string name="fail_to_create_folder">不能创建目录 \"#\"</string>
+
+    <string name="select_order_status">选择 [ # ] 状态.</string>
+
+    <string name="select_item">选择菜名</string>
+    <string name="str_refresh">更新</string>
+    <string name="open_file">打开文件</string>
+    <string name="new_entry">新的</string>
+
+
+
+    <string name="error_folder_permission">远程目录必须有读写权限， 请改正</string>
+    <string name="can_not_remove_smb_file">不能删除远程文件 #</string>
+    <string name="ignore_and_save">强制保存</string>
+    <string name="modify_setting">更改设置</string>
+    <string name="cancel_setting">取消设置</string>
+
+    <string name="backup_station_restored">我的备份终端 # 已恢复</string>
+    <string name="primary_station_restored">我的主终端 # 已恢复</string>
+    <string name="station_restored">终端 # 已恢复</string>
+
+    <string name="backup_router_lost">我的备份路由 # 不在线</string>
+    <string name="primary_router_lost">我的主路由 # 不在线</string>
+    <string name="write_buffer_to">写数据到 </string>
+    <string name="transfering_db_to_other_router">转移数据库到其它路由</string>
+    <string name="updating_db_from_other_router">从其它路由更新我的数据库.</string>
+    <string name="get_order">得到订单 #</string>
+    <string name="get_order_from_client_ip">从 [$] 得到订单 #</string>
+    <string name="get_order_from_server_ip">从 [$] 得到订单 #</string>
+    <string name="get_order_from_remote_folder">从远程文件夹得到订单 #</string>
+
+    <string name="pref_kds_language" >语言（Language）</string>
+    <string-array name="pref_kds_language_titles" >
+        <item>英语（English）</item>
+        <item>中文</item>
+
+    </string-array>
+    <string name="empty">空</string>
+    <string name="find_folders">找到文件夹</string>
+    <string name="no_rights_to_access">无访问权限</string>
+    <string name="folder_not_existed">文件夹不存在</string>
+
+    <string name="categories">类别</string>
+    <string name="items">菜名</string>
+    <string name="reset">重置</string>
+    <string name="retrieve_from">提取自</string>
+
+    <string name="failed_to_open_remote_folder">登录失败：未知用户名或密码错误</string>
+    <string name="english">英语</string>
+    <string name="chinese">中文</string>
+    <string name="downloading">下载中 ...</string>
+    <string name="str_message">Message</string>
+    <string name="category_name">Category Name:</string>
+    <string name="background">Background</string>
+    <string name="foreground">Foreground</string>
+    <string name="items_for_category">Items for category #</string>
+    <string name="no_data">No data</string>
+    <string name="export_csv">Export database to csv file</string>
+    <string name="import_csv">Import csv file to database</string>
+    <string name="file_name">File name:</string>
+    <string name="file_existed_overwrite_confirm">File is existed, do you want to overwrite it?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="export_db_done">Database has been exported to</string>
+    <string name="import_csv_done">Imported file</string>
+    <string name="auto_add_modifier">Add received modifier to database automatically</string>
+    <string name="item_auto_add">Add received item to database automatically</string>
+
+    <string name="pwd_do_not_match">Passwords do not match.</string>
+
+    <string name="log_mode">Log mode</string>
+    <string name="log_reserved_days">Reserve log files for X days</string>
+    <string name="log">Log</string>
+    <string name="log_orders">Lnable log received orders xml</string>
+    <string name="station_lost">Station # lost</string>
+    <string name="enable_order_ack">Enable order acknowledgement</string>
+    <string-array name="pref_kds_log_mode_titles">
+        <item>None</item>
+        <item>Basic</item>
+        <item>Detail</item>
+    </string-array>
+</resources>

@@ -1,0 +1,186 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="general_station_id"
+        android:title="@string/pref_general_title_name"
+        android:defaultValue="KDSRouter"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="general_router_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="general_router_backup"
+        android:summary="@string/pref_general_router_sum_backup"
+        android:title="@string/pref_general_router_backup_title" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="general_router_primary"
+        android:title="@string/primary_router"
+        android:defaultValue=""
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="general_router_backup"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="general_router_enabled"
+        android:summary="@string/pref_general_sum_router_enabled"
+        android:title="@string/pref_general_router_enabled" />
+
+
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_general_data_source_titles"
+        android:entryValues="@array/pref_general_data_source_values"
+        android:key="general_data_source"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:dependency="general_router_enabled"
+        android:title="@string/pref_general_data_source" />
+
+
+    <!-- TCP/IP port number -->
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="general_pos_ipport"
+        android:title="@string/pref_general_title_tcp_port"
+        android:defaultValue="@string/pref_general_default_tcp_port"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="general_router_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+
+    <com.bematechus.kdsrouter.KDSPreferenceSmbFolder
+        android:title="@string/pref_general_title_remote_folder"
+        android:key="general_remote_folder"
+        android:dialogMessage="message"
+        android:dialogTitle="title"
+        android:positiveButtonText="ok"
+        android:dependency="general_router_enabled"
+        android:negativeButtonText="cancel"
+        />
+    <!--<com.bematechus.kdsrouter.KDSPreferenceSmbFolder-->
+        <!--android:title="@string/pref_general_title_notification_folder"-->
+        <!--android:key="general_notification_folder"-->
+        <!--android:dialogMessage="message"-->
+        <!--android:dialogTitle="title"-->
+        <!--android:positiveButtonText="ok"-->
+        <!--android:dependency="general_router_enabled"-->
+        <!--android:negativeButtonText="cancel"-->
+        <!--/>-->
+    <!-- TCP/IP port number -->
+    <!--<EditTextPreference-->
+        <!--android:key="general_backup_ipport"-->
+        <!--android:title="@string/pref_general_title_backup_port"-->
+        <!--android:defaultValue="@string/pref_general_default_backup_port"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "number"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:maxLines="1" />-->
+
+    <!-- TCP/IP port number -->
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="general_connect_station_ipport"
+        android:title="@string/pref_general_connection_station_ipport"
+        android:defaultValue="@string/pref_general_default_station_port"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="general_router_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <!-- default kds station -->
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="general_default_tostation"
+        android:title="@string/pref_general_title_default_station"
+        android:defaultValue="@string/pref_general_default_station"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="general_router_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <CheckBoxPreference
+        android:key="notification_order_acknowledgement"
+        android:title="@string/enable_order_ack"
+        android:defaultValue="false" />
+
+    <com.bematechus.kdsrouter.KDSPreferenceEnablePassword
+        android:key="kds_general_enable_password"
+        android:title="@string/pref_kds_password_enabled"
+        android:defaultValue="false" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_password"
+        android:title="@string/pref_kds_password_text"
+        android:defaultValue=""
+        android:selectAllOnFocus="true"
+        android:inputType= "numberPassword"
+        android:singleLine="true"
+        android:dependency="kds_general_enable_password"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="kds_general_language"
+        android:title="@string/pref_kds_language"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_language_titles"
+        android:entryValues="@array/pref_kds_language_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!-- primary router 2015-12-29 -->
+    <!--<EditTextPreference-->
+        <!--android:key="general_router_primary"-->
+        <!--android:title="@string/primary_router"-->
+        <!--android:defaultValue=""-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "text"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="general_router_backup"-->
+        <!--android:maxLines="1" />-->
+
+    <!--&lt;!&ndash; primary router 2015-12-29 &ndash;&gt;-->
+    <!--<EditTextPreference-->
+        <!--android:key="general_router_slave"-->
+        <!--android:title="@string/slave_router"-->
+        <!--android:defaultValue=""-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "text"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:maxLines="1" />-->
+    <Preference
+        android:key="general_retrieve_settings"
+        android:title="@string/retrieve_settings">
+        <intent android:action= "android.intent.action.VIEW"
+            android:targetPackage="com.bematechus.kdsrouter"
+            android:data="remotesettings"
+            android:targetClass= "com.bematechus.kdsrouter.KDSUIRetriveConfig" />
+
+    </Preference>
+
+
+</PreferenceScreen>

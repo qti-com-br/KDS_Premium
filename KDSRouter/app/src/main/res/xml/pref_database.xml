@@ -1,0 +1,47 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+
+    <Preference android:title="@string/pref_router_database_title">
+        <intent android:action= "android.intent.action.VIEW"
+            android:targetPackage="com.bematechus.kdsrouter"
+            android:data="relations"
+            android:targetClass= "com.bematechus.kdsrouter.FilterActivity" />
+
+    </Preference>
+
+    <CheckBoxPreference
+        android:key="item_auto_add"
+        android:title="@string/item_auto_add"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="modifier_auto_add"
+        android:title="@string/auto_add_modifier"
+        android:defaultValue="true" />
+
+    <com.bematechus.kdsrouter.KDSPreferenceDb2CSV
+        android:key="save_db_csv"
+        android:defaultValue="1"
+        android:title="@string/export_csv"
+        />
+    <com.bematechus.kdsrouter.KDSPreferenceDb2CSV
+        android:key="save_db_csv"
+        android:defaultValue="0"
+        android:title="@string/import_csv"
+        />
+    <!--<Preference android:title="Clear database"-->
+        <!--android:key="database_clear">-->
+    <!--</Preference>-->
+
+
+    <!--<Preference android:title="Stations relations">-->
+        <!--<intent android:action= "android.intent.action.VIEW"-->
+            <!--android:targetPackage="com.bematechus.kdsrouter"-->
+            <!--android:data="relations"-->
+            <!--android:targetClass= "com.bematechus.kdsrouter.KDSUIStationsConfig" />-->
+
+    <!--</Preference>-->
+
+</PreferenceScreen>

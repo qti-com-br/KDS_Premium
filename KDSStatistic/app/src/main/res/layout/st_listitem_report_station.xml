@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:kdstextview="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal" android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:weightSum="9"
+    android:background="@drawable/textview_border">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:weightSum="1"
+        android:background="@drawable/textview_border">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgOK"
+            android:src="@drawable/done"
+            android:layout_margin="5dp"
+            android:layout_gravity="center" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:id="@+id/progressBar"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <com.bematechus.kdslib.KDSTextview
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="ID"
+        android:layout_weight="1"
+        android:textColor="@android:color/black"
+        kdstextview:rightcolor="@color/grid_border_color"
+        android:id="@+id/txtID"
+        android:paddingLeft="3dp"
+        android:background="@drawable/textview_border" />
+
+    <com.bematechus.kdslib.KDSTextview
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="IP"
+        kdstextview:rightcolor="@color/grid_border_color"
+        android:layout_weight="7"
+        android:textColor="@android:color/black"
+        android:id="@+id/txtIP"
+        android:gravity="center|left"
+        android:paddingLeft="3dp"
+        android:background="@drawable/textview_border" />
+
+
+</LinearLayout>

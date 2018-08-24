@@ -1,0 +1,125 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+
+    <!--android:summary="Basically KDS settings"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$GeneralPreferenceFragment"
+        android:title="@string/pref_header_general" />
+    <!--<header android:title="@string/pref_kds_stations_title_relations">-->
+        <!--<intent android:action= "android.intent.action.VIEW"-->
+            <!--android:targetPackage="com.bematechus.kds"-->
+            <!--android:data="relations"-->
+            <!--android:targetClass= "com.bematechus.kds.KDSUIStationsConfig" />-->
+
+    <!--</header>-->
+    <!--android:summary="All stations relationships"-->
+    <!--<header android:fragment="com.bematechus.kds.KDSUIConfiguration$PreferenceFragmentStations"-->
+        <!--android:title="@string/pref_kds_stations_title_relations" />-->
+    <header android:fragment="com.bematechus.kds.PreferenceFragmentStations"
+        android:title="@string/pref_kds_stations_title_relations" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$NotificationPreferenceFragment"
+        android:title="@string/notification" />
+
+
+
+    <header android:title="@string/pref_kds_category_orders" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TitlePreferenceFragment"
+        android:title="@string/screen_title" />
+    <!--android:summary="Panels and colors of orders"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PanelsDisplayPreferenceFragment"
+        android:title="@string/pref_kds_orders_display" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$ScreenBPanelsDisplayPreferenceFragment"
+        android:title="@string/pref_kds_screenb_orders_display" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$LineItemsPreferenceFragment"
+        android:title="@string/line_items_display" />
+    <header android:fragment="com.bematechus.kds.PreferenceFragmentTabDisplay"
+        android:title="@string/tab_display" />
+    <!--android:summary="Smart showing orders"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$SmartOrderPreferenceFragment"
+        android:title="@string/pref_kds_smartorder_title" />
+    <!--android:summary="Order title contents"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$CaptionPreferenceFragment"
+        android:title="@string/pref_kds_caption_title" />
+    <!--android:summary="Color for RUSH/FIRE order"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$HighlightPreferenceFragment"
+        android:title="@string/pref_kds_highlight_title" />
+
+    <!--<header android:fragment="com.bematechus.kds.KDSUIConfiguration$IconPreferenceFragment"-->
+        <!--android:title="@string/icon_display" />-->
+
+
+    <header android:title="@string/pref_kds_category_ordercontent" />
+    <!--android:summary="Item consoliting,color,font..."-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$ItemPreferenceFragment"
+        android:title="@string/pref_kds_item_title" />
+    <!--android:summary="Condiment font,color"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$CondimentPreferenceFragment"
+        android:title="@string/pref_kds_condiment_title" />
+    <!--android:summary="Premessage font,color"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$MessagePreferenceFragment"
+        android:title="@string/pref_kds_premsg_title" />
+    <!--android:summary="Footer font,color"-->
+    <header android:title="@string/pref_kds_category_footer" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$FooterPreferenceFragment"
+        android:title="@string/pref_kds_footer_title" />
+    <header android:title="@string/pref_kds_category_operations" />
+    <!--android:summary="Bump confirmation, reserved days"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$BumpingPreferenceFragment"
+        android:title="@string/pref_kds_bumping_title" />
+    <!--android:summary="Keyboard functions"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$BumpbarPreferenceFragment"
+        android:title="@string/pref_kds_bumpbar_title" />
+    <!--android:summary="Touch buttons visible/invisible"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TouchPreferenceFragment"
+        android:title="@string/pref_kds_touch_title" />
+    <!--android:summary="Print ticket format,port."-->
+
+    <!--<header android:title="@string/pref_kds_category_accessories" />-->
+    <header android:title="@string/pref_kds_category_extra_func" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$QueuePreferenceFragment"
+        android:title="@string/pref_kds_queue_title" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$QExpoPreferenceFragment"
+        android:title="@string/pref_kds_qexpo_title" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TrackerPreferenceFragment"
+        android:title="@string/pref_tracker_title" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PagerPreferenceFragment"
+        android:title="@string/pref_pager_title" />
+
+    <header android:title="@string/pref_kds_category_others" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PrinterPreferenceFragment"
+        android:title="@string/pref_kds_printer_title" />
+    <!--android:summary="Beeper properties"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$BeeperPreferenceFragment"
+        android:title="@string/pref_kds_beeper_title" />
+    <!--android:summary="How to show summary."-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$SumPreferenceFragment"
+        android:title="@string/pref_kds_sum_title" />
+    <header android:fragment="com.bematechus.kds.PreferenceFragmentAdvSum"
+        android:title="@string/advanced_summary" />
+    <!--android:summary="Expeditor special settings"-->
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$ExpeditorPreferenceFragment"
+        android:title="@string/pref_kds_expalert_title" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$MediaPreferenceFragment"
+        android:title="@string/pref_kds_media_title" />
+
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$SoundPreferenceFragment"
+        android:title="@string/pref_kds_sound_title" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$LogPreferenceFragment"
+        android:title="@string/log" />
+    <!--<header android:title="Retrieve remote settings">-->
+        <!--<intent android:action= "android.intent.action.VIEW"-->
+            <!--android:targetPackage="com.bematechus.kds"-->
+            <!--android:targetClass= "com.bematechus.kds.KDSUIRetriveConfig" />-->
+
+    <!--</header>-->
+
+</preference-headers>

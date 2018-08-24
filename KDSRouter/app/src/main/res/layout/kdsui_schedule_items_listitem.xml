@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="6"
+    android:measureWithLargestChild="false">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/preptime"
+        android:id="@+id/txtQty"
+        android:layout_weight="1"
+
+        android:layout_marginLeft="1dp"
+        android:gravity="center_vertical|center_horizontal" />
+
+    <View
+        android:layout_width="@dimen/relations_headers_separator"
+        android:layout_height="match_parent"
+        android:background="@color/relations_headers_bg"
+        android:visibility="visible" />
+
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/item"
+        android:layout_weight="3.5"
+        android:id="@+id/txtDescription"
+        android:gravity="center_vertical|center_horizontal" />
+
+    <View
+        android:layout_width="@dimen/relations_headers_separator"
+        android:layout_height="match_parent"
+        android:background="@color/relations_headers_bg"
+        android:visibility="visible" />
+
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtToStations"
+        android:enabled="true"
+        android:layout_weight="1.5"
+        android:gravity="center_vertical|center_horizontal"
+        android:textSize="19dp"
+        android:singleLine="true" />
+
+</LinearLayout>

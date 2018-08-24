@@ -1,0 +1,31 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="com.bematechus.kds.MainActivityFragmentSum"
+    android:id="@+id/fragment_summary">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|top"
+        android:weightSum="1"
+        android:background="@drawable/media_listview_border"
+        android:layout_margin="2dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Summary"
+            android:id="@+id/txtSumTitle"
+            android:layout_alignTop="@+id/txtSum"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lstSum" />
+
+    </LinearLayout>
+</FrameLayout>

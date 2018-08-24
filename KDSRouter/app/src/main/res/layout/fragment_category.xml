@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:kdstextview="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal" android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:weightSum="7">
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:id="@+id/imgFocus"
+        android:layout_weight="0.5" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:orientation="vertical"
+        android:layout_weight="6">
+
+        <com.bematechus.kdslib.KDSTextview
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Cate"
+            android:layout_weight="1"
+            android:textColor="@android:color/black"
+            kdstextview:topcolor="@color/grid_border_color"
+            kdstextview:leftcolor="@color/grid_border_color"
+            kdstextview:rightcolor="@color/grid_border_color"
+            kdstextview:bottomcolor="@android:color/transparent"
+
+            android:id="@+id/txtDescription"
+            android:paddingLeft="@dimen/text_indentation"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:background="@drawable/textview_border" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:weightSum="2"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/txtDel"
+            android:layout_weight="2"
+            android:src="@drawable/trash2"
+            android:background="@drawable/textview_border"
+            android:scaleType="center" />
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:text="D"-->
+        <!--android:layout_weight="1"-->
+        <!--android:textColor="@android:color/black"-->
+
+        <!--android:id="@+id/txtDel" />-->
+        <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:text="E"-->
+        <!--android:layout_weight="1"-->
+        <!--android:textColor="@android:color/black"-->
+        <!--android:id="@+id/txtEdit" />-->
+    </LinearLayout>
+
+</LinearLayout>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:kdstextview="http://schemas.android.com/apk/res-auto"-->
+    <!--android:orientation="horizontal" android:layout_width="match_parent"-->
+
+    <!--android:layout_height="match_parent"-->
+    <!--android:weightSum="7">-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:weightSum="2"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_weight="4">-->
+
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Cate"-->
+            <!--android:background="@drawable/textview_border"-->
+            <!--android:layout_weight="1"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:id="@+id/txtDescription" />-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:weightSum="2"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_weight="1">-->
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+                <!--android:text="1"-->
+                <!--android:id="@+id/txtToStation"-->
+                <!--android:background="@drawable/textview_border"-->
+                <!--android:layout_weight="1"-->
+                <!--android:textColor="#000000" />-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+                <!--android:id="@+id/txtToScreen"-->
+                <!--android:background="@drawable/textview_border"-->
+                <!--android:layout_weight="1"-->
+                <!--android:textColor="#000000" />-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
+    <!--<TextView-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:text="2.6"-->
+        <!--android:background="@drawable/textview_border"-->
+        <!--android:layout_weight="1"-->
+        <!--android:textColor="@android:color/black"-->
+        <!--android:id="@+id/txtDelay"-->
+        <!--android:gravity="center|left"-->
+        <!--android:paddingLeft="3dp" />-->
+
+    <!--<CheckBox-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:text=""-->
+        <!--android:background="@drawable/textview_border"-->
+        <!--android:layout_weight="1"-->
+        <!--android:textColor="@android:color/black"-->
+        <!--android:id="@+id/chkPrintable"-->
+        <!--android:enabled="false"-->
+        <!--android:focusable="false" />-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:weightSum="2"-->
+        <!--android:layout_height="match_parent">-->
+        <!--<ImageView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/txtDel"-->
+            <!--android:layout_weight="1"-->
+            <!--android:src="@drawable/delete_24px"-->
+            <!--android:background="@drawable/textview_border"-->
+            <!--android:scaleType="center" />-->
+
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="fill_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textAppearance="?android:attr/textAppearanceMedium"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="D"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColor="@android:color/black"&ndash;&gt;-->
+
+            <!--&lt;!&ndash;android:id="@+id/txtDel" />&ndash;&gt;-->
+        <!--<ImageView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/txtEdit"-->
+            <!--android:layout_weight="1"-->
+            <!--android:src="@drawable/edit_24px_16"-->
+            <!--android:background="@drawable/textview_border"-->
+            <!--android:scaleType="center" />-->
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textAppearance="?android:attr/textAppearanceMedium"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="E"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColor="@android:color/black"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/txtEdit" />&ndash;&gt;-->
+    <!--</LinearLayout>-->
+
+<!--</LinearLayout>-->

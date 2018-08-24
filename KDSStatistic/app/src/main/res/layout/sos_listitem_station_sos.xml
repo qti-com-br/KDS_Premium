@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="10">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/txtStationID"
+        android:layout_weight="5"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="true"
+        android:layout_gravity="center"
+        android:gravity="center|center_vertical|left"
+        android:textColor="@color/report_row_fg"
+        android:layout_marginLeft="10dp" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtTargetPrepTime"
+        android:layout_weight="5"
+        android:textColor="@color/report_row_fg"
+        android:selectAllOnFocus="true"
+        android:editable="true"
+        android:enabled="true"
+        android:focusable="true"
+        android:inputType="numberDecimal"
+        android:singleLine="true" />
+
+    <CheckBox
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/chkShowIndividual" />
+
+    <CheckBox
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/chkIncludedInOverall" />
+
+</LinearLayout>

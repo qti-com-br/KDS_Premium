@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<CheckBoxPreference-->
+        <!--android:key="icon_enabled"-->
+        <!--android:title="@string/icon_display_enabled"-->
+        <!--android:defaultValue="false" />-->
+
+    <CheckBoxPreference
+        android:key="icon_folder_enabled"
+        android:title="@string/use_local_folder_to_load_icon"
+
+        android:disableDependentsState="true"
+        android:defaultValue="false" />
+
+    <com.bematechus.kds.KDSPreferenceFolderPicker
+        android:key="icon_folder"
+        android:defaultValue=""
+        android:title="@string/setup_local_icon_folder"
+
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_0"
+        android:defaultValue=""
+        android:title="Icon #0"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_1"
+        android:defaultValue=""
+        android:title="Icon #1"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_2"
+        android:defaultValue=""
+        android:title="Icon #2"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_3"
+        android:defaultValue=""
+        android:title="Icon #3"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_4"
+        android:defaultValue=""
+        android:title="Icon #4"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_5"
+        android:defaultValue=""
+        android:title="Icon #5"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_6"
+        android:defaultValue=""
+        android:title="Icon #6"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_7"
+        android:defaultValue=""
+        android:title="Icon #7"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_8"
+        android:defaultValue=""
+        android:title="Icon #8"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_9"
+        android:defaultValue=""
+        android:title="Icon #9"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_10"
+        android:defaultValue=""
+        android:title="Icon #10"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_11"
+        android:defaultValue=""
+        android:title="Icon #11"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_12"
+        android:defaultValue=""
+        android:title="Icon #12"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_13"
+        android:defaultValue=""
+        android:title="Icon #13"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_14"
+        android:defaultValue=""
+        android:title="Icon #14"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_15"
+        android:defaultValue=""
+        android:title="Icon #15"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_16"
+        android:defaultValue=""
+        android:title="Icon #16"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_17"
+        android:defaultValue=""
+        android:title="Icon #17"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_18"
+        android:defaultValue=""
+        android:title="Icon #18"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_19"
+        android:defaultValue=""
+        android:title="Icon #19"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_20"
+        android:defaultValue=""
+        android:title="Icon #20"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_21"
+        android:defaultValue=""
+        android:title="Icon #21"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_22"
+        android:defaultValue=""
+        android:title="Icon #22"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_23"
+        android:defaultValue=""
+        android:title="Icon #23"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_24"
+        android:defaultValue=""
+        android:title="Icon #24"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_25"
+        android:defaultValue=""
+        android:title="Icon #25"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_26"
+        android:defaultValue=""
+        android:title="Icon #26"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_27"
+        android:defaultValue=""
+        android:title="Icon #27"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_28"
+        android:defaultValue=""
+        android:title="Icon #28"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_29"
+        android:defaultValue=""
+        android:title="Icon #29"
+        android:dependency="icon_folder_enabled"
+        />
+
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_30"
+        android:defaultValue=""
+        android:title="Icon #30"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_31"
+        android:defaultValue=""
+        android:title="Icon #31"
+        android:dependency="icon_folder_enabled"
+        />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="icon_32"
+        android:defaultValue=""
+        android:title="Icon #32"
+        android:dependency="icon_folder_enabled"
+        />
+
+</PreferenceScreen>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="bumpbar_type"
+        android:title="@string/pref_kds_bumpbar_types"
+        android:defaultValue="0"
+        android:entries="@array/pref_keyboard_type_titles"
+        android:entryValues="@array/pref_keyboard_type_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <PreferenceCategory android:title="Dialog">
+        <!-- key 1 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/ok"
+            android:key="bumpbar_func_ok"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="8,0,0,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- key 0 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/cancel"
+            android:key="bumpbar_func_cancel"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="7,0,0,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Operations">
+    <!--<CheckBoxPreference-->
+        <!--android:key="bumpbar_panelnum_focus"-->
+        <!--android:title="@string/pref_kds_panelnum_focus_enabled"-->
+        <!--android:defaultValue="false" />-->
+
+        <!-- key right -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/focus_next"
+        android:key="bumpbar_func_next"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="22,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+        <!-- key left -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/focus_prev"
+        android:key="bumpbar_func_prev"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="21,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+        <!-- key up -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/focus_up"
+        android:key="bumpbar_func_up"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="19,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+        <!-- down -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/focus_down"
+        android:key="bumpbar_func_down"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="20,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+
+        <!-- enter -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/pref_bumpbar_func_bump"
+        android:key="bumpbar_func_bump"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="66,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+        <!-- ctrl -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/pref_bumpbar_func_unbump"
+        android:key="bumpbar_func_unbump"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="113,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+        <!-- key pad - -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/show_summary"
+        android:key="bumpbar_func_sum"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="156,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+
+        <!-- space -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/transfer_order"
+        android:key="bumpbar_func_transfer"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="62,0,0,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+        <!-- ctrl+1 -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/sort_orders"
+        android:key="bumpbar_func_sort"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="8,0,1,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+
+        <!-- ctrl + 2 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/park"
+            android:key="bumpbar_func_park"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="9,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- ctrl+3 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/bumpbar_unpark"
+            android:key="bumpbar_func_unpark"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="10,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- ctrl+ 4 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/print"
+            android:key="bumpbar_func_print"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="11,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- ctrl+ 5 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/build_card"
+            android:key="bumpbar_func_buildcard"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="12,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- ctrl+ 6 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/training"
+            android:key="bumpbar_func_training"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="13,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- ctrl+ 7 -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/pref_bumpbar_func_unbumplast"
+            android:key="bumpbar_func_unbumplast"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="14,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- ctrl+8-->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/page"
+            android:key="bumpbar_func_page"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="15,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <!-- ctrl+9-->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/more"
+            android:key="bumpbar_func_more"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="16,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+
+        <!-- ctrl+0-->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/tab_display_next"
+            android:key="bumpbar_func_tab_next"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="7,0,1,0"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="USER B">
+
+        <!--<CheckBoxPreference-->
+            <!--android:key="bumpbar_enable_userb"-->
+            <!--android:title="@string/enable_userb_bumpbar"-->
+            <!--android:defaultValue="false" />-->
+        <!-- ctrl+down -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/switch_user"
+            android:key="bumpbar_switch_user"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="20,0,1,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+
+            />
+        <!--<CheckBoxPreference-->
+            <!--android:key="bumpbar_enable_userb_kbd"-->
+            <!--android:title="Enable user B screen"-->
+            <!--android:dependency="bumpbar_enable_userb"-->
+            <!--android:defaultValue="false" />-->
+
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Move focus to next"-->
+            <!--android:key="userb_bumpbar_func_next"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="22,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Move focus to prev"-->
+            <!--android:key="userb_bumpbar_func_prev"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="21,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Move focus to up"-->
+            <!--android:key="userb_bumpbar_func_up"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="19,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Move focus to down"-->
+            <!--android:key="userb_bumpbar_func_down"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="20,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="@string/pref_bumpbar_func_bump"-->
+            <!--android:key="userb_bumpbar_func_bump"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="66,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="@string/pref_bumpbar_func_unbump"-->
+            <!--android:key="userb_bumpbar_func_unbump"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="113,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Show/hide summary"-->
+            <!--android:key="userb_bumpbar_func_sum"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="156,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Transfer order to other station"-->
+            <!--android:key="userb_bumpbar_func_transfer"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="62,0,0,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Sort orders"-->
+            <!--android:key="userb_bumpbar_func_sort"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="116,0,1,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Park"-->
+            <!--android:key="userb_bumpbar_func_park"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="116,0,1,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Unpark"-->
+            <!--android:key="userb_bumpbar_func_unpark"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="116,0,1,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="More"-->
+            <!--android:key="userb_bumpbar_func_more"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="113,0,1,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+        <!--<com.bematechus.kds.KDSPreferenceKeySelection-->
+            <!--android:title="Print"-->
+            <!--android:key="userb_bumpbar_func_print"-->
+            <!--android:dialogMessage="bumpbar_type"-->
+            <!--android:dialogTitle="113,0,1,0"-->
+            <!--android:positiveButtonText="ok"-->
+            <!--android:negativeButtonText="cancel"-->
+            <!--android:dependency="bumpbar_enable_userb_kbd"-->
+            <!--/>-->
+    </PreferenceCategory>
+
+</PreferenceScreen>

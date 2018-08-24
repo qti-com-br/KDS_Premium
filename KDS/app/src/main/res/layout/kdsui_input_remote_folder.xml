@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:paddingTop="5dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Domain:"
+                android:id="@+id/textView40"
+                android:gravity="right" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtDomain"
+                android:hint="Domain name, can be empty" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/pc_name"
+                android:id="@+id/textView22"
+                android:layout_toLeftOf="@+id/txtUserID"
+                android:layout_toStartOf="@+id/txtUserID"
+                android:layout_alignParentTop="true"
+                android:gravity="right" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtPCName"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/textView22"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/user_id"
+                android:id="@+id/textView23"
+                android:layout_below="@+id/txtPCName"
+                android:layout_alignRight="@+id/textView25"
+                android:layout_alignEnd="@+id/textView25"
+                android:gravity="right" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtUserID"
+                android:layout_below="@+id/txtPCName"
+                android:layout_toRightOf="@+id/textView23"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/password"
+                android:id="@+id/textView24"
+                android:layout_below="@+id/txtUserID"
+                android:layout_toLeftOf="@+id/txtUserID"
+                android:layout_toStartOf="@+id/txtUserID"
+                android:gravity="right" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtPwd"
+                android:layout_below="@+id/txtUserID"
+                android:layout_toRightOf="@+id/textView24"
+                android:password="true"
+
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </LinearLayout>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/anonymous"
+            android:id="@+id/chkAnonymous"
+
+            android:layout_below="@+id/txtPwd"
+            android:layout_toRightOf="@+id/textView23"
+            android:layout_toEndOf="@+id/textView23"
+            android:layout_marginLeft="130dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/shared_folder"
+                android:id="@+id/textView25"
+                android:layout_below="@+id/chkAnonymous"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:gravity="right" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtFolder"
+                android:layout_below="@+id/chkAnonymous"
+                android:layout_toRightOf="@+id/textView23"
+                android:layout_toLeftOf="@+id/btnFind"
+                android:layout_toStartOf="@+id/btnFind"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/str_find"
+                android:id="@+id/btnFind"
+                android:layout_alignBottom="@+id/txtFolder"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,115 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_title"
+        android:title="@string/pref_kds_general_title"
+        android:defaultValue=""
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <!--<com.bematechus.kdssos.TimeDurationPreference-->
+
+        <!--android:key="auto_report_interval"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:title="@string/refresh_interval"-->
+        <!--android:defaultValue="5"-->
+        <!--/>-->
+    <!--<com.bematechus.kdssos.TimeDurationPreference-->
+
+        <!--android:key="real_time_period"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:title="@string/real_time_period"-->
+        <!--android:defaultValue="60"-->
+        <!--/>-->
+
+    <ListPreference
+        android:key="real_time_period"
+        android:title="@string/real_time_period"
+        android:defaultValue="60"
+        android:entries="@array/pref_real_period_titles"
+        android:entryValues="@array/pref_real_period_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!--<com.bematechus.kdssos.TimeDurationPreference-->
+        <!--android:key="graph_duration"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:title="@string/graph_duration"-->
+        <!--android:defaultValue="300"-->
+        <!--/>-->
+
+    <ListPreference
+        android:key="graph_duration"
+        android:title="@string/graph_duration"
+        android:defaultValue="3600"
+        android:entries="@array/pref_graph_duration_titles"
+        android:entryValues="@array/pref_graph_duration_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!--<com.bematechus.kdssos.TimeDurationPreference-->
+        <!--android:key="graph_interval"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:title="@string/graph_interval"-->
+        <!--android:defaultValue="30"-->
+        <!--/>-->
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="graph_axis_x_title"
+        android:title="@string/axis_x_title"
+        android:defaultValue="@string/graph_axis_x_title"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="graph_axis_y_title"
+        android:title="@string/axis_y_title"
+        android:defaultValue="@string/graph_axis_y_title"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <CheckBoxPreference
+        android:key="graph_hide_data_dot"
+        android:title="Disable data mark"
+        android:defaultValue="false"
+        />
+
+    <ListPreference
+        android:key="last_data_replace_zero"
+        android:title="@string/last_data_as_zero"
+        android:defaultValue="0"
+        android:entries="@array/pref_last_data_replace_zero_titles"
+        android:entryValues="@array/pref_last_data_replace_zero_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!--<ListPreference-->
+        <!--android:key="kds_general_language"-->
+        <!--android:title="@string/pref_kds_language"-->
+        <!--android:defaultValue="0"-->
+        <!--android:entries="@array/pref_kds_language_titles"-->
+        <!--android:entryValues="@array/pref_kds_language_values"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
+
+
+</PreferenceScreen>

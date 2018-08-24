@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="tracker_title"
+        android:title="@string/tracker_title_message"
+        android:defaultValue="@string/tracker_default_title"
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        />
+
+    <com.bematechus.kds.KDSPreferenceColorPicker
+        android:key="tracker_view_bg"
+        android:defaultValue="@color/tracker_view_bg"
+        android:title="@string/pref_queue_bg" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="tracker_cols"
+        android:title="@string/pref_tracker_cols"
+        android:defaultValue="3"
+        android:entries="@array/pref_tracker_cols_titles"
+        android:entryValues="@array/pref_tracker_cols_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="tracker_cell_height"
+        android:title="@string/pref_tracker_cell_height"
+        android:defaultValue="80"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="tracker_auto_switch_duration"
+        android:title="@string/pref_tracker_auto_pages_switch_duration"
+        android:defaultValue="5"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="tracker_order_name_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,20"
+        android:title="@string/tracker_order_name_font"
+        app:supportsColor="true"/>
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="tracker_table_name_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-3285959,-16777216,20"
+        android:title="@string/tracker_table_name_font"
+        app:supportsColor="true"/>
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="tracker_more_orders_message"
+        android:title= "@string/pref_tracker_more_orders_message"
+        android:defaultValue="@string/more_orders"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<CheckBoxPreference-->
+        <!--android:key="tracker_number_from_userinfo"-->
+        <!--android:title="@string/pref_tracker_number_from_userinfo"-->
+        <!--android:summary="@string/pref_tracker_number_from_userinfo_summary"-->
+
+        <!--android:defaultValue="false" />-->
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="tracker_number_from_userinfo_guesttable"
+        android:title="@string/pref_tracker_id_from_userinfo_or_guesttable"
+        android:defaultValue="0"
+        android:entries="@array/pref_trackerpager_userinfo_guesttable_titles"
+        android:entryValues="@array/pref_trackerpager_userinfo_guesttable_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+
+    <CheckBoxPreference
+        android:key="tracker_show_order_timer"
+        android:title="@string/pref_queue_show_order_timer"
+        android:defaultValue="true" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="tracker_order_timer_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,14"
+        android:title="@string/queue_order_timer_font"
+        android:dependency="tracker_show_order_timer"
+        app:supportsColor="true"/>
+
+    <CheckBoxPreference
+        android:key="tracker_show_assigned_tracker_id"
+        android:title="@string/pref_tracker_show_assigned_tracker_id"
+        android:defaultValue="true" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="tracker_tracker_id_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,14"
+        android:title="@string/pref_tracker_id_font"
+        android:dependency="tracker_show_assigned_tracker_id"
+        app:supportsColor="true"/>
+
+    <CheckBoxPreference
+        android:key="tracker_reverse_color_ttid_empty"
+        android:title="@string/tracker_reverse_color_ttid_empty"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="tracker_enable_auto_assign_id"
+        android:title="@string/pref_tracker_auto_assign_id"
+        android:defaultValue="false" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="tracker_auto_assign_timeout"
+        android:title="@string/pref_tracker_auto_assign_timeout"
+        android:defaultValue="30"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:dependency="tracker_enable_auto_assign_id"
+        android:maxLines="1" />
+
+
+    <CheckBoxPreference
+        android:key="tracker_enable_auto_bump"
+        android:title="@string/pref_tracker_enable_auto_bump"
+        android:defaultValue="true" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="tracker_auto_remove_after_expo_bump_timeout"
+        android:title="@string/pref_tracker_auto_remove_after_expo_bump_timeout"
+        android:defaultValue="1"
+        android:selectAllOnFocus="true"
+        android:inputType="numberDecimal"
+        android:capitalize="words"
+        android:dependency="tracker_enable_auto_bump"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="tracker_alert_not_bump_timeout"
+        android:title="@string/pref_tracker_alert_order_not_bump_timeout"
+        android:defaultValue="30"
+        android:selectAllOnFocus="true"
+        android:inputType="numberDecimal"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="tracker_alert_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-458735,-16777216,14"
+        android:title="@string/pref_tracker_alert_font"
+        app:supportsColor="true"/>
+    <com.bematechus.kds.KDSPreferenceTTMap
+        android:key="tracker_holder_map"
+        android:title="@string/pref_kds_tracker_map"
+        android:defaultValue=""
+
+        />
+
+
+</PreferenceScreen>

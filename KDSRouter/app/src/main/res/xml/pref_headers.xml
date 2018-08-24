@@ -1,0 +1,20 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header  android:fragment="com.bematechus.kdsrouter.SettingsActivity$GeneralPreferenceFragment"
+            android:title="@string/pref_header_general" />
+    <header android:fragment="com.bematechus.kdsrouter.SettingsActivity$DatabasePreferenceFragment"
+            android:title="@string/pref_header_database" />
+    <header android:fragment="com.bematechus.kdsrouter.SettingsActivity$RelationsPreferenceFragment"
+            android:title="@string/pref_header_relations" />
+    <header android:fragment="com.bematechus.kdsrouter.SettingsActivity$LogPreferenceFragment"
+            android:title="@string/log" />
+
+    <!--<header android:fragment="com.bematechus.kdsrouter.SettingsActivity$TrackerPreferenceFragment"-->
+        <!--android:title="@string/pref_tracker_title" />-->
+    <!--<header-->
+        <!--android:fragment="com.bematechus.kdsrouter.SettingsActivity$RelationsPreferenceFragment"-->
+        <!--android:title="@string/pref_header_relations" />-->
+
+</preference-headers>

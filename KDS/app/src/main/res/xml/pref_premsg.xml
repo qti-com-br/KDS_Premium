@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="message_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,12"
+        android:title="@string/pref_premsg_font"
+        app:supportsColor="true"/>
+    <CheckBoxPreference
+        android:key="kds_item_premsg_above"
+        android:title="@string/pref_kds_item_premsg_above"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="kds_order_premsg_bottom"
+        android:title="@string/pref_kds_order_premsg_bottom"
+        android:defaultValue="false" />
+
+
+</PreferenceScreen>

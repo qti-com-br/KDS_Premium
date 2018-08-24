@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBoxPreference
+        android:key="footer_enable"
+        android:title="@string/pref_kds_footer_enabled"
+        android:defaultValue="true" />
+    <!-- caption left -->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="footer_left"
+        android:title="@string/pref_kds_footer_left"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_caption_content_titles"
+        android:entryValues="@array/pref_kds_caption_content_values"
+        android:dependency="footer_enable"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <!-- caption center -->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="footer_center"
+        android:title="@string/pref_kds_footer_center"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_caption_content_titles"
+        android:entryValues="@array/pref_kds_caption_content_values"
+        android:dependency="footer_enable"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <!-- caption right -->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="footer_right"
+        android:title="@string/pref_kds_footer_right"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_caption_content_titles"
+        android:entryValues="@array/pref_kds_caption_content_values"
+        android:dependency="footer_enable"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="footer_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,12"
+        android:title="@string/pref_kds_footer_font"
+        android:dependency="footer_enable"
+        app:supportsColor="true"/>
+</PreferenceScreen>

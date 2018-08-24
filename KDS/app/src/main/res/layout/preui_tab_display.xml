@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_height="match_parent">
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_tab_display"
+        android:id="@+id/chkEnableTab"
+        android:textColor="#000000" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/relations_headers_separator"
+        android:background="#B8B8B8"
+        android:visibility="visible"
+        android:layout_marginBottom="5dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Background color"
+            android:id="@+id/textView31"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/btnBG"
+            android:textColor="#000000"
+            android:layout_margin="3dp"
+            android:text="@string/main_title"
+            android:layout_gravity="center"
+            android:gravity="center|center_horizontal" />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/relations_headers_separator"
+        android:background="#B8B8B8"
+        android:visibility="visible"
+        android:layout_marginBottom="5dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/caption_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/enabled_disply_mode"
+            android:id="@+id/textView28"
+            android:layout_marginRight="20dp"
+            android:textColor="#000000"
+            android:layout_marginLeft="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/up"
+            android:id="@+id/btnTabUp"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_margin="3dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/down"
+            android:id="@+id/btnTabDown"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_margin="3dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Display Text"
+            android:id="@+id/btnDisplayText"
+            android:layout_margin="3dp"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/lstTab"
+        android:background="@drawable/textview_border"
+        android:choiceMode="singleChoice"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/relations_headers_separator"
+        android:background="#B8B8B8"
+        android:visibility="visible"
+        android:layout_marginBottom="5dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/caption_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Destinations filter"
+            android:id="@+id/textView29"
+            android:layout_marginRight="20dp"
+            android:textColor="#000000"
+            android:layout_marginLeft="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_new"
+            android:id="@+id/btnDestNew"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_margin="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:id="@+id/btnDestEdit"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_margin="5dp"
+            android:layout_marginRight="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remove"
+            android:id="@+id/btnDestRemove"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_margin="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/up"
+            android:id="@+id/btnDestUp"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_margin="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/down"
+            android:id="@+id/btnDestDown"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_margin="5dp" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/lstDest"
+        android:background="@drawable/textview_border"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:choiceMode="singleChoice" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/relations_headers_separator"
+        android:background="#B8B8B8"
+        android:visibility="visible"
+        android:layout_marginBottom="5dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/caption_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/sorted_orders"
+            android:id="@+id/textView39" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_new"
+            android:id="@+id/btnSortedNew"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_margin="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit"
+            android:id="@+id/btnSortedEdit"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_margin="5dp"
+            android:layout_marginRight="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remove"
+            android:id="@+id/btnSortedRemove"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_margin="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/up"
+            android:id="@+id/btnSortedUp"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_margin="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/down"
+            android:id="@+id/btnSortedDown"
+            android:background="@drawable/button_selector"
+            android:textColor="@drawable/tab_settings_button_selector"
+            android:layout_margin="5dp" />
+    </LinearLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lstSorted"
+        android:background="@drawable/textview_border"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:choiceMode="singleChoice" />
+</LinearLayout>

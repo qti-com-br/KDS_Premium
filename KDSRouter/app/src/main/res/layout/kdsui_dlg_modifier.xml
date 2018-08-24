@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Description"
+            android:id="@+id/textView18" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtDescription" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/delayprep"
+            android:id="@+id/textViewScreen"
+            android:layout_column="0" />
+        <EditText
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtMins"
+            android:selectAllOnFocus="true"
+            android:inputType="number"
+
+
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=":"
+            android:layout_toRightOf="@id/txtPrepTime"
+            android:layout_toEndOf="@id/txtPrepTime"
+            android:id="@+id/txtDot"
+
+            />
+
+        <EditText
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/txtSecs"
+            android:selectAllOnFocus="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/txtDot"
+            android:layout_toEndOf="@+id/txtDot"
+            android:singleLine="true" />
+
+    </LinearLayout>
+</LinearLayout>

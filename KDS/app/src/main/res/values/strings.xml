@@ -1,0 +1,1110 @@
+<resources>
+    <string name="app_name">KitchenGo KDS</string>
+    <string name="main_title">KitchenGo Premium KDS</string>
+    <string name="order_queue_display_title">Order Queue Display</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_kdsuistations">KDS stations relationship</string>
+    <string name="title_activity_kdsactivity_unbump">Unbump order</string>
+    <string name="title_activity_kdsuistations_config">Configurations</string>
+    <string name="title_activity_kdsuiretrive_config">Retrieve remote config</string>
+    <!--<string name="title_activity_kdsuiretrieve_config">KDSUIRetrieveConfig</string>-->
+    <string name="menu_activity_cleardb">Clear database</string>
+    <string name="menu_activity_showip">Show my ip</string>
+    <string name="retrieve_config_waiting_data">Waiting for data ...</string>
+    <string name="retrieve_config_done">Done! Please close configuration.</string>
+    <string name="menu_activity_touchpad">Toggle touch pad on/off</string>
+    <string name="menu_activity_export">Export settings</string>
+    <string name="menu_activity_import">Import settings</string>
+    <string name="menu_activity_stations">Show active stations</string>
+    <string name="touchpad_next">Next</string>
+    <string name="touchpad_prev">Prev</string>
+    <string name="touchpad_up">Up</string>
+    <string name="touchpad_down">Down</string>
+    <string name="touchpad_bump">Bump</string>
+    <string name="touchpad_unbump">Unbump</string>
+    <string name="touchpad_unbump_last">Unbump Last</string>
+    <string name="touchpad_sum">Sum</string>
+    <string name="touchpad_transfer">Transfer</string>
+    <string name="touchpad_sort">Sort</string>
+    <string name="touchpad_test">Test</string>
+    <string name="touchpad_more">More</string>
+    <string name="touchpad_active">Active Stations</string>
+    <string name="touchpad_exit">Exit</string>
+    <string name="touchpad_park">Park</string>
+    <string name="touchpad_unpark">Unpark</string>
+    <string name="touchpad_print">Print</string>
+    <string name="touchpad_buildcard">Build Card</string>
+    <string name="touchpad_training">Training</string>
+    <string name="touchpad_page">Page</string>
+
+    <string name="sort_time_ascend">Waiting time ascend</string>
+    <string name="sort_time_descen">Waiting time descend</string>
+    <string name="sort_name_ascend">Order number ascend</string>
+    <string name="sort_name_descend">Order number descend</string>
+    <string name="sort_count_ascend">Items count ascend</string>
+    <string name="sort_count_descend">Items count descend</string>
+    <string name="sort_preptime_ascend">Preparation time ascend</string>
+    <string name="sort_preptime_descend">Preparation time descend</string>
+    <string name="restore">Restore</string>
+    <string name="unpark">Unpark</string>
+    <string name="addon">Add-on</string>
+    <string name="str_refresh">Refresh</string>
+    <string name="str_default">Default</string>
+    <string name="order_state_waiting">Waiting</string>
+    <string name="order_state_processing">Processing</string>
+    <string name="order_state_delivering">Delivering to counter</string>
+    <string name="order_state_sold_out">Sold out</string>
+    <string name="order_state_others">Others</string>
+    <string name="info_first_message">Bematech KDS messages</string>
+    <string name="message">Message</string>
+    <string name="str_message">Message</string>
+    <string name="receive_new_relations">It has received new relations setting.</string>
+    <string name="confirm_remove_relation_station">Do you want to remove station #</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>
+    <string name="confirm_broadcast_relations_changes">Changes have been made in stations relationship, do you want to save and update to all stations?</string>
+    <string name="confirm_remove_relations_expo">Expeditor station # will be removed from Expo column, are you sure you want to change this?</string>
+    <string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>
+    <string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>
+    <string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>
+    <string name="confirm_clear_db">Do you want to clear database?</string>
+    <string name="clear_db">Clear database</string>
+    <string name="confirm_export_db">Do you want to export settings to</string>
+    <string name="confirm_import_db">Do you want to import settings from</string>
+    <string name="data_backup_to">The data have been backup to</string>
+    <string name="update_to_all">Save &amp; Update to all</string>
+    <string name="delete">Delete</string>
+    <string name="new_entry">New</string>
+    <string name="save">Save</string>
+    <string name="show_id">Show Station ID</string>
+    <string name="about">About</string>
+
+    <string-array name="station_function">
+        <item>Prep</item>
+        <item>Expeditor</item>
+        <item>Queue</item>
+        <item>Mirror</item>
+        <item>Backup</item>
+        <item>Workload</item>
+        <item>Duplicate</item>
+        <item>Tracker</item>
+        <item>Queue-Expo</item>
+    </string-array>
+
+    <string-array name="station_status">
+        <item>Enabled</item>
+        <item>Disabled</item>
+    </string-array>
+    <string-array name="slave_function">
+        <item>No slave</item>
+        <item>Backup</item>
+        <item>Mirror</item>
+        <item>Auto workload distribution</item>
+        <item>Duplicate station</item>
+        <item>Order Queue Display</item>
+    </string-array>
+
+    <string name="error">Error</string>
+    <string name="question">Question</string>
+    <string name="input">Input</string>
+    <string name="input_station_id">This station doesn\'t have a ID yet, you will not be able to use it until you setup its ID!</string>
+    <string name="input_id_title">Please enter station ID(0~99)</string>
+    <string name="select_station">Please choose station first.</string>
+    <string name="select_retrieve_station">Select station</string>
+    <string name="confirm_bump_normal">Do you want to bump order # ?</string>
+    <string name="confirm_bump_expo_outstanding">Order # contains outstanding items.Do you still want to bump it?</string>
+    <string name="error_isnot_unique_id">The ID # used by others.Please change it.</string>
+    <string name="error_id_out_range">Please input ID value between 0 and 99.</string>
+    <string name="error_id_is_empty">Please input ID.</string>
+    <string name="active_stations_list">Stations</string>
+    <string name="no_active_stations">No available station is online</string>
+    <string name="searching_active_stations">Searching for activate stations …</string>
+    <string name="error_different_relations">The stations relationship is different with others, please edit stations relationship first.</string>
+    <string name="error_match_mac">Please run it in bematech device.</string>
+    <string name="back">Back</string>
+    <string name="clear_messages">Clear log</string>
+    <string name="cook_started">Cook started</string>
+    <string name="build_card">Build card</string>
+    <string name="training_video">Training video</string>
+    <string name="settings">Settings</string>
+    <string name="unbump_order_help">[0]--[9] single press to select order, double press to restore.\n# exit.</string>
+    <string name="unpark_order_help">[0]--[9] single press to select order, double press to unpark.\n# exit.</string>
+    <string name="background">Background</string>
+    <string name="foreground">Foreground</string>
+    <string name="find">Find</string>
+    <string name="str_find">Find</string>
+    <string name="pc_name">PC IP:</string>
+    <string name="password">Password</string>
+    <string name="user_id">User ID:</string>
+    <string name="shared_folder">Shared folder:</string>
+    <string name="get">Get</string>
+    <string name="information">Information:</string>
+    <string name="transfer_select_order_warn">Please select an order first.</string>
+    <string name="transfer_select_station_title">Please select the station you want the order transfer to:</string>
+
+    <string name="ip_search_title_id">ID</string>
+    <string name="ip_search_title_ip">IP address</string>
+    <string name="ip_search_title_port">Port</string>
+    <string name="park_count">Park:</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="password_incorrect">Password is incorrect!</string>
+    <string name="error_relations_repeat_backup_mirror">Stations # settings error.</string>
+    <string name="error_relations_mirror_dead_loop">Stations # mirror function dead loop.</string>
+    <string name="error_relations_backup_dead_loop">Stations # backup function dead loop.</string>
+    <string name="network_lost">Network lost</string>
+    <string name="network_restore">Network restore</string>
+    <string name="paid">Paid</string>
+    <string name="unpaid">Unpaid</string>
+    <string name="inprogress">In progress</string>
+    <string name="no_build_card">No build card files for selected item</string>
+    <string name="no_training_video">No training video files for selected item</string>
+    <string name="must_select_item">Please select item</string>
+
+    <string name="invalid_image_file">Invalid image file:</string>
+    <string name="downloading">Downloading ... </string>
+    <string name="unknown_file_format">Unknown file format: </string>
+    <string name="no_more_unbump_order">No more unbumped orders</string>
+    <string name="backup_of">Backup of</string>
+    <string name="mirror_of">Mirror of</string>
+    <string name="duplicated_of">Duplicate of</string>
+    <string name="workloan_of">Workload of</string>
+
+    <string name="please_input_slave_station">Please input station #\'s $ station</string>
+    <string name="please_input_primary_station">Please input station #\'s primary station</string>
+
+    <string name="check_new_version">Check new version</string>
+    <string name="current_version">Current version</string>
+    <string name="it_is_latest_version">It is latest version</string>
+    <string name="update_canceled">Updating canceled</string>
+    <string name="found_new_version">Found new version</string>
+    <string name="update_now">Upgrade now</string>
+    <string name="update_later">Later</string>
+    <string name="update">Upgrade</string>
+    <string name="checking">Checking ...</string>
+    <string name="update_error_download_error">Errors while downloading apk file</string>
+    <string name="update_error_download_apk_error">Can not download apk file</string>
+    <string name="update_error_apk_error">The apk file is wrong</string>
+    <string name="update_error_xml_error">Can not download updating file</string>
+    <string name="do_you_update">There is new version. Do you want to upgrade it now?</string>
+    <string name="invalid_update_file">Invalid update file</string>
+    <string name="update_new_version">New version: #, recommended rate: $</string>
+    <string name="input_ready_qty">Input ready qty</string>
+
+    <string name="queue_status_received">Order Received</string>
+    <string name="queue_status_preparation">In Preparation</string>
+    <string name="queue_status_ready">Order Ready</string>
+    <string name="queue_status_pickup">Ready for Pickup</string>
+
+    <string name="queue_mode_panel">Panel mode</string>
+    <string name="queue_mode_simple">ID mode</string>
+
+    <string name="expo_backup">Expo/Backup</string>
+    <string name="prep_backup">Prep/Backup</string>
+    <string name="error_slave">Error, please change to other station</string>
+    <string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>
+    <string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>
+    <string name="error_not_expo">Error, this station is not expo.</string>
+    <string name="error_not_prep">Error, this station is not prep.</string>
+    <string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>
+
+    <string name="tracker_caption_order_name">Order Name</string>
+    <string name="tracker_caption_table_name">Location</string>
+    <string name="tracker_only_one_allowed">Only one table tracker station is allowed</string>
+    <string name="confirm_reset_tt_authen">Do you want to reset save authentication value?</string>
+    <string name="reset_authen">Reset saved authentication value</string>
+
+    <string name="tt_bump_clear">Clear all active orders</string>
+    <string name="tt_bump_page">Page it</string>
+    <string name="tt_tracker_id">Tracker ID</string>
+
+    <string name="tt_bump_current">Remove it</string>
+    <string name="tt_authen_press_button">Press the button in gateway for KDS to connect.</string>
+    <string name="tt_connect_error">Can not connect to TT server.</string>
+    <string name="tt_unassigned">Unassigned</string>
+    <string name="tt_trackerid_error">Unassigned ID</string>
+    <string name="tracker_id">Assign Tracker ID</string>
+    <string name="tt_connect_successful">Connection to gateway successful.</string>
+    <string name="station_id">Station ID</string>
+    <string name="reset">Reset</string>
+    <string name="retrieve_from">Retrieve from</string>
+    <string name="str_new">New</string>
+    <string name="remove">Remove</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="del">Del</string>
+    <string name="active_stations">Active stations</string>
+    <string name="holder_id">Holder ID</string>
+    <string name="table_name">Table Name</string>
+
+    <string name="size">Size</string>
+    <string name="station_number">Station number</string>
+    <string name="ip_address">IP address</string>
+    <string name="ip_port">IP port</string>
+
+
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+
+    <!-- The strings for configuration dialog -->
+
+    <string name="title_activity_kdsactivity_settings">KDS Settings</string>
+
+    <!-- ============================This is my code=========================================== -->
+    <!-- Headers Group -->
+    <string name="pref_header_general">General</string>
+
+
+    <!-- vvvvvvvvvvvvvvvvvvvv KDS general configuration vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv -->
+
+    <!-- station number -->
+    <string name="pref_kds_general_title_number">Station number</string>
+
+    <!-- Data source -->
+    <string name="pref_kds_general_title_data_source">Order source</string>
+    <string-array name="pref_kds_general_data_source_titles">
+        <item>TCP/IP</item>
+        <item>Remote folder</item>
+    </string-array>
+
+    <!-- TCP/IP port number -->
+    <string name="pref_kds_general_title_tcp_port">Order source TCP port</string>
+
+    <!-- remote folder path -->
+    <string name="pref_kds_general_title_remote_folder">Order source remote folder</string>
+
+    <!-- the tcp/port for stations communication -->
+    <string name="pref_kds_general_title_stations_port">Stations communication TCP Port</string>
+
+    <string name="pref_kds_stations_title_relations">Stations relationship</string>
+
+    <string name="pref_kds_general_users">Screen mode</string>
+    <string-array name="pref_kds_general_users_titles">
+        <item>Single screen</item>
+        <item>Split screen</item>
+    </string-array>
+    <!-- vvvvvvvvvvvvvvvvvvvv panels/orders display configuration vvvvvvvvvvvvvvvvvvvvvvvvvvvvv -->
+
+    <string name="pref_kds_panels_font">Panel properties</string>
+    <string name="pref_kds_panels_bg">Panel background color</string>
+    <string name="pref_kds_panels_row_height">Text line height</string>
+    <string name="pref_kds_panels_viewer_bg">Screen background color</string>
+    <string name="pref_kds_panels_title_mode">Panel mode</string>
+    <string-array name="pref_kds_panels_mode_titles">
+        <item>Horizontal expand</item>
+        <item>Vertical expand</item>
+    </string-array>
+
+    <string name="pref_kds_panels_title_rows">Panel rows</string>
+    <string name="pref_kds_panels_title_cols">Panel columns</string>
+
+    <!-- panel number-->
+    <string name="pref_kds_panels_show_number">Display panel number</string>
+    <string name="pref_kds_panels_number_font">Panel number font</string>
+    <string name="pref_kds_panelnum_base">Starting panel number</string>
+    <!--<string name="pref_kds_panelnum_bg">Panel number background color</string>-->
+    <!--<string name="pref_kds_panelnum_fg">Panel number foreground color</string>-->
+    <string name="pref_kds_panelnum_bgfg">Panel number background/foreground color</string>
+
+    <!-- Order caption-->
+    <string name="pref_kds_caption_color_according_to_time"> Color according to waiting time</string>
+    <string name="pref_kds_caption_title">Order header display</string>
+    <string name="pref_kds_caption_stage0_enabled">Change color according to wait time</string>
+    <string name="pref_kds_caption_stage1_enabled">Change color according to wait time</string>
+    <string name="pref_kds_caption_stage2_enabled">Change color according to wait time</string>
+    <string name="pref_kds_caption_time">Time(Minutes)</string>
+    <string name="pref_kds_caption_color">Color</string>
+    <string name="pref_kds_caption_contents">Header contents</string>
+    <string name="pref_kds_caption_left">Header left content</string>
+    <string name="pref_kds_caption_center">Header center content</string>
+    <string name="pref_kds_caption_right">Header right content</string>
+
+    <!-- -->
+    <string name="pref_kds_caption_2_contents">Header second line</string>
+    <!--<string name="pref_kds_caption_2_enable_key">caption_enable_caption2</string>-->
+    <string name="pref_kds_caption_2_left">Header second left content</string>
+    <string name="pref_kds_caption_2_center">Header second center content</string>
+    <string name="pref_kds_caption_2_right">Header second right content</string>
+    <string-array name="pref_kds_caption_content_titles">
+        <item>n/a</item>
+        <item>Order ID</item>
+        <item>Waiting time</item>
+        <item>Waiter</item>
+        <item>To table</item>
+        <item>POS station</item>
+        <item>Order type</item>
+        <item>Destination</item>
+        <item>Custom Message</item>
+        <item>Order status</item>
+        <item>Order icon</item>
+
+    </string-array>
+
+    <string name="pref_kds_caption_enable_cap2">Header second line enable</string>
+    <!--=================================================================-->
+
+    <string name="pref_kds_item_title">Item display</string>
+    <string name="pref_kds_item_enable_consolidate">Consolidate order items</string>
+    <!--<string name="pref_kds_item_bg">Item background color</string>-->
+    <!--<string name="pref_kds_item_fg">Item color</string>-->
+    <string name="pref_kds_item_highlight_mark">Highlight item marks with</string>
+    <string name="pref_kds_item_bumped_mark">Bumped item marks with</string>
+    <string name="pref_kds_item_bumped_mark_in_exp">In expeditor, mark item bumped from normal station with</string>
+    <string name="pref_kds_item_mark_with_char">Mark item with character</string>
+    <string name="pref_kds_item_void">Mark voided item with</string>
+    <string name="pref_kds_item_changed">Mark changed item with</string>
+    <string name="pref_kds_item_showing_method">Item showing method</string>
+    <string-array name="pref_kds_item_showing_method_titles">
+        <item>On the fly</item>
+        <item>One item behind</item>
+        <item>When order is paid</item>
+    </string-array>
+
+    <!--  condiments  -->
+    <string name="pref_kds_condiment_title">Condiment display</string>
+    <!--<string name="pref_kds_condiment_bg">Item backgound color</string>-->
+    <!--<string name="pref_kds_condiment_fg">Item color</string>-->
+    <string name="pref_kds_condiment_default_font">Condiment font</string>
+    <string name="pref_kds_condiment_start_position">Condiment position</string>
+    <string name="pref_kds_condiment_start_position_title">Condiment starting column</string>
+    <!--premessage -->
+    <string name="pref_kds_premsg_title">Pre-message display</string>
+    <!--<string name="pref_kds_premsg_bg">Pre-message(Order message &amp;Item pre-modifier) backgound color</string>-->
+    <!--<string name="pref_kds_premsg_fg">Pre-message(Order message &amp;Item pre-modifier) color</string>-->
+    <string name="pref_premsg_font">Pre-message(Order message &amp;Item pre-modifier) font</string>
+    <!-- footer -->
+    <string name="pref_kds_footer_title">Footer settings</string>
+    <string name="pref_kds_footer_enabled">Footer enabled</string>
+    <string name="pref_kds_footer_left">Footer left content</string>
+    <string name="pref_kds_footer_right">Footer right content</string>
+    <string name="pref_kds_footer_center">Footer center content</string>
+    <string name="pref_kds_footer_font">Footer font</string>
+
+    <string name="pref_kds_information_enabled">Show log</string>
+    <string name="pref_kds_password_enabled">Enable password when enter setting</string>
+    <string name="pref_kds_password_text">Password</string>
+
+    <string name="pref_kds_notification_enabled">Enable bump notification</string>
+
+    <!-- -->
+    <string name="pref_kds_bumping_title">Bumping settings</string>
+    <string name="pref_kds_bumping_reserve_days">Reserve bumped orders for X days</string>
+
+    <string name="pref_kds_bumping_by_panelnumber">Bump off with panel number</string>
+    <string-array name="pref_kds_bumping_by_panelnum_title">
+        <item>Disabled</item>
+        <item>Double click</item>
+    </string-array>
+
+    <!-- -->
+    <string name="pref_kds_bumpbar_title">Bumpbar assignment</string>
+
+    <string name="pref_kds_bumpbar_types">Keyboard type</string>
+
+
+    <string name="pref_bumpbar_func_bump">Bump</string>
+    <string name="pref_bumpbar_func_unbump">Unbump</string>
+    <string name="pref_bumpbar_func_unbumplast">Unbump last</string>
+
+
+    <!-- Printer configurations -->
+    <string name="pref_kds_printer_title">Printer settings</string>
+    <string name="pref_kds_printer_enabled">Printer enabled</string>
+
+    <string name="pref_kds_printer_port">Printer port type</string>
+
+
+    <string name="pref_kds_printer_type">Printer type</string>
+    <string name="pref_kds_printer_ip">IP address</string>
+    <string name="pref_kds_printer_ipport">IP port number</string>
+    <string name="pref_kds_printer_serial">Serial port number</string>
+    <string name="pref_kds_printer_copies">Copies</string>
+    <string name="pref_kds_printer_chars_width">Characters per line</string>
+    <string name="pref_kds_printer_codepage">Code page</string>
+    <string name="pref_kds_printer_howtoprint">How to print order</string>
+    <string-array name="pref_kds_printer_howtoprint_titles">
+        <item>Manual print</item>
+        <item>Auto print after bump</item>
+        <item>Auto print after receive</item>
+    </string-array>
+
+    <!--baudrate-->
+    <string name="pref_kds_printer_baudrate">Baudrate</string>
+
+    <!-- sort -->
+    <string name="pref_kds_orders_sort">Sort orders</string>
+    <string name="pref_kds_orders_sort_rush_front">Move rush orders to front of queue</string>
+    <string name="pref_kds_printer_template">Ticket template definition</string>
+    <!-- smart order -->
+    <string name="pref_kds_smartorder_title">Smart order</string>
+    <string name="pref_kds_smartorder_enabled">Smart order enabled</string>
+    <string name="pref_kds_smartorder_showing">Order showing method</string>
+    <string-array name="pref_kds_smartorder_showing_titles">
+        <item>Gray out</item>
+        <item>Hidden</item>
+    </string-array>
+
+    <string name="pref_kds_beeper_title">Beeper</string>
+    <string name="pref_kds_beeper_enabled">Beeper enabled</string>
+    <string name="pref_kds_beeper_type">When does it beep?</string>
+    <string-array name="pref_kds_beeper_type_titles">
+        <item>Receive any order</item>
+        <item>Just rush order</item>
+    </string-array>
+
+    <string name="pref_kds_highlight_title">Highlight properties</string>
+    <string name="pref_kds_highlight_rush_enabled">Highlight RUSH order</string>
+    <string name="pref_kds_rush_bg">RUSH order background color</string>
+    <string name="pref_kds_rush_fg">RUSH order text color</string>
+    <string name="pref_kds_rush_bgfg">RUSH order background/foreground color</string>
+
+    <string name="pref_kds_highlight_fire_enabled">Highlight FIRE order</string>
+    <string name="pref_kds_fire_bg">FIRE order background color</string>
+    <string name="pref_kds_fire_fg">FIRE order text color</string>
+    <string name="pref_kds_fire_bgfg">FIRE order background/foreground color</string>
+
+    <string name="pref_kds_highlight_dest_enabled">Highlight destination</string>
+    <string name="pref_kds_dest_bg">Destination background color</string>
+    <string name="pref_kds_dest_fg">Destination text color</string>
+    <string name="pref_kds_dest_bgfg">Order with destination background/foreground color</string>
+
+    <string name="pref_kds_expalert_title">Expeditor Alert</string>
+    <string name="pref_kds_panelnum_focus_enabled">Use panel number to select</string>
+    <string name="pref_kds_exp_alert_enabled">Expeditor alert enabled</string>
+    <string name="pref_kds_exp_alert_color">Change panel color to</string>
+
+    <string name="pref_kds_exp_alert_change_panel">Change whole panel color</string>
+
+    <string name="pref_kds_sum_title">Summary</string>
+
+    <string name="pref_kds_sum_type">Summary method</string>
+    <string-array name="pref_kds_sum_type_titles">
+        <item>Item without condiments</item>
+        <item>Items with condiments</item>
+    </string-array>
+
+    <string name="pref_kds_sum_position">Summary position</string>
+    <string-array name="pref_sum_position_titles">
+        <item>Side</item>
+        <item>Top</item>
+    </string-array>
+
+    <string name="pref_kds_sum_order_by">Summary order by</string>
+    <string-array name="pref_sum_order_by_titles">
+        <item>Descend</item>
+        <item>Ascend</item>
+    </string-array>
+
+    <string name="id">ID</string>
+    <string name="ip">IP</string>
+    <string name="port">Port</string>
+    <string name="func">Function</string>
+    <string name="mirror">Mirror</string>
+    <string name="slave_func">Slave Function</string>
+    <string name="slave">Slave ID</string>
+    <string name="backup">Backup</string>
+    <string name="status">Status</string>
+    <string name="expo">Expo</string>
+
+    <string name="pref_kds_touch_font">Touch button font</string>
+    <string name="pref_kds_touch_title">Touch buttons</string>
+    <string name="pref_kds_touch_next_enabled">Enable [next] touch button</string>
+    <string name="pref_kds_touch_prev_enabled">Enable [prev] touch button</string>
+    <string name="pref_kds_touch_up_enabled">Enable [up] touch button</string>
+    <string name="pref_kds_touch_down_enabled">Enable [down] touch button</string>
+    <string name="pref_kds_touch_bump_enabled">Enable [bump] touch button</string>
+    <string name="pref_kds_touch_unbump_enabled">Enable [unbump] touch button</string>
+    <string name="pref_kds_touch_unbumplast_enabled">Enable [unbump last] touch button</string>
+    <string name="pref_kds_touch_sum_enabled">Enable [sum] touch button</string>
+    <string name="pref_kds_touch_transfer_enabled">Enable [transfer] touch button</string>
+    <string name="pref_kds_touch_sort_enabled">Enable [sort] touch button</string>
+    <string name="pref_kds_touch_park_enabled">Enable [park] touch button</string>
+    <string name="pref_kds_touch_unpark_enabled">Enable [unpark] touch button</string>
+    <string name="pref_kds_touch_print_enabled">Enable [print] touch button</string>
+    <string name="pref_kds_touch_more_enabled">Enable [more] touch button</string>
+    <string name="pref_kds_touch_test_enabled">Enable [test] touch button</string>
+    <string name="pref_kds_touch_buildcard_enabled">Enable [buildcard] touch button</string>
+    <string name="pref_kds_touch_training_enabled">Enable [training] touch button</string>
+    <string name="pref_kds_touch_page_enabled">Enable [page] touch button</string>
+
+    <string name="pref_kds_screen_title_font">Screen title font</string>
+    <string name="pref_kds_screen_show_time">Show date&amp;time in title</string>
+
+    <string name="pref_kds_bump_confirm_enabled">Show confirmation dialog after bumping an order</string>
+
+    <string name="pref_kds_orders_display">Orders display</string>
+
+    <string name="pref_kds_category_orders">Orders</string>
+    <string name="pref_kds_category_ordercontent">Order content</string>
+    <string name="pref_kds_category_footer">Order footer</string>
+    <string name="pref_kds_category_operations">Order operations</string>
+    <string name="pref_kds_category_others">Others</string>
+    <string name="pref_kds_category_accessories">Accessories</string>
+    <string name="pref_kds_category_extra_func">Extra feature</string>
+
+    <string name="pref_order_focus_color">Selected order border color</string>
+    <string name="pref_order_border_color">Panel border color</string>
+
+    <string name="pref_order_caption_normal_font">Header font</string>
+
+    <string name="pref_kds_item_premsg_above">Display item message above item.</string>
+    <string name="pref_kds_order_premsg_bottom">Display order message under order.</string>
+
+    <string name="item_font">Item font</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="focus_next">Move focus to next</string>
+    <string name="focus_prev">Move focus to prev</string>
+    <string name="focus_up">Move focus to up</string>
+    <string name="focus_down">Move focus to down</string>
+    <string name="show_summary">Show/hide summary</string>
+    <string name="transfer_order">Transfer order to other station</string>
+    <string name="sort_orders">Sort orders</string>
+    <string name="park">Park</string>
+    <string name="bumpbar_unpark">Unpark</string>
+    <string name="more">More</string>
+    <string name="page">Page</string>
+    <string name="print">Print</string>
+    <string name="buildcard">Build Card</string>
+    <string name="training">Training</string>
+    <string name="enable_userb_bumpbar">Enable user B bumpbar</string>
+    <string name="switch_user">Switch user focus</string>
+
+    <string name="pref_message_from_primary">Message for backup station get transferred order from primary station</string>
+    <string name="pref_from_primary_text">Message</string>
+    <string name="pref_from_primary_font">Font</string>
+
+    <string name="from_primary_default_text">----Transferred from primary----</string>
+    <string name="pref_kds_hide_navigation_bar">Hide navigation bar</string>
+
+    <string name="pref_kds_media_title">Build Card/Training</string>
+    <string name="pref_kds_media_auto_delay">Images auto flip interval(secs)</string>
+    <string name="pref_kds_media_default_vol">Default volume(0--15)</string>
+
+    <string name="pref_kds_panel_border_width">Panel border thickness</string>
+    <string name="pref_kds_bumping_auto_enabled">Enable auto bump order</string>
+    <string name="pref_kds_bumping_auto_minutes">Auto bumping minutes</string>
+
+    <string name="pref_kds_bumping_double_queue_enabled">Bump queue order by Expeditor</string>
+    <string name="pref_kds_bumping_double_queue_enabled_sum">Press bump key at expeditor to display order ready status in queue station.Press bump key second time to bump off orders at both expeditor and queue display</string>
+
+    <string name="pref_queue_show_order_id">Show order ID</string>
+    <string name="queue_order_id_font">Order ID font</string>
+    <string name="pref_queue_show_customer_name">Show customer name</string>
+    <string name="queue_customer_name_font">Customer name font</string>
+    <string name="pref_queue_show_order_timer">Show order timer</string>
+    <string name="queue_order_timer_font">Order timer font</string>
+    <string name="pref_queue_show_custom_message">Show queue display custom message</string>
+    <string name="queue_custom_message_font">Queue display custom message font</string>
+    <string name="pref_queue_move_ready_to_front">Move ready order to front</string>
+    <string name="pref_queue_simple_show_received_col">Show status 1 column</string>
+    <string name="pref_queue_simple_show_preparation_col">Show status 2 column</string>
+    <string name="pref_queue_simple_show_ready_col">Show status 3 column</string>
+    <string name="pref_queue_simple_show_pickup_col">Show status 4 column</string>
+    <string name="pref_queue_flash_ready_order">Flash ready order</string>
+    <string name="pref_queue_flash_ready_customer_name">Flash ready order customer name</string>
+    <string name="pref_queue_flash_ready_order_status">Flash ready order status</string>
+    <string name="queue_order_received_message">Status 1 message</string>
+    <string name="queue_order_received_font">Order status 1 message font</string>
+    <string name="queue_order_preparation_message">Status 2 message</string>
+    <string name="queue_order_preparation_font">Order status 2 message font</string>
+    <string name="queue_order_ready_message">Status 3 message</string>
+    <string name="queue_order_ready_font">Order status 3 message font</string>
+    <string name="queue_order_pickup_message">Status 4 message</string>
+    <string name="queue_order_pickup_font">Order status 4 message font</string>
+    <string name="pref_queue_cols">Queue display columns (1-4)</string>
+    <string name="pref_queue_mode">Viewer mode</string>
+    <string name="pref_queue_cell_height">Order panel height</string>
+    <string name="pref_queue_panel_ratio">Queue panel properties occupy percent(properties:status)</string>
+
+    <string name="pref_queue_more_orders_message">More orders message</string>
+    <string name="more_orders">More orders</string>
+    <string name="pref_kds_queue_title">Queue display</string>
+    <string name="pref_queue_bg">Background color</string>
+    <string name="pref_queue_simple_line_color">Column separate line background color</string>
+
+    <string name="pref_queue_show_finished_orders_at_right">Displaying the finished order on the right side</string>
+
+    <string name="queue_title_message">Header title message</string>
+    <string name="queue_default_title">Check your order status here</string>
+
+    <string name="pref_kds_sound_title">Sound</string>
+    <string name="pref_kds_sound_enabled">Sound enabled</string>
+    <string name="pref_kds_sound_bump_order">Bump order sound</string>
+    <string name="pref_kds_sound_unbump_order">Unbump order sound</string>
+    <string name="pref_kds_sound_new_order">New order sound</string>
+    <string name="pref_kds_sound_order_changed">Order modified</string>
+
+    <string name="pref_kds_sound_duration">Sound duration(seconds)</string>
+    <string name="pref_kds_sound_transfer_order">Transfer order</string>
+    <string name="pref_kds_sound_backup_activation">Back up station activation</string>
+
+    <string name="pref_kds_sound_backup_station_orders_received">Back up station orders received</string>
+    <string name="pref_kds_sound_order_timer_alert1">Order Timer alert 1</string>
+    <string name="pref_kds_sound_order_timer_alert2">Order Timer alert 2</string>
+    <string name="pref_kds_sound_order_timer_alert3">Order Timer alert 3</string>
+
+    <string name="pref_kds_sound_expo_order_complete">Expeditor order complete</string>
+
+
+    <string name="pref_queue_auto_pages_switch_duration">Auto switching duration(seconds)</string>
+
+    <string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>
+
+    <string name="pref_tracker_title">Table-tracker</string>
+    <string name="pref_tracker_enabled">Table tracker enabled</string>
+    <string name="pref_tracker_enabled_summary">Use table-tracker to get customer location</string>
+    <string name="pref_tracker_ip">Table tracker server IP address</string>
+    <string name="pref_tracker_number_from_userinfo">The table-tracker number is from \"UserInfo\" tag</string>
+    <string name="pref_tracker_number_from_userinfo_summary">POS program can use \"UserInfo\" tag to pass table-tracker number to KDS</string>
+
+    <string name="pref_kds_tracker_map">Location ID and Location map</string>
+    <string name="tracker_title_message">Header title message</string>
+    <string name="tracker_default_title">Tracker location</string>
+    <string name="pref_tracker_cols">Table Tracker display columns (1-4)</string>
+    <string name="pref_tracker_cell_height">Tracker panel height</string>
+    <string name="pref_tracker_auto_pages_switch_duration">Auto switching duration(seconds)</string>
+    <string name="tracker_order_name_font">Tracker order name font</string>
+    <string name="tracker_table_name_font">Tracker location name font</string>
+    <string name="pref_tracker_more_orders_message">More orders message</string>
+    <string name="pref_tracker_auto_assign_timeout">Auto assign tracker ID timeout(seconds)</string>
+    <string name="pref_tracker_auto_remove_after_expo_bump_timeout">The timeout of auto bumping after expo bump order(minutes)</string>
+    <string name="pref_tracker_alert_order_not_bump_timeout">The timeout for order was not bumped after a long time(minutes)</string>
+    <string name="pref_tracker_alert_font">The alert font</string>
+    <string name="pref_tracker_enable_auto_bump">Enable auto bump</string>
+
+    <string name="pref_pager_id_from_userinfo">The pager number is from \"UserInfo\" tag</string>
+    <string name="pref_pager_id_from_userinfo_summary">POS program can use \"UserInfo\" tag to pass pager number to KDS</string>
+    <string name="pref_pager_enabled">The pager enabled</string>
+    <string name="pref_pager_delay">The time to page after expeditor bump the order</string>
+    <string name="pref_pager_title">Pager</string>
+
+    <string name="restart_kds_as_language">A restart is needed in order to change language to #, do you want to change the language and restart now?</string>
+    <string name="retrieve_remote_settings">Retrieve remote settings</string>
+
+    <string name="new_folder">New folder</string>
+    <string name="new_folder_name">New folder name</string>
+    <string name="fail_to_create_folder">Failed to create \"#\" folder</string>
+    <string name="up">Up</string>
+    <string name="select_order_status">Select [" # "] status.</string>
+
+    <string name="manually">Manually</string>
+    <string-array name="pref_keyboard_type_titles">
+        <item>Standard</item>
+        <item>Bump bar Option-A</item>
+        <item>Bump bar Option-B</item>
+        <item>Bump bar Option-C</item>
+        <item>Bump bar Option-D</item>
+        <item>Bump bar Option-E</item>
+        <item>Bump bar Option-G</item>
+    </string-array>
+    <string-array name="pref_kds_printer_port_titles">
+        <item>USB</item>
+        <item>TCP/IP</item>
+        <item>Serial port</item>
+    </string-array>
+
+
+    <string name="choose_sound">Choose sound</string>
+
+    <string name="waiting_for_config_data">Waiting for config data...</string>
+    <string name="waiting_for_new_connection">Waiting for new connection...</string>
+    <string name="station_is_not_active">Station is not active...</string>
+    <string name="waiting_for_connecting">Waiting for connecting...</string>
+    <string name="can_not_get_file">Can not get:#</string>
+
+    <string name="pref_kds_language">Language</string>
+    <string-array name="pref_kds_language_titles">
+        <item>English</item>
+        <item>Chinese</item>
+
+    </string-array>
+
+    <string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>
+    <string name="can_not_remove_smb_file">Can not remove remote file #</string>
+
+    <string name="ignore_and_save">Ignore and save</string>
+    <string name="modify_setting">Modify setting</string>
+    <string name="cancel_setting"> Cancel setting</string>
+
+    <string name="smb_folder_lost"> Can not access remote folder #</string>
+    <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
+    <string name="folder_not_existed">The folder is not existed.</string>
+
+    <string name="english">English</string>
+    <string name="chinese">Chinese</string>
+
+    <string name="data_restored">The data have been restored from #</string>
+
+    <string name="pref_kds_bumping_reserve_max">Backup bumped orders count</string>
+
+    <string name="pref_kds_auto_backup_enabled">Enable auto database backup</string>
+    <string name="pref_kds_auto_backup_hours">The auto backup interval(hours)</string>
+
+    <string name="restore_customer_backup_db">Restore the database that user backup</string>
+    <string name="restore_auto_backup_db">Restore the database that KDS auto backup</string>
+
+    <string name="restore_db_successfully">Restore the database successfully</string>
+    <string name="restore_db_failed">Restore the database failed</string>
+    <string name="menu_activity_restore">Restore database</string>
+    <string name="confirm_restore_db">Do you want to restore database and settings?</string>
+    <string name="restore_database">Restore database</string>
+    <string name="run_database_utility">Run database utility</string>
+    <string name="ignore">Ignore</string>
+    <string name="reset_database">Reset database</string>
+    <string name="abort">Abort</string>
+    <string name="db_error_detected">KDS database error detected.</string>
+    <string name="db_will_clear">Database will be cleared!</string>
+    <string name="data_will_lost">Data may be lost!</string>
+
+    <string name="open_file">Open file</string>
+    <string name="no_rights_to_access">No rights to access!</string>
+    <string name="browse">Browse</string>
+
+    <string name="data_restore_failed">Data restoring from # failed</string>
+    <string name="load">Load</string>
+    <string name="load_old_db_or_not">There are old database and settings, do you want to load them?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="time">Time</string>
+    <string name="statistic_report">Statistic report</string>
+    <string name="daily_report">Daily report</string>
+    <string name="weekly_report">Weekly report</string>
+    <string name="monthly_report">Monthly report</string>
+    <string name="one_time_report">One Time report</string>
+    <string name="day_of_week">Day of Week</string>
+    <string name="day_of_month">Day of Month</string>
+    <string name="total">Total</string>
+
+    <string name="mins">mins</string>
+    <string name="hour_1">1 hr</string>
+    <string name="hours_8">8 hrs</string>
+    <string name="hours_12">12 hrs</string>
+    <string name="mins_15">15 mins</string>
+    <string name="mins_30">30 mins</string>
+
+    <string name="jan">Jan.</string>
+    <string name="feb">Feb.</string>
+    <string name="mar">Mar.</string>
+    <string name="apr">Apr.</string>
+    <string name="may">May</string>
+    <string name="jun">Jun.</string>
+    <string name="jul">Jul.</string>
+    <string name="aug">Aug.</string>
+    <string name="sep">Sep.</string>
+    <string name="oct">Oct.</string>
+    <string name="nov">Nov.</string>
+    <string name="dec">Dec.</string>
+
+    <string name="sunday">Sun</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+
+    <string name="queue_expo_title">Queue-Expo Station</string>
+    <string name="qexpo_bumpbar_pickup">Ready for pickup key</string>
+    <string name="qexpo_bumpbar_unpickup">Unready for pickup key</string>
+    <string name="pref_kds_qexpo_title">Queue-Expo</string>
+
+    <string name="pref_tracker_id_from_userinfo_or_guesttable">The table-tracker number is from \"UserInfo\" or \"GuestTable\" tag</string>
+    <string-array name="pref_trackerpager_userinfo_guesttable_titles">
+        <item>None</item>
+        <item>UserInfo</item>
+        <item>GuestTable</item>
+    </string-array>
+
+    <string name="pref_pager_id_from_userinfo_guesttable">The pager number is from \"UserInfo\" or \"GuestTable\" tag</string>
+    <string name="tracker_reverse_color_ttid_empty">Reverse color if tracker-id is empty</string>
+
+    <string name="pref_tracker_show_assigned_tracker_id">Show assigned tracker ID</string>
+    <string name="pref_tracker_id_font">Tracker ID font</string>
+    <string name="pref_tracker_auto_assign_id">Enable Auto assign tracker ID</string>
+    <string name="tt_extra_id_location">Location</string>
+    <string name="tracker_can_not_find">Can not find TT</string>
+    <string name="tt_discorvery_failed">Stop Discovery Failed</string>
+    <string name="tt_start_discovery_failed">Start Discovery Failed</string>
+    <string name="tt_service_lost">Service Lost</string>
+    <string name="tt_gateway_find">TT gateway Found</string>
+    <string name="tt_discovery_stop">Discovery Stopped</string>
+    <string name="tt_discovery_started">Discovery Started</string>
+    <string name="tt_need_reset">Connection to gateway is not made, press button in gateway to connect.</string>
+
+    <string name="pref_kds_general_users_orientation">Split screen orientation</string>
+    <string-array name="pref_kds_general_users_orientation_titles">
+        <item>Left and right</item>
+        <item>Up and down</item>
+    </string-array>
+
+    <string name="pref_kds_general_title">Customized title</string>
+
+    <string name="pref_kds_general_users_ratio">Screen ratio</string>
+    <string name="pref_kds_general_subtitle_font">Screen subtitle font</string>
+    <string name="pref_kds_general_subtitle_a_text">Screen 0 title</string>
+    <string name="pref_kds_general_subtitle_b_text">Screen 1 title</string>
+    <string name="screen_a">Screen 0</string>
+    <string name="screen_b">Screen 1</string>
+    <string name="summary_for">Summary for</string>
+    <string name="summary">Summary</string>
+
+    <string name="pref_kds_screenb_orders_display">Split screen display</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <!--<string name="hello_blank_fragment">Hello blank fragment</string>-->
+    <string name="pref_queue_simple_combine_status1">Combine status 1 to</string>
+    <string name="pref_queue_simple_combine_status2">Combine status 2 to</string>
+    <string name="pref_queue_simple_combine_status3">Combine status 3 to</string>
+    <string name="pref_queue_simple_combine_status4">Combine status 4 to</string>
+    <string-array name="pref_queue_combine_status1_titles">
+        <item>Status 2</item>
+        <item>Status 3</item>
+        <item>Status 4</item>
+    </string-array>
+    <string-array name="pref_queue_combine_status2_titles">
+        <item>Status 1</item>
+        <item>Status 3</item>
+        <item>Status 4</item>
+    </string-array>
+    <string-array name="pref_queue_combine_status3_titles">
+        <item>Status 1</item>
+        <item>Status 2</item>
+        <item>Status 4</item>
+    </string-array>
+    <string-array name="pref_queue_combine_status4_titles">
+        <item>Status 1</item>
+        <item>Status 2</item>
+        <item>Status 3</item>
+    </string-array>
+    <string name="pref_queue_id_mode_line_bg">ID mode break line background color</string>
+    <string name="line_items_display">Line items display</string>
+    <string name="lineitems_caption_font">Line items display caption font</string>
+    <string name="col_content">Columns count</string>
+    <string name="col_0_text">Column 0 name</string>
+    <string name="col_0_size">Column 0 size</string>
+    <string name="col_0_content">Column 0 content</string>
+    <string name="str_id">ID</string>
+    <string name="lineitems_col1_text">Column 1 name</string>
+    <string name="description">Description</string>
+    <string name="lineitems_col1_size">Column 1 size</string>
+    <string name="lineitems_col1_content">Column 1 content</string>
+    <string name="lineitems_col2_text">Column 2 name</string>
+    <string name="lineitems_col2_size">Column 2 size</string>
+    <string name="lineitems_col2_content">Column 2 content</string>
+    <string name="lineitems_col3_text">Column 3 name</string>
+    <string name="lineitems_col3_size">Column 3 size</string>
+    <string name="lineitems_col3_content">Column 3 content</string>
+    <string name="lineitems_col4_text">Column 4 name</string>
+    <string name="lineitems_col4_size">Column 4 size</string>
+    <string name="lineitems_col4_content">Column 4 content</string>
+    <string name="lineitems_col5_text">Column 5 name</string>
+    <string name="lineitems_col5_size">Column 5 size</string>
+    <string name="lineitems_col5_content">Column 5 content</string>
+    <string name="condiments">Condiments</string>
+    <string name="timer">Timer</string>
+    <string name="lineitems_caption_text">line items display caption text</string>
+
+
+    <string-array name="pref_kds_lineitems_cols_count_titles">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+
+    </string-array>
+    <string-array name="pref_kds_lineitems_cols_content_titles">
+        <item>Order ID</item>
+        <item>Order status</item>
+        <item>Order type</item>
+        <item>Order table</item>
+        <item>Item description</item>
+        <item>Condiments</item>
+        <item>Quantity</item>
+        <item>Waiting time</item>
+        <item>Modifiers</item>
+        <item>Modifiers and condiments</item>
+
+    </string-array>
+
+    <string name="no_more_unbump_item">No more unbumped items</string>
+    <string name="advanced_summary">Advanced summary</string>
+    <string name="input_item_description">Input item</string>
+    <string name="enable_advanced_summary">Enable advanced summary</string>
+    <string name="enable_smart_items_summary_format">Enable smart items summary format</string>
+    <string name="add_item">Add item</string>
+    <string name="browse_in_item_database">Browse in item database</string>
+    <string name="sum_bgfg_color">Summary background/foreground color</string>
+    <string name="screen_default_font">Screen default font</string>
+    <string name="rows">Rows:</string>
+    <string name="cols">Cols</string>
+    <string name="summary_items">Summary items</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="summary_panel_always_visible">Summary panel always visible</string>
+    <string name="warning">Warning</string>
+    <string name="no_data_in_db">No data in database.</string>
+    <string name="tab_display">Tab display</string>
+    <string name="input_destination">Input destination</string>
+    <string name="tab_display_next">Tab display next</string>
+    <string name="enable_tab_display">Enable tab display</string>
+    <string name="enabled_disply_mode">Enabled display mode</string>
+    <string name="down">Down</string>
+    <string name="empty">Empty</string>
+    <string name="find_folders">Find folders</string>
+    <string name="pref_title_database_keep_days">Number of days to keep data</string>
+    <string name="move_to_adjust_column_size">Move to adjust column size</string>
+    <string name="click_anywhere_to_add_new_column">Click anywhere to add new column</string>
+    <string name="click_and_drag_the_arrow_up_down_to_remove_column">Click and drag the arrow up/down to remove column</string>
+    <string name="icon_display">Icon Display</string>
+    <string name="icon_display_enabled">Icon display enabled</string>
+    <string name="use_local_folder_to_load_icon">Using local folder to load icon(png/bmp/jpg)</string>
+    <string name="setup_local_icon_folder">Setup local icon folder</string>
+    <string name="item_mark_setting">Item mark setting</string>
+    <string name="icon_folder_name_rule">Please use number.extension to name img file in select folder. e.g: 1.png, 2.jpg,5.bmp</string>
+    <string name="auto_bump_park_order_mins">Auto bump parked order minutes</string>
+    <string name="void_item_showing">Void item showing</string>
+    <string name="qty_changed">Qty changed</string>
+    <string name="enable_order_status_notify">Enable order status changed notification</string>
+    <string name="enable_item_qty_notify">Enable item quantity changed notification</string>
+    <string name="notification">Notification</string>
+    <string name="tab_display_text">Tab display text</string>
+    <string name="remote_support">Remote support</string>
+    <string name="sorted_orders">Sorted orders</string>
+    <string name="prep_mode_enabled">Smart order advance enabled</string>
+    <string name="smart_order_mode">Smart order mode</string>
+    <string name="log_mode">Log mode</string>
+    <string name="log_reserved_days">Reserve log files for X days</string>
+    <string name="log">Log</string>
+    <string name="input_condiment_description">Input condiment</string>
+    <string name="text_wrap">Text wrap</string>
+    <string name="focus_blink">Selected order blinking</string>
+    <string name="enable_line_items_display_mode">Enable line items display mode</string>
+    <string name="sorting_in_smart">Sorting in line Item display with smart order enable</string>
+    <string name="smart_timer_from_item_visible">Order timer start from item visible</string>
+    <string name="each_condiment_go_to_next_line">Each condiment/modifier go to next line</string>
+    <string name="show_last_n_of_order_id">Show last N digit of order ID</string>
+
+    <string-array name="pref_kds_item_mark_method">
+        <item>Internal icon</item>
+        <item>Char</item>
+        <item>Color</item>
+    </string-array>
+
+    <string-array name="pref_kds_void_item_showing_method_titles">
+        <item>Directly quantity Change</item>
+        <item>Insert VOID quantity line below item</item>
+    </string-array>
+
+    <string-array name="pref_kds_void_qty_mark_titles">
+        <item>Brackets ()</item>
+        <item>Negtive sign -</item>
+    </string-array>
+
+    <string-array name="pref_kds_smartorder_mode_titles">
+        <item>Disabled</item>
+        <item>Normal</item>
+        <item>Advanced</item>
+    </string-array>
+
+    <string-array name="pref_kds_log_mode_titles">
+        <item>None</item>
+        <item>Basic</item>
+        <item>Detail</item>
+    </string-array>
+
+    <string-array name="pref_queue_order_id_length_titles">
+        <item>All</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+
+
+    </string-array>
+
+
+    <string name="alert_disable_double_bump_queue">If you disable this option in Queue station, a Bumpbar is required to bump the order off Queue display.</string>
+    <string name="pwd_do_not_match">Passwords do not match.</string>
+    <string name="nand_lost">Cannot access NAND FLASH to save/load data, go to System Setting – Storage – NAND FLASH and click “Mount SD card” to mount the NAND FLASH.</string>
+    <string name="move_finished_order_to_front">Move finished orders to front of queue</string>
+    <string name="sd_disk_full">Database or sd-disk is full.</string>
+    <string name="pref_kds_item_partial_bumped_mark_in_expo">If item goes to multiple stations and partial stations bump this item, Expo shows partial finish mark</string>
+    <string name="expo_confirmation_bump">Expo confirmation bump</string>
+    <string name="expo_cannot_bump_unless_prep_bump_all">Expo cannot bump the order unless all its prep station bump the items</string>
+    <string name="pref_kds_touch_prev_page_enabled">Enable [prev page] touch button</string>
+    <string name="pref_kds_touch_next_page_enabled">Enable [next page] touch button</string>
+    <string name="touchpad_next_page">Next Page</string>
+    <string name="touchpad_prev_page">Prev Page</string>
+    <string name="avg_prep_time">AVG:</string>
+    <string name="real_time_period">Real time report period (mins)</string>
+    <string name="title">Title</string>
+    <string name="screen_title">Screen title</string>
+    <string name="show_avg_prep_time">Show average bump off time</string>
+    <string-array name="pref_real_period_titles">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+
+
+    </string-array>
+
+    <string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>
+
+    <string name="file_name">File name:</string>
+    <string name="confirm_bump_unpaid">Bump off unpaid order with confirmation</string>
+    <string name="confirm_bump_outstanding">Bump off outstanding order with confirmation</string>
+
+    <string-array name="pref_queue_sort_titles">
+        <item>Default</item>
+        <item>State change time, ascend</item>
+        <item>State change time, descend</item>
+
+    </string-array>
+
+    <string name="confirm_bump_unpaid_text">The order # is unpaid. Do you want to bump it?</string>
+    <string name="confirm_bump_outstanding_text">The order # contains outstanding items. Do you want to bump it?</string>
+    <string name="queue_status1_sort">Status 1 sort mode</string>
+    <string name="queue_status2_sort">Status 2 sort mode</string>
+    <string name="queue_status3_sort">Status 3 sort mode</string>
+    <string name="queue_status4_sort">Status 4 sort mode</string>
+    <string name="title_activity_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">User name</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This user name is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">Username required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="enable_order_ack">Enable order acknowledgement</string>
+
+    <string name="username_field_required">Username required</string>
+    <string name="password_field_required">Password required</string>
+    <string name="no_license_available">There is no license available</string>
+    <string name="license_deactivated">This KDS Stations’s license is deactivated.</string>
+    <string name="updating_license_data">Updating license data ...</string>
+    <string name="retrieve_licenses_data">Retrieve licenses data ...</string>
+    <string name="retrieve_store_settings">Retrieve store settings ...</string>
+    <string name="logining">Login ...</string>
+    <string name="str_ok">OK</string>
+    <string name="activation">Activation</string>
+    <string name="str_cancel">Cancel</string>
+    <string name="no_selected_license_to_replace">No selected license to replace</string>
+    <string name="item_group_by_category">Group items by its category</string>
+    <string name="inactive">"(Inactive)"</string>
+</resources>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="kds_general_users"
+        android:title="@string/pref_kds_general_users"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_general_users_titles"
+        android:entryValues="@array/pref_kds_general_users_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="kds_general_users_orientation"
+        android:title="@string/pref_kds_general_users_orientation"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_general_users_orientation_titles"
+        android:entryValues="@array/pref_kds_general_users_orientation_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="kds_general_users_ratio"
+        android:title="@string/pref_kds_general_users_ratio"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_general_users_ratio_titles"
+        android:entryValues="@array/pref_kds_general_users_ratio_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_subtitle_a_title"
+        android:title="@string/pref_kds_general_subtitle_a_text"
+        android:defaultValue="@string/screen_a"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_subtitle_b_title"
+        android:title="@string/pref_kds_general_subtitle_b_text"
+        android:defaultValue="@string/screen_b"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="kds_general_subtitle_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-16635741,-1,12"
+        android:title="@string/pref_kds_general_subtitle_font"
+        app:supportsColor="true"/>
+
+
+    <PreferenceCategory android:title="@string/screen_b">
+
+
+
+        <!-- Panels mode -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="screenb_panels_mode"
+            android:title="@string/pref_kds_panels_title_mode"
+            android:defaultValue="0"
+            android:entries="@array/pref_kds_panels_mode_titles"
+            android:entryValues="@array/pref_kds_panels_mode_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <!-- Panels rows -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="screenb_panels_rows"
+            android:title="@string/pref_kds_panels_title_rows"
+            android:defaultValue="2"
+            android:entries="@array/pref_kds_panels_rows_titles"
+            android:entryValues="@array/pref_kds_panels_rows_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <!-- Panels cols -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="screenb_panels_cols"
+            android:title="@string/pref_kds_panels_title_cols"
+            android:defaultValue="4"
+            android:entries="@array/pref_kds_panels_cols_titles"
+            android:entryValues="@array/pref_kds_panels_cols_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <!-- show panel number-->
+        <!--<CheckBoxPreference-->
+            <!--android:key="screenb_panels_show_number"-->
+            <!--android:title="@string/pref_kds_panels_show_number"-->
+            <!--android:defaultValue="true" />-->
+
+        <!--<CheckBoxPreference-->
+            <!--android:key="screenb_bumpbar_panelnum_focus"-->
+            <!--android:title="@string/pref_kds_panelnum_focus_enabled"-->
+            <!--android:defaultValue="false" />-->
+
+        <!--<com.bematechus.kds.KDSEditTextPreference-->
+            <!--android:key="screenb_panelnum_base"-->
+            <!--android:title="@string/pref_kds_panelnum_base"-->
+            <!--android:defaultValue="0"-->
+            <!--android:selectAllOnFocus="true"-->
+            <!--android:inputType= "number"-->
+            <!--android:capitalize="words"-->
+            <!--android:singleLine="true"-->
+            <!--android:dependency="panels_show_number"-->
+            <!--android:positiveButtonText="@string/ok"-->
+            <!--android:negativeButtonText="@string/cancel"-->
+            <!--android:maxLines="1" />-->
+
+        <!--<com.bematechus.kds.KDSPreferenceBGFGPicker-->
+            <!--android:key="screenb_panelnum_bgfg"-->
+            <!--android:defaultValue="-16769076,-1"-->
+            <!--android:dependency="screenb_panels_show_number"-->
+            <!--android:title="@string/pref_kds_panelnum_bgfg" />-->
+
+        <!--<com.bematechus.kds.KDSEditTextPreference-->
+            <!--android:key="screenb_panel_border_width"-->
+            <!--android:title="@string/pref_kds_panel_border_width"-->
+            <!--android:defaultValue="7"-->
+            <!--android:selectAllOnFocus="true"-->
+            <!--android:inputType="number"-->
+            <!--android:capitalize="words"-->
+            <!--android:singleLine="true"-->
+            <!--android:positiveButtonText="@string/ok"-->
+            <!--android:negativeButtonText="@string/cancel"-->
+            <!--android:maxLines="1" />-->
+
+
+    </PreferenceCategory>
+
+
+
+
+</PreferenceScreen>

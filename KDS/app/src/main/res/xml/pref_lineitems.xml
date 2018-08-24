@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBoxPreference
+        android:key="lineitems_enabled"
+        android:title="@string/enable_line_items_display_mode"
+        android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="lineitems_smart"
+        android:title="@string/sorting_in_smart"
+        android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="lineitems_modifier_condiment_each_line"
+        android:title="@string/each_condiment_go_to_next_line"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferenceColorPicker
+        android:key="viewer_bg"
+        android:defaultValue="0xff0e0e0e"
+        android:dependency="lineitems_enabled"
+        android:title="@string/pref_kds_panels_viewer_bg" />
+
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="lineitems_default_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-5724506,-16777216,12"
+        android:title="@string/screen_default_font"
+        android:dependency="lineitems_enabled"
+        app:supportsColor="true"/>
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="lineitems_caption_text"
+        android:title="@string/lineitems_caption_text"
+        android:defaultValue="@string/line_items_display"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="lineitems_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="lineitems_caption_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-5724506,-16777216,12"
+        android:title="@string/lineitems_caption_font"
+        android:dependency="lineitems_enabled"
+        app:supportsColor="true"/>
+    <!--<com.bematechus.kds.KDSListPreference-->
+        <!--android:key="lineitems_cols_count"-->
+        <!--android:title="@string/col_content"-->
+        <!--android:defaultValue="4"-->
+        <!--android:entries="@array/pref_kds_lineitems_cols_count_titles"-->
+        <!--android:entryValues="@array/pref_kds_lineitems_cols_count_values"-->
+        <!--android:dependency="lineitems_enabled"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
+
+    <PreferenceCategory android:title="Col Size">
+        <com.bematechus.kds.KDSPreferenceColsSize
+            android:key="lineitems_cols_size"
+            android:title=""
+            android:defaultValue="25,25,25,25"
+            android:dependency="lineitems_enabled"
+            />
+
+    </PreferenceCategory>
+
+    <!--================================================= -->
+    <PreferenceCategory android:title="Col 0">
+    <!-- Col0 -->
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="lineitems_col0_text"
+        android:title="@string/col_0_text"
+        android:defaultValue="@string/str_id"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="lineitems_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSEditTextPreference-->
+        <!--android:key="lineitems_col0_size"-->
+        <!--android:title="@string/col_0_size"-->
+        <!--android:defaultValue="10"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "number"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="lineitems_enabled"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="lineitems_col0_content"
+        android:title="@string/col_0_content"
+        android:defaultValue="0"
+        android:dependency="lineitems_enabled"
+        android:entries="@array/pref_kds_lineitems_cols_content_titles"
+        android:entryValues="@array/pref_kds_lineitems_cols_content_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    </PreferenceCategory>
+
+    <!-- Col1 -->
+    <PreferenceCategory android:title="Col 1">
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="lineitems_col1_text"
+        android:title="@string/lineitems_col1_text"
+        android:defaultValue="@string/description"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="lineitems_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSEditTextPreference-->
+        <!--android:key="lineitems_col1_size"-->
+        <!--android:title="@string/lineitems_col1_size"-->
+        <!--android:defaultValue="30"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "number"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="lineitems_enabled"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="lineitems_col1_content"
+        android:title="@string/lineitems_col1_content"
+        android:defaultValue="4"
+        android:dependency="lineitems_enabled"
+        android:entries="@array/pref_kds_lineitems_cols_content_titles"
+        android:entryValues="@array/pref_kds_lineitems_cols_content_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    </PreferenceCategory>
+
+    <!-- Col 2 -->
+    <PreferenceCategory android:title="Col 2">
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="lineitems_col2_text"
+        android:title="@string/lineitems_col2_text"
+        android:defaultValue="@string/condiments"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="lineitems_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSEditTextPreference-->
+        <!--android:key="lineitems_col2_size"-->
+        <!--android:title="@string/lineitems_col2_size"-->
+        <!--android:defaultValue="50"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "number"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="lineitems_enabled"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="lineitems_col2_content"
+        android:title="@string/lineitems_col2_content"
+        android:defaultValue="5"
+        android:dependency="lineitems_enabled"
+        android:entries="@array/pref_kds_lineitems_cols_content_titles"
+        android:entryValues="@array/pref_kds_lineitems_cols_content_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    </PreferenceCategory>
+    <!-- Col 3 -->
+    <PreferenceCategory android:title="Col 3">
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="lineitems_col3_text"
+        android:title="@string/lineitems_col3_text"
+        android:defaultValue="@string/timer"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="lineitems_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSEditTextPreference-->
+        <!--android:key="lineitems_col3_size"-->
+        <!--android:title="@string/lineitems_col3_size"-->
+        <!--android:defaultValue="10"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "number"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="lineitems_enabled"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="lineitems_col3_content"
+        android:title="@string/lineitems_col3_content"
+        android:defaultValue="7"
+        android:dependency="lineitems_enabled"
+        android:entries="@array/pref_kds_lineitems_cols_content_titles"
+        android:entryValues="@array/pref_kds_lineitems_cols_content_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    </PreferenceCategory>
+    <!-- Col 4 -->
+    <PreferenceCategory android:title="Col 4">
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="lineitems_col4_text"
+        android:title="@string/lineitems_col4_text"
+        android:defaultValue=""
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="lineitems_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSEditTextPreference-->
+        <!--android:key="lineitems_col4_size"-->
+        <!--android:title="@string/lineitems_col4_size"-->
+        <!--android:defaultValue="10"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "number"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="lineitems_enabled"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="lineitems_col4_content"
+        android:title="@string/lineitems_col4_content"
+        android:defaultValue="4"
+        android:dependency="lineitems_enabled"
+        android:entries="@array/pref_kds_lineitems_cols_content_titles"
+        android:entryValues="@array/pref_kds_lineitems_cols_content_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    </PreferenceCategory>
+    <!-- Col 5 -->
+    <PreferenceCategory android:title="Col 5">
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="lineitems_col5_text"
+        android:title="@string/lineitems_col5_text"
+        android:defaultValue=""
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="lineitems_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSEditTextPreference-->
+        <!--android:key="lineitems_col5_size"-->
+        <!--android:title="@string/lineitems_col5_size"-->
+        <!--android:defaultValue="10"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "number"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="lineitems_enabled"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="lineitems_col5_content"
+        android:title="@string/lineitems_col5_content"
+        android:defaultValue="4"
+        android:dependency="lineitems_enabled"
+        android:entries="@array/pref_kds_lineitems_cols_content_titles"
+        android:entryValues="@array/pref_kds_lineitems_cols_content_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

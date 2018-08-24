@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBoxPreference
+        android:key="exp_alert_enabled"
+        android:title="@string/pref_kds_exp_alert_enabled"
+        android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="exp_alert_change_panel"
+        android:title="@string/pref_kds_exp_alert_change_panel"
+        android:dependency="exp_alert_enabled"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferenceColorPicker
+        android:key="exp_alert_color"
+        android:defaultValue="@color/expalert_bg"
+        android:dependency="exp_alert_enabled"
+        android:title="@string/pref_kds_exp_alert_color" />
+
+</PreferenceScreen>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:orientation="horizontal" android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgLogo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/lci" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="30&lt;--"
+        android:id="@+id/txtPrev"
+        android:layout_alignBottom="@+id/imgLogo"
+        android:layout_toRightOf="@+id/imgLogo"
+        android:layout_toEndOf="@+id/imgLogo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="LCI KDS"
+        android:id="@+id/txtTitle"
+        android:layout_alignTop="@+id/txtPrev"
+        android:layout_toRightOf="@+id/txtPrev"
+        android:layout_toLeftOf="@+id/txtNext"
+        android:layout_toStartOf="@+id/txtNext" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="-->30"
+        android:id="@+id/txtNext"
+        android:layout_alignBottom="@+id/imgLogo"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center" />
+</RelativeLayout>
+<!--</LinearLayout>-->

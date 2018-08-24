@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_settings" android:title="@string/menu_activity_settings"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_schedule" android:title="@string/menu_activity_schedule"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <!--<item android:id="@+id/action_cleardb" android:title="@string/menu_activity_cleardb"-->
+        <!--android:orderInCategory="100" app:showAsAction="never" />-->
+    <item android:id="@+id/action_showip" android:title="@string/menu_activity_showip"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+
+    <item android:id="@+id/action_stations" android:title="@string/menu_activity_stations"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_clear_log" android:title="@string/menu_activity_clearlog"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_about" android:title="@string/about"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <!--<item android:id="@+id/action_touchpad" android:title="@string/menu_activity_touchpad"-->
+        <!--android:orderInCategory="100" app:showAsAction="never" />-->
+</menu>

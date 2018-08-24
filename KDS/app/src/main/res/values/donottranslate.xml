@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings related to Settings, They are not need to translate while support multiple language -->
+    <string-array name="kdsui_font_size" translatable="false">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+
+    </string-array>
+
+    <string name="pref_kds_general_default_number" translatable="false">1</string>
+    <string-array name="pref_kds_general_data_source_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="pref_kds_general_default_tcp_port" translatable="false">3000</string>
+    <string name="pref_kds_general_default_remote_folder" translatable="false"></string>
+    <string name="pref_kds_general_default_stations_port" translatable="false">3001</string>
+    <string-array name="pref_kds_general_functions_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="pref_kds_panels_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="pref_kds_panels_rows_titles" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="pref_kds_panels_rows_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="pref_kds_panels_cols_titles" translatable="false">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="pref_kds_panels_cols_values" translatable="false">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="pref_kds_caption_content_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+
+    <string-array name="pref_kds_item_showing_method__values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_kds_bumping_by_panelnum_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_keyboard_type_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+
+    </string-array>
+
+    <string-array name="pref_kds_general_users_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_kds_general_users_orientation_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_kds_printer_port_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_kds_printer_type_titles" translatable="false">
+        <item>LR2000</item>
+        <!--<item>MP4200</item>-->
+
+    </string-array>
+    <string-array name="pref_kds_printer_type_values" translatable="false">
+        <item>0</item>
+        <!--<item>1</item>-->
+    </string-array>
+
+    <string-array name="pref_kds_printer_codepage_titles" translatable="false">
+        <item>CP437</item>
+        <item>CP850</item>
+        <item>CP860</item>
+        <item>CP863</item>
+        <item>CP865</item>
+        <item>CP866</item>
+        <item>CP862</item>
+    </string-array>
+    <string-array name="pref_kds_printer_codepage_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="pref_kds_printer_howtoprint_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_kds_printer_baudrate_titles" translatable="false">
+        <item>9600</item>
+        <item>19200</item>
+        <item>38400</item>
+        <item>57600</item>
+        <item>115200</item>
+    </string-array>
+    <string-array name="pref_kds_printer_baudrate_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="pref_kds_orders_sort_method_titles" translatable="false">
+        <item>@string/manually</item>
+        <item>@string/sort_time_ascend</item>
+        <item>@string/sort_time_descen</item>
+        <item>@string/sort_name_ascend</item>
+        <item>@string/sort_name_descend</item>
+        <item>@string/sort_count_ascend</item>
+        <item>@string/sort_count_descend</item>
+        <item>@string/sort_preptime_ascend</item>
+        <item>@string/sort_preptime_descend</item>
+
+    </string-array>
+    <string-array name="pref_kds_orders_sort_method_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+     <string name="pref_kds_printer_template_default" translatable="false">&lt;c&gt;&lt;b&gt;Order #:&lt;ordernumber&gt;&lt;/b&gt;&lt;cr&gt;\n
+&lt;c&gt;&lt;addon&gt;&lt;cr&gt;\n
+Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\n
+&lt;ordertype&gt;&lt;r&gt;Cashier: &lt;employee&gt;&lt;cr&gt;\n
+&lt;r&gt;&lt;orderdestination&gt;&lt;cr&gt;\n
+&lt;cr&gt;\n
+&lt;i&gt;Qty &lt;t5&gt;Items&lt;/i&gt;&lt;cr&gt;\n
+&lt;Qty&gt;&lt;t5&gt;&lt;void&gt;&lt;items&gt;&lt;cr&gt;\n
+&lt;t7&gt;&lt;condiments&gt;&lt;cr&gt;\n
+----------------------------------------&lt;cr&gt;\n
+&lt;orderstatus&gt;&lt;r&gt;&lt;ordertime&gt;&lt;cr&gt;\n
+&lt;cr&gt;\n&lt;ordertime12h&gt;
+&lt;c&gt;========END=============&lt;cr&gt;\n
+&lt;cr&gt;\n
+&lt;cr&gt;\n
+&lt;cr&gt;\n
+&lt;cr&gt;\n
+&lt;cr&gt;\n
+&lt;cr&gt;\n
+&lt;cr&gt;\n&lt;pc&gt;\n
+    </string>
+
+    <string-array name="pref_kds_smartorder_showing_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_kds_beeper_type_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_kds_sum_type_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_sum_position_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_sum_order_by_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_queue_cols_titles" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+
+    </string-array>
+    <string-array name="pref_queue_cols_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="pref_queue_mode_titles" translatable="false">
+        <item>@string/queue_mode_panel</item>
+        <item>@string/queue_mode_simple</item>
+    </string-array>
+    <string-array name="pref_queue_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+
+    </string-array>
+
+    <string-array name="pref_queue_ratio_titles" translatable="false">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+
+    </string-array>
+    <string-array name="pref_queue_ratio_values" translatable="false">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+    </string-array>
+
+    <string-array name="pref_tracker_cols_titles" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+
+    </string-array>
+    <string-array name="pref_tracker_cols_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <!--<string name="pref_kds_language" translatable="false">Language</string>-->
+    <!--<string-array name="pref_kds_language_titles" translatable="false">-->
+        <!--<item>English</item>-->
+        <!--<item>Chinese</item>-->
+
+    <!--</string-array>-->
+    <string-array name="pref_kds_language_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+
+    </string-array>
+
+
+    <string name="sound_default_bump_order" translatable="false">Platinum|content://media/internal/audio/media/24</string>
+    <string name="sound_default_unbump_order" translatable="false">Beep-Beep-Beep Alarm|content://media/internal/audio/media/7</string>
+    <string name="sound_default_new_order" translatable="false">BeeBeep Alarm|content://media/internal/audio/media/6</string>
+    <string name="sound_default_order_changed" translatable="false">Buzzer Alarm|content://media/internal/audio/media/8</string>
+    <string name="sound_default_transfer_order" translatable="false">Carbon|content://media/internal/audio/media/13</string>
+    <string name="sound_default_backup_activation" translatable="false">Cesium|content://media/internal/audio/media/9</string>
+    <string name="sound_default_backup_orders_received" translatable="false">Fermium|content://media/internal/audio/media/15</string>
+    <string name="sound_default_timer_alert1" translatable="false">Krypton|content://media/internal/audio/media/18</string>
+    <string name="sound_default_timer_alert2" translatable="false">Osmium|content://media/internal/audio/media/22</string>
+    <string name="sound_default_timer_alert3" translatable="false">Oxygen|content://media/internal/audio/media/23</string>
+    <string name="sound_default_expo_order_complete" translatable="false">Piezo Alarm|content://media/internal/audio/media/5</string>
+
+
+    <string-array name="pref_kds_bumping_max_reserved" translatable="false">
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+    </string-array>
+
+
+    <string-array name="pref_kds_bumping_max_reserved_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+
+    <string-array name="pref_trackerpager_userinfo_guesttable_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+
+    </string-array>
+
+    <string-array name="pref_kds_general_users_ratio_titles">
+        <item>1/2</item>
+        <item>1/3</item>
+        <item>2/3</item>
+        <item>1/4</item>
+        <item>3/4</item>
+    </string-array>
+    <string-array name="pref_kds_general_users_ratio_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="pref_queue_combine_status1_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+
+    </string-array>
+    <string-array name="pref_queue_combine_status2_values" translatable="false">
+        <item>0</item>
+        <item>2</item>
+        <item>3</item>
+
+    </string-array>
+    <string-array name="pref_queue_combine_status3_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+
+    </string-array>
+    <string-array name="pref_queue_combine_status4_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_kds_lineitems_cols_count_values" translatable="false">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+
+    </string-array>
+
+    <string-array name="pref_kds_lineitems_cols_content_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+
+    </string-array>
+
+    <string-array name="pref_top_sum_cols_titles" translatable="false">
+
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+
+
+    </string-array>
+    <string-array name="pref_top_sum_cols_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="pref_kds_item_mark_method_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_kds_void_item_showing_method__values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_kds_void_qty_mark_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_kds_smartorder_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="pref_kds_log_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
+
+    <string-array name="pref_queue_order_id_length_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="pref_real_period_values"  translatable="false" >
+        <item>60</item>
+        <item>300</item>
+        <item>600</item>
+
+
+    </string-array>
+
+    <string-array name="pref_queue_sort_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+
+    </string-array>
+</resources>

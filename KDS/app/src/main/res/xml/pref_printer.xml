@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+   <CheckBoxPreference
+       android:key="printer_enabled"
+       android:title="@string/pref_kds_printer_enabled"
+       android:defaultValue="false" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="printer_type"
+        android:title="@string/pref_kds_printer_type"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_printer_type_titles"
+        android:entryValues="@array/pref_kds_printer_type_values"
+        android:dependency="printer_enabled"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+   <com.bematechus.kdslib.KDSListPreference
+        android:key="printer_port"
+        android:title="@string/pref_kds_printer_port"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_printer_port_titles"
+        android:entryValues="@array/pref_kds_printer_port_values"
+        android:dependency="printer_enabled"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <PreferenceCategory android:key="portconfig" android:title="Port settings">
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="printer_ip"
+            android:title="@string/pref_kds_printer_ip"
+            android:defaultValue="192.168.1.100"
+            android:selectAllOnFocus="true"
+            android:inputType= "text"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:dependency="printer_enabled"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="printer_ipport"
+            android:title="@string/pref_kds_printer_ipport"
+            android:defaultValue="9100"
+            android:selectAllOnFocus="true"
+            android:inputType= "number"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:dependency="printer_enabled"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="printer_serial"
+            android:title="@string/pref_kds_printer_serial"
+            android:defaultValue="4"
+            android:enabled="false"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:selectAllOnFocus="true"
+            android:inputType= "number"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:dependency="printer_enabled"
+            android:maxLines="1" />
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="printer_baudrate"
+            android:title="@string/pref_kds_printer_baudrate"
+            android:defaultValue="1"
+            android:entries="@array/pref_kds_printer_baudrate_titles"
+            android:entryValues="@array/pref_kds_printer_baudrate_values"
+            android:dependency="printer_enabled"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:key="printerconfig" android:title="Printer settings">
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="printer_width"
+        android:title="@string/pref_kds_printer_chars_width"
+        android:defaultValue="40"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="printer_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="printer_copies"
+        android:title="@string/pref_kds_printer_copies"
+        android:defaultValue="1"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="printer_enabled"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="printer_codepage"
+        android:title="@string/pref_kds_printer_codepage"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_printer_codepage_titles"
+        android:entryValues="@array/pref_kds_printer_codepage_values"
+        android:dependency="printer_enabled"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="printer_howtoprint"
+        android:title="@string/pref_kds_printer_howtoprint"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_printer_howtoprint_titles"
+        android:entryValues="@array/pref_kds_printer_howtoprint_values"
+        android:dependency="printer_enabled"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <!--<EditTextPreference-->
+        <!--android:key="printer_template"-->
+        <!--android:title="@string/pref_kds_printer_template"-->
+        <!--android:defaultValue="@string/pref_kds_printer_template_default"-->
+        <!--android:selectAllOnFocus="false"-->
+        <!--android:inputType= "text"-->
+        <!--android:dependency="printer_enabled"-->
+        <!--android:singleLine="false"-->
+         <!--/>-->
+    <com.bematechus.kds.KDSPreferencePrinterTemplate
+        android:key="printer_template"
+        android:title="@string/pref_kds_printer_template"
+        android:defaultValue="@string/pref_kds_printer_template_default"
+        android:dependency="printer_enabled"
+        />
+    </PreferenceCategory>
+</PreferenceScreen>

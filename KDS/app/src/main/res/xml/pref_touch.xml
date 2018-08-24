@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="touch_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,0,-12303292,12"
+        android:title="@string/pref_kds_touch_font"
+        app:supportsColor="true"/>
+
+    <CheckBoxPreference
+        android:key="touch_prev_enabled"
+        android:title="@string/pref_kds_touch_prev_enabled"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="touch_next_enabled"
+        android:title="@string/pref_kds_touch_next_enabled"
+        android:defaultValue="true" />
+
+
+    <CheckBoxPreference
+        android:key="touch_prev_page_enabled"
+        android:title="@string/pref_kds_touch_prev_page_enabled"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="touch_next_page_enabled"
+        android:title="@string/pref_kds_touch_next_page_enabled"
+        android:defaultValue="true" />
+
+
+    <CheckBoxPreference
+        android:key="touch_up_enabled"
+        android:title="@string/pref_kds_touch_up_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_down_enabled"
+        android:title="@string/pref_kds_touch_down_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_bump_enabled"
+        android:title="@string/pref_kds_touch_bump_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_unbump_enabled"
+        android:title="@string/pref_kds_touch_unbump_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_unbumplast_enabled"
+        android:title="@string/pref_kds_touch_unbumplast_enabled"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="touch_sum_enabled"
+        android:title="@string/pref_kds_touch_sum_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_transfer_enabled"
+        android:title="@string/pref_kds_touch_transfer_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_sort_enabled"
+        android:title="@string/pref_kds_touch_sort_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_park_enabled"
+        android:title="@string/pref_kds_touch_park_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_unpark_enabled"
+        android:title="@string/pref_kds_touch_unpark_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_print_enabled"
+        android:title="@string/pref_kds_touch_print_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="touch_more_enabled"
+        android:title="@string/pref_kds_touch_more_enabled"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="touch_buildcard_enabled"
+        android:title="@string/pref_kds_touch_buildcard_enabled"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="touch_training_enabled"
+        android:title="@string/pref_kds_touch_training_enabled"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="touch_page_enabled"
+        android:title="@string/pref_kds_touch_page_enabled"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="touch_test_enabled"
+        android:title="@string/pref_kds_touch_test_enabled"
+        android:defaultValue="true" />
+
+
+</PreferenceScreen>

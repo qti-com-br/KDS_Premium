@@ -1,0 +1,1098 @@
+<resources>
+    <string name="app_name">KitchenGo KDS</string>
+    <string name="main_title">KitchenGo 厨房系统</string>
+    <string name="order_queue_display_title">订单排序系统</string>
+
+    <string name="action_settings">设置</string>
+    <string name="title_activity_kdsuistations">终端关系设置</string>
+    <string name="title_activity_kdsactivity_unbump">恢复订单</string>
+    <string name="title_activity_kdsuistations_config">设置</string>
+    <string name="title_activity_kdsuiretrive_config">得到远程设置</string>
+
+    <string name="menu_activity_cleardb">清除数据库</string>
+    <string name="menu_activity_showip">显示我的IP地址</string>
+    <string name="retrieve_config_waiting_data">等待数据 ...</string>
+    <string name="retrieve_config_done">完成! 请关闭设置对话框</string>
+    <string name="menu_activity_touchpad">显示或隐藏触摸按钮</string>
+    <string name="menu_activity_export">导出设置</string>
+    <string name="menu_activity_import">导入设置</string>
+    <string name="menu_activity_stations">显示在线终端</string>
+    <string name="touchpad_next">下一个</string>
+    <string name="touchpad_prev">上一个</string>
+    <string name="touchpad_up">向上</string>
+    <string name="touchpad_down">向下</string>
+    <string name="touchpad_bump">删除</string>
+    <string name="touchpad_unbump">恢复</string>
+    <string name="touchpad_unbump_last">恢复最近</string>
+    <string name="touchpad_sum">统计</string>
+    <string name="touchpad_transfer">转移</string>
+    <string name="touchpad_sort">排序</string>
+    <string name="touchpad_test">测试</string>
+    <string name="touchpad_more">更多</string>
+    <string name="touchpad_active">在线终端</string>
+    <string name="touchpad_exit">退出</string>
+    <string name="touchpad_park">暂缓</string>
+    <string name="touchpad_unpark">调出</string>
+    <string name="touchpad_print">打印</string>
+    <string name="touchpad_buildcard">菜谱</string>
+    <string name="touchpad_training">培训</string>
+    <string name="touchpad_page">呼叫</string>
+
+    <string name="sort_time_ascend">等待时间升序</string>
+    <string name="sort_time_descen">等待时间降序</string>
+    <string name="sort_name_ascend">订单号升序</string>
+    <string name="sort_name_descend">订单号降序</string>
+    <string name="sort_count_ascend">菜名数量升序</string>
+    <string name="sort_count_descend">菜名数量降序</string>
+    <string name="sort_preptime_ascend">准备时间升序</string>
+    <string name="sort_preptime_descend">准备时间降序</string>
+    <string name="restore">恢复</string>
+    <string name="unpark">调出</string>
+    <string name="str_refresh">更新</string>
+    <string name="str_default">默认</string>
+    <string name="order_state_waiting">等待</string>
+    <string name="order_state_processing">进行中</string>
+    <string name="order_state_delivering">发到前台</string>
+    <string name="order_state_sold_out">售出</string>
+    <string name="order_state_others">其它</string>
+    <string name="info_first_message">Bematech KDS 消息</string>
+    <string name="message">消息</string>
+    <string name="str_message">消息</string>
+    <string name="receive_new_relations">KDS已收到最新的终端关系设置</string>
+    <string name="confirm_remove_relation_station">你确定要删除终端 #</string>
+    <string name="confirm">确认</string>
+    <string name="confirm_broadcast_relations_changes">关系发生了改变，需要保存并更新所有终端吗？</string>
+    <string name="confirm_remove_relations_expo">总台 # 将被删除， 是否继续?</string>
+    <string name="remove_relations_expo">总台 # 从expo 列删除</string>
+    <string name="confirm_fix_errors">关系设置有错误， 请改正</string>
+    <string name="confirm_retrieve_config">是否要从 # 得到最新设置?</string>
+    <string name="confirm_clear_db">是否清除数据库？</string>
+    <string name="clear_db">清除数据库</string>
+    <string name="confirm_export_db">是否输出设置到</string>
+    <string name="confirm_import_db">是否导入新的设置从</string>
+    <string name="data_backup_to">数据备份到</string>
+    <string name="update_to_all">保存并更新所有</string>
+    <string name="delete">删除</string>
+    <string name="new_entry">新加</string>
+    <string name="save">保存</string>
+    <string name="show_id">显示终端号</string>
+    <string name="about">关于</string>
+
+    <string-array name="station_function">
+        <item>正常</item>
+        <item>总台</item>
+        <item>排队</item>
+        <item>镜像</item>
+        <item>备份</item>
+        <item>工作量</item>
+        <item>副本</item>
+        <item>跟踪</item>
+        <item>排队-总台</item>
+    </string-array>
+
+    <string-array name="station_status">
+        <item>启用</item>
+        <item>停止</item>
+    </string-array>
+    <string-array name="slave_function">
+        <item>无副终端</item>
+        <item>备份</item>
+        <item>镜像</item>
+        <item>工作量分配</item>
+        <item>副本</item>
+        <item>排队</item>
+    </string-array>
+
+    <string name="error">错误</string>
+    <string name="question">询问</string>
+    <string name="input">输入</string>
+    <string name="input_station_id">在使用前，必须输入终端ID</string>
+    <string name="input_id_title">请输入终端ID(0~99)</string>
+    <string name="select_station">请选择终端</string>
+    <string name="select_retrieve_station">选择终端</string>
+    <string name="confirm_bump_normal">是否要删除订单 # ?</string>
+    <string name="confirm_bump_expo_outstanding">订单 # 包含未完成菜名， 是否仍然要删除?</string>
+    <string name="error_isnot_unique_id">ID # 已被占用，请输入其它</string>
+    <string name="error_id_out_range">请输入ID, 范围（0--99）</string>
+    <string name="error_id_is_empty">请输入ID</string>
+    <string name="active_stations_list">终端</string>
+    <string name="no_active_stations">无在线终端</string>
+    <string name="searching_active_stations">搜索在线终端 …</string>
+    <string name="error_different_relations">终端的关系设置和其它终端不同，请首先编辑关系设置</string>
+    <string name="error_match_mac">请在bematech设备上运行</string>
+    <string name="back">后退</string>
+    <string name="clear_messages">清除日志</string>
+    <string name="cook_started">开始制作</string>
+    <string name="build_card">菜谱</string>
+    <string name="training_video">培训视频</string>
+    <string name="settings">设置</string>
+    <string name="unbump_order_help">[0]--[9] 单次按动为选择，双次为恢复.\n# 为退出</string>
+    <string name="unpark_order_help">[0]--[9] 单次按动为选择，双次为回调\n# 为退出.</string>
+    <string name="background">背景</string>
+    <string name="foreground">前景</string>
+    <string name="str_find">查找</string>
+    <string name="pc_name">电脑 IP</string>
+    <string name="user_id">用户ID</string>
+    <string name="password">密码</string>
+    <string name="shared_folder">共享目录</string>
+    <string name="get">提取</string>
+    <string name="information">消息</string>
+    <string name="transfer_select_order_warn">请选择一个订单</string>
+    <string name="transfer_select_station_title">选择移动的目的终端:</string>
+
+    <string name="ip_search_title_id">ID</string>
+    <string name="ip_search_title_ip">IP 地址</string>
+    <string name="ip_search_title_port">端口</string>
+    <string name="park_count">暂缓</string>
+    <string name="anonymous">匿名</string>
+    <string name="password_incorrect">密码错误!</string>
+    <string name="error_relations_repeat_backup_mirror">终端 # 设置错误</string>
+    <string name="error_relations_mirror_dead_loop">终端 # 镜像功能死循环</string>
+    <string name="error_relations_backup_dead_loop">终端 # 备份功能死循环</string>
+    <string name="network_lost">网络丢失</string>
+    <string name="network_restore">网络恢复了</string>
+    <string name="paid">已付</string>
+    <string name="unpaid">未付</string>
+    <string name="inprogress">准备中</string>
+    <string name="no_build_card">选择的菜名没有菜谱</string>
+    <string name="no_training_video">选择的菜名无视频</string>
+    <string name="must_select_item">请选择菜名</string>
+
+    <string name="invalid_image_file">无效的图片文件:</string>
+    <string name="downloading">下载中 ...</string>
+    <string name="unknown_file_format">未知文件格式:</string>
+    <string name="no_more_unbump_order">无更多删除的订单</string>
+    <string name="backup_of">备份</string>
+    <string name="mirror_of">镜像</string>
+    <string name="duplicated_of">副本</string>
+    <string name="workloan_of">工作量</string>
+
+    <string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>
+    <string name="please_input_primary_station">请输入终端 # 的主终端</string>
+
+    <string name="check_new_version">检查新版本</string>
+    <string name="current_version">当前版本</string>
+    <string name="it_is_latest_version">这是最新版本</string>
+    <string name="update_canceled">升级被取消</string>
+    <string name="update_now">现在升级</string>
+    <string name="update">升级</string>
+    <string name="checking">检查中 ...</string>
+    <string name="update_error_download_error">下载错误</string>
+    <string name="update_error_download_apk_error">不能下载apk文件</string>
+    <string name="update_error_apk_error">apk文件格式错误</string>
+    <string name="update_error_xml_error">不能下载更新文件</string>
+    <string name="do_you_update">发现新版本， 现在要更新吗？</string>
+    <string name="invalid_update_file">无效的更新文件</string>
+    <string name="update_new_version">新版本: #, 推荐指数: $</string>
+    <string name="input_ready_qty">输入准备好的数量</string>
+
+    <string name="queue_status_received">收到</string>
+    <string name="queue_status_preparation">准备中 ...</string>
+    <string name="queue_status_ready">订单准备好</string>
+    <string name="queue_status_pickup">准备好了</string>
+
+    <string name="queue_mode_panel">分隔模式</string>
+    <string name="queue_mode_simple">ID模式</string>
+
+    <string name="expo_backup">总台/备份</string>
+    <string name="prep_backup">正常或备份</string>
+    <string name="error_slave">错误！请改为其它终端</string>
+    <string name="error_slave_myself">错误！不能用自己为副终端， 请改正</string>
+    <string name="error_primary_myself">错误！ 不能用自己为主终端， 请改正</string>
+    <string name="error_not_expo">错误！此终端不是expo</string>
+    <string name="error_not_prep">错误！此终端不是正常终端类型</string>
+    <string name="error_not_expo_prep_backup">错误！只有总台,正常 和 排队 可以</string>
+
+    <string name="tracker_caption_order_name">订单号</string>
+    <string name="tracker_caption_table_name">位置</string>
+    <string name="tracker_only_one_allowed">只允许一个跟踪终端显示</string>
+    <string name="confirm_reset_tt_authen">是否重置保留的授权信息?</string>
+    <string name="reset_authen">重置授权</string>
+
+    <string name="tt_bump_clear">清除所有订单</string>
+    <string name="tt_bump_page">呼叫它</string>
+    <string name="tt_tracker_id">跟踪器ID</string>
+
+    <string name="tt_bump_current">删除它</string>
+    <string name="tt_authen_press_button">按动在TT服务器上的按键已接受KDS的连接</string>
+    <string name="tt_connect_error">不能连接TT服务器</string>
+    <string name="tt_unassigned">未设置</string>
+    <string name="tt_trackerid_error">未设置跟踪器</string>
+    <string name="tracker_id">分配跟踪器号</string>
+    <string name="tt_connect_successful">成功连接TT服务器</string>
+    <string name="station_id">终端ID</string>
+    <string name="reset">重置</string>
+    <string name="retrieve_from">接收自</string>
+    <string name="remove">删除</string>
+    <string name="add">添加</string>
+    <string name="del">删除</string>
+    <string name="active_stations">在线终端</string>
+    <string name="holder_id">Holder ID</string>
+
+    <string name="size">大小</string>
+    <string name="station_number">终端号</string>
+    <string name="ip_address">IP地址</string>
+    <string name="ip_port">IP端口</string>
+
+
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+    <!-- ************************************************************************************************************************************************************ -->
+
+    <!-- The strings for configuration dialog -->
+
+    <string name="title_activity_kdsactivity_settings">KDS设置</string>
+
+    <!-- ============================This is my code=========================================== -->
+    <!-- Headers Group -->
+    <string name="pref_header_general">一般设置</string>
+
+
+    <!-- vvvvvvvvvvvvvvvvvvvv KDS general configuration vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv -->
+
+    <!-- station number -->
+    <string name="pref_kds_general_title_number">终端号</string>
+
+    <!-- Data source -->
+    <string name="pref_kds_general_title_data_source">订单数据来源</string>
+    <string-array name="pref_kds_general_data_source_titles">
+        <item>TCP/IP</item>
+        <item>远程共享目录</item>
+    </string-array>
+
+    <!-- TCP/IP port number -->
+    <string name="pref_kds_general_title_tcp_port">数据 TCP 端口</string>
+
+    <!-- remote folder path -->
+    <string name="pref_kds_general_title_remote_folder">数据远程共享目录</string>
+
+    <!-- the tcp/port for stations communication -->
+    <string name="pref_kds_general_title_stations_port">终端之间通信TCP端口</string>
+
+    <!-- vvvvvvvvvvvvvvvvvvvv stations configuration vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv -->
+    <string name="pref_kds_stations_title_relations">终端间关系</string>
+
+
+    <string name="pref_kds_general_users">屏幕模式</string>
+    <string-array name="pref_kds_general_users_titles">
+        <item>单屏</item>
+        <item>分屏</item>
+    </string-array>
+    <!-- vvvvvvvvvvvvvvvvvvvv panels/orders display configuration vvvvvvvvvvvvvvvvvvvvvvvvvvvvv -->
+
+    <string name="pref_kds_panels_font">显示区属性</string>
+    <string name="pref_kds_panels_bg">显示区背景色</string>
+    <string name="pref_kds_panels_row_height">文字行高</string>
+    <string name="pref_kds_panels_viewer_bg">屏幕背景色</string>
+    <string name="pref_kds_panels_title_mode">显示区模式</string>
+    <string-array name="pref_kds_panels_mode_titles">
+        <item>横向扩展</item>
+        <item>纵向扩展</item>
+    </string-array>
+
+    <string name="pref_kds_panels_title_rows">显示区行数</string>
+    <string name="pref_kds_panels_title_cols">显示区列数</string>
+
+    <!-- panel number-->
+    <string name="pref_kds_panels_show_number">显示订单显示块的编号</string>
+    <string name="pref_kds_panels_number_font">订单显示块编号的字体</string>
+    <string name="pref_kds_panelnum_base">订单显示块编号的起始数</string>
+
+    <string name="pref_kds_panelnum_bgfg">订单显示块的背景和前景色</string>
+
+    <!-- Order caption-->
+    <string name="pref_kds_caption_color_according_to_time">订单头颜色变化</string>
+    <string name="pref_kds_caption_title">订单头属性</string>
+    <string name="pref_kds_caption_stage0_enabled">根据等待时间改变订单头颜色</string>
+    <string name="pref_kds_caption_stage1_enabled">根据等待时间改变订单头颜色</string>
+    <string name="pref_kds_caption_stage2_enabled">根据等待时间改变订单头颜色</string>
+    <string name="pref_kds_caption_time">时间（分钟）</string>
+    <string name="pref_kds_caption_color">颜色</string>
+    <string name="pref_kds_caption_contents">标头内容</string>
+    <string name="pref_kds_caption_left">订单头左侧显示的内容</string>
+    <string name="pref_kds_caption_center">订单头中间显示的内容</string>
+    <string name="pref_kds_caption_right">订单头右侧显示的内容</string>
+
+    <!-- -->
+    <string name="pref_kds_caption_2_contents">订单头第二行</string>
+
+    <string name="pref_kds_caption_2_left">订单头第二行左侧显示的内容</string>
+    <string name="pref_kds_caption_2_center">订单头第二行中间显示的内容</string>
+    <string name="pref_kds_caption_2_right">订单头第二行右侧显示的内容</string>
+    <string-array name="pref_kds_caption_content_titles">
+        <item>空</item>
+        <item>订单ID</item>
+        <item>等待时间</item>
+        <item>服务员</item>
+        <item>桌号</item>
+        <item>收银台号</item>
+        <item>订单类型</item>
+        <item>目的地</item>
+        <item>自定义信息</item>
+        <item>订单状态</item>
+        <item>订单图标</item>
+    </string-array>
+
+    <string name="pref_kds_caption_enable_cap2">启用订单头第二行</string>
+    <!--=================================================================-->
+
+    <string name="pref_kds_item_title">菜名显示</string>
+    <string name="pref_kds_item_enable_consolidate">合并相同菜名</string>
+
+
+    <string name="pref_kds_item_highlight_mark">用字符标记选择的菜名</string>
+    <string name="pref_kds_item_bumped_mark">用字符标记删除的菜名</string>
+    <string name="pref_kds_item_bumped_mark_in_exp">在总台，其它终端删除的菜名用此字符标记</string>
+    <string name="pref_kds_item_mark_with_char">字符标记菜名</string>
+    <string name="pref_kds_item_void">用此字符标记取消的菜名</string>
+    <string name="pref_kds_item_changed">改变的菜名用此字符标记</string>
+    <string name="pref_kds_item_showing_method">菜名显示方法</string>
+    <string-array name="pref_kds_item_showing_method_titles">
+        <item>即时显示</item>
+        <item>隐藏最后菜名</item>
+        <item>只显示付款的订单</item>
+    </string-array>
+
+    <!-- condiments   -->
+    <string name="pref_kds_condiment_title">佐料属性</string>
+    <!--<string name="pref_kds_condiment_bg">Item backgound color</string>-->
+    <!--<string name="pref_kds_condiment_fg">Item color</string>-->
+    <string name="pref_kds_condiment_default_font">佐料字体</string>
+    <string name="pref_kds_condiment_start_position">佐料位置</string>
+    <string name="pref_kds_condiment_start_position_title">佐料开始位置</string>
+    <!-- premessage-->
+    <string name="pref_kds_premsg_title">附加消息显示</string>
+    <!--<string name="pref_kds_premsg_bg">Pre-message(Order message &amp;Item pre-modifier) backgound color</string>-->
+    <!--<string name="pref_kds_premsg_fg">Pre-message(Order message &amp;Item pre-modifier) color</string>-->
+    <string name="pref_premsg_font">附加消息（订单和菜名）字体</string>
+    <!-- footer -->
+    <string name="pref_kds_footer_title">脚注设置</string>
+    <string name="pref_kds_footer_enabled">启用脚注</string>
+    <string name="pref_kds_footer_left">脚注左边显示的内容</string>
+    <string name="pref_kds_footer_right">脚注右边显示的内容</string>
+    <string name="pref_kds_footer_center">脚注中心显示的内容</string>
+    <string name="pref_kds_footer_font">脚注的字体</string>
+
+    <string name="pref_kds_information_enabled">显示日志</string>
+    <string name="pref_kds_password_enabled">进入设置时需输入密码</string>
+    <string name="pref_kds_password_text">密码</string>
+
+    <string name="pref_kds_notification_enabled">启用删除通知</string>
+
+    <!-- -->
+    <string name="pref_kds_bumping_title">删除订单</string>
+    <string name="pref_kds_bumping_reserve_days">保存删除的订单X天</string>
+
+    <string name="pref_kds_bumping_by_panelnumber">用显示块编号删除订单</string>
+    <string-array name="pref_kds_bumping_by_panelnum_title">
+        <item>停用</item>
+        <item>双击</item>
+    </string-array>
+
+    <!-- -->
+    <string name="pref_kds_bumpbar_title">设置按键</string>
+
+    <string name="pref_kds_bumpbar_types">键盘类型</string>
+
+
+    <string name="pref_bumpbar_func_bump">删除</string>
+    <string name="pref_bumpbar_func_unbump">恢复</string>
+    <string name="pref_bumpbar_func_unbumplast">恢复最近</string>
+
+
+    <!-- Printer configurations -->
+    <string name="pref_kds_printer_title">打印机设置</string>
+    <string name="pref_kds_printer_enabled">启用打印机</string>
+
+    <string name="pref_kds_printer_port">打印机端口类型</string>
+
+
+    <string name="pref_kds_printer_type">打印机类型</string>
+    <string name="pref_kds_printer_ip">IP 地址</string>
+    <string name="pref_kds_printer_ipport">IP 端口号</string>
+    <string name="pref_kds_printer_serial">串口号</string>
+    <string name="pref_kds_printer_copies">打印份数</string>
+    <string name="pref_kds_printer_chars_width">每行显示字符个数</string>
+    <string name="pref_kds_printer_codepage">代码页</string>
+    <string name="pref_kds_printer_howtoprint">何时打印订单</string>
+    <string-array name="pref_kds_printer_howtoprint_titles">
+        <item>手动</item>
+        <item>当删除时</item>
+        <item>当接收到时</item>
+    </string-array>
+
+    <!--baudrate-->
+    <string name="pref_kds_printer_baudrate">波特率</string>
+
+    <!-- sort -->
+    <string name="pref_kds_orders_sort">订单排序</string>
+    <string name="pref_kds_orders_sort_rush_front">移动加急订单到队列前</string>
+    <!-- smart order -->
+    <string name="pref_kds_smartorder_title">聪明订单</string>
+    <string name="pref_kds_smartorder_enabled">启用聪明订单</string>
+    <string name="pref_kds_smartorder_showing">订单显示方法</string>
+    <string-array name="pref_kds_smartorder_showing_titles">
+        <item>变灰色</item>
+        <item>隐藏</item>
+    </string-array>
+
+    <string name="pref_kds_beeper_title">蜂鸣器</string>
+    <string name="pref_kds_beeper_enabled">启用蜂鸣器</string>
+    <string name="pref_kds_beeper_type">什么时候蜂鸣?</string>
+    <string-array name="pref_kds_beeper_type_titles">
+        <item>收到任意订单</item>
+        <item>加急订单</item>
+    </string-array>
+
+    <string name="pref_kds_highlight_title">属性高亮</string>
+    <string name="pref_kds_highlight_rush_enabled">高亮加急订单</string>
+    <string name="pref_kds_rush_bg">加急订单背景色</string>
+    <string name="pref_kds_rush_fg">加急订单文本色</string>
+    <string name="pref_kds_rush_bgfg">加急订单颜色</string>
+
+    <string name="pref_kds_highlight_fire_enabled">高亮特急订单</string>
+    <string name="pref_kds_fire_fg">特急订单文本色</string>
+    <string name="pref_kds_fire_bgfg">特急订单颜色</string>
+
+    <string name="pref_kds_highlight_dest_enabled">高亮目的地</string>
+    <string name="pref_kds_dest_bg">目的地背景色</string>
+    <string name="pref_kds_dest_fg">目的地文本色</string>
+    <string name="pref_kds_dest_bgfg">订单目的地颜色</string>
+
+    <string name="pref_kds_expalert_title">总台提醒</string>
+    <string name="pref_kds_panelnum_focus_enabled">用显示块编号选择</string>
+    <string name="pref_kds_exp_alert_enabled">启用总台提醒</string>
+
+    <string name="pref_kds_sum_title">统计</string>
+
+    <string name="pref_kds_sum_type">统计方法</string>
+    <string-array name="pref_kds_sum_type_titles">
+        <item>不比较佐料</item>
+        <item>比较佐料</item>
+    </string-array>
+
+    <string name="pref_kds_sum_position">统计显示位置</string>
+    <string-array name="pref_sum_position_titles">
+        <item>右侧</item>
+        <item>顶部</item>
+    </string-array>
+
+    <string name="pref_kds_sum_order_by">统计订单方式</string>
+    <string-array name="pref_sum_order_by_titles">
+        <item>降序</item>
+        <item>升序</item>
+    </string-array>
+
+    <string name="id">ID</string>
+    <string name="ip">IP</string>
+    <string name="port">端口</string>
+    <string name="func">功能</string>
+    <string name="mirror">镜像</string>
+    <string name="slave_func">副终端功能</string>
+    <string name="slave">副终端号</string>
+    <string name="backup">备份</string>
+    <string name="status">状态</string>
+    <string name="expo">总台</string>
+
+    <string name="pref_kds_touch_font">触控按钮字体</string>
+    <string name="pref_kds_touch_title">触摸按钮</string>
+    <string name="pref_kds_touch_next_enabled">启用【下一个】触控按钮</string>
+    <string name="pref_kds_touch_prev_enabled">启用【上一个】触控按钮</string>
+    <string name="pref_kds_touch_up_enabled">启用【向上】触控按钮</string>
+    <string name="pref_kds_touch_down_enabled">启用【向下】触控按钮</string>
+    <string name="pref_kds_touch_bump_enabled">启用【删除】触控按钮</string>
+    <string name="pref_kds_touch_unbump_enabled">启用【恢复】触控按钮</string>
+    <string name="pref_kds_touch_unbumplast_enabled">启用【恢复最近】触控按钮</string>
+    <string name="pref_kds_touch_sum_enabled">启用【统计】触控按钮</string>
+    <string name="pref_kds_touch_transfer_enabled">启用【转移】触控按钮</string>
+    <string name="pref_kds_touch_sort_enabled">启用【排序】触控按钮</string>
+    <string name="pref_kds_touch_park_enabled">启用【暂缓】触控按钮</string>
+    <string name="pref_kds_touch_unpark_enabled">启用【回调】触控按钮</string>
+    <string name="pref_kds_touch_print_enabled">启用【打印】触控按钮</string>
+    <string name="pref_kds_touch_more_enabled">启用【更多】触控按钮</string>
+    <string name="pref_kds_touch_test_enabled">启用【测试】触控按钮</string>
+    <string name="pref_kds_touch_buildcard_enabled">启用【菜单】触控按钮</string>
+    <string name="pref_kds_touch_training_enabled">启用【培训】触控按钮</string>
+    <string name="pref_kds_touch_page_enabled">启用【呼叫】触控按钮</string>
+
+    <string name="pref_kds_screen_title_font">屏幕标头字体</string>
+    <string name="pref_kds_screen_show_time">在屏幕头显示时间日期</string>
+
+    <string name="pref_kds_bump_confirm_enabled">删除时显示确认对话框</string>
+
+    <string name="pref_kds_orders_display">订单显示</string>
+
+    <string name="pref_kds_category_orders">订单</string>
+    <string name="pref_kds_category_ordercontent">订单内容</string>
+    <string name="pref_kds_category_footer">订单脚注</string>
+    <string name="pref_kds_category_operations">订单操作</string>
+    <string name="pref_kds_category_others">其它</string>
+    <string name="pref_kds_category_extra_func">扩展功能</string>
+
+    <string name="pref_order_focus_color">选择的边框颜色</string>
+    <string name="pref_order_border_color">边框颜色</string>
+
+    <string name="pref_order_caption_normal_font">标头字体</string>
+
+    <string name="pref_kds_item_premsg_above">在菜名顶部显示信息</string>
+    <string name="pref_kds_order_premsg_bottom">订单底部显示消息</string>
+
+    <string name="item_font">菜名的字体</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="focus_next">焦点移到下一个</string>
+    <string name="focus_prev">焦点移到前一个</string>
+    <string name="focus_up">焦点上移</string>
+    <string name="focus_down">焦点下移</string>
+    <string name="show_summary">隐藏或显示统计</string>
+    <string name="transfer_order">转移订单到其它终端</string>
+    <string name="sort_orders">订单排序</string>
+    <string name="park">暂缓</string>
+    <string name="bumpbar_unpark">回调</string>
+    <string name="page">呼叫</string>
+    <string name="print">打印</string>
+    <string name="buildcard">菜谱</string>
+    <string name="training">培训</string>
+    <string name="enable_userb_bumpbar">启用用户B的键盘</string>
+    <string name="switch_user">交换用户焦点</string>
+
+    <string name="pref_message_from_primary">转移自主终端的订单消息</string>
+    <string name="pref_from_primary_text">消息</string>
+    <string name="pref_from_primary_font">字体</string>
+
+    <string name="from_primary_default_text">----转移自主终端----</string>
+    <string name="pref_kds_hide_navigation_bar">隐藏导航条</string>
+
+    <string name="pref_kds_media_title">菜谱/培训</string>
+    <string name="pref_kds_media_auto_delay">图片自动变换（秒）</string>
+    <string name="pref_kds_media_default_vol">默认音量(0--15)</string>
+
+    <string name="pref_kds_panel_border_width">显示块边框大小</string>
+    <string name="pref_kds_bumping_auto_enabled">启用自动删除订单</string>
+    <string name="pref_kds_bumping_auto_minutes">自动删除等待时间（分钟）</string>
+
+    <string name="pref_kds_bumping_double_queue_enabled">利用总台删除排队订单</string>
+    <string name="pref_kds_bumping_double_queue_enabled_sum">总台第一次按删除改状态为“完成”， 第二次为删除总台和排队终端的订单</string>
+
+    <string name="pref_queue_show_order_id">显示订单ID</string>
+    <string name="queue_order_id_font">订单号字体</string>
+    <string name="pref_queue_show_customer_name">显示客户名</string>
+    <string name="queue_customer_name_font">客户名字体</string>
+    <string name="pref_queue_show_order_timer">显示订单时间</string>
+    <string name="queue_order_timer_font">等待时间字体</string>
+    <string name="pref_queue_show_custom_message">显示排序的自定义信息</string>
+    <string name="queue_custom_message_font">自定义信息字体</string>
+    <string name="pref_queue_move_ready_to_front">准备好的定单前移</string>
+    <string name="pref_queue_simple_show_received_col">显示[接收到]列</string>
+    <string name="pref_queue_simple_show_preparation_col">显示[准备中]列</string>
+    <string name="pref_queue_simple_show_ready_col">显示[完成]列</string>
+    <string name="pref_queue_simple_show_pickup_col">显示[领取]列</string>
+    <string name="pref_queue_flash_ready_order">闪烁准备好的订单</string>
+    <string name="pref_queue_flash_ready_customer_name">闪烁完成订单的客户名</string>
+    <string name="pref_queue_flash_ready_order_status">闪烁完成订单</string>
+    <string name="queue_order_received_message">订单接收时的信息</string>
+    <string name="queue_order_received_font">接收到订单状态字体</string>
+    <string name="queue_order_preparation_message">订单在准备状态信息</string>
+    <string name="queue_order_preparation_font">订单在准备状态字体</string>
+    <string name="queue_order_ready_message">订单准备好信息</string>
+    <string name="queue_order_ready_font">订单完成状态字体</string>
+    <string name="queue_order_pickup_message">提取状态信息</string>
+    <string name="queue_order_pickup_font">提取状态字体</string>
+    <string name="pref_queue_cols">列数(1-4)</string>
+    <string name="pref_queue_cell_height">订单显示区高度</string>
+    <string name="pref_queue_panel_ratio">排序区比例(属性：状态)</string>
+
+    <string name="pref_queue_more_orders_message">更多订单信息</string>
+    <string name="more_orders">更多订单</string>
+    <string name="pref_kds_queue_title">排队属性</string>
+    <string name="pref_queue_bg">背景色</string>
+    <string name="pref_queue_simple_line_color">列分隔线颜色</string>
+
+    <string name="pref_queue_show_finished_orders_at_right">在右侧显示完成的订单</string>
+
+    <string name="queue_title_message">标头信息</string>
+    <string name="queue_default_title">订单状态</string>
+
+    <string name="pref_kds_sound_title">声音</string>
+    <string name="pref_kds_sound_enabled">启用声音</string>
+    <string name="pref_kds_sound_bump_order">删除订单的声音</string>
+    <string name="pref_kds_sound_new_order">新订单的声音</string>
+    <string name="pref_kds_sound_order_changed">订单被修改</string>
+
+    <string name="pref_kds_sound_duration">声音持续时间(秒)</string>
+    <string name="pref_kds_sound_transfer_order">转移订单</string>
+    <string name="pref_kds_sound_backup_activation">备份终端工作</string>
+
+    <string name="pref_kds_sound_backup_station_orders_received">接收到备份终端的订单</string>
+    <string name="pref_kds_sound_order_timer_alert1">订单时间提醒 1</string>
+    <string name="pref_kds_sound_order_timer_alert2">订单时间提醒 2</string>
+    <string name="pref_kds_sound_order_timer_alert3">订单时间提醒 3</string>
+
+    <string name="pref_kds_sound_expo_order_complete">收集订单完成</string>
+
+
+
+    <string name="pref_queue_auto_pages_switch_duration">自动翻页时间（秒）</string>
+
+    <string name="relation_error_expo_as_slave">副终端不能是总台，请改正</string>
+
+    <string name="pref_tracker_title">桌位跟踪</string>
+    <string name="pref_tracker_enabled">启用桌位跟踪</string>
+    <string name="pref_tracker_enabled_summary">用跟踪器的到客户位置</string>
+    <string name="pref_tracker_ip">跟踪器服务器IP地址</string>
+    <string name="pref_tracker_number_from_userinfo">从\"UserInfo\" 中的到跟踪器号</string>
+    <string name="pref_tracker_number_from_userinfo_summary">POS程序用 \"UserInfo\" 来传送跟踪器编号</string>
+
+    <string name="pref_kds_tracker_map">位置ID和位置对应表</string>
+    <string name="tracker_title_message">标头信息</string>
+    <string name="tracker_default_title">跟踪器位置</string>
+    <string name="pref_tracker_cols">跟踪显示列数(1-4)</string>
+    <string name="pref_tracker_cell_height">显示区高度</string>
+    <string name="pref_tracker_auto_pages_switch_duration">自动翻页时间（秒）</string>
+    <string name="tracker_order_name_font">订单号字体</string>
+    <string name="tracker_table_name_font">座位信息字体</string>
+    <string name="pref_tracker_more_orders_message">更多订单消息</string>
+    <string name="pref_tracker_auto_assign_timeout">自动分配跟踪器号等待时间(秒)</string>
+    <string name="pref_tracker_auto_remove_after_expo_bump_timeout">最长保留订单时间自总台删除订单后(分钟)</string>
+    <string name="pref_tracker_alert_order_not_bump_timeout">最长保留未删除订单时间(分钟)</string>
+    <string name="pref_tracker_alert_font">警告的字体</string>
+    <string name="pref_tracker_enable_auto_bump">启用自动删除</string>
+
+    <string name="pref_pager_id_from_userinfo">用\"UserInfo\" 的到呼叫器号</string>
+    <string name="pref_pager_id_from_userinfo_summary">POS程序用 \"UserInfo\" 传递呼叫器号</string>
+    <string name="pref_pager_enabled">启用呼叫器</string>
+    <string name="pref_pager_delay">总台删除订单后呼叫等待时间</string>
+    <string name="pref_pager_title">呼叫器</string>
+    <string name="addon">后添加</string>
+    <string name="edit">编辑</string>
+    <string name="find">查询</string>
+    <string name="found_new_version">发现新版本</string>
+    <string name="more">更多</string>
+
+    <string name="restart_kds_as_language">为了改变语言为 # KDS 需要重启,你确定要还语言并现在重启吗?</string>
+    <string name="update_later">以后</string>
+    <string name="table_name">桌位号</string>
+    <string name="str_new">新的</string>
+    <string name="pref_queue_mode">显示模式</string>
+    <string name="pref_kds_printer_template">票据模板</string>
+    <string name="pref_kds_category_accessories">附件</string>
+    <string name="pref_kds_fire_bg">特急订单背景</string>
+    <string name="pref_kds_exp_alert_color">改显示块颜色为</string>
+    <string name="pref_kds_exp_alert_change_panel">改颜色为</string>
+    <string name="pref_kds_sound_unbump_order">恢复订单的声音</string>
+    <string name="confirm_broadcast_relations">是否更新其它终端的设置？</string>
+    <string name="retrieve_remote_settings">取得远程设置信息</string>
+
+    <string name="new_folder">新目录</string>
+    <string name="new_folder_name">目录名</string>
+    <string name="fail_to_create_folder">不能创建 \"#\" 目录</string>
+    <string name="up">上层目录</string>
+    <string name="select_order_status">选择订单 [" # "] 状态</string>
+
+    <string name="manually">手动</string>
+    <string-array name="pref_keyboard_type_titles" >
+        <item>标准键盘</item>
+        <item>Bump bar Option-A</item>
+        <item>Bump bar Option-B</item>
+        <item>Bump bar Option-C</item>
+        <item>Bump bar Option-D</item>
+        <item>Bump bar Option-E</item>
+        <item>Bump bar Option-G</item>
+    </string-array>
+
+    <string-array name="pref_kds_printer_port_titles" >
+        <item>USB</item>
+        <item>TCP/IP</item>
+        <item>串口</item>
+    </string-array>
+
+    <string name="choose_sound">选择声音</string>
+
+    <string name="waiting_for_config_data">等待设置数据...</string>
+    <string name="waiting_for_new_connection">等待连接...</string>
+    <string name="station_is_not_active">终端不在线...</string>
+    <string name="waiting_for_connecting">等待连接...</string>
+    <string name="can_not_get_file">得不到文件:#</string>
+
+    <string name="pref_kds_language" >语言（Language）</string>
+    <string-array name="pref_kds_language_titles" >
+        <item>英语（English）</item>
+        <item>中文</item>
+
+    </string-array>
+
+    <string name="error_folder_permission">远程目录必须有读写权限， 请改正</string>
+    <string name="can_not_remove_smb_file">不能删除远程文件 #</string>
+
+    <string name="ignore_and_save">强制保存</string>
+    <string name="modify_setting">更改设置</string>
+    <string name="cancel_setting">取消设置</string>
+    <string name="smb_folder_lost">不能打开远程文件夹 #</string>
+    <string name="failed_to_open_remote_folder">登录失败：未知用户名或密码错误</string>
+    <string name="folder_not_existed">文件夹不存在</string>
+    <string name="english">英语</string>
+    <string name="chinese">中文</string>
+    <string name="data_restored">数据已从 # 恢复</string>
+    <string name="pref_kds_bumping_reserve_max">备份删除订单的数量</string>
+
+    <string name="pref_kds_auto_backup_enabled">启动自动备份数据库和设置</string>
+    <string name="pref_kds_auto_backup_hours">自动备份间隔(小时)</string>
+
+
+    <string name="restore_customer_backup_db">恢复用户备份的数据库</string>
+    <string name="restore_auto_backup_db">恢复自动备份的数据库</string>
+
+    <string name="restore_db_successfully">成功恢复数据库</string>
+    <string name="restore_db_failed">恢复数据库失败</string>
+    <string name="menu_activity_restore">恢复数据库</string>
+    <string name="confirm_restore_db">是否恢复数据库和设置?</string>
+    <string name="run_database_utility">启动数据库工具</string>
+    <string name="restore_database">恢复数据库</string>
+    <string name="ignore">忽略</string>
+    <string name="reset_database">重置数据库</string>
+    <string name="abort">退出app</string>
+    <string name="db_error_detected">数据库有错误</string>
+    <string name="db_will_clear">数据库要被清除!</string>
+    <string name="data_will_lost">数据将丢失!</string>
+
+
+    <string name="open_file">打开文件</string>
+    <string name="no_rights_to_access">无访问权限!</string>
+    <string name="browse">浏览Browse</string>
+    <string name="data_restore_failed">从 # 恢复数据失败</string>
+    <string name="load">Load</string>
+    <string name="load_old_db_or_not">There are old data in database, do you want to load them?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="time">Time</string>
+    <string name="statistic_report">Statistic report</string>
+    <string name="daily_report">Daily report</string>
+    <string name="weekly_report">Weekly report</string>
+    <string name="monthly_report">Monthly report</string>
+    <string name="one_time_report">One Time report</string>
+    <string name="day_of_week">Day of Week</string>
+    <string name="day_of_month">Day of Month</string>
+    <string name="total">Total</string>
+
+    <string name="mins">mins</string>
+    <string name="hour_1">1 hr</string>
+    <string name="hours_8">8 hrs</string>
+    <string name="hours_12">12 hrs</string>
+    <string name="mins_15">15 mins</string>
+    <string name="mins_30">30 mins</string>
+
+    <string name="jan">Jan.</string>
+    <string name="feb">Feb.</string>
+    <string name="mar">Mar.</string>
+    <string name="apr">Apr.</string>
+    <string name="may">May</string>
+    <string name="jun">Jun.</string>
+    <string name="jul">Jul.</string>
+    <string name="aug">Aug.</string>
+    <string name="sep">Sep.</string>
+    <string name="oct">Oct.</string>
+    <string name="nov">Nov.</string>
+    <string name="dec">Dec.</string>
+
+    <string name="sunday">Sun</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+
+    <string name="queue_expo_title">Queue-Expo Station</string>
+    <string name="qexpo_bumpbar_pickup">Ready for pickup key</string>
+    <string name="qexpo_bumpbar_unpickup">Unready for pickup key</string>
+    <string name="pref_kds_qexpo_title">Queue-Expo</string>
+
+
+
+    <string name="pref_tracker_id_from_userinfo_or_guesttable">The table-tracker number is from \"UserInfo\" or \"GuestTable\" tag</string>
+    <string-array name="pref_trackerpager_userinfo_guesttable_titles">
+        <item>None</item>
+        <item>UserInfo</item>
+        <item>GuestTable</item>
+    </string-array>
+
+    <string name="pref_pager_id_from_userinfo_guesttable">The pager number is from \"UserInfo\" or \"GuestTable\" tag</string>
+    <string name="tracker_reverse_color_ttid_empty">Reverse color if tracker-id is empty</string>
+
+    <string name="pref_tracker_show_assigned_tracker_id">Show assigned tracker ID</string>
+    <string name="pref_tracker_id_font">Tracker ID font</string>
+    <string name="pref_tracker_auto_assign_id">Enable Auto assign tracker ID</string>
+    <string name="tt_extra_id_location">Location</string>
+    <string name="tracker_can_not_find">Can not find TT</string>
+    <string name="tt_discorvery_failed">Stop Discovery Failed</string>
+    <string name="tt_start_discovery_failed">Start Discovery Failed</string>
+    <string name="tt_service_lost">Service Lost</string>
+    <string name="tt_gateway_find">TT gateway Found</string>
+    <string name="tt_discovery_stop">Discovery Stopped</string>
+    <string name="tt_discovery_started">Discovery Started</string>
+    <string name="tt_need_reset">Connection to gateway is not made, press button in gateway to connect.</string>
+
+    <string name="pref_kds_general_users_orientation">Screens orientation</string>
+    <string-array name="pref_kds_general_users_orientation_titles">
+        <item>Left and right</item>
+        <item>Up and down</item>
+    </string-array>
+
+    <string name="pref_kds_general_title">Customized title</string>
+    <string name="pref_kds_general_users_ratio">Screen ratio</string>
+    <string name="pref_kds_general_subtitle_font">Screen subtitle font</string>
+    <string name="pref_kds_general_subtitle_b_text">Screen 0 title</string>
+    <string name="pref_kds_general_subtitle_a_text">Screen 0 title</string>
+    <string name="screen_a">Screen 0</string>
+    <string name="screen_b">Screen 1</string>
+    <string name="summary_for">Summary for</string>
+    <string name="summary">Summary</string>
+
+    <string name="pref_kds_screenb_orders_display">Screen 1 display</string>
+    <string name="pref_queue_simple_combine_status1">Combine status 1 to</string>
+    <string name="pref_queue_simple_combine_status2">Combine status 2 to</string>
+    <string name="pref_queue_simple_combine_status3">Combine status 3 to</string>
+    <string name="pref_queue_simple_combine_status4">Combine status 4 to</string>
+    <string-array name="pref_queue_combine_status1_titles">
+        <item>Status 2</item>
+        <item>Status 3</item>
+        <item>Status 4</item>
+    </string-array>
+    <string-array name="pref_queue_combine_status2_titles">
+        <item>Status 1</item>
+        <item>Status 3</item>
+        <item>Status 4</item>
+    </string-array>
+    <string-array name="pref_queue_combine_status3_titles">
+        <item>Status 1</item>
+        <item>Status 2</item>
+        <item>Status 4</item>
+    </string-array>
+    <string-array name="pref_queue_combine_status4_titles">
+        <item>Status 1</item>
+        <item>Status 2</item>
+        <item>Status 3</item>
+    </string-array>
+
+    <string name="pref_queue_id_mode_line_bg">ID mode break line background color</string>
+    <string name="line_items_display">Line items display</string>
+    <string name="lineitems_caption_font">Line items diaply caption font</string>
+    <string name="col_content">Columns count</string>
+    <string name="col_0_text">Column 0 text</string>
+    <string name="col_0_size">Column 0 size</string>
+    <string name="col_0_content">Column 0 content</string>
+    <string name="str_id">ID</string>
+    <string name="lineitems_col1_text">Column 1 text</string>
+    <string name="description">Description</string>
+    <string name="lineitems_col1_size">Column 1 size</string>
+    <string name="lineitems_col1_content">Column 1 content</string>
+    <string name="lineitems_col2_text">Column 2 text</string>
+    <string name="lineitems_col2_size">Column 2 size</string>
+    <string name="lineitems_col2_content">Column 2 content</string>
+    <string name="lineitems_col3_text">Column 3 text</string>
+    <string name="lineitems_col3_size">Column 3 size</string>
+    <string name="lineitems_col3_content">Column 3 content</string>
+    <string name="lineitems_col4_text">Column 4 text</string>
+    <string name="lineitems_col4_size">Column 4 size</string>
+    <string name="lineitems_col4_content">Column 4 content</string>
+    <string name="lineitems_col5_text">Column 5 text</string>
+    <string name="lineitems_col5_size">Column 5 size</string>
+    <string name="lineitems_col5_content">Column 5 content</string>
+    <string name="condiments">Condiments</string>
+    <string name="timer">Timer</string>
+    <string name="lineitems_caption_text">line items display caption text</string>
+
+    <string-array name="pref_kds_lineitems_cols_count_titles">
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+
+    </string-array>
+    <string-array name="pref_kds_lineitems_cols_content_titles">
+        <item>Order ID</item>
+        <item>Order status</item>
+        <item>Order type</item>
+        <item>Order table</item>
+        <item>Item description</item>
+        <item>Condiments</item>
+        <item>Quantity</item>
+        <item>Waiting time</item>
+        <item>Modifiers</item>
+        <item>Modifiers and condiments</item>
+    </string-array>
+    <string name="no_more_unbump_item">No more unbumped items</string>
+    <string name="advanced_summary">Advanced summary</string>
+    <string name="input_item_description">Input item description</string>
+    <string name="enable_advanced_summary">Enable advanced summary</string>
+    <string name="enable_smart_items_summary_format">Enable smart items summary format</string>
+    <string name="add_item">Add item</string>
+    <string name="browse_in_item_database">Browse in item database</string>
+    <string name="sum_bgfg_color">Summary background/foreground color</string>
+    <string name="screen_default_font">Screen default font</string>
+    <string name="rows">Rows:</string>
+    <string name="cols">Cols</string>
+    <string name="summary_items">Summary items</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="summary_panel_always_visible">Summary panel always visible</string>
+    <string name="warning">Warning</string>
+    <string name="no_data_in_db">No data in database.</string>
+    <string name="tab_display">Tab display</string>
+    <string name="input_destination">Input destination</string>
+    <string name="tab_display_next">Tab display next</string>
+    <string name="enable_tab_display">Enable tab display</string>
+    <string name="enabled_disply_mode">Enabled display mode</string>
+    <string name="down">Down</string>
+    <string name="empty">Empty</string>
+    <string name="find_folders">Find folders</string>
+    <string name="pref_title_database_keep_days">Number of days to keep data</string>
+    <string name="move_to_adjust_column_size">Move to adjust column size</string>
+    <string name="click_anywhere_to_add_new_column">Click anywhere to add new column</string>
+    <string name="click_and_drag_the_arrow_up_down_to_remove_column">Click and drag the arrow up/down to remove column</string>
+    <string name="icon_display">Icon Display</string>
+    <string name="icon_display_enabled">Icon display enabled</string>
+    <string name="use_local_folder_to_load_icon">Using local folder to load icon(png/bmp/jpg)</string>
+    <string name="setup_local_icon_folder">Setup local icon folder</string>
+    <string name="item_mark_setting">Item mark setting</string>
+    <string name="icon_folder_name_rule">Please use number.extension to name img file in select folder. e.g: 1.png, 2.jpg,5.bmp</string>
+    <string name="auto_bump_park_order_mins">Auto bump parked order minutes</string>
+    <string name="void_item_showing">Void item showing</string>
+    <string name="qty_changed">Qty changed</string>
+    <string name="enable_order_status_notify">Enable order status changed notification</string>
+    <string name="enable_item_qty_notify">Enable item quantity changed notifcation</string>
+    <string name="notification">Notification</string>
+    <string name="tab_display_text">Tab display text</string>
+    <string name="remote_support">Remote support</string>
+    <string name="sorted_orders">Sorted orders</string>
+    <string name="prep_mode_enabled">Smart order advance enabled</string>
+    <string name="smart_order_mode">Smart order mode</string>
+    <string name="log_mode">Log mode</string>
+    <string name="log_reserved_days">Reserve log file for X days</string>
+    <string name="log">Log</string>
+    <string name="input_condiment_description">Input condiment</string>
+    <string name="text_wrap">Text wrap</string>
+    <string name="focus_blink">Selected order blinking</string>
+    <string name="enable_line_items_display_mode">Enable line items display mode</string>
+    <string name="sorting_in_smart">Sorting in line Item display with smart order enable</string>
+    <string name="smart_timer_from_item_visible">Order timer start from item visible</string>
+    <string name="each_condiment_go_to_next_line">Each condiment/modifier go to next line</string>
+    <string name="show_last_n_of_order_id">Show last N digit of order ID</string>
+
+    <string-array name="pref_kds_item_mark_method">
+        <item>Internal icon</item>
+        <item>Char</item>
+        <item>Color</item>
+    </string-array>
+
+    <string-array name="pref_kds_void_item_showing_method_titles">
+        <item>Directly quantity Change</item>
+        <item>Insert VOID quantity line below item</item>
+    </string-array>
+
+    <string-array name="pref_kds_void_qty_mark_titles">
+        <item>Brackets ()</item>
+        <item>Negtive sign -</item>
+    </string-array>
+    <string-array name="pref_kds_smartorder_mode_titles">
+        <item>Disabled</item>
+        <item>Normal</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="pref_kds_log_mode_titles">
+        <item>None</item>
+        <item>Basic</item>
+        <item>Detail</item>
+    </string-array>
+
+    <string-array name="pref_queue_order_id_length_titles">
+        <item>All</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+
+
+    </string-array>
+
+    <string name="alert_disable_double_bump_queue">If you disable this option in Queue station, a Bumpbar is required to bump the order off Queue display.</string>
+    <string name="pwd_do_not_match">Passwords do not match.</string>
+    <string name="nand_lost">Cannot access NAND FLASH to save/load data, go to System Setting – Storage – NAND FLASH and click “Mount SD card” to mount the NAND FLASH.</string>
+    <string name="move_finished_order_to_front">Move finished orders to front of queue</string>
+    <string name="sd_disk_full">Database or sd-disk is full.</string>
+
+    <string name="pref_kds_item_partial_bumped_mark_in_expo">If item goes to multiple stations and partial stations bump this item, Expo shows partial finish mark</string>
+    <string name="expo_confirmation_bump">Expo confirmation bump</string>
+    <string name="expo_cannot_bump_unless_prep_bump_all">Expo cannot bump the order unless all its prep station bump the items</string>
+    <string name="pref_kds_touch_prev_page_enabled">Enable [prev page] touch button</string>
+    <string name="pref_kds_touch_next_page_enabled">Enable [next page] touch button</string>
+
+    <string name="touchpad_next_page">Next Page</string>
+    <string name="touchpad_prev_page">Prev Page</string>
+    <string name="avg_prep_time">AVG:</string>
+    <string name="real_time_period">Real time report period (mins)</string>
+    <string name="title">Title</string>
+    <string name="screen_title">Screen title</string>
+    <string name="show_avg_prep_time">Show average bump off time</string>
+    <string-array name="pref_real_period_titles" >
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+
+
+    </string-array>
+    <string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>
+    <string name="file_name">File name:</string>
+    <string name="confirm_bump_unpaid">Bump off unpaid order with confirmation</string>
+    <string name="confirm_bump_outstanding">Bump off outstanding order with confirmation</string>
+    <string-array name="pref_queue_sort_titles">
+        <item>Default</item>
+        <item>State change time, ascend</item>
+        <item>State change time, descend</item>
+
+    </string-array>
+    <string name="confirm_bump_unpaid_text">The order # is unpaid. Do you want to bump it?</string>
+    <string name="confirm_bump_outstanding_text">The order # contains outstanding items. Do you want to bump it?</string>
+    <string name="queue_status1_sort">Status 1 sort mode</string>
+    <string name="queue_status2_sort">Status 2 sort mode</string>
+    <string name="queue_status3_sort">Status 3 sort mode</string>
+    <string name="queue_status4_sort">Status 4 sort mode</string>
+
+
+    <string name="title_activity_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">User name</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This user name is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="enable_order_ack">Enable order acknowledgement</string>
+    <string name="username_field_required">Username required</string>
+    <string name="password_field_required">Password required</string>
+    <string name="no_license_available">There is no license available</string>
+    <string name="license_deactivated">This KDS Stations’s license is deactivated.</string>
+    <string name="updating_license_data">Updating license data ...</string>
+    <string name="retrieve_licenses_data">Retrieve licenses data ...</string>
+    <string name="retrieve_store_settings">Retrieve store settings ...</string>
+    <string name="logining">Login ...</string>
+    <string name="str_ok">OK</string>
+    <string name="activation">Activation</string>
+    <string name="str_cancel">Cancel</string>
+    <string name="no_selected_license_to_replace">No selected license to replace</string>
+    <string name="item_group_by_category">Group items by its category</string>
+    <string name="inactive">"(Inactive)"</string>
+</resources>

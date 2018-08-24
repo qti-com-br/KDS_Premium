@@ -1,0 +1,396 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <!--<com.bematechus.kds.KDSPreferenceFontPicker-->
+        <!--android:key="screen_title_font"-->
+        <!--android:defaultValue="/system/fonts/DroidSans.ttf,-3090381,-16777216,14"-->
+        <!--android:title="@string/pref_kds_screen_title_font"-->
+        <!--app:supportsColor="true"/>-->
+    <com.bematechus.kds.KDSPreferenceColorPicker
+        android:key="focus_bg"
+        android:defaultValue="@color/focus_bg"
+        android:title="@string/pref_order_focus_color" />
+    <com.bematechus.kds.KDSPreferenceColorPicker
+        android:key="block_border_bg"
+        android:defaultValue="@color/border_bg"
+        android:title="@string/pref_order_border_color" />
+    <CheckBoxPreference
+        android:key="blink_focus"
+        android:title="@string/focus_blink"
+        android:defaultValue="false" />
+    <!--<CheckBoxPreference-->
+        <!--android:key="screen_show_time"-->
+        <!--android:title="@string/pref_kds_screen_show_time"-->
+        <!--android:defaultValue="true" />-->
+
+
+    <com.bematechus.kds.KDSPreferenceColorPicker
+        android:key="viewer_bg"
+        android:defaultValue="0xff0e0e0e"
+        android:title="@string/pref_kds_panels_viewer_bg" />
+    <!--<CheckBoxPreference-->
+        <!--android:key="hide_navigation_bar"-->
+        <!--android:title="@string/pref_kds_hide_navigation_bar"-->
+        <!--android:defaultValue="false" />-->
+    <CheckBoxPreference
+        android:key="text_wrap"
+        android:title="@string/text_wrap"
+        android:defaultValue="false" />
+    <PreferenceScreen android:title="Icon setting  >">
+        <!--<CheckBoxPreference-->
+        <!--android:key="icon_enabled"-->
+        <!--android:title="@string/icon_display_enabled"-->
+        <!--android:defaultValue="false" />-->
+
+        <CheckBoxPreference
+            android:key="icon_folder_enabled"
+            android:title="@string/use_local_folder_to_load_icon"
+
+            android:disableDependentsState="true"
+            android:defaultValue="false" />
+
+        <com.bematechus.kds.KDSPreferenceFolderPicker
+            android:key="icon_folder"
+            android:defaultValue=""
+            android:summary="@string/icon_folder_name_rule"
+            android:title="@string/setup_local_icon_folder"
+
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_0"
+            android:defaultValue=""
+            android:title="Icon #0"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_1"
+            android:defaultValue=""
+            android:title="Icon #1"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_2"
+            android:defaultValue=""
+            android:title="Icon #2"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_3"
+            android:defaultValue=""
+            android:title="Icon #3"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_4"
+            android:defaultValue=""
+            android:title="Icon #4"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_5"
+            android:defaultValue=""
+            android:title="Icon #5"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_6"
+            android:defaultValue=""
+            android:title="Icon #6"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_7"
+            android:defaultValue=""
+            android:title="Icon #7"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_8"
+            android:defaultValue=""
+            android:title="Icon #8"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_9"
+            android:defaultValue=""
+            android:title="Icon #9"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_10"
+            android:defaultValue=""
+            android:title="Icon #10"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_11"
+            android:defaultValue=""
+            android:title="Icon #11"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_12"
+            android:defaultValue=""
+            android:title="Icon #12"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_13"
+            android:defaultValue=""
+            android:title="Icon #13"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_14"
+            android:defaultValue=""
+            android:title="Icon #14"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_15"
+            android:defaultValue=""
+            android:title="Icon #15"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_16"
+            android:defaultValue=""
+            android:title="Icon #16"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_17"
+            android:defaultValue=""
+            android:title="Icon #17"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_18"
+            android:defaultValue=""
+            android:title="Icon #18"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_19"
+            android:defaultValue=""
+            android:title="Icon #19"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_20"
+            android:defaultValue=""
+            android:title="Icon #20"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_21"
+            android:defaultValue=""
+            android:title="Icon #21"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_22"
+            android:defaultValue=""
+            android:title="Icon #22"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_23"
+            android:defaultValue=""
+            android:title="Icon #23"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_24"
+            android:defaultValue=""
+            android:title="Icon #24"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_25"
+            android:defaultValue=""
+            android:title="Icon #25"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_26"
+            android:defaultValue=""
+            android:title="Icon #26"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_27"
+            android:defaultValue=""
+            android:title="Icon #27"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_28"
+            android:defaultValue=""
+            android:title="Icon #28"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_29"
+            android:defaultValue=""
+            android:title="Icon #29"
+            android:dependency="icon_folder_enabled"
+            />
+
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_30"
+            android:defaultValue=""
+            android:title="Icon #30"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_31"
+            android:defaultValue=""
+            android:title="Icon #31"
+            android:dependency="icon_folder_enabled"
+            />
+        <com.bematechus.kds.KDSPreferenceIconPicker
+            android:key="icon_32"
+            android:defaultValue=""
+            android:title="Icon #32"
+            android:dependency="icon_folder_enabled"
+            />
+
+    </PreferenceScreen>
+
+    <PreferenceCategory android:title="@string/pref_kds_panels_font">
+        <com.bematechus.kds.KDSPreferenceColorPicker
+            android:key="panel_bg"
+            android:defaultValue="0xffffffff"
+            android:title="@string/pref_kds_panels_bg" />
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="panel_text_line_height"
+            android:title= "@string/pref_kds_panels_row_height"
+            android:defaultValue="14"
+            android:selectAllOnFocus="true"
+            android:inputType= "number"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
+
+
+    <!-- Panels mode -->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="panels_mode"
+        android:title="@string/pref_kds_panels_title_mode"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_panels_mode_titles"
+        android:entryValues="@array/pref_kds_panels_mode_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!-- Panels rows -->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="panels_rows"
+        android:title="@string/pref_kds_panels_title_rows"
+        android:defaultValue="2"
+        android:entries="@array/pref_kds_panels_rows_titles"
+        android:entryValues="@array/pref_kds_panels_rows_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!-- Panels cols -->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="panels_cols"
+        android:title="@string/pref_kds_panels_title_cols"
+        android:defaultValue="4"
+        android:entries="@array/pref_kds_panels_cols_titles"
+        android:entryValues="@array/pref_kds_panels_cols_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!-- show panel number-->
+    <CheckBoxPreference
+    android:key="panels_show_number"
+    android:title="@string/pref_kds_panels_show_number"
+    android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="bumpbar_panelnum_focus"
+        android:title="@string/pref_kds_panelnum_focus_enabled"
+        android:defaultValue="false" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="panelnum_base"
+        android:title="@string/pref_kds_panelnum_base"
+        android:defaultValue="0"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:dependency="panels_show_number"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <com.bematechus.kds.KDSPreferenceBGFGPicker
+        android:key="panelnum_bgfg"
+        android:defaultValue="-16769076,-1"
+        android:dependency="panels_show_number"
+        android:title="@string/pref_kds_panelnum_bgfg" />
+
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="panel_border_width"
+            android:title="@string/pref_kds_panel_border_width"
+            android:defaultValue="7"
+            android:selectAllOnFocus="true"
+            android:inputType="number"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
+
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_kds_orders_sort">
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="orders_sort_method"
+            android:title="@string/pref_kds_orders_sort"
+            android:defaultValue="0"
+            android:entries="@array/pref_kds_orders_sort_method_titles"
+            android:entryValues="@array/pref_kds_orders_sort_method_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <CheckBoxPreference
+            android:key="orders_sort_rush_front"
+            android:title="@string/pref_kds_orders_sort_rush_front"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="orders_sort_finished_front"
+            android:title="@string/move_finished_order_to_front"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_message_from_primary">
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="from_primary_text"
+            android:title="@string/pref_from_primary_text"
+            android:defaultValue="@string/from_primary_default_text"
+            android:inputType="text"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            />
+        <com.bematechus.kds.KDSPreferenceFontPicker
+            android:key="from_primary_font"
+            android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,12"
+            android:title="@string/pref_from_primary_font"
+            app:supportsColor="true"/>
+    </PreferenceCategory>
+
+
+
+</PreferenceScreen>

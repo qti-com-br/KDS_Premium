@@ -1,0 +1,33 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <!--<item android:id="@+id/action_cleardb" android:title="@string/menu_activity_cleardb"-->
+        <!--android:orderInCategory="100" app:showAsAction="never" />-->
+
+    <item android:id="@+id/action_showip" android:title="@string/menu_activity_showip"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_stations" android:title="@string/menu_activity_stations"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_touchpad" android:title="@string/menu_activity_touchpad"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_export" android:title="@string/menu_activity_export"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_import" android:title="@string/menu_activity_import"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_restore" android:title="@string/menu_activity_restore"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_remote_support" android:title="@string/remote_support"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_about" android:title="@string/about"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

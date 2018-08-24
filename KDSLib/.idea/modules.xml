@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/KDSLib.iml" filepath="$PROJECT_DIR$/KDSLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kdslib/kdslib.iml" filepath="$PROJECT_DIR$/kdslib/kdslib.iml" />
+    </modules>
+  </component>
+</project>

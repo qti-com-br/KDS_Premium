@@ -1,0 +1,170 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="caption_normal"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-5724506,-16777216,12"
+        android:title="@string/pref_order_caption_normal_font"
+        app:supportsColor="true"/>
+
+    <!--====================================================================================== -->
+    <PreferenceCategory android:title="@string/pref_kds_caption_color_according_to_time">
+        <!-- caption color according to the waiting time-->
+        <CheckBoxPreference
+            android:key="caption_enable_stage0"
+            android:title="@string/pref_kds_caption_stage0_enabled"
+            android:defaultValue="true" />
+
+        <!-- time -->
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="caption_stage0_time"
+            android:title="@string/pref_kds_caption_time"
+            android:defaultValue="1"
+            android:selectAllOnFocus="true"
+            android:inputType= "numberDecimal"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:dependency="caption_enable_stage0"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
+        <com.bematechus.kds.KDSPreferenceColorPicker
+            android:key="caption_stage0_color"
+            android:defaultValue="@color/stage0_bg"
+            android:dependency="caption_enable_stage0"
+            android:title="@string/pref_kds_caption_color" />
+        <!-- stage 1-->
+        <CheckBoxPreference
+            android:key="caption_enable_stage1"
+            android:title="@string/pref_kds_caption_stage1_enabled"
+            android:defaultValue="true" />
+        <!-- time -->
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="caption_stage1_time"
+            android:title="@string/pref_kds_caption_time"
+            android:defaultValue="2"
+            android:selectAllOnFocus="true"
+            android:inputType= "numberDecimal"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:dependency="caption_enable_stage1"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
+        <com.bematechus.kds.KDSPreferenceColorPicker
+            android:key="caption_stage1_color"
+            android:defaultValue="@color/stage1_bg"
+            android:dependency="caption_enable_stage1"
+            android:title="@string/pref_kds_caption_color" />
+        <!-- stage 2 -->
+        <CheckBoxPreference
+            android:key="caption_enable_stage2"
+            android:title="@string/pref_kds_caption_stage2_enabled"
+            android:defaultValue="true" />
+        <!-- time -->
+        <com.bematechus.kdslib.KDSEditTextPreference
+            android:key="caption_stage2_time"
+            android:title="@string/pref_kds_caption_time"
+            android:defaultValue="3"
+            android:selectAllOnFocus="true"
+            android:inputType= "numberDecimal"
+            android:capitalize="words"
+            android:singleLine="true"
+            android:dependency="caption_enable_stage2"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
+        <com.bematechus.kds.KDSPreferenceColorPicker
+            android:key="caption_stage2_color"
+            android:defaultValue="@color/stage2_bg"
+            android:dependency="caption_enable_stage2"
+            android:title="@string/pref_kds_caption_color" />
+    </PreferenceCategory>
+    <!--====================================================================================== -->
+    <PreferenceCategory android:title="@string/pref_kds_caption_contents">
+        <!-- caption left -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="caption_left"
+            android:title="@string/pref_kds_caption_left"
+            android:defaultValue="1"
+            android:entries="@array/pref_kds_caption_content_titles"
+            android:entryValues="@array/pref_kds_caption_content_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <!-- caption center -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="caption_center"
+            android:title="@string/pref_kds_caption_center"
+            android:defaultValue="4"
+            android:entries="@array/pref_kds_caption_content_titles"
+            android:entryValues="@array/pref_kds_caption_content_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <!-- caption right -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="caption_right"
+            android:title="@string/pref_kds_caption_right"
+            android:defaultValue="2"
+            android:entries="@array/pref_kds_caption_content_titles"
+            android:entryValues="@array/pref_kds_caption_content_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+    </PreferenceCategory>
+
+    <!-- caption second line -->
+    <PreferenceCategory android:title="@string/pref_kds_caption_2_contents">
+        <CheckBoxPreference
+            android:key="caption_enable_caption2"
+            android:title="@string/pref_kds_caption_enable_cap2"
+            android:defaultValue="false" />
+        <!-- caption2 left -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="caption2_left"
+            android:title="@string/pref_kds_caption_2_left"
+            android:defaultValue="0"
+            android:entries="@array/pref_kds_caption_content_titles"
+            android:entryValues="@array/pref_kds_caption_content_values"
+            android:dependency="caption_enable_caption2"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <!-- caption2 center -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="caption2_center"
+            android:title="@string/pref_kds_caption_2_center"
+            android:defaultValue="0"
+            android:entries="@array/pref_kds_caption_content_titles"
+            android:entryValues="@array/pref_kds_caption_content_values"
+            android:dependency="caption_enable_caption2"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <!-- caption2 right -->
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="caption2_right"
+            android:title="@string/pref_kds_caption_2_right"
+            android:defaultValue="0"
+            android:entries="@array/pref_kds_caption_content_titles"
+            android:entryValues="@array/pref_kds_caption_content_values"
+            android:dependency="caption_enable_caption2"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+    </PreferenceCategory>
+    <!--<ListPreference-->
+        <!--android:key="sync_frequency"-->
+        <!--android:title="@string/pref_title_sync_frequency"-->
+        <!--android:entries="@array/pref_sync_frequency_titles"-->
+        <!--android:entryValues="@array/pref_sync_frequency_values"-->
+        <!--android:defaultValue="180"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
+
+    <!--&lt;!&ndash; This preference simply launches an intent when selected. Use this UI sparingly, per-->
+         <!--design guidelines. &ndash;&gt;-->
+    <!--<Preference android:title="@string/pref_kds_caption_title">-->
+        <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
+    <!--</Preference>-->
+
+</PreferenceScreen>

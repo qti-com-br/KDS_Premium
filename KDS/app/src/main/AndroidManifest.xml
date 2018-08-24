@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bematechus.kds">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+
+    <permission
+        android:name="android.permission.HARDWARE_TEST"
+        android:label="hardware/permlab_hardware_test"
+        android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
+        android:protectionLevel="signature" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <application
+        android:name="com.bematechus.kdslib.KDSApplication"
+        android:allowBackup="true"
+        android:configChanges="keyboard|keyboardHidden|orientation"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:persistent="true"
+        android:theme="@style/AppTheme">
+        <receiver android:name=".BootBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".ApkActionsReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <!-- android:configChanges="keyboard|keyboardHidden|orientation|screenSize" -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- android:theme="@style/settings_style" -->
+        <activity
+            android:name=".KDSUIConfiguration"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:label="@string/title_activity_kdsactivity_settings" />
+        <!-- <activity -->
+        <!-- android:name=".KDSUIStations" -->
+        <!-- android:label="@string/title_activity_kdsuistations" > -->
+        <!-- </activity> -->
+        <activity
+            android:name=".KDSActivityUnbump"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:label="@string/title_activity_kdsactivity_unbump" />
+        <!-- <activity -->
+        <!-- android:name=".KDSUIStationsConfig" -->
+        <!-- android:label="@string/title_activity_kdsuistations_config" > -->
+        <!-- </activity> -->
+        <activity
+            android:name=".KDSUIRetriveConfig"
+            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:label="@string/title_activity_kdsuiretrive_config" />
+        <!--
+             ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".KDSActivityMedia"
+            android:configChanges="keyboard|keyboardHidden|orientation" />
+
+        <!-- <service -->
+        <!-- android:name=".KDSService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" /> -->
+        <service
+            android:name=".SoundService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".KDSActivityUtility" />
+        <activity
+            android:name=".ActivityLogin"
+            android:label="@string/title_activity_activity_login"></activity>
+    </application>
+
+</manifest>

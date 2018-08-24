@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".ScheduleActivity">
+    <item android:id="@+id/action_schedule_add" android:title="@string/menu_schedule_add"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <!--<item android:id="@+id/action_schedule_edit" android:title="@string/menu_schedule_edit"-->
+        <!--android:orderInCategory="100" app:showAsAction="never" />-->
+
+    <!--<item android:id="@+id/action_schedule_remove" android:title="@string/menu_schedule_remove"-->
+        <!--android:orderInCategory="100" app:showAsAction="never" />-->
+    <item android:id="@+id/action_schedule_clearall" android:title="@string/menu_schedule_clear_all"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+</menu>

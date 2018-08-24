@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="2">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/categories"
+            android:id="@+id/textView28"
+            android:background="@color/relations_headers_bg"
+            android:textColor="@color/relations_headers_fg"
+            android:textAlignment="center"
+            android:gravity="center" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lstCategory"
+            android:layout_gravity="center_horizontal"
+            android:choiceMode="singleChoice" />
+    </LinearLayout>
+    <View
+        android:layout_width="0.5px"
+        android:layout_height="match_parent"
+        android:background="#B8B8B8"
+        android:visibility="visible" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/items"
+            android:id="@+id/textView29"
+            android:background="@color/relations_headers_bg"
+            android:textColor="@color/relations_headers_fg"
+            android:textAlignment="center"
+            android:gravity="center" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lstItems"
+            android:choiceMode="singleChoice" />
+    </LinearLayout>
+
+</LinearLayout>

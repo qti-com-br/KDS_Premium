@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="relations_headers_bg">#888f94</color>
+    <color name="relations_headers_fg">#f8fafc</color>
+    <color name="listview_focus_bg">@android:color/holo_blue_light</color>
+    <color name="kds_title_bg">#d0d833</color>
+    <color name="kds_title_fg">#000000</color>
+    <color name="grid_border_color">#b6b6b6</color>
+    <color name="grid_inside_cell_border">#d7d7d7</color>
+    <color name="settings_page_bg">#e5e1d2</color>
+    <drawable name="settings_page_bg">@color/settings_page_bg</drawable>
+    <color name="settings_headers_bg">#d7d7d7</color>
+    <color name="list_focuseditem_bg">#ff29a2c8</color>
+    <color name="list_focuseditem_fg">#ff29a2c8</color>
+    <color name="separator_line_color">#B8B8B8</color>
+    <color name="filter_title_color">#436481</color>
+    <color name="category_name_color">#bebebe</color>
+
+</resources>

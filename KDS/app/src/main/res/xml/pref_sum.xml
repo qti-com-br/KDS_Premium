@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="sum_type"
+        android:title="@string/pref_kds_sum_type"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_sum_type_titles"
+        android:entryValues="@array/pref_kds_sum_type_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="sum_position"
+        android:title="@string/pref_kds_sum_position"
+        android:defaultValue="0"
+        android:entries="@array/pref_sum_position_titles"
+        android:entryValues="@array/pref_sum_position_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="sum_order_by"
+        android:title="@string/pref_kds_sum_order_by"
+        android:defaultValue="0"
+        android:entries="@array/pref_sum_order_by_titles"
+        android:entryValues="@array/pref_sum_order_by_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kds.KDSPreferenceBGFGPicker
+        android:key="sum_bgfg"
+        android:defaultValue="-5724506,-16777216"
+        android:title="@string/sum_bgfg_color" />
+
+
+</PreferenceScreen>

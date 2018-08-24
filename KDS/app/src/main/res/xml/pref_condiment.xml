@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="condiment_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,12"
+        android:title="@string/pref_kds_condiment_default_font"
+        app:supportsColor="true"/>
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="condiment_start_position"
+        android:title="@string/pref_kds_condiment_start_position"
+        android:defaultValue="10"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:dialogTitle="@string/pref_kds_condiment_start_position_title"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSPreferenceColorPicker-->
+        <!--android:key="condiment_bg"-->
+        <!--android:defaultValue="0xff99cc00"-->
+        <!--android:title="Item background color" />-->
+    <!--<com.bematechus.kds.KDSPreferenceColorPicker-->
+        <!--android:key="condiment_fg"-->
+        <!--android:defaultValue="0xff99cc00"-->
+        <!--android:title="Item text color" />-->
+</PreferenceScreen>

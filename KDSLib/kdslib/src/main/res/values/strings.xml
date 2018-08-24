@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">KDSLib</string>
+    <string name="message">Message</string>
+    <string name="empty">Empty</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <!-- kdssmbfile class use this strings -->
+    <string name="folder_not_existed">The folder is not existed.</string>
+    <string name="smb_folder_lost"> Can not access remote folder #</string>
+    <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
+    <string name="new_folder">New folder</string>
+    <string name="new_folder_name">New folder name</string>
+    <string name="fail_to_create_folder">Failed to create \"#\" folder</string>
+    <string name="up">Up</string>
+    <string name="find_folders">Find folders</string>
+    <!---->
+    <string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>
+    <string name="can_not_remove_smb_file">Can not remove remote file #</string>
+
+    <string name="english">English</string>
+    <string name="chinese">Chinese</string>
+
+    <string name="downloading">Downloading ...</string>
+    <string name="check_new_version">Check new version</string>
+    <string name="current_version">Current version</string>
+    <string name="it_is_latest_version">It is latest version</string>
+    <string name="update_canceled">Updating canceled</string>
+    <string name="found_new_version">Found new version</string>
+    <string name="update_now">Upgrade now</string>
+    <string name="update_later">Later</string>
+    <string name="update">Upgrade</string>
+    <string name="checking">Checking ...</string>
+    <string name="update_error_download_error">Errors while downloading apk file</string>
+    <string name="update_error_download_apk_error">Can not download apk file</string>
+    <string name="update_error_apk_error">The apk file is wrong</string>
+    <string name="update_error_xml_error">Can not download updating file</string>
+    <string name="do_you_update">There is new version. Do you want to upgrade it now?</string>
+    <string name="invalid_update_file">Invalid update file</string>
+    <string name="update_new_version">New version: #, recommended rate: $</string>
+
+    <string name="mins">mins</string>
+    <string name="hour_1">1 hr</string>
+    <string name="hours_8">8 hrs</string>
+    <string name="hours_12">12 hrs</string>
+    <string name="mins_15">15 mins</string>
+    <string name="mins_30">30 mins</string>
+
+    <string name="sunday">Sun</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+
+    <string name="jan">Jan.</string>
+    <string name="feb">Feb.</string>
+    <string name="mar">Mar.</string>
+    <string name="apr">Apr.</string>
+    <string name="may">May</string>
+    <string name="jun">Jun.</string>
+    <string name="jul">Jul.</string>
+    <string name="aug">Aug.</string>
+    <string name="sep">Sep.</string>
+    <string name="oct">Oct.</string>
+    <string name="nov">Nov.</string>
+    <string name="dec">Dec.</string>
+
+    <string name="time">Time</string>
+    <string name="item_description">Item description</string>
+    <string name="total">Total</string>
+
+    <string name="daily_report">Daily report</string>
+    <string name="weekly_report">Weekly report</string>
+    <string name="monthly_report">Monthly report</string>
+    <string name="one_time_report">One Time report</string>
+
+    <string name="day_of_week">Day of Week</string>
+    <string name="day_of_month">Day of Month</string>
+    <string name="statistic_report">Statistic report</string>
+    <string name="waiting">Waiting ...</string>
+
+    <string name="background">Background</string>
+    <string name="foreground">Foreground</string>
+    <string name="size">Size</string>
+    <string name="main_title">KitchenGo Premium KDS</string>
+</resources>

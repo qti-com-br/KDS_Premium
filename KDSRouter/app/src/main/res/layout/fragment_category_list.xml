@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/settings_headers_bg">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/filter_title_color">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/categories"
+            android:id="@+id/textView36"
+            android:layout_gravity="center_vertical"
+            android:textColor="#ffffff"
+            android:paddingLeft="@dimen/text_indentation" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="fill_parent"
+                android:id="@+id/btnCategoryNew"
+                android:layout_gravity="right"
+                android:src="@drawable/add" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lstCategory"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/textview_border"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:choiceMode="singleChoice" />
+
+</LinearLayout>
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+    <!--<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:id="@+id/list"-->
+    <!--android:name="com.bematechus.kdsrouter.CategoryFragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginRight="16dp"-->
+    <!--app:layoutManager="LinearLayoutManager"-->
+    <!--tools:context="com.bematechus.kdsrouter.CategoryFragment"-->
+    <!--tools:listitem="@layout/fragment_category" />-->

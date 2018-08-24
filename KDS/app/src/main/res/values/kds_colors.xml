@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <!--  aarrggbb or rrggbb -->
+    <color name="view_bg">#ff0e0e0e</color>
+    <color name="panel_bg">#ffffffff</color>
+    <color name="panel_fg">#ff000000</color>
+    <color name="border_bg">#eeeeee</color>
+    <color name="panelnum_bg">#ff001fcc</color>
+    <color name="panelnum_fg">#fff1f1e8</color>
+    <color name="caption_bg">#a8a5a6</color>
+    <color name="caption_fg">#ff000000</color>
+    <color name="focus_bg">#ffe9e03c</color>
+    <color name="focus_fg">#ff000000</color>
+    <color name="stage0_bg">#ff9948cc</color>
+    <color name="stage1_bg">#ff0000ff</color>
+    <color name="stage2_bg">#ffff0000</color>
+    <color name="item_bg">#ffffffff</color>
+    <color name="item_fg">#ff000000</color>
+    <color name="condiment_bg">#ffffffff</color>
+    <color name="condiment_fg">#ff000000</color>
+    <color name="premsg_bg">#ffffffff</color>
+    <color name="premsg_fg">#ff000000</color>
+    <color name="footer_bg">#ffffffff</color>
+    <color name="footer_fg">#ff000000</color>
+
+    <color name="rush_bg">#ffff6600</color>
+    <color name="rush_fg">#ff000000</color>
+
+    <color name="rush_bg1">#ff6600</color>
+    <color name="rush_fg1">#000000</color>
+
+    <color name="fire_bg">#ffbb00aa</color>
+    <color name="fire_fg">#ff000000</color>
+    <color name="dest_bg">#ffaa0033</color>
+    <color name="dest_fg">#ff000000</color>
+
+    <color name="expalert_bg">#ff00aa00</color>
+    <color name="relations_headers_bg">#888f94</color>
+    <color name="relations_headers_fg">#f8fafc</color>
+
+    <color name="kds_title_bg">#d0d833</color>
+    <color name="kds_title_fg">#000000</color>
+    <color name="listview_focus_bg">@android:color/holo_blue_light</color>
+
+    <!--<color name="settings_headers_bg">#ccc9bb</color>-->
+    <color name="settings_headers_bg">#d7d7d7</color>
+
+    <color name="settings_page_bg">#E5E1D2</color>
+    <drawable name="settings_page_bg">@color/settings_page_bg</drawable>
+
+    <color name="grid_border_color">#b6b6b6</color>
+    <color name="grid_inside_cell_border">#d7d7d7</color>
+
+    <color name="queue_order_id_bg">#000000</color>
+    <color name="queue_order_id_fg">#ffab00</color>
+
+    <color name="queue_order_timer_bg">#000000</color>
+    <color name="queue_order_timer_fg">#ffab00</color>
+
+    <color name="queue_cusomer_name_bg">#000000</color>
+    <color name="queue_cusomer_name_fg">#ffab00</color>
+
+    <color name="queue_cusom_message_bg">#000000</color>
+    <color name="queue_cusom_message_fg">#ffab00</color>
+
+    <color name="queue_order_status_received_bg">#ffffff</color>
+    <color name="queue_order_status_received_fg">#000000</color>
+
+    <color name="queue_order_status_preparation_bg">#304ffe</color>
+    <color name="queue_order_status_preparation_fg">#ffffff</color>
+
+    <color name="queue_order_status_ready_bg">#cddc39</color>
+    <color name="queue_order_status_ready_fg">#000000</color>
+
+    <color name="queue_order_status_pickup_bg">#64dd17</color>
+    <color name="queue_order_status_pickup_fg">#ffffff</color>
+
+    <color name="queue_view_bg">#757575</color>
+    <color name="queue_separator_color">#304ffe</color>
+
+    <color name="tracker_view_bg">#757575</color>
+    <color name="tracker_order_name_bg">#64dd17</color>
+    <color name="tracker_order_name_fg">#ffffff</color>
+    <color name="tracker_table_name_bg">#cddc39</color>
+    <color name="tracker_table_name_fg">#000000</color>
+    <color name="tracker_alert_bg">#f90011</color>
+    <color name="tracker_alert_fg">#000000</color>
+
+
+    <color name="subtitle_bg">#0228a3</color>
+    <color name="subtitle_fg">#ffffff</color>
+
+    <color name="lineitems_bg">#000000</color>
+    <color name="lineitems_fg">#ffffff</color>
+
+
+</resources>

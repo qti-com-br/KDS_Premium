@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1"
+    android:id="@+id/llMain">
+
+    <!--<ImageView-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_weight="1"-->
+        <!--android:scaleType="fitCenter"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_gravity="bottom|left|right|top" />-->
+
+    <!--<VideoView-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+
+        <!--android:id="@+id/videoView"-->
+        <!--android:layout_weight="1"-->
+        <!--android:visibility="visible"-->
+        <!--android:layout_gravity="bottom|top" />-->
+
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="25dp"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:text="Medium Text"-->
+        <!--android:id="@+id/txtInfo"-->
+        <!--android:layout_gravity="bottom" />-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="60dp"-->
+        <!--android:baselineAligned="false"-->
+        <!--android:measureWithLargestChild="false"-->
+        <!--android:layout_gravity="bottom">-->
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="Play"-->
+            <!--android:id="@+id/btnPlayPause"-->
+            <!--android:onClick="onBtnPlayPauseClicked"-->
+            <!--android:src="@drawable/playpause"-->
+            <!--android:scaleType="center" />-->
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="Stop"-->
+            <!--android:id="@+id/btnStop"-->
+            <!--android:onClick="onBtnStopClicked"-->
+            <!--android:src="@drawable/stop" />-->
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="Prev"-->
+            <!--android:id="@+id/btnPrev"-->
+            <!--android:onClick="onBtnPrevClicked"-->
+            <!--android:src="@drawable/prev" />-->
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/btnBackward"-->
+            <!--android:src="@drawable/rewind"-->
+            <!--android:onClick="onBtnBackwardClicked" />-->
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/btnForward"-->
+            <!--android:src="@drawable/fastforward"-->
+            <!--android:onClick="onBtnForwardClicked" />-->
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="Next"-->
+            <!--android:id="@+id/btnNext"-->
+            <!--android:onClick="onBtnNextClicked"-->
+            <!--android:src="@drawable/next" />-->
+
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="Vol -"-->
+            <!--android:id="@+id/btnVolDecrease"-->
+            <!--android:onClick="onBtnVolDecreaseClicked"-->
+            <!--android:src="@drawable/volume_down" />-->
+        <!--<ProgressBar-->
+            <!--style="?android:attr/progressBarStyleHorizontal"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:id="@+id/pbVol" />-->
+
+        <!--<ImageButton-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="Vol +"-->
+            <!--android:id="@+id/btnVolIncrease"-->
+            <!--android:onClick="onBtnVolIncreaseClicked"-->
+            <!--android:src="@drawable/volume_up" />-->
+
+        <!--<ProgressBar-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:id="@+id/pbProgress"-->
+            <!--style="?android:attr/progressBarStyleHorizontal" />-->
+    <!--</LinearLayout>-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/txtInfo"
+            android:weightSum="1">
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/imageView"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:visibility="visible"
+                android:layout_gravity="bottom|top"
+                android:layout_above="@+id/txtInfo"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="#000000" />
+
+            <VideoView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/videoView"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:layout_gravity="bottom|top"
+                android:layout_above="@+id/txtInfo" />
+        </LinearLayout>
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtInfo"
+        android:layout_gravity="bottom"
+            android:layout_above="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="false"
+            android:textColor="#ffffff" />
+        <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:baselineAligned="false"
+        android:measureWithLargestChild="false"
+        android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/linearLayout"
+            android:background="#ffffff">
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="[1]"
+            android:id="@+id/btnPlayPause"
+            android:onClick="onBtnPlayPauseClicked"
+            android:src="@drawable/playpause"
+            android:scaleType="center"
+            android:drawableTop="@drawable/playpause" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="[2]"
+            android:id="@+id/btnStop"
+            android:onClick="onBtnStopClicked"
+            android:drawableTop="@drawable/stop" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="[3]"
+            android:id="@+id/btnPrev"
+            android:onClick="onBtnPrevClicked"
+            android:drawableTop="@drawable/prev" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:id="@+id/btnBackward"
+            android:drawableTop="@drawable/rewind"
+            android:onClick="onBtnBackwardClicked"
+            android:text="[4]" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:id="@+id/btnForward"
+            android:drawableTop="@drawable/fastforward"
+            android:onClick="onBtnForwardClicked"
+            android:text="[5]" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="[6]"
+            android:id="@+id/btnNext"
+            android:onClick="onBtnNextClicked"
+            android:drawableTop="@drawable/next" />
+
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="[7]"
+            android:id="@+id/btnVolDecrease"
+            android:onClick="onBtnVolDecreaseClicked"
+            android:drawableTop="@drawable/volume_decrease" />
+        <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:id="@+id/pbVol" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="[8]"
+            android:id="@+id/btnVolIncrease"
+            android:onClick="onBtnVolIncreaseClicked"
+            android:drawableTop="@drawable/volume_increase" />
+
+        <ProgressBar
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:id="@+id/pbProgress"
+        style="?android:attr/progressBarStyleHorizontal" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

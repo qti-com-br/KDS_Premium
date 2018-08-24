@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_title"
+        android:title="@string/queue_title_message"
+        android:defaultValue="@string/queue_default_title"
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="queue_mode"
+        android:title="@string/pref_queue_mode"
+        android:defaultValue="0"
+        android:entries="@array/pref_queue_mode_titles"
+        android:entryValues="@array/pref_queue_mode_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!--<com.bematechus.kdslib.KDSListPreference-->
+        <!--android:key="queue_sort"-->
+        <!--android:title="Queue sort"-->
+        <!--android:defaultValue="0"-->
+        <!--android:entries="@array/pref_queue_sort_titles"-->
+        <!--android:entryValues="@array/pref_queue_sort_values"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
+
+
+    <com.bematechus.kds.KDSPreferenceColorPicker
+        android:key="queue_view_bg"
+        android:defaultValue="@color/queue_view_bg"
+        android:title="@string/pref_queue_bg" />
+
+
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="queue_cols"
+        android:title="@string/pref_queue_cols"
+        android:defaultValue="3"
+        android:entries="@array/pref_queue_cols_titles"
+        android:entryValues="@array/pref_queue_cols_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_cell_height"
+        android:title="@string/pref_queue_cell_height"
+        android:defaultValue="80"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_auto_switch_duration"
+        android:title="@string/pref_queue_auto_pages_switch_duration"
+        android:defaultValue="5"
+        android:selectAllOnFocus="true"
+        android:inputType="number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+
+
+    <CheckBoxPreference
+        android:key="bump_double_queue"
+        android:title="@string/pref_kds_bumping_double_queue_enabled"
+        android:summary="@string/pref_kds_bumping_double_queue_enabled_sum"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="queue_show_order_id"
+        android:title="@string/pref_queue_show_order_id"
+        android:defaultValue="true" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="queue_order_id_length"
+        android:title="@string/show_last_n_of_order_id"
+        android:defaultValue="0"
+        android:entries="@array/pref_queue_order_id_length_titles"
+        android:entryValues="@array/pref_queue_order_id_length_values"
+        android:dependency="queue_show_order_id"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_order_id_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,20"
+        android:title="@string/queue_order_id_font"
+        android:dependency="queue_show_order_id"
+        app:supportsColor="true"/>
+
+    <CheckBoxPreference
+        android:key="queue_show_customer_name"
+        android:title="@string/pref_queue_show_customer_name"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_customer_name_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,14"
+        android:title="@string/queue_customer_name_font"
+        android:dependency="queue_show_customer_name"
+        app:supportsColor="true"/>
+
+    <CheckBoxPreference
+        android:key="queue_show_order_timer"
+        android:title="@string/pref_queue_show_order_timer"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_order_timer_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,14"
+        android:title="@string/queue_order_timer_font"
+        android:dependency="queue_show_order_timer"
+        app:supportsColor="true"/>
+
+    <CheckBoxPreference
+        android:key="queue_show_custom_message"
+        android:title="@string/pref_queue_show_custom_message"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_custome_message_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,14"
+        android:title="@string/queue_custom_message_font"
+        android:dependency="queue_show_custom_message"
+        app:supportsColor="true"/>
+
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_order_received_status"
+        android:title="@string/queue_order_received_message"
+        android:defaultValue="@string/queue_status_received"
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        />
+
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_order_received_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,20"
+        android:title="@string/queue_order_received_font"
+        app:supportsColor="true"/>
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_order_preparation_status"
+        android:title="@string/queue_order_preparation_message"
+        android:defaultValue="@string/queue_status_preparation"
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_order_preparation_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-13611010,-1,20"
+        android:title="@string/queue_order_preparation_font"
+        app:supportsColor="true"/>
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_order_ready_status"
+        android:title="@string/queue_order_ready_message"
+        android:defaultValue="@string/queue_status_ready"
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_order_ready_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-3285959,-16777216,20"
+        android:title="@string/queue_order_ready_font"
+        app:supportsColor="true"/>
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_order_pickup_status"
+        android:title="@string/queue_order_pickup_message"
+        android:defaultValue="@string/queue_status_pickup"
+        android:inputType="text"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        />
+    <com.bematechus.kds.KDSPreferenceFontPicker
+        android:key="queue_order_pickup_font"
+        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,20"
+        android:title="@string/queue_order_pickup_font"
+        app:supportsColor="true"/>
+
+
+    <CheckBoxPreference
+        android:key="queue_flash_ready_order"
+        android:title="@string/pref_queue_flash_ready_order"
+        android:defaultValue="true" />
+
+
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="queue_more_orders_message"
+        android:title= "@string/pref_queue_more_orders_message"
+        android:defaultValue="@string/more_orders"
+        android:selectAllOnFocus="true"
+        android:inputType= "text"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+
+    <PreferenceCategory
+        android:title="@string/queue_mode_panel"    >
+
+        <CheckBoxPreference
+            android:key="queue_show_finished_at_right"
+            android:title="@string/pref_queue_show_finished_orders_at_right"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="queue_move_ready_to_front"
+            android:title="@string/pref_queue_move_ready_to_front"
+            android:defaultValue="true" />
+
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_panel_ratio"
+            android:title="@string/pref_queue_panel_ratio"
+            android:defaultValue="40"
+            android:entries="@array/pref_queue_ratio_titles"
+            android:entryValues="@array/pref_queue_ratio_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/queue_mode_simple">
+        <com.bematechus.kds.KDSPreferenceColorPicker
+            android:key="queue_simple_separator_color"
+            android:defaultValue="@color/queue_separator_color"
+            android:title="@string/pref_queue_id_mode_line_bg" />
+
+        <!-- status 1 -->
+        <CheckBoxPreference
+            android:key="queue_simple_show_received_col"
+            android:title="@string/pref_queue_simple_show_received_col"
+            android:disableDependentsState="true"
+            android:defaultValue="true" />
+
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_status1_sort"
+            android:title="@string/queue_status1_sort"
+            android:defaultValue="0"
+            android:entries="@array/pref_queue_sort_titles"
+            android:entryValues="@array/pref_queue_sort_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_simple_combine_status1"
+            android:title="@string/pref_queue_simple_combine_status1"
+            android:defaultValue="1"
+            android:dependency="queue_simple_show_received_col"
+            android:entries="@array/pref_queue_combine_status1_titles"
+            android:entryValues="@array/pref_queue_combine_status1_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <!-- status 2  -->
+        <CheckBoxPreference
+            android:key="queue_simple_show_preparation_col"
+            android:title="@string/pref_queue_simple_show_preparation_col"
+            android:disableDependentsState="true"
+            android:defaultValue="true" />
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_status2_sort"
+            android:title="@string/queue_status2_sort"
+            android:defaultValue="0"
+            android:entries="@array/pref_queue_sort_titles"
+            android:entryValues="@array/pref_queue_sort_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_simple_combine_status2"
+            android:title="@string/pref_queue_simple_combine_status2"
+            android:defaultValue="2"
+            android:dependency="queue_simple_show_preparation_col"
+            android:entries="@array/pref_queue_combine_status2_titles"
+            android:entryValues="@array/pref_queue_combine_status2_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <!-- status 3 -->
+        <CheckBoxPreference
+            android:key="queue_simple_show_ready_col"
+            android:title="@string/pref_queue_simple_show_ready_col"
+            android:disableDependentsState="true"
+            android:defaultValue="true" />
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_status3_sort"
+            android:title="@string/queue_status3_sort"
+            android:defaultValue="0"
+            android:entries="@array/pref_queue_sort_titles"
+            android:entryValues="@array/pref_queue_sort_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_simple_combine_status3"
+            android:title="@string/pref_queue_simple_combine_status3"
+            android:defaultValue="3"
+            android:dependency="queue_simple_show_ready_col"
+            android:entries="@array/pref_queue_combine_status3_titles"
+            android:entryValues="@array/pref_queue_combine_status3_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <!-- status 4 -->
+        <CheckBoxPreference
+            android:key="queue_simple_show_pickup_col"
+            android:title="@string/pref_queue_simple_show_pickup_col"
+            android:disableDependentsState="true"
+            android:defaultValue="true" />
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_status4_sort"
+            android:title="@string/queue_status4_sort"
+            android:defaultValue="0"
+            android:entries="@array/pref_queue_sort_titles"
+            android:entryValues="@array/pref_queue_sort_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+
+        <com.bematechus.kdslib.KDSListPreference
+            android:key="queue_simple_combine_status4"
+            android:title="@string/pref_queue_simple_combine_status4"
+            android:defaultValue="2"
+
+            android:entries="@array/pref_queue_combine_status4_titles"
+            android:entryValues="@array/pref_queue_combine_status4_values"
+            android:dependency="queue_simple_show_pickup_col"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+    </PreferenceCategory>
+</PreferenceScreen>

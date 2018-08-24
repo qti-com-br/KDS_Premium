@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="kds_general_notification_enable"
+        android:title="@string/pref_kds_notification_enabled"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="notification_order_status_enabled"
+        android:title="@string/enable_order_status_notify"
+        android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="notification_qty_change_enabled"
+        android:title="@string/enable_item_qty_notify"
+        android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="notification_order_acknowledgement"
+        android:title="@string/enable_order_ack"
+        android:defaultValue="false" />
+
+</PreferenceScreen>

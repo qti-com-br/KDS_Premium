@@ -1,0 +1,174 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- =======================MY code ===================== -->
+
+    <!-- TCP/IP port number -->
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_id"
+        android:title="@string/pref_kds_general_title_number"
+        android:defaultValue=""
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kdslib.KDSEditTextPreference-->
+        <!--android:key="kds_general_title"-->
+        <!--android:title="@string/pref_kds_general_title"-->
+        <!--android:defaultValue=""-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "text"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+
+    <!-- Data source type -->
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="kds_general_datasrc"
+        android:title="@string/pref_kds_general_title_data_source"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_general_data_source_titles"
+        android:entryValues="@array/pref_kds_general_data_source_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <!-- TCP/IP port number -->
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_tcpport"
+        android:title="@string/pref_kds_general_title_tcp_port"
+        android:defaultValue="@string/pref_kds_general_default_tcp_port"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+    <!-- remote folder -->
+    <!--<EditTextPreference-->
+        <!--android:key="kds_general_remote_folder"-->
+        <!--android:title="@string/pref_kds_general_title_remote_folder"-->
+        <!--android:defaultValue="@string/pref_kds_general_default_remote_folder"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "text"-->
+        <!--android:capitalize="words"-->
+        <!--android:singleLine="true"-->
+        <!--android:maxLines="1" />-->
+
+    <com.bematechus.kds.KDSPreferenceSmbFolder
+        android:title="@string/pref_kds_general_title_remote_folder"
+        android:key="kds_general_remote_folder"
+        android:dialogMessage="message"
+        android:dialogTitle="title"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+    <!-- Stations TCP/IP port number -->
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_stationsport"
+        android:title="@string/pref_kds_general_title_stations_port"
+        android:defaultValue="@string/pref_kds_general_default_stations_port"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+
+
+    <CheckBoxPreference
+        android:key="kds_general_information_enable"
+        android:title="@string/pref_kds_information_enabled"
+        android:defaultValue="false" />
+
+    <!--<CheckBoxPreference-->
+        <!--android:key="kds_general_notification_enable"-->
+        <!--android:title="@string/pref_kds_notification_enabled"-->
+        <!--android:defaultValue="true" />-->
+
+    <Preference android:title="@string/retrieve_remote_settings">
+        <intent android:action= "android.intent.action.VIEW"
+            android:targetPackage="com.bematechus.kds"
+            android:targetClass= "com.bematechus.kds.KDSUIRetriveConfig" />
+
+    </Preference>
+
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="180"
+        android:inputType="number"
+        android:key="statistic_db_keep"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:title="@string/pref_title_database_keep_days" />
+
+    <com.bematechus.kds.KDSPreferenceClearDB
+        android:key="clear_db"
+        android:title="@string/clear_db"
+        />
+
+    <com.bematechus.kds.KDSPreferenceEnablePassword
+        android:key="kds_general_enable_password"
+        android:title="@string/pref_kds_password_enabled"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferencePassword
+        android:key="kds_general_password"
+        android:title="@string/pref_kds_password_text"
+        android:defaultValue=""
+        android:selectAllOnFocus="true"
+        android:inputType= "numberPassword"
+        android:singleLine="true"
+        android:dependency="kds_general_enable_password"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+    <!--<com.bematechus.kds.KDSEditTextPreference-->
+        <!--android:key="kds_general_password"-->
+        <!--android:title="@string/pref_kds_password_text"-->
+        <!--android:defaultValue=""-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:inputType= "numberPassword"-->
+        <!--android:singleLine="true"-->
+        <!--android:dependency="kds_general_enable_password"-->
+        <!--android:positiveButtonText="@string/ok"-->
+        <!--android:negativeButtonText="@string/cancel"-->
+        <!--android:maxLines="1" />-->
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="kds_general_language"
+        android:title="@string/pref_kds_language"
+        android:defaultValue="0"
+        android:entries="@array/pref_kds_language_titles"
+        android:entryValues="@array/pref_kds_language_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+
+    <CheckBoxPreference
+        android:key="kds_general_enable_auto_backup"
+        android:title="@string/pref_kds_auto_backup_enabled"
+        android:defaultValue="false" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_auto_backup_hours"
+        android:title="@string/pref_kds_auto_backup_hours"
+        android:defaultValue="12"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:singleLine="true"
+        android:dependency="kds_general_enable_auto_backup"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
+</PreferenceScreen>
