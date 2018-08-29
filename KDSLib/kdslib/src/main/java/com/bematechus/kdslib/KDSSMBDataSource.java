@@ -124,7 +124,7 @@ public class KDSSMBDataSource implements Runnable {
             }
         }
         if (bIsTimeForCheckPermission){
-            int nError = KDSSmbFile.checkFolderWritable(m_strRemoteFolder);
+            int nError = KDSSmbFile2.checkFolderWritable(m_strRemoteFolder);
             if (nError !=0) {
                 m_bPermissionError = true;
                 informSmbPermissionError(nError);
@@ -166,7 +166,7 @@ public class KDSSMBDataSource implements Runnable {
                 continue;
             }
             try {
-                if (KDSSmbFile.isValidPath(m_strRemoteFolder)) {
+                if (KDSSmbFile2.isValidPath(m_strRemoteFolder)) {
                     if (isRemoteFolderPermissionError())
                     {
                         continue;
@@ -181,7 +181,7 @@ public class KDSSMBDataSource implements Runnable {
                 }
 
                 //read data
-                ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
+                ArrayList<String> ar = KDSSmbFile2.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
                 if (ar.size() <= 0) {
                     sleep(500);
                     continue;
@@ -227,7 +227,7 @@ public class KDSSMBDataSource implements Runnable {
         try {
 
 
-            String text = KDSSmbFile.readFromUtf8SmbText(smbFileName);
+            String text = KDSSmbFile2.readFromUtf8SmbText(smbFileName);
             return text;
         }
         catch (Exception e)
@@ -261,7 +261,7 @@ public class KDSSMBDataSource implements Runnable {
     private boolean removeSmbFile(String smbFileName)
     {
         try {
-            if (!KDSSmbFile.deleteUriFile(smbFileName))
+            if (!KDSSmbFile2.deleteUriFile(smbFileName))
             {
                 String strErr = String.format(KDSApplication.getContext().getString(R.string.can_not_remove_smb_file));
                 KDSSMBPath path = KDSSMBPath.parseString(smbFileName);
@@ -354,16 +354,16 @@ public class KDSSMBDataSource implements Runnable {
                         d = m_arData.get(i);
                     }
                     String remoteFolder = d.m_strRemoteFolder;
-                    if (!KDSSmbFile.isExistedSubFolder(d.m_strRemoteFolder, d.m_strSubFolder)) {
+                    if (!KDSSmbFile2.isExistedSubFolder(d.m_strRemoteFolder, d.m_strSubFolder)) {
 
-                        if (!KDSSmbFile.createSubDir(remoteFolder+d.m_strSubFolder)) {
+                        if (!KDSSmbFile2.createSubDir(remoteFolder+d.m_strSubFolder)) {
                             d.m_bResult = false;
                             continue;
                         }
                     }
 
                     remoteFolder += (d.m_strSubFolder +"/");
-                    boolean b = KDSSmbFile.smbPut(remoteFolder, d.m_fileName, d.m_fileContent);
+                    boolean b = KDSSmbFile2.smbPut(remoteFolder, d.m_fileName, d.m_fileContent);
                     d.m_bResult = b;
                     if (b)
                     {

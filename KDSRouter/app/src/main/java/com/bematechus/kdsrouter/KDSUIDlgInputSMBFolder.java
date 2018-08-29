@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSSMBPath;
-import com.bematechus.kdslib.KDSSmbFile;
+import com.bematechus.kdslib.KDSSmbFile2;
 
 import jcifs.smb.ACE;
 import jcifs.smb.SmbFile;
@@ -134,9 +134,9 @@ public class KDSUIDlgInputSMBFolder   {
             public void onClick(View v) {
                 saveToSmb();
                 // Create DirectoryChooserDialog and register a callback
-                KDSSmbFile directoryChooserDialog =
-                        new KDSSmbFile(dialog.getContext(),
-                                new KDSSmbFile.ChosenDirectoryListener()
+                KDSSmbFile2 directoryChooserDialog =
+                        new KDSSmbFile2(dialog.getContext(),
+                                new KDSSmbFile2.ChosenDirectoryListener()
                                 {
                                     @Override
                                     public void onChosenDir(String chosenDir)
@@ -146,7 +146,7 @@ public class KDSUIDlgInputSMBFolder   {
                                         m_txtPath.setText(smb.getFolder());
 
                                         m_smbPath = smb;
-                                        int nError = KDSSmbFile.checkFolderWritable(m_smbPath.toString());
+                                        int nError = KDSSmbFile2.checkFolderWritable(m_smbPath.toString());
                                         if (nError != 0)
                                         {
                                             showPermissionErrorDialog(nError);

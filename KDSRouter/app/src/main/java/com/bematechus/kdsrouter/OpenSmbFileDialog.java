@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSMBPath;
-import com.bematechus.kdslib.KDSSmbFile;
+import com.bematechus.kdslib.KDSSmbFile2;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -230,7 +230,7 @@ public class OpenSmbFileDialog extends KDSUIDialogBase  implements AdapterView.O
             protected Object doInBackground(Object[] objects) {
                 try {
                     String folder = (String) objects[0];
-                    m_smbFiles =  KDSSmbFile.getFiles(folder);
+                    m_smbFiles =  KDSSmbFile2.getFiles(folder);
                     m_handler.sendRefreshMessage();
 
                 } catch(Exception e) {
