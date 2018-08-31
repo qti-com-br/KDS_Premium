@@ -1663,6 +1663,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (!order.isItemsAllBumpedInExp()) {
                 strBump = getString(R.string.confirm_bump_expo_outstanding);
             }
+            else {
+                afterConfirmBumpOrder(userID, orderGuid);//2.0.51
+                return;
+            }
 
         }
         strBump = strBump.replace("#", "#" + orderName);

@@ -1094,5 +1094,6 @@
     <string name="str_cancel">Cancel</string>
     <string name="no_selected_license_to_replace">No selected license to replace</string>
     <string name="item_group_by_category">Group items by its category</string>
-    <string name="inactive">"(Inactive)"</string>
+    <string name="inactive">(Inactive)</string>
+    <string name="use_smb_v1_open_folder">Use SMB v1 to open remote folder</string>
 </resources>

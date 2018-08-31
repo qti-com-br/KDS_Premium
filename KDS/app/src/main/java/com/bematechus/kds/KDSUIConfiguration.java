@@ -44,6 +44,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSUtil;
 
@@ -448,6 +449,12 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 doLanguageChanged(prefs, key);
                 return;
             }
+            else if (key.equals("general_enable_smbv1"))
+            {
+                boolean bEnableSmbV1 =  prefs.getBoolean(key, false);
+                KDSSmbFile2.setEnableSmbV2((!bEnableSmbV1));
+            }
+
 //            else if (key.equals("kds_general_enable_password"))
 //            {
 //                //String keyid = ("kds_general_enable_password");

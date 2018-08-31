@@ -47,6 +47,7 @@ import jcifs.Configuration;
 import jcifs.config.PropertyConfiguration;
 import jcifs.context.BaseContext;
 import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.NtlmPasswordAuthenticator;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
 import jcifs.smb.SmbFileOutputStream;
@@ -60,7 +61,7 @@ import jcifs.smb.SmbFileOutputStream;
  */
 public class KDSSmbFile2 extends Handler implements Runnable {
     //SmbFile smbFile;
-    static final public String TAG = "KDSSmbFile";
+    static final public String TAG = "KDSSmbFile2";
     static final public int REFRESH_LIST = 1;
     static final public int SHOW_PROGRESS = 2;
     static final public int HIDE_PROGRESS = 3;
@@ -81,10 +82,30 @@ public class KDSSmbFile2 extends Handler implements Runnable {
     private ProgressDialog m_progressDialog = null;
 
     static private boolean m_bEnableSmbV2 = true;
+
+    static private Configuration m_config = null;//new PropertyConfiguration(m_properties);
     static public void setEnableSmbV2(boolean bEnabled)
     {
         m_bEnableSmbV2 = bEnabled;
 
+        Properties prop = new Properties();
+        if (m_bEnableSmbV2) {
+            prop.put("jcifs.smb.client.enableSMB2", "true");
+            prop.put("jcifs.smb.client.disableSMB1", "true");
+        }
+        else
+        {
+            prop.put("jcifs.smb.client.enableSMB2", "false");
+            prop.put("jcifs.smb.client.disableSMB1", "false");
+        }
+        try {
+            m_config = new PropertyConfiguration(prop);
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            e.printStackTrace();
+        }
     }
     /**
      * https://jcifs.samba.org/src/docs/api/
@@ -106,17 +127,17 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
             return ar;
         }
 
         //long t1 = System.currentTimeMillis();
         try {
             files = file.listFiles();
+            file.close();
         } catch (Exception e) {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+
         }
         //long t2 = System.currentTimeMillis() - t1;
 
@@ -143,13 +164,15 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             SmbFile file = openSmbUri(remoteUriFolder);
             if (file == null) return false;
 
-            return file.exists();
+            boolean b = file.exists();
+            file.close();
+            return b;
 
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+
             return false;
         }
     }
@@ -176,13 +199,14 @@ public class KDSSmbFile2 extends Handler implements Runnable {
                 bos.close();
                 bis.close();
             } catch (Exception ex) {
-               // KDSLog.e(TAG,KDSLog._FUNCLINE_(),ex);// + ex.toString());
-                //KDSLog.e(TAG, KDSUtil.error( ex));
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),ex);// + ex.toString());
+
             }
             files.add(localfile);
+            rmifile.close();
         } catch (Exception e) {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
         }
         return localfile;
     }
@@ -216,11 +240,11 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             }
             bos.close();
             bis.close();
-
+            smbfile.close();
 
         } catch (Exception e) {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
         }
         return localFileName;
     }
@@ -250,8 +274,8 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
             return "";
         }
     }
@@ -297,15 +321,16 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
                 bis.close();
             } catch (IOException e) {
-                //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-                //KDSLog.e(TAG, KDSUtil.error( e));
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
             }
+            rmifile.close();
 
         } catch (Exception e) {
 
-//            KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Error file:" + smbFileName);
-//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
         }
 
         //BOM: EF BB BF, start for UTF-8 file.
@@ -323,58 +348,54 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
         return text;
     }
-
-    static public SmbFile openSmbUri(String uri)
+    static private  CIFSContext m_contextWithCred = null;
+    static private void createContext(String uri)
     {
-        SmbFile f = null;
-
         try {
 
-            Properties prop = new Properties();
-            if (m_bEnableSmbV2) {
-                prop.put("jcifs.smb.client.enableSMB2", "true");
-                prop.put("jcifs.smb.client.disableSMB1", "true");
-            }
-            else
-            {
-                prop.put("jcifs.smb.client.enableSMB2", "false");
-                prop.put("jcifs.smb.client.disableSMB1", "false");
-            }
-
-            //prop.put( "jcifs.smb.client.useSMB2Negotiation", "false" );
-            //prop.put( "jcifs.smb.client.useExtendedSecurity","false");
-            Configuration config = new PropertyConfiguration(prop);
-
+            KDSSMBPath path = KDSSMBPath.parseString(uri);
             if (isAnonymous(uri)) {
-//                    CIFSContext cifxContext = jcifs.context.SingletonContext.getInstance();
-//                    cifxContext = cifxContext.withAnonymousCredentials();
-                CIFSContext baseContext = new BaseContext(config);
-                baseContext = baseContext.withAnonymousCredentials();
-                //NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, null, null);
-                f = new SmbFile(uri, baseContext);
+                if (m_contextWithCred == null ||
+                        (!m_contextWithCred.getCredentials().isAnonymous()) ) {
+                    CIFSContext baseContext = new BaseContext(m_config);
+                    m_contextWithCred = baseContext.withAnonymousCredentials();
+                }
             } else {
-//                    CIFSContext cifxContext = jcifs.context.SingletonContext.getInstance();
-//                    cifxContext = cifxContext.withDefaultCredentials();
-                KDSSMBPath path = KDSSMBPath.parseString(uri);
-
-
-//                    CIFSContext baseContext = new BaseContext(config);
-//                    CIFSContext contextWithCred = baseContext.withCredentials (new NtlmPasswordAuthentication(baseContext, path.getDomain(),path.getUserID(),path.getPwd()));
-
-                CIFSContext cifxContext = jcifs.context.SingletonContext.getInstance();
-                cifxContext = cifxContext.withCredentials (new NtlmPasswordAuthentication(cifxContext, path.getDomain(),path.getUserID(),path.getPwd()));
-
-                //f = new SmbFile(uri, contextWithCred);
-
-                //f = new SmbFile(uri, baseContext);
-                //f = new SmbFile(uri, cifxContext);
-                f = new SmbFile(uri, cifxContext);
+                boolean bCreateNew = false;
+                if (m_contextWithCred == null ||
+                        (m_contextWithCred.getCredentials().isAnonymous()) ) {
+                    bCreateNew =true;
+                }
+                else
+                {
+                    NtlmPasswordAuthenticator creds = (NtlmPasswordAuthenticator) m_contextWithCred.getCredentials();
+                    if (!creds.getUsername().equals(path.getUserID()) ||
+                            !creds.getPassword().equals(path.getPwd()) ||
+                            !creds.getUserDomain().equals(path.getDomain()))
+                    {
+                        bCreateNew =true;
+                    }
+                }
+                if (bCreateNew) {
+                    CIFSContext baseContext = new BaseContext(m_config);
+                    m_contextWithCred = baseContext.withCredentials(new NtlmPasswordAuthentication(baseContext, path.getDomain(), path.getUserID(), path.getPwd()));
+                }
             }
+
+        } catch (Exception e) {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+        }
+    }
+    static public SmbFile openSmbUri(String uri)
+    {
+        try
+        {
+            createContext(uri);
+            SmbFile f = new SmbFile(uri, m_contextWithCred);
             return f;
         } catch (Exception e) {
-            e.printStackTrace();
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
         }
         return null;
 
@@ -405,12 +426,13 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             if (f == null) return false;
 
             f.delete();
+            f.close();
             return true;
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);//+ e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);//+ e.toString());
+
             return false;
         }
     }
@@ -437,12 +459,14 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         String subFolderName = createNewGUID();// "6f1dfc4dc08948859eaf298fa17d7e83";
         SmbFile folderFile = openSmbUri(smbFolder);
         try {
-            if (!folderFile.exists())
+            if (!folderFile.exists()) {
+                folderFile.close();
                 return -1;
+            }
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
             return -1;
         }
         if (folderFile == null)
@@ -470,7 +494,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             if (smbf == null) return ar;
             String[] files = new String[0];
             files = smbf.list();
-
+            smbf.close();
             for( int i = 0; i < files.length; i++ ) {
                 ar.add(files[i]);
             }
@@ -480,8 +504,8 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
         }
         return ar;
 
@@ -507,15 +531,17 @@ public class KDSSmbFile2 extends Handler implements Runnable {
                 out.write(buffer);
                 buffer = new byte[1024];
             }
+            remoteFile.close();
         } catch (Exception e) {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
         } finally {
             try {
                 out.close();
                 in.close();
+
             } catch (IOException e) {
-                //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
                 //KDSLog.e(TAG, KDSUtil.error( e));
             }
         }
@@ -529,7 +555,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
         catch (Exception e)
         {
-          //  KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
             return null;
         }
@@ -557,11 +583,11 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             //byte[] buffer = new byte[1024];
             //while (in.read(buffer) != -1) {
             out.write(buffer);
-
+            remoteFile.close();
             //  buffer = new byte[1024];
             //}
         } catch (Exception e) {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
         } finally {
             try {
@@ -569,7 +595,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
                 return true;
                 //  in.close();
             } catch (Exception e) {
-               // KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
                 //KDSLog.e(TAG, KDSUtil.error( e));
             }
         }
@@ -594,6 +620,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         m_context = context;
         m_sdcardDirectory = "smb://";// Environment.getExternalStorageDirectory().getAbsolutePath();
         m_chosenDirectoryListener = chosenDirectoryListener;
+        setEnableSmbV2(true);
 
         try
         {
@@ -602,7 +629,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
     }
@@ -738,6 +765,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             SmbFile newDirFile = openSmbUri(newDir);// new SmbFile(newDir);
             if (!newDirFile.exists()) {
                 newDirFile.mkdir();
+                newDirFile.close();
                 return true;
             }
             else
@@ -745,7 +773,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
         catch (Exception e)
         {
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
             return false;
         }
@@ -763,7 +791,11 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
     static public boolean isAnonymous(String dir)
     {
-        return (dir.indexOf("smb:// : @")>=0);
+        if (dir.indexOf("smb:// : @")>=0)
+            return true;
+        else if (dir.indexOf("@")<0)
+            return true;
+        return false;
     }
     /**
      *
@@ -787,6 +819,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
             if (! dirFile.exists() || ! dirFile.isDirectory())
             {
+                dirFile.close();
                 if (errors != null) {
 
                     errors.add(KDSApplication.getContext().getString(R.string.folder_not_existed));//"The folder isn't existed.");
@@ -802,6 +835,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
                         dirs.add(file.getName());
                     }
                 }
+                dirFile.close();
             }
         }
         catch (Exception e)
@@ -809,7 +843,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             if (errors != null)
                 errors.add(KDSApplication.getContext().getString(R.string.failed_to_open_remote_folder));
 
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG,KDSLog._FUNCLINE_() + KDSUtil.error(e) );
         }
 
@@ -845,7 +879,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
             if (! dirFile.exists() || ! dirFile.isDirectory())
             {
-
+                dirFile.close();
                 return returnFiles;
             }
             SmbFile files[] = dirFile.listFiles();
@@ -853,13 +887,13 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             for (SmbFile file : files) {
                 returnFiles.add(file);
             }
-
+            dirFile.close();
         }
         catch (Exception e)
         {
 //            if (errors != null)
 //                errors.add(e.getMessage());
-            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
 
@@ -876,6 +910,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
             if (! dirFile.exists() || ! dirFile.isDirectory())
             {
+                dirFile.close();
 //                if (errors != null) {
 //                    errors.add("The folder isn't existed.");
 //                }
@@ -888,7 +923,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         catch (Exception e)
         {
 
-           // KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+           KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
 
@@ -916,12 +951,13 @@ public class KDSSmbFile2 extends Handler implements Runnable {
                     break;
                 }
             }
+            f.close();
             return myAccountACE ;
 
         }
         catch ( Exception e)
         {
-           // KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
             //e.printStackTrace();
         }
 
@@ -988,11 +1024,13 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             try {
                 // Navigate back to an upper directory
                 //m_dir = new SmbFile(m_dir).getParent();
-                m_dir = openSmbUri(m_dir).getParent();
+                SmbFile f = openSmbUri(m_dir);
+                m_dir = f.getParent();
+                f.close();
             }
             catch (Exception e)
             {
-                //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
                 //KDSLog.e(TAG, KDSUtil.error( e));
                 return false;
             }

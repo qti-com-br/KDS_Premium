@@ -51,7 +51,7 @@
 // *smb://[[[domain;]username[:password]@]server[:port]/[[share/[dir/]file]]][?param=value[param2=value2[...]]]
 // * https://jcifs.samba.org/
 // */
-//public class KDSSmbFile extends Handler implements Runnable {
+//public class KDSSmbFile2 extends Handler implements Runnable {
 //    //SmbFile smbFile;
 //    static final public String TAG = "KDSSmbFile";
 //    static final public int REFRESH_LIST = 1;
@@ -71,6 +71,11 @@
 //    //boolean m_bEnableProcessDialog = false;
 //    private ProgressDialog m_progressDialog = null;
 //
+//    static public void setEnableSmbV2(boolean bEnabled)
+//    {
+//
+//
+//    }
 //    /**
 //     * https://jcifs.samba.org/src/docs/api/
 //     * @param remoteUriFolder
@@ -519,7 +524,7 @@
 //        public void onChosenDir(String chosenDir);
 //    }
 //
-//    public KDSSmbFile(Context context, ChosenDirectoryListener chosenDirectoryListener)
+//    public KDSSmbFile2(Context context, ChosenDirectoryListener chosenDirectoryListener)
 //    {
 //        m_context = context;
 //        m_sdcardDirectory = "smb://";// Environment.getExternalStorageDirectory().getAbsolutePath();

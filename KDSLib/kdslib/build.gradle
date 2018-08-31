@@ -24,7 +24,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile files('libs/java_websocket.jar')
-    compile files('libs/bcprov-jdk15on-1.58.jar')
     compile files('libs/jcifs-ng-2.1.0.jar')
+    compile files('libs/bcprov-jdk15on-1.58.jar')
     compile files('libs/slf4j-api-1.7.25.jar')
 }

@@ -116,10 +116,14 @@ public class KDSSMBPath {
         String s = "smb://";
         if (!m_strDomain.isEmpty())
             s += m_strDomain +";";
-        s += m_strUser;
-        s += ":";
-        s += m_strPwd;
-        s += "@";
+        //if (!m_strUser.trim().isEmpty())
+        {
+
+            s += m_strUser;
+            s += ":";
+            s += m_strPwd;
+            s += "@";
+        }
         s += m_strPCName;
         s += "/";
         s += m_strFolder;
