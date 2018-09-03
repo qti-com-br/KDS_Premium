@@ -98,6 +98,15 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             prop.put("jcifs.smb.client.enableSMB2", "false");
             prop.put("jcifs.smb.client.disableSMB1", "false");
         }
+//        prop.setProperty("jcifs.smb.client.useExtendedSecurity", "false");
+//        prop.setProperty("jcifs.smb.client.forceExtendedSecurity", "false");
+//        prop.setProperty("jcifs.smb.useRawNTLM", "true");
+//        prop.setProperty("jcifs.smb.client.signingPreferred", "false");
+//        prop.setProperty("jcifs.smb.client.signingEnforced", "false");
+//        prop.setProperty("jcifs.smb.client.enforceSpnegoIntegrity", "true");
+//        prop.setProperty("jcifs.smb.client.useNtStatus", "false");
+//        prop.setProperty("jcifs.smb.client.useNTSmbs", "false");
+        //prop.setProperty("jcifs.smb.lmCompatibility", "0");
         try {
             m_config = new PropertyConfiguration(prop);
         }
@@ -363,7 +372,8 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             } else {
                 boolean bCreateNew = false;
                 if (m_contextWithCred == null ||
-                        (m_contextWithCred.getCredentials().isAnonymous()) ) {
+                        (m_contextWithCred.getCredentials().isAnonymous()) ||
+                        m_contextWithCred.getCredentials().isGuest()) {
                     bCreateNew =true;
                 }
                 else

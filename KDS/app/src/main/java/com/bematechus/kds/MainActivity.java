@@ -1765,7 +1765,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *     Show warning when user try to bump. And add this explanation under the option
      *     “
      *     Expo cannot bump the order unless all its prep station bump the items ”
-     *
+     *rev.
+     * default return false;
      * @param orderGuid
      * @return
      *  true: this order was handled by expo
@@ -1794,8 +1795,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                     .create();
             d.show();
+            return true;
         }
-        return true;
+        return false;
     }
 
     private void opBump(KDSUser.USER userID) {
