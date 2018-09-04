@@ -60,6 +60,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSMBPath;
+import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationActived;
@@ -579,11 +580,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSSettings.KDSDataSource source =KDSSettings.KDSDataSource.values ()[getKDS().getSettings().getInt(KDSSettings.ID.KDS_Data_Source)];
         if (source == KDSSettings.KDSDataSource.Folder) {
             String remoteFolder = getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
-            if (!KDSSmbFile2.isValidPath(remoteFolder)) {
+            if (!KDSSmbFile.smb_isValidPath(remoteFolder)) {
                 //m_handlerMessage.sendPermissionError();
                 return;
             }
-            if (KDSSmbFile2.checkFolderWritable(remoteFolder)!=0) {
+            if (KDSSmbFile.smb_checkFolderWritable(remoteFolder)!=0) {
                 m_handlerMessage.sendPermissionError();
 
             }

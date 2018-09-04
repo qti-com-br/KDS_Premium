@@ -452,7 +452,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             else if (key.equals("general_enable_smbv1"))
             {
                 boolean bEnableSmbV1 =  prefs.getBoolean(key, false);
-                KDSSmbFile2.setEnableSmbV2((!bEnableSmbV1));
+                KDSSmbFile2.smb_setEnableSmbV2((!bEnableSmbV1));
             }
 
 //            else if (key.equals("kds_general_enable_password"))

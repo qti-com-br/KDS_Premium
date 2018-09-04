@@ -41,16 +41,16 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import jcifs.ACE;
-import jcifs.CIFSContext;
-import jcifs.Configuration;
-import jcifs.config.PropertyConfiguration;
-import jcifs.context.BaseContext;
-import jcifs.smb.NtlmPasswordAuthentication;
-import jcifs.smb.NtlmPasswordAuthenticator;
-import jcifs.smb.SmbFile;
-import jcifs.smb.SmbFileInputStream;
-import jcifs.smb.SmbFileOutputStream;
+import jcifsng.ACE;
+import jcifsng.CIFSContext;
+import jcifsng.Configuration;
+import jcifsng.config.PropertyConfiguration;
+import jcifsng.context.BaseContext;
+import jcifsng.smb.NtlmPasswordAuthentication;
+import jcifsng.smb.NtlmPasswordAuthenticator;
+import jcifsng.smb.SmbFile;
+import jcifsng.smb.SmbFileInputStream;
+import jcifsng.smb.SmbFileOutputStream;
 
 //import jcifs.smb.ACE;
 
@@ -59,16 +59,16 @@ import jcifs.smb.SmbFileOutputStream;
  *smb://[[[domain;]username[:password]@]server[:port]/[[share/[dir/]file]]][?param=value[param2=value2[...]]]
  * https://jcifs.samba.org/
  */
-public class KDSSmbFile2 extends Handler implements Runnable {
+public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
     //SmbFile smbFile;
-    static final public String TAG = "KDSSmbFile2";
-    static final public int REFRESH_LIST = 1;
-    static final public int SHOW_PROGRESS = 2;
-    static final public int HIDE_PROGRESS = 3;
-    static final public int REFRESH_DIRS = 4;
-    static final public int ERROR_CREATE_FOLDER = 5;
+    static final private String TAG = "KDSSmbFile2";
+//    static final public int REFRESH_LIST = 1;
+//    static final public int SHOW_PROGRESS = 2;
+//    static final public int HIDE_PROGRESS = 3;
+//    static final public int REFRESH_DIRS = 4;
+//    static final public int ERROR_CREATE_FOLDER = 5;
 
-    private boolean m_isNewFolderEnabled = true;
+    //private boolean m_isNewFolderEnabled = true;
     private String m_sdcardDirectory = "";
     private Context m_context;
     private TextView m_titleView;
@@ -79,7 +79,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
     private ArrayAdapter<String> m_listAdapter = null;
 
     //boolean m_bEnableProcessDialog = false;
-    private ProgressDialog m_progressDialog = null;
+    //private ProgressDialog m_progressDialog = null;
 
     static private boolean m_bEnableSmbV2 = true;
 
@@ -186,41 +186,41 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
     }
 
-    public static File readFromSmb(String smbMachine, String localpath)
-    {
-        File localfile=null;
-        InputStream bis=null;
-        OutputStream bos=null;
-        List<File> files = new ArrayList<>();
-        try {
-            SmbFile rmifile = openSmbUri(smbMachine);
-            if (rmifile == null) return localfile;
+//    public static File readFromSmb(String smbMachine, String localpath)
+//    {
+//        File localfile=null;
+//        InputStream bis=null;
+//        OutputStream bos=null;
+//        List<File> files = new ArrayList<>();
+//        try {
+//            SmbFile rmifile = openSmbUri(smbMachine);
+//            if (rmifile == null) return localfile;
+//
+//            String filename=rmifile.getName();
+//            bis=new BufferedInputStream(new SmbFileInputStream(rmifile));
+//            localfile=new File(localpath+ File.separator+filename);
+//            bos=new BufferedOutputStream(new FileOutputStream(localfile));
+//            int length=rmifile.getContentLength();
+//            byte[] buffer=new byte[length];
+//            bis.read(buffer);
+//            bos.write(buffer);
+//            try {
+//                bos.close();
+//                bis.close();
+//            } catch (Exception ex) {
+//                KDSLog.e(TAG,KDSLog._FUNCLINE_(),ex);// + ex.toString());
+//
+//            }
+//            files.add(localfile);
+//            rmifile.close();
+//        } catch (Exception e) {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+//
+//        }
+//        return localfile;
+//    }
 
-            String filename=rmifile.getName();
-            bis=new BufferedInputStream(new SmbFileInputStream(rmifile));
-            localfile=new File(localpath+ File.separator+filename);
-            bos=new BufferedOutputStream(new FileOutputStream(localfile));
-            int length=rmifile.getContentLength();
-            byte[] buffer=new byte[length];
-            bis.read(buffer);
-            bos.write(buffer);
-            try {
-                bos.close();
-                bis.close();
-            } catch (Exception ex) {
-                KDSLog.e(TAG,KDSLog._FUNCLINE_(),ex);// + ex.toString());
-
-            }
-            files.add(localfile);
-            rmifile.close();
-        } catch (Exception e) {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-
-        }
-        return localfile;
-    }
-
-    static public int BUF_SIZE = 1024000; //10k;
+    //static public int BUF_SIZE = 1024000; //10k;
     public static String readFromSmbToLocal(String smbFileName, String localFolderWithoutLastSep)
     {
         File localfile=null;
@@ -260,34 +260,34 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
 
 
-    public static byte[] removeHeaders(byte[] buf, int ncount)
-    {
-        int nlen = buf.length;
-        for (int i=ncount; i< nlen; i++)
-        {
-            buf[i-ncount] = buf[i];
-        }
-        for (int i=nlen-ncount; i< nlen; i++)
-        {
-            buf[i]= 0;
-        }
-        return buf;
-    }
+//    private static byte[] removeHeaders(byte[] buf, int ncount)
+//    {
+//        int nlen = buf.length;
+//        for (int i=ncount; i< nlen; i++)
+//        {
+//            buf[i-ncount] = buf[i];
+//        }
+//        for (int i=nlen-ncount; i< nlen; i++)
+//        {
+//            buf[i]= 0;
+//        }
+//        return buf;
+//    }
 
 
-    static public String convertUtf8BytesToString(byte[] bytesUtf8, int noffset, int ncount)
-    {
-        try {
-            String strutf8 = new String(bytesUtf8,noffset, ncount, "UTF-8");
-            return strutf8;
-        }
-        catch (Exception e)
-        {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-
-            return "";
-        }
-    }
+//    static private String convertUtf8BytesToString(byte[] bytesUtf8, int noffset, int ncount)
+//    {
+//        try {
+//            String strutf8 = new String(bytesUtf8,noffset, ncount, "UTF-8");
+//            return strutf8;
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+//
+//            return "";
+//        }
+//    }
     /**
      * read the smb text file,
      * @param smbFileName
@@ -324,7 +324,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
                 }
             }
-            text = convertUtf8BytesToString(buffer, noffset, ncount);
+            text = KDSUtil.convertUtf8BytesToString(buffer, noffset, ncount);
 
             try {
 
@@ -396,7 +396,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
         }
     }
-    static public SmbFile openSmbUri(String uri)
+    static private SmbFile openSmbUri(String uri)
     {
         try
         {
@@ -446,13 +446,15 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             return false;
         }
     }
-    static public String createNewGUID()
-    {
+//    static private String createNewGUID()
+//    {
+//
+//        String s = UUID.randomUUID().toString();//create new GUID
+//        s = s.replaceAll("-", "");
+//        return s;
+//    }
 
-        String s = UUID.randomUUID().toString();//create new GUID
-        s = s.replaceAll("-", "");
-        return s;
-    }
+
 
     /**
      *
@@ -466,7 +468,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
      */
     static public int checkFolderWritable(String smbFolder)
     {
-        String subFolderName = createNewGUID();// "6f1dfc4dc08948859eaf298fa17d7e83";
+        String subFolderName =KDSUtil.createNewGUID();// "6f1dfc4dc08948859eaf298fa17d7e83";
         SmbFile folderFile = openSmbUri(smbFolder);
         try {
             if (!folderFile.exists()) {
@@ -490,38 +492,38 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         return 0;
     }
 
-    /**
-     *
-     * @param uri
-     *  The root uri, e.g: smb://
-     * @return
-     */
-    public ArrayList<String> listAllValidComputers(String uri)
-    {
-        ArrayList<String> ar = new ArrayList<String>();
-        try {
-            SmbFile smbf = openSmbUri(uri);//  new SmbFile(uri);
-            if (smbf == null) return ar;
-            String[] files = new String[0];
-            files = smbf.list();
-            smbf.close();
-            for( int i = 0; i < files.length; i++ ) {
-                ar.add(files[i]);
-            }
-
-            return ar;
-
-        }
-        catch (Exception e)
-        {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-
-        }
-        return ar;
-
-        //SmbFile file = new SmbFile()
-
-    }
+//    /**
+//     *
+//     * @param uri
+//     *  The root uri, e.g: smb://
+//     * @return
+//     */
+//    public ArrayList<String> listAllValidComputers(String uri)
+//    {
+//        ArrayList<String> ar = new ArrayList<String>();
+//        try {
+//            SmbFile smbf = openSmbUri(uri);//  new SmbFile(uri);
+//            if (smbf == null) return ar;
+//            String[] files = new String[0];
+//            files = smbf.list();
+//            smbf.close();
+//            for( int i = 0; i < files.length; i++ ) {
+//                ar.add(files[i]);
+//            }
+//
+//            return ar;
+//
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+//
+//        }
+//        return ar;
+//
+//        //SmbFile file = new SmbFile()
+//
+//    }
 
     // 向共享目录上传文件
     public static void smbPut(String remoteUrl, String localFilePath) {
@@ -557,19 +559,19 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
     }
 
-    static public byte[] convertStringToUtf8Bytes(String str)
-    {
-        try
-        {
-            return str.getBytes("UTF-8");
-        }
-        catch (Exception e)
-        {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
-            //KDSLog.e(TAG, KDSUtil.error( e));
-            return null;
-        }
-    }
+//    static private byte[] convertStringToUtf8Bytes(String str)
+//    {
+//        try
+//        {
+//            return str.getBytes("UTF-8");
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+//            //KDSLog.e(TAG, KDSUtil.error( e));
+//            return null;
+//        }
+//    }
     /**
      * write the contents to remote folder given file.
      * @param remoteUrl
@@ -589,7 +591,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
             if (remoteFile == null) return false;
             //in = new BufferedInputStream(new FileInputStream(localFile));
             out = new BufferedOutputStream(new SmbFileOutputStream(remoteFile));
-            byte[] buffer = convertStringToUtf8Bytes(localFileContent);
+            byte[] buffer =KDSUtil.convertStringToUtf8Bytes(localFileContent);
             //byte[] buffer = new byte[1024];
             //while (in.read(buffer) != -1) {
             out.write(buffer);
@@ -620,10 +622,10 @@ public class KDSSmbFile2 extends Handler implements Runnable {
     //////////////////////////////////////////////////////
     // Callback interface for selected directory
     //////////////////////////////////////////////////////
-    public interface ChosenDirectoryListener
-    {
-        public void onChosenDir(String chosenDir);
-    }
+//    public interface ChosenDirectoryListener
+//    {
+//        public void onChosenDir(String chosenDir);
+//    }
 
     public KDSSmbFile2(Context context, ChosenDirectoryListener chosenDirectoryListener)
     {
@@ -648,15 +650,15 @@ public class KDSSmbFile2 extends Handler implements Runnable {
     // setNewFolderEnabled() - enable/disable new folder button
     ///////////////////////////////////////////////////////////////////////
 
-    public void setNewFolderEnabled(boolean isNewFolderEnabled)
-    {
-        m_isNewFolderEnabled = isNewFolderEnabled;
-    }
-
-    public boolean getNewFolderEnabled()
-    {
-        return m_isNewFolderEnabled;
-    }
+//    public void setNewFolderEnabled(boolean isNewFolderEnabled)
+//    {
+//        m_isNewFolderEnabled = isNewFolderEnabled;
+//    }
+//
+//    public boolean getNewFolderEnabled()
+//    {
+//        return m_isNewFolderEnabled;
+//    }
 
     ///////////////////////////////////////////////////////////////////////
     // chooseDirectory() - load directory chooser dialog for initial
@@ -742,8 +744,6 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
     public boolean createSubDirInThread(String newDir)
     {
-
-
         AsyncTask a = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
@@ -799,14 +799,14 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
     }
 
-    static public boolean isAnonymous(String dir)
-    {
-        if (dir.indexOf("smb:// : @")>=0)
-            return true;
-        else if (dir.indexOf("@")<0)
-            return true;
-        return false;
-    }
+//    static private boolean isAnonymous(String dir)
+//    {
+//        if (dir.indexOf("smb:// : @")>=0)
+//            return true;
+//        else if (dir.indexOf("@")<0)
+//            return true;
+//        return false;
+//    }
     /**
      *
      * @param dir
@@ -911,7 +911,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         return returnFiles;
     }
 
-    static public SmbFile getDirFile(String dir)
+    static private SmbFile getDirFile(String dir)
     {
 
         try
@@ -941,7 +941,7 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         return null;
     }
 
-    static public ACE getDirACE(String dir)
+    static private ACE getDirACE(String dir)
     {
 
         SmbFile f = getDirFile(dir);
@@ -1002,9 +1002,6 @@ public class KDSSmbFile2 extends Handler implements Runnable {
 
     private boolean upDirInThread()
     {
-
-
-
         AsyncTask a = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
@@ -1248,48 +1245,48 @@ public class KDSSmbFile2 extends Handler implements Runnable {
         }
     }
 
-    private void showProgressDialog(Context context, String title, String message){
-
-        if (context == null) return;
-        // if (m_progressDialog == null)
-        //{
-            m_progressDialog = new ProgressDialog(context);
-            m_progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);//.STYLE_HORIZONTAL);
-
-            //m_progressDlg.setCancelable(true);
-           // m_progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,KDSApplication.getContext().getString(R.string.cancel), new OnClickListener() {
-           //     @Override
-           //     public void onClick(DialogInterface dialog, int which) {
-           //         hideProgressDialog();
-           //     }
-           // });
-
-        //}
-//        m_progressDialog.setMax(100);
-//        m_progressDialog.setProgress(0);
-        m_progressDialog.setTitle(title);
-        m_progressDialog.setMessage(message);
-        m_progressDialog.show();
-
-        Point size = new Point();
-        m_progressDialog.getWindow().getWindowManager().getDefaultDisplay().getSize(size);
-        int width = size.x;//获取界面的宽度像素
-        int height = size.y;
-        WindowManager.LayoutParams params = m_progressDialog.getWindow().getAttributes();//一定要用mProgressDialog得到当前界面的参数对象，否则就不是设置ProgressDialog的界面了
-        params.alpha = 0.8f;//设置进度条背景透明度
-        params.height = height/8;//设置进度条的高度
-        params.gravity = Gravity.CENTER;//设置ProgressDialog的重心
-        params.width = 200;// width/5;//4*width/5;//设置进度条的宽度
-        params.dimAmount = 0f;//设置半透明背景的灰度，范围0~1，系统默认值是0.5，1表示背景完全是黑色的,0表示背景不变暗，和原来的灰度一样
-        m_progressDialog.getWindow().setAttributes(params);//把参数设置给进度条，注意，一定要先show出来才可以再设置，不然就没效果了，因为只有当界面显示出来后才可以获得它的屏幕尺寸及参数等一些信息
-
-        //downloadApk();
-    }
-    private void hideProgressDialog()
-    {
-        if (m_progressDialog != null)
-            m_progressDialog.hide();
-    }
+//    private void showProgressDialog(Context context, String title, String message){
+//
+//        if (context == null) return;
+//        // if (m_progressDialog == null)
+//        //{
+//            m_progressDialog = new ProgressDialog(context);
+//            m_progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);//.STYLE_HORIZONTAL);
+//
+//            //m_progressDlg.setCancelable(true);
+//           // m_progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,KDSApplication.getContext().getString(R.string.cancel), new OnClickListener() {
+//           //     @Override
+//           //     public void onClick(DialogInterface dialog, int which) {
+//           //         hideProgressDialog();
+//           //     }
+//           // });
+//
+//        //}
+////        m_progressDialog.setMax(100);
+////        m_progressDialog.setProgress(0);
+//        m_progressDialog.setTitle(title);
+//        m_progressDialog.setMessage(message);
+//        m_progressDialog.show();
+//
+//        Point size = new Point();
+//        m_progressDialog.getWindow().getWindowManager().getDefaultDisplay().getSize(size);
+//        int width = size.x;//获取界面的宽度像素
+//        int height = size.y;
+//        WindowManager.LayoutParams params = m_progressDialog.getWindow().getAttributes();//一定要用mProgressDialog得到当前界面的参数对象，否则就不是设置ProgressDialog的界面了
+//        params.alpha = 0.8f;//设置进度条背景透明度
+//        params.height = height/8;//设置进度条的高度
+//        params.gravity = Gravity.CENTER;//设置ProgressDialog的重心
+//        params.width = 200;// width/5;//4*width/5;//设置进度条的宽度
+//        params.dimAmount = 0f;//设置半透明背景的灰度，范围0~1，系统默认值是0.5，1表示背景完全是黑色的,0表示背景不变暗，和原来的灰度一样
+//        m_progressDialog.getWindow().setAttributes(params);//把参数设置给进度条，注意，一定要先show出来才可以再设置，不然就没效果了，因为只有当界面显示出来后才可以获得它的屏幕尺寸及参数等一些信息
+//
+//        //downloadApk();
+//    }
+//    private void hideProgressDialog()
+//    {
+//        if (m_progressDialog != null)
+//            m_progressDialog.hide();
+//    }
 
 }
 

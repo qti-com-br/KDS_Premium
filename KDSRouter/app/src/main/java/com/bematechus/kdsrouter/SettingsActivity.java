@@ -44,6 +44,7 @@ import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSEditTextPreference;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSTimer;
@@ -177,7 +178,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
         else if (key.equals("general_enable_smbv1"))
         {
             boolean bEnableSmbV1 =  prefs.getBoolean(key, false);
-            KDSSmbFile2.setEnableSmbV2((!bEnableSmbV1));
+            KDSSmbFile.smb_setEnableSmbV2((!bEnableSmbV1));
         }
 
 

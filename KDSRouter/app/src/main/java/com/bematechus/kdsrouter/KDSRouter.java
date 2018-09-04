@@ -23,6 +23,7 @@ import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
+import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSSocketEventReceiver;
 import com.bematechus.kdslib.KDSSocketInterface;
@@ -449,7 +450,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             m_smbDataSource.setRemoteFolder(remoteFolder);
             //2.0.20
             boolean bEnableSmbV1 = settings.getBoolean(KDSRouterSettings.ID.Enable_smbv1);
-            KDSSmbFile2.setEnableSmbV2((!bEnableSmbV1));
+            KDSSmbFile.smb_setEnableSmbV2((!bEnableSmbV1));
 
             m_smbDataSource.start();
         }
