@@ -357,7 +357,7 @@
     <string name="log_orders">Lnable log received orders xml</string>
     <string name="station_lost">Station # lost</string>
     <string name="enable_order_ack">Enable order acknowledgement</string>
-    <string name="use_smb_v1_open_folder">Use SMB v1 to open remote folder</string>
+    <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
     <string-array name="pref_kds_log_mode_titles">
         <item>None</item>
         <item>Basic</item>

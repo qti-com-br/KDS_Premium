@@ -81,15 +81,15 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
     //boolean m_bEnableProcessDialog = false;
     //private ProgressDialog m_progressDialog = null;
 
-    static private boolean m_bEnableSmbV2 = true;
+    //static private boolean m_bEnableSmbV2 = true;
 
     static private Configuration m_config = null;//new PropertyConfiguration(m_properties);
     static public void setEnableSmbV2(boolean bEnabled)
     {
-        m_bEnableSmbV2 = bEnabled;
+      //  m_bEnableSmbV2 = bEnabled;
 
         Properties prop = new Properties();
-        if (m_bEnableSmbV2) {
+        if (bEnabled) {
             prop.put("jcifs.smb.client.enableSMB2", "true");
             prop.put("jcifs.smb.client.disableSMB1", "true");
         }
@@ -388,7 +388,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
                 }
                 if (bCreateNew) {
                     CIFSContext baseContext = new BaseContext(m_config);
-                    m_contextWithCred = baseContext.withCredentials(new NtlmPasswordAuthentication(baseContext, path.getDomain(), path.getUserID(), path.getPwd()));
+                    m_contextWithCred = baseContext.withCredentials(new NtlmPasswordAuthenticator( path.getDomain(), path.getUserID(), path.getPwd()));
                 }
             }
 

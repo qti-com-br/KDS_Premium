@@ -71,8 +71,8 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="general_enable_smbv1"
-        android:title="@string/use_smb_v1_open_folder" />
+        android:key="general_enable_smbv2"
+        android:title="@string/use_smb_v2_open_folder" />
     <!-- Stations TCP/IP port number -->
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="kds_general_stationsport"

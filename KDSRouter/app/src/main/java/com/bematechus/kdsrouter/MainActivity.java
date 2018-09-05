@@ -340,6 +340,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
     KDSRouter getKDSRouter()
     {
+        if (m_service == null)
+            return null;
         return m_service.getKDSRouter();
     }
 

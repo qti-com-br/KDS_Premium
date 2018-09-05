@@ -571,8 +571,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         {
 
             //2.0.51
-            boolean bEnableSmbV1 = settings.getBoolean(KDSSettings.ID.Enable_smbv1);
-            KDSSmbFile.smb_setEnableSmbV2((!bEnableSmbV1));
+            boolean bEnableSmbV2 = settings.getBoolean(KDSSettings.ID.Enable_smbv2);
+            KDSSmbFile.smb_setEnableSmbV2(bEnableSmbV2);
 
             String remoteFolder = settings.getString(KDSSettings.ID.KDS_Data_Folder);
             m_smbDataSource.setRemoteFolder(remoteFolder);

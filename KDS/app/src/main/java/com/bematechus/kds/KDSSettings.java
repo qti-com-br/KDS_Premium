@@ -548,7 +548,7 @@ public class KDSSettings extends SettingsBase {
 
        //2.0.47
        Item_group_category,
-       Enable_smbv1, //2.0.51
+       Enable_smbv2, //2.0.51
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1262,7 +1262,7 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.Item_group_category,"bool_item_group_category",false);//
 
-        init_option(ID.Enable_smbv1,"bool_general_enable_smbv1",false);//2.0.51
+        init_option(ID.Enable_smbv2,"bool_general_enable_smbv2",false);//2.0.51
     }
 
     /**

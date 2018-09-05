@@ -449,8 +449,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             String remoteFolder = settings.getString(KDSRouterSettings.ID.KDSRouter_Data_Folder);
             m_smbDataSource.setRemoteFolder(remoteFolder);
             //2.0.20
-            boolean bEnableSmbV1 = settings.getBoolean(KDSRouterSettings.ID.Enable_smbv1);
-            KDSSmbFile.smb_setEnableSmbV2((!bEnableSmbV1));
+            boolean bEnableSmbV2 = settings.getBoolean(KDSRouterSettings.ID.Enable_smbv2);
+            KDSSmbFile.smb_setEnableSmbV2(bEnableSmbV2);
 
             m_smbDataSource.start();
         }
