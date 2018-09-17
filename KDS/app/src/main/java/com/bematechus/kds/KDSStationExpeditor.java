@@ -805,13 +805,33 @@ public class KDSStationExpeditor extends KDSStationNormal {
     static public String exp_order_bumped_in_other_expo_station(KDS kds,KDSDBCurrent db,KDSDataOrders orders,  String fromStationID, String fromIP, KDSDataOrder orderReceived)
     {
 
-        KDSDataOrder orderExisted = orders.getOrderByName(orderReceived.getOrderName());
+        return exp_order_bumped_in_other_expo_station(kds, db,orders, fromStationID, fromIP, orderReceived.getOrderName());
+
+//        KDSDataOrder orderExisted = orders.getOrderByName(orderReceived.getOrderName());
+//
+//        if (orderExisted == null) {
+//            return "";
+//        }
+//        orders.removeComponent(orderExisted);
+//       db.orderSetBumped(orderExisted.getGUID(), true);
+//        //update the statistic database
+//        tt_checkAllItemsBumped(kds, orderExisted);
+//        kds.refreshView();
+//        return orderExisted.getGUID();
+
+
+    }
+
+    static public String exp_order_bumped_in_other_expo_station(KDS kds,KDSDBCurrent db,KDSDataOrders orders,  String fromStationID, String fromIP, String orderNameReceived)
+    {
+
+        KDSDataOrder orderExisted = orders.getOrderByName(orderNameReceived);
 
         if (orderExisted == null) {
             return "";
         }
         orders.removeComponent(orderExisted);
-       db.orderSetBumped(orderExisted.getGUID(), true);
+        db.orderSetBumped(orderExisted.getGUID(), true);
         //update the statistic database
         tt_checkAllItemsBumped(kds, orderExisted);
         kds.refreshView();

@@ -2326,4 +2326,59 @@ get the total qty of all found items
     {
         return m_dtQueueStateTime;
     }
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @return
+     */
+    public int getBumpedItemsCount()
+    {
+
+        int nCount = 0;
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            KDSDataItem item = m_items.getItem(i);
+            if (item.isFinished())
+                nCount ++;
+        }
+        return nCount;
+    }
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @return
+     */
+    public ArrayList<String> getBumpedItemsID()
+    {
+
+        ArrayList<String> ar = new ArrayList<>();
+        int nCount = 0;
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            KDSDataItem item = m_items.getItem(i);
+            if (item.isFinished())
+                ar.add(item.getItemName());
+
+        }
+        return ar;
+    }
+
+    public String getBumpedItemsIDString()
+    {
+        ArrayList<String> ar = getBumpedItemsID();
+        String s = "";
+
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (i >0)
+                s += ",";
+            s += ar.get(i);
+
+
+        }
+        return s;
+    }
 }

@@ -674,4 +674,123 @@ public class KDSDataOrders extends KDSDataArray {
         }
         return (!bFindActiveItem);
     }
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @return
+     *
+     *  CSV format data.
+     *  order_id,queue_double_bump_ready,bumped_item_id,bumped_item_id /n
+     *  order_id,queue_double_bump_ready,bumped_item_id,bumped_item_id /n
+     *  order_id,queue_double_bump_ready,bumped_item_id,bumped_item_id /n
+     *
+     *  Notes:
+     *      queue_double_bump_ready: if expo double bump is in ready state.1/0
+     */
+    static public String QUEUE_SYNC_SEPERATOR = "\n";
+    public String outputBumpedItemsCountForSyncToQueue()
+    {
+        String strReturn = "";
+        for (int i=0; i< getCount(); i++)
+        {
+            String s = "";
+            KDSDataOrder order = get(i);
+            s = order.getOrderName();
+            s += ",";
+            boolean bBumpReady = order.getQueueReady();
+            s += (bBumpReady?"1":"0");
+            s += ",";
+            String itemsID = "";
+            if (order.isAllItemsFinished())
+                itemsID = "-1";
+            else
+                itemsID = order.getBumpedItemsIDString();
+
+
+            //s += KDSUtil.convertIntToString(n);
+            s += itemsID;
+            s += QUEUE_SYNC_SEPERATOR;
+            strReturn += s;
+        }
+
+        return strReturn;
+
+    }
+
+    /**
+     *
+     * @param strCSVData
+     * @return
+     *  The orders name have been bumped in prep station.
+     */
+    public ArrayList<String> queueSetOrderItemsBumped(String strCSVData)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(strCSVData,QUEUE_SYNC_SEPERATOR );
+        ArrayList<String> arReceivedOrdersName = new ArrayList<>();
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            String s = ar.get(i);
+            if (s.isEmpty()) continue;
+            String orderName = QueueSetSingleOrderItemsBumped(s);
+            if (orderName.isEmpty()) continue;
+            arReceivedOrdersName.add(orderName);
+
+        }
+
+        ArrayList<String> arWillBumpedOrder = new ArrayList<>();
+
+        //check which one has bumped in prep
+        for (int i=0; i< this.getCount(); i++)
+        {
+            if (!KDSUtil.isExistedInArray(arReceivedOrdersName, this.get(i).getOrderName()))
+                arWillBumpedOrder.add(this.get(i).getOrderName());
+        }
+
+       return arWillBumpedOrder;
+
+    }
+
+    /**
+     *
+     * @param strOrderItemsBumpedInfo
+     * Format:
+     *      order_id,queue_double_bump_ready,bumped_item_id,bumped_item_id /n
+     */
+
+    /**
+     *
+     * @param strOrderItemsBumpedInfo
+     * Format:
+     *      order_id,queue_double_bump_ready,bumped_item_id,bumped_item_id /n
+     * @return
+     *  Order Name value.
+     */
+    private String QueueSetSingleOrderItemsBumped(String strOrderItemsBumpedInfo)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(strOrderItemsBumpedInfo, ",");
+        if (ar.size() <2) return "";
+        String orderName = ar.get(0);
+        String queueReady = ar.get(1);
+        ar.remove(1);
+        ar.remove(0);
+        KDSDataOrder order =  getOrderByName(orderName);
+        if (order == null) return "";
+
+        order.setQueueReady(queueReady.equals("1"));
+
+
+        //left over is items id
+        for (int i=0; i< ar.size(); i++)
+        {
+            String itemName = ar.get(i);
+            if (itemName.isEmpty()) continue;
+            KDSDataItem item =  order.getItems().getItemByName(itemName);
+            if (item == null) continue;
+            item.setLocalBumped(true);
+        }
+        return orderName;
+
+    }
 }

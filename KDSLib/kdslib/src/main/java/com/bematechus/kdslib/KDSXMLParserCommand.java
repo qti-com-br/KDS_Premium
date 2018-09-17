@@ -5,6 +5,7 @@
  */
 
 package com.bematechus.kdslib;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -99,6 +100,9 @@ public class KDSXMLParserCommand {
         //sos
         SOS_Request_Report,
         SOS_Return_Report,
+        //KPP1-7, 2.0.50
+        Queue_ask_sync_from_prep,
+        Prep_sync_to_queue,
     }
     private static final String COMMAND = "KDSCommand";
     private static final String CODE = "Code";
@@ -580,5 +584,36 @@ public class KDSXMLParserCommand {
         String param =reportXml;// KDSUtil.convertIntToString(nLastTimeStamp);
 
         return createCommandXmlString(KDSCommand.SOS_Return_Report.ordinal(),strStationID, ipAddress, macAddress,param);
+    }
+
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @param strStationID
+     * @param ipAddress
+     * @param macAddress
+     * @param ordersItemsStatus
+     *  CSV format data.
+     *  order_id,bumped_items_count /n
+     *  order_id,bumped_items_count /n
+     *  order_id,bumped_items_count /n
+     *
+     * @return
+     */
+    static public String createPrepSyncOrdersStatusToQueue(String strStationID, String ipAddress, String macAddress, String ordersItemsStatus)
+    {
+
+        return createCommandXmlString(KDSCommand.Prep_sync_to_queue.ordinal(),
+                strStationID, ipAddress, macAddress, ordersItemsStatus);
+
+    }
+
+    static public String createQueueAskSyncPrep(String strStationID, String ipAddress, String macAddress)
+    {
+
+        return createCommandXmlString(KDSCommand.Queue_ask_sync_from_prep.ordinal(),
+                strStationID, ipAddress, macAddress, "");
+
     }
 }

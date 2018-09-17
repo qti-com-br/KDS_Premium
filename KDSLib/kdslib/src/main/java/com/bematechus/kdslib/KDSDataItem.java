@@ -1142,4 +1142,17 @@ public class KDSDataItem extends KDSData {
     {
         return m_nCategoryPriority;
     }
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @return
+     */
+    public boolean isFinished()
+    {
+        if (getLocalBumped() ||
+                (!getBumpedStationsString().isEmpty()) )
+            return true;
+        return false;
+    }
 }
