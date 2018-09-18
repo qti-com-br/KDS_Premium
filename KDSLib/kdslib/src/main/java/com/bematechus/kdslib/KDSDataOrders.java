@@ -724,20 +724,25 @@ public class KDSDataOrders extends KDSDataArray {
      * @return
      *  The orders name have been bumped in prep station.
      */
-    public ArrayList<String> queueSetOrderItemsBumped(String strCSVData)
+    public ArrayList<String> queueSetOrderItemsBumped(String strCSVData, ArrayList<String> arChangedOrders)
     {
         ArrayList<String> ar = KDSUtil.spliteString(strCSVData,QUEUE_SYNC_SEPERATOR );
         ArrayList<String> arReceivedOrdersName = new ArrayList<>();
+        ArrayList<String> arOrderGuid = new ArrayList<>();
 
         for (int i=0; i< ar.size(); i++)
         {
             String s = ar.get(i);
             if (s.isEmpty()) continue;
-            String orderName = QueueSetSingleOrderItemsBumped(s);
+            arOrderGuid.clear();
+            String orderName = queueSetSingleOrderItemsBumped(s, arOrderGuid);
             if (orderName.isEmpty()) continue;
             arReceivedOrdersName.add(orderName);
+            s = arOrderGuid.get(0) + "," + s; //append the guid.
+            ar.set(i, s);
 
         }
+        arChangedOrders.addAll(ar);
 
         ArrayList<String> arWillBumpedOrder = new ArrayList<>();
 
@@ -748,6 +753,17 @@ public class KDSDataOrders extends KDSDataArray {
                 arWillBumpedOrder.add(this.get(i).getOrderName());
         }
 
+        ArrayList<String> arMyStationMissed = new ArrayList<>();
+        for (int i=0; i< arReceivedOrdersName.size(); i++)
+        {
+            if (this.getOrderByName(arReceivedOrdersName.get(i)) == null) //this is a new order
+                arMyStationMissed.add(arReceivedOrdersName.get(i));
+        }
+        if (arMyStationMissed.size() >0)
+        {
+            arWillBumpedOrder.add("+");
+            arWillBumpedOrder.addAll(arMyStationMissed);
+        }
        return arWillBumpedOrder;
 
     }
@@ -767,7 +783,7 @@ public class KDSDataOrders extends KDSDataArray {
      * @return
      *  Order Name value.
      */
-    private String QueueSetSingleOrderItemsBumped(String strOrderItemsBumpedInfo)
+    private String queueSetSingleOrderItemsBumped(String strOrderItemsBumpedInfo, ArrayList<String> arOrderGuid)
     {
         ArrayList<String> ar = KDSUtil.spliteString(strOrderItemsBumpedInfo, ",");
         if (ar.size() <2) return "";
@@ -776,19 +792,29 @@ public class KDSDataOrders extends KDSDataArray {
         ar.remove(1);
         ar.remove(0);
         KDSDataOrder order =  getOrderByName(orderName);
-        if (order == null) return "";
+        if (order == null) return orderName;
 
         order.setQueueReady(queueReady.equals("1"));
-
+        arOrderGuid.add(order.getGUID());
 
         //left over is items id
         for (int i=0; i< ar.size(); i++)
         {
             String itemName = ar.get(i);
             if (itemName.isEmpty()) continue;
-            KDSDataItem item =  order.getItems().getItemByName(itemName);
-            if (item == null) continue;
-            item.setLocalBumped(true);
+            if (itemName.equals("-1"))
+            {//all bumped
+                for (int j=0; j< order.getItems().getCount(); j++) {
+                    KDSDataItem item = order.getItems().getItem(j);
+                    if (item == null) continue;
+                    item.setLocalBumped(true);
+                }
+            }
+            else {
+                KDSDataItem item = order.getItems().getItemByName(itemName);
+                if (item == null) continue;
+                item.setLocalBumped(true);
+            }
         }
         return orderName;
 

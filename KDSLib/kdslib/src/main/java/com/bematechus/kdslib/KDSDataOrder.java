@@ -1343,6 +1343,9 @@ public class KDSDataOrder extends KDSData {
             pxml.getFirstGroup(KDSConst.KDS_Str_Transaction);
 
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDER, true);
+        //2.0.51
+            pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_QUEUE_READY, getQueueReady()?"1":"0");
+
             //pxml->xmj_getFrstGroup(_T("Order"));
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
@@ -1389,14 +1392,16 @@ public class KDSDataOrder extends KDSData {
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PAGERID,this.getPagerID(), false);
             //2.5.4.19 add received time and restore time
             s = KDSUtil.convertDateToString(this.getStartTime());
-            pxml.newGroup("Received_Time",s, false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_RECEIVE_DATE,s, false);
 
             Date dtNow = new Date();
             
             s = KDSUtil.convertDateToString(dtNow);
-            pxml.newGroup("Bumpoff_Time",s, false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_BUMPED_DATE,s, false);
+            //2.0.51
+
             //////
-            outputKDSMessages(pxml, this.getOrderMessages(), "OrderMessages");
+            outputKDSMessages(pxml, this.getOrderMessages(), KDSXMLParserOrder.DBXML_ELEMENT_ORDER_MESSAGES);
 
             return true;
     }
