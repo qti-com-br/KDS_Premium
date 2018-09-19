@@ -3365,6 +3365,7 @@ update the schedule item ready qty
         ArrayList<String> ar = KDSUtil.spliteString(strOrderItemsBumpedInfo, ",");
         if (ar.size() <3) return "";
         String guid = ar.get(0);
+        if (guid.isEmpty()) return "";
         String orderName = ar.get(1);
         String queueReady = ar.get(2);
 

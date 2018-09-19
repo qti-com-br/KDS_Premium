@@ -738,7 +738,10 @@ public class KDSDataOrders extends KDSDataArray {
             String orderName = queueSetSingleOrderItemsBumped(s, arOrderGuid);
             if (orderName.isEmpty()) continue;
             arReceivedOrdersName.add(orderName);
-            s = arOrderGuid.get(0) + "," + s; //append the guid.
+            if (arOrderGuid.size()>0)
+                s = arOrderGuid.get(0) + "," + s; //append the guid.
+            else
+                s = "," + s; //append the guid.
             ar.set(i, s);
 
         }
