@@ -94,7 +94,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
-        m_myMacAddress = "11.123456789";//test
+       // m_myMacAddress = "11.123456789";//test
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {

@@ -474,7 +474,7 @@ public class ActivationRequest {
             long updateTime = dt.getTime()/1000;
             if (updateTime<lastUpdateTime)
                 updateTime = lastUpdateTime +1;
-            updateTime = lastUpdateTime -1; //debug
+            //updateTime = lastUpdateTime -1; //debug
 
             //the data setup by me.
 //            if (licenseGuid.isEmpty())
