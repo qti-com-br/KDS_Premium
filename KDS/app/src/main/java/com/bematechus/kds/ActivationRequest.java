@@ -38,6 +38,7 @@ public class ActivationRequest {
      Password:098765
 
      //test store
+     storename: lci test
      user: david
      pwd: 123456
      */
@@ -473,6 +474,7 @@ public class ActivationRequest {
             long updateTime = dt.getTime()/1000;
             if (updateTime<lastUpdateTime)
                 updateTime = lastUpdateTime +1;
+            updateTime = lastUpdateTime -1; //debug
 
             //the data setup by me.
 //            if (licenseGuid.isEmpty())

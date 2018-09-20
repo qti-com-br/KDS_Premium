@@ -79,6 +79,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     boolean m_bDoLicensing = false;
 
+    int m_nSyncGetDevicesCount = 0; //record the loop count. Prevent dead loop.
+
     public Activation(Context context)
     {
         m_context = context;
@@ -92,7 +94,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
-        //m_myMacAddress = "1.123456789";//test
+        m_myMacAddress = "11.123456789";//test
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {
@@ -148,6 +150,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static public boolean isResponseError(String response)
     {
         String s = response.toUpperCase();
+        if ( s.indexOf("\"ERROR\":NULL") >=0)
+            return false;
+
         return (s.indexOf("\"ERROR\":")>=0);
     }
     /**
@@ -207,18 +212,25 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         }
         try
         {
-            JSONArray ar = new JSONArray(request.m_result);
-            if (ar.length() <=0)
+            m_nSyncGetDevicesCount ++;
+            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+            {
+                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, m_context.getString(R.string.cannot_sync_license_data));
                 return;
-            JSONObject json =(JSONObject) ar.get(0);
-
-            StoreDevice dev = parseJsonDevice(json);
-            updateDevices(dev);
-            if (findMyLicense()!= null)
-                fireSuccessEvent();
-            else
-                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, "Can not sync data with server.");
-            System.out.println(ar.toString());
+            }
+            postGetDevicesRequest();
+//            JSONArray ar = new JSONArray(request.m_result);
+//            if (ar.length() <=0)
+//                return;
+//            JSONObject json =(JSONObject) ar.get(0);
+//
+//            StoreDevice dev = parseJsonDevice(json);
+//            updateDevices(dev);
+//            if (findMyLicense()!= null)
+//                fireSuccessEvent();
+//            else
+//                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, "Can not sync data with server.");
+//            System.out.println(ar.toString());
         }
         catch (Exception e)
         {
@@ -358,6 +370,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         }
         return null;
     }
+    private int MAX_TRY_COUNT = 3;
     private void checkMyActivation()
     {
 
@@ -389,10 +402,16 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         //register me now
         if (m_devices.size()<=0)
         {
+            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT) {
+                fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
+                return;
+            }
             postSyncMac("",m_stationID, m_myMacAddress, null);
             return;
         }
 
+        if (m_nSyncGetDevicesCount>0)
+            fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,"Sync data error, try again!");
 
         showRegisterOptionDlg();
 
@@ -528,6 +547,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
      * rev.
      *  2.1.4
      *      dev parameters, for update time value. This update_time must < "new one".
+     *
+     *      samples:
+     *      [{"tok":"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"},{"data":[{"bump_transfer_device_id":"0","xml_order":"2","screen_id":"1","screen_size":"0","enable":"1","split_screen_child_device_id":"0","split_screen_parent_device_id":"0","function":"'EXPEDITOR'","id":"1","guid":"'c6ad5b2d-4d72-4ab1-a66a-f8d49a927603'","is_deleted":"0","update_time":"1537313373","store_guid":"'7dc418db-25a1-4b0c-aa41-b357acec2033'","name":"'1'","create_time":"1537313373","login":"0","license":"1","serial":"'5.123456789'","line_display":"0","parent_id":"0","update_device":"''"}],"req":"SYNC","entity":"devices"}]
      */
     public void postSyncMac(String licenseGuid,String stationID, String macAddress, StoreDevice dev)
     {
@@ -987,6 +1009,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         if (m_bDoLicensing) return;
         m_bDoLicensing = true;
+        m_nSyncGetDevicesCount = 0;
+
         m_bSilent = bSilent;
         String userName = loadUserName();
         String password = loadPassword();
