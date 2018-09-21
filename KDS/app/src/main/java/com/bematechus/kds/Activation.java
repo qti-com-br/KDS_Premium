@@ -94,7 +94,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
-        //m_myMacAddress = "12.123456789";//test
+        //m_myMacAddress = "12.123456789";//test	000ec3310238
+        m_myMacAddress = "000ec33102389";
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {
@@ -364,7 +365,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         {
             String serial = m_devices.get(i).getSerial();
             serial = serial.toUpperCase();
-            if (serial.equals(m_myMacAddress))
+            if (serial.equals(m_myMacAddress.toUpperCase()))
                 return m_devices.get(i);
 
         }
