@@ -38,6 +38,8 @@ import java.util.List;
  */
 public class Activation implements ActivationHttp.ActivationHttpEvent {
 
+    static final String TAG = "ACTIVATION";
+
     /**
      *
      * Management
@@ -53,8 +55,19 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
      */
 //    static final String USER_NAME =  "androidkds";// "bematech@kitchengous.com";
 //    static final String PASSWORD ="123456";// "098765";
-    static final String TAG = "ACTIVATION";
-    static final int HOUR_MS =3600000;
+
+    //final boolean _DEBUG = true;
+
+//    static final int HOUR_MS = 3600000;
+//    static int MAX_LOST_COUNT = 120;
+    //debug
+    static final int HOUR_MS = 60000;//use 5secs// 3600000;
+    static int MAX_LOST_COUNT = 60;//120
+//
+    static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
+
+
+
     public interface ActivationEvents
     {
         public void onActivationSuccess();
@@ -94,7 +107,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
-        //m_myMacAddress = "12.123456789";//test	000ec3310238
+        //if (_DEBUG)
+        //    m_myMacAddress = "18.ABCdef";//test	000ec3310238
+
         //m_myMacAddress = "000ec33102389";
     }
     public void setEventsReceiver(ActivationEvents receiver)
@@ -123,6 +138,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 case Get_devices:
                     onActivationResponseGetDevices(http, request);
                     break;
+                case Replace:
+                    onActivationResponseReplace(http, request);
+                    break;
             }
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
@@ -150,11 +168,24 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     }
     static public boolean isResponseError(String response)
     {
-        String s = response.toUpperCase();
-        if ( s.indexOf("\"ERROR\":NULL") >=0)
-            return false;
-
-        return (s.indexOf("\"ERROR\":")>=0);
+        try {
+//            JSONObject json = new JSONObject(response);
+//            String errorInfo = json.getString("error");
+//            if (errorInfo.isEmpty() ||
+//                    errorInfo.toUpperCase().equals("NULL"))
+//                return false;
+            String s = response.toUpperCase();
+            if (s.indexOf("\"ERROR\":NULL") >= 0)
+                return false;
+            if (s.indexOf("\"ERROR\":\"\"") >= 0)
+                return false;
+            return (s.indexOf("\"ERROR\":") >= 0);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return true;
     }
     /**
      * [{"store_guid":"4220e7ee-dcdf-46d9-ae6b-565d228d6e2d"}]
@@ -238,6 +269,33 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             e.printStackTrace();
         }
     }
+
+    public void onActivationResponseReplace(ActivationHttp http, ActivationRequest request)
+    {
+        showProgressDialog(false, "");
+        if (isResponseError(request.m_result))
+        {
+            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
+            return;
+        }
+        try
+        {
+            m_nSyncGetDevicesCount ++;
+            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+            {
+                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, m_context.getString(R.string.cannot_replace_license_data));
+                return;
+            }
+            postGetDevicesRequest();
+
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e);
+            //e.printStackTrace();
+        }
+    }
+
 
     /**
      * [
@@ -355,7 +413,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e);
+            //e.printStackTrace();
         }
     }
 
@@ -402,7 +461,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
         //register me now
         if (m_devices.size()<=0)
-        {
+        {//add new
             if (m_nSyncGetDevicesCount > MAX_TRY_COUNT) {
                 fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
                 return;
@@ -560,6 +619,13 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void postSyncMac(String licenseGuid,String stationID, String macAddress, StoreDevice dev)
     {
         ActivationRequest r = ActivationRequest.createSyncMacRequest(m_storeGuid, stationID, licenseGuid, macAddress, dev);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+    }
+
+    public void postReplacecMac(String licenseGuid,String macAddress)
+    {
+        ActivationRequest r = ActivationRequest.createReplaceMacRequest(m_storeGuid, licenseGuid, macAddress);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
@@ -776,7 +842,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.No_selected_license_to_replace,  m_context.getString(R.string.no_selected_license_to_replace));
             }
             else
-                postSyncMac(dev.getGuid(),m_stationID, m_myMacAddress, dev);
+                postReplacecMac(dev.getGuid(), m_myMacAddress);
+
+                //postSyncMac(dev.getGuid(),m_stationID, m_myMacAddress, dev);
         }
     }
 
@@ -926,7 +994,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     }
 
-    static int MAX_LOST_COUNT = 120;
+
     static public boolean isActivationFailedEnoughToLock()
     {
 
@@ -945,7 +1013,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         return ncount;
     }
 
-    static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
+
     public int updateFailedCount()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
@@ -959,8 +1027,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             return ncount;
         if (nTime ==0) //first time
             ncount ++;
-        else
-            ncount += (nDelay/LOST_COUNT_INTERVAL);
+        else {
+            long nn =  (nDelay / LOST_COUNT_INTERVAL);
+            ncount += nn;
+        }
 
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("activation_lost", ncount);

@@ -4879,6 +4879,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * @return
      */
     public boolean isMacMatch2() {
+        if (KDSConst.ENABLE_FEATURE_ACTIVATION)
+            return true;
+        
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         String strMac = "";
 
@@ -5905,12 +5908,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     TimeDog m_activationDog = new TimeDog();
 
+
     private void checkAutoActivation()
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activationDog.is_timeout(Activation.HOUR_MS))
-
+        if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
             doActivation(true, false);
             m_activationDog.reset();
