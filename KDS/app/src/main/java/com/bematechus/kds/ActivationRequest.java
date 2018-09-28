@@ -574,4 +574,48 @@ public class ActivationRequest {
 
         }
     }
+
+
+    /**
+     * 2.0.50
+     *
+     * @param store_guid
+     * @param storeName
+     * @param orderName
+     * @param orderSmsState
+     * @return
+     */
+    static public ActivationRequest createSyncMacRequest( String store_guid,String storeName,String customerPhone, String orderName,int orderSmsState )
+    {
+
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj("tok", auth) );
+        JSONObject json = getJsonObj("req", "SMS_ORDER");
+
+        try {
+            json.put("store_guid", store_guid);
+            json.put("store_name", storeName);
+            json.put("order_guid", orderName);
+            json.put("order_status",KDSUtil.convertIntToString(orderSmsState));
+            json.put("order_phone", customerPhone);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Sync );
+        return r;
+
+
+    }
+
 }

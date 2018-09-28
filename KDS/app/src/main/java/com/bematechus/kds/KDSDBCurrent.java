@@ -3326,6 +3326,38 @@ update the schedule item ready qty
         return s;
     }
 
+    /**
+     * 2.0.50
+     * save customer information for sms feature
+     * use R1, R2 field
+     *
+     * @param customerID
+     * @param customerPhone
+     */
+    public void setSMSInfo(String orderGuid, String customerID, String customerPhone)
+    {
+        String sql = String.format("update orders set r1='%s',r2='%s' where guid='%s'",customerID, customerPhone, orderGuid);
+
+        getDB().execSQL(sql);
+
+    }
+
+    /**
+     * 2.0.50
+     * record last order sms state to db
+     * User R3 field
+     *
+     * @param orderGuid
+     * @param nState
+     *  Record this state has been send to server.
+     */
+    public void setSMSState(String orderGuid, int nState)
+    {
+        String sql = String.format("update orders set r3='%s' where guid='%s'",KDSUtil.convertIntToString(nState), orderGuid);
+
+        getDB().execSQL(sql);
+    }
+
 
 
 
@@ -3361,9 +3393,9 @@ update the schedule item ready qty
             + "FromPrimary int default 0,"//in backup station, this order is from primary station. 1, 0.
 
             +"r0 text(16)," //2.0.34, use it for queue status sort.
-            +"r1 text(16),"
-            +"r2 text(16),"
-            +"r3 text(16),"
+            +"r1 text(16)," //2.0.50, for sms customer id
+            +"r2 text(16)," //2.0.50 for sms customer phone number
+            +"r3 text(16)," //2.0.50 for sms state.//0 = new, 1 = prepared, 2 = done
             +"r4 text(16),"
             +"r5 text(16),"
             +"r6 text(16),"
