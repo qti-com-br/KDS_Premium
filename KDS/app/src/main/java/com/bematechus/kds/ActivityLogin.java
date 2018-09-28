@@ -66,6 +66,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         s = intent.getStringExtra("mac");
         m_activation.setMacAddress(s);
 
+        String errmsg = intent.getStringExtra("errmsg");
+
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -100,6 +102,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         mUserNameView.setText(Activation.loadUserName());
         mPasswordView.setText(Activation.loadPassword());
 
+        showErrorMessage(errmsg);
 //        Button btnCancel = (Button) findViewById(R.id.btnCancel);
 //        if (Activation.isActivationFailedEnoughToLock())
 //            btnCancel.setVisibility(View.GONE);

@@ -60,9 +60,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
 //    static final int HOUR_MS = 3600000;
 //    static int MAX_LOST_COUNT = 120;
-    //debug
-    static final int HOUR_MS = 60000;//use 5secs// 3600000;
-    static int MAX_LOST_COUNT = 60;//120
+
+    static final int HOUR_MS = 3600000;
+    static int MAX_LOST_COUNT = 120;
 //
     static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
 
@@ -1081,7 +1081,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     /**
      * start from here.
      */
-    public void startActivation(boolean bSilent,boolean bForceShowNamePwdDlg, Activity caller)
+    public void startActivation(boolean bSilent,boolean bForceShowNamePwdDlg, Activity caller, String showErrorMessage)
     {
         if (m_bDoLicensing) return;
         m_bDoLicensing = true;
@@ -1099,7 +1099,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 fireFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
                 return;
             }
-            showLoginActivity(caller);
+            showLoginActivity(caller, showErrorMessage);
 
             //showInputNamePasswordDlg(m_context);
         }
@@ -1117,7 +1117,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             if ( !bForceShowNamePwdDlg)
                 postLoginRequest(userName, password);
             else
-                showLoginActivity(caller);
+                showLoginActivity(caller, showErrorMessage);
         }
     }
     ProgressDialog m_progressDlg = null;
@@ -1140,7 +1140,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     }
 
-    public void showLoginActivity(Activity caller)
+    public void showLoginActivity(Activity caller, String showErrorMessage)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         m_bDoLicensing = true;
@@ -1149,6 +1149,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         intent.putExtra("func", KDSConst.SHOW_LOGIN);
         intent.putExtra("id", m_stationID);
         intent.putExtra("mac", m_myMacAddress);
+        intent.putExtra("errmsg", showErrorMessage);
+
         caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
