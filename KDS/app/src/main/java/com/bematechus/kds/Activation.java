@@ -108,7 +108,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         m_myMacAddress = mac;
         //if (_DEBUG)
-        //    m_myMacAddress = "18.ABCdef";//test	000ec3310238
+            //m_myMacAddress = "19.ABCdef";//test	000ec3310238
 
         //m_myMacAddress = "000ec33102389";
     }
