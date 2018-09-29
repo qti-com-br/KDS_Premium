@@ -95,6 +95,18 @@ public class KDSDataOrder extends KDSData {
     //2.0.34
     Date m_dtQueueStateTime = new Date();
 
+    //2.0.50, sms feature
+    // see https://bematech.atlassian.net/browse/KPP1-15
+    public static final int SMS_STATE_UNKNOWN = -1;
+    public static final int SMS_STATE_NEW = 0;
+    public static final int SMS_STATE_PREPARED = 1;
+    public static final int SMS_STATE_DONE = 2;
+
+    String m_smsCustomerID = "";
+    String m_smsCustomerPhone = "";
+    int m_smsLastState = SMS_STATE_UNKNOWN; //this state has been send to server.
+
+
     /**
      * When auto-bump is enable, after the time reaches, it is impossible to “unbump” an order to
      * current screen anymore since it has time > auto bump time. So for this, when auto – bump is enable,
@@ -128,6 +140,10 @@ public class KDSDataOrder extends KDSData {
         Queue_Message,
         TrackerID,
         PagerID,
+        //2.0.50
+//        SMS_Customer_ID,
+//        SMS_Customer_Phone,
+
         Count
     };
 
@@ -467,6 +483,11 @@ public class KDSDataOrder extends KDSData {
         obj.m_prepSorts = m_prepSorts;
         obj.m_nSmartTimerDelayShowing = m_nSmartTimerDelayShowing;//for smart hidden.
 
+        //2.0.50
+        obj.m_smsCustomerID = m_smsCustomerID;
+        obj.m_smsCustomerPhone = m_smsCustomerPhone;
+        obj.m_smsLastState = m_smsLastState;
+        //
         this.getOrderMessages().copyTo(obj.getOrderMessages());
     }
     /***************************************************************************
@@ -500,7 +521,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -528,7 +549,11 @@ public class KDSDataOrder extends KDSData {
             + "," + KDSUtil.convertFloatToString(getOrderDelay())
             + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"//2.0.8, for auto bump time
             + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"//2.0.34, for queue state time
-            + ",0 )";
+            + ",0" //2.0.34, use it for queue status sort.
+            + ",'" + getSMSCustomerID() +"'" //2.0.50, for sms customer id
+            +",'" + m_smsCustomerPhone + "'" //2.0.50 for sms customer phone number
+            + "," +  KDSUtil.convertFloatToString(m_smsLastState)  ////2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
+            +  ")";
         return sql;
          
         
@@ -1387,6 +1412,13 @@ public class KDSDataOrder extends KDSData {
 
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRACKERID,this.getTrackerID(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PAGERID,this.getPagerID(), false);
+
+            //2.0.50 SMS feature
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER, true);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getSMSCustomerID(), false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER,this.getSMSCustomerPhone(), false);
+            //
+
             //2.5.4.19 add received time and restore time
             s = KDSUtil.convertDateToString(this.getStartTime());
             pxml.newGroup("Received_Time",s, false);
@@ -2325,5 +2357,59 @@ get the total qty of all found items
     public Date getQueueStateTime()
     {
         return m_dtQueueStateTime;
+    }
+
+    /**
+     * 2.0.50
+     * @return
+     */
+    public String getSMSCustomerID()
+    {
+        return m_smsCustomerID;
+    }
+
+    /**
+     * 2.0.50
+     * @param customerID
+     */
+    public void setSMSCustomerID(String customerID)
+    {
+        m_smsCustomerID = customerID;
+    }
+
+    /**
+     * 2.0.50 SMS feature
+     * @return
+     */
+    public String getSMSCustomerPhone()
+    {
+        return m_smsCustomerPhone;
+    }
+
+    /**
+     * 2.0.50 SMS feature
+     * @param phone
+     */
+    public void setSMSCustomerPhone(String phone)
+    {
+        m_smsCustomerPhone = phone;
+    }
+
+    /**
+     * 2.0.50 SMS feature
+     * @return
+     */
+    public int getSMSLastSendState()
+    {
+        return m_smsLastState;
+    }
+
+    /**
+     * 2.0.50 SMS feature
+     * @param nSMSState
+     */
+    public void setSMSLastSendState(int nSMSState)
+    {
+        m_smsLastState = nSMSState;
     }
 }

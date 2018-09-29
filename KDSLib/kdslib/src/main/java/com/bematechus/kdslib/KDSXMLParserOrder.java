@@ -100,6 +100,7 @@ public class KDSXMLParserOrder {
 
     //2.0.47
     public final static String DBXML_ELEMENT_CATEGORY_PRIORITY = "SortPriority";
+
     /************************************************************************/
     /* 
     <CatDelay> 
@@ -123,7 +124,12 @@ public class KDSXMLParserOrder {
     //for modifiers
     public final static String DBXML_ELEMENT_MODIFIER = ("Modifier");
 
-
+    //2.0.50
+    /**
+     * SMS feature
+     */
+    public final static String DBXML_ELEMENT_CUSTOMER = "Customer";
+    public final static String DBXML_ELEMENT_PHONE = "Phone";
     /**
      *
      * @param kdsStation
@@ -273,6 +279,17 @@ public class KDSXMLParserOrder {
             case DBXML_ELEMENT_ITEM:
             {
                 doItem(xml,  order);
+            }
+            break;
+            //2.0.50
+            /*<Customer>
+                <ID>1</ID>
+                <Phone>15167074365</Phone>
+            </Customer>
+            */
+            case DBXML_ELEMENT_CUSTOMER:
+            {
+                doCustomerGroup(xml, order);
             }
             break;
         }
@@ -920,4 +937,48 @@ public class KDSXMLParserOrder {
     }
 
 
+    /**
+     * 2.0.50 SMS feature
+     * @param xml
+     * @param order
+     */
+    static protected void doCustomerGroup(KDSXML xml,KDSDataOrder order)
+    {
+
+
+        if (!xml.moveToFirstChild())
+            return ;
+        do
+        {
+            String name = xml.getCurrentName();
+            doCustomerSubGroup(xml, name, order);
+        }
+        while (xml.slidingNext());
+
+
+        xml.back_to_parent();
+
+    }
+    /********************
+     *
+     * @param xml
+     * @param grpName
+     * @param order
+     */
+    protected static void doCustomerSubGroup(KDSXML xml,String grpName,KDSDataOrder order) {
+        String strVal = xml.getCurrentGroupValue();
+
+        switch (grpName) {
+            case DBXML_ELEMENT_ID: {
+
+                order.setSMSCustomerID(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_PHONE: {
+                order.setSMSCustomerPhone(strVal);
+            }
+            break;
+
+        }
+    }
 }

@@ -249,7 +249,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    final int ORDER_FIELDS_COUNT = 24; //it should equal field in following function.
+    final int ORDER_FIELDS_COUNT = 27; //it should equal field in following function.
 
     /**
      * see function #orderGet() and  #ordersLoadAllJustInfo
@@ -279,10 +279,16 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.CookState," +
                 "orders.SosReady," + //20
                 "orders.iconidx," +  //21
-                "orders.BumpedTime, "+//22
-                "orders.r0 "; //23
+                "orders.BumpedTime,"+//22
+                "orders.r0," + //23
+                "orders.r1," + //24
+                "orders.r2," +//25
+                "orders.r3 " ;//26
 
-
+        //**********************************************************************
+        //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
+        //Please keep last SPACE character!!!!!
+        //**********************************************************************
         return sql;
     }
     /***************************************************************************
@@ -379,6 +385,11 @@ public class KDSDBCurrent extends KDSDBBase {
         if (dtQueueStateChangeTime == null)
             dtQueueStateChangeTime = new Date(c.getStartTime().getTime());
         c.setQueueStateTime(dtQueueStateChangeTime);
+
+        //2.0.50
+        c.setSMSCustomerID( getString(sf, 24) );
+        c.setSMSCustomerPhone( getString(sf, 25) );
+        c.setSMSLastSendState( getInt(sf, 26, KDSDataOrder.SMS_STATE_UNKNOWN) );
 
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
@@ -3395,7 +3406,7 @@ update the schedule item ready qty
             +"r0 text(16)," //2.0.34, use it for queue status sort.
             +"r1 text(16)," //2.0.50, for sms customer id
             +"r2 text(16)," //2.0.50 for sms customer phone number
-            +"r3 text(16)," //2.0.50 for sms state.//0 = new, 1 = prepared, 2 = done
+            +"r3 text(16)," //2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
             +"r4 text(16),"
             +"r5 text(16),"
             +"r6 text(16),"
