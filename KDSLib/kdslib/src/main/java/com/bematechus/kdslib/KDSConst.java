@@ -83,8 +83,8 @@ public class KDSConst {
     /**
      * for feature enable/disable
      * note:
-     *  Latest Activation version: 2.1.5
-     *  Latest normal version: 2.0.49
+     *  Latest Activation version: 2.1.9
+     *  Latest normal version: 2.0.52
      */
     //2.0.38
     public static final boolean ENABLE_FEATURE_ACTIVATION = true;//for multiple version.

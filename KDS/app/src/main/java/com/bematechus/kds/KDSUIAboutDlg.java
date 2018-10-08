@@ -99,7 +99,7 @@ public class KDSUIAboutDlg extends KDSUIDialogBase implements UpdateManager.Upda
 
     public void onActivationClicked()
     {
-        m_mainActivity.doActivation(false, true);
+        m_mainActivity.doActivation(false, true, "");
         this.getDialog().hide();
     }
 }

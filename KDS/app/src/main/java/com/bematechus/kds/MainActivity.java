@@ -479,7 +479,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
             boolean bSilent = Activation.hasDoRegister();//2.1.2
-            doActivation(bSilent, false);
+            doActivation(bSilent, false, "");
         }
 
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
@@ -4879,6 +4879,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * @return
      */
     public boolean isMacMatch2() {
+        if (KDSConst.ENABLE_FEATURE_ACTIVATION)
+            return true;
+        
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         String strMac = "";
 
@@ -5890,34 +5893,44 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
        // Toast.makeText(this, "Activation failed: " +stage.toString()+" - " + failMessage, Toast.LENGTH_LONG).show();
 //        if (ActivationRequest.needResetUsernamePassword(errType))
 //            m_activation.resetUserNamePassword();
-        checkActivationResult();
+
+        checkActivationResult(stage, errType);
         updateTitle();
     }
-    private void checkActivationResult()
+    private void checkActivationResult(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType)
     {
-        if (m_activation.isActivationFailedEnoughToLock())
+        if (m_activation.isActivationFailedEnoughToLock() || errType == ActivationRequest.ErrorType.License_disabled)
         {
             //this.finish();
-            doActivation(false, true);
+            doActivation(false, true, this.getString(R.string.license_deactivated));
             //m_activation.showLoginActivity(this);
         }
     }
 
     TimeDog m_activationDog = new TimeDog();
 
+
     private void checkAutoActivation()
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activationDog.is_timeout(Activation.HOUR_MS))
-
+        if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
-            doActivation(true, false);
+            doActivation(true, false, "");
             m_activationDog.reset();
         }
     }
 
-    public void doActivation(boolean bSilent,boolean bForceShowNamePwdDlg)
+    /**
+     *
+     * @param bSilent
+     * @param bForceShowNamePwdDlg
+     * @param showErrorMessage
+     *      If it is "", show nothing,
+     *      Otherwise, show this error message to login dialog.
+     */
+    public void doActivation(boolean bSilent,boolean bForceShowNamePwdDlg, String showErrorMessage)
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
@@ -5927,7 +5940,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (ar.size()<=0) return;
         m_activation.setMacAddress(ar.get(0));
       //  m_activation.setMacAddress("BEMA0000011");//test
-        m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this);
+        m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
 }
 

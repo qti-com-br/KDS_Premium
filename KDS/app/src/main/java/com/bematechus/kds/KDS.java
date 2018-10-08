@@ -1965,7 +1965,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     private void doCommandXml(KDSSocketInterface sock, String xmlData)
     {
         KDSXMLParserCommand command = (KDSXMLParserCommand)KDSXMLParser.parseXml(this.getStationID(), xmlData);
-        if (command == null) return;
+        if (command == null) return;//different version cause command messed.
         KDSXMLParserCommand.KDSCommand code = command.getCode();
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");

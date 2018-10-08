@@ -1107,4 +1107,6 @@
     <string name="no_selected_license_to_replace">No selected license to replace</string>
     <string name="item_group_by_category">Group items by its category</string>
     <string name="inactive">"(Inactive)"</string>
+    <string name="cannot_sync_license_data">Can not sync data with server.</string>
+    <string name="cannot_replace_license_data">Can not replace data with server.</string>
 </resources>

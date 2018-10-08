@@ -38,6 +38,7 @@ public class ActivationRequest {
      Password:098765
 
      //test store
+     storename: lci test
      user: david
      pwd: 123456
      */
@@ -54,6 +55,7 @@ public class ActivationRequest {
         Sync,
         Get_settings,
         Get_devices,
+        Replace,
 
     }
 
@@ -70,6 +72,7 @@ public class ActivationRequest {
         License_disabled,
         No_selected_license_to_replace,
         Cancel_license_options,
+        Replace_error,
     }
     String m_params = "";
     String m_result = "";
@@ -347,6 +350,45 @@ public class ActivationRequest {
 
     }
 
+    /**
+     * New command
+     * @param store_guid
+     * @param licenseGuid
+     * @param macAddress
+     * @return
+     */
+    static public ActivationRequest createReplaceMacRequest( String store_guid, String licenseGuid, String macAddress)
+    {
+
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj("tok", auth) );
+        JSONObject json = getJsonObj("req", "DEVICE_REPLACE");
+
+        try {
+            json.put("store_guid", store_guid );
+            json.put("device_guid", licenseGuid );
+            json.put("device_serial", macAddress );
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Replace );
+        return r;
+
+
+    }
+
+
     static public String createNewGUID()
     {
 
@@ -473,6 +515,7 @@ public class ActivationRequest {
             long updateTime = dt.getTime()/1000;
             if (updateTime<lastUpdateTime)
                 updateTime = lastUpdateTime +1;
+            //updateTime = lastUpdateTime -1; //debug
 
             //the data setup by me.
 //            if (licenseGuid.isEmpty())
@@ -563,6 +606,7 @@ public class ActivationRequest {
             case License_disabled:
             case No_selected_license_to_replace:
             case Cancel_license_options:
+            case Replace_error:
                 return false;
 
 

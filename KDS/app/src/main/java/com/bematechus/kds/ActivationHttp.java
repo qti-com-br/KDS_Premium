@@ -512,7 +512,7 @@ public class ActivationHttp  extends Handler implements Runnable {
         catch (UnknownHostException err)
         {//2.1.5
 
-            request.m_result = "Internet error";
+            request.m_result = "No internet connection is detected.";
             request.m_httpResponseCode = HTTP_Exception;
             Message msg = new Message();
             msg.what = MSG_HTTP_EXCEPTION;
