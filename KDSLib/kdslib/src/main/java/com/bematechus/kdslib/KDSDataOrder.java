@@ -2412,4 +2412,35 @@ get the total qty of all found items
     {
         m_smsLastState = nSMSState;
     }
+
+    public int getFinishedItemsCount()
+    {
+        int nFinished = 0;
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (item.getLocalBumped() ||
+               (!item.getBumpedStationsString().isEmpty()) ||
+                item.isReady() ||
+                item.isMarked() )
+                    nFinished ++;
+
+
+        }
+        return nFinished;
+
+    }
+    public int getSMSCurrentState()
+    {
+        int nFinished = this.getFinishedItemsCount();
+        int nItemsCount = this.getItems().getCount();
+        if (nFinished ==0)
+            return SMS_STATE_NEW;
+        else if (nFinished == nItemsCount)
+            return SMS_STATE_DONE;
+        else
+            return SMS_STATE_PREPARED;
+
+    }
 }

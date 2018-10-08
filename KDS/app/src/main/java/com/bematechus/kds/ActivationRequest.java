@@ -2,6 +2,7 @@ package com.bematechus.kds;
 
 //import com.bematechus.kdslib.KDSUtil;
 
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 
 import org.json.JSONArray;
@@ -30,6 +31,7 @@ import java.util.UUID;
  */
 public class ActivationRequest {
 
+    final String TAG = "ActivationRequest";
     /**
      *
      * Management
@@ -56,6 +58,7 @@ public class ActivationRequest {
         Get_settings,
         Get_devices,
         Replace,
+        SMS,
 
     }
 
@@ -621,11 +624,11 @@ public class ActivationRequest {
 
 
     /**
-     * 2.0.50
      *
      * @param store_guid
      * @param storeName
-     * @param orderName
+     * @param customerPhone
+     * @param orderGuid
      * @param orderSmsState
      * @return
      */
@@ -647,6 +650,7 @@ public class ActivationRequest {
         }
         catch (Exception e)
         {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e );
             e.printStackTrace();
         }
 
@@ -656,7 +660,7 @@ public class ActivationRequest {
 
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
-        r.setCommand( COMMAND.Sync );
+        r.setCommand( COMMAND.SMS );
         return r;
 
 

@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 
@@ -72,6 +73,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         public void onActivationSuccess();
         public void onActivationFail(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String failMessage);
+        public void onSMSSendSuccess(String orderGuid, int smsState);
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -143,6 +145,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                     break;
                 case Replace:
                     onActivationResponseReplace(http, request);
+                    break;
+                case SMS:
+                    onSMSResponse(http, request);
                     break;
             }
         }
@@ -1179,6 +1184,45 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         m_http.request(r);
 
     }
+
+
+    public void onSMSResponse(ActivationHttp http, ActivationRequest request)
+    {
+
+        if (isResponseError(request.m_result))
+        {
+            //fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
+            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "SMS sending failed");
+            return;
+        }
+        else
+        {
+            String s = request.getParams();
+            try {
+                JSONArray jsonar = new JSONArray(s);
+                if (jsonar.length()!=2)
+                    return;
+                JSONObject json = (JSONObject) jsonar.get(0);
+                String orderguid = json.getString("order_guid");
+                String smsState = json.getString("order_status");
+                if (orderguid.isEmpty())
+                {
+                    json = (JSONObject) jsonar.get(1);
+                    orderguid = json.getString("order_guid");
+                    smsState = json.getString("order_status");
+                }
+                if (m_receiver != null)
+                    m_receiver.onSMSSendSuccess(orderguid, KDSUtil.convertStringToInt( smsState, KDSDataOrder.SMS_STATE_NEW) );
+            }
+            catch (Exception e)
+            {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            }
+
+        }
+
+    }
+
 
     class StoreDevice
     {
