@@ -585,7 +585,7 @@ public class ActivationRequest {
      * @param orderSmsState
      * @return
      */
-    static public ActivationRequest createSyncMacRequest( String store_guid,String storeName,String customerPhone, String orderName,int orderSmsState )
+    static public ActivationRequest createSMSRequest( String store_guid,String storeName,String customerPhone, String orderGuid,int orderSmsState )
     {
 
         String auth = TOKEN;
@@ -596,7 +596,7 @@ public class ActivationRequest {
         try {
             json.put("store_guid", store_guid);
             json.put("store_name", storeName);
-            json.put("order_guid", orderName);
+            json.put("order_guid", orderGuid);
             json.put("order_status",KDSUtil.convertIntToString(orderSmsState));
             json.put("order_phone", customerPhone);
 

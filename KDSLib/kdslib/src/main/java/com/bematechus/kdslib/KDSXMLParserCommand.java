@@ -107,8 +107,14 @@ public class KDSXMLParserCommand {
     public void setCode(String strCode)
     {
         int n = KDSUtil.convertStringToInt(strCode, 0);
-        KDSCommand k = KDSCommand.values()[n];
-        m_command = k;
+        if (n >= KDSCommand.values().length)
+        {
+            m_command = KDSCommand.Nothing;
+        }
+        else {
+            KDSCommand k = KDSCommand.values()[n];
+            m_command = k;
+        }
     }
     public KDSCommand getCode()
     {

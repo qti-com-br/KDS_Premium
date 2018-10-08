@@ -79,6 +79,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     boolean m_bDoLicensing = false;
 
+    private String m_storeName = ""; //2.0.50
+    private String m_storeKey = "";
+
     public Activation(Context context)
     {
         m_context = context;
@@ -151,7 +154,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         return (s.indexOf("\"ERROR\":")>=0);
     }
     /**
-     * [{"store_guid":"4220e7ee-dcdf-46d9-ae6b-565d228d6e2d"}]
+     *
+     * [{"store_guid":"80c82eaf-d052-4e35-96a8-03a2b2ec838a","store_name":"rest","store_key":"223c2db3"}]
      * @param http
      * @param request
      */
@@ -172,6 +176,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
             String store_guid = json.getString("store_guid");
             m_storeGuid = store_guid;
+
+            m_storeName =  json.getString("store_name");//2.0.50
+            m_storeKey =  json.getString("store_key");//2.0.50
+
             System.out.println(m_storeGuid);
 
             //postSyncMac(m_licenseGuid, m_myMacAddress);
@@ -1052,6 +1060,22 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+
+    /**
+     * 2.0.50
+     * @param orderGuid
+     *  Local orderGuid value
+     * @param customerPhone
+     * @param nSMSState
+     *  See SMS_STATE_UNKNOWN ... in KDSDataOrder
+     */
+    public void postSMS(String orderGuid, String customerPhone, int nSMSState)
+    {
+        ActivationRequest r = ActivationRequest.createSMSRequest(m_storeGuid,m_storeName, customerPhone, orderGuid, nSMSState );
+        m_http.request(r);
+
     }
 
     class StoreDevice
