@@ -2321,6 +2321,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
         refreshView(userID);
+
+        getKDS().checkSMS(orderGuid); //2.1.10
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
@@ -2560,6 +2563,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String itemGuid = getSelectedItemGuid(userID);
 
         unbumpItem(userID, orderGuid, itemGuid);
+
+        getKDS().checkSMS(orderGuid); //2.1.10
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
@@ -5134,6 +5139,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!isKDSValid()) return ;
 
+        //2.1.10
+        getKDS().setSMSActivation(m_activation);
+
+
         initStationGeneralSteps();
 
         init_information_list_gui();
@@ -5941,6 +5950,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_activation.setMacAddress(ar.get(0));
       //  m_activation.setMacAddress("BEMA0000011");//test
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
+    }
+
+    public void onSMSSendSuccess(String orderGuid, int smsState)
+    {
+        getKDS().onSMSSuccess(orderGuid, smsState);
     }
 }
 

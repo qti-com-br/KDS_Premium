@@ -1109,4 +1109,5 @@
     <string name="inactive">"(Inactive)"</string>
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
+    <string name="sms_feature_enabled">SMS feature enabled</string>
 </resources>

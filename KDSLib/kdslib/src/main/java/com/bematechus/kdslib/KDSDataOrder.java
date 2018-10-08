@@ -2431,6 +2431,11 @@ get the total qty of all found items
         return nFinished;
 
     }
+
+    /**
+     *
+     * @return
+     */
     public int getSMSCurrentState()
     {
         int nFinished = this.getFinishedItemsCount();
@@ -2442,5 +2447,12 @@ get the total qty of all found items
         else
             return SMS_STATE_PREPARED;
 
+    }
+
+    public boolean isSMSStateChanged()
+    {
+        int nSMSState = this.getSMSCurrentState();
+        int nSendState = getSMSLastSendState();
+        return (nSendState != nSMSState);
     }
 }

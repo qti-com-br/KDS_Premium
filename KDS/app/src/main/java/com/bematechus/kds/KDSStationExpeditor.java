@@ -1,5 +1,7 @@
 package com.bematechus.kds;
 
+import android.app.ProgressDialog;
+
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
@@ -490,14 +492,22 @@ public class KDSStationExpeditor extends KDSStationNormal {
         return true;
 
     }
-    static public  void exp_sync_item_unbumped(KDS kds, KDSXMLParserCommand command)
+
+    /**
+     *
+     * @param kds
+     * @param command
+     * @return
+     *  order guid
+     */
+    static public  String exp_sync_item_unbumped(KDS kds, KDSXMLParserCommand command)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
 
         if (strOrderName.isEmpty() ||
                 strItemName.isEmpty()    )
-            return;
+            return "";
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
 
@@ -573,6 +583,8 @@ public class KDSStationExpeditor extends KDSStationNormal {
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
             sync_with_queue(kds, command.getCode(), orderA, itemA);
+
+            return orderA.getGUID();
         }
         else if (itemB != null)
         {
@@ -580,7 +592,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
             sync_with_queue(kds, command.getCode(), orderB, itemB);
+            return orderB.getGUID();
         }
+
+        return "";
 
     }
 
@@ -1001,15 +1016,16 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * @param kds
      * @param command
      * @return
+     *  order guid
      */
-    static public  boolean exp_sync_item_bumped(KDS kds,  KDSXMLParserCommand command)
+    static public  String exp_sync_item_bumped(KDS kds,  KDSXMLParserCommand command)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
 
         if (strOrderName.isEmpty() ||
                 strItemName.isEmpty()    )
-            return false;
+            return "";
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
 
@@ -1030,7 +1046,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         }
 
         if (itemA == null && itemB == null)
-            return false;
+            return "";
 
         if (kds.getStationsConnections().getRelations().isBackupStation())
         { //I am backup slave station
@@ -1040,12 +1056,12 @@ public class KDSStationExpeditor extends KDSStationNormal {
                 if (itemA != null)
                 {
                     if (!exp_item_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null)
                 {
                     if (!exp_item_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
 
                 //don't show them
@@ -1054,12 +1070,12 @@ public class KDSStationExpeditor extends KDSStationNormal {
             { //primary is offline now, svae to current database.
                 if (itemA != null) {
                     if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null)
                 {
                     if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
             }
         }
@@ -1070,24 +1086,24 @@ public class KDSStationExpeditor extends KDSStationNormal {
             {
                 if (itemA != null) {
                     if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null)
                 {
                     if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
             }
             else
             {
                 if (itemA != null) {
                     if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null)
                 {
                     if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
             }
 
@@ -1099,12 +1115,12 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //                return false;
             if (itemA != null) {
                 if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                    return false;
+                    return "";
             }
             if (itemB != null)
             {
                 if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                    return false;
+                    return "";
             }
         }
 
@@ -1130,8 +1146,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
             if (orderB != null && orderB.isItemsAllBumpedInExp())
                 kds.getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
         }
-
-        return true;
+        if (orderA != null)
+            return orderA.getGUID();
+        else
+        {
+            if (orderB != null)
+                return orderB.getGUID();
+        }
+        return "";
 
     }
 

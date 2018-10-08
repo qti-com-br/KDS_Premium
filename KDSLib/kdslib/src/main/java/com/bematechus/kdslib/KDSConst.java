@@ -83,7 +83,7 @@ public class KDSConst {
     /**
      * for feature enable/disable
      * note:
-     *  Latest Activation version: 2.1.9
+     *  Latest Activation version: 2.1.11
      *  Latest normal version: 2.0.52
      */
     //2.0.38

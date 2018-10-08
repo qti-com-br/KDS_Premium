@@ -417,14 +417,21 @@ public class KDSStationNormal extends KDSStationFunc {
         sync_with_backup(kds, command.getCode(), orderReceived, null);
     }
 
-    static public boolean normal_sync_item_bumped(KDS kds,  KDSXMLParserCommand command)
+    /**
+     *
+     * @param kds
+     * @param command
+     * @return
+     *  order guid
+     */
+    static public String normal_sync_item_bumped(KDS kds,  KDSXMLParserCommand command)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
 
         if (strOrderName.isEmpty() ||
                 strItemName.isEmpty()    )
-            return false;
+            return "";
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
 
@@ -442,9 +449,9 @@ public class KDSStationNormal extends KDSStationFunc {
                 itemB= orderB.getItems().getItemByName(strItemName);
         }
         if (orderA == null && orderB == null)
-            return false;
+            return "";
         if (itemA == null && itemB == null)
-            return false;
+            return "";
 
         if (kds.getStationsConnections().getRelations().isBackupStation())
         { //I am backup slave station
@@ -454,11 +461,11 @@ public class KDSStationNormal extends KDSStationFunc {
 
                 if (itemA != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
                 //don't show them
             }
@@ -467,11 +474,11 @@ public class KDSStationNormal extends KDSStationFunc {
 
                 if (itemA != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
                 //if (! normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getOrders(), fromStationID, fromIP, order, item))
                 //    return false;
@@ -484,22 +491,22 @@ public class KDSStationNormal extends KDSStationFunc {
             {
                 if (itemA != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
             }
             else
             {
                 if (itemA != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                        return false;
+                        return "";
                 }
                 if (itemB != null) {
                     if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                        return false;
+                        return "";
                 }
             }
 
@@ -509,11 +516,11 @@ public class KDSStationNormal extends KDSStationFunc {
             //check if current database contains this order.
             if (itemA != null) {
                 if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
-                    return false;
+                    return "";
             }
             if (itemB != null) {
                 if (!normal_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
-                    return false;
+                    return "";
             }
         }
 
@@ -521,23 +528,33 @@ public class KDSStationNormal extends KDSStationFunc {
         if (itemA != null) {
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
+            return orderA.getGUID();
         }
         else if (itemB != null)
         {
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
+            return orderB.getGUID();
         }
 
-        return true;
+        return "";
     }
-    static public void normal_sync_item_unbumped(KDS kds,  KDSXMLParserCommand command)
+
+    /**
+     *
+     * @param kds
+     * @param command
+     * @return
+     *  order guid
+     */
+    static public String normal_sync_item_unbumped(KDS kds,  KDSXMLParserCommand command)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
 
         if (strOrderName.isEmpty() ||
                 strItemName.isEmpty()    )
-            return ;
+            return "";
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
 
@@ -574,7 +591,7 @@ public class KDSStationNormal extends KDSStationFunc {
             item = itemB;
         }
         else {
-            return ;
+            return "";
         }
 
 
@@ -614,6 +631,10 @@ public class KDSStationNormal extends KDSStationFunc {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, item);
         sync_with_backup(kds, command.getCode(), order, item);
+
+        if (order != null)
+            return order.getGUID();
+        return "";
     }
 
     static public void normal_sync_item_modified(KDS kds,  KDSXMLParserCommand command)

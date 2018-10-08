@@ -549,6 +549,8 @@ public class KDSSettings extends SettingsBase {
        //2.0.47
      Item_group_category,
 
+     SMS_enabled, //SMS feature , KPP1-15
+
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1261,6 +1263,10 @@ public class KDSSettings extends SettingsBase {
 
 
         init_option(ID.Item_group_category,"bool_item_group_category",false);//
+
+        //SMS
+        init_option(ID.SMS_enabled,"bool_kds_general_sms_enable",false);//
+
     }
 
     /**

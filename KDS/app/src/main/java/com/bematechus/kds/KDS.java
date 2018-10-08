@@ -163,7 +163,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     KDSDBBase.DBEvents m_dbEventsReceiver = null;
 
     Broadcaster m_broadcaster = new Broadcaster(this);
+
+    Activation m_activationSMS = null; //sms feature. 2.1.10
     ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * for sms feature.
+     * send sms through activation class
+     * @param a
+     */
+    public void setSMSActivation(Activation a)
+    {
+        m_activationSMS = a;
+    }
 
     public void setDBEventsReceiver(KDSDBBase.DBEvents evReceiver )
     {
@@ -1973,6 +1985,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 code != KDSXMLParserCommand.KDSCommand.Station_Transfer_Order)
             return; //don't do loop
         String orderGuidDoOperation = "";
+        String orderGuid = "";
         //showMessage("receive command="+KDSUtil.convertIntToString(code.ordinal()));
         switch (code)
         {
@@ -2001,9 +2014,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case Station_Bump_Order:
 
                 checkLostFocusAfterSyncBumpOrderName(command, xmlData);
-                KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData);
+                orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData);
                 schedule_process_update_after_receive_new_order();
                 sortOrderForMoveFinishedToFront();
+                checkSMS(orderGuid); //2.1.10
+
                 break;
             case Station_Unbump_Order:
                 KDSStationFunc.doSyncCommandOrderUnbumped(this,command, xmlData);
@@ -2019,13 +2034,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 break;
             case Station_Bump_Item:
 
-                KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData);
+                orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData);
                 sortOrderForMoveFinishedToFront();
+                checkSMS(orderGuid); //2.1.10
+
                 break;
             case Station_Unbump_Item:
-                KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData);
+                orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData);
                 sortOrderForMoveFinishedToFront();
                 schedule_process_update_to_be_prepare_qty();
+
+                checkSMS(orderGuid); //2.1.10
                 break;
             case Station_Modified_Item:
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
@@ -2603,8 +2622,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 //TimeDog t = new TimeDog();
                 ArrayList<KDSDataOrder> ordersAdded =  m_users.orderAdd(order, true);//////
                 //set the preparation time mode sorts
-                for (int i=0; i< ordersAdded.size(); i++)
+                for (int i=0; i< ordersAdded.size(); i++) {
                     ordersAdded.get(i).prep_set_sorts(order.prep_get_sorts());
+                    //send sms
+                    if (i ==0)
+                        checkSMS(ordersAdded.get(i)); //2.1.10
+                }
                 //t.debug_print_Duration("TRANSTYPE_ADD1");
                 //beep
                 if (this.getSettings().getBoolean(KDSSettings.ID.Beeper_Enabled)) {
@@ -2662,6 +2685,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 m_users.orderInfoModify(order, false);
                 schedule_process_update_to_be_prepare_qty();
                 getSoundManager().playSound(KDSSettings.ID.Sound_modify_order);
+                //send sms
+                checkSMS(order); //2.1.10
                 break;
             }
             case KDSDataOrder.TRANSTYPE_TRANSFER:{
@@ -2677,7 +2702,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
                 //TimeDog t = new TimeDog();
                 ArrayList<KDSDataOrder> ordersAdded =  m_users.orderUpdate(order, true);//////
-
+                //send sms
+                for (int i=0; i< ordersAdded.size(); i++) {
+                    //send sms
+                    checkSMS(ordersAdded.get(0)); //2.1.10
+                    break;
+                }
                 //beep
                 if (this.getSettings().getBoolean(KDSSettings.ID.Beeper_Enabled)) {
                     KDSBeeper.BeeperType beeperType = KDSBeeper.BeeperType.values()[ getSettings().getInt(KDSSettings.ID.Beeper_Type)];
@@ -3784,5 +3814,36 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         refreshView();
 
+    }
+
+    public void checkSMS(KDSDataOrder order)
+    {
+        if (!getSettings().getBoolean(KDSSettings.ID.SMS_enabled))
+            return;
+
+        if (order.isSMSStateChanged())
+        {
+            m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(), order.getSMSCurrentState());
+        }
+    }
+
+    public void checkSMS(String orderGuid)
+    {
+        if (!getSettings().getBoolean(KDSSettings.ID.SMS_enabled))
+            return;
+        KDSDataOrder order = getUsers().getOrderByGUID(orderGuid);
+        if (order == null) return;
+        checkSMS(order);
+
+
+    }
+
+    public void onSMSSuccess(String orderGuid, int smsState)
+    {
+
+        KDSDataOrder order = getUsers().getOrderByGUID(orderGuid);
+        if (order == null) return;
+        order.setSMSLastSendState(smsState);
+        getCurrentDB().setSMSState(orderGuid, smsState);
     }
 }

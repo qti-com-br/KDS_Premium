@@ -967,20 +967,28 @@ public class KDSStationFunc {
         //sync_with_exp(KDSXMLCommandFactory.SyncInfo.Order_Transfer, .Order_Bumped, order, null);
     }
 
-    static public void doSyncCommandItemBumped(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    /**
+     *
+     * @param kds
+     * @param command
+     * @param strOrinalData
+     * @return
+     *  order guid
+     */
+    static public String doSyncCommandItemBumped(KDS kds, KDSXMLParserCommand command, String strOrinalData)
     {
         switch (kds.getStationFunction())
         {
 
             case Normal:
-                KDSStationNormal.normal_sync_item_bumped(kds, command);
-                break;
+                return KDSStationNormal.normal_sync_item_bumped(kds, command);
+
             case Expeditor:
             case Queue:
             case TableTracker:
             case Queue_Expo:
-                KDSStationExpeditor.exp_sync_item_bumped(kds, command);
-                break;
+                return KDSStationExpeditor.exp_sync_item_bumped(kds, command);
+
             case Mirror:
                 break;
             case Backup:
@@ -992,6 +1000,7 @@ public class KDSStationFunc {
             default:
                 break;
         }
+        return "";
     }
 
     static public void doSyncCommandScheduleItemQtyChanged(KDS kds, KDSXMLParserCommand command, String strOrinalData)
@@ -1021,20 +1030,27 @@ public class KDSStationFunc {
         }
     }
 
-    static public void doSyncCommandItemUnbumped(KDS kds,  KDSXMLParserCommand command, String strOrinalData)
+    /**
+     *
+     * @param kds
+     * @param command
+     * @param strOrinalData
+     * @return
+     */
+    static public String doSyncCommandItemUnbumped(KDS kds,  KDSXMLParserCommand command, String strOrinalData)
     {
         switch (kds.getStationFunction())
         {
 
             case Normal:
-                KDSStationNormal.normal_sync_item_unbumped(kds, command);
-                break;
+                return KDSStationNormal.normal_sync_item_unbumped(kds, command);
+
             case Expeditor:
             case Queue:
             case TableTracker:
             case Queue_Expo:
-                KDSStationExpeditor.exp_sync_item_unbumped(kds, command);
-                break;
+                return KDSStationExpeditor.exp_sync_item_unbumped(kds, command);
+
             case Mirror:
                 break;
             case Backup:
@@ -1046,6 +1062,7 @@ public class KDSStationFunc {
             default:
                 break;
         }
+        return "";
     }
 
      static public void doSyncCommandItemModified(KDS kds,  KDSXMLParserCommand command, String strOrinalData)

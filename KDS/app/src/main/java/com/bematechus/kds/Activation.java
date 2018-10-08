@@ -78,7 +78,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     ActivationHttp m_http = new ActivationHttp();
 
-    private String m_storeGuid = "";
+    static private String m_storeGuid = "";
 
 
     private String m_myMacAddress = "";
@@ -95,8 +95,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     boolean m_bDoLicensing = false;
 
     int m_nSyncGetDevicesCount = 0; //record the loop count. Prevent dead loop.
-    private String m_storeName = ""; //2.0.50
-    private String m_storeKey = "";
+    static private String m_storeName = ""; //2.0.50
+    static private String m_storeKey = "";
 
 
     public Activation(Context context)
@@ -1202,12 +1202,13 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 JSONArray jsonar = new JSONArray(s);
                 if (jsonar.length()!=2)
                     return;
-                JSONObject json = (JSONObject) jsonar.get(0);
+                JSONObject json = (JSONObject) jsonar.get(1);
+
                 String orderguid = json.getString("order_guid");
                 String smsState = json.getString("order_status");
                 if (orderguid.isEmpty())
                 {
-                    json = (JSONObject) jsonar.get(1);
+                    json = (JSONObject) jsonar.get(0);
                     orderguid = json.getString("order_guid");
                     smsState = json.getString("order_status");
                 }

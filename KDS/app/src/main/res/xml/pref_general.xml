@@ -171,4 +171,9 @@
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
 
+    <CheckBoxPreference
+        android:key="kds_general_sms_enable"
+        android:title="@string/sms_feature_enabled"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

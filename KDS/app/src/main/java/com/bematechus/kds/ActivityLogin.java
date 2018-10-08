@@ -335,6 +335,11 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         }
     }
 
+    public void onSMSSendSuccess(String orderGuid, int smsState)
+    {
+
+    }
+
 //    /**
 //     * Represents an asynchronous login/registration task used to authenticate
 //     * the user.

@@ -31,7 +31,7 @@ import java.util.UUID;
  */
 public class ActivationRequest {
 
-    final String TAG = "ActivationRequest";
+    static final String TAG = "ActivationRequest";
     /**
      *
      * Management
