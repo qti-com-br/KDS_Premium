@@ -30,6 +30,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.KDSSocketTCPSideBase;
+import com.bematechus.kdslib.KDSUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +54,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
     private View mProgressView;
     private View mLoginFormView;
 
+    private TextView m_txtSerialID = null;
+
     Activation m_activation = new Activation(this);
 
 
@@ -63,8 +68,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         Intent intent = this.getIntent();
         String s =  intent.getStringExtra("id");
         m_activation.setStationID(s);
-        s = intent.getStringExtra("mac");
-        m_activation.setMacAddress(s);
+        String macAddress = intent.getStringExtra("mac");
+        m_activation.setMacAddress(macAddress);
 
         String errmsg = intent.getStringExtra("errmsg");
 
@@ -101,6 +106,14 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
         mUserNameView.setText(Activation.loadUserName());
         mPasswordView.setText(Activation.loadPassword());
+
+
+        m_txtSerialID = (TextView) findViewById(R.id.txtSerialNumber);
+
+        s = getString(R.string.my_serial_number);
+        s += macAddress;
+        m_txtSerialID.setText(s);
+
 
         showErrorMessage(errmsg);
 //        Button btnCancel = (Button) findViewById(R.id.btnCancel);

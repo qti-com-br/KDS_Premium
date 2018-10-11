@@ -19,6 +19,14 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/txtSerialNumber"
+        android:layout_gravity="left"
+        android:layout_marginBottom="10dp" />
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
