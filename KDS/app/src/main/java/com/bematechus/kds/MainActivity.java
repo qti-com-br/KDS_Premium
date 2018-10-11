@@ -2144,6 +2144,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //print it
             printOrder(order);
         }
+        //SMS feature
+        if (getKDS().isExpeditorStation())
+            getKDS().checkSMS(order, true);
     }
 
     /**
@@ -2322,7 +2325,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
         refreshView(userID);
 
-        getKDS().checkSMS(orderGuid); //2.1.10
+        getKDS().checkSMS(orderGuid, false); //2.1.10
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
@@ -2564,7 +2567,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         unbumpItem(userID, orderGuid, itemGuid);
 
-        getKDS().checkSMS(orderGuid); //2.1.10
+        getKDS().checkSMS(orderGuid, false); //2.1.10
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 

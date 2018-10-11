@@ -2436,22 +2436,34 @@ get the total qty of all found items
      *
      * @return
      */
-    public int getSMSCurrentState()
+    public int getSMSCurrentState(boolean bExpoStation, boolean bOrderBumped)
     {
         int nFinished = this.getFinishedItemsCount();
         int nItemsCount = this.getItems().getCount();
-        if (nFinished ==0)
-            return SMS_STATE_NEW;
-        else if (nFinished == nItemsCount)
-            return SMS_STATE_DONE;
+
+        if (!bExpoStation) {
+            if (nFinished == nItemsCount)
+                return SMS_STATE_PREPARED;
+            else
+                return SMS_STATE_NEW;
+        }
         else
-            return SMS_STATE_PREPARED;
+        {
+            if (bOrderBumped)
+                return SMS_STATE_DONE;
+
+            if (nFinished == nItemsCount)
+                return SMS_STATE_PREPARED;
+            else
+                return SMS_STATE_NEW;
+
+        }
 
     }
 
-    public boolean isSMSStateChanged()
+    public boolean isSMSStateChanged(boolean bIsExpoStation, boolean bOrderBumped)
     {
-        int nSMSState = this.getSMSCurrentState();
+        int nSMSState = this.getSMSCurrentState(bIsExpoStation, bOrderBumped);
         int nSendState = getSMSLastSendState();
         return (nSendState != nSMSState);
     }

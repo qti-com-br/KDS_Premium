@@ -2017,7 +2017,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData);
                 schedule_process_update_after_receive_new_order();
                 sortOrderForMoveFinishedToFront();
-                checkSMS(orderGuid); //2.1.10
+                checkSMS(orderGuid, false); //2.1.10
 
                 break;
             case Station_Unbump_Order:
@@ -2036,7 +2036,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
                 orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData);
                 sortOrderForMoveFinishedToFront();
-                checkSMS(orderGuid); //2.1.10
+                checkSMS(orderGuid, false); //2.1.10
 
                 break;
             case Station_Unbump_Item:
@@ -2044,7 +2044,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 sortOrderForMoveFinishedToFront();
                 schedule_process_update_to_be_prepare_qty();
 
-                checkSMS(orderGuid); //2.1.10
+                checkSMS(orderGuid, false); //2.1.10
                 break;
             case Station_Modified_Item:
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
@@ -2626,7 +2626,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     ordersAdded.get(i).prep_set_sorts(order.prep_get_sorts());
                     //send sms
                     if (i ==0)
-                        checkSMS(ordersAdded.get(i)); //2.1.10
+                        checkSMS(ordersAdded.get(i), false); //2.1.10
                 }
                 //t.debug_print_Duration("TRANSTYPE_ADD1");
                 //beep
@@ -2686,7 +2686,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 schedule_process_update_to_be_prepare_qty();
                 getSoundManager().playSound(KDSSettings.ID.Sound_modify_order);
                 //send sms
-                checkSMS(order); //2.1.10
+                checkSMS(order, false); //2.1.10
                 break;
             }
             case KDSDataOrder.TRANSTYPE_TRANSFER:{
@@ -2705,7 +2705,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 //send sms
                 for (int i=0; i< ordersAdded.size(); i++) {
                     //send sms
-                    checkSMS(ordersAdded.get(0)); //2.1.10
+                    checkSMS(ordersAdded.get(0), false); //2.1.10
                     break;
                 }
                 //beep
@@ -3816,24 +3816,24 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     }
 
-    public void checkSMS(KDSDataOrder order)
+    public void checkSMS(KDSDataOrder order, boolean bOrderBumped)
     {
         if (!getSettings().getBoolean(KDSSettings.ID.SMS_enabled))
             return;
 
-        if (order.isSMSStateChanged())
+        if (order.isSMSStateChanged(this.isExpeditorStation(), bOrderBumped))
         {
-            m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(), order.getSMSCurrentState());
+            m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(), order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped));
         }
     }
 
-    public void checkSMS(String orderGuid)
+    public void checkSMS(String orderGuid, boolean bOrderBumped)
     {
         if (!getSettings().getBoolean(KDSSettings.ID.SMS_enabled))
             return;
         KDSDataOrder order = getUsers().getOrderByGUID(orderGuid);
         if (order == null) return;
-        checkSMS(order);
+        checkSMS(order, bOrderBumped);
 
 
     }
@@ -3842,8 +3842,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
 
         KDSDataOrder order = getUsers().getOrderByGUID(orderGuid);
-        if (order == null) return;
-        order.setSMSLastSendState(smsState);
-        getCurrentDB().setSMSState(orderGuid, smsState);
+        if (order != null) {
+            order.setSMSLastSendState(smsState);
+            getCurrentDB().setSMSState(orderGuid, smsState);
+        }
+
     }
 }

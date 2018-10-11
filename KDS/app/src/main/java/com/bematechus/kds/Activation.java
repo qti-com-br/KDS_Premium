@@ -1155,6 +1155,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     public void showLoginActivity(Activity caller, String showErrorMessage)
     {
+
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         m_bDoLicensing = true;
         Intent intent = new Intent(caller, ActivityLogin.class);
