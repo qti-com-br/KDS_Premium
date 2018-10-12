@@ -2442,7 +2442,8 @@ get the total qty of all found items
         int nItemsCount = this.getItems().getCount();
 
         if (!bExpoStation) {
-            if (nFinished == nItemsCount)
+            if (nFinished == nItemsCount ||
+                    bOrderBumped)
                 return SMS_STATE_PREPARED;
             else
                 return SMS_STATE_NEW;

@@ -2145,8 +2145,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             printOrder(order);
         }
         //SMS feature
-        if (getKDS().isExpeditorStation())
-            getKDS().checkSMS(order, true);
+        //if (getKDS().isExpeditorStation())
+        getKDS().checkSMS(order, true);
     }
 
     /**
