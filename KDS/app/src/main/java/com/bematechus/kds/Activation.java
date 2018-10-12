@@ -1157,18 +1157,18 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
 
 
-//        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-//        m_bDoLicensing = true;
-//        Intent intent = new Intent(caller, ActivityLogin.class);
-//
-//        intent.putExtra("func", KDSConst.SHOW_LOGIN);
-//        intent.putExtra("id", m_stationID);
-//        intent.putExtra("mac", m_myMacAddress);
-//        intent.putExtra("errmsg", showErrorMessage);
-//
-//        caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
-//
-//        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        m_bDoLicensing = true;
+        Intent intent = new Intent(caller, ActivityLogin.class);
+
+        intent.putExtra("func", KDSConst.SHOW_LOGIN);
+        intent.putExtra("id", m_stationID);
+        intent.putExtra("mac", m_myMacAddress);
+        intent.putExtra("errmsg", showErrorMessage);
+
+        caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
+
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
 
