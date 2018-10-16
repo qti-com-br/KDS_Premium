@@ -2432,6 +2432,38 @@ get the total qty of all found items
 
     }
 
+    public int getExpoBumpedItemsCount()
+    {
+        int nBumped = 0;
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if ( item.getLocalBumped() )
+                nBumped ++;
+
+
+        }
+        return nBumped;
+
+    }
+
+    public int getExpoReadyItemsCount()
+    {
+        int nReady = 0;
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if ((!item.getBumpedStationsString().isEmpty()) )
+                nReady ++;
+
+
+        }
+        return nReady;
+
+    }
+
     /**
      *
      * @return
@@ -2449,11 +2481,15 @@ get the total qty of all found items
                 return SMS_STATE_NEW;
         }
         else
-        {
+        { //expo station
             if (bOrderBumped)
                 return SMS_STATE_DONE;
+            int nReady = getExpoReadyItemsCount();
+            int nBumped = getExpoBumpedItemsCount();
 
-            if (nFinished == nItemsCount)
+            if (nBumped == nItemsCount)
+                return SMS_STATE_DONE;
+            else if (nReady == nItemsCount)
                 return SMS_STATE_PREPARED;
             else
                 return SMS_STATE_NEW;

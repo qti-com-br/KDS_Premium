@@ -2325,7 +2325,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
         refreshView(userID);
 
-        getKDS().checkSMS(orderGuid, false); //2.1.10
+        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 

@@ -744,14 +744,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
                 if (kds.getStationsConnections().isMyPrimaryBackupStation(fromStationID))
                 {
-                    normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                    orderGuid = normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
                     if (kds.isMultpleUsersMode()) {
                        normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
 
                     }
                 }
                 else {
-                    exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                    orderGuid = exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
                     if (kds.isMultpleUsersMode())
                         exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
                 }
@@ -761,7 +761,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             { //primary is offline now, svae to current database.
                 if (kds.getStationsConnections().isMyPrimaryBackupStation(fromStationID))
                 {
-                    normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                    orderGuid = normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
                     if (kds.isMultpleUsersMode())
                         normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
                 }
@@ -785,13 +785,13 @@ public class KDSStationExpeditor extends KDSStationNormal {
             //My primary backup is online or offline.
             if (kds.getStationsConnections().isPrimaryWhoUseMeAsMirrorActive())
             {
-                exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
                 if (kds.isMultpleUsersMode())
                     exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
             }
             else
             {
-                exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
                 if (kds.isMultpleUsersMode())
                     exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
             }
@@ -800,7 +800,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         else
         { //I am common station
             //check if current database contains this order.
-            exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+            orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
             if (kds.isMultpleUsersMode())
                 exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
         }
@@ -810,10 +810,12 @@ public class KDSStationExpeditor extends KDSStationNormal {
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
         sync_with_queue(kds, command.getCode(), order, null);
-        if (order != null)
-            return order.getGUID();
-        else
-            return "";
+
+        return orderGuid;
+//        if (order != null)
+//            return order.getGUID();
+//        else
+//            return "";
 
     }
 
