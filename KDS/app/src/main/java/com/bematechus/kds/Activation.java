@@ -76,7 +76,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     ActivationHttp m_http = new ActivationHttp();
 
-    private String m_storeGuid = "";
+    static private String m_storeGuid = "";
 
 
     private String m_myMacAddress = "";
@@ -94,10 +94,12 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     int m_nSyncGetDevicesCount = 0; //record the loop count. Prevent dead loop.
 
+
     public Activation(Context context)
     {
         m_context = context;
         m_http.setReceiver(this);
+        loadStoreGuid();
     }
 
     public void setStationID(String stationID)
@@ -119,6 +121,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public Activation()
     {
         m_http.setReceiver(this);
+        loadStoreGuid();
     }
     public void onHttpResponse(ActivationHttp http, ActivationRequest request)
     {
@@ -950,6 +953,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("activation_user_name", userName);
         editor.putString("activation_password", pwd);
+        editor.putString("store_guid", m_storeGuid);
         editor.apply();
         editor.commit();
 
@@ -1154,6 +1158,19 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+    static public String getStoreGuid()
+    {
+        return m_storeGuid;
+
+    }
+
+    static public String loadStoreGuid()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString("store_guid", "");
+        return s;
     }
 
     class StoreDevice

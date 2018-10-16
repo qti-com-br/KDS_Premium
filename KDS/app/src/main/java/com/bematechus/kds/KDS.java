@@ -163,6 +163,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     KDSDBBase.DBEvents m_dbEventsReceiver = null;
 
     Broadcaster m_broadcaster = new Broadcaster(this);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void setDBEventsReceiver(KDSDBBase.DBEvents evReceiver )
@@ -666,7 +667,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         int port = this.m_nStationsPort;
         String strport = KDSUtil.convertIntToString(port);
         int nItemsCount = getAllItemsCount();
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getStationID(),m_strLocalIP, strport, getLocalMacAddress(), nItemsCount, getSettings().getInt(KDSSettings.ID.Users_Mode));
+        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getStationID(),m_strLocalIP, strport, getLocalMacAddress(), nItemsCount, getSettings().getInt(KDSSettings.ID.Users_Mode), Activation.getStoreGuid());
         return buf;
     }
 //    public void broadcastStationAnnounceInThread2()
@@ -1067,7 +1068,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         int port = this.m_nStationsPort;
         String strport = KDSUtil.convertIntToString(port);
         int nItemsCount = getAllItemsCount();
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getStationID(),m_strLocalIP, strport, getLocalMacAddress(), nItemsCount, getSettings().getInt(KDSSettings.ID.Users_Mode));
+        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getStationID(),m_strLocalIP, strport, getLocalMacAddress(), nItemsCount, getSettings().getInt(KDSSettings.ID.Users_Mode), Activation.getStoreGuid());
         //send data to statistic station.
          (new KDSBroadcastThread(m_udpStationAnnouncer, statistic_ip,KDSSettings.UDP_STATISTIC_ANNOUNCER_PORT, buf )).start();
     }
@@ -1215,7 +1216,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     //check how long time don't receive udp data.
     TimeDog m_annoucerTimeDog = new TimeDog();
     /**
-     * id,ip,port string
+     * stationID, ip,port,mac,ordersCount,usermode, storeguid
      * @param strInfo
      */
     private void onUdpReceiveStationAnnounce(String strInfo)
@@ -1244,9 +1245,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             if (n <0 || n>1)
                 n = 0;
             nUserMode = n;
-
-
         }
+
+        String storeGuid = "";
+        if (ar.size() >=7)
+        {
+            storeGuid = ar.get(6);
+        }
+
+        //check the store guid, different store can run in same ethernet.
+        if (!storeGuid.equals(Activation.getStoreGuid()))
+            return;
 
         KDSStationActived station =m_stationsConnection.findActivedStationByMac(mac);//id);
         if (station == null) {
@@ -1261,7 +1270,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         station.setMac(mac);
         station.setStationContainItemsCount(itemsCount);
         station.setUserMode(nUserMode);
+        station.setStoreGuid(storeGuid);
+
         station.updatePulseTime();//record last received time
+
+
 
         //some connection don't have the station ID in it. use this function to update them.
         //comment it for debuging the connect with data function.
@@ -3785,4 +3798,6 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         refreshView();
 
     }
+
+
 }

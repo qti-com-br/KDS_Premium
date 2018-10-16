@@ -179,7 +179,7 @@ public class Broadcaster {
         String strport = KDSUtil.convertIntToString(port);
         int nItemsCount = getKDS().getAllItemsCount();
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getKDS().getStationID(),getKDS().getLocalIpAddress(), strport, getKDS().getLocalMacAddress(),
-                                                                                    nItemsCount, getKDS().getSettings().getInt(KDSSettings.ID.Users_Mode));
+                                                                                    nItemsCount, getKDS().getSettings().getInt(KDSSettings.ID.Users_Mode), Activation.getStoreGuid());
         return buf;
     }
 
