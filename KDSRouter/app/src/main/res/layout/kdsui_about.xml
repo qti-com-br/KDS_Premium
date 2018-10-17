@@ -42,6 +42,16 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_gravity="center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/txtActivation"
+        android:singleLine="true"
+        android:linksClickable="false"
+        android:textColor="@color/accent_material_light" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
@@ -47,7 +48,6 @@ import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
-import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -902,9 +902,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     }
 
+    private boolean isMyStoreIP(String ip)
+    {
+        KDSStationActived station =m_stationsConnection.findActivedStationByIP(ip);//id);
+        return (station != null);
+
+    }
+
     private void doUdpReceiveData(KDSSocketInterface sock,String remoteIP,  ByteBuffer buffer, int nLength)
     {
         m_udpBuffer.appendData(buffer, nLength);
+        String remoteStationIP =KDSUtil.parseRemoteUDPIP(remoteIP);
+
 
         while (true) {
             m_udpBuffer.skip_to_STX();
@@ -928,9 +937,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 }
                 break;
                 case KDSSocketTCPCommandBuffer.UDP_REQ_STATION: {
+
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     //broadcastStationAnnounceInThread();
                     getBroadcaster().broadcastStationAnnounceInThread2();
 
@@ -946,6 +957,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     b2 = m_udpBuffer.buffer().get(4);
                     b3 = m_udpBuffer.buffer().get(5);
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
 
                     onStatisticAppRequireStationAnnounceInThread2(b0, b1, b2, b3);
 
@@ -956,6 +968,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     onShowStationID();
                 }
                 break;
@@ -966,6 +979,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
                     byte[] bytes = m_udpBuffer.xml_command_data();
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
                     doUdpXmlCommand(utf8, remoteIP);
                 }
@@ -975,6 +989,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     onClearDB();
                 }
                 break;
@@ -983,9 +998,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
 
-                    String ip = parseRemoteUDPIP(remoteIP);
-                    String port = parseRemoteUDPPort(remoteIP);
+                    String ip = KDSUtil.parseRemoteUDPIP(remoteIP);
+                    String port = KDSUtil.parseRemoteUDPPort(remoteIP);
                     onOtherAskRelations(ip, port);
                 }
                 break;
@@ -994,6 +1010,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
+
                     String strRelations = getSettings().loadStationsRelationString(m_context);
                     Object[] ar = new Object[]{strRelations, remoteIP};
                     //m_nLoadThreadCounter ++;
@@ -1020,6 +1038,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     if (n == 1)
                         bEnabled = true;
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
+
                     onSyncStationQueueExpoBumpSettingChanged(bEnabled);
                 }
                 break;
@@ -1035,6 +1055,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 //                    if (n == 1)
 //                        bEnabled = true;
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
+
                     onSyncStationSmartModeEnabledSettingChanged(nVal);
                 }
                 break;
@@ -1044,6 +1066,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     if (ncommand_end == 0) return; //need more data
                     byte[] bytes = m_udpBuffer.xml_command_data();
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
+
                     String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
 
                     onPreparationTimeModeItemBumpUnbumped(utf8, (command ==KDSSocketTCPCommandBuffer.UDP_ITEM_BUMPED) );
@@ -1097,33 +1121,33 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     }
 
 
-    public String parseRemoteUDPIP(String remoteIP)
-    {
-        String str = remoteIP;
-        String port = "";
-        String ip = "";
-        str = str.replace("/", "");
-        int n = str.indexOf(":");
-        if (n >0) {
-            ip = str.substring(0, n);
-            port = str.substring(n+1);
-        }
-        return ip;
-    }
-
-    public String parseRemoteUDPPort(String remoteIP)
-    {
-        String str = remoteIP;
-        String port = "";
-        String ip = "";
-        str = str.replace("/", "");
-        int n = str.indexOf(":");
-        if (n >0) {
-            ip = str.substring(0, n);
-            port = str.substring(n+1);
-        }
-        return port;
-    }
+//    public String parseRemoteUDPIP(String remoteIP)
+//    {
+//        String str = remoteIP;
+//        String port = "";
+//        String ip = "";
+//        str = str.replace("/", "");
+//        int n = str.indexOf(":");
+//        if (n >0) {
+//            ip = str.substring(0, n);
+//            port = str.substring(n+1);
+//        }
+//        return ip;
+//    }
+//
+//    public String parseRemoteUDPPort(String remoteIP)
+//    {
+//        String str = remoteIP;
+//        String port = "";
+//        String ip = "";
+//        str = str.replace("/", "");
+//        int n = str.indexOf(":");
+//        if (n >0) {
+//            ip = str.substring(0, n);
+//            port = str.substring(n+1);
+//        }
+//        return port;
+//    }
 
 
     boolean m_bRelationsDifferentErrorShown = false;
@@ -1137,8 +1161,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
         if (xmlCommand.indexOf("<Relations>") >= 0)
         {
-            String ip = parseRemoteUDPIP(remoteIP);
-            String port = parseRemoteUDPPort(remoteIP);
+            String ip = KDSUtil.parseRemoteUDPIP(remoteIP);
+            String port =KDSUtil.parseRemoteUDPPort(remoteIP);
             if (ip.equals(getLocalIpAddress()))
             {
                 if (port.equals(KDSUtil.convertIntToString(KDSSettings.UDP_ANNOUNCER_PORT)))

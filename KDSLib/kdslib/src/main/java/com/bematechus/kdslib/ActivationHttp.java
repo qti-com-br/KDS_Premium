@@ -1,4 +1,4 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.os.Handler;
 import android.os.Message;

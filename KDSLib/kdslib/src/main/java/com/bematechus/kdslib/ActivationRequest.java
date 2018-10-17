@@ -1,8 +1,6 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 //import com.bematechus.kdslib.KDSUtil;
-
-import com.bematechus.kdslib.KDSUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

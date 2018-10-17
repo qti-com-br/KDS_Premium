@@ -84,6 +84,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ScheduleActivity"></activity>
+        <activity
+            android:name="com.bematechus.kdslib.ActivityLogin"
+            android:label="@string/title_activity_activity_login"></activity>
     </application>
 
 </manifest>

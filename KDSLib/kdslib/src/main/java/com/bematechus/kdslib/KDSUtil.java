@@ -1617,5 +1617,47 @@ just 16bits value
 
     }
 
+    /**
+     *
+     * @param remoteIP
+     *  e.g: /192.168.1.100:3000
+     * @return
+     */
+    static public String parseRemoteUDPIP(String remoteIP)
+    {
+        String str = remoteIP;
+        String port = "";
+        String ip = "";
+        str = str.replace("/", "");
+        int n = str.indexOf(":");
+        if (n >0) {
+            ip = str.substring(0, n);
+            port = str.substring(n+1);
+        }
+        return ip;
+    }
+
+    /**
+     *
+     * @param remoteIP
+     *  e.g: /192.168.1.100:3000
+     * @return
+     */
+    static public String parseRemoteUDPPort(String remoteIP)
+    {
+        String str = remoteIP;
+        String port = "";
+        String ip = "";
+        str = str.replace("/", "");
+        int n = str.indexOf(":");
+        if (n >0) {
+            ip = str.substring(0, n);
+            port = str.substring(n+1);
+        }
+        return port;
+    }
+
+
+
 
 }

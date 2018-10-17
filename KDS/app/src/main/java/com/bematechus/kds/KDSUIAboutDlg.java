@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.UpdateManager;
 
@@ -47,10 +48,17 @@ public class KDSUIAboutDlg extends KDSUIDialogBase implements UpdateManager.Upda
 
         m_txtActivation = (TextView)this.getView().findViewById(R.id.txtActivation);
         if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
-            if (Activation.isActivationPassed())
-                m_txtActivation.setText("Active");
+            String activiationText = "";
+            if (Activation.isActivationPassed()) {
+                activiationText = "Active";
+
+                if (!Activation.getStoreName().isEmpty())
+                    activiationText += " (" + Activation.getStoreName() + ")";
+
+            }
             else
-                m_txtActivation.setText("Inactive");
+                activiationText = "Inactive";
+            m_txtActivation.setText(activiationText);
 
 
             m_txtActivation.setOnClickListener(new View.OnClickListener() {

@@ -85,4 +85,37 @@
     <string name="foreground">Foreground</string>
     <string name="size">Size</string>
     <string name="main_title">KitchenGo Premium KDS</string>
+
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">User name</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This user name is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">Username required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <string name="username_field_required">Username required</string>
+    <string name="password_field_required">Password required</string>
+    <string name="no_license_available">There is no license available</string>
+    <string name="license_deactivated">This KDS Stations’s license is deactivated.</string>
+    <string name="updating_license_data">Updating license data ...</string>
+    <string name="retrieve_licenses_data">Retrieve licenses data ...</string>
+    <string name="retrieve_store_settings">Retrieve store settings ...</string>
+    <string name="logining">Login ...</string>
+    <string name="str_ok">OK</string>
+    <string name="activation">Activation</string>
+    <string name="str_cancel">Cancel</string>
+    <string name="no_selected_license_to_replace">No selected license to replace</string>
+    <string name="item_group_by_category">Group items by its category</string>
+    <string name="inactive">"(Inactive)"</string>
+    <string name="cannot_sync_license_data">Can not sync data with server.</string>
+    <string name="cannot_replace_license_data">Can not replace data with server.</string>
+    <string name="my_serial_number">My serial number:</string>
+
 </resources>

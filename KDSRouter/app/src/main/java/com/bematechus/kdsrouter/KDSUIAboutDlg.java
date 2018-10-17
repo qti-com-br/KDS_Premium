@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.UpdateManager;
 /**
  *
@@ -22,6 +24,14 @@ public class KDSUIAboutDlg extends KDSUIDialogBase implements UpdateManager.Upda
     Button m_btnUpdate = null;
     UpdateManager m_updateManager = null;
     TextView m_txtVersionInfo = null;
+    TextView m_txtActivation = null;
+    MainActivity m_mainActivity = null;
+
+    public void setMainActivity(MainActivity a)
+    {
+        m_mainActivity = a;
+    }
+
 
     public KDSUIAboutDlg(final Context context, String strVersion) {
         this.int_information_dialog(context, R.layout.kdsui_about);
@@ -42,11 +52,41 @@ public class KDSUIAboutDlg extends KDSUIDialogBase implements UpdateManager.Upda
             }
         });
 
-    }
-    static void showAbout(Context context, String strVersion)
-    {
-        KDSUIDialogBase dlg = new KDSUIAboutDlg(context, strVersion);
+        m_txtActivation = (TextView)this.getView().findViewById(R.id.txtActivation);
+        if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
+            String activiationText = "";
+            if (Activation.isActivationPassed()) {
+                activiationText = "Active";
 
+                if (!Activation.getStoreName().isEmpty())
+                    activiationText += " (" + Activation.getStoreName() + ")";
+
+            }
+            else
+                activiationText = "Inactive";
+            m_txtActivation.setText(activiationText);
+
+            m_txtActivation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onActivationClicked();
+                }
+            });
+        }
+
+    }
+//    static void showAbout(Context context, String strVersion)
+//    {
+//        KDSUIDialogBase dlg = new KDSUIAboutDlg(context, strVersion);
+//
+//        dlg.show();
+//    }
+
+    static void showAbout(MainActivity context,  String strVersion)
+    {
+        KDSUIAboutDlg dlg = new KDSUIAboutDlg(context, strVersion);
+        //dlg.setKDSUser(user);
+        dlg.setMainActivity(context);
         dlg.show();
     }
 
@@ -77,6 +117,10 @@ public class KDSUIAboutDlg extends KDSUIDialogBase implements UpdateManager.Upda
         m_txtVersionInfo.setText(this.getView().getContext().getString(R.string.found_new_version)+":"+newVersion);
         m_btnUpdate.setText(getView().getContext().getString(R.string.check_new_version));
     }
-
+    public void onActivationClicked()
+    {
+        m_mainActivity.doActivation(false, true, "");
+        this.getDialog().hide();
+    }
 
 }

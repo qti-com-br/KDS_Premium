@@ -356,6 +356,7 @@ public class KDSSocketTCPCommandBuffer {
         byte[] bytes = new byte[3];
         bytes[0] = STX;
         bytes[1] = UDP_CLEAR_DB;
+
         bytes[2] = ETX;
         return ByteBuffer.wrap(bytes);
 
@@ -396,7 +397,7 @@ public class KDSSocketTCPCommandBuffer {
      * @param macAddress
      * @return
      */
-    static public ByteBuffer buildReturnStationIPCommand(String stationID, String IP, String strPort, String macAddress)
+    static public ByteBuffer buildReturnStationIPCommand(String stationID, String IP, String strPort, String macAddress, String storeGuid)
     {
         String s = stationID;
         s += ",";
@@ -405,6 +406,9 @@ public class KDSSocketTCPCommandBuffer {
         s += strPort;
         s +=",";
         s += macAddress;
+        s += ","; //KPP1-22
+        s += storeGuid;
+
         byte[] bytes = KDSUtil.convertStringToUtf8Bytes(s);
         ByteBuffer buf = ByteBuffer.allocate(bytes.length + 1+1+1+1); //STX , Code , length(1 bytes) ,data,  ETX
         buf.put(STX);
@@ -497,14 +501,18 @@ public class KDSSocketTCPCommandBuffer {
     /**
      * announce this to every router.
      *  Just for prevent the multiple router enabled.
+     *  Format:
+     *      station_id, ip, port, mac, enabled, backup_mode,store_guid
      * @param stationID
      * @param IP
      * @param strPort
      * @param macAddress
      * @param bEnabled
+     * @param storeGuid
+     *      For multiple store running in same ethernet
      * @return
      */
-    static public ByteBuffer buildRouterStationAnnounceCommand(String stationID, String IP, String strPort, String macAddress, boolean bEnabled, boolean backupMode)
+    static public ByteBuffer buildRouterStationAnnounceCommand(String stationID, String IP, String strPort, String macAddress, boolean bEnabled, boolean backupMode, String storeGuid)
     {
         String s = stationID;
         s += ",";
@@ -523,6 +531,8 @@ public class KDSSocketTCPCommandBuffer {
             s += "1";
         else
             s += "0";
+        s +=",";
+        s += storeGuid;
 
         byte[] bytes = KDSUtil.convertStringToUtf8Bytes(s);
         ByteBuffer buf = ByteBuffer.allocate(bytes.length + 1+1+1+1); //STX , Code , length(1 bytes) ,data,  ETX

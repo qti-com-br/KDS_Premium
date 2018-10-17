@@ -45,6 +45,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
@@ -2623,7 +2625,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case KDSConst.SHOW_LOGIN:
             {
                 if (!isKDSValid()) return ;
-                m_activation.m_bDoLicensing = false;
+                m_activation.setDoLicensing( false );
             }
             default:
                 break;
@@ -5888,7 +5890,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         updateTitle();
     }
-    public void onActivationFail(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String failMessage)
+    public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
        // Toast.makeText(this, "Activation failed: " +stage.toString()+" - " + failMessage, Toast.LENGTH_LONG).show();
 //        if (ActivationRequest.needResetUsernamePassword(errType))
@@ -5934,7 +5936,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activation.m_bDoLicensing) return;
+        if (m_activation.isDoLicensing()) return;
         m_activation.setStationID(getKDS().getStationID());
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         if (ar.size()<=0) return;

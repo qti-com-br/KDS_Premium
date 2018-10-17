@@ -1,4 +1,4 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -17,13 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
-
-import com.bematechus.kdslib.KDSApplication;
-import com.bematechus.kdslib.KDSConst;
-import com.bematechus.kdslib.KDSLog;
-import com.bematechus.kdslib.KDSUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,17 +54,17 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 //    static final int HOUR_MS = 3600000;
 //    static int MAX_LOST_COUNT = 120;
 
-    static final int HOUR_MS = 3600000;
-    static int MAX_LOST_COUNT = 120;
+    public static final int HOUR_MS = 3600000;
+    public static int MAX_LOST_COUNT = 120;
 //
-    static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
+    public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
 
 
 
     public interface ActivationEvents
     {
         public void onActivationSuccess();
-        public void onActivationFail(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String failMessage);
+        public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage);
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -93,13 +86,24 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     boolean m_bDoLicensing = false;
 
     int m_nSyncGetDevicesCount = 0; //record the loop count. Prevent dead loop.
+    static private String m_storeName = ""; //2.0.50
+    static private String m_storeKey = "";
 
 
+    public boolean isDoLicensing()
+    {
+        return m_bDoLicensing;
+    }
+    public void setDoLicensing(boolean bDoing)
+    {
+        m_bDoLicensing = bDoing;
+    }
     public Activation(Context context)
     {
         m_context = context;
         m_http.setReceiver(this);
         loadStoreGuid();
+        loadStoreName();
     }
 
     public void setStationID(String stationID)
@@ -122,6 +126,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         m_http.setReceiver(this);
         loadStoreGuid();
+        loadStoreName();
     }
     public void onHttpResponse(ActivationHttp http, ActivationRequest request)
     {
@@ -212,6 +217,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
             String store_guid = json.getString("store_guid");
             m_storeGuid = store_guid;
+
+            m_storeName =  json.getString("store_name");//2.0.50
+            m_storeKey =  json.getString("store_key");//2.0.50
+
             System.out.println(m_storeGuid);
 
             //postSyncMac(m_licenseGuid, m_myMacAddress);
@@ -954,6 +963,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         editor.putString("activation_user_name", userName);
         editor.putString("activation_password", pwd);
         editor.putString("store_guid", m_storeGuid);
+        editor.putString("store_name", m_storeName);
+
         editor.apply();
         editor.commit();
 
@@ -1170,6 +1181,19 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         String s = pref.getString("store_guid", "");
+        m_storeGuid = s;
+        return s;
+    }
+
+    static public String getStoreName()
+    {
+        return m_storeName;
+    }
+    static public String loadStoreName()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString("store_name", "");
+        m_storeName = s;
         return s;
     }
 
