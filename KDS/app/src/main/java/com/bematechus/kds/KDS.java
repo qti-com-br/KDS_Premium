@@ -3821,6 +3821,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         if (!getSettings().getBoolean(KDSSettings.ID.SMS_enabled))
             return;
 
+        if (this.isPrepStation())
+        {//if expo existed, send nothing.
+            if (this.getStationsConnections().getRelations().getAllExpoStations().size()>0)
+                return;
+        }
         if (order.isSMSStateChanged(this.isExpeditorStation(), bOrderBumped))
         {
             m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(), order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped));
