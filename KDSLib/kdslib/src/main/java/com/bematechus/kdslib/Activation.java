@@ -357,6 +357,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     private StoreDevice parseJsonDevice(JSONObject json)
     {
 
+        if (isDeletedDevice(json))
+            return null;
         StoreDevice device = new StoreDevice();
         device.setEnabled(isLicenseEnabled(json));
         device.setGuid(getGuid(json));
@@ -417,6 +419,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             {
                 JSONObject json =(JSONObject) ar.get(i);
                 StoreDevice device =parseJsonDevice(json);
+                if (device == null) //KPP1-27
+                    continue;
                 m_devices.add(device);
             }
 
@@ -498,6 +502,20 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         try {
             int n = json.getInt("license");
+            return (n ==1);
+        }
+        catch ( Exception e)
+        {
+
+        }
+        return false;
+
+    }
+
+    private boolean isDeletedDevice(JSONObject json)
+    {
+        try {
+            int n = json.getInt("is_deleted");
             return (n ==1);
         }
         catch ( Exception e)
