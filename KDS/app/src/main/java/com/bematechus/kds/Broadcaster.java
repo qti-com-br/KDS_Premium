@@ -40,7 +40,7 @@ public class Broadcaster {
     {
         int port =getKDS().getOpenedOrderSourceIpPort();
         String strport = KDSUtil.convertIntToString(port);
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(getKDS().getStationID(),getKDS().getLocalIpAddress(), strport,getKDS().getLocalMacAddress(), Activation.getStoreGuid());
+        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getKDS().getStationID(),getKDS().getLocalIpAddress(), strport,getKDS().getLocalMacAddress(),0, 0, Activation.getStoreGuid());
         return buf;
     }
     /**
@@ -191,7 +191,7 @@ public class Broadcaster {
         (new KDSBroadcastThread(getUDP(), makeStationAnnounceBuffer())).start();
 
         // ByteBuffer buf = makeAnnounceToRouterBuffer();
-        (new KDSBroadcastThread(getUDP(),KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeStationAnnounceBuffer())).start();
+        (new KDSBroadcastThread(getUDP(),KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeAnnounceToRouterBuffer())).start();
 
     }
 
