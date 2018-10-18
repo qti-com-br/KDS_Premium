@@ -2289,6 +2289,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         //if (bForceAcceptThisOrderNoStationIDItems)//2.0.36
             assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
 
+        //save it for sms feature.
+        ArrayList<KDSToStation> arTargetStations = KDSPosNotificationFactory.getOrderTargetStations(order);
+
+
+
         order = justKeepMyStationItems(order);
 
         if (order == null) return 0;
@@ -2304,7 +2309,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (writeOrderToWorkLoad(order))
                     return nItemsCount;
             }
-            filterInNormalStation(order);
+            filterInNormalStation(order, arTargetStations);
 
         }
         return nItemsCount;
@@ -2324,7 +2329,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (writeOrderToWorkLoad(schOrder))
                     continue;
             }
-            filterInNormalStation(schOrder);
+            filterInNormalStation(schOrder, null);
 
         }
 
@@ -2594,10 +2599,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     /**
      *
      * @param order
+     * @param arOriginalTargetStations
+     *  For sms feature, just send one sms when order goes to multiple stations.(No expo existed).
+     *  It can been null!!!! Please Notice!!!
      * @return
      *  items count
      */
-    public int filterInNormalStation(KDSDataOrder order)
+    public int filterInNormalStation(KDSDataOrder order, ArrayList<KDSToStation> arOriginalTargetStations)
     {
         int nItemsCount = 0;
         if (order != null)
@@ -2625,8 +2633,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 for (int i=0; i< ordersAdded.size(); i++) {
                     ordersAdded.get(i).prep_set_sorts(order.prep_get_sorts());
                     //send sms
-                    if (i ==0)
-                        checkSMS(ordersAdded.get(i), false); //2.1.10
+                    if (i ==0) {
+
+                        checkSMS(ordersAdded.get(i), false, arOriginalTargetStations); //2.1.10
+                    }
                 }
                 //t.debug_print_Duration("TRANSTYPE_ADD1");
                 //beep
@@ -2686,7 +2696,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 schedule_process_update_to_be_prepare_qty();
                 getSoundManager().playSound(KDSSettings.ID.Sound_modify_order);
                 //send sms
-                checkSMS(order, false); //2.1.10
+                checkSMS(order, false, null); //2.1.10
                 break;
             }
             case KDSDataOrder.TRANSTYPE_TRANSFER:{
@@ -2705,7 +2715,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 //send sms
                 for (int i=0; i< ordersAdded.size(); i++) {
                     //send sms
-                    checkSMS(ordersAdded.get(0), false); //2.1.10
+                    checkSMS(ordersAdded.get(0), false,null); //2.1.10
                     break;
                 }
                 //beep
@@ -3816,7 +3826,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     }
 
-    public void checkSMS(KDSDataOrder order, boolean bOrderBumped)
+    /**
+     *
+     * @param order
+     * @param bOrderBumped
+     * @param arOrignalTargetStations
+     *  just the min station send out sms of expo is not existed.
+     */
+    public void checkSMS(KDSDataOrder order, boolean bOrderBumped, ArrayList<KDSToStation> arOrignalTargetStations)
     {
         if (!getSettings().getBoolean(KDSSettings.ID.SMS_enabled))
             return;
@@ -3825,11 +3842,49 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         {//if expo existed, send nothing.
             if (this.getStationsConnections().getRelations().getAllExpoStations().size()>0)
                 return;
+            else //just min station send SMS.
+            {
+                if (!bOrderBumped) { //new order
+                    String minStationID = findMinStationID(arOrignalTargetStations);
+                    if (!minStationID.isEmpty()) {
+                        if (!minStationID.equals(getStationID())) {
+                            return; //just min send sms
+                        }
+                    }
+                }
+                else//bump order
+                {
+                    if (order.getSMSLastSendState() == KDSDataOrder.SMS_STATE_UNKNOWN)
+                        return; //just sms has send out station, it can do next step.
+                }
+            }
         }
         if (order.isSMSStateChanged(this.isExpeditorStation(), bOrderBumped))
         {
-            m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(), order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped));
+            int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
+            m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(),nSMSState );
+            //KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
         }
+    }
+
+    private String findMinStationID(ArrayList<KDSToStation> arOrignalTargetStations)
+    {
+        if (arOrignalTargetStations == null)
+            return "";
+        String minStationID = "";
+        for (int i=0; i< arOrignalTargetStations.size(); i++)
+        {
+            String stationID = arOrignalTargetStations.get(i).getPrimaryStation();
+            if (minStationID.isEmpty())
+                minStationID = stationID;
+            else
+            {
+                if (stationID.compareTo(minStationID)<0)
+                    minStationID = stationID;
+
+            }
+        }
+        return minStationID;
     }
 
     public void checkSMS(String orderGuid, boolean bOrderBumped)
@@ -3838,7 +3893,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             return;
         KDSDataOrder order = getUsers().getOrderByGUID(orderGuid);
         if (order == null) return;
-        checkSMS(order, bOrderBumped);
+
+
+        checkSMS(order, bOrderBumped, null);
 
 
     }
