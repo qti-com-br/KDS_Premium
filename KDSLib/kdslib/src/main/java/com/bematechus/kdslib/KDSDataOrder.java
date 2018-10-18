@@ -2502,6 +2502,6 @@ get the total qty of all found items
     {
         int nSMSState = this.getSMSCurrentState(bIsExpoStation, bOrderBumped);
         int nSendState = getSMSLastSendState();
-        return (nSendState != nSMSState);
+        return (nSendState < nSMSState);
     }
 }

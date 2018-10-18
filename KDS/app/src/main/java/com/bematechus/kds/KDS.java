@@ -3851,6 +3851,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                             return; //just min send sms
                         }
                     }
+                    else if (arOrignalTargetStations == null)
+                    {
+                        if (order.getSMSLastSendState() == KDSDataOrder.SMS_STATE_UNKNOWN)
+                            return; //just sms has send out station, it can do next step.
+                    }
                 }
                 else//bump order
                 {
@@ -3863,7 +3868,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         {
             int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
             m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(),nSMSState );
-            //KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
+            KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
         }
     }
 
