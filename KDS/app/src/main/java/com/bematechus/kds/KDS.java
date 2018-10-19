@@ -1193,6 +1193,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
 
         }
+        else if (xmlCommand.indexOf("<SMSStationState>")>=0)
+        {
+            String s = xmlCommand;
+            s = s.replace("<SMSStationState>", "");
+            s = s.replace("</SMSStationState>", "");
+            onReceiveSMSStationStateChanged(s);
+        }
     }
     KDSStationsRelation findStation( List<KDSStationsRelation> lst, String stationID)
     {
@@ -1857,7 +1864,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     if (error != KDSPosNotificationFactory.OrderParamError.OK) {
                         String errorCode = KDSPosNotificationFactory.getOrderParamErrorCode(error);
                         if (objSource != null) {
-                            ArrayList<KDSToStation> ar = KDSPosNotificationFactory.getOrderTargetStations(order);
+                            ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
                             if (KDSToStations.findInToStationsArray(ar, getStationID()) != KDSToStations.PrimarySlaveStation.Unknown)
                                doOrderAcknowledgement(objSource, order, 1, originalFileName, xmlData, KDSUtil.createNewGUID(), errorCode, false);
                         }
@@ -2290,9 +2297,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
 
         //save it for sms feature.
-        ArrayList<KDSToStation> arTargetStations = KDSPosNotificationFactory.getOrderTargetStations(order);
-
-
+        ArrayList<KDSToStation> arTargetStations = KDSDataOrder.getOrderTargetStations(order);
+        order.setSmsOriginalToStations(arTargetStations);
 
         order = justKeepMyStationItems(order);
 
@@ -3844,23 +3850,27 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 return;
             else //just min station send SMS.
             {
-                if (!bOrderBumped) { //new order
-                    String minStationID = findMinStationID(arOrignalTargetStations);
+                if (!bOrderBumped && (arOrignalTargetStations!=null) ) { //new order
+                    String minStationID = order.findSMSMinStationID();
                     if (!minStationID.isEmpty()) {
                         if (!minStationID.equals(getStationID())) {
                             return; //just min send sms
                         }
                     }
-                    else if (arOrignalTargetStations == null)
-                    {
-                        if (order.getSMSLastSendState() == KDSDataOrder.SMS_STATE_UNKNOWN)
-                            return; //just sms has send out station, it can do next step.
-                    }
+                }
+                else if (!bOrderBumped && (arOrignalTargetStations == null))
+                {//item bump/unbump
+                    if (!order.isAllItemsFinished()) return;
+                    if (!order.isSMSAllOtherStationsDone(getStationID()))
+                        return;
                 }
                 else//bump order
                 {
-                    if (order.getSMSLastSendState() == KDSDataOrder.SMS_STATE_UNKNOWN)
-                        return; //just sms has send out station, it can do next step.
+                    if (!order.isSMSAllOtherStationsDone(getStationID()))
+                        return; //If all others finished same order part, send SMS
+                    if (order.isSMSStationsDone(getStationID()))
+                        return; //I have do broadcast "done" udp, but other is not finished.
+                                 //Don't send SMS here. Other station will do it.
                 }
             }
         }
@@ -3872,25 +3882,25 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
     }
 
-    private String findMinStationID(ArrayList<KDSToStation> arOrignalTargetStations)
-    {
-        if (arOrignalTargetStations == null)
-            return "";
-        String minStationID = "";
-        for (int i=0; i< arOrignalTargetStations.size(); i++)
-        {
-            String stationID = arOrignalTargetStations.get(i).getPrimaryStation();
-            if (minStationID.isEmpty())
-                minStationID = stationID;
-            else
-            {
-                if (stationID.compareTo(minStationID)<0)
-                    minStationID = stationID;
-
-            }
-        }
-        return minStationID;
-    }
+//    private String findMinStationID(ArrayList<KDSToStation> arOrignalTargetStations)
+//    {
+//        if (arOrignalTargetStations == null)
+//            return "";
+//        String minStationID = "";
+//        for (int i=0; i< arOrignalTargetStations.size(); i++)
+//        {
+//            String stationID = arOrignalTargetStations.get(i).getPrimaryStation();
+//            if (minStationID.isEmpty())
+//                minStationID = stationID;
+//            else
+//            {
+//                if (stationID.compareTo(minStationID)<0)
+//                    minStationID = stationID;
+//
+//            }
+//        }
+//        return minStationID;
+//    }
 
     public void checkSMS(String orderGuid, boolean bOrderBumped)
     {
@@ -3914,5 +3924,68 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             getCurrentDB().setSMSState(orderGuid, smsState);
         }
 
+    }
+
+    /**
+     *
+     * @param orderGuid
+     * @param bOrderBumped
+     */
+    /**
+     * Don't check unbump operation. It can not rollback.
+     * @param orderGuid
+     *      When order bump, the order has deleted, we can find it again.
+     *      So, pass orderName to me.
+     * @param orderName
+     *      When item bump, the orderName is empty
+     *      When order bump, the order has deleted, we can find it again.
+     *      So, pass orderName to me.
+     * @param bOrderBumped
+     */
+    public void checkBroadcastSMSStationStateChanged(String orderGuid,String orderName,boolean bAllItemsFinished, boolean bOrderBumped)
+    {
+        if (!getSettings().getBoolean(KDSSettings.ID.SMS_enabled))
+            return;
+        if (orderName.isEmpty()) {
+            KDSDataOrder order = getUsers().getOrderByGUID(orderGuid);
+            if (order == null) return;
+            orderName = order.getOrderName();
+        }
+
+        if (this.isPrepStation())
+        {//if expo existed, send nothing.
+            if (this.getStationsConnections().getRelations().getAllExpoStations().size()>0)
+                return;
+            else //just min station send SMS.
+            {
+                if (bAllItemsFinished || bOrderBumped)
+                    m_broadcaster.broadcastSmsStationStateChanged(getStationID(), orderName, true);
+
+
+            }
+        }
+
+
+
+    }
+
+    /**
+     *
+     * @param stationState
+     *  Format:
+     *      StationID, orderName, Done
+     */
+    public void onReceiveSMSStationStateChanged(String stationState)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(stationState, ",");
+        if (ar.size() != 3) return;
+        String stationID = ar.get(0);
+        String orderName = ar.get(1);
+        String isDone = ar.get(2);
+        KDSDataOrder order =  this.getUsers().getOrderByName(orderName);
+        if (order == null)
+            return;
+        order.setSmsOriginalToStationState(stationID, true);
+        this.getCurrentDB().setSMSStationsState(order.getGUID(), order.getSmsOriginalOrderGoToStations());
     }
 }

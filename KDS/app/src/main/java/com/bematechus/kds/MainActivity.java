@@ -2147,6 +2147,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //SMS feature
         //if (getKDS().isExpeditorStation())
         getKDS().checkSMS(order, true, null);
+        getKDS().checkBroadcastSMSStationStateChanged(orderGuid, order.getOrderName(),order.isAllItemsFinished(), true);
     }
 
     /**
@@ -2326,7 +2327,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         refreshView(userID);
 
         getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
-
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order != null) {
+            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
+        }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }

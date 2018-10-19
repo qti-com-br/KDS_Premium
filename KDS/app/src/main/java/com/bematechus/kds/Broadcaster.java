@@ -272,4 +272,16 @@ public class Broadcaster {
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildSmartModeEnabledSettingCommand( bSmartEnabled?1:0);
         return buf;
     }
+
+    public ByteBuffer makeSmsStationStateChangedBuffer(String stationID, String orderName, boolean bDone)
+    {
+        String s ="<SMSStationState>" + stationID + "," + orderName +"," +( bDone?"1":"0") +"</SMSStationState>";
+        return KDSSocketTCPCommandBuffer.buildXMLCommand(s);
+
+    }
+
+    public void broadcastSmsStationStateChanged(String stationID, String orderName, boolean bDone)
+    {
+        (new KDSBroadcastThread(getUDP(), makeSmsStationStateChangedBuffer(stationID, orderName, bDone))).start();
+    }
 }

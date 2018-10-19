@@ -249,7 +249,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    final int ORDER_FIELDS_COUNT = 27; //it should equal field in following function.
+    final int ORDER_FIELDS_COUNT = 28; //it should equal field in following function.
 
     /**
      * see function #orderGet() and  #ordersLoadAllJustInfo
@@ -283,7 +283,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r0," + //23
                 "orders.r1," + //24
                 "orders.r2," +//25
-                "orders.r3 " ;//26
+                "orders.r3," +//26
+                "orders.r4 "; //27
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -390,7 +391,8 @@ public class KDSDBCurrent extends KDSDBBase {
         c.setSMSCustomerID( getString(sf, 24) );
         c.setSMSCustomerPhone( getString(sf, 25) );
         c.setSMSLastSendState( getInt(sf, 26, KDSDataOrder.SMS_STATE_UNKNOWN) );
-
+        //2.1.15
+        c.setSmsOriginalToStations(getString(sf, 27));
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
         if (sf.getColumnCount() > ORDER_FIELDS_COUNT) //save the items count.,for :ordersLoadAllJustInfo function
@@ -3369,6 +3371,20 @@ update the schedule item ready qty
         getDB().execSQL(sql);
     }
 
+    /**
+     *     //for SMS. If no expo existed, use it to record which has bumped/(items bumped).
+     //format:
+     //stationID\nAllDone, stationID\nAllDone
+     //save to database order table, r4.
+     * @param orderGuid
+     * @param strStationsState
+     */
+    public void setSMSStationsState(String orderGuid, String strStationsState)
+    {
+        String sql = String.format("update orders set r4='%s' where guid='%s'",strStationsState, orderGuid);
+
+        getDB().execSQL(sql);
+    }
 
 
 
@@ -3407,7 +3423,7 @@ update the schedule item ready qty
             +"r1 text(16)," //2.0.50, for sms customer id
             +"r2 text(16)," //2.0.50 for sms customer phone number
             +"r3 text(16)," //2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
-            +"r4 text(16),"
+            +"r4 text(16)," //2.1.15, for sms, save original order go to which stations.
             +"r5 text(16),"
             +"r6 text(16),"
             +"r7 text(16),"

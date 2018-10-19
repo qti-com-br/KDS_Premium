@@ -106,6 +106,12 @@ public class KDSDataOrder extends KDSData {
     String m_smsCustomerPhone = "";
     int m_smsLastState = SMS_STATE_UNKNOWN; //this state has been send to server.
 
+    //for SMS. If no expo existed, use it to record which has bumped/(items bumped).
+    //format:
+    //stationID\nAllDone, stationID\nAllDone
+    //save to database order table, r4.
+    String m_smsOriginalOrderGoToStations = "";
+
 
     /**
      * When auto-bump is enable, after the time reaches, it is impossible to “unbump” an order to
@@ -487,7 +493,10 @@ public class KDSDataOrder extends KDSData {
         obj.m_smsCustomerID = m_smsCustomerID;
         obj.m_smsCustomerPhone = m_smsCustomerPhone;
         obj.m_smsLastState = m_smsLastState;
+        //2.1.15
+        obj.m_smsOriginalOrderGoToStations = m_smsOriginalOrderGoToStations;
         //
+
         this.getOrderMessages().copyTo(obj.getOrderMessages());
     }
     /***************************************************************************
@@ -521,7 +530,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -553,6 +562,7 @@ public class KDSDataOrder extends KDSData {
             + ",'" + getSMSCustomerID() +"'" //2.0.50, for sms customer id
             +",'" + m_smsCustomerPhone + "'" //2.0.50 for sms customer phone number
             + "," +  KDSUtil.convertFloatToString(m_smsLastState)  ////2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
+            + ",'" + m_smsOriginalOrderGoToStations +"'" //r4
             +  ")";
         return sql;
          
@@ -2503,5 +2513,208 @@ get the total qty of all found items
         int nSMSState = this.getSMSCurrentState(bIsExpoStation, bOrderBumped);
         int nSendState = getSMSLastSendState();
         return (nSendState < nSMSState);
+    }
+
+    static public ArrayList<KDSToStation> getOrderTargetStations(KDSDataOrder order)
+    {
+
+        ArrayList<KDSToStation> ar = new ArrayList<>();
+
+
+        for (int i=0; i< order.getItems().getCount(); i++)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            KDSToStations toStations = item.getToStations();
+            for (int j=0; j< toStations.getCount(); j++)
+            {
+                KDSToStation toStation = toStations.getToStation(j);
+                if (isExistedInArrary(ar, toStation))
+                    continue;
+                ar.add(toStation);
+            }
+        }
+        return ar;
+    }
+    static public boolean isExistedInArrary(ArrayList<KDSToStation> ar, KDSToStation toStation)
+    {
+        for (int i=0; i< ar.size(); i++)
+        {
+            if ( ar.get(i).getPrimaryStation().equals(toStation.getPrimaryStation()) &&
+                    ar.get(i).getSlaveStation().equals(toStation.getSlaveStation()) )
+                return true;
+        }
+        return false;
+    }
+
+    public String getSmsOriginalOrderGoToStations()
+    {
+        return m_smsOriginalOrderGoToStations;
+    }
+    public void setSmsOriginalToStations(String goToStations)
+    {
+        m_smsOriginalOrderGoToStations = goToStations;
+    }
+
+    public void setSmsOriginalToStations(ArrayList<KDSToStation> arTargetStations)
+    {
+        ArrayList<SmsStationsState> ar = new ArrayList<>();
+
+        for (int i=0; i< arTargetStations.size(); i++)
+        {
+            KDSToStation toStation = arTargetStations.get(i);
+            String stationID = toStation.getPrimaryStation();
+            SmsStationsState state = new SmsStationsState();
+            state.m_stationID = stationID;
+            ar.add(state);
+
+        }
+        String s = smsStationsStateToString(ar);
+        setSmsOriginalToStations(s);
+
+    }
+
+    /**
+     * change m_smsOriginalOrderGoToStations
+     * //for SMS. If no expo existed, use it to record which has bumped/(items bumped).
+     //format:
+     //stationID\nAllDone, stationID\nAllDone
+     //save to database order table, r4.
+     * @param stationID
+     * @param bDone
+     *  the order was bumped or all items is done.
+     */
+    public void setSmsOriginalToStationState(String stationID, boolean bDone)
+    {
+        ArrayList<SmsStationsState> ar = parseSmsOriginalToStations();
+        SmsStationsState state = findSmsStationState(ar, stationID);
+        if (state == null) return;
+        state.m_bDone = bDone;
+        m_smsOriginalOrderGoToStations = smsStationsStateToString(ar);
+    }
+
+
+
+    private String smsStationsStateToString(ArrayList<SmsStationsState> arStates )
+    {
+        String s = "";
+        for (int i=0; i< arStates.size(); i++)
+        {
+            SmsStationsState state = arStates.get(i);
+            if (!s.isEmpty())
+                s += ",";
+            s += state.toString();
+        }
+        return s;
+    }
+
+
+    private SmsStationsState findSmsStationState(ArrayList<SmsStationsState> arStates, String stationID)
+    {
+        for (int i=0; i< arStates.size(); i++)
+        {
+            SmsStationsState state = arStates.get(i);
+            if (state.m_stationID.equals(stationID))
+                return state;
+        }
+        return null;
+    }
+    private ArrayList<SmsStationsState> parseSmsOriginalToStations()
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(m_smsOriginalOrderGoToStations, ",");
+
+        ArrayList<SmsStationsState> arStates = new ArrayList<>();
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            String s = ar.get(i);
+            SmsStationsState state = parseSmsStationState(s);
+            if (state != null)
+            {
+                arStates.add(state);
+            }
+        }
+        return arStates;
+
+    }
+    private SmsStationsState parseSmsStationState(String smsStationState)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(smsStationState, "\n");
+        if (ar.size() !=2) return null;
+
+        String stationID =  ar.get(0);
+        String strDone = ar.get(1);
+
+        SmsStationsState state = new SmsStationsState();
+        state.m_stationID = stationID;
+        state.m_bDone = KDSUtil.convertStringToBool(strDone, false);
+        return state;
+
+    }
+
+    public  String findSMSMinStationID()
+    {
+        if (m_smsOriginalOrderGoToStations.isEmpty())
+            return "";
+        String minStationID = "";
+        ArrayList<SmsStationsState> ar =  parseSmsOriginalToStations();
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            String stationID = ar.get(i).m_stationID;
+            if (minStationID.isEmpty())
+                minStationID = stationID;
+            else
+            {
+                if (stationID.compareTo(minStationID)<0)
+                    minStationID = stationID;
+
+            }
+        }
+        return minStationID;
+    }
+
+    public boolean isSMSAllOtherStationsDone(String myStationIDException)
+    {
+        ArrayList<SmsStationsState> ar =  parseSmsOriginalToStations();
+        boolean bAllOthersDone = true;
+        for (int i=0; i<ar.size(); i++)
+        {
+            if (ar.get(i).m_stationID.equals(myStationIDException))
+                continue;
+
+            if (!ar.get(i).m_bDone)
+                bAllOthersDone = false;
+
+        }
+        return bAllOthersDone;
+    }
+
+    public boolean isSMSStationsDone(String myStationIDException)
+    {
+        ArrayList<SmsStationsState> ar =  parseSmsOriginalToStations();
+
+        for (int i=0; i<ar.size(); i++)
+        {
+            if (!ar.get(i).m_stationID.equals(myStationIDException))
+                continue;
+
+            return (ar.get(i).m_bDone);
+
+
+        }
+        return false;
+    }
+
+    class SmsStationsState
+    {
+        public String m_stationID = "";
+        public  boolean m_bDone = false;
+        public String toString()
+        {
+            String s = m_stationID;
+            s += "\n";
+            s += m_bDone?"1":"0";
+            return s;
+        }
     }
 }

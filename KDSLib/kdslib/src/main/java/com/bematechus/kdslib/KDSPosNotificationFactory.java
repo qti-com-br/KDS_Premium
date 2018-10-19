@@ -440,34 +440,34 @@ false: unbump order/item
         return ACK_ERR_OK;
     }
 
-    static public ArrayList<KDSToStation> getOrderTargetStations(KDSDataOrder order)
-    {
-
-        ArrayList<KDSToStation> ar = new ArrayList<>();
-
-
-        for (int i=0; i< order.getItems().getCount(); i++)
-        {
-            KDSDataItem item = order.getItems().getItem(i);
-            KDSToStations toStations = item.getToStations();
-            for (int j=0; j< toStations.getCount(); j++)
-            {
-                KDSToStation toStation = toStations.getToStation(j);
-                if (isExistedInArrary(ar, toStation))
-                    continue;
-                ar.add(toStation);
-            }
-        }
-        return ar;
-    }
-    static public boolean isExistedInArrary(ArrayList<KDSToStation> ar, KDSToStation toStation)
-    {
-        for (int i=0; i< ar.size(); i++)
-        {
-            if ( ar.get(i).getPrimaryStation().equals(toStation.getPrimaryStation()) &&
-                    ar.get(i).getSlaveStation().equals(toStation.getSlaveStation()) )
-                return true;
-        }
-        return false;
-    }
+//    static public ArrayList<KDSToStation> getOrderTargetStations(KDSDataOrder order)
+//    {
+//
+//        ArrayList<KDSToStation> ar = new ArrayList<>();
+//
+//
+//        for (int i=0; i< order.getItems().getCount(); i++)
+//        {
+//            KDSDataItem item = order.getItems().getItem(i);
+//            KDSToStations toStations = item.getToStations();
+//            for (int j=0; j< toStations.getCount(); j++)
+//            {
+//                KDSToStation toStation = toStations.getToStation(j);
+//                if (isExistedInArrary(ar, toStation))
+//                    continue;
+//                ar.add(toStation);
+//            }
+//        }
+//        return ar;
+//    }
+//    static public boolean isExistedInArrary(ArrayList<KDSToStation> ar, KDSToStation toStation)
+//    {
+//        for (int i=0; i< ar.size(); i++)
+//        {
+//            if ( ar.get(i).getPrimaryStation().equals(toStation.getPrimaryStation()) &&
+//                    ar.get(i).getSlaveStation().equals(toStation.getSlaveStation()) )
+//                return true;
+//        }
+//        return false;
+//    }
 }
