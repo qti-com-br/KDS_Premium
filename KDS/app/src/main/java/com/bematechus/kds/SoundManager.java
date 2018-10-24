@@ -39,11 +39,38 @@ public class SoundManager {
         String s = getSettings().getString(soundID);
         if (s.isEmpty()) return;
         KDSSound sound = KDSSound.parseString(s);
-        m_player.playWithoutBind( sound.getUri(), getDurationSeconds() *1000);
+        //m_player.playWithoutBind( sound.getUri(), getDurationSeconds() *1000);
+        playSoundByThread(sound);
 
     }
     public void stopSound()
     {
         m_player.stopWithoutBind();
+    }
+
+    private void playSoundByThread(KDSSound sound)
+    {
+        SoundRunnable s = new SoundRunnable(sound);
+
+        Thread t = new Thread(s);
+
+        t.start();
+
+    }
+    class SoundRunnable implements Runnable
+    {
+        KDSSound m_sound = null;
+        public SoundRunnable(KDSSound sound )
+        {
+            this.setSound(sound);
+        }
+        public void setSound(KDSSound sound)
+        {
+            m_sound = sound;
+        }
+        @Override
+        public void run() {
+            m_player.playWithoutBind( m_sound.getUri(), getDurationSeconds() *1000);
+        }
     }
 }

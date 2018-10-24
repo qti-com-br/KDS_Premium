@@ -1239,57 +1239,61 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     private void onUdpReceiveStationAnnounce(String strInfo)
     {
-        m_annoucerTimeDog.reset();
-        boolean bNewStation = false;
-        //remove all failed stations.
-        m_stationsConnection.checkAllNoResponseStations();
 
-        ArrayList<String> ar = KDSUtil.spliteString(strInfo, ",");
-        if (ar.size() < 4)
-            return;
-        String id = ar.get(0);
-        String ip = ar.get(1);
-        String port = ar.get(2);
-        String mac = ar.get(3);
-        String itemsCount ="";
-        if (ar.size() >=5) //add orders count
-            itemsCount = ar.get(4);
+        doStationAnnounceInThread(strInfo);
 
-        int nUserMode = 0;
-
-        if (ar.size() >=6)
-        {
-            int n = KDSUtil.convertStringToInt( ar.get(5),0 );
-            if (n <0 || n>1)
-                n = 0;
-            nUserMode = n;
-
-
-        }
-
-        KDSStationActived station =m_stationsConnection.findActivedStationByMac(mac);//id);
-        if (station == null) {
-            station = new KDSStationActived();
-            //m_arActivedStations.add(station);
-            m_stationsConnection.addActiveStation(station);
-            bNewStation = true;
-        }
-        station.setID(id);
-        station.setIP(ip);
-        station.setPort(port);
-        station.setMac(mac);
-        station.setStationContainItemsCount(itemsCount);
-        station.setUserMode(nUserMode);
-        station.updatePulseTime();//record last received time
-
-        //some connection don't have the station ID in it. use this function to update them.
-        //comment it for debuging the connect with data function.
-        m_stationsConnection.refreshAllExistedConnectionInfo();
-
-        if (m_stationAnnounceEvents != null)
-            m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
-        if (bNewStation)
-            announce_restore_pulse(id, ip);
+//
+//        m_annoucerTimeDog.reset();
+//        boolean bNewStation = false;
+//        //remove all failed stations.
+//        m_stationsConnection.checkAllNoResponseStations();
+//
+//        ArrayList<String> ar = KDSUtil.spliteString(strInfo, ",");
+//        if (ar.size() < 4) //In old version, this is a bug. Old code:if (ar.size() <= 4)
+//            return;
+//        String id = ar.get(0);
+//        String ip = ar.get(1);
+//        String port = ar.get(2);
+//        String mac = ar.get(3);
+//        String itemsCount ="";
+//        if (ar.size() >=5) //add orders count
+//            itemsCount = ar.get(4);
+//
+//        int nUserMode = 0;
+//
+//        if (ar.size() >=6)
+//        {
+//            int n = KDSUtil.convertStringToInt( ar.get(5),0 );
+//            if (n <0 || n>1)
+//                n = 0;
+//            nUserMode = n;
+//
+//
+//        }
+//
+//        KDSStationActived station =m_stationsConnection.findActivedStationByMac(mac);//id);
+//        if (station == null) {
+//            station = new KDSStationActived();
+//            //m_arActivedStations.add(station);
+//            m_stationsConnection.addActiveStation(station);
+//            bNewStation = true;
+//        }
+//        station.setID(id);
+//        station.setIP(ip);
+//        station.setPort(port);
+//        station.setMac(mac);
+//        station.setStationContainItemsCount(itemsCount);
+//        station.setUserMode(nUserMode);
+//        station.updatePulseTime();//record last received time
+//
+//        //some connection don't have the station ID in it. use this function to update them.
+//        //comment it for debuging the connect with data function.
+//        m_stationsConnection.refreshAllExistedConnectionInfo();
+//
+//        if (m_stationAnnounceEvents != null)
+//            m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
+//        if (bNewStation)
+//            announce_restore_pulse(id, ip);
 
     }
     public KDSStationConnection getSocketConnection(KDSSocketInterface sock)
@@ -3832,6 +3836,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     }
 
+
+
     /**
      *
      * @param order
@@ -3988,4 +3994,118 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         order.setSmsOriginalToStationState(stationID, true);
         this.getCurrentDB().setSMSStationsState(order.getGUID(), order.getSmsOriginalOrderGoToStations());
     }
+
+    private void doStationAnnounceInThread(String strInfo)
+    {
+        StationAnnounceRunnable r = new StationAnnounceRunnable(strInfo);
+        Thread t = new Thread(r);
+        t.start();
+
+    }
+
+    private void doStationAnnounce(String strInfo)
+    {
+        m_annoucerTimeDog.reset();
+        boolean bNewStation = false;
+        //remove all failed stations.
+        m_stationsConnection.checkAllNoResponseStations();
+
+        ArrayList<String> ar = KDSUtil.spliteString(strInfo, ",");
+        if (ar.size() < 4)
+            return;
+        String id = ar.get(0);
+        String ip = ar.get(1);
+        String port = ar.get(2);
+        String mac = ar.get(3);
+        String itemsCount ="";
+        if (ar.size() >=5) //add orders count
+            itemsCount = ar.get(4);
+
+        int nUserMode = 0;
+
+        if (ar.size() >=6)
+        {
+            int n = KDSUtil.convertStringToInt( ar.get(5),0 );
+            if (n <0 || n>1)
+                n = 0;
+            nUserMode = n;
+
+
+        }
+
+        KDSStationActived station =m_stationsConnection.findActivedStationByMac(mac);//id);
+        if (station == null) {
+            station = new KDSStationActived();
+            //m_arActivedStations.add(station);
+            m_stationsConnection.addActiveStation(station);
+            bNewStation = true;
+        }
+        station.setID(id);
+        station.setIP(ip);
+        station.setPort(port);
+        station.setMac(mac);
+        station.setStationContainItemsCount(itemsCount);
+        station.setUserMode(nUserMode);
+        station.updatePulseTime();//record last received time
+
+        //some connection don't have the station ID in it. use this function to update them.
+        //comment it for debuging the connect with data function.
+        m_stationsConnection.refreshAllExistedConnectionInfo();
+
+
+        //if (m_stationAnnounceEvents != null)
+        //    m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
+        Message msg = new Message();
+        msg.what = ANNOUNCE_MSG_SEND_EVENT;
+        msg.obj = station;
+        m_announceHander.sendMessage(msg);
+
+        if (bNewStation) {
+            //announce_restore_pulse(id, ip);
+            msg = new Message();
+            msg.what = ANNOUNCE_MSG_STATION_RESTORE;
+            msg.obj = station;
+            m_announceHander.sendMessage(msg);
+        }
+    }
+    final int ANNOUNCE_MSG_SEND_EVENT = 0;
+    final int ANNOUNCE_MSG_STATION_RESTORE = 1;
+    Handler m_announceHander = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            KDSStationActived station = (KDSStationActived)msg.obj;
+            if (msg.what == ANNOUNCE_MSG_SEND_EVENT) {
+                if (m_stationAnnounceEvents != null)
+                    m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
+            }
+            else if (msg.what == ANNOUNCE_MSG_STATION_RESTORE)
+            {
+                announce_restore_pulse(station.getID(),station.getIP());
+            }
+            return false;
+        }
+    });
+
+
+    class StationAnnounceRunnable implements Runnable
+    {
+        String m_strStationAnnounce = "";
+
+        public StationAnnounceRunnable(String strAnnounce)
+        {
+            setAnnounce(strAnnounce);
+        }
+        public void setAnnounce(String strAnnounce)
+        {
+            m_strStationAnnounce = strAnnounce;
+        }
+
+
+        public void run()
+        {
+            doStationAnnounce(m_strStationAnnounce);
+        }
+    }
+
+
 }

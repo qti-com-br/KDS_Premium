@@ -46,7 +46,7 @@ public class RouterAcks {
 
     private ArrayList<KDSToStation> getOrderTargetStations(KDSDataOrder order)
     {
-        return KDSPosNotificationFactory.getOrderTargetStations(order);
+        return KDSDataOrder.getOrderTargetStations(order);
 
 //
 //        ArrayList<KDSToStation> ar = new ArrayList<>();

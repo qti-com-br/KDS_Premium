@@ -1744,7 +1744,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         }
 
 
-
+        ArrayList<StationFunction> m_stationFuncSpinnerListHaveExpo = new ArrayList<>();
+        ArrayList<StationFunction> m_stationFuncSpinnerListNoExpo = new ArrayList<>();
         private void initStationfunctionSpinner2(Context context, Spinner spinner,KDSStationsRelation relation)
         {
 
@@ -1768,34 +1769,38 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             List<String> arFuncStrings = Arrays.asList(context.getResources().getStringArray(R.array.station_function));
 
             if (isExpoExisted()) {
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Normal.ordinal()), KDSSettings.StationFunc.Normal));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Expeditor.ordinal()), KDSSettings.StationFunc.Expeditor));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue.ordinal()), KDSSettings.StationFunc.Queue));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Mirror.ordinal()), KDSSettings.StationFunc.Mirror));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Backup.ordinal()), KDSSettings.StationFunc.Backup));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Workload.ordinal()), KDSSettings.StationFunc.Workload));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Duplicate.ordinal()), KDSSettings.StationFunc.Duplicate));
+                if (m_stationFuncSpinnerListHaveExpo.size()<=0) {
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Normal.ordinal()), KDSSettings.StationFunc.Normal));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Expeditor.ordinal()), KDSSettings.StationFunc.Expeditor));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue.ordinal()), KDSSettings.StationFunc.Queue));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Mirror.ordinal()), KDSSettings.StationFunc.Mirror));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Backup.ordinal()), KDSSettings.StationFunc.Backup));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Workload.ordinal()), KDSSettings.StationFunc.Workload));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Duplicate.ordinal()), KDSSettings.StationFunc.Duplicate));
 
 
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.TableTracker.ordinal()), KDSSettings.StationFunc.TableTracker));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue_Expo.ordinal()), KDSSettings.StationFunc.Queue_Expo));
-
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.TableTracker.ordinal()), KDSSettings.StationFunc.TableTracker));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue_Expo.ordinal()), KDSSettings.StationFunc.Queue_Expo));
+                }
+                list = m_stationFuncSpinnerListHaveExpo;
 
             }
             else {
+                if (m_stationFuncSpinnerListNoExpo.size() <=0) {
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Normal.ordinal()), KDSSettings.StationFunc.Normal));
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Expeditor.ordinal()), KDSSettings.StationFunc.Expeditor));
+                    //2.0.11, allow queue in prep station
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue.ordinal()), KDSSettings.StationFunc.Queue));
+                    //
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Mirror.ordinal()), KDSSettings.StationFunc.Mirror));
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Backup.ordinal()), KDSSettings.StationFunc.Backup));
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Workload.ordinal()), KDSSettings.StationFunc.Workload));
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Duplicate.ordinal()), KDSSettings.StationFunc.Duplicate));
 
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Normal.ordinal()), KDSSettings.StationFunc.Normal));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Expeditor.ordinal()), KDSSettings.StationFunc.Expeditor));
-                //2.0.11, allow queue in prep station
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue.ordinal()), KDSSettings.StationFunc.Queue));
-
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Mirror.ordinal()), KDSSettings.StationFunc.Mirror));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Backup.ordinal()), KDSSettings.StationFunc.Backup));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Workload.ordinal()), KDSSettings.StationFunc.Workload));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Duplicate.ordinal()), KDSSettings.StationFunc.Duplicate));
-
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.TableTracker.ordinal()), KDSSettings.StationFunc.TableTracker));
-                list.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue_Expo.ordinal()), KDSSettings.StationFunc.Queue_Expo));
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.TableTracker.ordinal()), KDSSettings.StationFunc.TableTracker));
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue_Expo.ordinal()), KDSSettings.StationFunc.Queue_Expo));
+                }
+                list = m_stationFuncSpinnerListNoExpo;
             }
 
 
@@ -1929,6 +1934,13 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         final static int DUPLICATE_SLAVE_OPTIONS = 1;
         final static int BACKUP_SLAVE_OPTIONS = 2;
         final static int Queue_Expo_SLAVE_OPTIONS = 2;
+
+        ArrayList<SlaveFunction> m_slaveFuncNormalSpinnerList = new ArrayList<>();
+        ArrayList<SlaveFunction> m_slaveFuncExpoSpinnerList = new ArrayList<>();
+        ArrayList<SlaveFunction> m_slaveFuncQueueExpoSpinnerList = new ArrayList<>();
+        ArrayList<SlaveFunction> m_slaveFuncBackupSpinnerList = new ArrayList<>();
+        ArrayList<SlaveFunction> m_slaveFuncOtherSpinnerList = new ArrayList<>();
+
         private void initSlaveFunctionSpinner(Context context, Spinner spinner, KDSSettings.StationFunc stationFunction)
         {
             SpinnerAdapter oldAdapter =  spinner.getAdapter();
@@ -1966,37 +1978,49 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
             switch (stationFunction)
             {
-
                 case Normal:
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Mirror.ordinal()), KDSSettings.SlaveFunc.Mirror));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Automatic_work_loan_distribution.ordinal()), KDSSettings.SlaveFunc.Automatic_work_loan_distribution));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Duplicate_station.ordinal()), KDSSettings.SlaveFunc.Duplicate_station));
-                    //2.0.11, allow queue in prep station
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Order_Queue_Display.ordinal()), KDSSettings.SlaveFunc.Order_Queue_Display));
-
+                    if (m_slaveFuncNormalSpinnerList.size()<=0) {
+                        m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
+                        m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
+                        m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Mirror.ordinal()), KDSSettings.SlaveFunc.Mirror));
+                        m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Automatic_work_loan_distribution.ordinal()), KDSSettings.SlaveFunc.Automatic_work_loan_distribution));
+                        m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Duplicate_station.ordinal()), KDSSettings.SlaveFunc.Duplicate_station));
+                        //2.0.11, allow queue in prep station
+                        m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Order_Queue_Display.ordinal()), KDSSettings.SlaveFunc.Order_Queue_Display));
+                    }
+                    list = m_slaveFuncNormalSpinnerList;
                     break;
                 case Expeditor:
-
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Order_Queue_Display.ordinal()), KDSSettings.SlaveFunc.Order_Queue_Display));
+                    if (m_slaveFuncExpoSpinnerList.size() <=0) {
+                        m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
+                        m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
+                        m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Order_Queue_Display.ordinal()), KDSSettings.SlaveFunc.Order_Queue_Display));
+                    }
+                    list = m_slaveFuncExpoSpinnerList;
                     break;
                 case Queue_Expo:
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
+                    if (m_slaveFuncQueueExpoSpinnerList.size() <=0) {
+                        m_slaveFuncQueueExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
+                        m_slaveFuncQueueExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
+                    }
+                    list = m_slaveFuncQueueExpoSpinnerList;
                     break;
                 case Queue:
                 case Mirror:
                 case Workload:
                 case Duplicate:
                 case TableTracker:
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
+                    if (m_slaveFuncOtherSpinnerList.size() <=0) {
+                        m_slaveFuncOtherSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
+                    }
+                    list = m_slaveFuncOtherSpinnerList;
                     break;
                 case Backup:
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
-                    list.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
+                    if (m_slaveFuncBackupSpinnerList.size() <=0) {
+                        m_slaveFuncBackupSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
+                        m_slaveFuncBackupSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
+                    }
+                    list = m_slaveFuncBackupSpinnerList;
                     break;
             }
             adapter = new MySlaveSpinnerArrayAdapter(context, list);
@@ -2315,13 +2339,15 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             viewHolder.m_txtStationID = txtStationID;
             txtStationID.setText(r.getID());
             init_view_focus_event(txtStationID, convertView);
-            init_edittext_changed_event(txtStationID);
+            if (bNewView)
+                init_edittext_changed_event(txtStationID);
 
             EditText txtExp = ((EditText) convertView.findViewById(R.id.txtExpStations));
             viewHolder.m_txtExp = txtExp;
             txtExp.setText(r.getExpStations());
             init_view_focus_event(txtExp, convertView);
-            init_edittext_changed_event(txtExp);
+            if (bNewView)
+                init_edittext_changed_event(txtExp);
 
             //EditText txtSlave = ((EditText) convertView.findViewById(R.id.txtSlaveStations));
             TextView txtSlave = ((TextView) convertView.findViewById(R.id.txtSlaveStations));
@@ -2353,7 +2379,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             spinner.setTag(convertView);
 
             buildStationFunctionSpinner2(spinner, convertView, r);
-            ((MyStationFuncSpinnerAdapter)spinner.getAdapter()).notifyDataSetChanged();
+            //((MyStationFuncSpinnerAdapter)spinner.getAdapter()).notifyDataSetChanged();
 
             //
             spinner = ((Spinner) convertView.findViewById(R.id.spinnerStatus));//..setText(r.getFunctionString());
@@ -2379,22 +2405,21 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             setImageEditingIcon(imgEdit, r);
 
 
-            if (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()))
-            {
+            boolean bUnderLineLocalStation = (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()));
+            //{
 
-                TextPaint tp = viewHolder.m_txtStationID.getPaint();
-                tp.setUnderlineText(true);
+            TextPaint tp = viewHolder.m_txtStationID.getPaint();
+            tp.setUnderlineText(bUnderLineLocalStation);
+            tp.setFakeBoldText(bUnderLineLocalStation);
 
-                tp.setFakeBoldText(true);
-
-            }
-            else
-            {
-                TextPaint tp = viewHolder.m_txtStationID.getPaint();
-                tp.setFakeBoldText(false);
-                tp.setUnderlineText(false);
-
-            }
+            //}
+//            else
+//            {
+//                TextPaint tp = viewHolder.m_txtStationID.getPaint();
+//                tp.setFakeBoldText(false);
+//                tp.setUnderlineText(false);
+//
+//            }
             return convertView;
 
         }

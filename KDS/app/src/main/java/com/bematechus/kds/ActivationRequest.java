@@ -44,8 +44,8 @@ public class ActivationRequest {
      user: david
      pwd: 123456
      */
-    static final String URL = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
-
+    //static final String URL = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
+    static final String URL = "https://kdsgo.com/api/apiKDS";
     public static final String TOKEN = "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"; //fixed
 
 
