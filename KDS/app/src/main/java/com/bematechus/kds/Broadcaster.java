@@ -190,7 +190,7 @@ public class Broadcaster {
         (new KDSBroadcastThread(getUDP(), makeStationAnnounceBuffer())).start();
 
         // ByteBuffer buf = makeAnnounceToRouterBuffer();
-        (new KDSBroadcastThread(getUDP(),KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeStationAnnounceBuffer())).start();
+        (new KDSBroadcastThread(getUDP(),KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeAnnounceToRouterBuffer())).start();
 
     }
 
