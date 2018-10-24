@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
@@ -823,6 +825,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     private boolean isDifferentRelationsWithMyLocal(ArrayList<KDSStationsRelation> arReceived)
     {
         ArrayList<KDSStationsRelation> arLocal = KDSRouterSettings.loadStationsRelation(m_context);
+        if (arReceived == null) return false;
         if (arReceived.size() != arLocal.size())
             return true;
         for (int i=0; i< arReceived.size(); i++) {
@@ -844,6 +847,76 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
      * @param strInfo
      */
     private void onUdpReceiveStationAnnounce(String strInfo)
+    {
+        TimeDog d = new TimeDog();
+       // for (int i=0; i< 30; i++)
+        doStationAnnounceInThread(strInfo);
+        d.debug_print_Duration("duration "+strInfo);
+
+
+//
+//        boolean bNewStation = false;
+//        //remove all failed stations.
+//        m_stationsConnection.checkAllNoResponseStations();
+//
+//        ArrayList<String> ar = KDSUtil.spliteString(strInfo, ",");
+//        if (ar.size() != 4)
+//            return;
+//        String id = ar.get(0);
+//        String ip = ar.get(1);
+//        String port = ar.get(2);
+//        String mac = ar.get(3);
+//        String itemsCount ="";
+//        if (ar.size() >=5) //add orders count
+//            itemsCount = ar.get(4);
+//        // *********************** IMPORTANT ************************
+//        //As router will check router and kds two app, we have to use port to find it.
+//        KDSStationActived station =m_stationsConnection.findActivedStationByMacAndPort(mac, port);//id); ///IMPORTANT
+//        if (station == null) {
+//            station = new KDSStationActived();
+//            m_stationsConnection.addActiveStation(station);
+//            bNewStation = true;
+//        }
+//        else
+//        {//check if the connection existed,2.0.8
+//            KDSStationConnection conn = m_stationsConnection.findConnectionByID(station.getID());
+//            if (conn != null)
+//            {
+//                if (conn.isConnecting())
+//                    bNewStation = true;
+//            }
+//            else
+//            {
+//                bNewStation = true;
+//            }
+//        }
+//        station.setID(id);
+//        station.setIP(ip);
+//        station.setPort(port);
+//        station.setMac(mac);
+//
+//        station.updatePulseTime();//record last received time
+//
+//        //some connection don't have the station ID in it. use this function to update them.
+//        //comment it for debuging the connect with data function.
+//        m_stationsConnection.refreshAllExistedConnectionInfo();
+//
+//        if (m_stationAnnounceEvents != null)
+//            m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
+//        if (bNewStation ||
+//                id.equals(m_primaryRouterID) ||
+//                id.equals(m_slaveRouterID))
+//            announce_restore_pulse(id, ip);
+//
+//        d.debug_print_Duration("Deal with station announce duration");
+
+    }
+
+    /**
+     * call this function in thread
+     * @param strInfo
+     */
+    private void doStationAnnounce(String strInfo)
     {
         boolean bNewStation = false;
         //remove all failed stations.
@@ -890,16 +963,50 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         //some connection don't have the station ID in it. use this function to update them.
         //comment it for debuging the connect with data function.
         m_stationsConnection.refreshAllExistedConnectionInfo();
-
-        if (m_stationAnnounceEvents != null)
-            m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
+        //as this is in thread.
+        Message msg = new Message();
+        msg.what = ANNOUNCE_MSG_SEND_EVENT;
+        msg.obj = station;
+        m_announceHander.sendMessage(msg);
+//        if (m_stationAnnounceEvents != null)
+//            m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
         if (bNewStation ||
                 id.equals(m_primaryRouterID) ||
-                id.equals(m_slaveRouterID))
-            announce_restore_pulse(id, ip);
+                id.equals(m_slaveRouterID)) {
+            msg = new Message();
+            msg.what = ANNOUNCE_MSG_STATION_RESTORE;
+            msg.obj = station;
+            m_announceHander.sendMessage(msg);
+            //announce_restore_pulse(id, ip);
+        }
 
     }
 
+    final int ANNOUNCE_MSG_SEND_EVENT = 0;
+    final int ANNOUNCE_MSG_STATION_RESTORE = 1;
+    Handler m_announceHander = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            KDSStationActived station = (KDSStationActived)msg.obj;
+            if (msg.what == ANNOUNCE_MSG_SEND_EVENT) {
+                if (m_stationAnnounceEvents != null)
+                    m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
+            }
+            else if (msg.what == ANNOUNCE_MSG_STATION_RESTORE)
+            {
+                announce_restore_pulse(station.getID(),station.getIP());
+            }
+            return false;
+        }
+    });
+
+    private void doStationAnnounceInThread(String strInfo)
+    {
+        StationAnnounceRunnable r = new StationAnnounceRunnable(strInfo);
+        Thread t = new Thread(r);
+        t.start();
+
+    }
 
     /**
      *
@@ -2782,7 +2889,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
         while (m_bRunning) {
 
-
+            if (m_dogAnnounce.is_timeout(KDSConst.ACTIVE_PLUS_FREQUENCE))
             {
                 m_dogAnnounce.reset();
                 //if (!DEBUG)
@@ -3075,4 +3182,23 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     }
 
 
+    class StationAnnounceRunnable implements Runnable
+    {
+        String m_strStationAnnounce = "";
+
+        public StationAnnounceRunnable(String strAnnounce)
+        {
+            setAnnounce(strAnnounce);
+        }
+        public void setAnnounce(String strAnnounce)
+        {
+            m_strStationAnnounce = strAnnounce;
+        }
+
+
+        public void run()
+        {
+            doStationAnnounce(m_strStationAnnounce);
+        }
+    }
 }

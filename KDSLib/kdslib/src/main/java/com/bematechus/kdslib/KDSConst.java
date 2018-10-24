@@ -26,7 +26,7 @@ public class KDSConst {
 
     public static final int CONNECTING_TIMEOUT = 10000; //10 secs
     public static final int ACTIVE_PLUS_TIMEOUT = 10000; //10 secs //in old router, this value is 5000
-    public static final int ACTIVE_PLUS_FREQUENCE = 1000; //2 secs
+    public static final int ACTIVE_PLUS_FREQUENCE = 2000;//1000; //2 secs
     public static final int PING_THREAD_SLEEP = 1000; //1 secs
 
     public static final int MAX_INFORMATION_COUNT = 20; //in old router, this value is 15

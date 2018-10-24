@@ -51,7 +51,7 @@ public class SoundManager {
     private void playSoundByThread(KDSSound sound)
     {
         SoundRunnable s = new SoundRunnable(sound);
-        
+
         Thread t = new Thread(s);
 
         t.start();
