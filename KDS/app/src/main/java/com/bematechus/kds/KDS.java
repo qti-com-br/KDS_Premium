@@ -915,7 +915,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     private void doUdpReceiveData(KDSSocketInterface sock,String remoteIP,  ByteBuffer buffer, int nLength)
     {
-        m_udpBuffer.appendData(buffer, nLength);
+        //m_udpBuffer.appendData(buffer, nLength);
+        m_udpBuffer.replaceBuffer(buffer, nLength);//for speed.
 
         while (true) {
             m_udpBuffer.skip_to_STX();
@@ -1219,7 +1220,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             return true;
         for (int i=0; i< arReceived.size(); i++) {
             KDSStationsRelation r = arReceived.get(i);
-
+            if (r == null) //there is bug here
+                continue;
             KDSStationsRelation relationOriginal = findStation(arLocal, r.getID());
             if (relationOriginal == null)
                 return true;

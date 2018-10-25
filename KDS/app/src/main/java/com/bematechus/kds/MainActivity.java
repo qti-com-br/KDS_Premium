@@ -3720,6 +3720,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSUIDialogBase dlg = new KDSUIDialogBase();
         dlg.createInformationDialog(this, this.getString(R.string.error), this.getString(R.string.error_different_relations), false);
         dlg.show();
+        dlg.setAutoCloseTimeout(KDSConst.DIALOG_AUTO_CLOSE_TIMEOUT);
 
     }
 

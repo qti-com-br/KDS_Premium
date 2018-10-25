@@ -11,7 +11,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSKbdRecorder;
+import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUtil;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Administrator on 2015/11/6 0006.
@@ -634,6 +638,26 @@ public class KDSUIDialogBase {
         });
     }
 
+
+    private long m_nAutoCloseTimeoutMs = 0;
+    public void setAutoCloseTimeout(long nTimeoutMs)
+    {
+        m_nAutoCloseTimeoutMs = nTimeoutMs;
+        if (m_nAutoCloseTimeoutMs >0)
+            startTimerForAutoClose();
+    }
+
+    private void startTimerForAutoClose()
+    {
+        final Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            public void run() {
+
+                dialog.dismiss();
+                t.cancel();
+            }
+        }, m_nAutoCloseTimeoutMs);
+    }
 
 
 }

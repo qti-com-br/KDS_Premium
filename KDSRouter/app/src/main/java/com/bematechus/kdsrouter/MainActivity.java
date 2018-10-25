@@ -391,7 +391,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (id == R.id.action_showip)
         {
             if (!isRouterEnabled()) {
-                showAlertMessage(getString(R.string.error), getString(R.string.router_disabled_warning));
+                showAlertMessage(getString(R.string.error), getString(R.string.router_disabled_warning), false);
 
             }
             else {
@@ -403,7 +403,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (id == R.id.action_stations)
         {
             if (!isRouterEnabled()) {
-                showAlertMessage(getString(R.string.error), getString(R.string.router_disabled_warning));
+                showAlertMessage(getString(R.string.error), getString(R.string.router_disabled_warning), false);
 
             }
             else {
@@ -793,16 +793,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
-    public void showAlertMessage(String title, String msg)
+    public void showAlertMessage(String title, String msg, boolean bAutoClose)
     {
 
         KDSUIDialogBase dlg = new KDSUIDialogBase();
         dlg.createInformationDialog(this,title,msg, false  );
         dlg.show();
+        if (bAutoClose)
+            dlg.setAutoCloseTimeout(KDSConst.DIALOG_AUTO_CLOSE_TIMEOUT);
+
     }
     public void onReceiveRelationsDifferent()
     {
-        showAlertMessage(this.getString(R.string.error),this.getString(R.string.error_different_relations) );
+        showAlertMessage(this.getString(R.string.error),this.getString(R.string.error_different_relations) , true);
     }
     public void onShowMessage(String message)
     {

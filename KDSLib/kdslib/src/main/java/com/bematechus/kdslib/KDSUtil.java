@@ -27,6 +27,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -826,31 +827,41 @@ public class KDSUtil {
         return f.length();
     }
 
+    public static int getStrCountInString(String originalString,String strFind){
+        int result = 0 ;
+        int fullLength = originalString.length();
+        int afterLength = originalString.replace(strFind, "").length();
+        result = (int)((fullLength-afterLength)/strFind.length());
+        return result;
+    }
+
     static public ArrayList<String> spliteString(String s, String splitor) {
         String[] ar = s.split(splitor);
         //get there are how many splitor in string.
-        int nstart = 0;
+        //int nstart = 0;
         int ncount = 0;
+        ncount = getStrCountInString(s, splitor);
 
-        while (true) {
-            nstart = s.indexOf(splitor, nstart);
-            if (nstart >= 0) {
-                ncount++;
-                nstart++;
-            }
-            else
-                break;
+//        while (true) {
+//            nstart = s.indexOf(splitor, nstart);
+//            if (nstart >= 0) {
+//                ncount++;
+//                nstart++;
+//            }
+//            else
+//                break;
+//
+//        }
 
-        }
 
 
+        ArrayList<String> arRet =  new ArrayList<>();
+        Collections.addAll(arRet, ar);
 
-        ArrayList<String> arRet = new ArrayList<String>();
-
-        for (int i = 0; i < ar.length; i++) {
-            arRet.add(ar[i]);
-
-        }
+//        for (int i = 0; i < ar.length; i++) {
+//            arRet.add(ar[i]);
+//
+//        }
         //add more space to ncount
         ncount ++; //this string should contain those substrings
         if (arRet.size() < ncount)

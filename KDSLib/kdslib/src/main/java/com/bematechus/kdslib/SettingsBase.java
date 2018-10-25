@@ -64,8 +64,6 @@ public class SettingsBase {
 
         ArrayList<KDSStationsRelation> ar = new ArrayList<>();
 
-
-
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         HashSet<String> setStations = null;
         Set<String> set =  pref.getStringSet("StationsRelation", null);
@@ -86,6 +84,7 @@ public class SettingsBase {
 
     }
 
+    static final String RELATION_STATION_SEPERATOR = ":";
     /**
      *
      * @param context
@@ -101,24 +100,30 @@ public class SettingsBase {
         {
             str += ar.get(i).toString();
             if (i < ncount-1)
-                str += ":";
+                str += RELATION_STATION_SEPERATOR;
         }
 
         return str;
 
     }
 
+    /**
+     *
+     * @param strRelations
+     * @return
+     */
     static public ArrayList<KDSStationsRelation> parseStationsRelations(String strRelations)
     {
-        ArrayList<KDSStationsRelation> arRelations = new  ArrayList<KDSStationsRelation>();
-        ArrayList<String> ar = KDSUtil.spliteString(strRelations, ":");
+        ArrayList<KDSStationsRelation> arRelations = new  ArrayList<>();
+        ArrayList<String> ar = KDSUtil.spliteString(strRelations, RELATION_STATION_SEPERATOR);
         int ncount = ar.size();
         for (int i=0; i< ncount; i++)
         {
             String s = ar.get(i);
             if (s.isEmpty()) continue;
             KDSStationsRelation relation = KDSStationsRelation.parseString(s);
-            arRelations.add(relation);
+            if (relation != null)
+                arRelations.add(relation);
 
         }
         return arRelations;
@@ -138,8 +143,6 @@ public class SettingsBase {
 
     static public void saveStationsRelation(Context context, ArrayList<KDSStationsRelation> ar)
     {
-
-
         int ncount = ar.size();
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -147,7 +150,11 @@ public class SettingsBase {
 
         for (int i=0; i< ncount; i++)
         {
-            setStations.add(ar.get(i).toString());
+            KDSStationsRelation r = ar.get(i);
+            if (r != null)
+            {
+                setStations.add(r.toString());
+            }
         }
 
         SharedPreferences.Editor editor =  pref.edit();

@@ -5,6 +5,7 @@ package com.bematechus.kdslib;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
@@ -15,6 +16,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 //import com.bematechus.kds.KDSSocketInterface;
@@ -207,19 +209,22 @@ public class KDSSocketUDP implements KDSSocketInterface{
         m_bufferRead.clear();
 
         try {
-            SocketAddress client = null;
-            synchronized (m_locker){
-                client = m_channelControl.receive(m_bufferRead);
-            }
-            if (client == null) return;
-            int nlength = m_bufferRead.position();
-            if (nlength <=0) return;
-            ByteBuffer buffer = ByteBuffer.allocate(nlength);
-            for (int i=0; i< nlength;i++)
-                buffer.put(m_bufferRead.get(i));
-            m_bufferRead.clear();
-            m_eventHandler.sendReceiveDataMessage(this, client.toString(), buffer, nlength);
+            for (int nTry = 0; nTry < 100; nTry ++) {
+                SocketAddress client = null;
+                synchronized (m_locker) {
+                    client = m_channelControl.receive(m_bufferRead);
+                }
+                if (client == null) return;
+                int nlength = m_bufferRead.position();
+                if (nlength <= 0) return;
+                //ByteBuffer buffer = ByteBuffer.allocate(nlength);
+                //for (int i = 0; i < nlength; i++)
+                //    buffer.put(m_bufferRead.get(i));
+                ByteBuffer buffer = cloneByteBufferData(m_bufferRead, nlength);
 
+                m_bufferRead.clear();
+                m_eventHandler.sendReceiveDataMessage(this, client.toString(), buffer, nlength);
+            }
         }
         catch (Exception e)
         {
@@ -229,6 +234,13 @@ public class KDSSocketUDP implements KDSSocketInterface{
 
     }
 
+    public ByteBuffer cloneByteBufferData(ByteBuffer source, int nlength )
+    {
+        ByteBuffer target = ByteBuffer.allocate(nlength);
+        target.put(source.array(), 0,nlength);
+
+        return target;
+    }
 
     @Override
     public void interface_OnUDPWrite(DatagramChannel channel)
@@ -265,7 +277,7 @@ public class KDSSocketUDP implements KDSSocketInterface{
     public void interface_OnSocketDisconnected(SocketChannel channel){}
 
     /**********************************************************************************************/
-    static public int MIN_BUFFER_SIZE = 1024;//large than packetsize
+    static public int MIN_BUFFER_SIZE = 4096;//large than packetsize, change its size from 1k to 4k.(20181025)
     protected void onControlSocketRead()
     {
 

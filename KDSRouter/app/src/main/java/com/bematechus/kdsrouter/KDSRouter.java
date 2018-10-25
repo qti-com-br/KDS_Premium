@@ -628,7 +628,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
 
     public void onUdpReceiveData(KDSSocketInterface sock,String remoteIP,  ByteBuffer buffer, int nLength) {
-        m_udpBuffer.appendData(buffer, nLength);
+        //m_udpBuffer.appendData(buffer, nLength);
+        m_udpBuffer.replaceBuffer(buffer, nLength);
 
         while (true) {
             m_udpBuffer.skip_to_STX();
@@ -918,7 +919,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
      */
     private void doStationAnnounce(String strInfo)
     {
-        boolean bNewStation = false;
+
         //remove all failed stations.
         m_stationsConnection.checkAllNoResponseStations();
 
@@ -929,13 +930,14 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         String ip = ar.get(1);
         String port = ar.get(2);
         String mac = ar.get(3);
-        String itemsCount ="";
-        if (ar.size() >=5) //add orders count
-            itemsCount = ar.get(4);
+//        String itemsCount ="";
+//        if (ar.size() >=5) //add orders count
+//            itemsCount = ar.get(4);
 
         if (id.equals(getStationID()) && ip.equals(getLocalIpAddress()) )
             return; //it is myself
 
+        boolean bNewStation = false;
         // *********************** IMPORTANT ************************
         //As router will check router and kds two app, we have to use port to find it.
         KDSStationActived station =m_stationsConnection.findActivedStationByMacAndPort(mac, port);//id); ///IMPORTANT
@@ -943,9 +945,16 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             station = new KDSStationActived();
             m_stationsConnection.addActiveStation(station);
             bNewStation = true;
+            station.setID(id);
+            station.setIP(ip);
+            station.setPort(port);
+            station.setMac(mac);
         }
         else
         {//check if the connection existed,2.0.8
+            station.setID(id);
+            station.setIP(ip);
+
             KDSStationConnection conn = m_stationsConnection.findConnectionByID(station.getID());
             if (conn != null)
             {
@@ -957,10 +966,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 bNewStation = true;
             }
         }
-        station.setID(id);
-        station.setIP(ip);
-        station.setPort(port);
-        station.setMac(mac);
+//        station.setID(id);
+//        station.setIP(ip);
+//        station.setPort(port);
+//        station.setMac(mac);
 
         station.updatePulseTime();//record last received time
 
@@ -968,16 +977,18 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         //comment it for debuging the connect with data function.
         m_stationsConnection.refreshAllExistedConnectionInfo();
         //as this is in thread.
-        Message msg = new Message();
-        msg.what = ANNOUNCE_MSG_SEND_EVENT;
-        msg.obj = station;
-        m_announceHander.sendMessage(msg);
+        if ( m_stationAnnounceEvents != null) {
+            Message msg = new Message();
+            msg.what = ANNOUNCE_MSG_SEND_EVENT;
+            msg.obj = station;
+            m_announceHander.sendMessage(msg);
+        }
 //        if (m_stationAnnounceEvents != null)
 //            m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
         if (bNewStation ||
                 id.equals(m_primaryRouterID) ||
                 id.equals(m_slaveRouterID)) {
-            msg = new Message();
+            Message msg = new Message();
             msg.what = ANNOUNCE_MSG_STATION_RESTORE;
             msg.obj = station;
             m_announceHander.sendMessage(msg);
@@ -1033,7 +1044,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         String mac = ar.get(3);
         String strEnabled = ar.get(4);
         String strBackupMode = ar.get(5);
-
+        if (ip.equals(getLocalIpAddress()))
+            return; //don't care myself
 
         // *********************** IMPORTANT ************************
         //As router will check router and kds two app, we have to use port to find it.

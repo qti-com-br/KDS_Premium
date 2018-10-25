@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSKbdRecorder;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * It is different with KDS file.
  *
@@ -443,5 +446,23 @@ public class KDSUIDialogBase {
         dialog.show();
     }
 
+    private long m_nAutoCloseTimeoutMs = 0;
+    public void setAutoCloseTimeout(long nTimeoutMs)
+    {
+        m_nAutoCloseTimeoutMs = nTimeoutMs;
+        if (m_nAutoCloseTimeoutMs >0)
+            startTimerForAutoClose();
+    }
 
+    private void startTimerForAutoClose()
+    {
+        final Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            public void run() {
+
+                dialog.dismiss();
+                t.cancel();
+            }
+        }, m_nAutoCloseTimeoutMs);
+    }
 }

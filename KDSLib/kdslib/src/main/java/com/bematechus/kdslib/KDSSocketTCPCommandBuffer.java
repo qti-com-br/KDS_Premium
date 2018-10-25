@@ -599,6 +599,12 @@ public class KDSSocketTCPCommandBuffer {
     }
 
 
+    public void replaceBuffer(ByteBuffer buf, int nLen)
+    {
+        m_fill = nLen;
+        m_buffer = buf;
+
+    }
 
 
 }

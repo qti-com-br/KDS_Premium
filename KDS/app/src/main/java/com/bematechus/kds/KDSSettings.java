@@ -547,9 +547,10 @@ public class KDSSettings extends SettingsBase {
         Notification_order_acknowledgement,
 
        //2.0.47
-     Item_group_category,
+       Item_group_category,
 
-     SMS_enabled, //SMS feature , KPP1-15
+        SMS_enabled, //SMS feature , KPP1-15
+        Queue_auto_bump_timeout,
 
     }
     /*
@@ -1266,6 +1267,9 @@ public class KDSSettings extends SettingsBase {
 
         //SMS
         init_option(ID.SMS_enabled,"bool_kds_general_sms_enable",false);//
+
+        init_option(ID.Queue_auto_bump_timeout,"string_queue_auto_bump_timeout","0");//
+
 
     }
 

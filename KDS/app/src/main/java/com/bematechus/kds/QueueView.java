@@ -1,5 +1,6 @@
 package com.bematechus.kds;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -90,6 +91,9 @@ public class QueueView  extends View {
     QueueOrders.QueueSort m_status2Sort = QueueOrders.QueueSort.Default;
     QueueOrders.QueueSort m_status3Sort = QueueOrders.QueueSort.Default;
     QueueOrders.QueueSort m_status4Sort = QueueOrders.QueueSort.Default;
+
+
+    long m_nAutoBumpTimeoutMs = 0;
 
     public QueueView(Context context)
     {
@@ -1555,6 +1559,10 @@ public class QueueView  extends View {
         {
             m_status4Sort = getStatusSort( m_pickupCombinedToStatus);
         }
+
+        String s = settings.getString(KDSSettings.ID.Queue_auto_bump_timeout);
+        m_nAutoBumpTimeoutMs = KDSUtil.convertStringToInt(s, 0) *60000;
+
     }
 
     private QueueOrders.QueueSort getStatusSort( QueueOrders.QueueStatus status)
@@ -1891,6 +1899,7 @@ public class QueueView  extends View {
     {
         refreshTimer();
         checkPageCounter();
+        checkAutoBump();
     }
     public KDSDataOrders getOrders()
     {
@@ -2154,6 +2163,41 @@ public class QueueView  extends View {
             m_strInputOrderID = "";
         refresh();
 
+    }
+
+    /**
+     * auto bump order if order is in status=3 or 4.
+     *
+     */
+    private void checkAutoBump()
+    {
+        if (m_nAutoBumpTimeoutMs <=0) return;
+
+        int ncount =  m_queueOrders.getOrders().getCount();
+        long dtNow = System.currentTimeMillis();
+
+        ArrayList<KDSDataOrder> ar = new ArrayList<>();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataOrder order = m_queueOrders.getOrders().get(i);
+            QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
+            if (status != QueueOrders.QueueStatus.Ready &&
+                    status != QueueOrders.QueueStatus.Pickup)
+                return;
+            Date dtStart = order.getQueueStateTime();//.getStartTime();
+            if ( dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs)
+            {
+                ar.add(order);
+            }
+        }
+        for (int i=0; i< ar.size(); i++)
+        {
+            m_queueOrders.getOrders().removeComponent(ar.get(i));
+            KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
+
+        }
+        if (ar.size() >0)
+            refresh();
     }
 
 

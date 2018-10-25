@@ -496,6 +496,7 @@ public class KDSDataOrder extends KDSData {
         //2.1.15
         obj.m_smsOriginalOrderGoToStations = m_smsOriginalOrderGoToStations;
         //
+        obj.m_dtQueueStateTime = m_dtQueueStateTime;
 
         this.getOrderMessages().copyTo(obj.getOrderMessages());
     }

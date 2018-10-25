@@ -25,8 +25,8 @@ public class TimeDog {
     }
     public boolean is_timeout(int nms)
     {
-        Date dtNow = new Date(System.currentTimeMillis());
-        long msNow = dtNow.getTime();
+        //Date dtNow = new Date();//System.currentTimeMillis());
+        long msNow = System.currentTimeMillis();// dtNow.getTime();
         long msStart = m_dtStart.getTime();
         if (msNow - msStart >nms)
             return true;

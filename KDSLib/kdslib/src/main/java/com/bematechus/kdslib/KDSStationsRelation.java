@@ -216,6 +216,12 @@ public class KDSStationsRelation extends KDSStationIP {
 
     }
 
+    /**
+     *
+     * @param s
+     * @return
+     *  It can return NULL !!!!
+     */
     static public KDSStationsRelation parseString(String s)
     {
         ArrayList<String> ar = KDSUtil.spliteString(s, SEPERATOR);
