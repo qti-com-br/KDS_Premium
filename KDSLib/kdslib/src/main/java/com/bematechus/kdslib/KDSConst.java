@@ -54,7 +54,7 @@ public class KDSConst {
     public static final int INT_TRUE = 1;
     public static final int INT_FALSE = 0;
 
-    public static final long DIALOG_AUTO_CLOSE_TIMEOUT = 6000; //1 mins
+    public static final long DIALOG_AUTO_CLOSE_TIMEOUT = 5000; //1 mins
 
 
 

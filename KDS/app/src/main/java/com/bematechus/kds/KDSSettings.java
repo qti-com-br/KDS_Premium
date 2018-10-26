@@ -2046,7 +2046,12 @@ public class KDSSettings extends SettingsBase {
 //        }
 //    }
 
-    public void parseXmlText(Context appContext, String strXml)
+ /**
+  * this is from retieve settings from remote station
+  * @param appContext
+  * @param strXml
+     */
+    public void parseXmlText(Context appContext, String strXml, boolean bExcludeStationID, boolean bExcludeBumpbarMenu)
     {
         KDSXML xml = new KDSXML();
         xml.loadString(strXml);
@@ -2064,8 +2069,12 @@ public class KDSSettings extends SettingsBase {
                 int n = KDSUtil.convertStringToInt(strid, -1);
                 if (n <0) continue;
                 ID id = ID.values()[n];
-                if (id == ID.KDS_ID) continue;
-                if (id == ID.Bumpbar_Menu) continue;
+                if (bExcludeStationID) {
+                    if (id == ID.KDS_ID) continue;
+                }
+                if (bExcludeBumpbarMenu) {
+                    if (id == ID.Bumpbar_Menu) continue;
+                }
 
                 Object objVal = convertConfigStringToType(strval, strType);
                 this.set(id, objVal);
@@ -2082,40 +2091,46 @@ public class KDSSettings extends SettingsBase {
 
     }
 
-    public void parseXmlTextAll(Context appContext, String strXml)
-    {
-        KDSXML xml = new KDSXML();
-        xml.loadString(strXml);
-
-        xml.back_to_root();
-
-        if (xml.getFirstGroup("config"))
-        {
-            do {
-                String strid = xml.getAttribute("id", "");
-                String strval = xml.getCurrentGroupValue();
-                String strType = xml.getAttribute("ty", "");
-
-
-                int n = KDSUtil.convertStringToInt(strid, -1);
-                if (n <0) continue;
-                ID id = ID.values()[n];
-
-
-                Object objVal = convertConfigStringToType(strval, strType);
-                this.set(id, objVal);
-
-            }while(xml.getNextGroup("config"));
-        }
-        xml.back_to_root();
-        if (!xml.getFirstGroup("StationsRelation"))
-            return;
-        String strRelations = xml.getCurrentGroupValue();
-        saveStationsRelation(appContext, strRelations);
-
-
-
-    }
+// /**
+//  * This is for import settings.
+//  * @param appContext
+//  * @param strXml
+//     */
+//    public void parseXmlTextAll(Context appContext, String strXml)
+//    {
+//        KDSXML xml = new KDSXML();
+//        xml.loadString(strXml);
+//
+//        xml.back_to_root();
+//
+//        if (xml.getFirstGroup("config"))
+//        {
+//            do {
+//                String strid = xml.getAttribute("id", "");
+//                String strval = xml.getCurrentGroupValue();
+//                String strType = xml.getAttribute("ty", "");
+//
+//
+//                int n = KDSUtil.convertStringToInt(strid, -1);
+//                if (n <0) continue;
+//                ID id = ID.values()[n];
+//
+//                if (id == ID.KDS_ID) continue; //exclude id.
+//
+//                Object objVal = convertConfigStringToType(strval, strType);
+//                this.set(id, objVal);
+//
+//            }while(xml.getNextGroup("config"));
+//        }
+//        xml.back_to_root();
+//        if (!xml.getFirstGroup("StationsRelation"))
+//            return;
+//        String strRelations = xml.getCurrentGroupValue();
+//        saveStationsRelation(appContext, strRelations);
+//
+//
+//
+//    }
 
 
     /**

@@ -542,6 +542,19 @@ public class KDSSocketTCPCommandBuffer {
         return bytes;
     }
 
+    /**
+     * directly get the station alive announce package string.
+     * @return
+     */
+    public String station_info_string()
+    {
+        int ncount = m_buffer.get(2);
+
+        String s = new String(m_buffer.array(), 3, ncount);
+
+        return s;
+    }
+
     public byte[] router_info_command_data()
     {
         int ncount = m_buffer.get(2);

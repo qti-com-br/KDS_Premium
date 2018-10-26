@@ -641,18 +641,37 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 return;
             switch (command) {
                 case KDSSocketTCPCommandBuffer.UDP_RET_STATION: {//the command send by xml format
+                    //station announce arrived
                     //1. parse the xml text
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)
                         return; //need more data
 
-                    byte[] bytes = m_udpBuffer.station_info_command_data();
-                    m_udpBuffer.remove(ncommand_end);
-                    String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
+                    //byte[] bytes = m_udpBuffer.station_info_command_data();
+                    //m_udpBuffer.remove(ncommand_end);
+                    //String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
+                    String utf8 = m_udpBuffer.station_info_string();
+                    //m_udpBuffer.remove(ncommand_end);
                     onUdpReceiveStationAnnounce(utf8);
+                    return; //the UDP just one package, just return, As use "replacebuffer".
 
                 }
-                break;
+                //break;
+                case KDSSocketTCPCommandBuffer.UDP_RET_ROUTER:
+                { //the router announce arrived
+                    int ncommand_end = m_udpBuffer.command_end();
+                    if (ncommand_end == 0)
+                        return; //need more data
+
+                    //byte[] bytes = m_udpBuffer.router_info_command_data();
+                    //m_udpBuffer.remove(ncommand_end);
+                    //String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
+                    String utf8 = m_udpBuffer.station_info_string();
+                    //m_udpBuffer.remove(ncommand_end);
+                    onUdpReceiveRouterAnnounce(utf8);
+                    return; //the UDP just one package, just return, As use "replacebuffer".
+                }
+                //break;
                 case KDSSocketTCPCommandBuffer.UDP_REQ_STATION: {
                     int ncommand_end = m_udpBuffer.command_end();
                     m_udpBuffer.remove(ncommand_end);
@@ -715,18 +734,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
                 }
                 break;
-                case KDSSocketTCPCommandBuffer.UDP_RET_ROUTER:
-                {
-                    int ncommand_end = m_udpBuffer.command_end();
-                    if (ncommand_end == 0)
-                        return; //need more data
 
-                    byte[] bytes = m_udpBuffer.router_info_command_data();
-                    m_udpBuffer.remove(ncommand_end);
-                    String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
-                    onUdpReceiveRouterAnnounce(utf8);
-                }
-                break;
                 case KDSSocketTCPCommandBuffer.UDP_ASK_ROUTER:
                 {
                     int ncommand_end = m_udpBuffer.command_end();

@@ -831,7 +831,10 @@ public class KDSUtil {
         int result = 0 ;
         int fullLength = originalString.length();
         int afterLength = originalString.replace(strFind, "").length();
-        result = (int)((fullLength-afterLength)/strFind.length());
+        if (strFind.length()!=0)
+            result = (int)((fullLength-afterLength)/strFind.length());
+        else
+            return 0;
         return result;
     }
 

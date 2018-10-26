@@ -932,13 +932,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
 
-                    byte[] bytes = m_udpBuffer.station_info_command_data();
-                    m_udpBuffer.remove(ncommand_end);
-                    String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
+//                    byte[] bytes = m_udpBuffer.station_info_command_data();
+//                    m_udpBuffer.remove(ncommand_end);
+//                    String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
+                    String utf8 = m_udpBuffer.station_info_string();
                     onUdpReceiveStationAnnounce(utf8);
-
+                    return;
                 }
-                break;
+                //break;
                 case KDSSocketTCPCommandBuffer.UDP_REQ_STATION: {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
@@ -3097,7 +3098,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
         if (strConfig.isEmpty())
             return;
-        m_settings.parseXmlText(m_context, strConfig);
+        m_settings.parseXmlText(m_context, strConfig, true, true);
         m_settings.save(m_context);
 
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
@@ -3109,7 +3110,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
         if (strConfig.isEmpty())
             return;
-        m_settings.parseXmlTextAll(m_context, strConfig);
+        //m_settings.parseXmlTextAll(m_context, strConfig);
+        m_settings.parseXmlText(m_context, strConfig, true, false);
         m_settings.save(m_context);
 
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
@@ -4020,19 +4022,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         String port = ar.get(2);
         String mac = ar.get(3);
         String itemsCount ="";
-        if (ar.size() >=5) //add orders count
+        if (ar.size() >4) //add orders count
             itemsCount = ar.get(4);
 
         int nUserMode = 0;
 
-        if (ar.size() >=6)
+        if (ar.size() >5)
         {
             int n = KDSUtil.convertStringToInt( ar.get(5),0 );
             if (n <0 || n>1)
                 n = 0;
             nUserMode = n;
-
-
         }
 
         KDSStationActived station =m_stationsConnection.findActivedStationByMac(mac);//id);
@@ -4057,21 +4057,24 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         //if (m_stationAnnounceEvents != null)
         //    m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
-        Message msg = new Message();
-        msg.what = ANNOUNCE_MSG_SEND_EVENT;
-        msg.obj = station;
-        m_announceHander.sendMessage(msg);
-
+        if (m_stationAnnounceEvents != null) {
+            Message msg = new Message();
+            msg.what = ANNOUNCE_MSG_SEND_EVENT;
+            msg.obj = station;
+            m_announceHander.sendMessage(msg);
+        }
         if (bNewStation) {
             //announce_restore_pulse(id, ip);
-            msg = new Message();
+            Message msg = new Message();
             msg.what = ANNOUNCE_MSG_STATION_RESTORE;
             msg.obj = station;
             m_announceHander.sendMessage(msg);
         }
     }
+
     final int ANNOUNCE_MSG_SEND_EVENT = 0;
     final int ANNOUNCE_MSG_STATION_RESTORE = 1;
+
     Handler m_announceHander = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
