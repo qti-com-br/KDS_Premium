@@ -1098,8 +1098,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         } else {
             if (id == R.id.action_touchpad) {
                 if (!isKDSValid()) return false;
-                if (getKDS().isSingleUserMode())
+                if (getKDS().isSingleUserMode()) {
                     m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
+                }
                 else {
                     int n = KDSSettings.getEnumIndexValues(getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
                     KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
@@ -1107,6 +1108,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         case Left_Right:
                             m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
                             m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
+
                             //m_uiUserA.showVerticalTouchPad(!m_uiUserA.isVisibleVerticalTouchPad());
                             //m_uiUserB.showVerticalTouchPad(!m_uiUserB.isVisibleVerticalTouchPad());
 
@@ -1118,6 +1120,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     }
 
                 }
+                this.m_bSuspendChangedEvent = true;
+                SettingsBase.saveTouchPadVisible(this, m_uiUserA.isVisibleTouchPad());
+                this.m_bSuspendChangedEvent = false;
 ;
             } else if (id == R.id.action_export) {
                 String info = this.getString(R.string.confirm_export_db);
@@ -3493,7 +3498,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_uiUserA.showScreenTitle(false);
         m_uiUserA.showVerticalTouchPad(false);
-        m_uiUserA.showTouchPad(true);
+        boolean bTouchPadVisible = SettingsBase.loadTouchPadVisible(this);
+        m_uiUserA.showTouchPad(bTouchPadVisible);
         m_uiUserA.showSummaryAlways(KDSUser.USER.USER_A);
 
         m_uiUserA.refresh();
@@ -3512,6 +3518,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_uiUserB.showSummaryAlways( KDSUser.USER.USER_B);
         int n =  KDSSettings.getEnumIndexValues(getKDS().getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
         KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
+        boolean bTouchPadVisible = SettingsBase.loadTouchPadVisible(this);
+
         switch (orientation)
         {
 
@@ -3519,16 +3527,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                                 //20170822:   Check touch position in attached picture, in left and right mode, the position should be in blue position.
                 getUserUI(KDSUser.USER.USER_A).showVerticalTouchPad(false);
                 getUserUI(KDSUser.USER.USER_B).showVerticalTouchPad(false);
-                getUserUI(KDSUser.USER.USER_A).showTouchPad(true);
-                getUserUI(KDSUser.USER.USER_B).showTouchPad(true);
+                getUserUI(KDSUser.USER.USER_A).showTouchPad(bTouchPadVisible);
+                getUserUI(KDSUser.USER.USER_B).showTouchPad(bTouchPadVisible);
                 getUserUI(KDSUser.USER.USER_B).getLinear().setPadding(2, 0,0,0);
 
                 break;
             case Up_Down:
                 getUserUI(KDSUser.USER.USER_A).showVerticalTouchPad(false);
                 getUserUI(KDSUser.USER.USER_B).showVerticalTouchPad(false);
-                getUserUI(KDSUser.USER.USER_A).showTouchPad(true);
-                getUserUI(KDSUser.USER.USER_B).showTouchPad(true);
+                getUserUI(KDSUser.USER.USER_A).showTouchPad(bTouchPadVisible);
+                getUserUI(KDSUser.USER.USER_B).showTouchPad(bTouchPadVisible);
                 getUserUI(KDSUser.USER.USER_B).getLinear().setPadding(0, 0,0,0);
                 break;
         }
@@ -5215,13 +5223,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_timer.start(this, this, 1000);
         //init_title();
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                getKDS().getBroadcaster().broadcastRequireRelationsCommand();
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (!SettingsBase.isNoCheckRelationWhenAppStart(this)) {
+            AsyncTask task = new AsyncTask() {
+                @Override
+                protected Object doInBackground(Object[] params) {
+                    getKDS().getBroadcaster().broadcastRequireRelationsCommand();
+                    return null;
+                }
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
         if (!getKDS().isDataLoaded())
             refreshWithNewDbData();
 

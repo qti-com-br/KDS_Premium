@@ -50,6 +50,7 @@ import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
 import java.lang.reflect.Field;
@@ -597,15 +598,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSGlobalVariables.setKDSRouter(m_service.getKDSRouter());
         m_service.getKDSRouter().setEventReceiver(this);
 
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                getKDSRouter().broadcastRequireRelationsCommand();
-                checkRemoteFolderPermission();//move this to thread
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+        if (!SettingsBase.isNoCheckRelationWhenAppStart(this)) {
+            AsyncTask task = new AsyncTask() {
+                @Override
+                protected Object doInBackground(Object[] params) {
+                    getKDSRouter().broadcastRequireRelationsCommand();
+                    checkRemoteFolderPermission();//move this to thread
+                    return null;
+                }
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
 
     }
 

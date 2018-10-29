@@ -1110,6 +1110,7 @@
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <string name="sms_feature_enabled">SMS feature enabled</string>
+    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

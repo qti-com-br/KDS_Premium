@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -66,6 +67,44 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     //////////////////////
     ListView m_lstStations = null;
     TextView m_txtError = null;
+    CheckBox m_chkNoCheckRelation = null;
+
+    /* >>> HERE, different with KDS file */
+    public void onStationConnected(String ip, KDSStationConnection conn){}
+    public void onStationDisconnected(String ip){}
+    public void onAcceptIP(String ip){}
+    //public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam){}
+    public void onRetrieveNewConfigFromOtherStation(){ reloadRelations();}
+    public void onShowMessage(String message){}  /* >>> HERE, different with KDS file */
+
+    public void onShowStationStateMessage(String stationID, int nState){}
+    // public void onShowToastMessage(String message){}
+    //public void onRefreshSummary(KDSUser.USER userID){}
+    public void onAskOrderState(Object objSource, String orderName){}
+    public void onSetFocusToOrder(String orderGuid){}
+    public void onXmlCommandBumpOrder(String orderGuid){}
+    public void onTTBumpOrder(String orderGuid){}
+    public void onReceiveRelationsDifferent(){}
+    public void onReceiveNewRelations(){
+
+        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(this.getActivity().getApplicationContext(), false);
+        if (!((MyAdapter)(m_lstStations.getAdapter() )).isDifferent(ar))
+            return;
+
+
+        reloadRelations();
+        if (this.isVisible())
+        {
+            KDSUIDialogBase d = new KDSUIDialogBase();
+            d.createInformationDialog(this.getActivity(),this.getString(R.string.str_message), this.getString(R.string.receive_new_relations), false );
+            d.show();
+        }
+    }
+
+    /**********************************************************************************************
+     * From here, the code is same in KDSROUTER and KDS app.
+     *
+     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -313,7 +352,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     {
 
         this.save();
-        String s = KDSSettings.loadStationsRelationString(this.getActivity().getApplicationContext());
+        String s = KDSSettings.loadStationsRelationString(this.getActivity().getApplicationContext(), true);
         Object[] ar = new Object[]{s};
 
         AsyncTask task = new AsyncTask() {
@@ -330,9 +369,9 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     public void broadcastUpdateAfterPause()
     {
 
-        KDSStationsRelation.save(m_contextApp, (ArrayList) ((MyAdapter) (m_lstStations.getAdapter())).getListData());
+        KDSStationsRelation.save(m_contextApp, (ArrayList) ((MyAdapter) (m_lstStations.getAdapter())).getListData(), m_chkNoCheckRelation.isChecked());
 
-        String s = KDSSettings.loadStationsRelationString(m_contextApp);
+        String s = KDSSettings.loadStationsRelationString(m_contextApp, true);
         Object[] ar = new Object[]{s};
 
         AsyncTask task = new AsyncTask() {
@@ -548,6 +587,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
         m_txtError = (TextView)view.findViewById(R.id.txtError);
         m_lstStations = (ListView)view.findViewById(R.id.lstStations);
+        m_chkNoCheckRelation = (CheckBox) view.findViewById(R.id.chkNoRelationsCheck);
+
         List  lst =  new ArrayList<KDSStationsRelation>();
         MyAdapter adapter = new MyAdapter(this.getActivity().getApplicationContext(), lst);
         m_lstStations.setAdapter(adapter);
@@ -602,18 +643,39 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             }
         });
 
+        m_chkNoCheckRelation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean bNoCheck =  ((CheckBox)v).isChecked();
+                onNoCheckRelationChanged(bNoCheck);
+            }
+        });
+
         load();
         adapter.notifyDataSetChanged();
 
     }
 
+    private void onNoCheckRelationChanged(boolean bNoCheck)
+    {
+        ArrayList<KDSStationsRelation> ar =SettingsBase.loadStationsRelation(KDSApplication.getContext(), true);
+        KDSStationsRelation r =  SettingsBase.findRelationNoCheckOptionStation(ar);
 
+        if (r == null)
+            SettingsBase.addRelationNoCheckOptionStation(ar, bNoCheck);
+        else
+        {
+            r.setID( ( bNoCheck?SettingsBase.NO_CHECK_TRUE:SettingsBase.NO_CHECK_FALSE) );
+
+        }
+        SettingsBase.saveStationsRelation(KDSApplication.getContext(), ar);
+    }
 
     public void save()
     {
 
         // if (!saveScreenDataToBuffer()) return;
-        KDSStationsRelation.save(this.getActivity().getApplicationContext(), (ArrayList) ((MyAdapter) (m_lstStations.getAdapter())).getListData());
+        KDSStationsRelation.save(this.getActivity().getApplicationContext(), (ArrayList) ((MyAdapter) (m_lstStations.getAdapter())).getListData(), m_chkNoCheckRelation.isChecked());
         List<KDSStationsRelation> ar =((MyAdapter)(m_lstStations.getAdapter() )).getListData();
         ((MyAdapter)(m_lstStations.getAdapter() )).cloneToOriginalArray();
         ((MyAdapter)(m_lstStations.getAdapter() )).notifyDataSetChanged();
@@ -624,9 +686,16 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         if (this == null) return;
         if (this.getActivity() == null) return;
         if (this.getActivity().getApplicationContext() == null) return;
-        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(this.getActivity().getApplicationContext());
+        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(this.getActivity().getApplicationContext(), true);
+        //find no check option. I save it as station.
+        KDSStationsRelation noCheckRelation = SettingsBase.removeRelationNoCheckOptionStation(ar);
+
         sortStations(ar);
         ((MyAdapter)(m_lstStations.getAdapter() )).setListData(ar);
+        if (noCheckRelation != null)
+            m_chkNoCheckRelation.setChecked(noCheckRelation.getID().equals(SettingsBase.NO_CHECK_TRUE));
+        else
+            m_chkNoCheckRelation.setChecked(false);
 
     }
 
@@ -652,37 +721,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         );
     }
 
-    /* >>> HERE, different with KDS file */
-    public void onStationConnected(String ip, KDSStationConnection conn){}
-    public void onStationDisconnected(String ip){}
-    public void onAcceptIP(String ip){}
-    //public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam){}
-    public void onRetrieveNewConfigFromOtherStation(){ reloadRelations();}
-    public void onShowMessage(String message){}  /* >>> HERE, different with KDS file */
 
-    public void onShowStationStateMessage(String stationID, int nState){}
-    // public void onShowToastMessage(String message){}
-    //public void onRefreshSummary(KDSUser.USER userID){}
-    public void onAskOrderState(Object objSource, String orderName){}
-    public void onSetFocusToOrder(String orderGuid){}
-    public void onXmlCommandBumpOrder(String orderGuid){}
-    public void onTTBumpOrder(String orderGuid){}
-    public void onReceiveRelationsDifferent(){}
-    public void onReceiveNewRelations(){
-
-        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(this.getActivity().getApplicationContext());
-        if (!((MyAdapter)(m_lstStations.getAdapter() )).isDifferent(ar))
-            return;
-
-
-        reloadRelations();
-        if (this.isVisible())
-        {
-            KDSUIDialogBase d = new KDSUIDialogBase();
-            d.createInformationDialog(this.getActivity(),this.getString(R.string.str_message), this.getString(R.string.receive_new_relations), false );
-            d.show();
-        }
-    }
 
     public void reloadRelations()
     {

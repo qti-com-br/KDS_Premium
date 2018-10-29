@@ -176,6 +176,12 @@
 
     </LinearLayout>
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/do_not_check_stations_relationship_in_this_station"
+        android:id="@+id/chkNoRelationsCheck" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

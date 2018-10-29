@@ -251,14 +251,29 @@ public class KDSStationsRelation extends KDSStationIP {
      * @param context
      * @return
      */
-    public static ArrayList<KDSStationsRelation> loadStationsRelation(Context context )
+    public static ArrayList<KDSStationsRelation> loadStationsRelation(Context context , boolean bNeedNoCheckOption)
     {
-        return SettingsBase.loadStationsRelation(context);
+        return SettingsBase.loadStationsRelation(context, bNeedNoCheckOption);
     }
 
-    static public void save(Context context, ArrayList<KDSStationsRelation> ar)
+    /**
+     *
+     * @param context
+     * @param ar
+     * @param bNoCheckRelations
+     *  true: don't check relations when station started
+     *  false: check it.
+     */
+    static public void save(Context context, ArrayList<KDSStationsRelation> ar, boolean bNoCheckRelations)
     {
-        SettingsBase.saveStationsRelation(context, ar);
+        ArrayList<KDSStationsRelation> arsave = new ArrayList<>();
+        arsave.addAll(ar);
+
+        SettingsBase.addRelationNoCheckOptionStation(arsave, bNoCheckRelations);
+
+
+
+        SettingsBase.saveStationsRelation(context, arsave);
     }
 
 

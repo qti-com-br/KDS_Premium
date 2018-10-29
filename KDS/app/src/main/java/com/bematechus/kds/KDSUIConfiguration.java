@@ -1469,7 +1469,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             if (myStationID.isEmpty())
                 return true;
 
-            ArrayList<KDSStationsRelation>  ar = KDSSettings.loadStationsRelation(KDSApplication.getContext());
+            ArrayList<KDSStationsRelation>  ar = KDSSettings.loadStationsRelation(KDSApplication.getContext(), false);
             for (int i=0; i< ar.size(); i++)
             {
                 KDSStationsRelation r = ar.get(i);
@@ -1682,7 +1682,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             if (myStationID.isEmpty())
                 return true;
 
-            ArrayList<KDSStationsRelation>  ar = KDSSettings.loadStationsRelation(KDSApplication.getContext() );
+            ArrayList<KDSStationsRelation>  ar = KDSSettings.loadStationsRelation(KDSApplication.getContext(), false );
             for (int i=0; i< ar.size(); i++)
             {
                 KDSStationsRelation r = ar.get(i);

@@ -31,11 +31,15 @@ public class KDSMyStationRelations {
 
     KDSStationsRelation m_myRelation = null;
 
+
     public void refreshRelations(Context context, String stationID)
     {
         synchronized (m_locker) {
 
-            m_arStationsRelations = KDSStationsRelation.loadStationsRelation(context);
+            m_arStationsRelations = KDSStationsRelation.loadStationsRelation(context, true);
+            SettingsBase.removeRelationNoCheckOptionStation(m_arStationsRelations);
+
+            //m_bNoCheckingRelationsWhenStart = (noCheck.getID().equals(SettingsBase.NO_CHECK_TRUE));
 
             m_arTTStations = KDSStationsRelation.findTTStation(m_arStationsRelations);
             //find all stations relations

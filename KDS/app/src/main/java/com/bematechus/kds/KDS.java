@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,11 +97,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     final int DEFAULT_STATION_IP_PORT = 3001;
     final int DEFAULT_STATISTIC_TCP_PORT = 6001;
 
-
-    public interface StationAnnounceEvents
-    {
-        void onReceivedStationAnnounce(KDSStationIP stationReceived);//String stationID, String ip, String port, String mac);
-    }
+//
+//    public interface StationAnnounceEvents
+//    {
+//        void onReceivedStationAnnounce(KDSStationIP stationReceived);//String stationID, String ip, String port, String mac);
+//    }
 
     /********************************************************************************************/
 
@@ -133,7 +134,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     ArrayList<KDSEvents> m_arKdsEventsReceiver = new ArrayList<KDSEvents>();//null; //KDS events
 
-    StationAnnounceEvents m_stationAnnounceEvents = null;
+//    StationAnnounceEvents m_stationAnnounceEvents = null;
 
     KDSStationsConnection m_stationsConnection = new KDSStationsConnection(m_socksManager,m_sockEventsMessageHandler );
    // ArrayList<KDSStationsRelation> m_arStationsRelations = new ArrayList<KDSStationsRelation>();
@@ -455,6 +456,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public boolean startStatisticListener()
     {
+        stopStatisticListener(); //stop it first.
         m_listenStatistic.startServer(m_nStatisticPort, m_socksManager, m_sockEventsMessageHandler);
         return true;
     }
@@ -879,7 +881,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public String getRelationsXml()
     {
-        String strRelations = getSettings().loadStationsRelationString(m_context);
+        String strRelations = getSettings().loadStationsRelationString(m_context, true);
         // Object[] ar = new Object[]{s};
         String s = "<Relations>";
         s += strRelations;
@@ -1007,7 +1009,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)  return; //need more data
                     m_udpBuffer.remove(ncommand_end);
-                    String strRelations = getSettings().loadStationsRelationString(m_context);
+                    String strRelations = getSettings().loadStationsRelationString(m_context,true);
                     Object[] ar = new Object[]{strRelations, remoteIP};
                     //m_nLoadThreadCounter ++;
 
@@ -1170,13 +1172,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         }
         else if (xmlCommand.indexOf("<RelationsRet>") >= 0)
-        { //ask the relations, and others return.
+        { //ask the relations, and others return. Someone ask all station feedback broadcast their relations.
+
+
          //   if (isRequireRelationsFinished()) return;
+            if (SettingsBase.isNoCheckRelationWhenAppStart(KDSApplication.getContext()))
+                return;
             String s = xmlCommand;
             s = s.replace("<RelationsRet>", "");
             s = s.replace("</RelationsRet>", "");
            // if (s.isEmpty()) return;
             ArrayList<KDSStationsRelation> ar =KDSSettings.parseStationsRelations(s);
+            SettingsBase.removeRelationNoCheckOptionStation(ar);
+
             if (isDifferentRelationsWithMyLocal(ar))
             {
                 if (m_bRelationsDifferentErrorShown) return;
@@ -1216,7 +1224,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     private boolean isDifferentRelationsWithMyLocal(ArrayList<KDSStationsRelation> arReceived)
     {
-        ArrayList<KDSStationsRelation> arLocal = KDSSettings.loadStationsRelation(m_context);
+        ArrayList<KDSStationsRelation> arLocal = KDSSettings.loadStationsRelation(m_context, false);
         if (arReceived.size() != arLocal.size())
             return true;
         for (int i=0; i< arReceived.size(); i++) {
@@ -1358,10 +1366,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
     }
 
-    public void setStationAnnounceEventsReceiver(StationAnnounceEvents receiver)
-    {
-        m_stationAnnounceEvents = receiver;
-    }
+//    public void setStationAnnounceEventsReceiver(StationAnnounceEvents receiver)
+//    {
+//        m_stationAnnounceEvents = receiver;
+//    }
 
     public void sockevent_onTCPDisconnected(KDSSocketInterface sock)
     {
@@ -1528,6 +1536,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @param stationID
      * @param stationIP
      */
+    @Override
     public void announce_restore_pulse(String stationID, String stationIP)
     {
         KDSLog.i(TAG, KDSLog._FUNCLINE_() + "Station=" + stationID + ",IP=" + stationIP);
@@ -3000,6 +3009,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
             try {
                 Thread.sleep(KDSConst.PING_THREAD_SLEEP);
+
             }
             catch (Exception ex)
             {
@@ -3999,15 +4009,32 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         this.getCurrentDB().setSMSStationsState(order.getGUID(), order.getSmsOriginalOrderGoToStations());
     }
 
-    private void doStationAnnounceInThread(String strInfo)
-    {
-        StationAnnounceRunnable r = new StationAnnounceRunnable(strInfo);
-        Thread t = new Thread(r);
-        t.start();
+//    Thread m_stationAnnounceThread = null;
+//    StationAnnounceRunnable m_stationAnnounceRunnable = null;
+//    private void doStationAnnounceInThread(String strInfo)
+//    {
+////        StationAnnounceRunnable r = new StationAnnounceRunnable(strInfo);
+////        Thread t = new Thread(r);
+////
+////        t.start();
+//        if (m_stationAnnounceThread == null || (!m_stationAnnounceThread.isAlive()))
+//        {
+//
+//            Log.d(TAG, "start announce thread");
+//
+//            m_stationAnnounceRunnable = new StationAnnounceRunnable(strInfo);
+//            m_stationAnnounceThread = new Thread(m_stationAnnounceRunnable);
+//            m_stationAnnounceThread.start();
+//        }
+//        else
+//        {
+//
+//            m_stationAnnounceRunnable.append(strInfo);
+//        }
+//    }
 
-    }
-
-    private void doStationAnnounce(String strInfo)
+    @Override
+    protected void doStationAnnounce(String strInfo)
     {
         m_annoucerTimeDog.reset();
         boolean bNewStation = false;
@@ -4072,45 +4099,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
     }
 
-    final int ANNOUNCE_MSG_SEND_EVENT = 0;
-    final int ANNOUNCE_MSG_STATION_RESTORE = 1;
-
-    Handler m_announceHander = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            KDSStationActived station = (KDSStationActived)msg.obj;
-            if (msg.what == ANNOUNCE_MSG_SEND_EVENT) {
-                if (m_stationAnnounceEvents != null)
-                    m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
-            }
-            else if (msg.what == ANNOUNCE_MSG_STATION_RESTORE)
-            {
-                announce_restore_pulse(station.getID(),station.getIP());
-            }
-            return false;
-        }
-    });
 
 
-    class StationAnnounceRunnable implements Runnable
-    {
-        String m_strStationAnnounce = "";
-
-        public StationAnnounceRunnable(String strAnnounce)
-        {
-            setAnnounce(strAnnounce);
-        }
-        public void setAnnounce(String strAnnounce)
-        {
-            m_strStationAnnounce = strAnnounce;
-        }
-
-
-        public void run()
-        {
-            doStationAnnounce(m_strStationAnnounce);
-        }
-    }
 
 
 }

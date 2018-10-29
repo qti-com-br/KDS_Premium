@@ -357,6 +357,7 @@
     <string name="log_orders">Lnable log received orders xml</string>
     <string name="station_lost">Station # lost</string>
     <string name="enable_order_ack">Enable order acknowledgement</string>
+    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
     <string-array name="pref_kds_log_mode_titles">
         <item>None</item>
         <item>Basic</item>

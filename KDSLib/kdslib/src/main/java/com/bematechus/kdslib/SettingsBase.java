@@ -59,7 +59,7 @@ public class SettingsBase {
     }
 
 
-    public static ArrayList<KDSStationsRelation> loadStationsRelation(Context context )
+    public static ArrayList<KDSStationsRelation> loadStationsRelation(Context context, boolean bNeedNoCheckOption )
     {
 
         ArrayList<KDSStationsRelation> ar = new ArrayList<>();
@@ -80,20 +80,74 @@ public class SettingsBase {
             if (station != null)
                 ar.add(station);
         }
+
+        if (!bNeedNoCheckOption)
+        {
+            removeRelationNoCheckOptionStation(ar);
+        }
+
         return ar;
 
     }
 
+    public static final String NO_CHECK_TRUE = "NoCheck=1";
+    public static final String NO_CHECK_FALSE = "NoCheck=0";
+
+
+    /**
+     * I save this option as a station.
+     * Station ID is "NoCheck=1" or NoCheck=0.
+     * @param ar
+     */
+    static public KDSStationsRelation removeRelationNoCheckOptionStation( ArrayList<KDSStationsRelation> ar)
+    {
+        KDSStationsRelation optionRelation = null;
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (ar.get(i).getID().indexOf(NO_CHECK_FALSE) == 0 ||
+                    ar.get(i).getID().indexOf(NO_CHECK_TRUE) == 0   )
+            {
+                optionRelation = ar.get(i);
+                ar.remove(i);
+                break;
+            }
+        }
+        return optionRelation;
+    }
+
+    static public KDSStationsRelation findRelationNoCheckOptionStation( ArrayList<KDSStationsRelation> ar)
+    {
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (ar.get(i).getID().indexOf(NO_CHECK_FALSE) == 0 ||
+                    ar.get(i).getID().indexOf(NO_CHECK_TRUE) == 0   )
+            {
+
+                return ar.get(i);
+
+            }
+        }
+        return null;
+    }
+
+    static public void addRelationNoCheckOptionStation(ArrayList<KDSStationsRelation> arsave, boolean bNoCheckRelations)
+    {
+        KDSStationsRelation noCheckRelation = new KDSStationsRelation();
+        noCheckRelation.setID( (bNoCheckRelations?NO_CHECK_TRUE:NO_CHECK_FALSE) );
+        arsave.add(noCheckRelation);
+
+    }
     static final String RELATION_STATION_SEPERATOR = ":";
     /**
      *
      * @param context
      * @return
      */
-    public static String loadStationsRelationString(Context context )
+    public static String loadStationsRelationString(Context context, boolean bNeedNoCheckOption )
     {
 
-        ArrayList<KDSStationsRelation> ar = loadStationsRelation(context);
+        ArrayList<KDSStationsRelation> ar = loadStationsRelation(context, bNeedNoCheckOption);
         int ncount = ar.size();
         String str = "";
         for (int i=0; i< ncount; i++)
@@ -141,6 +195,12 @@ public class SettingsBase {
 
     }
 
+    /**
+     *
+     * @param context
+     * @param ar
+
+     */
     static public void saveStationsRelation(Context context, ArrayList<KDSStationsRelation> ar)
     {
         int ncount = ar.size();
@@ -156,6 +216,7 @@ public class SettingsBase {
                 setStations.add(r.toString());
             }
         }
+
 
         SharedPreferences.Editor editor =  pref.edit();
         editor.putStringSet("StationsRelation", setStations);
@@ -430,6 +491,52 @@ public class SettingsBase {
         }
     }
 
+    /**
+     * A quick function to load "No check relation option" value.
+     * @param context
+     * @return
+     */
+    public static boolean isNoCheckRelationWhenAppStart(Context context )
+    {
 
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        HashSet<String> setStations = null;
+        Set<String> set =  pref.getStringSet("StationsRelation", null);
+        if (set == null)
+            return false;
+        setStations = new HashSet<>( set);
+
+        Iterator it =setStations.iterator();
+
+        while(it .hasNext())
+        {
+            String s= (String) it.next();
+            if (s.indexOf(NO_CHECK_TRUE) >=0)
+                return true;
+
+        }
+
+        return false;
+    }
+
+
+    static public void saveTouchPadVisible(Context context, boolean bVisible)
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+
+
+        SharedPreferences.Editor editor =  pref.edit();
+        editor.putBoolean("TouchPadVisible", bVisible);
+        editor.commit();
+    }
+
+    static public boolean loadTouchPadVisible(Context context)
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+
+        return pref.getBoolean("TouchPadVisible", true);
+
+
+    }
 
 }
