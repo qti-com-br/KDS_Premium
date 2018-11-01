@@ -2456,7 +2456,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     private KDSDataOrder keepExpoItemsAccordingToStationsSetting(KDSDataOrder order)
     {
-        if (!this.isExpeditorStation())
+        if (!this.isExpeditorStation() && !this.isQueueExpo())
             return order;
 
         ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(getStationID());
@@ -2506,8 +2506,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public KDSDataOrder justKeepMyStationItems(KDSDataOrder order)
     {
         //2.0.33
-        if (this.isExpeditorStation())
+        //KPP1-37
+        //Queue expo supports certain stations
+        //just keep the items which target station uses I as expo/expo-queue.
+        //For KPP1-37, I add queue-expo filter at here.
+        if (this.isExpeditorStation() || this.isQueueExpo()) //2.1.15.3, KPP1-37
             keepExpoItemsAccordingToStationsSetting(order);
+
 
         //20160418, keep all items if i am expo station
         //One bug I will need you to fix before moving to new project: Setup 2 station, 1 normal,
@@ -3896,9 +3901,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
         if (order.isSMSStateChanged(this.isExpeditorStation(), bOrderBumped))
         {
-            int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
-            m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(),nSMSState );
-            KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
+            if (m_activationSMS != null) {
+                int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
+                m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(), nSMSState);
+                KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
+            }
         }
     }
 
