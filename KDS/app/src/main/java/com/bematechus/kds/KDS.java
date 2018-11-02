@@ -103,7 +103,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 //        void onReceivedStationAnnounce(KDSStationIP stationReceived);//String stationID, String ip, String port, String mac);
 //    }
 
-    /********************************************************************************************/
+
 
     String m_strKDSStationID = "";
     int m_nPOSPort = DEFAULT_POS_IP_PORT;

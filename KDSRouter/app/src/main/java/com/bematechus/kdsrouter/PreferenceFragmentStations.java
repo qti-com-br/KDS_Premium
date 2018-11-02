@@ -531,42 +531,96 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
     }
 
+    /**
+     * refresh the network state icon according the active stations state.
+     * Call it in a timer
+     */
     public void refreshNetworkStatusIcon()
     {
         int ncount = ((MyAdapter) m_lstStations.getAdapter()).getListData().size();
         for (int i=0; i< ncount; i++) {
-            KDSStationsRelation r =(KDSStationsRelation) ((MyAdapter) m_lstStations.getAdapter()).getListData().get(i);
+
 
             // MyAdapter.ViewHolder holder =( MyAdapter.ViewHolder) (r.getTag());
             View view = m_lstStations.getChildAt(i);
-            if (view == null) continue;
-            ImageView img = (ImageView) view.findViewById(R.id.imgNetwork);
-            //if (holder == null) continue;
-            boolean bonline = true;
-            if (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()))
-            {
-                bonline = KDSSocketManager.isNetworkActived(KDSApplication.getContext());
-            }
-            else
-            {
-                bonline = (KDSGlobalVariables.getKDS().getStationsConnections().findActivedStationByID(r.getID()) != null);
+            if (view == null) return;
+            if (view.getTag() == null) continue;
+            int nPosition = (int)view.getTag();
+            KDSStationsRelation r =(KDSStationsRelation) ((MyAdapter) m_lstStations.getAdapter()).getListData().get(nPosition);
+            refreshStationNetworkStatusIcon(view, r);
 
-            }
-            if (bonline)
-            {
-                if (img != null) {
-                    img.setImageResource(R.drawable.online);
-                    img.invalidate();
-                }
-            }
-            else
-            {
-                if (img != null) {
-                    img.setImageResource(R.drawable.offline);
-                    img.invalidate();
-                }
+//            if (view == null) continue;
+//            ImageView img = (ImageView) view.findViewById(R.id.imgNetwork);
+//            //if (holder == null) continue;
+//            boolean bonline = true;
+//            if (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()))
+//            {
+//                bonline = KDSSocketManager.isNetworkActived(KDSApplication.getContext());
+//            }
+//            else
+//            {
+//                bonline = (KDSGlobalVariables.getKDS().getStationsConnections().findActivedStationByID(r.getID()) != null);
+//
+//            }
+//            if (bonline)
+//            {
+//                if (img != null) {
+//                    img.setImageResource(R.drawable.online);
+//                    img.invalidate();
+//                }
+//            }
+//            else
+//            {
+//                if (img != null) {
+//                    img.setImageResource(R.drawable.offline);
+//                    img.invalidate();
+//                }
+//            }
+        }
+
+    }
+
+    /**
+     *
+     * @param viewRow
+     *  Its tag contains the position value.
+     * @param r
+     */
+    public void refreshStationNetworkStatusIcon(View viewRow,  KDSStationsRelation r)
+    {
+
+
+        if (r.getTag() == null) return;
+
+        ImageView img = (ImageView) viewRow.findViewById(R.id.imgNetwork);
+        if (img == null) return;
+
+        //if (holder == null) continue;
+        boolean bonline = true;
+        if (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()))
+        {
+            bonline = KDSSocketManager.isNetworkActived(KDSApplication.getContext());
+        }
+        else
+        {
+            bonline = (KDSGlobalVariables.getKDS().getStationsConnections().findActivedStationByID(r.getID()) != null);
+
+        }
+        if (bonline)
+        {
+            if (img != null) {
+                img.setImageResource(R.drawable.online);
+                img.invalidate();
             }
         }
+        else
+        {
+            if (img != null) {
+                img.setImageResource(R.drawable.offline);
+                img.invalidate();
+            }
+        }
+
 
     }
 
@@ -2410,6 +2464,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             ImageView imgNetwork = ((ImageView) convertView.findViewById(R.id.imgNetwork));
             viewHolder.m_viewNetwork = imgNetwork;
             init_view_click_event(imgNetwork, convertView);
+            refreshStationNetworkStatusIcon(convertView, r); //2.1.15.3
 
 
 
