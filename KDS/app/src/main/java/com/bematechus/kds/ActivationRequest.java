@@ -2,12 +2,14 @@ package com.bematechus.kds;
 
 //import com.bematechus.kdslib.KDSUtil;
 
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -44,10 +46,13 @@ public class ActivationRequest {
      user: david
      pwd: 123456
      */
+
     //test server api
-    //static final String URL = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
+    static final String URL_TEST = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
     //production server api
-    static final String URL = "https://kdsgo.com/api/apiKDS";
+    static final String URL_PRODUCTION = "https://kdsgo.com/api/apiKDS";
+    static String URL = URL_TEST;
+    //
     public static final String TOKEN = "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"; //fixed
 
 
@@ -123,6 +128,10 @@ public class ActivationRequest {
 
     public ActivationRequest()
     {
+        if (KDSConst._DEBUG)
+            this.URL = URL_TEST;
+        else
+            this.URL = URL_PRODUCTION;
         reset();
     }
 

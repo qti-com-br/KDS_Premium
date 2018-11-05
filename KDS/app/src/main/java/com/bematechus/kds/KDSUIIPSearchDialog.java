@@ -203,7 +203,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
 
         int ncount = m_lstStations.getCount();
         for (int i=0; i< ncount; i++) {
-            if ( m_lstStations.isItemChecked(i))
+            if (m_lstStations.isFocused() || m_lstStations.isItemChecked(i))
             {
                 String s = ((MyAdapter) m_lstStations.getAdapter()).getListData().get(i).toString();
                 ar.add(s);
@@ -219,8 +219,8 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
 
         int ncount = m_lstStations.getCount();
         for (int i=0; i< ncount; i++) {
-            if ( m_lstStations.isItemChecked(i))
-            {
+            if ( m_lstStations.isFocused() || m_lstStations.isItemChecked(i))
+            {//2.1.15.4 add isFocused to it.
                return ((MyAdapter) m_lstStations.getAdapter()).getListData().get(i);
 
             }
