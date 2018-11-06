@@ -1229,6 +1229,40 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     }
 
 
+    static public boolean needShowInactiveTitle(ActivationRequest.ErrorType errType)
+    {
+        boolean bShowInactive = false;
+        switch (errType)
+        {
+            case OK:
+            case Http_error_code:
+            case Http_exception:
+            case Cancel_license_options:
+            case Replace_error:
+            case Sync_error:
+            case Get_Settings_error:
+            case Get_Devices_error:
+            case No_selected_license_to_replace:
+                bShowInactive = false;
+                break;
+            case UserName_Password:
+            case No_valid_license:
+            case License_disabled:
+                bShowInactive = true;
+                break;
+            default:
+                bShowInactive = false;
+
+        }
+
+        if (!hasDoRegister())
+        {
+            bShowInactive = true;
+        }
+        return bShowInactive;
+    }
+
+
     class StoreDevice
     {
         String m_guid = "";

@@ -5922,7 +5922,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //            m_activation.resetUserNamePassword();
 
         checkActivationResult(stage, errType);
-        updateTitle();
+        if (Activation.needShowInactiveTitle(errType))
+            updateTitle();
     }
     private void checkActivationResult(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType)
     {
@@ -5942,7 +5943,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
         if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
-         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+        //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
             doActivation(true, false, "");
             m_activationDog.reset();
