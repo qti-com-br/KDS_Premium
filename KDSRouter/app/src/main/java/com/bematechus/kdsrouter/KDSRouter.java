@@ -2249,6 +2249,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             //writeToAllStations(xmlOrder);
         }
         checkAssignStationsActive(order, xmlData);
+
+        assignColorToOrder(order, xmlData); //2.1.15.4
+
         String xmlOrder = rebuildOrderXml(order, xmlData);
         checkLostStationsAndSaveToOffline(order, xmlOrder);
 
@@ -2665,6 +2668,23 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                     }
                 }
 
+                //color, 2.1.15.4
+                int bg = item.getBG();
+                int fg = item.getFG();
+                if ( bg != fg ) {
+                    //use RGBColor
+                    if (xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_COLOR)) {
+                        xml.back_to_parent();
+                        xml.delSubGroup(KDSXMLParserOrder.DBXML_ELEMENT_COLOR);
+                        //xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_KDSSTATION, xmlToStation, false);
+                    }
+                    if (!xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_RGBCOLOR)) {
+                        xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_RGBCOLOR, true);
+                    }
+                    xml.setAttribute(KDSXMLParserOrder.DBXML_ELEMENT_COLOR_BG, KDSUtil.convertIntToString(bg));
+                    xml.setAttribute(KDSXMLParserOrder.DBXML_ELEMENT_COLOR_FG, KDSUtil.convertIntToString(fg));
+                    xml.back_to_parent();
+                }
 
 
                 //sumnames
@@ -2716,6 +2736,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
                     }
                     while (xml.getNextGroup(KDSXMLParserOrder.DBXML_ELEMENT_MODIFIER));
+
+
                     xml.back_to_parent();
                 }
 
@@ -3229,6 +3251,29 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         Object objSrc = objSource;
 
         writeXmlToPOSOrderAck( s, fileName);
+    }
+
+    public void assignColorToOrder(KDSDataOrder order, String xmlData)
+    {
+        int ncount = order.getItems().getCount();
+
+
+        for (int i=ncount-1; i>=0; i--)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            if ( item.getBG() != item.getFG())
+                continue;
+
+            String description = item.getDescription();
+            String category = item.getCategory();
+            KDSRouterDataItem colorItem =  getRouterDB().itemGetBGFG(category, description);
+            if (colorItem.getBG()==0 && colorItem.getFG() ==0)
+                continue;
+
+            item.setBG(colorItem.getBG());
+            item.setFG(colorItem.getFG());
+        }
+
     }
 
 //    protected void fireStationAnnounceReceivedEvent(KDSStationActived station)

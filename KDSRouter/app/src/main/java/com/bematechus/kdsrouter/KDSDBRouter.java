@@ -1428,6 +1428,48 @@ public class KDSDBRouter extends KDSDBBase {
     }
 
 
+    public KDSRouterDataItem itemGetBGFG(String category, String strItemDescription)
+    {
+
+        String guid = itemGetGuidFromDescription(category, strItemDescription);
+        int bg=0, fg=0;
+        String sql = "";
+        //check item
+        if (!guid.isEmpty()) {
+            sql = "select bg,fg from items where guid='" + guid + "'";
+            Cursor c = getDB().rawQuery(sql, null);
+            if (c.moveToNext()) {
+                bg = getInt(c, 0);
+                fg = getInt(c, 1);
+
+                c.close();
+            }
+        }
+        //check category
+        if (bg ==0 && fg ==0)
+        {
+            guid = categoryGetGuidFromDescription(category);
+            if (!guid.isEmpty()) {
+                sql = "select bg,fg from category where guid='" + guid + "'";
+                Cursor c = getDB().rawQuery(sql, null);
+                if (c.moveToNext()) {
+                    bg = getInt(c, 0);
+                    fg = getInt(c, 1);
+                    c.close();
+                }
+
+            }
+        }
+
+        KDSRouterDataItem item = new KDSRouterDataItem();
+        item.setBG(bg);
+        item.setFG(fg);
+
+        return item;
+
+    }
+
+
     /***************************************************************************
      * SQL definitions
      */
