@@ -4745,12 +4745,26 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         focusUser(user);
     }
 
+    boolean m_bWatingRefreshViewAsDblClick = false;
     public void onViewPanelDoubleClicked(KDSLayout layout) {
         if (!isKDSValid()) return ;
+        if (m_bWatingRefreshViewAsDblClick ) return;
+
         KDSUser.USER user = getUserFromLayout(layout);// KDSUser.USER.USER_A;
         opBump(user);
+        if (layout.getView() != null)
+            layout.getView().setNeedDrawOnce();
+        m_bWatingRefreshViewAsDblClick = true;
     }
 
+    /**
+     *
+     * @param layout
+     */
+    public void onViewDrawingFinished(KDSLayout layout)
+    {
+        m_bWatingRefreshViewAsDblClick = false;
+    }
 
     PowerManager.WakeLock m_wakeLock = null;
 

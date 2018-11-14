@@ -41,7 +41,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     {
         public  void onViewPanelDoubleClicked(KDSLayout layout);
         public  void onViewPanelClicked(KDSLayout layout);
-
+        public void onViewDrawingFinished(KDSLayout layout);
     }
 
 
@@ -1161,6 +1161,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     public void onSizeChanged()
     {
         this.refresh();
+    }
+    public void onViewDrawFinished()
+    {
+        if (m_eventsReceiver != null)
+            m_eventsReceiver.onViewDrawingFinished(this);
     }
 
 
