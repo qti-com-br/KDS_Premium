@@ -2183,7 +2183,7 @@ public class QueueView  extends View {
             QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
             if (status != QueueOrders.QueueStatus.Ready &&
                     status != QueueOrders.QueueStatus.Pickup)
-                return;
+                continue;
             Date dtStart = order.getQueueStateTime();//.getStartTime();
             if ( dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs)
             {
