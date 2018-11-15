@@ -2177,13 +2177,31 @@ public class QueueView  extends View {
         long dtNow = System.currentTimeMillis();
 
         ArrayList<KDSDataOrder> ar = new ArrayList<>();
+        ArrayList<QueueOrders.QueueStatus> arReadyStatus = getSimpleColStatus(QueueOrders.QueueStatus.Ready);
+        ArrayList<QueueOrders.QueueStatus> arPickupStatus = getSimpleColStatus(QueueOrders.QueueStatus.Pickup);
+        arReadyStatus.addAll(arPickupStatus);
+
         for (int i=0; i< ncount; i++)
         {
             KDSDataOrder order = m_queueOrders.getOrders().get(i);
             QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
-            if (status != QueueOrders.QueueStatus.Ready &&
-                    status != QueueOrders.QueueStatus.Pickup)
-                continue;
+            if (m_nViewMode == KDSSettings.QueueMode.Panels) {
+                if (status != QueueOrders.QueueStatus.Ready &&
+                        status != QueueOrders.QueueStatus.Pickup)
+                    continue;
+            }
+            else if (m_nViewMode == KDSSettings.QueueMode.Simple)
+            {
+                boolean bBumpIt = false;
+                for (int j=0; j< arReadyStatus.size(); j++)
+                {
+                    if (arReadyStatus.get(j) == status) {
+                        bBumpIt = true;
+                        break;
+                    }
+                }
+                if (!bBumpIt) continue;
+            }
             Date dtStart = order.getQueueStateTime();//.getStartTime();
             if ( dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs)
             {
