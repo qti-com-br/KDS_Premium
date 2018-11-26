@@ -536,7 +536,7 @@ public class KDSView extends View {
 
 
         m_bDrawing = false;
-        fireViewAfterDrawing();
+        //fireViewAfterDrawing();
 
 
     }
