@@ -4037,7 +4037,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 //        {
 //
 //            m_stationAnnounceRunnable.append(strInfo);
-//        }
+// //       }
 //    }
 
     @Override
