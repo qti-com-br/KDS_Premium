@@ -32,6 +32,7 @@ import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSmbFile;
+import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.TimeDog;
@@ -529,7 +530,7 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
         try {
             createTempFolder();
             // KDSSmbFile.readFromSmb()
-            String filename = KDSSmbFile.readFromSmbToLocal(url, getTempFolder());
+            String filename = KDSSmbFile.smb_readFromSmbToLocal(url, getTempFolder());
             if (!filename.isEmpty())
                 m_handler.sendSmbDownloadedMessage(filename);
             return filename;

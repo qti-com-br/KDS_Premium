@@ -46,6 +46,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
+import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSTimer;
@@ -292,7 +293,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (source == KDSRouterSettings.KDSDataSource.Folder) {
             String remoteFolder = getKDSRouter().getSettings().getString(KDSRouterSettings.ID.KDSRouter_Data_Folder);
             if (remoteFolder.isEmpty()) return;
-            int nError = KDSSmbFile.checkFolderWritable(remoteFolder);
+            int nError = KDSSmbFile.smb_checkFolderWritable(remoteFolder);
             if (nError != 0) {
                 Message msg = new Message();
                 msg.obj = nError;
@@ -340,6 +341,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
     KDSRouter getKDSRouter()
     {
+        if (m_service == null)
+            return null;
         return m_service.getKDSRouter();
     }
 

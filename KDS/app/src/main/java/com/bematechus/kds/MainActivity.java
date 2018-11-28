@@ -61,6 +61,7 @@ import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
+import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationActived;
 import com.bematechus.kdslib.KDSStationConnection;
@@ -579,11 +580,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSSettings.KDSDataSource source =KDSSettings.KDSDataSource.values ()[getKDS().getSettings().getInt(KDSSettings.ID.KDS_Data_Source)];
         if (source == KDSSettings.KDSDataSource.Folder) {
             String remoteFolder = getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
-            if (!KDSSmbFile.isValidPath(remoteFolder)) {
+            if (!KDSSmbFile.smb_isValidPath(remoteFolder)) {
                 //m_handlerMessage.sendPermissionError();
                 return;
             }
-            if (KDSSmbFile.checkFolderWritable(remoteFolder)!=0) {
+            if (KDSSmbFile.smb_checkFolderWritable(remoteFolder)!=0) {
                 m_handlerMessage.sendPermissionError();
 
             }
@@ -1668,6 +1669,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (!order.isItemsAllBumpedInExp()) {
                 strBump = getString(R.string.confirm_bump_expo_outstanding);
             }
+            else {
+                afterConfirmBumpOrder(userID, orderGuid);//2.0.51
+                return;
+            }
 
         }
         strBump = strBump.replace("#", "#" + orderName);
@@ -1766,7 +1771,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *     Show warning when user try to bump. And add this explanation under the option
      *     “
      *     Expo cannot bump the order unless all its prep station bump the items ”
-     *
+     *rev.
+     * default return false;
      * @param orderGuid
      * @return
      *  true: this order was handled by expo
@@ -1795,8 +1801,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                     .create();
             d.show();
+            return true;
         }
-        return true;
+        return false;
     }
 
     private void opBump(KDSUser.USER userID) {
