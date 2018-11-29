@@ -1379,6 +1379,9 @@ public class KDSDataOrder extends KDSData {
             pxml.getFirstGroup(KDSConst.KDS_Str_Transaction);
 
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDER, true);
+        //2.0.51
+            pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_QUEUE_READY, getQueueReady()?"1":"0");
+
             //pxml->xmj_getFrstGroup(_T("Order"));
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
@@ -1432,14 +1435,16 @@ public class KDSDataOrder extends KDSData {
 
             //2.5.4.19 add received time and restore time
             s = KDSUtil.convertDateToString(this.getStartTime());
-            pxml.newGroup("Received_Time",s, false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_RECEIVE_DATE,s, false);
 
             Date dtNow = new Date();
             
             s = KDSUtil.convertDateToString(dtNow);
-            pxml.newGroup("Bumpoff_Time",s, false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_BUMPED_DATE,s, false);
+            //2.0.51
+
             //////
-            outputKDSMessages(pxml, this.getOrderMessages(), "OrderMessages");
+            outputKDSMessages(pxml, this.getOrderMessages(), KDSXMLParserOrder.DBXML_ELEMENT_ORDER_MESSAGES);
 
             return true;
     }
@@ -2369,6 +2374,63 @@ get the total qty of all found items
     {
         return m_dtQueueStateTime;
     }
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @return
+     */
+    public int getBumpedItemsCount()
+    {
+
+        int nCount = 0;
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            KDSDataItem item = m_items.getItem(i);
+            if (item.isFinished())
+                nCount ++;
+        }
+        return nCount;
+    }
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @return
+     */
+    public ArrayList<String> getBumpedItemsID()
+    {
+
+        ArrayList<String> ar = new ArrayList<>();
+        int nCount = 0;
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            KDSDataItem item = m_items.getItem(i);
+            if (item.isFinished())
+                ar.add(item.getItemName());
+
+        }
+        return ar;
+    }
+
+    public String getBumpedItemsIDString()
+    {
+        ArrayList<String> ar = getBumpedItemsID();
+        String s = "";
+
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (i >0)
+                s += ",";
+            s += ar.get(i);
+
+
+        }
+        return s;
+    }
+
+
 
     /**
      * 2.0.50

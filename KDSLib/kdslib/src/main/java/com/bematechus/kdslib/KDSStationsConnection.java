@@ -1325,6 +1325,24 @@ public class KDSStationsConnection {
         int ncount =m_stationsRelations.getQueueStations().size();
         return (ncount >0);
     }
+
+    /**
+     * KPP1-7
+     * @param stationID
+     * @return
+     */
+    public boolean isMyQueueStation(String stationID)
+    {
+        int ncount = m_stationsRelations.getQueueStations().size();
+        for (int i=0; i< ncount; i++)
+        {
+            String id = m_stationsRelations.getQueueStations().get(i).getID();
+            if (id.equals(stationID))
+                return true;
+        }
+        return false;
+    }
+
     public boolean isMirrorOfOthers()
     {
         int ncount = m_stationsRelations.getPrimaryStationsWhoUseMeAsMirror().size();

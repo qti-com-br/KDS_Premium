@@ -225,7 +225,7 @@ public class KDSRouterDataItem extends KDSData {
         }
     }
     /**
-     * Descriptin, ToStations, ToScreen,Delay,Printable,SumTranslated,SumNames,BuildCards,Videos
+     * Descriptin, ToStations, ToScreen,Delay,Printable,BG,FG,SumTranslated,SumNames,BuildCards,Videos
      * @return
      */
     public String toCSV()

@@ -3386,7 +3386,75 @@ update the schedule item ready qty
         getDB().execSQL(sql);
     }
 
+    /**
+     *
+     * @param arChangedOrders
+     *  format:
+     *      guid,order name, queue_ready, bumped_item_name,...
+     *      guid,order name, queue_ready, bumped_item_name,...
+     *      guid,order name, queue_ready, bumped_item_name,...
+     *      guid,order name, queue_ready, bumped_item_name,...
+     * @return
+     */
+    public void queueSetOrderItemsBumped(ArrayList<String> arChangedOrders)
+    {
 
+        for (int i=0; i< arChangedOrders.size(); i++)
+        {
+            String s = arChangedOrders.get(i);
+            if (s.isEmpty()) continue;
+            queueSetSingleOrderItemsBumped(s);
+        }
+
+
+
+    }
+
+
+    /**
+     *
+     * @param strOrderItemsBumpedInfo
+     * Format:
+     *      guid,order_id,queue_double_bump_ready,bumped_item_id,bumped_item_id /n
+     * @return
+     *  Order guid value.
+     */
+    private String queueSetSingleOrderItemsBumped(String strOrderItemsBumpedInfo)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(strOrderItemsBumpedInfo, ",");
+        if (ar.size() <3) return "";
+        String guid = ar.get(0);
+        if (guid.isEmpty()) return "";
+        String orderName = ar.get(1);
+        String queueReady = ar.get(2);
+
+        ar.remove(2);
+        ar.remove(1);
+        ar.remove(0);
+
+        this.orderSetQueueReady(guid,queueReady.equals("1"));
+
+        //left over is items id
+        for (int i=0; i< ar.size(); i++)
+        {
+            String itemName = ar.get(i);
+            if (itemName.isEmpty()) continue;
+            if (itemName.equals("-1"))
+            {//all bumped
+                String sql = "update items set localbumped=1 where orderguid='" + guid +"'";
+
+                this.executeDML(sql);
+
+            }
+            else {
+                String sql = "update items set localbumped=1 where orderguid='" + guid + "' and name='" + itemName + "'";
+                this.executeDML(sql);
+
+            }
+        }
+        return guid;
+
+    }
 
     /***************************************************************************
      * SQL definitions

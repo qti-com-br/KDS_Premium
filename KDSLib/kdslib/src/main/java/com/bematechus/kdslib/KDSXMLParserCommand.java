@@ -5,6 +5,7 @@
  */
 
 package com.bematechus.kdslib;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -99,6 +100,11 @@ public class KDSXMLParserCommand {
         //sos
         SOS_Request_Report,
         SOS_Return_Report,
+        //KPP1-7, 2.0.50
+        Queue_ask_sync_from_prep,
+        Prep_sync_to_queue,
+        Queue_ask_sync_new_orders_from_prep,
+        Prep_sync_new_order_to_queue,
     }
     private static final String COMMAND = "KDSCommand";
     private static final String CODE = "Code";
@@ -585,4 +591,62 @@ public class KDSXMLParserCommand {
 
         return createCommandXmlString(KDSCommand.SOS_Return_Report.ordinal(),strStationID, ipAddress, macAddress,param);
     }
+
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @param strStationID
+     * @param ipAddress
+     * @param macAddress
+     * @param ordersItemsStatus
+     *  CSV format data.
+     *  order_id,bumped_items_count /n
+     *  order_id,bumped_items_count /n
+     *  order_id,bumped_items_count /n
+     *
+     * @return
+     */
+    static public String createPrepSyncOrdersStatusToQueue(String strStationID, String ipAddress, String macAddress, String ordersItemsStatus)
+    {
+
+        return createCommandXmlString(KDSCommand.Prep_sync_to_queue.ordinal(),
+                strStationID, ipAddress, macAddress, ordersItemsStatus);
+
+    }
+
+    static public String createQueueAskSyncPrep(String strStationID, String ipAddress, String macAddress)
+    {
+
+        return createCommandXmlString(KDSCommand.Queue_ask_sync_from_prep.ordinal(),
+                strStationID, ipAddress, macAddress, "");
+
+    }
+
+    /**
+     *
+     * @param strStationID
+     * @param ipAddress
+     * @param macAddress
+     * @param ordersName
+     *  CSV format
+     * @return
+     */
+    static public String createQueueAskSyncNewOrders(String strStationID, String ipAddress, String macAddress, String ordersName)
+    {
+
+        return createCommandXmlString(KDSCommand.Queue_ask_sync_new_orders_from_prep.ordinal(),
+                strStationID, ipAddress, macAddress, ordersName);
+
+    }
+
+    static public String createPrepAckQueueSyncNewOrders(String strStationID, String ipAddress, String macAddress, String orderData)
+    {
+
+        return createCommandXmlString(KDSCommand.Prep_sync_new_order_to_queue.ordinal(),
+                strStationID, ipAddress, macAddress, orderData);
+
+    }
+
+
 }

@@ -9,6 +9,7 @@ package com.bematechus.kdslib;
 import android.graphics.Color;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -124,7 +125,13 @@ public class KDSXMLParserOrder {
     //for modifiers
     public final static String DBXML_ELEMENT_MODIFIER = ("Modifier");
 
+    public final static String DBXML_ELEMENT_BUMPED_STATIONS = "BumpedStations";
+    public final static String DBXML_ELEMENT_RECEIVE_DATE = "Received_Time";
+    public final static String DBXML_ELEMENT_BUMPED_DATE = "Bumpoff_Time";
+
     //2.0.50
+    public final static String DBXML_ELEMENT_ORDER_MESSAGES = "OrderMessages";
+    public final static String DBXML_ELEMENT_QUEUE_READY = "QueueReady";
     /**
      * SMS feature
      */
@@ -146,7 +153,10 @@ public class KDSXMLParserOrder {
         if (!xml.getFirstGroup(DBXML_ELEMENT_ORDER))
             return null;
         //go through the order xml file
-
+        //2.0.51
+        String s = xml.getAttribute(DBXML_ELEMENT_QUEUE_READY, "0");
+        c.setQueueReady(s.equals("1"));
+        //
         if (!xml.moveToFirstChild())
             return null;
         do
@@ -275,6 +285,15 @@ public class KDSXMLParserOrder {
                 order.setScreen(n);
             }
             break;
+            case DBXML_ELEMENT_RECEIVE_DATE://2.0.51
+            {
+                if (!strVal.isEmpty())
+                {
+                    Date dt = KDSUtil.convertStringToDate(strVal);
+                    order.setStartTime(dt);
+                }
+            }
+            break;
 
             case DBXML_ELEMENT_ITEM:
             {
@@ -378,6 +397,8 @@ public class KDSXMLParserOrder {
         if (!s.equals("0"))
             bLocalBumped = true;
 
+        s = xml.getAttribute(DBXML_ELEMENT_BUMPED_STATIONS, "");
+        String bumpedStations = s;//2.0.51
 
         //20160116
         s = xml.getAttribute(DBXML_ELEMENT_ITEM_TYPE, "0");
@@ -390,6 +411,7 @@ public class KDSXMLParserOrder {
         KDSDataItem item = new KDSDataItem(order.getGUID());
         item.setItemType(itemType);
 
+        item.setBumpedStationString(bumpedStations); //2.0.51
         do
         {
             String name = xml.getCurrentName();

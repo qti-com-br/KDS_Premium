@@ -1482,22 +1482,24 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
         //check if the "support" database is empty first.
         String strXml = KDSXMLParserCommand.createAskSupportDBStatus(this.getStationID(), this.getLocalIpAddress(), "");
-        KDSStationConnection conn = m_stationsConnection.findConnectionByID(stationID);
-        if (conn != null) {
-            if (conn.getSock().isConnected())
-                conn.getSock().writeXmlTextCommand(strXml);
-            else
-                conn.addBufferedData(strXml);
-        }
-        else
-        {
-            KDSStationIP station = new KDSStationIP();
-            station.setID(stationID);
-            station.setIP(ip);
-            station.setPort(m_settings.getString(KDSSettings.ID.KDS_Station_Port));
+        writeStringToStation(stationID, ip, strXml); //2.0.50
 
-            m_stationsConnection.connectStationWithData(station, strXml);
-        }
+//        KDSStationConnection conn = m_stationsConnection.findConnectionByID(stationID);
+//        if (conn != null) {
+//            if (conn.getSock().isConnected())
+//                conn.getSock().writeXmlTextCommand(strXml);
+//            else
+//                conn.addBufferedData(strXml);
+//        }
+//        else
+//        {
+//            KDSStationIP station = new KDSStationIP();
+//            station.setID(stationID);
+//            station.setIP(ip);
+//            station.setPort(m_settings.getString(KDSSettings.ID.KDS_Station_Port));
+//
+//            m_stationsConnection.connectStationWithData(station, strXml);
+//        }
     }
     /**
      * my mirror station restored
@@ -1581,6 +1583,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             onMyMirrorStationRestore(stationID, stationIP);
         }
 
+        //KPP1-7
+        if (getStationsConnections().isMyQueueStation(stationID))
+        {
+            KDSLog.d(TAG, KDSLog._FUNCLINE_() + "isMyQueueStation=true");
+            onMyQueueStationRestore(stationID, stationIP);
+        }
     }
 
 
@@ -2199,6 +2207,26 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case SOS_Request_Report:
             {
                 doSosReport(sock, command);
+            }
+            break;
+            case Queue_ask_sync_from_prep:
+            {
+                syncOrdersStatusWithQueue(sock, fromStationID, fromIP);
+            }
+            break;
+            case Prep_sync_to_queue:
+            {
+                onQueueReceivePrepSyncOrdersStatusData(sock, command, fromStationID, fromIP);
+            }
+            break;
+            case Queue_ask_sync_new_orders_from_prep:
+            {
+                onQueueAskSyncNewOrdersFromPrep(sock, command, fromStationID, fromIP);
+            }
+            break;
+            case Prep_sync_new_order_to_queue:
+            {
+                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData);
             }
             break;
 
@@ -4117,4 +4145,164 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
 
 
+
+    /**
+     * KPP1-7
+     * @param stationID
+     * @param ip
+     */
+    private void onMyQueueStationRestore(String stationID, String ip)
+    {
+        String s = "My queue station #" + stationID + " restored";
+        showMessage(s);
+        syncOrdersStatusWithQueue(null, stationID, ip);
+    }
+
+    /**
+     * KPP1-7
+     * @param sock
+     * @param stationID
+     * @param ip
+     */
+    private void syncOrdersStatusWithQueue(KDSSocketInterface sock,String stationID, String ip)
+    {
+        String orderItemsStatus = this.getUsers().getUserA().getOrders().outputBumpedItemsCountForSyncToQueue();
+        if (this.isMultpleUsersMode())
+            orderItemsStatus += this.getUsers().getUserB().getOrders().outputBumpedItemsCountForSyncToQueue();
+
+        String strXml = KDSXMLParserCommand.createPrepSyncOrdersStatusToQueue(this.getStationID(), this.getLocalIpAddress(), "", orderItemsStatus);
+        writeDataThroughSocket(sock, stationID, ip, strXml);
+
+//        if (sock == null) {
+//            writeStringToStation(stationID, ip, strXml);
+//        }
+//        else
+//        {
+//            if (sock instanceof KDSSocketTCPSideBase)
+//            {
+//                KDSSocketTCPSideBase tcp = (KDSSocketTCPSideBase)sock;
+//                tcp.writeXmlTextCommand(strXml);
+//            }
+//        }
+
+
+    }
+
+    /**
+     * for write data in command
+     * @param stationID
+     * @param ip
+     * @param data
+     */
+    private void writeStringToStation(String stationID,String ip, String data)
+    {
+        KDSStationConnection conn = m_stationsConnection.findConnectionByID(stationID);
+        if (conn != null) {
+            if (conn.getSock().isConnected())
+                conn.getSock().writeXmlTextCommand(data);
+            else
+                conn.addBufferedData(data);
+        }
+        else
+        {
+            KDSStationIP station = new KDSStationIP();
+            station.setID(stationID);
+            station.setIP(ip);
+            station.setPort(m_settings.getString(KDSSettings.ID.KDS_Station_Port));
+
+            m_stationsConnection.connectStationWithData(station, data);
+        }
+    }
+
+    /**
+     * 2.0.50,
+     * KPP1-7
+     * This station should been in queue mode.
+     * Prep --> Queue.
+     * rev.
+     *  2.0.51
+     * @param sock
+     * @param command
+     */
+    private void onQueueReceivePrepSyncOrdersStatusData(KDSSocketInterface sock,  KDSXMLParserCommand command, String stationID, String ip)
+    {
+        String strOrdersItemsStatus = command.getParam(KDSConst.KDS_Str_Param, "");
+
+        //retrieve all changed order information,
+        //see format: guid,ordername,queue_ready,bumped_item_name ...( "-1" is all bumped).
+        ArrayList<String> arChangedOrders = new ArrayList<>();//format: guid,ordername,queue_ready,bumped_item_name ...( "-1" is all bumped).
+
+        //parse data.
+        ArrayList<String> arOrdersWillBumped =  this.getUsers().getUserA().getOrders().queueSetOrderItemsBumped(strOrdersItemsStatus, arChangedOrders);
+        this.getCurrentDB().queueSetOrderItemsBumped(arChangedOrders);//2.0.51
+        int nMissedOrdersStartIndex  = -1;
+        for (int i=0; i< arOrdersWillBumped.size(); i++)
+        {
+            String orderName = arOrdersWillBumped.get(i);
+            if (orderName.equals("+"))
+            {//some new orders in prep
+                nMissedOrdersStartIndex = i;
+                break;
+            }
+            else {
+                //do remove bumped orders
+                KDSStationExpeditor.exp_order_bumped_in_other_expo_station(this, this.getCurrentDB(), this.getUsers().getUserA().getOrders(), "", "", arOrdersWillBumped.get(i));
+            }
+
+        }
+
+        //do add new orders
+        ArrayList<String> arNewOrdersInPrep = arOrdersWillBumped;
+        if (nMissedOrdersStartIndex !=-1)
+        {
+            for (int i=0; i<= nMissedOrdersStartIndex; i++)
+            {
+                arNewOrdersInPrep.remove(0);
+            }
+        }
+        if (arNewOrdersInPrep.size() >0)
+        {
+            String s = "";
+            for (int i=0; i< arNewOrdersInPrep.size(); i++)
+            {
+                if (i>0)
+                    s += ",";
+                s += arNewOrdersInPrep.get(i);
+            }
+            String strXmlCommand = KDSXMLParserCommand.createQueueAskSyncNewOrders(getStationID(),getLocalIpAddress(), "", s);
+            writeDataThroughSocket(sock, stationID, ip, strXmlCommand);
+        }
+
+    }
+
+    private void writeDataThroughSocket(KDSSocketInterface sock, String stationID, String ip, String strData)
+    {
+        if (sock == null) {
+            writeStringToStation(stationID, ip, strData);
+        }
+        else
+        {
+            if (sock instanceof KDSSocketTCPSideBase)
+            {
+                KDSSocketTCPSideBase tcp = (KDSSocketTCPSideBase)sock;
+                tcp.writeXmlTextCommand(strData);
+            }
+        }
+    }
+
+    private void onQueueAskSyncNewOrdersFromPrep(KDSSocketInterface sock,  KDSXMLParserCommand command, String stationID, String ip)
+    {
+        String strOrders = command.getParam(KDSConst.KDS_Str_Param, "");
+        ArrayList<String> ar = KDSUtil.spliteString(strOrders, ",");
+        for (int i=0; i< ar.size(); i++)
+        {
+            String orderName = ar.get(i);
+            KDSDataOrder order = this.getUsers().getUserA().getOrders().getOrderByName(orderName);
+            if (order == null) continue;
+            String s = order.createXml();
+            s = KDSXMLParserCommand.createPrepAckQueueSyncNewOrders(getStationID(), getLocalIpAddress(), "", s);
+            writeDataThroughSocket(sock, stationID, ip, s);
+
+        }
+    }
 }

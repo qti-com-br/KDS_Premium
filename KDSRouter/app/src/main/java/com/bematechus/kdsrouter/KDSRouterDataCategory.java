@@ -131,6 +131,10 @@ public class KDSRouterDataCategory extends KDSData {
 
     static final String CSV_TAG = "Category:";
 
+    /**
+     *  Category: Description, ToStations, ToScreen,Delay,Printable,BG,FG
+     * @return
+     */
     public String toCSV()
     {
         String s = String.format("%s%s,%s,%s,%f,%s,%s,%s",

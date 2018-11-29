@@ -630,6 +630,9 @@ public class KDSDataItem extends KDSData {
         if (this.getItemType() == ITEM_TYPE.Exp)
             pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_ITEM_TYPE, "1");
 
+        //2.0.51, add remote bumped stations tag
+        pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_BUMPED_STATIONS, this.getBumpedStationsString());
+
         pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getItemName(), false);
         pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID, this.getGUID(), false);
         if (this.getLocalBumped())
@@ -1141,5 +1144,18 @@ public class KDSDataItem extends KDSData {
     public int getCategoryPriority()
     {
         return m_nCategoryPriority;
+    }
+
+    /**
+     * KPP1-7
+     * Queue display order stuck
+     * @return
+     */
+    public boolean isFinished()
+    {
+        if (getLocalBumped() ||
+                (!getBumpedStationsString().isEmpty()) )
+            return true;
+        return false;
     }
 }
