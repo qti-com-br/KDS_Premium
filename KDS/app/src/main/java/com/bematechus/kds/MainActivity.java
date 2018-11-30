@@ -1771,6 +1771,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *     Show warning when user try to bump. And add this explanation under the option
      *     “
      *     Expo cannot bump the order unless all its prep station bump the items ”
+     * rev.
+     *  fix kpp1-9 bug
      *rev.
      * default return false;
      * @param orderGuid
