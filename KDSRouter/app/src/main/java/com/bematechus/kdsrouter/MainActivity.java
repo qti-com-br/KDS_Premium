@@ -1022,6 +1022,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         checkActivationResult(stage, errType);
         updateTitle();
     }
+    public void onSMSSendSuccess(String orderGuid, int smsState)
+    {
+
+    }
+
     private void checkActivationResult(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType)
     {
         if (m_activation.isActivationFailedEnoughToLock() || errType == ActivationRequest.ErrorType.License_disabled)

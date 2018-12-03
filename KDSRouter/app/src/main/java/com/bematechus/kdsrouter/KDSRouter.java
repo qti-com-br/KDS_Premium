@@ -732,7 +732,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                     int ncommand_end = m_udpBuffer.command_end();
                     m_udpBuffer.remove(ncommand_end);
                     if (!isMyStoreIP(remoteStationIP)) return;
-                    String strRelations = getSettings().loadStationsRelationString(m_context);
+                    String strRelations = getSettings().loadStationsRelationString(m_context, true);
 
                     Object[] ar = new Object[]{strRelations};
 
@@ -1014,7 +1014,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 //        station.setPort(port);
 //        station.setMac(mac);
         station.setStoreGuid(storeGuid);
-        station.setStationContainItemsCount(itemsCount);
+        //station.setStationContainItemsCount(itemsCount);
         station.setUserMode(KDSUtil.convertStringToInt(userMode, 0));
 
         station.updatePulseTime();//record last received time
