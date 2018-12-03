@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
@@ -577,7 +578,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     {
         int port =  this.m_nRouterBackupPort; //this station opened this port for TCP/IP connection
         String strport = KDSUtil.convertIntToString(port);
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(m_strStationID,m_strLocalIP, strport, getLocalMacAddress());
+        //ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(), Activation.getStoreGuid());
+        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(),0, 0, Activation.getStoreGuid());
         m_udpStationAnnouncer.broadcastData(buf);
     }
 
@@ -613,7 +615,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         String strport = KDSUtil.convertIntToString(port);
         boolean bEnabled = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
         boolean bBackupMode = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Backup);
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildRouterStationAnnounceCommand(getStationID(), m_strLocalIP, strport, getLocalMacAddress(), bEnabled, bBackupMode);
+        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildRouterStationAnnounceCommand(getStationID(), m_strLocalIP, strport, getLocalMacAddress(), bEnabled, bBackupMode, Activation.getStoreGuid());
         return buf;
     }
 
@@ -635,6 +637,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     public void onUdpReceiveData(KDSSocketInterface sock,String remoteIP,  ByteBuffer buffer, int nLength) {
         //m_udpBuffer.appendData(buffer, nLength);
         m_udpBuffer.replaceBuffer(buffer, nLength);
+        String remoteStationIP = KDSUtil.parseRemoteUDPIP(remoteIP);
 
         while (true) {
             m_udpBuffer.skip_to_STX();
@@ -654,6 +657,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
                     //byte[] bytes = m_udpBuffer.station_info_command_data();
                     //m_udpBuffer.remove(ncommand_end);
+                    //it don't check if data is my store condition. It will been check in following function.
                     //String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
                     String utf8 = m_udpBuffer.station_info_string();
                     //m_udpBuffer.remove(ncommand_end);
@@ -680,6 +684,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 case KDSSocketTCPCommandBuffer.UDP_REQ_STATION: {
                     int ncommand_end = m_udpBuffer.command_end();
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     broadcastStationAnnounce();
 
                 }
@@ -688,6 +693,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 {
                     int ncommand_end = m_udpBuffer.command_end();
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     onShowStationID();
                 }
                 break;
@@ -699,6 +705,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
                     byte[] bytes = m_udpBuffer.xml_command_data();
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
                     doUdpXmlCommand(utf8);
                 }
@@ -707,6 +714,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 {
                     int ncommand_end = m_udpBuffer.command_end();
                     m_udpBuffer.remove(ncommand_end);
+                    if (!isMyStoreIP(remoteStationIP)) return;
                     String str = remoteIP;
                     String port = "";
                     String ip = "";
@@ -723,7 +731,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 {
                     int ncommand_end = m_udpBuffer.command_end();
                     m_udpBuffer.remove(ncommand_end);
-                    String strRelations = getSettings().loadStationsRelationString(m_context, true);
+                    if (!isMyStoreIP(remoteStationIP)) return;
+                    String strRelations = getSettings().loadStationsRelationString(m_context);
 
                     Object[] ar = new Object[]{strRelations};
 
@@ -739,14 +748,18 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
                 }
                 break;
+                    //don't check store guid here, it will been check in following function.
 
                 case KDSSocketTCPCommandBuffer.UDP_ASK_ROUTER:
                 {
                     int ncommand_end = m_udpBuffer.command_end();
                     if (ncommand_end == 0)
                         return; //need more data
-                    broadcastRouterAnnounceInThread();
                     m_udpBuffer.remove(ncommand_end);
+                   // if (!isMyStoreIP(remoteStationIP)) return;
+
+                    broadcastRouterAnnounceInThread();
+
                 }
                 break;
                 default: {
@@ -862,7 +875,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     }
 
     /**
-     * id,ip,port string
+     * Active stations just contain my store stations.
+     *
+     * stationID, ip,port,mac,ordersCount,usermode, storeguid
      * @param strInfo
      */
     private void onUdpReceiveStationAnnounce(String strInfo)
@@ -957,6 +972,15 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             return; //it is myself
 
         boolean bNewStation = false;
+        String userMode = "0";
+        if (ar.size() >5)
+            userMode = ar.get(5);
+        String storeGuid = "";
+        if (ar.size() >6)
+            storeGuid = ar.get(6);
+        if (!storeGuid.equals(Activation.getStoreGuid()))
+            return; //it is not my store station
+
         // *********************** IMPORTANT ************************
         //As router will check router and kds two app, we have to use port to find it.
         KDSStationActived station =m_stationsConnection.findActivedStationByMacAndPort(mac, port);//id); ///IMPORTANT
@@ -989,6 +1013,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 //        station.setIP(ip);
 //        station.setPort(port);
 //        station.setMac(mac);
+        station.setStoreGuid(storeGuid);
+        station.setStationContainItemsCount(itemsCount);
+        station.setUserMode(KDSUtil.convertStringToInt(userMode, 0));
 
         station.updatePulseTime();//record last received time
 
@@ -1063,7 +1090,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
      *
      * @param strInfo
      *  Format:
-     *      stationID, IP, Port,MAC,Enabled
+     *      station_id, ip, port, mac, enabled, backup_mode,store_guid
      */
     private void onUdpReceiveRouterAnnounce(String strInfo)
     {
@@ -1083,6 +1110,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         if (ip.equals(getLocalIpAddress()))
             return; //don't care myself
 
+        String storeGuid = "";
+        if (ar.size() > 6)
+            storeGuid = ar.get(6);
+        if (!storeGuid.equals(Activation.getStoreGuid()))
+            return; //it is not my store router.
         // *********************** IMPORTANT ************************
         //As router will check router and kds two app, we have to use port to find it.
         RouterStation router =m_stationsConnection.routerFind(id, ip);//id); ///IMPORTANT
@@ -3237,6 +3269,21 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
                 m_arKdsEventsReceiver.get(i).onShowMessage(strError);
         }
+
+    }
+
+
+    /**
+     * check if this ip station is included in my store.
+     * If we can find it in active station, it is my store station.
+     * Active stations just contain my store stations.
+     * @param ip
+     * @return
+     */
+    private boolean isMyStoreIP(String ip)
+    {
+        KDSStationActived station =m_stationsConnection.findActivedStationByIP(ip);//id);
+        return (station != null);
 
     }
 

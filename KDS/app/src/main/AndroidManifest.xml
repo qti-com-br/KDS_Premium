@@ -106,7 +106,7 @@
 
         <activity android:name=".KDSActivityUtility" />
         <activity
-            android:name=".ActivityLogin"
+            android:name="com.bematechus.kdslib.ActivityLogin"
             android:label="@string/title_activity_activity_login"></activity>
     </application>
 

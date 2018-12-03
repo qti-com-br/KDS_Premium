@@ -1,4 +1,4 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
 
 import com.bematechus.kdslib.KDSApplication;
@@ -62,17 +60,17 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 //    static final int HOUR_MS = 3600000;
 //    static int MAX_LOST_COUNT = 120;
 
-    static final int HOUR_MS = 3600000;
-    static int MAX_LOST_COUNT = 120;
+    public static final int HOUR_MS = 3600000;
+    public static int MAX_LOST_COUNT = 120;
 //
-    static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
+    public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
 
 
 
     public interface ActivationEvents
     {
         public void onActivationSuccess();
-        public void onActivationFail(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String failMessage);
+        public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage);
         public void onSMSSendSuccess(String orderGuid, int smsState);
     }
 
@@ -99,10 +97,20 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static private String m_storeKey = "";
 
 
+    public boolean isDoLicensing()
+    {
+        return m_bDoLicensing;
+    }
+    public void setDoLicensing(boolean bDoing)
+    {
+        m_bDoLicensing = bDoing;
+    }
     public Activation(Context context)
     {
         m_context = context;
         m_http.setReceiver(this);
+        loadStoreGuid();
+        loadStoreName();
     }
 
     public void setStationID(String stationID)
@@ -124,6 +132,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public Activation()
     {
         m_http.setReceiver(this);
+        loadStoreGuid();
+        loadStoreName();
     }
     public void onHttpResponse(ActivationHttp http, ActivationRequest request)
     {
@@ -358,6 +368,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     private StoreDevice parseJsonDevice(JSONObject json)
     {
 
+        if (isDeletedDevice(json))
+            return null;
         StoreDevice device = new StoreDevice();
         device.setEnabled(isLicenseEnabled(json));
         device.setGuid(getGuid(json));
@@ -418,6 +430,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             {
                 JSONObject json =(JSONObject) ar.get(i);
                 StoreDevice device =parseJsonDevice(json);
+                if (device == null) //KPP1-27
+                    continue;
                 m_devices.add(device);
             }
 
@@ -499,6 +513,20 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         try {
             int n = json.getInt("license");
+            return (n ==1);
+        }
+        catch ( Exception e)
+        {
+
+        }
+        return false;
+
+    }
+
+    private boolean isDeletedDevice(JSONObject json)
+    {
+        try {
+            int n = json.getInt("is_deleted");
             return (n ==1);
         }
         catch ( Exception e)
@@ -963,6 +991,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("activation_user_name", userName);
         editor.putString("activation_password", pwd);
+        editor.putString("store_guid", m_storeGuid);
+        editor.putString("store_name", m_storeName);
+
         editor.apply();
         editor.commit();
 
@@ -1263,6 +1294,31 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     }
 
 
+    static public String getStoreGuid()
+    {
+        return m_storeGuid;
+
+    }
+
+    static public String loadStoreGuid()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString("store_guid", "");
+        m_storeGuid = s;
+        return s;
+    }
+
+    static public String getStoreName()
+    {
+        return m_storeName;
+    }
+    static public String loadStoreName()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString("store_name", "");
+        m_storeName = s;
+        return s;
+    }
     class StoreDevice
     {
         String m_guid = "";

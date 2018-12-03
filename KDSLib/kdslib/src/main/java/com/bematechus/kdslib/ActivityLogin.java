@@ -1,37 +1,23 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.ActivationRequest;
 
 
 /**
@@ -51,6 +37,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
     private View mProgressView;
     private View mLoginFormView;
 
+    private TextView m_txtSerialID = null;
+
     Activation m_activation = new Activation(this);
 
 
@@ -63,8 +51,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         Intent intent = this.getIntent();
         String s =  intent.getStringExtra("id");
         m_activation.setStationID(s);
-        s = intent.getStringExtra("mac");
-        m_activation.setMacAddress(s);
+        String macAddress = intent.getStringExtra("mac");
+        m_activation.setMacAddress(macAddress);
 
         String errmsg = intent.getStringExtra("errmsg");
 
@@ -101,6 +89,14 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
         mUserNameView.setText(Activation.loadUserName());
         mPasswordView.setText(Activation.loadPassword());
+
+
+        m_txtSerialID = (TextView) findViewById(R.id.txtSerialNumber);
+
+        s = getString(R.string.my_serial_number);
+        s += macAddress;
+        m_txtSerialID.setText(s);
+
 
         showErrorMessage(errmsg);
 //        Button btnCancel = (Button) findViewById(R.id.btnCancel);
@@ -307,7 +303,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
         this.finish();
     }
-    public void onActivationFail(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String failMessage)
+    public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
         Toast.makeText(this, "Activation failed: " + failMessage, Toast.LENGTH_LONG).show();
         if (ActivationRequest.needResetUsernamePassword(errType))

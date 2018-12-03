@@ -2,6 +2,7 @@ package com.bematechus.kds;
 
 import android.os.AsyncTask;
 
+import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSSocketTCPCommandBuffer;
 import com.bematechus.kdslib.KDSSocketUDP;
@@ -39,7 +40,7 @@ public class Broadcaster {
     {
         int port =getKDS().getOpenedOrderSourceIpPort();
         String strport = KDSUtil.convertIntToString(port);
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(getKDS().getStationID(),getKDS().getLocalIpAddress(), strport,getKDS().getLocalMacAddress());
+        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getKDS().getStationID(),getKDS().getLocalIpAddress(), strport,getKDS().getLocalMacAddress(),0, 0, Activation.getStoreGuid());
         return buf;
     }
     /**
@@ -179,7 +180,7 @@ public class Broadcaster {
         String strport = KDSUtil.convertIntToString(port);
         int nItemsCount = getKDS().getAllItemsCount();
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getKDS().getStationID(),getKDS().getLocalIpAddress(), strport, getKDS().getLocalMacAddress(),
-                                                                                    nItemsCount, getKDS().getSettings().getInt(KDSSettings.ID.Users_Mode));
+                                                                                    nItemsCount, getKDS().getSettings().getInt(KDSSettings.ID.Users_Mode), Activation.getStoreGuid());
         return buf;
     }
 

@@ -15,6 +15,17 @@ public class KDSStationIP {
 
     int m_nScreen = 0;//for multiple users
 
+    String m_storeGuid = "";
+
+    public void setStoreGuid(String storeGuid)
+    {
+        m_storeGuid = storeGuid;
+    }
+    public String getStoreGuid()
+    {
+        return m_storeGuid;
+    }
+
     public void setScreen(int nScreen)
     {
         m_nScreen = nScreen;
@@ -87,40 +98,57 @@ public class KDSStationIP {
         this.setMac(station.getMac());
         this.setStationContainItemsCount(station.getStationContainItemsCount());
         this.setUserMode(station.getUserMode());
+        this.setStoreGuid(station.getStoreGuid()); //kpp1-21
 
     }
 
+    /**
+     * stationID, ip,port,mac,ordersCount,usermode, storeguid
+     * @return
+     */
     @Override
     public String toString()
     {
-        return m_strID + "," + m_strIP + ","+m_strPort + ","+m_strMac+","+KDSUtil.convertIntToString(m_nStationContainItemsCount);
+        return m_strID + "," + m_strIP + ","+m_strPort + ","+m_strMac+","+KDSUtil.convertIntToString(m_nStationContainItemsCount) +","+ KDSUtil.convertIntToString(m_nUserMode) +","+m_storeGuid;
     }
 
+    /**
+     * stationID, ip,port,mac,ordersCount,usermode, storeguid
+     * @param str
+     * @return
+     */
     static public  KDSStationIP parseString(String str)
     {
         KDSStationIP ff = new KDSStationIP();
         String s = new String(str);
+
+        //station ID
         int n = s.indexOf(",", 0);
         if (n <0) return ff;
         ff.m_strID = s.substring(0, n);
         s = s.substring(n + 1);
-
+        //ip
         n = s.indexOf(",", 0);
         if (n <0) return ff;
         ff.m_strIP =(s.substring(0, n ));
         s = s.substring(n + 1);
-
+        //port
         n = s.indexOf(",", 0);
         if (n <0) return ff;
         ff.m_strPort =(s.substring(0, n ));
         s = s.substring(n + 1);
-
+        //mac
+        n = s.indexOf(",", 0);
+        if (n <0) return ff;
+        ff.m_strMac =(s.substring(0, n ));
+        s = s.substring(n + 1);
+        //items count
         n = s.indexOf(",", 0);
         if (n <0) return ff;
         ff.setStationContainItemsCount(s.substring(0, n ));
         s = s.substring(n + 1);
-
-        ff.m_strMac = (s);
+        //store guid
+        ff.m_storeGuid = s;
 
         return ff;
     }

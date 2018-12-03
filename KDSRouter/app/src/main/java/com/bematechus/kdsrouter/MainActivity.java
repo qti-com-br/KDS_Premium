@@ -38,6 +38,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
@@ -67,7 +69,9 @@ import java.util.logging.LogRecord;
 public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener,
         KDSRouter.KDSRouterEvents,
         KDSTimer.KDSTimerInterface,
-        KDSUIDialogBase.KDSDialogBaseListener    {
+        KDSUIDialogBase.KDSDialogBaseListener,
+        Activation.ActivationEvents
+        {
 
     final static private String TAG = "MainActivity";
     final static int SHOW_SCHEDULE = 1456;
@@ -91,6 +95,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     TextView m_txtRouterID = null;
 
     KDSKbdRecorder m_kbdRecorder = new KDSKbdRecorder();
+
+    Activation m_activation = new Activation(this);
 
 
     public enum Confirm_Dialog {
@@ -129,6 +135,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         checkNetworkState();
         checkLogFilesDeleting();
+
+        checkAutoActivation();
 
     }
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -233,6 +241,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         super.onCreate(savedInstanceState);
 
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        m_activation.setEventsReceiver(this);
+
         if (!isMacMatch2()) {
             showErrorMac();
             return;
@@ -320,6 +331,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 title += " " + str;
             }
             title += " " + getVersionName();
+
+            if (KDSConst.ENABLE_FEATURE_ACTIVATION) { //2.0.48
+                if (!m_activation.isActivationPassed()) {
+                    title +=" " + getString(R.string.inactive);
+                }
+            }
+
             m_txtTitle.setText(title);
 
         }
@@ -612,6 +630,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
+        if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
+            boolean bSilent = Activation.hasDoRegister();//2.1.2
+            doActivation(bSilent, false, "");
+        }
     }
 
     private void bindKDSRouterService()
@@ -961,6 +983,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public boolean isKDSValid()
     {
+        if (m_service == null ) return false;
         return (getKDSRouter() != null);
     }
     private KDSRouterSettings getSettings() {
@@ -984,6 +1007,70 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
     }
+
+    public void onActivationSuccess()
+    {
+        //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
+        updateTitle();
+    }
+    public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
+    {
+        // Toast.makeText(this, "Activation failed: " +stage.toString()+" - " + failMessage, Toast.LENGTH_LONG).show();
+//        if (ActivationRequest.needResetUsernamePassword(errType))
+//            m_activation.resetUserNamePassword();
+
+        checkActivationResult(stage, errType);
+        updateTitle();
+    }
+    private void checkActivationResult(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType)
+    {
+        if (m_activation.isActivationFailedEnoughToLock() || errType == ActivationRequest.ErrorType.License_disabled)
+        {
+            //this.finish();
+            doActivation(false, true, this.getString(R.string.license_deactivated));
+            //m_activation.showLoginActivity(this);
+        }
+    }
+
+    TimeDog m_activationDog = new TimeDog();
+
+
+    private void checkAutoActivation()
+    {
+        if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
+            return;
+        if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+        //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+        {
+            doActivation(true, false, "");
+            m_activationDog.reset();
+        }
+    }
+
+    /**
+     *
+     * @param bSilent
+     * @param bForceShowNamePwdDlg
+     * @param showErrorMessage
+     *      If it is "", show nothing,
+     *      Otherwise, show this error message to login dialog.
+     */
+    public void doActivation(boolean bSilent,boolean bForceShowNamePwdDlg, String showErrorMessage)
+    {
+        if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
+            return;
+        if (m_activation.isDoLicensing()) return;
+        if (!isKDSValid()) return;
+        m_activation.setStationID(getKDSRouter().getStationID());
+        ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
+        if (ar.size()<=0) return;
+        m_activation.setMacAddress(ar.get(0));
+        //  m_activation.setMacAddress("BEMA0000011");//test
+        m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
+    }
+
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////
     public final class ViewHolder {
         public TextView m_txtInfo;
