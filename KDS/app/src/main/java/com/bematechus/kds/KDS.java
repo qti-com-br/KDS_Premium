@@ -4126,6 +4126,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 n = 0;
             nUserMode = n;
         }
+        String storeGuid = "";
+        if (ar.size() >6)
+            storeGuid = ar.get(6);
+        //check the store guid, different store can run in same ethernet.
+        if (!storeGuid.equals(Activation.getStoreGuid()))
+            return; //it is not my store station
 
         KDSStationActived station =m_stationsConnection.findActivedStationByMac(mac);//id);
         if (station == null) {
@@ -4140,6 +4146,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         station.setMac(mac);
         station.setStationContainItemsCount(itemsCount);
         station.setUserMode(nUserMode);
+        station.setStoreGuid(storeGuid);
+
         station.updatePulseTime();//record last received time
 
         //some connection don't have the station ID in it. use this function to update them.

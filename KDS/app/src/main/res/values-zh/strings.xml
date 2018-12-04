@@ -1098,7 +1098,7 @@
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
-    <string name="my_serial_number">My serial number:</string>
+    <!--<string name="my_serial_number">My serial number:</string>-->
     <string name="sms_feature_enabled">SMS feature enabled</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
 
