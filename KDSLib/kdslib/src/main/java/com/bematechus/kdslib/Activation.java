@@ -1187,8 +1187,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void showLoginActivity(Activity caller, String showErrorMessage)
     {
 
-//        if (KDSConst._DEBUG)
-//            return;
+        if (KDSConst._DEBUG) {
+            if (KDSConst._HIDE_LOGIN_DLG)
+                return;
+        }
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         m_bDoLicensing = true;
