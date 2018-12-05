@@ -4777,12 +4777,31 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         focusUser(user);
     }
 
+    //boolean m_bWatingRefreshViewAsDblClick = false;
+    TimeDog m_doubleClickIntervalTimeout = new TimeDog(); //prevent the double click too quick.
+    final int DOUBLE_CLICK_BUMP_TIMEOUT = 1000;
     public void onViewPanelDoubleClicked(KDSLayout layout) {
+        if (!m_doubleClickIntervalTimeout.is_timeout(DOUBLE_CLICK_BUMP_TIMEOUT))
+            return;
+        m_doubleClickIntervalTimeout.reset();
         if (!isKDSValid()) return ;
+        //if (m_bWatingRefreshViewAsDblClick ) return;
+
         KDSUser.USER user = getUserFromLayout(layout);// KDSUser.USER.USER_A;
         opBump(user);
+        if (layout.getView() != null)
+            layout.getView().setNeedDrawOnce();
+        //m_bWatingRefreshViewAsDblClick = true;
     }
 
+    /**
+     *
+     * @param layout
+     */
+    public void onViewDrawingFinished(KDSLayout layout)
+    {
+        //m_bWatingRefreshViewAsDblClick = false;
+    }
 
     PowerManager.WakeLock m_wakeLock = null;
 

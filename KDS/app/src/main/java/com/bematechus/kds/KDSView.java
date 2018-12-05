@@ -44,7 +44,7 @@ public class KDSView extends View {
         public  void onViewPanelClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public  void onViewPanelDoubleClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public void onSizeChanged();
-
+        public void onViewDrawFinished();
     }
 
     public enum OrdersViewMode
@@ -536,7 +536,7 @@ public class KDSView extends View {
 
 
         m_bDrawing = false;
-
+        //fireViewAfterDrawing();
 
 
     }
@@ -669,6 +669,23 @@ public class KDSView extends View {
     {
         if (this.getEventReceiver() != null)
             this.getEventReceiver().onViewPanelDoubleClicked(this, panel, block, cell);
+    }
+
+    private void fireViewAfterDrawing()
+    {
+        if (!m_bMustDrawOnce) return;
+
+        if (this.getEventReceiver() != null)
+            this.getEventReceiver().onViewDrawFinished();
+        m_bMustDrawOnce = false;
+    }
+
+    private boolean m_bMustDrawOnce = false;
+    public void setNeedDrawOnce()
+    {
+        m_bMustDrawOnce = true;
+        //this.invalidate();
+
     }
 
     public boolean onTouchDown(MotionEvent event)
