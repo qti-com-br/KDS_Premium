@@ -175,6 +175,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * @return
      */
     public boolean isMacMatch2() {
+        if (KDSConst.ENABLE_FEATURE_ACTIVATION)
+            return true;
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         String strMac = "";
 
