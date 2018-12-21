@@ -154,7 +154,7 @@ public class MainActivityFragment extends Fragment {
             addButton(KDSTouchPadButton.TouchPadID.Page, R.string.touchpad_page, R.drawable.page );
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_test))
-            addButton(KDSTouchPadButton.TouchPadID.Test, R.string.touchpad_test, R.drawable.lci );
+            addButton(KDSTouchPadButton.TouchPadID.Test, R.string.touchpad_test, R.drawable.testing );
         //((SimpleAdapter) listView.getAdapter()).notifyDataSetChanged();
 
 

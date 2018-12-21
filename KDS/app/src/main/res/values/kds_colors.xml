@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
         <!--  aarrggbb or rrggbb -->
-    <color name="view_bg">#ff0e0e0e</color>
+    <color name="view_bg">#f2f2f2</color>
     <color name="panel_bg">#ffffffff</color>
     <color name="panel_fg">#ff000000</color>
-    <color name="border_bg">#eeeeee</color>
-    <color name="panelnum_bg">#ff001fcc</color>
+    <color name="border_bg">#e6e6e6</color>
+    <color name="panelnum_bg">#414141</color>
     <color name="panelnum_fg">#fff1f1e8</color>
-    <color name="caption_bg">#a8a5a6</color>
+    <color name="caption_bg">#e6e6e6</color>
     <color name="caption_fg">#ff000000</color>
-    <color name="focus_bg">#ffe9e03c</color>
+    <color name="focus_bg">#414141</color>
     <color name="focus_fg">#ff000000</color>
-    <color name="stage0_bg">#ff9948cc</color>
-    <color name="stage1_bg">#ff0000ff</color>
-    <color name="stage2_bg">#ffff0000</color>
+    <color name="stage0_bg">#fed04e</color>
+    <color name="stage1_bg">#f0750f</color>
+    <color name="stage2_bg">#e62d05</color>
     <color name="item_bg">#ffffffff</color>
     <color name="item_fg">#ff000000</color>
     <color name="condiment_bg">#ffffffff</color>
@@ -23,10 +23,10 @@
     <color name="footer_bg">#ffffffff</color>
     <color name="footer_fg">#ff000000</color>
 
-    <color name="rush_bg">#ffff6600</color>
+    <color name="rush_bg">#c00000</color>
     <color name="rush_fg">#ff000000</color>
 
-    <color name="rush_bg1">#ff6600</color>
+    <color name="rush_bg1">#c00000</color>
     <color name="rush_fg1">#000000</color>
 
     <color name="fire_bg">#ffbb00aa</color>
@@ -38,7 +38,7 @@
     <color name="relations_headers_bg">#888f94</color>
     <color name="relations_headers_fg">#f8fafc</color>
 
-    <color name="kds_title_bg">#d0d833</color>
+    <color name="kds_title_bg">#21abae</color>
     <color name="kds_title_fg">#000000</color>
     <color name="listview_focus_bg">@android:color/holo_blue_light</color>
 
@@ -93,5 +93,7 @@
     <color name="lineitems_bg">#000000</color>
     <color name="lineitems_fg">#ffffff</color>
 
+    <color name="item_focused_bg">#bcf1f2</color>
+    <color name="item_focused_fg">#000000</color>
 
 </resources>

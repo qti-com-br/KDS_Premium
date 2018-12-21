@@ -1297,6 +1297,21 @@ public class KDSSettings extends SettingsBase {
     {
         return m_contextTmp.getResources().getString(nResID);
     }
+
+    String getResBGFG(int nBGID, int nFGID)
+    {
+      int bg = getResColor(nBGID);
+      int fg = getResColor(nFGID);
+      String s = String.format("%d,%d", bg, fg);
+      return s;
+    }
+    String buildBGFG(int nBGID, int fgColor)
+    {
+     int bg = getResColor(nBGID);
+     int fg = fgColor;
+     String s = String.format("%d,%d", bg, fg);
+     return s;
+    }
     /**
      *
      */
@@ -1321,7 +1336,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.Panels_Row_Height, 14);
 
         set(ID.Panels_Show_Number, true);
-        set(ID.Panels_Panel_Number_BGFG,"-16769076,-1");// getResColor(R.color.panelnum_bg));
+        set(ID.Panels_Panel_Number_BGFG, buildBGFG(R.color.panelnum_bg, -1));// "-16769076,-1");// getResColor(R.color.panelnum_bg));
         //set(ID.Panels_Panel_Number_FG, getResColor(R.color.panelnum_fg));
         set(ID.Panels_Panel_Number_Base, "0");
         set(ID.Panels_Blocks_Rows, 2);
@@ -1426,13 +1441,13 @@ public class KDSSettings extends SettingsBase {
 
         //highlight
         set(ID.Highlight_rush_enabled, false);
-        set(ID.Highlight_rush_bgfg, "-39424,0");// getResColor(R.color.rush_bg));
+        set(ID.Highlight_rush_bgfg,buildBGFG(R.color.rush_bg, 0));// "-39424,0");// getResColor(R.color.rush_bg));
         //set(ID.Highlight_rush_fg, getResColor(R.color.rush_fg));
         set(ID.Highlight_fire_enabled, false);
-        set(ID.Highlight_fire_bgfg, "-4521814,0");//getResColor(R.color.fire_bg));
+        set(ID.Highlight_fire_bgfg, buildBGFG(R.color.fire_bg, 0));// "-4521814,0");//getResColor(R.color.fire_bg));
         //set(ID.Highlight_fire_fg, getResColor(R.color.fire_fg));
         set(ID.Highlight_dest_enabled, false);
-        set(ID.Highlight_dest_bgfg, "-5636045,0");//getResColor(R.color.dest_bg));
+        set(ID.Highlight_dest_bgfg, buildBGFG(R.color.dest_bg, 0));// "-5636045,0");//getResColor(R.color.dest_bg));
         //set(ID.Highlight_dest_fg, getResColor(R.color.fire_fg));
 
         //set(ID.Bumping_Days, "3");
@@ -1658,7 +1673,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.AdvSum_always_visible,false);
         set(ID.AdvSum_items,"");
 
-        set(ID.Sum_bgfg,"-5724506,-16777216");
+        set(ID.Sum_bgfg,  "-5724506,-16777216");
         set(ID.AdvSum_rows,"4");
         set(ID.AdvSum_cols,"4");
 

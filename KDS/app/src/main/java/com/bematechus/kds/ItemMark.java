@@ -115,7 +115,7 @@ public class ItemMark {
                 return new KDSBGFG(0,0);
 
             case Focused:
-                return new KDSBGFG(KDSApplication.getContext().getResources().getColor(R.color.focus_bg),KDSApplication.getContext().getResources().getColor(R.color.focus_fg));
+                return new KDSBGFG(KDSApplication.getContext().getResources().getColor(R.color.item_focused_bg),KDSApplication.getContext().getResources().getColor(R.color.item_focused_fg));
 
             case Local_bumped:
                 return new KDSBGFG(Color.LTGRAY ,Color.GRAY);
