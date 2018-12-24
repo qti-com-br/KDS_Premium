@@ -39,6 +39,11 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private OnItemSelectedListener mOnItemSelected;
     private OnItemClickListener mOnItemClicked;
     private OnItemLongClickListener mOnItemLongClicked;
+    //
+    private OnItemClickListener mOnItemClickedDown;
+    private OnItemClickListener mOnItemClickedUp;
+
+
     private boolean mDataChanged = false;
 
     private boolean m_bDrawSplitLine = false;
@@ -96,6 +101,15 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener listener) {
         mOnItemLongClicked = listener;
     }
+
+    public void setOnItemClickDownListener(AdapterView.OnItemClickListener listener){
+        mOnItemClickedDown = listener;
+    }
+
+    public void setOnItemClickUpListener(AdapterView.OnItemClickListener listener){
+        mOnItemClickedUp = listener;
+    }
+
 
     private DataSetObserver mDataObserver = new DataSetObserver() {
 
@@ -308,12 +322,48 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
         @Override
         public boolean onDown(MotionEvent e) {
-            return HorizontalListView.this.onDown(e);
+            boolean b =  HorizontalListView.this.onDown(e);
+            for(int i=0;i<getChildCount();i++){
+                View child = getChildAt(i);
+                if (isEventWithinView(e, child)) {
+                    if(mOnItemClickedDown != null){
+                        mOnItemClickedDown.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId( mLeftViewIndex + 1 + i ));
+                    }
+                    break;
+                }
+            }
+
+            return b;
+
         }
+//        @Override
+//        public boolean onSingleTapUp(MotionEvent e) {
+//            for(int i=0;i<getChildCount();i++){
+//                View child = getChildAt(i);
+//                if (isEventWithinView(e, child)) {
+//                    if(mOnItemClickedUp != null){
+//                        mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId( mLeftViewIndex + 1 + i ));
+//                    }
+//                    break;
+//                }
+//            }
+//            return false;
+//        }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                                float velocityY) {
+            if (e1 != null) {
+                for (int i = 0; i < getChildCount(); i++) {
+                    View child = getChildAt(i);
+                    if (isEventWithinView(e1, child)) {
+                        if (mOnItemClickedUp != null) {
+                            mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
+                        }
+                        break;
+                    }
+                }
+            }
             return HorizontalListView.this.onFling(e1, e2, velocityX, velocityY);
         }
 
@@ -321,6 +371,18 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                                 float distanceX, float distanceY) {
 
+            if (e1 != null) {
+                for (int i = 0; i < getChildCount(); i++) {
+                    View child = getChildAt(i);
+
+                    if (isEventWithinView(e1, child)) {
+                        if (mOnItemClickedUp != null) {
+                            mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
+                        }
+                        break;
+                    }
+                }
+            }
             synchronized(HorizontalListView.this){
                 mNextX += (int)distanceX;
             }
@@ -334,6 +396,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             for(int i=0;i<getChildCount();i++){
                 View child = getChildAt(i);
                 if (isEventWithinView(e, child)) {
+                    if(mOnItemClickedUp != null){
+                        mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId( mLeftViewIndex + 1 + i ));
+                    }
                     if(mOnItemClicked != null){
                         mOnItemClicked.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId( mLeftViewIndex + 1 + i ));
                     }
@@ -353,6 +418,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             for (int i = 0; i < childCount; i++) {
                 View child = getChildAt(i);
                 if (isEventWithinView(e, child)) {
+                    if(mOnItemClickedUp != null){
+                        mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId( mLeftViewIndex + 1 + i ));
+                    }
                     if (mOnItemLongClicked != null) {
                         mOnItemLongClicked.onItemLongClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
                     }

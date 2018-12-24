@@ -3,8 +3,13 @@ package com.bematechus.kds;
 import android.content.Context;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -98,73 +103,74 @@ public class MainActivityFragment extends Fragment {
         KDS kds = KDSGlobalVariables.getKDS();
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_prev))
-            addButton(KDSTouchPadButton.TouchPadID.Prev, R.string.touchpad_prev,R.drawable.back_32px);
+            addButton(KDSTouchPadButton.TouchPadID.Prev, R.string.touchpad_prev,R.drawable.left_arrow,R.drawable.left_arrow_us);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_next))
-             addButton(KDSTouchPadButton.TouchPadID.Next, R.string.touchpad_next, R.drawable.next_32px);
+             addButton(KDSTouchPadButton.TouchPadID.Next, R.string.touchpad_next, R.drawable.right_arrow, R.drawable.right_arrow_us);
 
         //2.0.25
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_prev_page))
-            addButton(KDSTouchPadButton.TouchPadID.Prev_Page, R.string.touchpad_prev_page,R.drawable.rewind); //2.0.28
+            addButton(KDSTouchPadButton.TouchPadID.Prev_Page, R.string.touchpad_prev_page,R.drawable.previous_page,R.drawable.previous_page_us); //2.0.28
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_next_page))
-            addButton(KDSTouchPadButton.TouchPadID.Next_Page, R.string.touchpad_next_page, R.drawable.fastforward); //2.0.28
+            addButton(KDSTouchPadButton.TouchPadID.Next_Page, R.string.touchpad_next_page, R.drawable.next_page, R.drawable.next_page_us); //2.0.28
 
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_up))
-            addButton(KDSTouchPadButton.TouchPadID.Up, R.string.touchpad_up, R.drawable.up_32px);
+            addButton(KDSTouchPadButton.TouchPadID.Up, R.string.touchpad_up, R.drawable.up_arrow, R.drawable.up_arrow_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_down))
-            addButton(KDSTouchPadButton.TouchPadID.Down, R.string.touchpad_down,R.drawable.down_32px);
+            addButton(KDSTouchPadButton.TouchPadID.Down, R.string.touchpad_down,R.drawable.down_arrow,R.drawable.down_arrow_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_bump))
-            addButton(KDSTouchPadButton.TouchPadID.Bump, R.string.touchpad_bump,R.drawable.bump2_32px);
+            addButton(KDSTouchPadButton.TouchPadID.Bump, R.string.touchpad_bump,R.drawable.bump2_32px,R.drawable.bump2_32px);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_unbump_last))
-            addButton(KDSTouchPadButton.TouchPadID.UnbumpLast, R.string.touchpad_unbump_last, R.drawable.unbump_last );
+            addButton(KDSTouchPadButton.TouchPadID.UnbumpLast, R.string.touchpad_unbump_last, R.drawable.unbump_last, R.drawable.unbump_last_us );
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_unbump))
-            addButton(KDSTouchPadButton.TouchPadID.Unbump, R.string.touchpad_unbump, R.drawable.undo_32px );
+            addButton(KDSTouchPadButton.TouchPadID.Unbump, R.string.touchpad_unbump, R.drawable.unbump, R.drawable.unbump_us);
 
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_sum))
-            addButton(KDSTouchPadButton.TouchPadID.Sum, R.string.touchpad_sum, R.drawable.sum_32px );
+            addButton(KDSTouchPadButton.TouchPadID.Sum, R.string.touchpad_sum, R.drawable.summary, R.drawable.summary_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_transfer))
-            addButton(KDSTouchPadButton.TouchPadID.Transfer, R.string.touchpad_transfer,R.drawable.transfer_32px );
+            addButton(KDSTouchPadButton.TouchPadID.Transfer, R.string.touchpad_transfer,R.drawable.transfer,R.drawable.transfer_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_sort))
-            addButton(KDSTouchPadButton.TouchPadID.Sort, R.string.touchpad_sort, R.drawable.sort_32px );
+            addButton(KDSTouchPadButton.TouchPadID.Sort, R.string.touchpad_sort, R.drawable.sort, R.drawable.sort_us);
 
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_park))
-            addButton(KDSTouchPadButton.TouchPadID.Park, R.string.touchpad_park, R.drawable.park_32px );
+            addButton(KDSTouchPadButton.TouchPadID.Park, R.string.touchpad_park, R.drawable.park_32px, R.drawable.park_32px );
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_unpark))
-            addButton(KDSTouchPadButton.TouchPadID.Unpark, R.string.touchpad_unpark, R.drawable.unpark_32px);
+            addButton(KDSTouchPadButton.TouchPadID.Unpark, R.string.touchpad_unpark, R.drawable.unpark_32px, R.drawable.unpark_32px);
         //addButton(KDSTouchPadButton.TouchPadID.ActiveStations, R.string.touchpad_active, KDSSettings.ID.Bumpbar_More,kbdtype );
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_print))
-            addButton(KDSTouchPadButton.TouchPadID.Print, R.string.touchpad_print, R.drawable.print_32px );
+            addButton(KDSTouchPadButton.TouchPadID.Print, R.string.touchpad_print, R.drawable.ticket_print, R.drawable.ticket_print_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_more))
-            addButton(KDSTouchPadButton.TouchPadID.More, R.string.touchpad_more,R.drawable.more_32px);
+            addButton(KDSTouchPadButton.TouchPadID.More, R.string.touchpad_more,R.drawable.more_32px,R.drawable.more_32px);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_BuildCard))
-            addButton(KDSTouchPadButton.TouchPadID.BuildCard, R.string.touchpad_buildcard,R.drawable.buildcard);
+            addButton(KDSTouchPadButton.TouchPadID.BuildCard, R.string.touchpad_buildcard,R.drawable.buildcard,R.drawable.buildcard_us);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_Training))
-            addButton(KDSTouchPadButton.TouchPadID.Training, R.string.touchpad_training,R.drawable.training);
+            addButton(KDSTouchPadButton.TouchPadID.Training, R.string.touchpad_training,R.drawable.training_video,R.drawable.training_video_us);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_page))
-            addButton(KDSTouchPadButton.TouchPadID.Page, R.string.touchpad_page, R.drawable.page );
+            addButton(KDSTouchPadButton.TouchPadID.Page, R.string.touchpad_page, R.drawable.guest_paging, R.drawable.guest_paging_us);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_test))
-            addButton(KDSTouchPadButton.TouchPadID.Test, R.string.touchpad_test, R.drawable.testing );
+            addButton(KDSTouchPadButton.TouchPadID.Test, R.string.touchpad_test, R.drawable.testing, R.drawable.testing_us );
         //((SimpleAdapter) listView.getAdapter()).notifyDataSetChanged();
 
 
     }
 
 
-    public void addButton(KDSTouchPadButton.TouchPadID id, int nStringID, int imgID )
+    public void addButton(KDSTouchPadButton.TouchPadID id, int nStringID, int imgUp, int imgDown )
     {
         Map<String,Object> item = new HashMap<>();
-        item.put("icon", imgID);//.getDrawable(id);   this.getActivity().getDrawable(imgID));
+        item.put("icon", imgUp);//.getDrawable(id);   this.getActivity().getDrawable(imgID));
+        item.put("icondown", imgDown);
         item.put("btn", new KDSTouchPadButton(id, this.getString(nStringID)) );
 
         m_arData.add(item);
@@ -299,6 +305,105 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        //for touch down/up events
+        init_vertical_touch_button_down_up(m_touchPadVerticalA);
+
+        init_horizontal_touch_button_down_up(m_touchPadA);
+        init_horizontal_touch_button_down_up(m_touchPadB);
+
+
+    }
+
+    private void init_vertical_touch_button_down_up(ListView lst)
+    {
+        lst.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_DOWN: // 单击
+                        int childCount = ((ListView)v).getChildCount();
+                        for (int i = 0; i < childCount; i++) {
+                            View child = ((ListView)v).getChildAt(i);
+                            if (isEventWithinView(event, child)) {
+                                HashMap<String, Object> map = (HashMap<String, Object>) ((ListView)v).getAdapter().getItem(i);
+                                KDSTouchPadButton btn = (KDSTouchPadButton) map.get("btn");
+                                btn.setPressDown( (event.getAction()==MotionEvent.ACTION_DOWN));
+                                updateTouchButtonImage((ListView)v, i, map, btn);
+
+                                break;
+                            }
+
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+
+                        break;
+                }
+
+
+                return false;
+            }
+        });
+    }
+
+
+    private boolean isEventWithinView(MotionEvent e, View child) {
+        Rect viewRect = new Rect();
+        int[] childPosition = new int[2];
+        child.getLocationOnScreen(childPosition);
+        int left = childPosition[0];
+        int right = left + child.getWidth();
+        int top = childPosition[1];
+        int bottom = top + child.getHeight();
+        viewRect.set(left, top, right, bottom);
+        return viewRect.contains((int) e.getRawX(), (int) e.getRawY());
+    }
+
+    private void init_horizontal_touch_button_down_up(HorizontalListView v)
+    {
+        v.setOnItemClickDownListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                    HashMap<String, Object> map = (HashMap<String, Object>) parent.getAdapter().getItem(position);
+                    KDSTouchPadButton btn = (KDSTouchPadButton) map.get("btn");
+                    btn.setPressDown(true);
+                updateTouchButtonImage(parent, position, map, btn);
+            }
+        });
+
+        v.setOnItemClickUpListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                    HashMap<String, Object> map = (HashMap<String, Object>) parent.getAdapter().getItem(position);
+                    KDSTouchPadButton btn = (KDSTouchPadButton) map.get("btn");
+                    btn.setPressDown(false);
+                updateTouchButtonImage(parent, position, map, btn);
+            }
+        });
+    }
+
+    private void updateTouchButtonImage(AdapterView<?> parent, int position,HashMap<String, Object> map, KDSTouchPadButton btn )
+    {
+        View v = parent.getChildAt(position);
+        if (v == null) return;
+        ImageView img = (ImageView) v.findViewById(R.id.imgTouch);
+        if (img == null) return;
+        TextView t = (TextView) v.findViewById(R.id.txtText);
+        if (t == null) return;
+
+        if (btn.m_bIsDown) {
+            img.setImageResource((int) map.get("icondown"));
+            t.setTextColor( getResources().getColor( R.color.touch_button_down_color));
+        }
+        else {
+            img.setImageResource((int) map.get("icon"));
+            t.setTextColor( getResources().getColor( R.color.touch_button_up_color));
+        }
     }
 
     public void enableUserB(boolean bEnable)
@@ -603,9 +708,13 @@ public class MainActivityFragment extends Fragment {
             } else {
 
             }
+            KDS kds = KDSGlobalVariables.getKDS();
 
             TextView t = (TextView) convertView.findViewById(R.id.txtText);
-            KDS kds = KDSGlobalVariables.getKDS();
+
+            GradientDrawable drawable = (GradientDrawable)convertView.getBackground();
+            drawable.setStroke(1,kds.getSettings().getInt(KDSSettings.ID.Panels_BG)) ;
+
             KDSViewFontFace ff = kds.getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface);
 
            // convertView.setBackgroundColor(ff.getBG());
@@ -614,10 +723,17 @@ public class MainActivityFragment extends Fragment {
             t.setTypeface(ff.getTypeFace());
             t.setTextSize(ff.getFontSize());
             Map<String, Object> map =( Map<String, Object>) this.getItem(position);
-
-            t.setText( ((KDSTouchPadButton) map.get("btn")).getText());
+            KDSTouchPadButton btn = (KDSTouchPadButton) map.get("btn");
+            t.setText( btn.getText());
             ImageView img = (ImageView) convertView.findViewById(R.id.imgTouch);
-            img.setImageResource((int)map.get("icon"));
+            if (btn.m_bIsDown) {
+                img.setImageResource((int) map.get("icondown"));
+                t.setTextColor( getResources().getColor( R.color.touch_button_down_color));
+            }
+            else {
+                img.setImageResource((int) map.get("icon"));
+                t.setTextColor( getResources().getColor( R.color.touch_button_up_color));
+            }
 
             return convertView;
         }

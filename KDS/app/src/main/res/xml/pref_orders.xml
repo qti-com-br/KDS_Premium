@@ -27,7 +27,7 @@
 
     <com.bematechus.kds.KDSPreferenceColorPicker
         android:key="viewer_bg"
-        android:defaultValue="0xff0e0e0e"
+        android:defaultValue="@color/view_bg"
         android:title="@string/pref_kds_panels_viewer_bg" />
     <!--<CheckBoxPreference-->
         <!--android:key="hide_navigation_bar"-->

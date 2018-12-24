@@ -68,14 +68,14 @@
             <!--android:layout_width="100dp"-->
             <!--android:layout_height="match_parent"-->
             <!--android:id="@+id/btnBackward"-->
-            <!--android:src="@drawable/rewind"-->
+            <!--android:src="@drawable/previous_page"-->
             <!--android:onClick="onBtnBackwardClicked" />-->
 
         <!--<ImageButton-->
             <!--android:layout_width="100dp"-->
             <!--android:layout_height="match_parent"-->
             <!--android:id="@+id/btnForward"-->
-            <!--android:src="@drawable/fastforward"-->
+            <!--android:src="@drawable/next_page"-->
             <!--android:onClick="onBtnForwardClicked" />-->
 
         <!--<ImageButton-->
@@ -201,7 +201,7 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:id="@+id/btnBackward"
-            android:drawableTop="@drawable/rewind"
+            android:drawableTop="@drawable/previous_page"
             android:onClick="onBtnBackwardClicked"
             android:text="[4]" />
 
@@ -209,7 +209,7 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:id="@+id/btnForward"
-            android:drawableTop="@drawable/fastforward"
+            android:drawableTop="@drawable/next_page"
             android:onClick="onBtnForwardClicked"
             android:text="[5]" />
 

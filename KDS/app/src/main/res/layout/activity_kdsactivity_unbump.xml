@@ -37,7 +37,7 @@
         android:layout_toLeftOf="@+id/btnBack"
         android:layout_toStartOf="@+id/btnBack"
         android:onClick="onBtnRestoreClicked"
-        android:drawableLeft="@drawable/undo_32px" />
+        android:drawableLeft="@drawable/unbump" />
 
     <Button
         android:layout_width="wrap_content"

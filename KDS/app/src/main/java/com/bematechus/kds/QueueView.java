@@ -1597,7 +1597,7 @@ public class QueueView  extends View {
     {
         synchronized (m_locker) {
             m_queueOrders.setFocusedOrderGuid(orderGuid);
-            if (isQueueExpo()) {//if multiple pages, move to focused order page.
+            if (isQueueExpo()) {//if multiple pages, move to focused order guest_paging.
                 if (!orderGuid.isEmpty()) {
                     int nPage = checkFocusedOrderInWhichPage();
                     if (nPage >= 0)
@@ -1757,7 +1757,7 @@ public class QueueView  extends View {
             int ncount = m_queueOrders.getOrders().getCount();
             int nPanelIndex = 0;
             int nTotalPanels = nRows * getCols();
-            //for page
+            //for guest_paging
             int nPagesCount = getPageCount(status, nRows, getCols());
             int nPageIndex = 0;//getCurrentPageIndex(nPagesCount);
 
@@ -1968,7 +1968,7 @@ public class QueueView  extends View {
         int ncount = m_queueOrders.getOrders().getCount();
         int nPanelIndex = 0;
         int nTotalPanels = nRows * getCols();
-        //for page
+        //for guest_paging
         int nPagesCount = getPageCount(status, nRows, getCols());
         int nPageIndex = getCurrentPageIndex(nPagesCount);
         int nItemsStartIndex = nPageIndex * nTotalPanels;

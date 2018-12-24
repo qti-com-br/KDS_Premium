@@ -44,14 +44,14 @@ public class KDSTouchPadButton {
         Training,
         UnbumpLast,
         Page,
-        //2.0.25 Add two more button to touch button, Next page/ Prev page which go to next page directory; also apply this to Bumpbar key assignment.
+        //2.0.25 Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
         Next_Page,
         Prev_Page,
     }
 
     String m_strText = "";
     TouchPadID m_id = TouchPadID.NULL;
-
+    boolean m_bIsDown = false;
 
     public KDSTouchPadButton(TouchPadID id, String strText)
     {
@@ -80,5 +80,8 @@ public class KDSTouchPadButton {
         return m_strText;
     }
 
-
+    public void setPressDown(boolean bDown)
+    {
+        m_bIsDown = bDown;
     }
+}

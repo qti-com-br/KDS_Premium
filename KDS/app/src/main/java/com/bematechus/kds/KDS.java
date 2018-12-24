@@ -4127,8 +4127,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             nUserMode = n;
         }
         String storeGuid = "";
-        if (ar.size() >6)
+        if (ar.size() >6) {
             storeGuid = ar.get(6);
+            if (storeGuid.isEmpty()) //don't need empty store.
+                return;
+        }
+
         //check the store guid, different store can run in same ethernet.
         if (!storeGuid.equals(Activation.getStoreGuid()))
             return; //it is not my store station

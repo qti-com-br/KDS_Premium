@@ -131,8 +131,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
+                // TODO: If you have web guest_paging content that matches this app activity's content,
+                // make sure this auto-generated web guest_paging URL is correct.
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app deep link URI is correct.
@@ -153,8 +153,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
+                // TODO: If you have web guest_paging content that matches this app activity's content,
+                // make sure this auto-generated web guest_paging URL is correct.
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app deep link URI is correct.
@@ -1905,12 +1905,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 order.setQueueReady(true);
                 getKDS().getCurrentDB().orderSetQueueReady(order.getGUID(), true);
                 KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Ready, order, null );
-                //page it, add it at 20130313
+                //guest_paging it, add it at 20130313
                 /**
                  * One “bug” to fix: The queue display mode has option to enable double bump from expo which works well.
                  * Its first bump turns the order to grey(as regular food ready for bump), and 2nd bump to remove order.
-                 * However there is a “bug” when queue display work with pager, the expo only page the pager after 2nd bump.
-                 * Please change it to expo page the pager at its first bump as the food is already ready.
+                 * However there is a “bug” when queue display work with pager, the expo only guest_paging the pager after 2nd bump.
+                 * Please change it to expo guest_paging the pager at its first bump as the food is already ready.
                  */
             //2.0.11, enable prep queue
                 if (getKDS().isExpeditorStation() || getKDS().isPrepStation())
@@ -4720,7 +4720,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             break;
             case Training:
             {
-                KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Touch-->training");
+                KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Touch-->training_video");
                 doMoreFunc_Training_Video(userID);
             }
             break;
@@ -4732,7 +4732,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             break;
             case Page:
             {
-                KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Touch-->page");
+                KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Touch-->guest_paging");
                 opPageOrder(userID);
             }
             break;
@@ -4891,7 +4891,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         CSVStrings files = item.getTrainingVideo();
         //files.add("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"); //test video
         if (files.getCount() <=0) {
-            showToastMessage(this.getString(R.string.no_training_video));//"No training video files for selected item");
+            showToastMessage(this.getString(R.string.no_training_video));//"No training_video video files for selected item");
             return;
         }
 
@@ -5834,7 +5834,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     /**
      * 2.0.25
-     * Add two more button to touch button, Next page/ Prev page which go to next page directory; also apply this to Bumpbar key assignment.
+     * Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
      * @param userID
      */
     private void opNextPage(KDSUser.USER userID)
@@ -5848,7 +5848,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     /**
      * 2.0.25
-     * Add two more button to touch button, Next page/ Prev page which go to next page directory; also apply this to Bumpbar key assignment.
+     * Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
      * @param userID
      */
     private void opPrevPage(KDSUser.USER userID)

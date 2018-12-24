@@ -248,14 +248,14 @@ public class TableTracker extends Handler implements KDSHttp.KDSHttpEvent {
 
     public void pageOrder(String trackerID)
     {
-        log2File(TAG +KDSLog._FUNCLINE_()+ "---------page Order Enter----");
+        log2File(TAG +KDSLog._FUNCLINE_()+ "---------guest_paging Order Enter----");
         if (!isValidAuthentication()) {
             log2File(TAG +KDSLog._FUNCLINE_()+ "Authen is empty");
 
             return;
         }
         if (m_ipAddress.isEmpty()) return;
-        String strUrl = String.format("http://%s:%d%s", m_ipAddress,m_nPort,TT_Page_Order + trackerID + "/page" );
+        String strUrl = String.format("http://%s:%d%s", m_ipAddress,m_nPort,TT_Page_Order + trackerID + "/guest_paging" );
         HttpRequest r = new HttpRequest();
         r.methodPOST();
         r.m_authen = m_strAuthentication;
