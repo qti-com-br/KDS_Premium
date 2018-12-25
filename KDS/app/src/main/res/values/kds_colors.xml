@@ -96,7 +96,10 @@
     <color name="item_focused_bg">#bcf1f2</color>
     <color name="item_focused_fg">#000000</color>
 
-    <color name="touch_button_down_color">#666666</color>
-    <color name="touch_button_up_color">#21abae</color>
+    <color name="touch_button_down_text_color">#666666</color>
+    <!--<color name="touch_button_up_color">#21abae</color>-->
+
+    <color name="touch_button_bg">#ffffff</color>
+    <color name="touch_button_fg">#21abae</color>
 
 </resources>

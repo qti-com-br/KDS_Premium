@@ -398,11 +398,11 @@ public class MainActivityFragment extends Fragment {
 
         if (btn.m_bIsDown) {
             img.setImageResource((int) map.get("icondown"));
-            t.setTextColor( getResources().getColor( R.color.touch_button_down_color));
+            t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
         }
         else {
             img.setImageResource((int) map.get("icon"));
-            t.setTextColor( getResources().getColor( R.color.touch_button_up_color));
+            t.setTextColor( getResources().getColor( R.color.touch_button_fg));
         }
     }
 
@@ -728,11 +728,11 @@ public class MainActivityFragment extends Fragment {
             ImageView img = (ImageView) convertView.findViewById(R.id.imgTouch);
             if (btn.m_bIsDown) {
                 img.setImageResource((int) map.get("icondown"));
-                t.setTextColor( getResources().getColor( R.color.touch_button_down_color));
+                t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
             }
             else {
                 img.setImageResource((int) map.get("icon"));
-                t.setTextColor( getResources().getColor( R.color.touch_button_up_color));
+                t.setTextColor( getResources().getColor( R.color.touch_button_fg));
             }
 
             return convertView;

@@ -1188,7 +1188,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
 
         if (KDSConst._DEBUG) {
-            if (KDSConst._HIDE_LOGIN_DLG)
+            if (KDSConst._DEBUG_HIDE_LOGIN_DLG)
                 return;
         }
 

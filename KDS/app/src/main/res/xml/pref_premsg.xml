@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="message_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,12"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/premsg_bg,@color/premsg_fg,12"
         android:title="@string/pref_premsg_font"
         app:supportsColor="true"/>
     <CheckBoxPreference

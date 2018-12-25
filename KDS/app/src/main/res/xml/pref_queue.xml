@@ -104,7 +104,7 @@
 
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_order_id_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,20"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_order_id_bg,@color/queue_order_id_fg,20"
         android:title="@string/queue_order_id_font"
         android:dependency="queue_show_order_id"
         app:supportsColor="true"/>
@@ -115,7 +115,7 @@
         android:defaultValue="false" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_customer_name_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,14"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_cusomer_name_bg,@color/queue_cusomer_name_fg,14"
         android:title="@string/queue_customer_name_font"
         android:dependency="queue_show_customer_name"
         app:supportsColor="true"/>
@@ -126,7 +126,7 @@
         android:defaultValue="false" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_order_timer_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,14"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_order_timer_bg,@color/queue_order_timer_fg,14"
         android:title="@string/queue_order_timer_font"
         android:dependency="queue_show_order_timer"
         app:supportsColor="true"/>
@@ -137,7 +137,7 @@
         android:defaultValue="false" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_custome_message_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-16777216,-21760,14"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_cusom_message_bg,@color/queue_cusom_message_fg,14"
         android:title="@string/queue_custom_message_font"
         android:dependency="queue_show_custom_message"
         app:supportsColor="true"/>
@@ -157,7 +157,7 @@
 
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_order_received_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,20"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_order_status_received_bg,@color/queue_order_status_received_fg,20"
         android:title="@string/queue_order_received_font"
         app:supportsColor="true"/>
 
@@ -174,7 +174,7 @@
         />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_order_preparation_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-13611010,-1,20"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_order_status_preparation_bg,@color/queue_order_status_preparation_fg,20"
         android:title="@string/queue_order_preparation_font"
         app:supportsColor="true"/>
 
@@ -191,7 +191,7 @@
         />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_order_ready_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-3285959,-16777216,20"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_order_status_ready_bg,@color/queue_order_status_ready_fg,20"
         android:title="@string/queue_order_ready_font"
         app:supportsColor="true"/>
 
@@ -208,7 +208,7 @@
         />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="queue_order_pickup_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,20"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/queue_order_status_pickup_bg,@color/queue_order_status_pickup_fg,20"
         android:title="@string/queue_order_pickup_font"
         app:supportsColor="true"/>
 

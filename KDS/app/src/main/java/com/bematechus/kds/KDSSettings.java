@@ -1461,7 +1461,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.Order_Sort, "0");
 
         //KDSViewFontFace ff = new KDSViewFontFace(Color.WHITE.TRANSPARENT, Color.DKGRAY, KDSViewFontFace.DEFULT_FONT_FILE, 12);
-        set(ID.Touch_fontface,new KDSViewFontFace(Color.WHITE, Color.DKGRAY, KDSViewFontFace.DEFULT_FONT_FILE, 12));
+        set(ID.Touch_fontface,new KDSViewFontFace(getResColor(R.color.touch_button_bg),getResColor(R.color.touch_button_fg), KDSViewFontFace.DEFULT_FONT_FILE, 12));
         set(ID.Touch_next,true);
         set(ID.Touch_prev,true);
         set(ID.Touch_up,true);

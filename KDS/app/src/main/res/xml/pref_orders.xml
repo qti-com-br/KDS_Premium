@@ -386,7 +386,7 @@
             />
         <com.bematechus.kds.KDSPreferenceFontPicker
             android:key="from_primary_font"
-            android:defaultValue="/system/fonts/DroidSans.ttf,-1,-16777216,12"
+            android:defaultValue="/system/fonts/DroidSans.ttf,@color/item_bg,@color/item_fg,12"
             android:title="@string/pref_from_primary_font"
             app:supportsColor="true"/>
     </PreferenceCategory>

@@ -336,33 +336,49 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             return b;
 
         }
-//        @Override
-//        public boolean onSingleTapUp(MotionEvent e) {
-//            for(int i=0;i<getChildCount();i++){
-//                View child = getChildAt(i);
-//                if (isEventWithinView(e, child)) {
-//                    if(mOnItemClickedUp != null){
-//                        mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId( mLeftViewIndex + 1 + i ));
-//                    }
-//                    break;
-//                }
-//            }
-//            return false;
-//        }
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            for(int i=0;i<getChildCount();i++){
+                View child = getChildAt(i);
+                if (isEventWithinView(e, child)) {
+                    if(mOnItemClickedUp != null){
+                        mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId( mLeftViewIndex + 1 + i ));
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+
+
+        public boolean onDoubleTap(MotionEvent e) {
+            return onSingleTapUp(e);
+        }
+
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return onSingleTapUp(e);
+        }
+
+        public boolean onContextClick(MotionEvent e) {
+            return onSingleTapUp(e);
+        }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                                float velocityY) {
             if (e1 != null) {
-                for (int i = 0; i < getChildCount(); i++) {
-                    View child = getChildAt(i);
-                    if (isEventWithinView(e1, child)) {
-                        if (mOnItemClickedUp != null) {
-                            mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
-                        }
-                        break;
-                    }
-                }
+                onSingleTapUp(e1);
+//
+//                for (int i = 0; i < getChildCount(); i++) {
+//                    View child = getChildAt(i);
+//                    if (isEventWithinView(e1, child)) {
+//                        if (mOnItemClickedUp != null) {
+//                            mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
+//                        }
+//                        break;
+//                    }
+//                }
             }
             return HorizontalListView.this.onFling(e1, e2, velocityX, velocityY);
         }
@@ -372,16 +388,17 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
                                 float distanceX, float distanceY) {
 
             if (e1 != null) {
-                for (int i = 0; i < getChildCount(); i++) {
-                    View child = getChildAt(i);
-
-                    if (isEventWithinView(e1, child)) {
-                        if (mOnItemClickedUp != null) {
-                            mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
-                        }
-                        break;
-                    }
-                }
+                onSingleTapUp(e1);
+//                for (int i = 0; i < getChildCount(); i++) {
+//                    View child = getChildAt(i);
+//
+//                    if (isEventWithinView(e1, child)) {
+//                        if (mOnItemClickedUp != null) {
+//                            mOnItemClickedUp.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i, mAdapter.getItemId(mLeftViewIndex + 1 + i));
+//                        }
+//                        break;
+//                    }
+//                }
             }
             synchronized(HorizontalListView.this){
                 mNextX += (int)distanceX;

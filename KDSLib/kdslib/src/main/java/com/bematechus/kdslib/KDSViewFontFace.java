@@ -61,12 +61,14 @@ public class KDSViewFontFace {
 
         n = s.indexOf(",", 0);
         if (n <0) return ff;
-        ff.m_colorBG = Integer.parseInt(s.substring(0, n ));
+        String bg = s.substring(0, n );
+        ff.m_colorBG = convertColor(bg);// Integer.parseInt(s.substring(0, n ));
         s = s.substring(n + 1);
 
         n = s.indexOf(",", 0);
         if (n <0) return ff;
-        ff.m_colorFG = Integer.parseInt(s.substring(0, n ));
+        String fg = s.substring(0, n );
+        ff.m_colorFG = convertColor(fg);//  Integer.parseInt(s.substring(0, n ));
         s = s.substring(n + 1);
 
 //        n = s.indexOf(",", 0);
@@ -75,6 +77,22 @@ public class KDSViewFontFace {
 
         return ff;
     }
+
+    static private int convertColor(String strColor)
+    {
+        int ncolor = 0;
+        if (strColor.indexOf("@color/")>=0)
+        {
+            int nBgID = KDSApplication.getContext().getResources().getIdentifier(strColor, "color", KDSApplication.getContext().getPackageName());
+            ncolor = KDSApplication.getContext().getResources().getColor(nBgID);
+        }
+        else
+        {
+            ncolor = Integer.parseInt(strColor);
+        }
+        return ncolor;
+    }
+
     public void setBG(int nBG)
     {
         m_colorBG = nBG;

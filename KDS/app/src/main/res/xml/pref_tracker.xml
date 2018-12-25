@@ -50,12 +50,12 @@
         android:maxLines="1" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_order_name_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,20"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_order_name_bg,@color/tracker_order_name_fg,20"
         android:title="@string/tracker_order_name_font"
         app:supportsColor="true"/>
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_table_name_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-3285959,-16777216,20"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_table_name_bg,@color/tracker_table_name_fg,20"
         android:title="@string/tracker_table_name_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSEditTextPreference
@@ -92,7 +92,7 @@
         android:defaultValue="true" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_order_timer_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,14"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_order_name_bg,@color/tracker_order_name_fg,14"
         android:title="@string/queue_order_timer_font"
         android:dependency="tracker_show_order_timer"
         app:supportsColor="true"/>
@@ -103,7 +103,7 @@
         android:defaultValue="true" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_tracker_id_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-10167017,-1,14"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_order_name_bg,@color/tracker_order_name_fg,14"
         android:title="@string/pref_tracker_id_font"
         android:dependency="tracker_show_assigned_tracker_id"
         app:supportsColor="true"/>
@@ -161,7 +161,7 @@
         android:maxLines="1" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_alert_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,-458735,-16777216,14"
+        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_alert_bg,@color/tracker_alert_fg,14"
         android:title="@string/pref_tracker_alert_font"
         app:supportsColor="true"/>
     <com.bematechus.kds.KDSPreferenceTTMap
