@@ -89,15 +89,17 @@ public class CanvasDC {
         return getTextPixelsWidth(paint, text);
     }
 
-    static public  int drawText_without_clear_bg(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align)
+    static public  int drawText_without_clear_bg(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
     {
 
-        Paint paint = new Paint();
+        TextPaint paint = new TextPaint();
+
         paint.setColor(ff.getFG());
         paint.setTypeface(ff.getTypeFace());
         paint.setTextSize(ff.getFontSize());
         paint.setAntiAlias(true);
-
+        if (bBold)
+            paint.setFakeBoldText(bBold);
         Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
 
         int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
@@ -107,6 +109,7 @@ public class CanvasDC {
         //fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
         //
         paint.setColor(ff.getFG());
+
         //
         if (align == Paint.Align.CENTER)
         { //horizontal center

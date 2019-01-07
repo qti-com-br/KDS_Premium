@@ -21,8 +21,11 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.KDSViewFontFace;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -51,6 +54,7 @@ public class KDSView extends View {
     {
         Normal,
         LineItems,
+
     }
 
 
@@ -98,7 +102,7 @@ public class KDSView extends View {
         getSettings().set(KDSSettings.ID.Panels_Layout_Format, format);
     }
 
-    private KDSSettings getSettings()
+    protected KDSSettings getSettings()
     {
         return getEnv().getSettings();
     }
@@ -482,7 +486,7 @@ public class KDSView extends View {
 
     }
 
-    private  boolean m_bForceFullDrawing = false;
+    protected   boolean m_bForceFullDrawing = false;
     public void refresh()
     {
         m_bForceFullDrawing = true;
@@ -490,7 +494,7 @@ public class KDSView extends View {
         this.invalidate();
     }
 
-    private boolean m_bDrawing = false;
+    protected boolean m_bDrawing = false;
 
 
     @Override
@@ -544,7 +548,7 @@ public class KDSView extends View {
 
     Bitmap m_bitmapBuffer = null;
     Canvas m_bufferCanvas = null;
-    private Canvas get_double_buffer()
+    protected Canvas get_double_buffer()
     {
         if (m_bufferCanvas == null)
             m_bufferCanvas = new Canvas();
@@ -566,11 +570,11 @@ public class KDSView extends View {
         }
         return m_bufferCanvas;
     }
-    private void commit_double_buffer(Canvas canvas)
+    protected void commit_double_buffer(Canvas canvas)
     {
         canvas.drawBitmap(m_bitmapBuffer, 0, 0, null);
     }
-    private void drawMe_DoubleBuffer(Canvas canvas)
+    protected void drawMe_DoubleBuffer(Canvas canvas)
     {
 
         Canvas g = get_double_buffer();
@@ -615,7 +619,7 @@ public class KDSView extends View {
 
         return nHeight/nRowH;
     }
-    private boolean touchXY(int x, int y)
+    protected boolean touchXY(int x, int y)
     {
         if (getOrdersViewMode() == OrdersViewMode.Normal) {
             firePanelClicked(null, null, null);
@@ -660,7 +664,7 @@ public class KDSView extends View {
         return false;
     }
 
-    private void firePanelClicked(KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell)
+    protected void firePanelClicked(KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell)
     {
         if (this.getEventReceiver() != null)
             this.getEventReceiver().onViewPanelClicked(this, panel, block, cell);
@@ -814,6 +818,23 @@ public class KDSView extends View {
         return null;
     }
 
+    static public int getOrderCaptionBackgroundColor(KDSDataOrder order, KDSViewSettings env, KDSViewFontFace font)
+    {
+        //get the background color according to the time.
+        int nBG = env.getSettings().getOrderTimeColorAccordingWaitingTime(order.getStartToCookTime(), font.getBG());
+        //exp alert
+        if (env.getSettings().isExpeditorStation())
+        { //the exp aler color
+            if (order.isItemsAllBumpedInExp())
+            {
+                nBG = env.getSettings().getExpAlertTitleBgColor(true, font.getBG());
+            }
+        }
+
+        if (order.isDimColor())
+            nBG = KDSConst.DIM_BG;
+        return nBG;
+    }
 
 }
 

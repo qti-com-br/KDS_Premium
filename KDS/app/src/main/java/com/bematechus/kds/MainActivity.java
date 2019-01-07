@@ -3240,8 +3240,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String strOrderName = "Order #" + KDSUtil.convertIntToString(m_nTestCount);
 
         int nItems = m_randomItems.nextInt(5);
-
         nItems = Math.abs(m_randomItems.nextInt() % 5) +1;
+//        if (m_nTestCount%2 ==1)
+//            nItems =15;// Math.abs(m_randomItems.nextInt() % 5) +1;
+//        else
+//            nItems = 1;
         KDSDataOrder order = KDSDataOrder.createTestOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
         //KDSDataOrder order = KDSDataOrder.createTestSmartOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
        // KDSDataOrder order = KDSDataOrder.createTestPrepOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;

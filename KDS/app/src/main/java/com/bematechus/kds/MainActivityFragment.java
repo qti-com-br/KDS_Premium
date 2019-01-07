@@ -189,8 +189,8 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        m_layoutA = new KDSLayout((KDSView)v.findViewById(R.id.viewOrdersA));
-        m_layoutB = new KDSLayout((KDSView)v.findViewById(R.id.viewOrdersB));
+        m_layoutA = new KDSLayout((KDSIOSView)v.findViewById(R.id.viewOrdersA));
+        m_layoutB = new KDSLayout((KDSIOSView)v.findViewById(R.id.viewOrdersB));
 
         m_linearA = v.findViewById(R.id.linearA);
         m_linearB = v.findViewById(R.id.linearB);

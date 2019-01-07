@@ -40,7 +40,7 @@ import java.util.TreeMap;
 public class KDSActivityUnbump extends Activity  {
 
     ListView m_lstOrders;
-    KDSView m_viewOrder;
+    KDSIOSView m_viewOrder;
     KDSDBCurrent m_db = null;
     String m_selectedOrderGuid = "";
     Button m_btnUnparkUnbump = null;
@@ -60,7 +60,7 @@ public class KDSActivityUnbump extends Activity  {
         setContentView(R.layout.activity_kdsactivity_unbump);
 
         m_lstOrders =(ListView) this.findViewById(R.id.lstOrders);
-        m_viewOrder =(KDSView) this.findViewById(R.id.viewOrder);
+        m_viewOrder =(KDSIOSView) this.findViewById(R.id.viewOrder);
         m_txtHelp =(TextView) this.findViewById(R.id.txtHelp);
         m_btnUnparkUnbump=(Button) this.findViewById(R.id.btnRestore);
         KDSSettings settings = new KDSSettings(this.getApplicationContext());

@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import com.bematechus.kdslib.CanvasDC;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSData;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
@@ -44,8 +45,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         Addon_String,
     }
 
-    final  int DIM_BG = Color.GRAY;
-    final int DIM_FG = Color.DKGRAY;
+//    public final  int DIM_BG = Color.GRAY;
+//    public final int DIM_FG = Color.DKGRAY;
 
     CellSubType m_cellSubType = CellSubType.Unknown;
 
@@ -164,19 +165,20 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         this.getFont().copyFrom( env.getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace));
 
-        //get the background color according to the time.
-        int nBG = env.getSettings().getOrderTimeColorAccordingWaitingTime(order.getStartToCookTime(), this.getFont().getBG());
-        //exp alert
-        if (env.getSettings().isExpeditorStation())
-        { //the exp aler color
-            if (order.isItemsAllBumpedInExp())
-            {
-                nBG = env.getSettings().getExpAlertTitleBgColor(true, this.getFont().getBG());
-            }
-        }
-
-        if (order.isDimColor())
-            nBG = DIM_BG;
+        int nBG = KDSView.getOrderCaptionBackgroundColor(order,env, this.getFont());
+//        //get the background color according to the time.
+//        int nBG = env.getSettings().getOrderTimeColorAccordingWaitingTime(order.getStartToCookTime(), this.getFont().getBG());
+//        //exp alert
+//        if (env.getSettings().isExpeditorStation())
+//        { //the exp aler color
+//            if (order.isItemsAllBumpedInExp())
+//            {
+//                nBG = env.getSettings().getExpAlertTitleBgColor(true, this.getFont().getBG());
+//            }
+//        }
+//
+//        if (order.isDimColor())
+//            nBG = KDSConst.DIM_BG;
 
         //
 
@@ -216,9 +218,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         }
         CanvasDC.fillRect(g, nBG, rc);
 
-        Object l = getOrderContentObject(KDSSettings.TitlePosition.Left, env);
-        Object r = getOrderContentObject(KDSSettings.TitlePosition.Right, env);
-        Object c = getOrderContentObject(KDSSettings.TitlePosition.Center, env);
+        Object l = getOrderContentObject((KDSDataOrder) this.getData(),KDSSettings.TitlePosition.Left,this.getCellSubType(), env);
+        Object r = getOrderContentObject((KDSDataOrder) this.getData(),KDSSettings.TitlePosition.Right,this.getCellSubType(), env);
+        Object c = getOrderContentObject((KDSDataOrder) this.getData(),KDSSettings.TitlePosition.Center,this.getCellSubType(), env);
 
         KDSViewFontFace fontDef = new KDSViewFontFace();
         fontDef.copyFrom(this.getFont());
@@ -229,10 +231,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         if (order.getCookState() == KDSDataOrder.CookState.Started) {
 
             Drawable drawable = env.getSettings().getOrderCookStartedImage();
-            drawable.setBounds(rcAbsolute.left+IMAGE_GAP, rcAbsolute.top+IMAGE_GAP, rcAbsolute.left + rcAbsolute.height()-IMAGE_GAP, rcAbsolute.bottom-IMAGE_GAP);//, rcAbsolute.height());
+            drawable.setBounds(rcAbsolute.left+KDSConst.IMAGE_GAP, rcAbsolute.top+KDSConst.IMAGE_GAP, rcAbsolute.left + rcAbsolute.height()-KDSConst.IMAGE_GAP, rcAbsolute.bottom-KDSConst.IMAGE_GAP);//, rcAbsolute.height());
 
             drawable.draw(g);
-            rcAbsolute.left += rcAbsolute.height()+IMAGE_GAP;
+            rcAbsolute.left += rcAbsolute.height()+KDSConst.IMAGE_GAP;
         }
 
         rcAbsolute = drawOrderTitleContent(g, rcAbsolute, env, order, l, KDSSettings.TitlePosition.Left, Paint.Align.LEFT, fontDef);
@@ -282,16 +284,16 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return true;
     }
 
-    private Rect drawOrderTitleContent(Canvas g,Rect rcAbsolute,KDSViewSettings env, KDSDataOrder order, Object objContent,KDSSettings.TitlePosition titlePosition,Paint.Align align,KDSViewFontFace ftDef   )
+    public Rect drawOrderTitleContent(Canvas g,Rect rcAbsolute,KDSViewSettings env, KDSDataOrder order, Object objContent,KDSSettings.TitlePosition titlePosition,Paint.Align align,KDSViewFontFace ftDef   )
     {
         if (objContent == null)
             return rcAbsolute;
         if (objContent instanceof String) {
             String str = (String)objContent;
             if (!str.isEmpty()) {
-                KDSSettings.TitleContents content = getOrderContentType(titlePosition, env);
+                KDSSettings.TitleContents content = getOrderContentType(titlePosition,this.getCellSubType(), env);
                 KDSViewFontFace ff = getOrderContentFont(env, content, ftDef);
-                if (order.isDimColor()) ff.setBG(DIM_BG);
+                if (order.isDimColor()) ff.setBG(KDSConst.DIM_BG);
                 CanvasDC.drawText(g, ff, rcAbsolute, str, align);
             }
         }
@@ -332,14 +334,14 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
     }
 
-    private Object getOrderContentObject(KDSSettings.TitlePosition position, KDSViewSettings env)
+    static public Object getOrderContentObject(KDSDataOrder order,KDSSettings.TitlePosition position,CellSubType subtype, KDSViewSettings env)
     {
-        KDSSettings.TitleContents content = getOrderContentType(position, env);
-        return getOrderContentObject(content,env);
+        KDSSettings.TitleContents content = getOrderContentType(position,subtype, env);
+        return getOrderContentObject(order,content,env);
     }
-    private Object getOrderContentObject( KDSSettings.TitleContents content, KDSViewSettings env)
+    static public  Object getOrderContentObject(KDSDataOrder order, KDSSettings.TitleContents content, KDSViewSettings env)
     {
-        KDSDataOrder order = (KDSDataOrder)this.getData();
+        //KDSDataOrder order = (KDSDataOrder)this.getData();
         switch (content)
         {
             case NULL:
@@ -496,9 +498,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     }
 
 
-    private KDSSettings.TitleContents getOrderContentType(KDSSettings.TitlePosition position, KDSViewSettings env)
+    static  public KDSSettings.TitleContents getOrderContentType(KDSSettings.TitlePosition position,CellSubType subtype, KDSViewSettings env)
     {
-        CellSubType subtype =  this.getCellSubType();
+        //CellSubType subtype =  this.getCellSubType();
 
         switch (subtype)
         {
@@ -795,7 +797,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //
 //    }
 
-    static final int IMAGE_GAP =1;
+    //static final int IMAGE_GAP =1;
 //    protected boolean drawDataItemWithIcon(Canvas g,Rect rcAbsolute,KDSViewSettings env)
 //    {
 //        KDSDataItem item =(KDSDataItem) this.getData();
@@ -989,8 +991,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         if (item.isDimColor())
         {
-            color.setBG( DIM_BG );
-            color.setFG(DIM_FG);
+            color.setBG( KDSConst.DIM_BG );
+            color.setFG(KDSConst.DIM_FG);
         }
 
 
@@ -1010,9 +1012,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //                if (item.m_tempShowMeNeedBlockLines.size() >0)
 //                    nsize /= item.m_tempShowMeNeedBlockLines.size();
                 //drawable.setBounds(rcAbsolute.left+IMAGE_GAP, rcAbsolute.top+IMAGE_GAP, rcAbsolute.left + rcAbsolute.height()-IMAGE_GAP, rcAbsolute.bottom-IMAGE_GAP);//, rcAbsolute.height());
-                drawable.setBounds(rcAbsolute.left+IMAGE_GAP, rcAbsolute.top+IMAGE_GAP, rcAbsolute.left + nsize-IMAGE_GAP,rcAbsolute.top + nsize-IMAGE_GAP);//, rcAbsolute.height());
+                drawable.setBounds(rcAbsolute.left+KDSConst.IMAGE_GAP, rcAbsolute.top+KDSConst.IMAGE_GAP, rcAbsolute.left + nsize-KDSConst.IMAGE_GAP,rcAbsolute.top + nsize-KDSConst.IMAGE_GAP);//, rcAbsolute.height());
                 drawable.draw(g);
-                rcAbsolute.left += nsize+IMAGE_GAP;
+                rcAbsolute.left += nsize+KDSConst.IMAGE_GAP;
                 break;
             case Char:
                 String mark =  itemMark.getMarkString()+ " ";
@@ -1522,8 +1524,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         if (c.isDimColor())
         {
-            bg = DIM_BG;
-            fg = DIM_FG;
+            bg = KDSConst.DIM_BG;
+            fg = KDSConst.DIM_FG;
         }
         //draw background
         CanvasDC.fillRect(g, bg, rcAbsolute);
@@ -1553,7 +1555,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         //reset font bg.
         int noldbg = this.getFont().getBG();
         int noldfg = this.getFont().getFG();
-        if (c.isDimColor()) this.getFont().setFG(DIM_FG);
+        if (c.isDimColor()) this.getFont().setFG(KDSConst.DIM_FG);
 
         this.getFont().setBG(bg);
 
@@ -1590,7 +1592,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             bg = Color.TRANSPARENT;
 
         if (c.isDimColor())
-            bg = DIM_BG;
+            bg = KDSConst.DIM_BG;
 
         CanvasDC.fillRect(g, bg, rcAbsolute);
 
@@ -1615,7 +1617,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         int noldfg = this.getFont().getFG();
         if (c.isDimColor())
         {
-            this.getFont().setFG(DIM_FG);
+            this.getFont().setFG(KDSConst.DIM_FG);
         }
         this.getFont().setBG(bg);
 
