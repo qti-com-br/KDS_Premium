@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Environment;
+import android.os.storage.StorageManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -23,12 +24,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -1579,19 +1582,57 @@ just 16bits value
 
     public static boolean sdcardExisted()
     {
-        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-        Boolean isSDSupportedDevice = Environment.isExternalStorageRemovable();
 
-        if(isSDSupportedDevice && isSDPresent)
-        {
-            return true;
-            // yes SD-card is present
-        }
-        else
-        {
+
+        List ar = listAvailableStorage(KDSApplication.getContext());
+
+        if (ar.size()<=0)
             return false;
-            // Sorry
+        String sClickedMountPoint = "/mnt/internal_sd";
+        for (int i=0; i< ar.size(); i++)
+        {
+            StorageInfo storage =(StorageInfo)ar.get(i);
+            if ( storage.isMounted())
+            {
+                if ( storage.path.equals(sClickedMountPoint) )
+                    return true;
+            }
         }
+        return false;
+
+//        String state = "";
+//        try {
+//            String sClickedMountPoint = "/mnt/internal_sd";
+//            // use class "StorageManager"
+//
+//            StorageManager mStorageManager = (StorageManager) KDSApplication.getContext().getSystemService(Context.STORAGE_SERVICE);
+//
+//            Method getVolumeState = mStorageManager.getClass().getMethod("getVolumeState", String.class);
+//            state = (String) getVolumeState.invoke(mStorageManager, sClickedMountPoint);
+//            return (state.equals(Environment.MEDIA_MOUNTED));
+//
+//
+//        } catch (Exception e) {
+////            e.printStackTrace();
+//            e = e;
+//            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+//            return false;
+//        }
+
+
+//        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+//        Boolean isSDSupportedDevice = Environment.isExternalStorageRemovable();
+//
+//        if(isSDSupportedDevice && isSDPresent)
+//        {
+//            return true;
+//            // yes SD-card is present
+//        }
+//        else
+//        {
+//            return false;
+//            // Sorry
+//        }
     }
 
     /**
@@ -1673,5 +1714,63 @@ just 16bits value
 
 
 
+
+    public static List listAvailableStorage(Context context) {
+        ArrayList storagges = new ArrayList();
+        StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+        try {
+            Class<?>[] paramClasses = {};
+            Method getVolumeList = StorageManager.class.getMethod("getVolumeList", paramClasses);
+            getVolumeList.setAccessible(true);
+            Object[] params = {};
+            Object[] invokes = (Object[]) getVolumeList.invoke(storageManager, params);
+            if (invokes != null) {
+                StorageInfo info = null;
+                for (int i = 0; i < invokes.length; i++) {
+                    Object obj = invokes[i];
+                    Method getPath = obj.getClass().getMethod("getPath", new Class[0]);
+                    String path = (String) getPath.invoke(obj, new Object[0]);
+                    info = new StorageInfo(path);
+                    File file = new File(info.path);
+                    if ((file.exists()) && (file.isDirectory()) && (file.canWrite())) {
+                        Method isRemovable = obj.getClass().getMethod("isRemovable", new Class[0]);
+                        String state = null;
+                        try {
+                            Method getVolumeState = StorageManager.class.getMethod("getVolumeState", String.class);
+                            state = (String) getVolumeState.invoke(storageManager, info.path);
+                            info.state = state;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (info.isMounted()) {
+                            info.isRemoveable = ((Boolean) isRemovable.invoke(obj, new Object[0])).booleanValue();
+                            storagges.add(info);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        storagges.trimToSize();
+
+        return storagges;
+    }
+
+
+    static public class StorageInfo {
+        public String path;
+        public String state;
+        public boolean isRemoveable;
+
+        public StorageInfo(String path) {
+            this.path = path;
+        }
+
+        public boolean isMounted() {
+            return "mounted".equals(state);
+        }
+    }
 
 }

@@ -67,6 +67,7 @@ public class KDSDBBase extends SQLiteOpenHelper {
 
         try {
 
+
             SQLiteDatabase db =  this.getWritableDatabase();
             if (db == null)
             {
