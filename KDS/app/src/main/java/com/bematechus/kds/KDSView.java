@@ -111,6 +111,11 @@ public class KDSView extends View {
     {
         return m_arPanels;
     }
+
+    public int getPanelsCount()
+    {
+        return m_arPanels.size();
+    }
     public KDSView(Context context)
     {
         super(context);
@@ -750,7 +755,7 @@ public class KDSView extends View {
 
     }
 
-    public KDSViewPanel getLastPanel()
+    public KDSViewPanelBase getLastPanel()
     {
         if (m_arPanels.size() <=0)
             return null;
@@ -834,6 +839,29 @@ public class KDSView extends View {
         if (order.isDimColor())
             nBG = KDSConst.DIM_BG;
         return nBG;
+    }
+
+    /**
+     * check if this order is visible in view
+     * @param orderGuid
+     * @return
+     */
+    protected boolean isOrderVisible(String orderGuid)
+    {
+        int ncount = this.getPanels().size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSViewPanel panel = this.getPanels().get(i);
+            if (panel == null)
+                continue;
+            KDSViewBlock block = panel.getFirstBlock();
+            if (block == null)
+                continue;
+            String guid = ((KDSLayoutOrder)block.getCells().get(0).getData()).getGUID();
+            if (guid.equals(orderGuid))
+                return true;
+        }
+        return false;
     }
 
 }

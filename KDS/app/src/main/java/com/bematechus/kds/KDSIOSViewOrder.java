@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Draw iOS KDS style UI.
  * Rev:
  */
-public class KDSIOSViewOrder {
+public class KDSIOSViewOrder extends KDSViewPanelBase {
 
     static public int m_premessageHeight = 20;
     static public int m_orderCaptionHeight = 40;
@@ -359,7 +359,21 @@ public class KDSIOSViewOrder {
             r.bottom = rt.bottom ;//-KDSIOSView.BORDER_INSET_DX ;
             r = convertToAbsoluteRect(r, screenDataRect);
             drawRoundRect(g, r,nbg, false, false );
+
+//            //draw border for out of screen part. As the order were out screen, we draw something.
+//            Rect rtLast = m_arRects.get(m_arRects.size()-1);
+//            if (!screenDataRect.contains(rtLast.left, rtLast.top) )
+//            {
+//                rtLast = new Rect ( m_arRects.get(0) );
+//                rtLast.right = screenDataRect.right;
+//                int nViewBg = env.getSettings().getInt(KDSSettings.ID.Panels_View_BG);
+//                rtLast.top += m_premessageHeight + (rtLast.height()-m_premessageHeight)/3;
+//                drawRoundRect(g, rtLast);
+//
+//            }
+
         }
+
     }
 
     private int getColWidth()
@@ -395,12 +409,12 @@ public class KDSIOSViewOrder {
     protected boolean drawMessages(Canvas g,KDSViewSettings env, Rect rtScreenDataArea, int nOrderPanelIndex)
     {
         if (m_arRects.size()<=0) return false;
-        Rect rtCaption = getCaptionRect();
+        Rect rtCaption = getCaptionRect(rtScreenDataArea);
         Rect rtMessage = new Rect( rtCaption);
 
         //rtMessage.left += KDSIOSView.INSET_DX;
         rtMessage.right = rtMessage.left + getColWidth() -  KDSIOSView.INSET_DX-KDSIOSView.BORDER_INSET_DX;
-        rtMessage.top = getCaptionRect().bottom;
+        rtMessage.top = rtCaption.bottom;
         rtMessage.bottom = rtMessage.top + m_premessageHeight;
 
         rtMessage = convertToAbsoluteRect(rtMessage, m_arRects.get(0));
@@ -416,7 +430,7 @@ public class KDSIOSViewOrder {
     }
     protected boolean drawCaptionBG(Canvas g,KDSViewSettings env, Rect rtScreenDataArea,int nBG, int nOrderPanelIndex)
     {
-        Rect rcBG = getCaptionBGRect();
+        Rect rcBG = getCaptionBGRect(rtScreenDataArea);
         rcBG = convertToAbsoluteRect(rcBG, m_arRects.get(0));
         rcBG =  convertToAbsoluteRect(rcBG, rtScreenDataArea);
         drawRoundRect(g,rcBG,nBG, true, false);
@@ -428,7 +442,7 @@ public class KDSIOSViewOrder {
     }
     protected boolean drawCaption(Canvas g,KDSViewSettings env, Rect rtScreenDataArea, int nOrderPanelIndex)
     {
-        Rect rtCaption = getCaptionRect();
+        Rect rtCaption = getCaptionRect(rtScreenDataArea);
 
         KDSDataOrder order = m_order;//
 
@@ -459,16 +473,12 @@ public class KDSIOSViewOrder {
         //Rect rcAbsolute = new Rect(rtCaption);
 
         Rect rcAbsolute = convertToAbsoluteRect(rtCaption, m_arRects.get(0));
+        if (rcAbsolute.right > rtScreenDataArea.width())
+            rcAbsolute.right = rtScreenDataArea.width()- 2 * KDSIOSView.INSET_DX;// - 2*+KDSIOSView.BORDER_INSET_DX;
+
         rcAbsolute = convertToAbsoluteRect(rcAbsolute, rtScreenDataArea);
 
-//        int nInset = env.getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Inset);
-//        nInset += env.getSettings().getInt(KDSSettings.ID.Panels_Block_Inset);
-//        nInset = 0;
-//        rcAbsolute.inset( nInset, nInset );
         drawCaptionBG(g, env, rtScreenDataArea, nBG, nOrderPanelIndex);
-
-       // CanvasDC.fillRect(g, nBG, rcAbsolute);
-
 
         Object first_l =KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitlePosition.Left,KDSLayoutCell.CellSubType.Unknown, env);
         Object first_r = KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitlePosition.Right, KDSLayoutCell.CellSubType.Unknown, env);
@@ -477,11 +487,6 @@ public class KDSIOSViewOrder {
         Object second_l =KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitlePosition.Left,KDSLayoutCell.CellSubType.OrderTitle_Second, env);
         Object second_r = KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitlePosition.Right, KDSLayoutCell.CellSubType.OrderTitle_Second, env);
         Object second_c = KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitlePosition.Center, KDSLayoutCell.CellSubType.OrderTitle_Second, env);
-
-        String orderName = (String)KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitleContents.Name, env );
-        String orderDest = (String)KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitleContents.Destination, env );
-        String orderTimer = (String)KDSLayoutCell.getOrderContentObject(order, KDSSettings.TitleContents.Timer, env );
-
 
         KDSViewFontFace fontDef = new KDSViewFontFace();
         fontDef.copyFrom(this.getFont());
@@ -519,12 +524,6 @@ public class KDSIOSViewOrder {
         if (second_r != null && (second_r instanceof String) )
             drawString(g, rcBottom, fontDef, (String)second_r, Paint.Align.RIGHT, false);
 
-
-//        drawString(g, rcTop, fontDef, orderDest, Paint.Align.LEFT, false);// KDSLayoutCell.drawOrderTitleContent(g, rcAbsolute, env, order, l, KDSSettings.TitlePosition.Left, Paint.Align.LEFT, fontDef);
-//        drawString(g, rcBottom, fontDef, orderName, Paint.Align.LEFT, false);
-//        drawString(g, rcBottom, fontDef, orderTimer, Paint.Align.RIGHT, false);
-
-
         return true;
 
     }
@@ -553,9 +552,9 @@ public class KDSIOSViewOrder {
 
     }
 
-    protected Rect getCaptionBGRect()
+    protected Rect getCaptionBGRect(Rect rtScreenDataArea)
     {
-        Rect rt = getCaptionRect();
+        Rect rt = getCaptionRect(rtScreenDataArea);
         rt.left -= KDSIOSView.INSET_DX;
         rt.right += KDSIOSView.INSET_DX;
         rt.top -= KDSIOSView.INSET_DY;
@@ -565,7 +564,7 @@ public class KDSIOSViewOrder {
      * The relative rect to m_arRects
      * @return
      */
-    protected Rect getCaptionRect()
+    protected Rect getCaptionRect(Rect rtScreenDataArea)
     {
         if (m_arRects.size() == 0)
         {
@@ -588,7 +587,11 @@ public class KDSIOSViewOrder {
             rt.left = KDSIOSView.INSET_DX+KDSIOSView.BORDER_INSET_DX;
             Rect last = m_arRects.get(m_arRects.size() -1);
             Rect first = m_arRects.get(0);
-            rt.right =rt.left +  last.right - first.left - 2 * KDSIOSView.INSET_DX - 2*+KDSIOSView.BORDER_INSET_DX;
+            rt.right =rt.left +  last.right - first.left;// - 2 * KDSIOSView.INSET_DX - 2*+KDSIOSView.BORDER_INSET_DX;
+//            if (rt.right > rtScreenDataArea.width())
+//                rt.right = rtScreenDataArea.width();
+            rt.right = rt.right  - 2 * KDSIOSView.INSET_DX - 2*+KDSIOSView.BORDER_INSET_DX;
+
             return rt;
         }
     }
@@ -638,6 +641,11 @@ public class KDSIOSViewOrder {
                 return itemView;
         }
         return null;
+    }
+
+    public Object getFirstBlockFirstRowData()
+    {
+        return m_order;
     }
 
     static class KDSSize

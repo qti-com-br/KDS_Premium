@@ -908,9 +908,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //        return true;
 //    }
 
-    protected KDSBGFG getStateColor(KDSDataItem item,KDSViewSettings env)
+    static protected KDSBGFG getStateColor(KDSDataItem item,KDSViewSettings env, int defaultBG, int defaultFG)
     {
-        int nbg = this.getFont().getBG();
+        int nbg = defaultBG;// this.getFont().getBG();
         //if the bg is same as panel color, transparent it.
 //        int panelBG = env.getSettings().getInt(KDSSettings.ID.Panels_BG);
 //
@@ -918,7 +918,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //            nbg = Color.TRANSPARENT;
 
         String guid = item.getGUID();
-        KDSBGFG color = new KDSBGFG(this.getFont().getBG(), this.getFont().getFG());
+        KDSBGFG color = new KDSBGFG(defaultBG, defaultFG);//this.getFont().getBG(), this.getFont().getFG());
         color.setBG(nbg);
 
         if (item.getChangedQty() !=0)
@@ -999,7 +999,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return color;
     }
 
-    private Rect drawItemMark(Canvas g,KDSDataItem item, Rect rcAbsolute,KDSViewSettings env, ItemMark itemMark, KDSBGFG color, int nSize)
+    static private Rect drawItemMark(Canvas g,KDSDataItem item, Rect rcAbsolute,KDSViewSettings env, ItemMark itemMark, KDSBGFG color, int nSize, KDSViewFontFace ff)
     {
 
 
@@ -1018,13 +1018,13 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 break;
             case Char:
                 String mark =  itemMark.getMarkString()+ " ";
-                int noldbg = this.getFont().getBG();
-                int noldfg = this.getFont().getFG();
-                this.getFont().setBG(color.getBG());
-                this.getFont().setFG(color.getFG());
-                int nwidth = CanvasDC.drawText(g, this.getFont(), rcAbsolute,mark);
-                this.getFont().setBG(noldbg);
-                this.getFont().setFG(noldfg);
+                int noldbg = ff.getBG();
+                int noldfg = ff.getFG();
+                ff.setBG(color.getBG());
+                ff.setFG(color.getFG());
+                int nwidth = CanvasDC.drawText(g, ff, rcAbsolute,mark);
+                ff.setBG(noldbg);
+                ff.setFG(noldfg);
                 rcAbsolute.left += nwidth;
 
                 break;
@@ -1042,7 +1042,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
      * @return
      *  The rect for draw description
      */
-    protected Rect drawItemState(Canvas g,KDSDataItem item, Rect rcAbsolute,KDSViewSettings env, KDSBGFG color, int nSize)
+    static protected Rect drawItemState(Canvas g,KDSDataItem item, Rect rcAbsolute,KDSViewSettings env, KDSBGFG color, int nSize, KDSViewFontFace ff)
     {
 
 //        KDSBGFG color = getStateColor(item, env);
@@ -1056,7 +1056,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             String s = env.getSettings().getString(KDSSettings.ID.Item_mark_focused);
             ItemMark itemMark = ItemMark.parseString(s);
             itemMark.setMarkType(ItemMark.MarkType.Focused);
-            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize);
+            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize, ff);
 
 
 
@@ -1068,7 +1068,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             String s = env.getSettings().getString(KDSSettings.ID.Item_mark_local_bumped);
             ItemMark itemMark = ItemMark.parseString(s);
             itemMark.setMarkType(ItemMark.MarkType.Local_bumped);
-            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize);
+            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize, ff);
 
 
         }
@@ -1090,7 +1090,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 }
             }
 
-            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize);
+            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize, ff);
 
 //            Drawable drawable = env.getSettings().getItemBumpedInOthersImage();
 //            drawable.setBounds(rcAbsolute.left+IMAGE_GAP, rcAbsolute.top+IMAGE_GAP, rcAbsolute.left + rcAbsolute.height()-IMAGE_GAP, rcAbsolute.bottom-IMAGE_GAP);//, rcAbsolute.height());
@@ -1107,7 +1107,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             String s = env.getSettings().getString(KDSSettings.ID.Item_mark_del_by_xml);
             ItemMark itemMark = ItemMark.parseString(s);
             itemMark.setMarkType(ItemMark.MarkType.Delete_by_xml);
-            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize);
+            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize, ff);
 
 //            Drawable drawable = env.getSettings().getItemVoidByXmlCommandImage();
 //            drawable.setBounds(rcAbsolute.left+IMAGE_GAP, rcAbsolute.top+IMAGE_GAP, rcAbsolute.left + rcAbsolute.height()-IMAGE_GAP, rcAbsolute.bottom-IMAGE_GAP);//, rcAbsolute.height());
@@ -1122,7 +1122,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             String s = env.getSettings().getString(KDSSettings.ID.Item_mark_qty_changed);
             ItemMark itemMark = ItemMark.parseString(s);
             itemMark.setMarkType(ItemMark.MarkType.Qty_changed);
-            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize);
+            rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color,nSize, ff);
 
 //            Drawable drawable = env.getSettings().getItemChangedImage();
 //            drawable.setBounds(rcAbsolute.left+IMAGE_GAP, rcAbsolute.top+IMAGE_GAP, rcAbsolute.left + rcAbsolute.height()-IMAGE_GAP, rcAbsolute.bottom-IMAGE_GAP);//, rcAbsolute.height());
@@ -1379,11 +1379,11 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         KDSDataItem item =(KDSDataItem) this.getData();
 
-        KDSBGFG color = getStateColor(item, env);
+        KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
 
         CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
 
-        rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight());
+        rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight(), this.getFont());
         //reset font bg.
         int noldbg = this.getFont().getBG();
         int noldfg = this.getFont().getFG();
@@ -1543,9 +1543,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             Object obj = c.getFocusTag();
             if (obj instanceof KDSDataItem) {
                 KDSDataItem item = (KDSDataItem) obj;
-                KDSBGFG color = getStateColor(item, env);
+                KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
                 CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
-                rcAbsolute = drawItemState(g,item, rcAbsolute, env, color,block.getCalculatedAverageRowHeight());
+                rcAbsolute = drawItemState(g,item, rcAbsolute, env, color,block.getCalculatedAverageRowHeight(), this.getFont());
                 bg = color.getBG();
                 //s = buildItemStateString(item, s, env);
 
@@ -1604,9 +1604,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             Object obj = c.getFocusTag();
             if (obj instanceof KDSDataItem) {
                 KDSDataItem item = (KDSDataItem) obj;
-                KDSBGFG color = getStateColor(item, env);
+                KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
                 CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
-                rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight());
+                rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight(), this.getFont());
                 bg = color.getBG();
 
             }
@@ -1670,18 +1670,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return true;
     }
 
-    protected boolean drawVoidItemQtyChange(Canvas g,Rect rcAbsolute,KDSViewSettings env)
+    static public String getVoidItemQtyString(KDSViewSettings env, float qty)
     {
-        KDSDataVoidItemQtyChanged item =(KDSDataVoidItemQtyChanged) this.getData();
-
-        KDSBGFG color = getStateColor(item, env);
-
-        CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
-
-        float qty = item.getChangedQty();
-        String strDescription = item.getDescription();
-
-        String s = getSpaces(2);
         String strQty =  Integer.toString(Math.abs((int) qty));
         if (qty <0)
         {
@@ -1697,7 +1687,43 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                     strQty = "-" + strQty;
                     break;
             }
+
         }
+
+        return strQty;
+    }
+
+    protected boolean drawVoidItemQtyChange(Canvas g,Rect rcAbsolute,KDSViewSettings env)
+    {
+        KDSDataVoidItemQtyChanged item =(KDSDataVoidItemQtyChanged) this.getData();
+
+        KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
+
+        CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
+
+        float qty = item.getChangedQty();
+        String strDescription = item.getDescription();
+
+        String s = getSpaces(2);
+
+
+        String strQty = getVoidItemQtyString(env, qty);//  Integer.toString(Math.abs((int) qty));
+
+//        if (qty <0)
+//        {
+//            int n = env.getSettings().getInt(KDSSettings.ID.Void_qty_line_mark);
+//            KDSSettings.VoidQtyChangeMark mark = KDSSettings.VoidQtyChangeMark.values()[n];
+//            switch (mark)
+//            {
+//
+//                case Brackets:
+//                    strQty = "(" + strQty + ")";
+//                    break;
+//                case Negative_sign:
+//                    strQty = "-" + strQty;
+//                    break;
+//            }
+//        }
         if (item.getAlign() == Paint.Align.RIGHT)
         {
 

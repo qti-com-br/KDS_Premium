@@ -10,7 +10,9 @@ import android.text.TextPaint;
 
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSDataItem;
+import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 
 import java.util.ArrayList;
@@ -85,21 +87,48 @@ public class KDSIOSViewItem {
         CanvasDC.drawText_without_clear_bg(g, ff, rcAbsolute, str, Paint.Align.LEFT, bBold);
 
     }
-    static KDSViewFontFace m_ffDescription = new KDSViewFontFace();
-    static KDSViewFontFace m_ffCondiment = new KDSViewFontFace();
-    static KDSViewFontFace m_ffMessage = new KDSViewFontFace();
+//    static KDSViewFontFace m_ffDescription = new KDSViewFontFace();
+//    static KDSViewFontFace m_ffCondiment = new KDSViewFontFace();
+//    static KDSViewFontFace m_ffMessage = new KDSViewFontFace();
 
     static Paint m_paintSeparator = new Paint();
     public void onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect, ArrayList<Rect> arOrderView, boolean bDrawSeparator)
     {
+
+        KDSViewFontFace ffDescription = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);
+        KDSViewFontFace ffCondiment = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Condiment_Default_FontFace);
+        KDSViewFontFace ffMessage = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Message_Default_FontFace);
+
+
         Rect rt = getAbsoluteRect(screenDataRect, arOrderView);
-        rt.inset(KDSIOSView.INSET_DX, 0);
+        //rt.inset(KDSIOSView.INSET_DX, 0);
+        rt.left += KDSIOSView.INSET_DX;
+        rt.right -= KDSIOSView.BORDER_INSET_DX;
+        rt.right -= KDSIOSView.INSET_DX*2;
+
+
+        //String strQty = KDSLayoutCell.getItemQtyString(env, m_item.getChangedQty());
+
         Rect rtText = new Rect(rt);
         rtText.bottom = rtText.top + m_itemTextHeight;
-        m_ffDescription.setFontSize(14);
+        //m_ffDescription.setFontSize(14);
+        String str = String.format("%dx %s",(int)m_item.getShowingQty(), m_item.getDescription());
 
+        KDSBGFG color =  KDSLayoutCell.getStateColor(m_item, env, ffDescription.getBG(), ffDescription.getFG());
 
-        drawString(g, m_ffDescription, rtText, m_item.getDescription(), true);
+        CanvasDC.fillRect(g, color.getBG(), rtText);
+        //CanvasDC.fillRect(g, Color.RED, rtText);
+        rtText = KDSLayoutCell.drawItemState(g,m_item, rtText, env, color, m_itemTextHeight, ffDescription);
+
+        int noldbg = ffDescription.getBG();
+        int noldfg = ffDescription.getFG();
+
+        ffDescription.setFG(color.getFG());
+        ffDescription.setBG(color.getBG());
+        drawString(g, ffDescription, rtText,str, true);
+
+        ffDescription.setFG(noldfg);
+        ffDescription.setBG(noldbg);
 
         //draw messages
         Rect rtMessage = new Rect(rtText);
@@ -108,7 +137,7 @@ public class KDSIOSViewItem {
 
         for (int i=0; i< m_item.getMessages().getCount(); i++)
         {
-            drawString(g, m_ffMessage, rtMessage, m_item.getMessages().getMessage(i).getMessage(), false);
+            drawString(g, ffMessage, rtMessage, m_item.getMessages().getMessage(i).getMessage(), false);
             rtMessage.top+= m_messageHeight ;
             rtMessage.bottom = rtMessage.top + m_messageHeight;
         }
@@ -118,7 +147,7 @@ public class KDSIOSViewItem {
         rtCondiment.bottom = rtCondiment.top + m_condimentHeight;
         for (int i=0; i< m_item.getCondiments().getCount(); i++)
         {
-            drawString(g, m_ffCondiment, rtCondiment, m_item.getCondiments().getCondiment(i).getDescription(), false);
+            drawString(g, ffCondiment, rtCondiment, m_item.getCondiments().getCondiment(i).getDescription(), false);
             rtCondiment.top+= m_condimentHeight ;
             rtCondiment.bottom = rtCondiment.top + m_condimentHeight;
         }

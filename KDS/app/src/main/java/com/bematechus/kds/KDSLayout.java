@@ -1296,20 +1296,22 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      */
     private boolean isOrderVisible(String orderGuid)
     {
-        int ncount = this.getView().getPanels().size();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSViewPanel panel = this.getView().getPanels().get(i);
-            if (panel == null)
-                continue;
-            KDSViewBlock block = panel.getFirstBlock();
-            if (block == null)
-                continue;
-            String guid = ((KDSLayoutOrder)block.getCells().get(0).getData()).getGUID();
-            if (guid == orderGuid)
-                return true;
-        }
-        return false;
+        return this.getView().isOrderVisible(orderGuid);
+
+//        int ncount = this.getView().getPanels().size();
+//        for (int i=0; i< ncount; i++)
+//        {
+//            KDSViewPanel panel = this.getView().getPanels().get(i);
+//            if (panel == null)
+//                continue;
+//            KDSViewBlock block = panel.getFirstBlock();
+//            if (block == null)
+//                continue;
+//            String guid = ((KDSLayoutOrder)block.getCells().get(0).getData()).getGUID();
+//            if (guid == orderGuid)
+//                return true;
+//        }
+//        return false;
     }
 
 
@@ -1556,7 +1558,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     public String getLastShowingOrderGuid()
     {
-        if (this.getView().getPanels().size()<=0)
+        if (this.getView().getPanelsCount()<=0)
             return "";
         Object obj = this.getView().getLastPanel().getFirstBlockFirstRowData();
         if (obj == null)
@@ -1588,7 +1590,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     }
     public int getPrevCount()
     {
-        if (this.getView().getPanels().size()<=0)
+        if (this.getView().getPanelsCount()<=0)
             return 0;
         String guid = this.getEnv().getStateValues().getFirstShowingOrderGUID();
         if (guid.isEmpty())
@@ -1986,7 +1988,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      */
     public boolean isFocusOrderVisible()
     {
-        if (this.getView().getPanels().size()<=0)
+        if (this.getView().getPanelsCount()<=0)
             return true;
         Object obj = this.getView().getLastPanel().getFirstBlockFirstRowData();
         if (obj == null)

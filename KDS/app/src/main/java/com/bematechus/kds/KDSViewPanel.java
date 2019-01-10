@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by Administrator on 2015/8/13 0013.
  */
-public class KDSViewPanel {
+public class KDSViewPanel extends KDSViewPanelBase {
     ArrayList<KDSViewBlock> m_arBlocks = new ArrayList<KDSViewBlock>();
 
     KDSView m_viewParent = null;

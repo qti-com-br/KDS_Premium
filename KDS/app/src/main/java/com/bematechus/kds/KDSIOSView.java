@@ -198,22 +198,21 @@ public class KDSIOSView extends KDSView {
 
     public boolean showIOSOrder(KDSIOSViewOrder iosOrder)
     {
-
-
         Rect screenDataRect = ios_getDataArea();
         Point pt = convertAbsoluteOrderViewPoint(m_ptNextStartPointInScreenDataArea, screenDataRect);
 
-        if (!screenDataRect.contains(pt.x + 10, pt.y+1))
+        if (!screenDataRect.contains(pt.x + INSET_DX, pt.y+INSET_DY))
             return false;
         if (screenDataRect.width()<=0) return false;
         ArrayList<Rect> arRects = KDSIOSViewOrder.calculateOrderSize(iosOrder, screenDataRect, m_ptNextStartPointInScreenDataArea,getBlockAverageWidth(), screenDataRect.height() );
+        if (arRects.size() <=0 ) return false;
+        Rect rtLast = arRects.get(0);
+
+        if (!screenDataRect.contains(rtLast.right - INSET_DX, rtLast.bottom - INSET_DY))
+            return false;
         iosOrder.setRects(arRects);
         m_arIOSOrdersView.add(iosOrder);
-//        m_ptNextStartPointInScreenDataArea.y += INSET_DY;
-//        if (m_ptNextStartPointInScreenDataArea.y >= screenDataRect.height()) {
-//            m_ptNextStartPointInScreenDataArea.y = 0;
-//            m_ptNextStartPointInScreenDataArea.x += getBlockAverageWidth();
-//        }
+
 
         return true;
 
@@ -254,4 +253,47 @@ public class KDSIOSView extends KDSView {
 
 
     }
+
+    public KDSViewPanelBase getLastPanel()
+    {
+        if (useSupperFunction())
+            return getLastPanel();
+        if (m_arIOSOrdersView.size() <=0)
+            return null;
+        return m_arIOSOrdersView.get(m_arIOSOrdersView.size() - 1);
+
+    }
+
+    public int getPanelsCount()
+    {
+        if (useSupperFunction())
+            return super.getPanelsCount();
+        return m_arIOSOrdersView.size();
+    }
+
+
+    /**
+     * check if this order is visible in view
+     * @param orderGuid
+     * @return
+     */
+    protected boolean isOrderVisible(String orderGuid)
+    {
+        if (useSupperFunction())
+            return super.isOrderVisible(orderGuid);
+
+        int ncount = m_arIOSOrdersView.size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSIOSViewOrder panel = this.m_arIOSOrdersView.get(i);
+            if (panel == null)
+                continue;
+            String guid = panel.getData().getGUID();
+
+            if (guid.equals(orderGuid) )
+                return true;
+        }
+        return false;
+    }
+
 }
