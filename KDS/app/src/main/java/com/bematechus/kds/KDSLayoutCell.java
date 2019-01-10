@@ -622,7 +622,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //        this.getFont().setFG(noldfg);
 //        return true;
 //    }
-    static private String getSpaces(int nCount)
+    static public String getSpaces(int nCount)
     {
         String s = "";
         for (int i=0; i< nCount; i++)
@@ -681,6 +681,25 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     protected boolean drawFromPrimaryIndicator(Canvas g,Rect rcAbsolute,KDSViewSettings env)
     {
         KDSDataFromPrimaryIndicator c =(KDSDataFromPrimaryIndicator) this.getData();
+        return drawFromPrimaryIndicator(g, rcAbsolute, env, c);
+//        KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.From_primary_font);
+//
+//        int bg = ff.getBG();// Color.WHITE;//c.getBG();
+//        int fg = ff.getFG();//Color.RED;
+//
+//        //draw background
+//        CanvasDC.fillRect(g, bg, rcAbsolute);
+//
+//        String strDescription = env.getSettings().getString(KDSSettings.ID.From_primary_text);// "---From Primary---";//
+//
+//        CanvasDC.drawText(g, ff, rcAbsolute, strDescription, Paint.Align.CENTER);
+//
+//        return true;
+    }
+
+    static public boolean drawFromPrimaryIndicator(Canvas g,Rect rcAbsolute,KDSViewSettings env, KDSDataFromPrimaryIndicator c)
+    {
+
         KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.From_primary_font);
 
         int bg = ff.getBG();// Color.WHITE;//c.getBG();

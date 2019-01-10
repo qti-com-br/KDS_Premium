@@ -257,7 +257,7 @@ public class KDSIOSView extends KDSView {
     public KDSViewPanelBase getLastPanel()
     {
         if (useSupperFunction())
-            return getLastPanel();
+            return super.getLastPanel();
         if (m_arIOSOrdersView.size() <=0)
             return null;
         return m_arIOSOrdersView.get(m_arIOSOrdersView.size() - 1);

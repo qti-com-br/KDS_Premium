@@ -399,10 +399,10 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
         drawCaption(g, env, screenDataRect, nOrderPanelIndex);
         drawMessages(g, env, screenDataRect, nOrderPanelIndex);
 
-
+        int nLastGroupID = -1;
         for (int i=0; i< m_arItemsPanels.size(); i++)
         {
-            m_arItemsPanels.get(i).onDraw(g, env, screenDataRect, m_arRects, (i!=0) );
+            nLastGroupID = m_arItemsPanels.get(i).onDraw(g, env, screenDataRect, m_arRects, (i!=0), nLastGroupID );
         }
     }
 
