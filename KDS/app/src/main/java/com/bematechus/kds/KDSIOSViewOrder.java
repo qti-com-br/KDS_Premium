@@ -105,9 +105,14 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
         h = nmessages * m_premessageHeight;
         arSizes.add(new KDSSize(w, h)); //for premessages
         orderView.setMessagesSize(arSizes.get(arSizes.size()-1));
-        int nItemsStart = 2;
+        int nItemsStart = 2;// the data item started index
+        int nLastGroupID = -1;
+
         for (int i = 0; i < order.getItems().getCount(); i++) {
-            int itemh = KDSIOSViewItem.calculateNeedHeight(order.getItems().getItem(i));
+
+            int itemh = KDSIOSViewItem.calculateNeedHeight(order.getItems().getItem(i), nLastGroupID);
+            if ( order.getItems().getItem(i).getAddOnGroup() != nLastGroupID)
+                nLastGroupID = order.getItems().getItem(i).getAddOnGroup() ;
             arSizes.add(new KDSSize(w, itemh));
             KDSIOSViewItem itemView = orderView.addItem(new KDSIOSViewItem(order.getItems().getItem(i)));
             itemView.setSize(arSizes.get(arSizes.size()-1));
@@ -273,6 +278,7 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
     }
 
 
+    static int SHADOW_COLOR = 0xFFDDDDDD;
     private void drawRoundRect(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow)
     {
         Paint p = new Paint();
@@ -295,7 +301,7 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
                 rtShadow.right += 5;
                 rtShadow.top += 5;
                 rtShadow.bottom += 5;
-                p.setColor(Color.LTGRAY);
+                p.setColor(SHADOW_COLOR);//Color.LTGRAY);
                 g.drawRoundRect(rtShadow, KDSIOSView.ROUND_CORNER_DX, KDSIOSView.ROUND_CORNER_DY, p);
                 p.setColor(color);
                 //p.setShader(shader);

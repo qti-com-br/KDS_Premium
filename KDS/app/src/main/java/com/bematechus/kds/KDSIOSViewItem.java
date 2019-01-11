@@ -57,14 +57,16 @@ public class KDSIOSViewItem {
     {
         m_size = size;
     }
-    static public int calculateNeedHeight(KDSDataItem item)
+    static public int calculateNeedHeight(KDSDataItem item, int nLastGroupID)
     {
         int nmessages = item.getMessages().getCount();
         int nmodifiers = item.getModifiers().getCount();
         int nItem = 1;
         int nCondiments = item.getCondiments().getCount();
-
-        int h =  nmessages * m_messageHeight + nmodifiers * m_messageHeight +  nItem * m_itemTextHeight + nCondiments * m_condimentHeight;
+        int nAddon = 0;
+        if (nLastGroupID != item.getAddOnGroup())
+            nAddon = 1;
+        int h =  nmessages * m_messageHeight + nmodifiers * m_messageHeight +  nItem * m_itemTextHeight + nCondiments * m_condimentHeight + nAddon * m_messageHeight;
         return h;
 
 
