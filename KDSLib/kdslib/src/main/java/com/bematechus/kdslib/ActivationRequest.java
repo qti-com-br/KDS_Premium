@@ -132,6 +132,7 @@ public class ActivationRequest {
             this.URL = URL_TEST;
         else
             this.URL = URL_PRODUCTION;
+        this.URL = URL_TEST;
         reset();
     }
 
