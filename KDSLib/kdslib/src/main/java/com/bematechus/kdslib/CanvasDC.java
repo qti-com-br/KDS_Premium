@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -390,6 +391,52 @@ public class CanvasDC {
         return rtReturn;
 
 
+
+    }
+
+    static public final int ROUND_CORNER_DX = 10;
+    static public final int ROUND_CORNER_DY = 10;
+    static int SHADOW_COLOR = 0xFFDDDDDD;
+    static public void drawRoundRect(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow)
+    {
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setColor(color);
+
+        RectF rt = new RectF(rc);
+        if (bRoundCorner) {
+            if (bShadow)
+            {
+//                MaskFilter filter = p.getMaskFilter();
+//                p.setMaskFilter(new BlurMaskFilter(20, BlurMaskFilter.Blur.SOLID));
+
+
+//                Shader shader = p.getShader();
+//                LinearGradient backGradient = new LinearGradient(rt.left+5, rt.top+5, rt.right+5, rt.bottom+5, new int[]{Color.GRAY, Color.WHITE}, null, Shader.TileMode.CLAMP);
+//                p.setShader(backGradient);
+                RectF rtShadow = new RectF(rt);
+                rtShadow.left += 5;
+                rtShadow.right += 5;
+                rtShadow.top += 5;
+                rtShadow.bottom += 5;
+                p.setColor(SHADOW_COLOR);//Color.LTGRAY);
+                g.drawRoundRect(rtShadow, ROUND_CORNER_DX, ROUND_CORNER_DY, p);
+                p.setColor(color);
+                //p.setShader(shader);
+                //p.setMaskFilter(filter);
+
+            }
+//            //else
+            g.drawRoundRect(rt, ROUND_CORNER_DX, ROUND_CORNER_DY, p);
+        }
+        else
+            g.drawRect(rt, p);
+
+
+//        Resources res = KDSApplication.getContext().getResources();
+//        Drawable myImage = res.getDrawable(R.drawable.ios_panel_shadow_border );
+//        myImage.setBounds(rc);
+//        myImage.draw(g);
 
     }
 

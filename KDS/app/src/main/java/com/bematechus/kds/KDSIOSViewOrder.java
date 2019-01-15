@@ -279,7 +279,7 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
 
 
     static int SHADOW_COLOR = 0xFFDDDDDD;
-    private void drawRoundRect(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow)
+    static public void drawRoundRect(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow)
     {
         Paint p = new Paint();
         p.setAntiAlias(true);

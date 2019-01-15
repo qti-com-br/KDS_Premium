@@ -68,10 +68,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
 
 
-    public boolean onDraw(Canvas g,Rect rcAbsolute,  KDSViewSettings env, int nColInBlock, KDSViewBlock block)
+    public boolean onDraw(Canvas g,Rect rcAbsolute,  KDSViewSettings env, int nColInBlock, KDSViewBlock block, boolean bRoundCorner)
     {
 
-        return drawCell(g, rcAbsolute, env,nColInBlock, block);
+        return drawCell(g, rcAbsolute, env,nColInBlock, block, bRoundCorner);
 
     }
 
@@ -83,14 +83,14 @@ public class KDSLayoutCell extends KDSViewBlockCell {
      * @return
      */
     @Override
-    protected boolean drawCell(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block)
+    protected boolean drawCell(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block, boolean bRoundCorner)
     {
         Object obj = this.getData();
         if (obj == null) return true;
 
         if (obj instanceof KDSDataOrder)
         {
-            return drawDataOrder(g, rcAbsolute, env,nColInBlock, block);
+            return drawDataOrder(g, rcAbsolute, env,nColInBlock, block, bRoundCorner);
         }
         else if (obj instanceof KDSDataMessage)
         {
@@ -156,7 +156,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
      * @param env
      * @return
      */
-    protected boolean drawDataOrder(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block)
+    protected boolean drawDataOrder(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block, boolean bRoundCorner)
     {
 
         CellSubType subtype =  this.getCellSubType();
@@ -216,7 +216,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             rc.left -= env.getSettings().getInt(KDSSettings.ID.Panels_Block_Inset)*2;
 
         }
-        CanvasDC.fillRect(g, nBG, rc);
+        if (bRoundCorner)
+            CanvasDC.drawRoundRect(g, rc, nBG, true, false);
+        else
+            CanvasDC.fillRect(g, nBG, rc);
 
         Object l = getOrderContentObject((KDSDataOrder) this.getData(),KDSSettings.TitlePosition.Left,this.getCellSubType(), env);
         Object r = getOrderContentObject((KDSDataOrder) this.getData(),KDSSettings.TitlePosition.Right,this.getCellSubType(), env);

@@ -477,8 +477,8 @@ public class KDSViewBlock {
 
         int bg = nbg;// getEnv().getSettings().getKDSViewFontFace(KDSSettings.ID.Panels_Default_FontFace).getBG();//.getPanelBG();
 
-        CanvasDC.fillRect(g, bg, this.getDrawableRect());
-
+        //CanvasDC.fillRect(g, bg, this.getDrawableRect());
+        CanvasDC.drawRoundRect(g, this.getDrawableRect(), bg, false, false);
 
         paintCells(g);
     }
@@ -509,7 +509,10 @@ public class KDSViewBlock {
             //g.save();
             //Rect rc = this.getCellAbsoluteRect(i);
             //   g.clipRect(rc);
-            c.onDraw(g, this.getCellAbsoluteRect(i), getEnv(), ncol, this);
+            if (i ==0)
+                c.onDraw(g, this.getCellAbsoluteRect(i), getEnv(), ncol, this, true);
+            else
+                c.onDraw(g, this.getCellAbsoluteRect(i), getEnv(), ncol, this, false);
             // g.restore();
         }
 
@@ -557,8 +560,10 @@ public class KDSViewBlock {
             int ncol = i / colRows;
             //Rect rcAbsoluteCell = this.getCellAbsoluteRect(i);
             Rect rcAbsoluteCell = this.getCombinedCellAbsoluteRect(c,bTextWrap, i, (ncol + 1)* getColTotalRows());
-
-            c.onDraw(g,rcAbsoluteCell , getEnv(), ncol, this);
+            if (i == 0)
+                c.onDraw(g,rcAbsoluteCell , getEnv(), ncol, this, true);
+            else
+                c.onDraw(g,rcAbsoluteCell , getEnv(), ncol, this, false);
         }
         drawBorders(g);
     }
