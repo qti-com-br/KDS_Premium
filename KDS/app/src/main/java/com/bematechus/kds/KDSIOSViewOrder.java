@@ -302,14 +302,14 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
                 rtShadow.top += 5;
                 rtShadow.bottom += 5;
                 p.setColor(SHADOW_COLOR);//Color.LTGRAY);
-                g.drawRoundRect(rtShadow, KDSIOSView.ROUND_CORNER_DX, KDSIOSView.ROUND_CORNER_DY, p);
+                g.drawRoundRect(rtShadow, CanvasDC.ROUND_CORNER_DX, CanvasDC.ROUND_CORNER_DY, p);
                 p.setColor(color);
                 //p.setShader(shader);
                 //p.setMaskFilter(filter);
 
             }
 //            //else
-                g.drawRoundRect(rt, KDSIOSView.ROUND_CORNER_DX, KDSIOSView.ROUND_CORNER_DY, p);
+                g.drawRoundRect(rt, CanvasDC.ROUND_CORNER_DX, CanvasDC.ROUND_CORNER_DY, p);
         }
         else
             g.drawRect(rt, p);
@@ -340,7 +340,7 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
                 if (i == m_arRects.size() -1) //last one
                 {
 
-                    rtReal.left = rtReal.left - 2*KDSIOSView.BORDER_INSET_DX - 2*KDSIOSView.ROUND_CORNER_DX;
+                    rtReal.left = rtReal.left - 2*KDSIOSView.BORDER_INSET_DX - 2*CanvasDC.ROUND_CORNER_DX;
                 }
 
                 drawRoundRect(g,rtReal, nbg, true, true );
@@ -359,9 +359,9 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
 //            drawRoundRect(g, r,nbg, false );
             //left-bottom corner
             r.right = r.left - KDSIOSView.BORDER_INSET_DX;
-            r.left = rt.left - 2*KDSIOSView.BORDER_INSET_DX - 2*KDSIOSView.ROUND_CORNER_DX;
+            r.left = rt.left - 2*KDSIOSView.BORDER_INSET_DX - 2*CanvasDC.ROUND_CORNER_DX;
 
-            r.top = rt.bottom - KDSIOSView.ROUND_CORNER_DX *2;
+            r.top = rt.bottom - CanvasDC.ROUND_CORNER_DX *2;
             r.bottom = rt.bottom ;//-KDSIOSView.BORDER_INSET_DX ;
             r = convertToAbsoluteRect(r, screenDataRect);
             drawRoundRect(g, r,nbg, false, false );
@@ -442,7 +442,7 @@ public class KDSIOSViewOrder extends KDSViewPanelBase {
         drawRoundRect(g,rcBG,nBG, true, false);
         //full bottom corner
         Rect rt = new Rect(rcBG);
-        rt.top += KDSIOSView.ROUND_CORNER_DY*2;
+        rt.top += CanvasDC.ROUND_CORNER_DY*2;
         drawRoundRect(g,rt, nBG, false, false);
         return true;
     }

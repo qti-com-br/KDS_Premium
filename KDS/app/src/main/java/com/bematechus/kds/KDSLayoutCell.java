@@ -216,9 +216,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             rc.left -= env.getSettings().getInt(KDSSettings.ID.Panels_Block_Inset)*2;
 
         }
-        if (bRoundCorner)
-            CanvasDC.drawRoundRect(g, rc, nBG, true, false);
-        else
+//        if (bRoundCorner)
+//            CanvasDC.drawRoundRect(g, rc, nBG, true, false);
+//        else
             CanvasDC.fillRect(g, nBG, rc);
 
         Object l = getOrderContentObject((KDSDataOrder) this.getData(),KDSSettings.TitlePosition.Left,this.getCellSubType(), env);
@@ -297,7 +297,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 KDSSettings.TitleContents content = getOrderContentType(titlePosition,this.getCellSubType(), env);
                 KDSViewFontFace ff = getOrderContentFont(env, content, ftDef);
                 if (order.isDimColor()) ff.setBG(KDSConst.DIM_BG);
-                CanvasDC.drawText(g, ff, rcAbsolute, str, align);
+                Rect rc = new Rect(rcAbsolute);
+                rc.inset(4, 0);
+                CanvasDC.drawText(g, ff, rc, str, align);
             }
         }
         else if ( objContent instanceof Drawable)

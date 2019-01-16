@@ -1,10 +1,12 @@
 package com.bematechus.kds;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
 
+import com.bematechus.kdslib.CanvasDC;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
@@ -85,6 +87,7 @@ public class KDSViewPanel extends KDSViewPanelBase {
         int ncount = m_arBlocks.size();
         for (int i=0; i< ncount; i++)
             m_arBlocks.get(i).onJustDrawCaptionAndFooter(canvas);
+        drawRoundCornerForPanel(canvas);
         drawPanelNumber(canvas, nIndex);
     }
 
@@ -109,11 +112,73 @@ public class KDSViewPanel extends KDSViewPanelBase {
     public  void onDraw(Canvas canvas, int nIndex)
     {
         int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
+        for (int i=0; i< ncount; i++) {
+            //Rect rt = m_arBlocks.get(i).getDrawableRect();
+            //CanvasDC.drawRoundRect(canvas, rt, Color.BLUE, true,false );
             m_arBlocks.get(i).onDraw(canvas, getBG());
+        }
+
+        drawRoundCornerForPanel(canvas);
 
         drawPanelNumber(canvas, nIndex);
 
+    }
+
+    private void drawRoundCornerForPanel(Canvas canvas)
+    {
+        int ncount = m_arBlocks.size();
+        if (ncount <=0) return;
+        int nViewBG = getEnv().getSettings().getInt(KDSSettings.ID.Panels_BG);
+        boolean bFocused = m_arBlocks.get(0).isFocused();
+        int ninset = getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Inset);
+        int nInsetBlock = getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Inset);
+
+        //draw round corner for border.
+        for (int i=0; i< ncount; i++) {
+            Rect rt = m_arBlocks.get(i).getDrawableRect();
+            if (bFocused)
+                rt.inset(-1*nInsetBlock, -1*nInsetBlock);
+            CanvasDC.drawLeftUpArc(canvas, rt, nViewBG );
+            CanvasDC.drawLeftDownArc(canvas, rt, nViewBG );
+            CanvasDC.drawRightDownArc(canvas, rt, nViewBG );
+            CanvasDC.drawRightUpArc(canvas, rt, nViewBG );
+
+        }
+        //draw content round corner
+        if (ncount == 1)
+        {
+            KDSViewBlock block = m_arBlocks.get(0);
+            Rect rt = block.getDrawableRect();
+            //int ninset = block.getInsetBeforeCell();
+
+            rt.inset(ninset, ninset);
+            int nBorderColor = block.getBorderColor();
+            if (bFocused)
+                nBorderColor =  block.getBorderInsideLineColor(block.getBorderColor(), nViewBG);
+            CanvasDC.drawLeftUpArc(canvas, rt, nBorderColor );
+            CanvasDC.drawLeftDownArc(canvas, rt, nBorderColor );
+            CanvasDC.drawRightDownArc(canvas, rt, nBorderColor );
+            CanvasDC.drawRightUpArc(canvas, rt, nBorderColor );
+
+        }
+        else
+        {
+            KDSViewBlock block = m_arBlocks.get(0);
+            Rect rt = block.getDrawableRect();
+            //int ninset = block.getInsetBeforeCell();
+
+            rt.inset(ninset, ninset);
+            int nBorderColor = block.getBorderColor();
+            if (bFocused)
+                nBorderColor = block.getBorderInsideLineColor(block.getBorderColor(), nViewBG);// getEnv().getSettings().getInt(KDSSettings.ID.Panels_View_BG);
+            CanvasDC.drawLeftUpArc(canvas, rt, nBorderColor );
+            CanvasDC.drawLeftDownArc(canvas, rt, nBorderColor );
+            block = m_arBlocks.get(m_arBlocks.size()-1);
+            rt = block.getDrawableRect();
+            rt.inset(ninset, ninset);
+            CanvasDC.drawRightDownArc(canvas, rt, nBorderColor );
+            CanvasDC.drawRightUpArc(canvas, rt, nBorderColor );
+        }
     }
 
     protected int getBlockStartPointX( int nCol)

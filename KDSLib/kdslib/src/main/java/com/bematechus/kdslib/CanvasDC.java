@@ -2,6 +2,7 @@ package com.bematechus.kdslib;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -181,6 +182,8 @@ public class CanvasDC {
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
+        paint.setDither(true);
+        //paint.setFilterBitmap(true);
         paint.setColor(color);
         int x = rect.left + rect.width()/2;
         int y = rect.top + rect.height()/2;
@@ -394,8 +397,8 @@ public class CanvasDC {
 
     }
 
-    static public final int ROUND_CORNER_DX = 10;
-    static public final int ROUND_CORNER_DY = 10;
+//    static public final int ROUND_CORNER_DX = 10;
+//    static public final int ROUND_CORNER_DY = 10;
     static int SHADOW_COLOR = 0xFFDDDDDD;
     static public void drawRoundRect(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow)
     {
@@ -438,6 +441,63 @@ public class CanvasDC {
 //        myImage.setBounds(rc);
 //        myImage.draw(g);
 
+    }
+    static public final int ROUND_CORNER_DX = 10;
+    static public final int ROUND_CORNER_DY = 10;
+
+    static public void drawLeftUpArc(Canvas canvas, Rect rect, int nColor) {
+        Path path = new Path();
+        path.moveTo(rect.left, rect.top + ROUND_CORNER_DY);
+        path.lineTo(rect.left, rect.top);
+        path.lineTo(rect.left + ROUND_CORNER_DX, rect.top);
+        //arcTo的第二个参数是以多少度为开始点，第三个参数-90度表示逆时针画弧，正数表示顺时针
+        path.arcTo(new RectF(rect.left,rect.top,rect.left + ROUND_CORNER_DX*2,rect.top + ROUND_CORNER_DY*2),-90,-90);
+        path.close();
+        Paint p = new Paint();
+        p.setColor(nColor);
+        p.setAntiAlias(true);
+        p.setDither(true);
+        canvas.drawPath(path, p);
+    }
+
+    static public void drawLeftDownArc(Canvas canvas, Rect rect, int nColor) {
+        Path path = new Path();
+        path.moveTo(rect.left, rect.bottom - ROUND_CORNER_DY);
+        path.lineTo(rect.left, rect.bottom);
+        path.lineTo(rect.left+ROUND_CORNER_DX, rect.bottom);
+        path.arcTo(new RectF(rect.left,rect.bottom -ROUND_CORNER_DY*2,rect.left+ROUND_CORNER_DX*2,rect.bottom),90,90);
+        path.close();
+        Paint p = new Paint();
+        p.setColor(nColor);
+        p.setAntiAlias(true);
+        canvas.drawPath(path, p);
+    }
+
+    static public void drawRightDownArc(Canvas canvas, Rect rect, int nColor) {
+        Path path = new Path();
+        path.moveTo( rect.right -ROUND_CORNER_DX, rect.bottom);
+        path.lineTo(rect.right, rect.bottom);
+        path.lineTo(rect.right, rect.bottom-ROUND_CORNER_DY);
+        path.arcTo(new RectF(rect.right-ROUND_CORNER_DX*2,rect.bottom-ROUND_CORNER_DY*2,rect.right,rect.bottom), 0, 90);
+        path.close();
+        Paint p = new Paint();
+        p.setColor(nColor);
+        p.setAntiAlias(true);
+        canvas.drawPath(path, p);
+    }
+
+    static public void drawRightUpArc(Canvas canvas, Rect rect, int nColor) {
+        Path path = new Path();
+        path.moveTo(rect.right, rect.top + ROUND_CORNER_DY);
+        path.lineTo(rect.right, rect.top);
+        path.lineTo(rect.right-ROUND_CORNER_DX, rect.top);
+        path.arcTo(new RectF(rect.right-ROUND_CORNER_DX*2,rect.top,rect.right,rect.top+ROUND_CORNER_DY*2),-90,90);
+        path.close();
+        Paint p = new Paint();
+        p.setColor(nColor);
+        p.setAntiAlias(true);
+        p.setDither(true);
+        canvas.drawPath(path, p);
     }
 
 

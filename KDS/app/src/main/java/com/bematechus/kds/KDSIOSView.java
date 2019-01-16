@@ -26,8 +26,8 @@ public class KDSIOSView extends KDSView {
 
     /*************************************/
 
-    static public final int ROUND_CORNER_DX = 10;
-    static public final int ROUND_CORNER_DY = 10;
+//    static public final int ROUND_CORNER_DX = 10;
+//    static public final int ROUND_CORNER_DY = 10;
     static public final int INSET_DY = 10;
     static public final int INSET_DX = 10;
     static public final int BORDER_INSET_DX = 5;

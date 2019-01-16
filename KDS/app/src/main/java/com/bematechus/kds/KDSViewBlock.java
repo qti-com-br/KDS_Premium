@@ -7,10 +7,12 @@ import android.graphics.ComposePathEffect;
 import android.graphics.DashPathEffect;
 import android.graphics.DiscretePathEffect;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.PathDashPathEffect;
 import android.graphics.PathEffect;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.SumPathEffect;
 import android.graphics.Typeface;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.view.View;
 //import java.awt.event.MouseListener;
 //import javax.swing.*;
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
@@ -445,7 +448,7 @@ public class KDSViewBlock {
         return y;
     }
 
-    private int getInsetBeforeCell() {
+    public int getInsetBeforeCell() {
         int n = getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Inset);
         n += getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Inset);
         return n;
@@ -472,15 +475,31 @@ public class KDSViewBlock {
         return x;
     }
 
+    private void setRoundCornerClip(Canvas g, Rect rt)
+    {
+        Path clipPath = new Path();
+        int w = rt.width();
+        int h = rt.height();
+        clipPath.addRoundRect(new RectF(rt), CanvasDC.ROUND_CORNER_DX, CanvasDC.ROUND_CORNER_DY, Path.Direction.CW);
+
+
+        g.clipPath(clipPath);
+        //super.onDraw(canvas);
+
+    }
 
     public void onDraw(Canvas g, int nbg) {
 
+        g.setDrawFilter(new PaintFlagsDrawFilter(0,Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         int bg = nbg;// getEnv().getSettings().getKDSViewFontFace(KDSSettings.ID.Panels_Default_FontFace).getBG();//.getPanelBG();
-
-        //CanvasDC.fillRect(g, bg, this.getDrawableRect());
-        CanvasDC.drawRoundRect(g, this.getDrawableRect(), bg, false, false);
+        //g.save();
+        //setRoundCornerClip(g, this.getDrawableRect());
+        CanvasDC.fillRect(g, bg, this.getDrawableRect());
+        //CanvasDC.drawRoundRect(g, this.getDrawableRect(), bg, false, false);
 
         paintCells(g);
+        //g.restore();
+        //g.clipPath(new Path());
     }
 
     public void invalidateCaptionAndFooter(View view) {
@@ -560,9 +579,9 @@ public class KDSViewBlock {
             int ncol = i / colRows;
             //Rect rcAbsoluteCell = this.getCellAbsoluteRect(i);
             Rect rcAbsoluteCell = this.getCombinedCellAbsoluteRect(c,bTextWrap, i, (ncol + 1)* getColTotalRows());
-            if (i == 0)
-                c.onDraw(g,rcAbsoluteCell , getEnv(), ncol, this, true);
-            else
+//            if (i == 0)
+//                c.onDraw(g,rcAbsoluteCell , getEnv(), ncol, this, true);
+//            else
                 c.onDraw(g,rcAbsoluteCell , getEnv(), ncol, this, false);
         }
         drawBorders(g);
@@ -669,7 +688,7 @@ public class KDSViewBlock {
 
     }
 
-    protected int getBorderInsideLineColor(int borderColor, int panelColor) {
+    public int getBorderInsideLineColor(int borderColor, int panelColor) {
 
         return KDSUtil.getContrastVersionForColor(borderColor);
 
