@@ -4872,7 +4872,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         CSVStrings files = item.getBuildCard();
         if (files.getCount() <=0) {
             showToastMessage(this.getString(R.string.no_build_card));// "No build card files for selected item");
-            return;
+            if (!KDSConst._DEBUG)
+                return;
         }
 
         Intent intent = new Intent(MainActivity.this, KDSActivityMedia.class);

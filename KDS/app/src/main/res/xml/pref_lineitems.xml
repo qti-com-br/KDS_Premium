@@ -21,7 +21,7 @@
 
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="lineitems_default_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/lineitems_bg,@color/lineitems_fg,12"
+        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,normal_size"
         android:title="@string/screen_default_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>
@@ -40,7 +40,7 @@
         android:maxLines="1" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="lineitems_caption_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/lineitems_bg,@color/lineitems_fg,12"
+        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,normal_size"
         android:title="@string/lineitems_caption_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>

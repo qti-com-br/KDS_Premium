@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="condiment_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/condiment_bg,@color/condiment_fg,12"
+        android:defaultValue="default_font,@color/condiment_bg,@color/condiment_fg,normal_size"
         android:title="@string/pref_kds_condiment_default_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSEditTextPreference

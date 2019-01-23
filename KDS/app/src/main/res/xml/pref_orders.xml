@@ -267,7 +267,7 @@
         <com.bematechus.kdslib.KDSEditTextPreference
             android:key="panel_text_line_height"
             android:title= "@string/pref_kds_panels_row_height"
-            android:defaultValue="14"
+            android:defaultValue="16"
             android:selectAllOnFocus="true"
             android:inputType= "number"
             android:capitalize="words"
@@ -386,7 +386,7 @@
             />
         <com.bematechus.kds.KDSPreferenceFontPicker
             android:key="from_primary_font"
-            android:defaultValue="/system/fonts/DroidSans.ttf,@color/item_bg,@color/item_fg,12"
+            android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
             android:title="@string/pref_from_primary_font"
             app:supportsColor="true"/>
     </PreferenceCategory>

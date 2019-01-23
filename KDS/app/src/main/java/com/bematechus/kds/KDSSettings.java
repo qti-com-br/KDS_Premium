@@ -808,8 +808,8 @@ public class KDSSettings extends SettingsBase {
         m_mapPrefID.put(ID.Panels_View_BG, "int_viewer_bg");
         //m_mapPrefID.put(ID.Panels_Default_FontFace, "fontface_panels_font");
         m_mapPrefID.put(ID.Panels_BG,"int_panel_bg");
-        m_mapPrefID.put(ID.Panels_Row_Height,"string_panel_text_line_height");//"int_panel_text_line_height");
-
+        //m_mapPrefID.put(ID.Panels_Row_Height,"string_panel_text_line_height");//"int_panel_text_line_height");
+        init_option(ID.Panels_Row_Height,"string_panel_text_line_height", 16);
         m_mapPrefID.put(ID.Panels_Show_Number, "bool_panels_show_number");
         m_mapPrefID.put(ID.Panels_Panel_Number_BGFG, "string_panelnum_bgfg");
         //m_mapPrefID.put(ID.Panels_Panel_Number_FG, "int_panelnum_fg");
@@ -1334,7 +1334,7 @@ public class KDSSettings extends SettingsBase {
         //KDSViewFontFace ff =  new KDSViewFontFace(getResColor(R.color.panel_bg), getResColor(R.color.panel_fg), KDSViewFontFace.DEFULT_FONT_FILE, 14);
         //set(ID.Panels_Default_FontFace, new KDSViewFontFace(getResColor(R.color.panel_bg), getResColor(R.color.panel_fg), KDSViewFontFace.DEFULT_FONT_FILE, 14));
         set(ID.Panels_BG, getResColor(R.color.panel_bg));
-        set(ID.Panels_Row_Height, 14);
+        //set(ID.Panels_Row_Height, 14);
 
         set(ID.Panels_Show_Number, true);
         set(ID.Panels_Panel_Number_BGFG, buildBGFG(R.color.panelnum_bg, -1));// "-16769076,-1");// getResColor(R.color.panelnum_bg));
@@ -2472,7 +2472,7 @@ public class KDSSettings extends SettingsBase {
     public KDSViewFontFace getViewBlockFont(){
         if (m_kdsBlockFont == null) {
             m_kdsBlockFont = new KDSViewFontFace();
-            m_kdsBlockFont.setTypeFace(Typeface.createFromFile("/system/fonts/DroidSans.ttf"));
+            m_kdsBlockFont.setTypeFace(Typeface.createFromFile(KDSViewFontFace.DEFULT_FONT_FILE));//"/system/fonts/DroidSans.ttf"));
 
         }
         m_kdsBlockFont.setFontSize(this.getInt(ID.Panels_Row_Height));

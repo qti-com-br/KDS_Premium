@@ -641,7 +641,7 @@ public class KDSViewBlock {
     /**
      * Use Line to impress focus
      */
-    static final int LINE_SIZE = 3;
+    static public final int LINE_SIZE = 3;
 
     private void drawBorderInsideLines2(Canvas g) {
 
@@ -1030,6 +1030,77 @@ public class KDSViewBlock {
         KDSViewPanel panel =  this.m_parentViewer.getBlockPanel(this);
         return panel;
     }
+
+
+//    private void draw_border2(Canvas g, Rect rect, BorderStyle style, boolean bLeft2Right) {
+//
+//        if (style == BorderStyle.BorderStyle_Line) {
+//            //CanvasDC.fillRect(g, getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Color), rect );
+//            CanvasDC.fillRect(g, getBorderColor(), rect);
+//
+//        } else if (style == BorderStyle.BorderStyle_Break) {
+//
+//            //int bg = getEnv().getSettings().getKDSViewFontFace(KDSSettings.ID.Panels_Default_FontFace).getBG();
+//            int bg = getEnv().getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace).getBG();
+//            CanvasDC.fillRect(g, bg, rect);
+//            // g.drawColor(getEnv().getBlockBorderColor());
+//            if (bLeft2Right) { //left to right
+//                int h = rect.height();
+//                int ncount = rect.width() / h;
+//                int nleft = rect.width() % h;
+//                int x = rect.left;
+//                int y = rect.top;
+//
+//                for (int i = 0; i < ncount; i++) {
+//                    int w = h;
+//                    if (i < nleft) w = h + 1;
+//                    int color = 0;
+//                    if (i % 2 == 0) {
+//                        color = bg;// (getEnv().getViewerBG());
+//
+//                    } else {
+//                        color = getBorderColor();// (getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Color));
+//                    }
+//                    CanvasDC.fillRect(g, color, new Rect(x, y, x + w, y + h));
+//                    //g2.fillRect(x, y, w, h);
+//                    x += w;
+//
+//                }
+//            } else { //up to down
+//                int w = rect.width()*2;
+//                int ncount = rect.height() / w;
+//                int nleft = (rect.height() % w);
+//                int x = rect.left;
+//                int y = rect.top;
+//                Path path = new Path();
+//                //x += rect.width()/2;
+//                path.moveTo(x, y); //start point
+//                for (int i = 0; i < ncount; i++) {
+//                    int h = w;
+//                    if (i < nleft) h = w + 1;
+//                    path.rQuadTo(h, h/2, 0, h);
+//                    //path.rQuadTo(0, -1*h/2, 0, h);
+//
+//
+////                    int color = 0;
+////                    if ((i % 2) == 0) {
+////                        color = bg;// (getEnv().getViewerBG());
+////
+////                    } else {
+////                        color = getBorderColor();//(getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Color));
+////                    }
+////                    CanvasDC.fillRect(g, color, new Rect(x, y, x + w, y + h));
+////                    //g2.fillRect(x, y, w, h);
+////                    y += h;
+//
+//                }
+//                Paint p = new Paint();
+//                p.setColor(getBorderColor());
+//                p.setStrokeWidth(1);
+//                g.drawPath(path, p);
+//            }
+//        }
+//    }
 
 
 }

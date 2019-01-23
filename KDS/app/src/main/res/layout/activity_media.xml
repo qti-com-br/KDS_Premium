@@ -203,7 +203,8 @@
             android:id="@+id/btnBackward"
             android:drawableTop="@drawable/previous_page"
             android:onClick="onBtnBackwardClicked"
-            android:text="[4]" />
+            android:text="[4]"
+            android:src="@drawable/previous_page" />
 
         <Button
             android:layout_width="80dp"

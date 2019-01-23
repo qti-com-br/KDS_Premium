@@ -159,6 +159,17 @@ public class KDSViewPanel extends KDSViewPanelBase {
             CanvasDC.drawLeftDownArc(canvas, rt, nBorderColor );
             CanvasDC.drawRightDownArc(canvas, rt, nBorderColor );
             CanvasDC.drawRightUpArc(canvas, rt, nBorderColor );
+            if (bFocused)
+            {
+                int nFocusColor = getEnv().getSettings().getInt(KDSSettings.ID.Focused_BG);
+                //nFocusColor = Color.RED;
+                //rt.inset(-1*ninset, -1*ninset);
+                rt.inset(-1*KDSViewBlock.LINE_SIZE, -1*KDSViewBlock.LINE_SIZE);
+                CanvasDC.drawLeftUpArc(canvas, rt, nFocusColor );
+                CanvasDC.drawLeftDownArc(canvas, rt, nFocusColor );
+                CanvasDC.drawRightDownArc(canvas, rt, nFocusColor );
+                CanvasDC.drawRightUpArc(canvas, rt, nFocusColor );
+            }
 
         }
         else
@@ -173,11 +184,34 @@ public class KDSViewPanel extends KDSViewPanelBase {
                 nBorderColor = block.getBorderInsideLineColor(block.getBorderColor(), nViewBG);// getEnv().getSettings().getInt(KDSSettings.ID.Panels_View_BG);
             CanvasDC.drawLeftUpArc(canvas, rt, nBorderColor );
             CanvasDC.drawLeftDownArc(canvas, rt, nBorderColor );
+            if (bFocused)
+            {
+                int nFocusColor = getEnv().getSettings().getInt(KDSSettings.ID.Focused_BG);
+
+                //rt.inset(-1*ninset, -1*ninset);
+                rt.inset(-1*KDSViewBlock.LINE_SIZE, -1*KDSViewBlock.LINE_SIZE);
+                CanvasDC.drawLeftUpArc(canvas, rt, nFocusColor );
+                CanvasDC.drawLeftDownArc(canvas, rt, nFocusColor );
+              //  CanvasDC.drawRightDownArc(canvas, rt, nFocusColor );
+              //  CanvasDC.drawRightUpArc(canvas, rt, nFocusColor );
+            }
+
             block = m_arBlocks.get(m_arBlocks.size()-1);
             rt = block.getDrawableRect();
             rt.inset(ninset, ninset);
             CanvasDC.drawRightDownArc(canvas, rt, nBorderColor );
             CanvasDC.drawRightUpArc(canvas, rt, nBorderColor );
+            if (bFocused)
+            {
+                int nFocusColor = getEnv().getSettings().getInt(KDSSettings.ID.Focused_BG);
+
+                //rt.inset(-1*ninset, -1*ninset);
+                rt.inset(-1*KDSViewBlock.LINE_SIZE, -1*KDSViewBlock.LINE_SIZE);
+                //CanvasDC.drawLeftUpArc(canvas, rt, nFocusColor );
+                //CanvasDC.drawLeftDownArc(canvas, rt, nFocusColor );
+                CanvasDC.drawRightDownArc(canvas, rt, nFocusColor );
+                CanvasDC.drawRightUpArc(canvas, rt, nFocusColor );
+            }
         }
     }
 

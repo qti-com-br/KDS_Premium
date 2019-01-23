@@ -55,40 +55,42 @@ public class CanvasDC {
     static public  int drawText(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align)
     {
 
-        Paint paint = new Paint();
-        paint.setColor(ff.getFG());
-        paint.setTypeface(ff.getTypeFace());
-        paint.setTextSize(ff.getFontSize());
-        paint.setAntiAlias(true);
+        return drawText(g, ff, rect, text, align, false);
 
-        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
-
-        int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
-        g.save();
-        g.clipRect(rect);
-        //
-        fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
-        //
-        paint.setColor(ff.getFG());
-        //
-        if (align == Paint.Align.CENTER)
-        { //horizontal center
-            paint.setTextAlign(Paint.Align.CENTER);
-            g.drawText(text, rect.centerX(), baseline, paint);
-        }
-        else if (align == Paint.Align.LEFT)
-        {
-            paint.setTextAlign(Paint.Align.LEFT);
-            g.drawText(text, rect.left, baseline, paint);
-        }
-        else if (align == Paint.Align.RIGHT)
-        {
-            paint.setTextAlign(Paint.Align.RIGHT);
-            g.drawText(text, rect.right, baseline, paint);
-        }
-
-        g.restore();
-        return getTextPixelsWidth(paint, text);
+//        Paint paint = new Paint();
+//        paint.setColor(ff.getFG());
+//        paint.setTypeface(ff.getTypeFace());
+//        paint.setTextSize(ff.getFontSize());
+//        paint.setAntiAlias(true);
+//
+//        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+//
+//        int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+//        g.save();
+//        g.clipRect(rect);
+//        //
+//        fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
+//        //
+//        paint.setColor(ff.getFG());
+//        //
+//        if (align == Paint.Align.CENTER)
+//        { //horizontal center
+//            paint.setTextAlign(Paint.Align.CENTER);
+//            g.drawText(text, rect.centerX(), baseline, paint);
+//        }
+//        else if (align == Paint.Align.LEFT)
+//        {
+//            paint.setTextAlign(Paint.Align.LEFT);
+//            g.drawText(text, rect.left, baseline, paint);
+//        }
+//        else if (align == Paint.Align.RIGHT)
+//        {
+//            paint.setTextAlign(Paint.Align.RIGHT);
+//            g.drawText(text, rect.right, baseline, paint);
+//        }
+//
+//        g.restore();
+//        return getTextPixelsWidth(paint, text);
     }
 
     static public  int drawText_without_clear_bg(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
@@ -306,34 +308,35 @@ public class CanvasDC {
     }
     static public  void drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align )
     {
-        g.save();
-        TextPaint textPaint = new TextPaint();
-        textPaint.setTextSize(ft.getFontSize());
-        textPaint.setTypeface(ft.getTypeFace());
-        textPaint.setColor( ft.getFG());
-        textPaint.setAntiAlias(true);
-
-        g.clipRect(rt);
-        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
-        if (align == Paint.Align.RIGHT)
-            al = Layout.Alignment.ALIGN_OPPOSITE;
-        else if (align == Paint.Align.LEFT)
-            al = Layout.Alignment.ALIGN_NORMAL;
-        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
-        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
-//        int n = sl.getLineCount();
-//        for (int i=0; i< n; i++)
-//        {
-//            int nstart = sl.getLineStart(i);
-//            int nend = sl.getLineEnd(i);
-////            Log.d("a", "b");
-//        }
-
-        int x = rt.left;
-        int y = rt.top + (rt.height() - sl.getHeight())/2;
-        g.translate(x,y);
-        sl.draw(g);
-        g.restore();
+        drawWrapString(g, ft, rt, string, align, false);
+//        g.save();
+//        TextPaint textPaint = new TextPaint();
+//        textPaint.setTextSize(ft.getFontSize());
+//        textPaint.setTypeface(ft.getTypeFace());
+//        textPaint.setColor( ft.getFG());
+//        textPaint.setAntiAlias(true);
+//
+//        g.clipRect(rt);
+//        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
+//        if (align == Paint.Align.RIGHT)
+//            al = Layout.Alignment.ALIGN_OPPOSITE;
+//        else if (align == Paint.Align.LEFT)
+//            al = Layout.Alignment.ALIGN_NORMAL;
+//        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
+//        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+////        int n = sl.getLineCount();
+////        for (int i=0; i< n; i++)
+////        {
+////            int nstart = sl.getLineStart(i);
+////            int nend = sl.getLineEnd(i);
+//////            Log.d("a", "b");
+////        }
+//
+//        int x = rt.left;
+//        int y = rt.top + (rt.height() - sl.getHeight())/2;
+//        g.translate(x,y);
+//        sl.draw(g);
+//        g.restore();
     }
 
     static public ArrayList<Point> getWrapStringRows(KDSViewFontFace ft, Rect rt, String string, Paint.Align align )
@@ -498,6 +501,78 @@ public class CanvasDC {
         p.setAntiAlias(true);
         p.setDither(true);
         canvas.drawPath(path, p);
+    }
+    static public  void drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align, boolean bBold )
+    {
+        g.save();
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(ft.getFontSize());
+        textPaint.setTypeface(ft.getTypeFace());
+        textPaint.setColor( ft.getFG());
+        textPaint.setAntiAlias(true);
+        textPaint.setFakeBoldText(bBold);
+
+        g.clipRect(rt);
+        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
+        if (align == Paint.Align.RIGHT)
+            al = Layout.Alignment.ALIGN_OPPOSITE;
+        else if (align == Paint.Align.LEFT)
+            al = Layout.Alignment.ALIGN_NORMAL;
+        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
+        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+//        int n = sl.getLineCount();
+//        for (int i=0; i< n; i++)
+//        {
+//            int nstart = sl.getLineStart(i);
+//            int nend = sl.getLineEnd(i);
+////            Log.d("a", "b");
+//        }
+
+        int x = rt.left;
+        int y = rt.top + (rt.height() - sl.getHeight())/2;
+        g.translate(x,y);
+        sl.draw(g);
+        g.restore();
+    }
+
+    static public  int drawText(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
+    {
+
+        TextPaint paint = new TextPaint();
+        paint.setColor(ff.getFG());
+        paint.setTypeface(ff.getTypeFace());
+        paint.setTextSize(ff.getFontSize());
+        paint.setAntiAlias(true);
+        paint.setFakeBoldText(bBold);
+
+        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+
+        int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+        g.save();
+        g.clipRect(rect);
+        //
+        fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
+        //
+        paint.setColor(ff.getFG());
+        //
+        if (align == Paint.Align.CENTER)
+        { //horizontal center
+            paint.setTextAlign(Paint.Align.CENTER);
+            g.drawText(text, rect.centerX(), baseline, paint);
+        }
+        else if (align == Paint.Align.LEFT)
+        {
+            paint.setTextAlign(Paint.Align.LEFT);
+            g.drawText(text, rect.left, baseline, paint);
+        }
+        else if (align == Paint.Align.RIGHT)
+        {
+            paint.setTextAlign(Paint.Align.RIGHT);
+            g.drawText(text, rect.right, baseline, paint);
+        }
+
+        g.restore();
+        return getTextPixelsWidth(paint, text);
     }
 
 
