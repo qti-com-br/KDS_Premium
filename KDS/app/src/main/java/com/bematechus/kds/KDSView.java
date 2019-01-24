@@ -524,6 +524,7 @@ public class KDSView extends View {
                     for (int i = 0; i < ncount; i++) {
                         m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
                     }
+                    redrawAllPanelNumberInReverseSequence(g);
                     commit_double_buffer(canvas);
                     m_bJustRedrawTimer = false;
                 } else {
@@ -606,7 +607,7 @@ public class KDSView extends View {
             CanvasDC.fillRect(g, hightlightBg, rtHightLight);
             //g.drawRect(rtHightLight, );
         }
-
+        redrawAllPanelNumberInReverseSequence(g);
         commit_double_buffer(canvas);
 
     }
@@ -862,6 +863,14 @@ public class KDSView extends View {
                 return true;
         }
         return false;
+    }
+
+    private void redrawAllPanelNumberInReverseSequence(Canvas g)
+    {
+        int ncount = panelsGetCount();
+        for (int i = ncount-1; i >=0; i--) {
+            m_arPanels.get(i).drawPanelNumber(g, i);
+        }
     }
 
 }

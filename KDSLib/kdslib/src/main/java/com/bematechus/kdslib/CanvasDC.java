@@ -445,8 +445,8 @@ public class CanvasDC {
 //        myImage.draw(g);
 
     }
-    static public final int ROUND_CORNER_DX = 10;
-    static public final int ROUND_CORNER_DY = 10;
+    static public final int ROUND_CORNER_DX = 11;
+    static public final int ROUND_CORNER_DY = 11;
 
     static public void drawLeftUpArc(Canvas canvas, Rect rect, int nColor) {
         Path path = new Path();

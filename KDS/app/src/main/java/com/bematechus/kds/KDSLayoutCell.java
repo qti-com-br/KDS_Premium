@@ -1480,7 +1480,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         Paint paint = new Paint();
         paint.setColor(Color.GRAY);
-        paint.setStrokeWidth(1);
+        paint.setStrokeWidth(0);
         g.drawLine(rcAbsolute.left+ KDSIOSView.INSET_DX, rcAbsolute.top, rcAbsolute.right-+ KDSIOSView.INSET_DX, rcAbsolute.top,paint );
 
         return true;
