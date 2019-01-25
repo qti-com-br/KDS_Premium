@@ -3,9 +3,11 @@ package com.bematechus.kds;
 import android.app.Application;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
 import com.bematechus.kdslib.CanvasDC;
@@ -1477,13 +1479,33 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //            //CanvasDC.drawText(g, this.getFont(), rcAbsolute, s, Paint.Align.LEFT);
         this.getFont().setBG(noldbg);
         this.getFont().setFG(noldfg);
-
-        Paint paint = new Paint();
-        paint.setColor(Color.GRAY);
-        paint.setStrokeWidth(0);
-        g.drawLine(rcAbsolute.left+ KDSIOSView.INSET_DX, rcAbsolute.top, rcAbsolute.right-+ KDSIOSView.INSET_DX, rcAbsolute.top,paint );
+        if (!block.isFirstItemDataRow(this))
+            drawItemLine(g, rcAbsolute, color);
+//        Paint paint = new Paint();
+//        paint.setColor(Color.LTGRAY);
+//        paint.setStrokeWidth(0);
+//        LinearGradient backGradient = new LinearGradient(0, 0, rcAbsolute.width(), 1, new int[]{color.getBG(), this.getFont().getFG() ,color.getBG()}, null, Shader.TileMode.CLAMP);
+//        paint.setShader(backGradient);
+//
+//        int nInset = rcAbsolute.width()/2;
+//        //g.drawLine(rcAbsolute.left+ KDSIOSView.INSET_DX, rcAbsolute.top, rcAbsolute.right-nInset, rcAbsolute.top,paint );
+//        g.drawLine(rcAbsolute.left+ KDSIOSView.INSET_DX, rcAbsolute.top, rcAbsolute.right-KDSIOSView.INSET_DX, rcAbsolute.top,paint );
 
         return true;
+    }
+
+    private void drawItemLine(Canvas g, Rect rcAbsolute, KDSBGFG color)
+    {
+        Paint paint = new Paint();
+        //paint.setColor(Color.LTGRAY);
+        paint.setStrokeWidth(0);
+        LinearGradient backGradient = new LinearGradient(rcAbsolute.left+ KDSIOSView.INSET_DX, rcAbsolute.top, rcAbsolute.right-KDSIOSView.INSET_DX, rcAbsolute.top, new int[]{color.getBG(), this.getFont().getFG() ,color.getBG()}, null, Shader.TileMode.CLAMP);
+        paint.setShader(backGradient);
+
+        //int nInset = rcAbsolute.width()/2;
+        //g.drawLine(rcAbsolute.left+ KDSIOSView.INSET_DX, rcAbsolute.top, rcAbsolute.right-nInset, rcAbsolute.top,paint );
+        g.drawLine(rcAbsolute.left+ KDSIOSView.INSET_DX, rcAbsolute.top, rcAbsolute.right-KDSIOSView.INSET_DX, rcAbsolute.top,paint );
+
     }
 
     private String getTextWrapRowsDescription(KDSData data,String strDescription, int nFromRow, int nCount)

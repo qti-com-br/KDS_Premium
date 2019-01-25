@@ -128,7 +128,7 @@ public class KDSViewPanel extends KDSViewPanelBase {
     {
         int ncount = m_arBlocks.size();
         if (ncount <=0) return;
-        int nViewBG = getEnv().getSettings().getInt(KDSSettings.ID.Panels_BG);
+        int nViewBG = getEnv().getSettings().getInt(KDSSettings.ID.Panels_View_BG);
         boolean bFocused = m_arBlocks.get(0).isFocused();
         int ninset = getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Inset);
         int nInsetBlock = getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Inset);

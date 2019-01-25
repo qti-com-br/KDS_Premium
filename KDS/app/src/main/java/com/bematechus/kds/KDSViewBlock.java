@@ -1031,6 +1031,31 @@ public class KDSViewBlock {
         return panel;
     }
 
+    public boolean isFirstItemDataRow(KDSLayoutCell cell)
+    {
+        int nNoOrderDataCounter = 0;
+        for (int i=0; i< m_arCells.size(); i++)
+        {
+
+            if ( cell == m_arCells.get(i))
+            {
+                if (i ==0) return true;
+                if (i >0)
+                {
+                    if (m_arCells.get(i-1).getData() instanceof KDSDataOrder)
+                        return true;
+                }
+                return false;
+            }
+//            if (m_arCells.get(i).getData() instanceof KDSDataOrder)
+//                continue;
+//            nNoOrderDataCounter ++;
+//            if ( cell == m_arCells.get(i))
+//                return true;
+//            return false;
+        }
+        return false;
+    }
 
 //    private void draw_border2(Canvas g, Rect rect, BorderStyle style, boolean bLeft2Right) {
 //
