@@ -1,7 +1,9 @@
 package com.bematechus.kdslib;
 
 import android.graphics.Canvas;
+import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -445,10 +447,11 @@ public class CanvasDC {
 //        myImage.draw(g);
 
     }
-    static public final int ROUND_CORNER_DX = 11;
-    static public final int ROUND_CORNER_DY = 11;
+    static public final int ROUND_CORNER_DX = 10;
+    static public final int ROUND_CORNER_DY = 10;
 
     static public void drawLeftUpArc(Canvas canvas, Rect rect, int nColor) {
+
         Path path = new Path();
         path.moveTo(rect.left, rect.top + ROUND_CORNER_DY);
         path.lineTo(rect.left, rect.top);
@@ -456,11 +459,24 @@ public class CanvasDC {
         //arcTo的第二个参数是以多少度为开始点，第三个参数-90度表示逆时针画弧，正数表示顺时针
         path.arcTo(new RectF(rect.left,rect.top,rect.left + ROUND_CORNER_DX*2,rect.top + ROUND_CORNER_DY*2),-90,-90);
         path.close();
-        Paint p = new Paint();
-        p.setColor(nColor);
-        p.setAntiAlias(true);
-        p.setDither(true);
-        canvas.drawPath(path, p);
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
+
+//        canvas.save();
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        //p.setDither(true);
+//        //p.setStyle(Paint.Style.STROKE);
+//        p.setStrokeWidth(4);
+//        canvas.clipPath(path);
+//        canvas.drawRoundRect( new RectF(rect), ROUND_CORNER_DX,ROUND_CORNER_DY, p);
+//        canvas.restore();
     }
 
     static public void drawLeftDownArc(Canvas canvas, Rect rect, int nColor) {
@@ -470,10 +486,13 @@ public class CanvasDC {
         path.lineTo(rect.left+ROUND_CORNER_DX, rect.bottom);
         path.arcTo(new RectF(rect.left,rect.bottom -ROUND_CORNER_DY*2,rect.left+ROUND_CORNER_DX*2,rect.bottom),90,90);
         path.close();
-        Paint p = new Paint();
-        p.setColor(nColor);
-        p.setAntiAlias(true);
-        canvas.drawPath(path, p);
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
     }
 
     static public void drawRightDownArc(Canvas canvas, Rect rect, int nColor) {
@@ -483,10 +502,13 @@ public class CanvasDC {
         path.lineTo(rect.right, rect.bottom-ROUND_CORNER_DY);
         path.arcTo(new RectF(rect.right-ROUND_CORNER_DX*2,rect.bottom-ROUND_CORNER_DY*2,rect.right,rect.bottom), 0, 90);
         path.close();
-        Paint p = new Paint();
-        p.setColor(nColor);
-        p.setAntiAlias(true);
-        canvas.drawPath(path, p);
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
     }
 
     static public void drawRightUpArc(Canvas canvas, Rect rect, int nColor) {
@@ -496,12 +518,29 @@ public class CanvasDC {
         path.lineTo(rect.right-ROUND_CORNER_DX, rect.top);
         path.arcTo(new RectF(rect.right-ROUND_CORNER_DX*2,rect.top,rect.right,rect.top+ROUND_CORNER_DY*2),-90,90);
         path.close();
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
+    }
+
+    static private void drawPath(Canvas canvas, Path path, int nColor)
+    {
         Paint p = new Paint();
         p.setColor(nColor);
         p.setAntiAlias(true);
         p.setDither(true);
+        //p.setFilterBitmap(true);
+        //p.setStyle(Paint.Style.FILL_AND_STROKE);//.STROKE);
+        //p.setStrokeWidth(4);
+        //p.setPathEffect(new CornerPathEffect(ROUND_CORNER_DX));
+        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         canvas.drawPath(path, p);
     }
+
     static public  void drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align, boolean bBold )
     {
         g.save();
