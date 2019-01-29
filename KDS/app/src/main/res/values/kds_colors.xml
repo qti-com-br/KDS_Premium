@@ -7,7 +7,7 @@
     <color name="border_bg">#e6e6e6</color>
     <color name="panelnum_bg">#414141</color>
     <color name="panelnum_fg">#fff1f1e8</color>
-    <color name="caption_bg">#e6e6e6</color>
+    <color name="caption_bg">#bbbbbb</color>
     <color name="caption_fg">#ff000000</color>
     <color name="focus_bg">#414141</color>
     <color name="focus_fg">#ff000000</color>

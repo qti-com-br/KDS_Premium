@@ -720,7 +720,7 @@ public class KDSViewBlock {
                     if (i < nleft) w = h + 1;
                     int color = 0;
                     if (i % 2 == 0) {
-                        color = bg;// (getEnv().getViewerBG());
+                        color =  bg;// (getEnv().getViewerBG());
 
                     } else {
                         color = getBorderColor();// (getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Color));
