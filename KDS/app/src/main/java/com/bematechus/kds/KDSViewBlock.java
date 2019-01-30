@@ -730,7 +730,7 @@ public class KDSViewBlock {
                     x += w;
 
                 }
-            } else {
+            } else {//from top to bottom
                 int w = rect.width();
                 int ncount = rect.height() / w;
                 int nleft = (rect.height() % w);
@@ -751,7 +751,81 @@ public class KDSViewBlock {
                     y += h;
 
                 }
+
             }
+        }
+    }
+
+    private void draw_border2(Canvas g, Rect rect, BorderStyle style, boolean bLeft2Right, boolean bTop) {
+
+        if (style == BorderStyle.BorderStyle_Line) {
+            //CanvasDC.fillRect(g, getEnv().getSettings().getInt(KDSSettings.ID.Panels_Block_Border_Color), rect );
+            CanvasDC.fillRect(g, getBorderColor(), rect);
+
+        } else if (style == BorderStyle.BorderStyle_Break) {
+
+            //int bg = getEnv().getSettings().getKDSViewFontFace(KDSSettings.ID.Panels_Default_FontFace).getBG();
+            int bg = getEnv().getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace).getBG();
+            int viewBG = getEnv().getSettings().getInt(KDSSettings.ID.Panels_View_BG);
+            CanvasDC.fillRect(g, getBorderColor(), rect);
+            Paint paint = new Paint();
+            paint.setColor(bg);
+            paint.setStyle(Paint.Style.FILL);
+
+            g.save();
+            g.clipRect(new Rect(rect));
+            // g.drawColor(getEnv().getBlockBorderColor());
+            if (bLeft2Right) {
+                int h = rect.height();
+                int ncount = rect.width() / h/2;
+                //int nleft = rect.width() % h;
+                int x = rect.left;
+                int y = rect.top;
+
+                for (int i = 0; i < ncount; i++) {
+                    int r = h;
+                  //  if (i < nleft) w = h + 1;
+                    int color = 0;
+                    if (i % 2 == 0) {
+                        x += r*2;
+                        continue;
+                    }
+                    if (bTop)
+                        g.drawCircle(x, rect.bottom,  r, paint);
+                    else
+                        g.drawCircle(x, rect.top,  r, paint);
+                    x += r*2;
+
+                }
+            } else {//from top to bottom
+                int w = rect.width();
+                int ncount = rect.height() / w;
+                int nleft = (rect.height() % w);
+                int x = rect.left;
+                int y = rect.top;
+
+//                g.save();
+//                g.clipRect(new Rect(rect));
+                ncount = rect.height() / w/2;
+                for (int i = 0; i < ncount; i++) {
+                    int r = w;
+                    if ((i % 2) == 1) {
+                        y += r*2;
+                        continue;
+                    }
+
+                    if (bTop)
+                        g.drawCircle(rect.right, y, r, paint);
+                    else
+                        g.drawCircle(rect.left, y, r, paint);
+                    //CanvasDC.fillRect(g, color, new Rect(x, y, x + w, y + h));
+                    //g2.fillRect(x, y, w, h);
+                    y += r*2;
+
+                }
+
+            }
+            g.restore();
         }
     }
 
@@ -785,7 +859,8 @@ public class KDSViewBlock {
 
 
         rect = convertRelativeToAbsolute(rect);
-        draw_border(g, rect, m_borderStyleLeftSide, false);
+        //draw_border(g, rect, m_borderStyleLeftSide, false);
+        draw_border2(g, rect, m_borderStyleLeftSide, false, false);
 
         //g2.setColor(c);
     }
@@ -822,7 +897,8 @@ public class KDSViewBlock {
 
         Rect rect = getRightBorderAbsoluteRect(isFocused());
         rect = convertRelativeToAbsolute(rect);
-        draw_border(g,rect, m_borderStyleRightSide, false );
+        //draw_border(g,rect, m_borderStyleRightSide, false );
+        draw_border2(g,rect, m_borderStyleRightSide, false, true );
 
         
     }
@@ -857,7 +933,8 @@ public class KDSViewBlock {
 
         Rect rect = getTopBorderAbsoluteRect(isFocused());
         rect = convertRelativeToAbsolute(rect);
-        draw_border(g, rect, m_borderStyleTopSide, true);
+        //draw_border(g, rect, m_borderStyleTopSide, true);
+        draw_border2(g, rect, m_borderStyleTopSide, true, false);
 
     }
     private Rect getBottomBorderAbsoluteRect(boolean isFocused)
@@ -898,7 +975,8 @@ public class KDSViewBlock {
 
         Rect rect = getBottomBorderAbsoluteRect(isFocused());
         rect = convertRelativeToAbsolute(rect);
-        draw_border(g, rect, m_borderStyleBottomSide, true);
+        //draw_border(g, rect, m_borderStyleBottomSide, true);
+        draw_border2(g, rect, m_borderStyleBottomSide, true, true);
 
 
     }
