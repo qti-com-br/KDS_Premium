@@ -66,6 +66,9 @@ public class ActivationRequest {
         Get_devices,
         Replace,
         SMS,
+        Sync_orders, //KPP1-41
+        Sync_items,
+        Sync_condiments,
 
     }
 
@@ -678,6 +681,160 @@ public class ActivationRequest {
 
     }
 
+    static public ActivationRequest createSyncRequest( String tblName, JSONArray data)
+    {
 
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj("tok", auth) );
+        JSONObject json = getJsonObj("req", "SYNC");
+        try {
+
+            json.put("entity",tblName );
+
+            json.put("data", data);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Sync );
+        return r;
+
+
+    }
+
+    /**
+     * sync order data to api back office
+     * @param store_guid
+     * @param stationID
+     * @param licenseGuid
+     * @param order
+     * @return
+     */
+    static public ActivationRequest createSyncOrderRequest( String store_guid,String stationID, String licenseGuid, KDSDataOrder order, iOSOrderState state)
+    {
+        long lastUpdateTime = -1;
+        return createSyncRequest("orders",createSyncOrderJson(store_guid,stationID, licenseGuid, order, lastUpdateTime, state) );
+
+
+
+    }
+    static enum iOSOrderState
+    {
+        New,
+        Preparation,
+        Done,
+    }
+    static private JSONArray createSyncOrderJson(String store_guid, String stationID,String licenseGuid, KDSDataOrder order, long lastUpdateTime, iOSOrderState state)
+    {
+        JSONArray ar = new JSONArray();
+
+        String guid = licenseGuid;
+        if (licenseGuid.isEmpty())
+            guid = createNewGUID() ;
+
+        JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
+        try {
+
+            Date dt = getUTCTime();// new Date();
+            long updateTime = dt.getTime()/1000;
+            if (updateTime<lastUpdateTime)
+                updateTime = lastUpdateTime +1;
+
+
+            json.put("guid", "'" + order.getGUID() + "'");
+            json.put("store_guid","'" + store_guid + "'" );
+            json.put("destination", "'" + order.getDestination()+"'");
+            json.put("external_id", "''");
+            json.put("guest_table", "'" + order.getToTable()+"'");
+            json.put("is_priority", "0");
+            json.put("items_count", KDSUtil.convertIntToString( order.getItems().getCount()));
+            json.put("order_type", "'" + order.getOrderType()+"'");
+            json.put("pos_terminal", "'" + order.getFromPOSNumber()+"'");
+            json.put("server_name", "'" + order.getWaiterName()+"'");
+            json.put("done",   KDSUtil.convertIntToString( state.ordinal() ));
+            json.put("create_time" ,Long.toString( updateTime)); //seconds
+            json.put("update_time" ,Long.toString( updateTime)); //seconds
+            json.put("upload_time" ,Long.toString( updateTime)); //seconds
+            json.put("is_deleted", "0");
+            json.put("update_device" , "''");
+            json.put("phone", "'" + order.getSMSCustomerPhone()+"'");
+            json.put("create_local_time", Long.toString( updateTime)); //seconds
+            json.put("is_hidden", "0");
+            json.put("customer_guid", "''");
+            json.put("smart_order_start_time", "0");
+            json.put("preparation_time", "0");
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        ar.put(json);
+        return ar;
+    }
+
+    static private JSONArray createSyncItemJson(String store_guid, String stationID,String licenseGuid, KDSDataItem item, long lastUpdateTime)
+    {
+        JSONArray ar = new JSONArray();
+
+        String guid = licenseGuid;
+        if (licenseGuid.isEmpty())
+            guid = createNewGUID() ;
+
+        JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
+        try {
+
+            Date dt = getUTCTime();// new Date();
+            long updateTime = dt.getTime()/1000;
+            if (updateTime<lastUpdateTime)
+                updateTime = lastUpdateTime +1;
+
+
+            json.put("guid", "'" + item.getGUID() + "'");
+            json.put("order_guid","'" + item.getOrderGUID() + "'" );
+            json.put("name", "'" + item.getDescription()+"'");
+            json.put("device_id", "0");
+            json.put("external_id", "''");
+            json.put("is_priority", "0");
+            json.put("condiments_count", KDSUtil.convertIntToString( item.getCondiments().getCount()));
+            json.put("pre_modifier", "''");
+            json.put("preparation_time", "0");
+            json.put("recall_time", Long.toString( updateTime)); //seconds
+            json.put("training_video", "''");
+            json.put("transfer_from_device_id",  '0');
+            json.put("transfer_time" ,Long.toString( updateTime)); //seconds
+            json.put("untransfer_time" ,Long.toString( updateTime)); //seconds
+            json.put("beeped",  '0');
+            json.put("build_card", "''");
+            json.put("create_time" ,Long.toString( updateTime)); //seconds
+            json.put("update_time" ,Long.toString( updateTime)); //seconds
+            json.put("upload_time" ,Long.toString( updateTime)); //seconds
+            json.put("is_deleted", "0");
+            json.put("update_device" , "''");
+            json.put("printed_status", "0");
+            json.put("item_bump_guid", "''");
+            json.put("create_local_time", Long.toString( updateTime)); //seconds
+            json.put("is_hidden", "0");
+            json.put("ready_since_local_time", "0");
+
+
+
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        ar.put(json);
+        return ar;
+    }
 
 }

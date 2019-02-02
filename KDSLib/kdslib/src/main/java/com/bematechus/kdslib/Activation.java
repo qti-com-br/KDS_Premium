@@ -159,6 +159,15 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 case SMS:
                     onSMSResponse(http, request);
                     break;
+                case Sync_orders:
+                    onSyncOrderResponse(http, request);
+                    break;
+                case Sync_items:
+                    onSyncItemResponse(http, request);
+                    break;
+                case Sync_condiments:
+                    onSyncCondimentResponse(http, request);
+                    break;
             }
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
