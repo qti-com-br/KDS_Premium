@@ -163,10 +163,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                     onSyncOrderResponse(http, request);
                     break;
                 case Sync_items:
-                    onSyncItemResponse(http, request);
+                    onSyncItemsResponse(http, request);
                     break;
                 case Sync_condiments:
-                    onSyncCondimentResponse(http, request);
+                    onSyncCondimentsResponse(http, request);
                     break;
             }
         }
@@ -1441,5 +1441,12 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     }
 
+    public void onSyncItemsResponse(ActivationHttp http, ActivationRequest request) {
 
-}
+    }
+
+    public void onSyncCondimentsResponse(ActivationHttp http, ActivationRequest request) {
+
+    }
+
+    }
