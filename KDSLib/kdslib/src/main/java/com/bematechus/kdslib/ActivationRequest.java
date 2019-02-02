@@ -781,15 +781,9 @@ public class ActivationRequest {
         return ar;
     }
 
-    static private JSONArray createSyncItemJson(String store_guid, String stationID,String licenseGuid, KDSDataItem item, long lastUpdateTime)
+    static private JSONObject createItemJson( KDSDataItem item, long lastUpdateTime)
     {
-        JSONArray ar = new JSONArray();
-
-        String guid = licenseGuid;
-        if (licenseGuid.isEmpty())
-            guid = createNewGUID() ;
-
-        JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
+        JSONObject json = getJsonObj( "guid" , item.getGUID() );
         try {
 
             Date dt = getUTCTime();// new Date();
@@ -797,8 +791,7 @@ public class ActivationRequest {
             if (updateTime<lastUpdateTime)
                 updateTime = lastUpdateTime +1;
 
-
-            json.put("guid", "'" + item.getGUID() + "'");
+            //json.put("guid", "'" + item.getGUID() + "'");
             json.put("order_guid","'" + item.getOrderGUID() + "'" );
             json.put("name", "'" + item.getDescription()+"'");
             json.put("device_id", "0");
@@ -833,8 +826,64 @@ public class ActivationRequest {
         {
             e.printStackTrace();
         }
-        ar.put(json);
+        return json;
+    }
+
+    static private JSONArray createSyncItemsJson(String store_guid, String stationID, KDSDataItems items, long lastUpdateTime)
+    {
+        JSONArray ar = new JSONArray();
+
+        for (int i=0; i< items.getCount(); i++)
+        {
+            ar.put(createItemJson(items.getItem(i), lastUpdateTime));
+        }
         return ar;
+
+
+    }
+
+
+    static private JSONObject createCondimentJson( KDSDataCondiment condiment, long lastUpdateTime)
+    {
+        JSONObject json = getJsonObj( "guid" , condiment.getGUID() );
+        try {
+
+            Date dt = getUTCTime();// new Date();
+            long updateTime = dt.getTime()/1000;
+            if (updateTime<lastUpdateTime)
+                updateTime = lastUpdateTime +1;
+            //json.put("guid", "'" + item.getGUID() + "'");
+            json.put("item_guid","'" + condiment.getItemGUID() + "'" );
+            json.put("external_id", "''");
+            json.put("name", "'" + condiment.getDescription()+"'");
+            json.put("pre_modifier", "''");
+            json.put("create_time" ,Long.toString( updateTime)); //seconds
+            json.put("update_time" ,Long.toString( updateTime)); //seconds
+            json.put("upload_time" ,Long.toString( updateTime)); //seconds
+            json.put("is_deleted", "0");
+            json.put("update_device" , "''");
+            json.put("create_local_time", Long.toString( updateTime)); //seconds
+            json.put("preparation_time",  Long.toString( updateTime));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+
+    static private JSONArray createSyncItemsJson(KDSDataCondiments condiments, long lastUpdateTime)
+    {
+        JSONArray ar = new JSONArray();
+
+        for (int i=0; i< condiments.getCount(); i++)
+        {
+            ar.put(createCondimentJson(condiments.getCondiment(i), lastUpdateTime));
+        }
+        return ar;
+
+
     }
 
 }
