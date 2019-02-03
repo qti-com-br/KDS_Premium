@@ -55,7 +55,7 @@ public class ActivationRequest {
     //
     public static final String TOKEN = "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"; //fixed
 
-
+    private Object m_tag = null;
 
     public enum COMMAND
     {
@@ -721,11 +721,35 @@ public class ActivationRequest {
     static public ActivationRequest createSyncOrderRequest( String store_guid,String stationID, String licenseGuid, KDSDataOrder order, iOSOrderState state)
     {
         long lastUpdateTime = -1;
-        return createSyncRequest("orders",createSyncOrderJson(store_guid,stationID, licenseGuid, order, lastUpdateTime, state) );
-
-
-
+        ActivationRequest r = createSyncRequest("orders",createSyncOrderJson(store_guid,stationID, licenseGuid, order, lastUpdateTime, state) );
+        r.setTag(order);
+        return r;
     }
+
+    static public ActivationRequest createSyncItemsRequest(  KDSDataOrder order)
+    {
+        long lastUpdateTime = -1;
+        ActivationRequest r = createSyncRequest("orders",createItemsJson( order.getItems(), lastUpdateTime) );
+        r.setTag(order);
+        return r;
+    }
+
+    static public ActivationRequest createSyncCondimentsRequest(  KDSDataOrder order)
+    {
+        KDSDataCondiments condiments = new KDSDataCondiments();
+        for (int i=0; i< order.getItems().getCount(); i++)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            condiments.getComponents().addAll(item.getCondiments().getComponents());
+        }
+
+        long lastUpdateTime = -1;
+        ActivationRequest r = createSyncRequest("condiments",createCondimentsJson( condiments, lastUpdateTime) );
+        r.setTag(order);
+        return r;
+    }
+
+
     static enum iOSOrderState
     {
         New,
@@ -829,7 +853,7 @@ public class ActivationRequest {
         return json;
     }
 
-    static private JSONArray createSyncItemsJson(String store_guid, String stationID, KDSDataItems items, long lastUpdateTime)
+    static private JSONArray createItemsJson( KDSDataItems items, long lastUpdateTime)
     {
         JSONArray ar = new JSONArray();
 
@@ -842,6 +866,19 @@ public class ActivationRequest {
 
     }
 
+
+    static private JSONArray createCondimentsJson( KDSDataCondiments condiments, long lastUpdateTime)
+    {
+        JSONArray ar = new JSONArray();
+
+        for (int i=0; i< condiments.getCount(); i++)
+        {
+            ar.put(createCondimentJson(condiments.getCondiment(i), lastUpdateTime));
+        }
+        return ar;
+
+
+    }
 
     static private JSONObject createCondimentJson( KDSDataCondiment condiment, long lastUpdateTime)
     {
@@ -873,17 +910,14 @@ public class ActivationRequest {
     }
 
 
-    static private JSONArray createSyncItemsJson(KDSDataCondiments condiments, long lastUpdateTime)
+
+    public void setTag(Object obj)
     {
-        JSONArray ar = new JSONArray();
-
-        for (int i=0; i< condiments.getCount(); i++)
-        {
-            ar.put(createCondimentJson(condiments.getCondiment(i), lastUpdateTime));
-        }
-        return ar;
-
-
+        m_tag = obj;
+    }
+    public Object getTag()
+    {
+        return m_tag;
     }
 
 }

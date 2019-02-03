@@ -1406,38 +1406,39 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void onSyncOrderResponse(ActivationHttp http, ActivationRequest request)
     {
 
-//        if (isResponseError(request.m_result))
-//        {
-//            //fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
-//            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "Order sending failed");
-//            return;
-//        }
-//        else
-//        {
-//            String s = request.getParams();
-//            try {
-//                JSONArray jsonar = new JSONArray(s);
-//                if (jsonar.length()!=2)
-//                    return;
-//                JSONObject json = (JSONObject) jsonar.get(1);
-//
-//                String orderguid = json.getString("order_guid");
-//                String smsState = json.getString("order_status");
-//                if (orderguid.isEmpty())
-//                {
-//                    json = (JSONObject) jsonar.get(0);
-//                    orderguid = json.getString("order_guid");
-//                    smsState = json.getString("order_status");
-//                }
-//                if (m_receiver != null)
-//                    m_receiver.onSMSSendSuccess(orderguid, KDSUtil.convertStringToInt( smsState, KDSDataOrder.SMS_STATE_NEW) );
-//            }
-//            catch (Exception e)
-//            {
-//                KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
-//            }
-//
-//        }
+        if (isResponseError(request.m_result))
+        {
+            //fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
+            KDSUtil.showMsg(KDSApplication.getContext(),"Order sending failed: " + getErrorMessage(request.m_result) );
+            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "Order sending failed");
+            return;
+        }
+        else
+        {
+            String s = request.getParams();
+            try {
+                JSONArray jsonar = new JSONArray(s);
+                if (jsonar.length()!=2)
+                    return;
+                JSONObject json = (JSONObject) jsonar.get(1);
+
+                String orderguid = json.getString("order_guid");
+                String smsState = json.getString("order_status");
+                if (orderguid.isEmpty())
+                {
+                    json = (JSONObject) jsonar.get(0);
+                    orderguid = json.getString("order_guid");
+                    smsState = json.getString("order_status");
+                }
+                if (m_receiver != null)
+                    m_receiver.onSMSSendSuccess(orderguid, KDSUtil.convertStringToInt( smsState, KDSDataOrder.SMS_STATE_NEW) );
+            }
+            catch (Exception e)
+            {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            }
+
+        }
 
     }
 
