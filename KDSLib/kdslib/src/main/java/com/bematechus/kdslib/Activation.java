@@ -1415,23 +1415,20 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         }
         else
         {
+            Object obj = request.getTag();
+            if (obj == null) return;
+
+
             String s = request.getParams();
             try {
-                JSONArray jsonar = new JSONArray(s);
-                if (jsonar.length()!=2)
-                    return;
-                JSONObject json = (JSONObject) jsonar.get(1);
 
-                String orderguid = json.getString("order_guid");
-                String smsState = json.getString("order_status");
-                if (orderguid.isEmpty())
-                {
-                    json = (JSONObject) jsonar.get(0);
-                    orderguid = json.getString("order_guid");
-                    smsState = json.getString("order_status");
-                }
-                if (m_receiver != null)
-                    m_receiver.onSMSSendSuccess(orderguid, KDSUtil.convertStringToInt( smsState, KDSDataOrder.SMS_STATE_NEW) );
+                KDSDataOrder order = (KDSDataOrder)obj;
+                postItemsRequest(order);
+                postCondimentsRequest(order);
+
+
+//                if (m_receiver != null)
+//                    m_receiver.onSMSSendSuccess(orderguid, KDSUtil.convertStringToInt( smsState, KDSDataOrder.SMS_STATE_NEW) );
             }
             catch (Exception e)
             {
@@ -1450,4 +1447,24 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     }
 
+    public void postOrderRequest(KDSDataOrder order, ActivationRequest.iOSOrderState state)
+    {
+        ActivationRequest r = ActivationRequest.createSyncOrderRequest(m_storeGuid,  order, state);
+        m_http.request(r);
+
     }
+
+    public void postItemsRequest(KDSDataOrder order)
+    {
+        ActivationRequest r = ActivationRequest.createSyncItemsRequest(  order );
+        m_http.request(r);
+
+    }
+
+    public void postCondimentsRequest(KDSDataOrder order)
+    {
+        ActivationRequest r = ActivationRequest.createSyncCondimentsRequest(  order );
+        m_http.request(r);
+
+    }
+}

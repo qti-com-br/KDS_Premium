@@ -713,15 +713,13 @@ public class ActivationRequest {
     /**
      * sync order data to api back office
      * @param store_guid
-     * @param stationID
-     * @param licenseGuid
      * @param order
      * @return
      */
-    static public ActivationRequest createSyncOrderRequest( String store_guid,String stationID, String licenseGuid, KDSDataOrder order, iOSOrderState state)
+    static public ActivationRequest createSyncOrderRequest( String store_guid,KDSDataOrder order, iOSOrderState state)
     {
         long lastUpdateTime = -1;
-        ActivationRequest r = createSyncRequest("orders",createSyncOrderJson(store_guid,stationID, licenseGuid, order, lastUpdateTime, state) );
+        ActivationRequest r = createSyncRequest("orders",createSyncOrderJson(store_guid, order, lastUpdateTime, state) );
         r.setTag(order);
         return r;
     }
@@ -756,15 +754,11 @@ public class ActivationRequest {
         Preparation,
         Done,
     }
-    static private JSONArray createSyncOrderJson(String store_guid, String stationID,String licenseGuid, KDSDataOrder order, long lastUpdateTime, iOSOrderState state)
+    static private JSONArray createSyncOrderJson(String store_guid,  KDSDataOrder order, long lastUpdateTime, iOSOrderState state)
     {
         JSONArray ar = new JSONArray();
 
-        String guid = licenseGuid;
-        if (licenseGuid.isEmpty())
-            guid = createNewGUID() ;
-
-        JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
+        JSONObject json = getJsonObj( "guid" , "'"+order.getGUID()+"'");
         try {
 
             Date dt = getUTCTime();// new Date();
