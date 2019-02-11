@@ -1013,7 +1013,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
                 return null;
             }
         };
-        a.execute(null);
+        a.execute(new Object());
         return true;
     }
 

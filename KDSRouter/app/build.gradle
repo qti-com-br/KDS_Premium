@@ -14,7 +14,7 @@ android {
         }
     }
     compileSdkVersion 23
-    buildToolsVersion "22.0.1"
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.bematechus.kdsrouter"
         minSdkVersion 19
@@ -27,32 +27,71 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            zipAlignEnabled true
+            renderscriptOptimLevel 3
         }
         debug {
+            debuggable true
+            jniDebuggable false
+            renderscriptDebuggable false
+            renderscriptOptimLevel 3
+            minifyEnabled false
+            zipAlignEnabled true
         }
     }
     android.applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def outputFile = output.outputFile
-            if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                //这里修改apk文件名
-                def fileName = "KDS-Router-${output.baseName}-${defaultConfig.versionName}.apk"
-// "demo_${variant.productFlavors[0].name}-${defaultConfig.versionCode}-${defaultConfig.versionName}-${releaseTime() }.apk"
-                output.outputFile = new File(outputFile.parent, fileName)
-            }
+        variant.outputs.all {
+            outputFileName = "KDS-Router-${variant.baseName}-${defaultConfig.versionName}.apk"
         }
+//        variant.outputs.each { output ->
+//            def outputFile = output.outputFile
+//            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                //这里修改apk文件名
+//                def fileName = "KDS-Router-${output.baseName}-${defaultConfig.versionName}.apk"
+//// "demo_${variant.productFlavors[0].name}-${defaultConfig.versionCode}-${defaultConfig.versionName}-${releaseTime() }.apk"
+//                output.outputFile = new File(outputFile.parent, fileName)
+//            }
+//        }
     }
+    flavorDimensions "default"
     productFlavors {
+        dev {
+            minSdkVersion 19
+            applicationId 'com.bematechus.kdsrouter'
+            targetSdkVersion 22
+            versionCode 2
+            versionName '2.2.0.9'
+            dimension "default"
+        }
+        stage {
+            minSdkVersion 19
+            applicationId 'com.bematechus.kdsrouter'
+            targetSdkVersion 22
+            versionCode 2
+            versionName '2.2.0.9'
+            dimension "default"
+        }
+        prod {
+            minSdkVersion 19
+            applicationId 'com.bematechus.kdsrouter'
+            targetSdkVersion 22
+            versionCode 2
+            versionName '2.2.0.9'
+            dimension "default"
+        }
     }
 }
 
 dependencies {
-    provided fileTree(dir: 'libs', include: ['*.jar'])
-    provided files('libs/jcifs-1.3.18.jar')
-    provided files('libs/java_websocket.jar')
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.android.support:support-v4:22.2.1'
-    compile 'com.android.support:design:22.2.1'
-    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
-    compile project(':kdslib')
+    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+    compileOnly files('libs/jcifs-1.3.18.jar')
+    compileOnly files('libs/java_websocket.jar')
+    api 'com.android.support:appcompat-v7:22.2.1'
+    api 'com.android.support:support-v4:22.2.1'
+    api 'com.android.support:design:22.2.1'
+    api 'com.google.android.gms:play-services-appindexing:8.1.0'
+    api project(':kdslib')
 }
