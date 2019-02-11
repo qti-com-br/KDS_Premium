@@ -101,5 +101,6 @@
 
     </string-array>
 
+    <!--<string name="api_url" translatable="false">https://kdsgo.com/api/apiKDS</string>-->
 
 </resources>
