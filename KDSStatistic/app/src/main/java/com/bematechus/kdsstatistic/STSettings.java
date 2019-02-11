@@ -444,7 +444,7 @@ public class STSettings extends SettingsBase {
         }
 
         xml.newGroup("StationsRelation", true);
-        String strRelations = loadStationsRelationString(appContex);
+        String strRelations = loadStationsRelationString(appContex, true);
         xml.setGroupValue(strRelations);
         xml.back_to_parent();
         return xml.get_xml_string();

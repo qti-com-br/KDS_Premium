@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
+import com.bematechus.kdslib.KDSSmbFile1;
+import com.bematechus.kdslib.KDSSmbFile2;
 
 /**
  * Created by Administrator on 2015/10/19 0019.
@@ -129,42 +131,122 @@ public class STDlgInputSMBFolder {
             @Override
             public void onClick(View v) {
                 saveToSmb();
-                // Create DirectoryChooserDialog and register a callback
-                KDSSmbFile directoryChooserDialog =
-                        new KDSSmbFile(dialog.getContext(),
-                                new KDSSmbFile.ChosenDirectoryListener()
-                                {
-                                    @Override
-                                    public void onChosenDir(String chosenDir)
-                                    {
-
-                                        KDSSMBPath smb = KDSSMBPath.parseString(chosenDir);
-                                        m_txtPath.setText(smb.getFolder());
-
-                                        m_smbPath = smb;
-                                        int nError = KDSSmbFile.checkFolderWritable(m_smbPath.toString());
-                                        if (nError != 0)
-                                        {
-                                            showPermissionErrorDialog(nError);
-
-                                        }
-                                    }
-                                });
-                // Toggle new folder button enabling
-                directoryChooserDialog.setNewFolderEnabled(false);
-                // Load directory chooser dialog for initial 'm_chosenDir' directory.
-                // The registered callback will be called upon final directory selection.
-                //smb://Administrator:zwt1314521zw@192.168.6.138/
-                // String str = "smb://Administrator:13188223394@192.168.1.197/";
-                //String str = "smb://workgroup/";
-                String str = m_smbPath.toString();
-
-                directoryChooserDialog.chooseDirectory(str);
-
+                if (KDSSmbFile.getEnabledSmbV2())
+                    findSmbFile2();
+                else
+                    findSmbFile1();
 
             }
         });
+//        m_btnFind.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                saveToSmb();
+//                // Create DirectoryChooserDialog and register a callback
+//                KDSSmbFile directoryChooserDialog =
+//                        new KDSSmbFile(dialog.getContext(),
+//                                new KDSSmbFile.ChosenDirectoryListener()
+//                                {
+//                                    @Override
+//                                    public void onChosenDir(String chosenDir)
+//                                    {
+//
+//                                        KDSSMBPath smb = KDSSMBPath.parseString(chosenDir);
+//                                        m_txtPath.setText(smb.getFolder());
+//
+//                                        m_smbPath = smb;
+//                                        int nError = KDSSmbFile.smb_checkFolderWritable(m_smbPath.toString());
+//                                        if (nError != 0)
+//                                        {
+//                                            showPermissionErrorDialog(nError);
+//
+//                                        }
+//                                    }
+//                                });
+//                // Toggle new folder button enabling
+//                directoryChooserDialog.setNewFolderEnabled(false);
+//                // Load directory chooser dialog for initial 'm_chosenDir' directory.
+//                // The registered callback will be called upon final directory selection.
+//                //smb://Administrator:zwt1314521zw@192.168.6.138/
+//                // String str = "smb://Administrator:13188223394@192.168.1.197/";
+//                //String str = "smb://workgroup/";
+//                String str = m_smbPath.toString();
+//
+//                directoryChooserDialog.chooseDirectory(str);
+//
+//
+//            }
+//        });
 
+    }
+    private void findSmbFile2()
+    {
+        // Create DirectoryChooserDialog and register a callback
+        KDSSmbFile2 directoryChooserDialog =
+                new KDSSmbFile2(dialog.getContext(),
+                        new KDSSmbFile2.ChosenDirectoryListener()
+                        {
+                            @Override
+                            public void onChosenDir(String chosenDir)
+                            {
+
+                                KDSSMBPath smb = KDSSMBPath.parseString(chosenDir);
+                                m_txtPath.setText(smb.getFolder());
+                                m_smbPath = smb;
+                                int nError = KDSSmbFile2.checkFolderWritable(m_smbPath.toString());
+                                if (nError!=0)
+                                {
+                                    showPermissionErrorDialog(nError);
+
+                                }
+                            }
+                        });
+        // Toggle new folder button enabling
+        directoryChooserDialog.setNewFolderEnabled(false);
+        // Load directory chooser dialog for initial 'm_chosenDir' directory.
+        // The registered callback will be called upon final directory selection.
+        //smb://Administrator:zwt1314521zw@192.168.6.138/
+        // String str = "smb://Administrator:13188223394@192.168.1.197/";
+        //String str = "smb://workgroup/";
+        String str = m_smbPath.toString();
+
+        directoryChooserDialog.chooseDirectory(str);
+        //m_newFolderEnabled = ! m_newFolderEnabled;
+    }
+
+    private void findSmbFile1()
+    {
+        // Create DirectoryChooserDialog and register a callback
+        KDSSmbFile1 directoryChooserDialog =
+                new KDSSmbFile1(dialog.getContext(),
+                        new KDSSmbFile1.ChosenDirectoryListener()
+                        {
+                            @Override
+                            public void onChosenDir(String chosenDir)
+                            {
+
+                                KDSSMBPath smb = KDSSMBPath.parseString(chosenDir);
+                                m_txtPath.setText(smb.getFolder());
+                                m_smbPath = smb;
+                                int nError = KDSSmbFile1.checkFolderWritable(m_smbPath.toString());//
+                                if (nError !=0)
+                                {
+                                    showPermissionErrorDialog(nError);
+
+                                }
+                            }
+                        });
+        // Toggle new folder button enabling
+        directoryChooserDialog.setNewFolderEnabled(false);
+        // Load directory chooser dialog for initial 'm_chosenDir' directory.
+        // The registered callback will be called upon final directory selection.
+        //smb://Administrator:zwt1314521zw@192.168.6.138/
+        // String str = "smb://Administrator:13188223394@192.168.1.197/";
+        //String str = "smb://workgroup/";
+        String str = m_smbPath.toString();
+
+        directoryChooserDialog.chooseDirectory(str);
+        //m_newFolderEnabled = ! m_newFolderEnabled;
     }
 
     private void onPermissionIgnoreAndSave()
