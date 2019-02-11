@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'kds'
             keyPassword 'bematechus'
-            storeFile file('F:/Android/src/KDS/keystore/bematech-kds.jks')
+            storeFile file('KDS/keystore/bematech-kds.jks')
             storePassword 'bematechus'
         }
     }
