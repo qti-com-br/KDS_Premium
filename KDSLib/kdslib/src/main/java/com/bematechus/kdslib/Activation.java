@@ -72,6 +72,9 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         public void onActivationSuccess();
         public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage);
         public void onSMSSendSuccess(String orderGuid, int smsState);
+        public void onOrderSyncWebSuccess(String orderGuid);
+        public void onItemsSyncWebSuccess(String orderGuid);
+        public void onCondimentsSyncWebSuccess(String orderGuid);
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -1403,6 +1406,12 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     }
 
 
+    /**
+     * The order sync request return OK.
+     * Then, we start to send items and condiments in two request.
+     * @param http
+     * @param request
+     */
     public void onSyncOrderResponse(ActivationHttp http, ActivationRequest request)
     {
 
@@ -1418,17 +1427,14 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             Object obj = request.getTag();
             if (obj == null) return;
 
-
-            String s = request.getParams();
             try {
 
                 KDSDataOrder order = (KDSDataOrder)obj;
                 postItemsRequest(order);
                 postCondimentsRequest(order);
 
-
-//                if (m_receiver != null)
-//                    m_receiver.onSMSSendSuccess(orderguid, KDSUtil.convertStringToInt( smsState, KDSDataOrder.SMS_STATE_NEW) );
+                if (m_receiver != null)
+                    m_receiver.onOrderSyncWebSuccess(order.getGUID());
             }
             catch (Exception e)
             {
@@ -1439,14 +1445,33 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     }
 
+    /**
+     * Items sync ok.
+     * Send message to receiver.
+     * @param http
+     * @param request
+     */
     public void onSyncItemsResponse(ActivationHttp http, ActivationRequest request) {
-
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onItemsSyncWebSuccess(order.getGUID());
     }
 
     public void onSyncCondimentsResponse(ActivationHttp http, ActivationRequest request) {
-
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onCondimentsSyncWebSuccess(order.getGUID());
     }
 
+    /**
+     * post order to web database
+     * @param order
+     * @param state
+     */
     public void postOrderRequest(KDSDataOrder order, ActivationRequest.iOSOrderState state)
     {
         ActivationRequest r = ActivationRequest.createSyncOrderRequest(m_storeGuid,  order, state);

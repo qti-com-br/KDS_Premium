@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
@@ -4339,5 +4340,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             writeDataThroughSocket(sock, stationID, ip, s);
 
         }
+    }
+
+    /**
+     * KPP1-41
+     * @param order
+     */
+    public boolean syncOrderToWebDatabase(KDSDataOrder order, ActivationRequest.iOSOrderState iosState)
+    {
+        if (m_activationSMS == null)
+            return false;
+        m_activationSMS.postOrderRequest(order, iosState);
+        return true;
+
     }
 }

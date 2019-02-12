@@ -2164,6 +2164,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //if (getKDS().isExpeditorStation())
         getKDS().checkSMS(order, true, null);
         getKDS().checkBroadcastSMSStationStateChanged(orderGuid, order.getOrderName(),order.isAllItemsFinished(), true);
+        //KPP1-41
+        getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done);
     }
 
     /**
@@ -2674,6 +2676,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         refreshWithNewDbDataAndFocusFirst();
         notifiyPOSOrderUnbump(userID, orderGuid);
+        //KPP1-41
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order != null) {
+            ActivationRequest.iOSOrderState iosstate = ActivationRequest.iOSOrderState.New;
+            if (order.getFinishedItemsCount()>0)
+                iosstate = ActivationRequest.iOSOrderState.Preparation;
+            getKDS().syncOrderToWebDatabase(order, iosstate);
+        }
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -6004,6 +6015,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onSMSSendSuccess(String orderGuid, int smsState)
     {
         getKDS().onSMSSuccess(orderGuid, smsState);
+    }
+
+    public void onOrderSyncWebSuccess(String orderGuid)
+    {
+
+    }
+    public void onItemsSyncWebSuccess(String orderGuid)
+    {
+
+    }
+    public void onCondimentsSyncWebSuccess(String orderGuid)
+    {
+
     }
 }
 

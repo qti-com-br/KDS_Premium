@@ -718,16 +718,16 @@ public class ActivationRequest {
      */
     static public ActivationRequest createSyncOrderRequest( String store_guid,KDSDataOrder order, iOSOrderState state)
     {
-        long lastUpdateTime = -1;
-        ActivationRequest r = createSyncRequest("orders",createSyncOrderJson(store_guid, order, lastUpdateTime, state) );
+
+        ActivationRequest r = createSyncRequest("orders",createSyncOrderJson(store_guid, order,  state) );
         r.setTag(order);
         return r;
     }
 
     static public ActivationRequest createSyncItemsRequest(  KDSDataOrder order)
     {
-        long lastUpdateTime = -1;
-        ActivationRequest r = createSyncRequest("orders",createItemsJson( order.getItems(), lastUpdateTime) );
+
+        ActivationRequest r = createSyncRequest("orders",createItemsJson( order.getItems()) );
         r.setTag(order);
         return r;
     }
@@ -741,20 +741,33 @@ public class ActivationRequest {
             condiments.getComponents().addAll(item.getCondiments().getComponents());
         }
 
-        long lastUpdateTime = -1;
-        ActivationRequest r = createSyncRequest("condiments",createCondimentsJson( condiments, lastUpdateTime) );
+
+        ActivationRequest r = createSyncRequest("condiments",createCondimentsJson( condiments) );
         r.setTag(order);
         return r;
     }
 
 
-    static enum iOSOrderState
+    /**
+     * From iOS kds app definition
+     */
+    public enum iOSOrderState
     {
         New,
         Preparation,
         Done,
     }
-    static private JSONArray createSyncOrderJson(String store_guid,  KDSDataOrder order, long lastUpdateTime, iOSOrderState state)
+
+    /**
+     *
+     * @param store_guid
+     * @param order
+     *    send this order information to web database.
+     * @param state
+     * @return
+     * The order data json.
+     */
+    static private JSONArray createSyncOrderJson(String store_guid,  KDSDataOrder order, iOSOrderState state)
     {
         JSONArray ar = new JSONArray();
 
@@ -763,8 +776,8 @@ public class ActivationRequest {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
-            if (updateTime<lastUpdateTime)
-                updateTime = lastUpdateTime +1;
+//            if (updateTime<lastUpdateTime)
+//                updateTime = lastUpdateTime +1;
 
 
             json.put("guid", "'" + order.getGUID() + "'");
@@ -799,15 +812,15 @@ public class ActivationRequest {
         return ar;
     }
 
-    static private JSONObject createItemJson( KDSDataItem item, long lastUpdateTime)
+    static private JSONObject createItemJson( KDSDataItem item)
     {
         JSONObject json = getJsonObj( "guid" , item.getGUID() );
         try {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
-            if (updateTime<lastUpdateTime)
-                updateTime = lastUpdateTime +1;
+//            if (updateTime<lastUpdateTime)
+//                updateTime = lastUpdateTime +1;
 
             //json.put("guid", "'" + item.getGUID() + "'");
             json.put("order_guid","'" + item.getOrderGUID() + "'" );
@@ -847,13 +860,13 @@ public class ActivationRequest {
         return json;
     }
 
-    static private JSONArray createItemsJson( KDSDataItems items, long lastUpdateTime)
+    static private JSONArray createItemsJson( KDSDataItems items)
     {
         JSONArray ar = new JSONArray();
 
         for (int i=0; i< items.getCount(); i++)
         {
-            ar.put(createItemJson(items.getItem(i), lastUpdateTime));
+            ar.put(createItemJson(items.getItem(i)));
         }
         return ar;
 
@@ -861,28 +874,28 @@ public class ActivationRequest {
     }
 
 
-    static private JSONArray createCondimentsJson( KDSDataCondiments condiments, long lastUpdateTime)
+    static private JSONArray createCondimentsJson( KDSDataCondiments condiments)
     {
         JSONArray ar = new JSONArray();
 
         for (int i=0; i< condiments.getCount(); i++)
         {
-            ar.put(createCondimentJson(condiments.getCondiment(i), lastUpdateTime));
+            ar.put(createCondimentJson(condiments.getCondiment(i)));
         }
         return ar;
 
 
     }
 
-    static private JSONObject createCondimentJson( KDSDataCondiment condiment, long lastUpdateTime)
+    static private JSONObject createCondimentJson( KDSDataCondiment condiment)
     {
         JSONObject json = getJsonObj( "guid" , condiment.getGUID() );
         try {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
-            if (updateTime<lastUpdateTime)
-                updateTime = lastUpdateTime +1;
+//            if (updateTime<lastUpdateTime)
+//                updateTime = lastUpdateTime +1;
             //json.put("guid", "'" + item.getGUID() + "'");
             json.put("item_guid","'" + condiment.getItemGUID() + "'" );
             json.put("external_id", "''");

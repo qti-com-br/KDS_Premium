@@ -336,6 +336,9 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     }
 
+    public void onOrderSyncWebSuccess(String orderGuid){}
+    public void onItemsSyncWebSuccess(String orderGuid){}
+    public void onCondimentsSyncWebSuccess(String orderGuid){}
 //    /**
 //     * Represents an asynchronous login/registration task used to authenticate
 //     * the user.
