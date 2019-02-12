@@ -135,8 +135,7 @@ public class ActivationRequest {
 //            this.URL = URL_TEST;
 //        else
 //            this.URL = URL_PRODUCTION;
-        //this.URL = URL_TEST;
-        this.URL = KDSApplication.getContext().getString(R.string.api_url);
+        this.URL = KDSApplication.getContext().getString(R.string.api_url);// URL_TEST;
         reset();
     }
 

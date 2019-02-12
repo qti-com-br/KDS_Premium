@@ -5,10 +5,17 @@ android {
         config {
             keyAlias 'kds'
             keyPassword 'bematechus'
-            storeFile file('F:/Android/src/KDS/keystore/bematech-kds.jks')
+            storeFile file('keystore/bematech-kds.jks')
             storePassword 'bematechus'
         }
     }
+    lintOptions {
+        //checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
     compileSdkVersion 23
     defaultConfig {
         applicationId "com.bematechus.kds"
@@ -28,6 +35,7 @@ android {
         variant.outputs.all {
             outputFileName = "KDS-${variant.baseName}-${variant.versionName}.apk"
         }
+
 //        variant.outputs.each { output ->
 //            def outputFile = output.outputFile
 //            if (outputFile != null && outputFile.name.endsWith('.apk')) {
@@ -38,7 +46,6 @@ android {
 //        }
     }
     flavorDimensions "default"
-
     productFlavors {
         dev {
             minSdkVersion 19
