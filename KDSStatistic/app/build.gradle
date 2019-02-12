@@ -5,9 +5,16 @@ android {
         config {
             keyAlias 'kdsstatistic'
             keyPassword 'bematechus'
-            storeFile file('F:/Android/src/KDSStatistic/keystore/kdsstatistic.jks')
+            storeFile file('keystore/kdsstatistic.jks')
             storePassword 'bematechus'
         }
+    }
+
+    lintOptions {
+        //checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
     compileSdkVersion 23
     buildToolsVersion '28.0.3'
