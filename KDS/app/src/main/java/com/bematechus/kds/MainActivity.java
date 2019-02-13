@@ -6038,17 +6038,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().onSMSSuccess(orderGuid, smsState);
     }
 
-    public void onOrderSyncWebSuccess(String orderGuid)
+    public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, Activation.SyncDataResult result)
     {
 
     }
-    public void onItemsSyncWebSuccess(String orderGuid)
-    {
 
-    }
-    public void onCondimentsSyncWebSuccess(String orderGuid)
-    {
-
-    }
 }
 

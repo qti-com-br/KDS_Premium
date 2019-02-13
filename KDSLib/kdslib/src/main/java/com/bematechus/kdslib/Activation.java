@@ -65,16 +65,20 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 //
     public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
 
-
+    public enum SyncDataResult
+    {
+        OK,
+        Fail_Http_exception,
+        Fail_reponse_error,
+    }
 
     public interface ActivationEvents
     {
         public void onActivationSuccess();
         public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage);
         public void onSMSSendSuccess(String orderGuid, int smsState);
-        public void onOrderSyncWebSuccess(String orderGuid);
-        public void onItemsSyncWebSuccess(String orderGuid);
-        public void onCondimentsSyncWebSuccess(String orderGuid);
+        public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
+
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -147,7 +151,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 case Login:
                     onActivationResponseLogin(http, request);
                     break;
-                case Sync:
+                case Sync_devices:
                     onActivationResponseSync(http, request);
                     break;
                 case Get_settings:
@@ -175,11 +179,27 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
         {//activatioinhttp code error/exception
-            onActivationHttpException(http, request);
+            if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments)
+            {
+                onSyncDataHttpException(http, request);
+            }
+            else {
+                onActivationHttpException(http, request);
+            }
         }
         else
         {//http server return error code
-            onActivationResponseError(http, request);
+            if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments)
+            {
+                onSyncDataResponseError(http, request);
+            }
+            else {
+                onActivationResponseError(http, request);
+            }
         }
     }
     static public String getErrorMessage(String strResponse)
@@ -229,7 +249,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         String response = request.m_result;
         if (isResponseError(response))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.UserName_Password, getErrorMessage(response));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.UserName_Password, getErrorMessage(response));
             resetUserNamePassword();
             return;
         }
@@ -274,7 +294,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, getErrorMessage(request.m_result));
             return;
         }
         try
@@ -282,7 +302,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             m_nSyncGetDevicesCount ++;
             if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
             {
-                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, m_context.getString(R.string.cannot_sync_license_data));
+                fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
             postGetDevicesRequest();
@@ -310,7 +330,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
             return;
         }
         try
@@ -318,7 +338,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             m_nSyncGetDevicesCount ++;
             if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
             {
-                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, m_context.getString(R.string.cannot_replace_license_data));
+                fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, m_context.getString(R.string.cannot_replace_license_data));
                 return;
             }
             postGetDevicesRequest();
@@ -355,7 +375,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Settings_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Settings_error, getErrorMessage(request.m_result));
             return;
         }
         try
@@ -429,7 +449,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Devices_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Devices_error, getErrorMessage(request.m_result));
             return;
         }
 
@@ -481,7 +501,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         {
             if (!device.getEnabled())
             {
-                fireFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.License_disabled,m_context.getString(R.string.license_deactivated));
+                fireActivationFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.License_disabled,m_context.getString(R.string.license_deactivated));
                 return;
             }
             else {
@@ -494,7 +514,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         if (m_nMaxLicenseCount <=0 ||
                 (getEnabledDevicesCount() >= m_nMaxLicenseCount ))//2.1.2
         {
-            fireFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.No_valid_license,  m_context.getString(R.string.no_license_available));
+            fireActivationFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.No_valid_license,  m_context.getString(R.string.no_license_available));
             return;
         }
 
@@ -502,7 +522,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         if (m_devices.size()<=0)
         {//add new
             if (m_nSyncGetDevicesCount > MAX_TRY_COUNT) {
-                fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
+                fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
             postSyncMac("",m_stationID, m_myMacAddress, null);
@@ -511,11 +531,11 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
         if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
         {
-            fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
+            fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
             return;
         }
         if (m_nSyncGetDevicesCount>0)
-            fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,"Sync data error, try again!");
+            fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,"Sync data error, try again!");
 
         showRegisterOptionDlg();
 
@@ -695,7 +715,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
         }
 
-        fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_error_code, "Http response error code =" + request.m_httpResponseCode);
+        fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_error_code, "Http response error code =" + request.m_httpResponseCode);
 
     }
 
@@ -703,7 +723,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         showProgressDialog(false, "");
         System.out.println(request.m_httpResponseCode);
-        fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_exception, request.getResult());
+        fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_exception, request.getResult());
 
     }
 
@@ -721,7 +741,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         if (m_receiver != null)
             m_receiver.onActivationSuccess();
     }
-    public void fireFailEvent(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String strMessage)
+    public void fireActivationFailEvent(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String strMessage)
     {
         m_bDoLicensing = false;
         updateFailedCount();//record failed count
@@ -892,7 +912,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             StoreDevice dev = findSelectedLicense(lst);
             if (dev == null) {
                 //Toast.makeText(KDSApplication.getContext(), "No selected item", Toast.LENGTH_LONG).show();
-                fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.No_selected_license_to_replace,  m_context.getString(R.string.no_selected_license_to_replace));
+                fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.No_selected_license_to_replace,  m_context.getString(R.string.no_selected_license_to_replace));
             }
             else
                 postReplacecMac(dev.getGuid(), m_myMacAddress);
@@ -915,7 +935,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     private void afterCancelRegisterOptionDlg()
     {
-        fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Cancel_license_options, "Canceled");
+        fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Cancel_license_options, "Canceled");
     }
 
 
@@ -1152,7 +1172,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             if (m_bSilent) {
                 updateFailedCount();
                 m_bDoLicensing = false;
-                fireFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
+                fireActivationFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
                 return;
             }
             showLoginActivity(caller, showErrorMessage);
@@ -1434,7 +1454,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 postCondimentsRequest(order);
 
                 if (m_receiver != null)
-                    m_receiver.onOrderSyncWebSuccess(order.getGUID());
+                    m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getGUID(), SyncDataResult.OK);
             }
             catch (Exception e)
             {
@@ -1456,7 +1476,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         if (obj == null) return;
         KDSDataOrder order = (KDSDataOrder)obj;
         if (m_receiver != null)
-            m_receiver.onItemsSyncWebSuccess(order.getGUID());
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_items, order.getGUID(), SyncDataResult.OK);
+
     }
 
     public void onSyncCondimentsResponse(ActivationHttp http, ActivationRequest request) {
@@ -1464,7 +1485,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         if (obj == null) return;
         KDSDataOrder order = (KDSDataOrder)obj;
         if (m_receiver != null)
-            m_receiver.onCondimentsSyncWebSuccess(order.getGUID());
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_condiments, order.getGUID(), SyncDataResult.OK);
+
     }
 
     /**
@@ -1490,6 +1512,32 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         ActivationRequest r = ActivationRequest.createSyncCondimentsRequest(  order );
         m_http.request(r);
+
+    }
+
+    public void onSyncDataHttpException(ActivationHttp http, ActivationRequest request)
+    {
+        System.out.println(request.m_httpResponseCode);
+        if (m_receiver != null)
+        {
+            Object obj = request.getTag();
+            if (obj == null) return;
+            KDSDataOrder order = (KDSDataOrder) obj;
+            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getGUID(), SyncDataResult.Fail_Http_exception);
+        }
+
+    }
+    public void onSyncDataResponseError(ActivationHttp http, ActivationRequest request)
+    {
+        System.out.println(request.m_httpResponseCode);
+        if (m_receiver != null)
+        {
+            Object obj = request.getTag();
+            if (obj == null) return;
+            KDSDataOrder order = (KDSDataOrder) obj;
+            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getGUID(), SyncDataResult.Fail_reponse_error);
+        }
+
 
     }
 }

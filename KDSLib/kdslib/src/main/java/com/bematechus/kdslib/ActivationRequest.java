@@ -78,7 +78,7 @@ public class ActivationRequest {
     {
         Unknown,
         Login,
-        Sync,
+        Sync_devices,
         Get_settings,
         Get_devices,
         Replace,
@@ -318,70 +318,74 @@ public class ActivationRequest {
      */
     static public ActivationRequest createSyncMacRequest( String store_guid,String stationID, String licenseGuid, String macAddress,Activation.StoreDevice dev)
     {
-
-       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
-
-        String auth = TOKEN;
-        JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "SYNC");
-        try {
-
-            json.put("entity","devices" );
-            long lastUpdateTime = -1;
-            if (dev != null)
-                lastUpdateTime = dev.getUpdateTime();
-
-            json.put("data", createSyncMacJson(store_guid,stationID, licenseGuid, macAddress, lastUpdateTime));
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-//        JSONArray j = createSyncMacJson(store_guid, licenseGuid, macAddress);
-//        strJson += j.toString();
-//        strJson +="}]";
-
-        arJson.put(json);
-        String str = arJson.toString();
-        //str = strJson;
-//        str = "[{\n" +
-//                "  \"tok\" : \"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"\n" +
-//                "},{\n" +
-//                "    \"entity\": \"devices\",\n" +
-//                "    \"req\": \"SYNC\",\n" +
-//                "    \"data\": [{\n" +
-//                "        \"bump_transfer_device_id\" : \"0\",\n" +
-//                "        \"create_time\" : \"1530217280\",\n" +
-//                "        \"enable\" : \"1\",\n" +
-//                "        \"function\" : \"'EXPEDITOR'\",\n" +
-//                "        \"guid\" : \"'4220e7ee-dcdf-46d9-ae6b-565d228d620'\",\n" +
-//                "        \"id\" : \"2\",\n" +
-//                "        \"is_deleted\" : \"0\",\n" +
-//                "        \"license\" : \"1\",\n" +
-//                "        \"line_display\" : \"0\",\n" +
-//                "        \"login\" : \"0\",\n" +
-//                "        \"name\" : \"'hello22'\",\n" +
-//                "        \"parent_id\" : \"0\",\n" +
-//                "        \"screen_id\" : \"1\",\n" +
-//                "        \"screen_size\" : \"0\",\n" +
-//                "        \"serial\" : \"'1223'\",\n" +
-//                "        \"split_screen_child_device_id\" : \"0\",\n" +
-//                "        \"split_screen_parent_device_id\" : \"0\",\n" +
-//                "        \"store_guid\" : \"'4220e7ee-dcdf-46d9-ae6b-565d228d62d'\",\n" +
-//                "        \"update_device\" : \"''\",\n" +
-//                //"        \"update_time\" : \"1531428990.865947\",\n" +
-//                "        \"update_time\" : \"1530217280\",\n" +
-//                "        \"xml_order\" : \"2\"\n" +
-//                "    }]\n" +
-//                "\n" +
-//                "}]";
-
-        ActivationRequest r = new ActivationRequest();
-        r.setParams( str );
-        r.setCommand( COMMAND.Sync );
+        long lastUpdateTime = -1;
+        if (dev != null)
+            lastUpdateTime = dev.getUpdateTime();
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createSyncMacJson(store_guid,stationID, licenseGuid, macAddress, lastUpdateTime) );
         return r;
+//       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
+//
+//        String auth = TOKEN;
+//        JSONArray arJson = new JSONArray();
+//        arJson.put(getJsonObj("tok", auth) );
+//        JSONObject json = getJsonObj("req", "SYNC");
+//        try {
+//
+//            json.put("entity","devices" );
+//            long lastUpdateTime = -1;
+//            if (dev != null)
+//                lastUpdateTime = dev.getUpdateTime();
+//
+//            json.put("data", createSyncMacJson(store_guid,stationID, licenseGuid, macAddress, lastUpdateTime));
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+////        JSONArray j = createSyncMacJson(store_guid, licenseGuid, macAddress);
+////        strJson += j.toString();
+////        strJson +="}]";
+//
+//        arJson.put(json);
+//        String str = arJson.toString();
+//        //str = strJson;
+////        str = "[{\n" +
+////                "  \"tok\" : \"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"\n" +
+////                "},{\n" +
+////                "    \"entity\": \"devices\",\n" +
+////                "    \"req\": \"SYNC\",\n" +
+////                "    \"data\": [{\n" +
+////                "        \"bump_transfer_device_id\" : \"0\",\n" +
+////                "        \"create_time\" : \"1530217280\",\n" +
+////                "        \"enable\" : \"1\",\n" +
+////                "        \"function\" : \"'EXPEDITOR'\",\n" +
+////                "        \"guid\" : \"'4220e7ee-dcdf-46d9-ae6b-565d228d620'\",\n" +
+////                "        \"id\" : \"2\",\n" +
+////                "        \"is_deleted\" : \"0\",\n" +
+////                "        \"license\" : \"1\",\n" +
+////                "        \"line_display\" : \"0\",\n" +
+////                "        \"login\" : \"0\",\n" +
+////                "        \"name\" : \"'hello22'\",\n" +
+////                "        \"parent_id\" : \"0\",\n" +
+////                "        \"screen_id\" : \"1\",\n" +
+////                "        \"screen_size\" : \"0\",\n" +
+////                "        \"serial\" : \"'1223'\",\n" +
+////                "        \"split_screen_child_device_id\" : \"0\",\n" +
+////                "        \"split_screen_parent_device_id\" : \"0\",\n" +
+////                "        \"store_guid\" : \"'4220e7ee-dcdf-46d9-ae6b-565d228d62d'\",\n" +
+////                "        \"update_device\" : \"''\",\n" +
+////                //"        \"update_time\" : \"1531428990.865947\",\n" +
+////                "        \"update_time\" : \"1530217280\",\n" +
+////                "        \"xml_order\" : \"2\"\n" +
+////                "    }]\n" +
+////                "\n" +
+////                "}]";
+//
+//        ActivationRequest r = new ActivationRequest();
+//        r.setParams( str );
+//        r.setCommand( COMMAND.Sync );
+//        return r;
 
 
     }
@@ -699,7 +703,7 @@ public class ActivationRequest {
 
     }
 
-    static public ActivationRequest createSyncRequest( String tblName, JSONArray data)
+    static public ActivationRequest createSyncRequest(COMMAND command, String tblName, JSONArray data)
     {
 
         String auth = TOKEN;
@@ -722,14 +726,82 @@ public class ActivationRequest {
 
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
-        r.setCommand( COMMAND.Sync );
+        r.setCommand( command);//COMMAND.Sync );
         return r;
 
 
     }
 
     /**
-     * sync order data to api back office
+     * sync order data to api back office.
+     * Sample:
+     *  Request:
+     *
+     * [
+     *     {
+     *         "tok":"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"
+     *     },
+     *     {
+     *         "data":[
+     *             {
+     *                 "preparation_time":"0",
+     *                 "items_count":"1",
+     *                 "external_id":"''",
+     *                 "phone":"''",
+     *                 "guest_table":"'Tbl #4'",
+     *                 "is_priority":"0",
+     *                 "done":"2",
+     *                 "customer_guid":"''",
+     *                 "pos_terminal":"'5'",
+     *                 "destination":"'Fast food'",
+     *                 "upload_time":"1550018592",
+     *                 "server_name":"'David Wong'",
+     *                 "guid":"'b39c2d4390b041be96a6b62b7e80154c'",
+     *                 "is_deleted":"0",
+     *                 "create_local_time":"1550018592",
+     *                 "update_time":"1550018592",
+     *                 "store_guid":"''",
+     *                 "is_hidden":"0",
+     *                 "create_time":"1550018592",
+     *                 "smart_order_start_time":"0",
+     *                 "update_device":"''",
+     *                 "order_type":"'RUSH'"
+     *             }
+     *         ],
+     *         "req":"SYNC",
+     *         "entity":"orders"
+     *     }
+     * ]
+     *
+     *  Response:
+     *
+     * [
+     *     {
+     *         "guid":"b39c2d4390b041be96a6b62b7e80154c",
+     *         "store_guid":"",
+     *         "destination":"Fast food",
+     *         "external_id":"",
+     *         "guest_table":"Tbl #4",
+     *         "is_priority":0,
+     *         "items_count":1,
+     *         "order_type":"RUSH",
+     *         "pos_terminal":"5",
+     *         "server_name":"David Wong",
+     *         "user_info":null,
+     *         "done":2,
+     *         "create_time":1550018592,
+     *         "update_time":1550018592,
+     *         "upload_time":1550047392,
+     *         "is_deleted":0,
+     *         "update_device":"",
+     *         "phone":"",
+     *         "create_local_time":1550018592,
+     *         "is_hidden":0,
+     *         "customer_guid":"",
+     *         "smart_order_start_time":0,
+     *         "preparation_time":0
+     *     }
+     * ]
      * @param store_guid
      * @param order
      * @return
@@ -737,7 +809,7 @@ public class ActivationRequest {
     static public ActivationRequest createSyncOrderRequest( String store_guid,KDSDataOrder order, iOSOrderState state)
     {
 
-        ActivationRequest r = createSyncRequest("orders",createSyncOrderJson(store_guid, order,  state) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_orders,"orders",createSyncOrderJson(store_guid, order,  state) );
         r.setTag(order);
         r.setDbTarget();
         return r;
@@ -746,7 +818,7 @@ public class ActivationRequest {
     static public ActivationRequest createSyncItemsRequest(  KDSDataOrder order)
     {
 
-        ActivationRequest r = createSyncRequest("orders",createItemsJson( order.getItems()) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_items,"items",createItemsJson( order.getItems()) );
         r.setTag(order);
         r.setDbTarget();
         return r;
@@ -762,7 +834,7 @@ public class ActivationRequest {
         }
 
 
-        ActivationRequest r = createSyncRequest("condiments",createCondimentsJson( condiments) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_condiments,"condiments",createCondimentsJson( condiments) );
         r.setTag(order);
         r.setDbTarget();
         return r;
@@ -835,7 +907,7 @@ public class ActivationRequest {
 
     static private JSONObject createItemJson( KDSDataItem item)
     {
-        JSONObject json = getJsonObj( "guid" , item.getGUID() );
+        JSONObject json = getJsonObj( "guid" , "'" + item.getGUID() +"'" );
         try {
 
             Date dt = getUTCTime();// new Date();
@@ -884,8 +956,9 @@ public class ActivationRequest {
     static private JSONArray createItemsJson( KDSDataItems items)
     {
         JSONArray ar = new JSONArray();
+        int ncount = items.getCount();
 
-        for (int i=0; i< items.getCount(); i++)
+        for (int i=0; i< ncount; i++)
         {
             ar.put(createItemJson(items.getItem(i)));
         }
@@ -910,7 +983,7 @@ public class ActivationRequest {
 
     static private JSONObject createCondimentJson( KDSDataCondiment condiment)
     {
-        JSONObject json = getJsonObj( "guid" , condiment.getGUID() );
+        JSONObject json = getJsonObj( "guid" ,"'" +  condiment.getGUID() +"'");
         try {
 
             Date dt = getUTCTime();// new Date();
