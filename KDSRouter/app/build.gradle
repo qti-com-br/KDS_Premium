@@ -27,7 +27,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
         versionCode 2
-        versionName '2.2.0.9'
+        versionName '2.3.0.0'
     }
     buildTypes {
         release {
@@ -70,7 +70,7 @@ android {
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
             versionCode 2
-            versionName '2.2.0.9'
+            versionName '2.3.0.0'
             dimension "default"
         }
         stage {
@@ -78,7 +78,7 @@ android {
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
             versionCode 2
-            versionName '2.2.0.9'
+            versionName '2.3.0.0'
             dimension "default"
         }
         prod {
@@ -86,7 +86,7 @@ android {
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
             versionCode 2
-            versionName '2.2.0.9'
+            versionName '2.3.0.0'
             dimension "default"
         }
     }
