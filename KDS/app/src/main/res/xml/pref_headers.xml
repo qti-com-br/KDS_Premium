@@ -77,6 +77,8 @@
     <!--android:summary="Touch buttons visible/invisible"-->
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TouchPreferenceFragment"
         android:title="@string/pref_kds_touch_title" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TransferPreferenceFragment"
+        android:title="@string/pref_kds_transfer_title" />
     <!--android:summary="Print ticket format,port."-->
 
     <!--<header android:title="@string/pref_kds_category_accessories" />-->
