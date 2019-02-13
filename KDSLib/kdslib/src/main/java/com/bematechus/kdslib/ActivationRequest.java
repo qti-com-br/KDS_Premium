@@ -48,15 +48,32 @@ public class ActivationRequest {
      */
 
     //test server api
-    static final String URL_TEST = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
+    static final String API_URL_TEST = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
     //production server api
-    static final String URL_PRODUCTION = "https://kdsgo.com/api/apiKDS";
-    static String URL = URL_TEST;
+    static final String API_URL_PRODUCTION = "https://kdsgo.com/api/apiKDS";
+
+    //test db url
+    static final String DB_URL_TEST = "http://54.70.214.221/api/apiKDS/Premium";
+
+    static String API_URL = API_URL_TEST;
+
+    //Web database sync feature.
+    //DEV:http://54.70.214.221/api/apiKDS/Premium
+    //STAGE: http://kitchengous.com/api/apiKDS/Premium
+    //PROD: https://kdsgo.com/api/apiKDS/Premium
+    static String DB_URL = DB_URL_TEST;
     //
     public static final String TOKEN = "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"; //fixed
 
     private Object m_tag = null;
+    private TARGET m_target = TARGET.api;
 
+
+    public enum TARGET
+    {
+        api, //for api data sync, see api_url
+        db, //for database sync. see db_url
+    }
     public enum COMMAND
     {
         Unknown,
@@ -91,7 +108,7 @@ public class ActivationRequest {
     String m_result = "";
     int m_httpResponseCode = 0;
     COMMAND m_command = COMMAND.Unknown;
-
+    /**********************************************************************************************/
     public void setParams(String str)
     {
         m_params = str;
@@ -135,7 +152,8 @@ public class ActivationRequest {
 //            this.URL = URL_TEST;
 //        else
 //            this.URL = URL_PRODUCTION;
-        this.URL = KDSApplication.getContext().getString(R.string.api_url);// URL_TEST;
+        this.API_URL = KDSApplication.getContext().getString(R.string.api_url);// URL_TEST;
+        this.DB_URL = KDSApplication.getContext().getString(R.string.db_url);
         reset();
     }
 
@@ -721,6 +739,7 @@ public class ActivationRequest {
 
         ActivationRequest r = createSyncRequest("orders",createSyncOrderJson(store_guid, order,  state) );
         r.setTag(order);
+        r.setDbTarget();
         return r;
     }
 
@@ -729,6 +748,7 @@ public class ActivationRequest {
 
         ActivationRequest r = createSyncRequest("orders",createItemsJson( order.getItems()) );
         r.setTag(order);
+        r.setDbTarget();
         return r;
     }
 
@@ -744,6 +764,7 @@ public class ActivationRequest {
 
         ActivationRequest r = createSyncRequest("condiments",createCondimentsJson( condiments) );
         r.setTag(order);
+        r.setDbTarget();
         return r;
     }
 
@@ -925,6 +946,25 @@ public class ActivationRequest {
     public Object getTag()
     {
         return m_tag;
+    }
+
+    public void setDbTarget()
+    {
+        m_target = TARGET.db;
+    }
+    public String getUrl()
+    {
+        switch (m_target)
+        {
+
+            case api:
+                return API_URL;
+
+            case db:
+                return DB_URL;
+            default:
+                return API_URL;
+        }
     }
 
 }

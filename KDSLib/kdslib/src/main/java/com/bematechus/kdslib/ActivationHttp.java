@@ -453,7 +453,7 @@ public class ActivationHttp  extends Handler implements Runnable {
         try {
 
 
-            URL url = new URL(request.URL);
+            URL url = new URL(request.getUrl());
 
             urlConn = (HttpURLConnection) url.openConnection();
 
