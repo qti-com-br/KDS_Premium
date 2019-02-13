@@ -180,7 +180,6 @@ public class KDSUIDlgInputSMBFolder   {
                                     }
                                 };
                                 t.execute();
-
 //                                if (KDSSmbFile2.checkFolderWritable(m_smbPath.toString())!=0)
 //                                {
 //                                    showPermissionErrorDialog();

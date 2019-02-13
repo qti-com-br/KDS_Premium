@@ -549,8 +549,12 @@ public class KDSSettings extends SettingsBase {
        //2.0.47
        Item_group_category,
        Enable_smbv2, //2.0.51
-        SMS_enabled, //SMS feature , KPP1-15
-        Queue_auto_bump_timeout,
+       SMS_enabled, //SMS feature , KPP1-15
+       Queue_auto_bump_timeout,
+
+       //Transfer
+       Transfer_default_station, //KPP1-42
+       Transfer_auto_to_default,
 
     }
     /*
@@ -1271,6 +1275,12 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.SMS_enabled,"bool_kds_general_sms_enable",false);//
 
         init_option(ID.Queue_auto_bump_timeout,"string_queue_auto_bump_timeout","0");//
+        //transfer options
+        init_option(ID.Transfer_default_station,"string_transfer_default_station","1");//KPP1-42
+        init_option(ID.Transfer_auto_to_default,"bool_transfer_auto_to_default",false);//KPP1-42
+
+
+
 
 
     }

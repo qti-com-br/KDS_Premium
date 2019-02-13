@@ -1113,6 +1113,10 @@
     <!--<string name="my_serial_number">My serial number:</string>-->
     <string name="sms_feature_enabled">SMS feature enabled</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <string name="transfer_default_station">Transfer order to default station</string>
+    <string name="transfer_to_default_automaticlly">Transfer order to default station when do transferring</string>
+    <string name="pref_kds_transfer_title">Transfer</string>
+    <string name="transfer_default_station_offline">Transfer default station # is offline</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

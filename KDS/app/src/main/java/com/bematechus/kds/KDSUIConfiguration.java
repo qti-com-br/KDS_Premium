@@ -1418,6 +1418,21 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
     }
 
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class TransferPreferenceFragment extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_transfer);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+            bindPreferenceSummaryToValue(findPreference("transfer_default_station"));
+
+        }
+    }
+
     /**
      * This fragment shows data and sync preferences only. It is used when the
      * activity is showing a two-pane settings UI.

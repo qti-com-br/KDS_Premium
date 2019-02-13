@@ -3074,14 +3074,35 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         }
 
-        KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Single, this, this.getString(R.string.transfer_select_station_title));
-        dlg.setSelf(true);
-        dlg.setShowMultipleUsers(true);
-        //dlg.setTag(v);
-        dlg.setKDSUser(getKDS().getUsers().getUser(userID));
-        dlg.show();
-        dlg.setKDSUser(getKDS().getUsers().getUser(userID));
+        String stationID = getSettings().getString(KDSSettings.ID.Transfer_default_station);
+        if (getSettings().getBoolean(KDSSettings.ID.Transfer_auto_to_default))
+        {
 
+            if (getKDS().getStationsConnections().findActivedStationByID(stationID) != null) {
+                KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Transfer to default station #" + stationID);
+                KDSStationIP toStation = new KDSStationIP();
+                toStation.setID(stationID);
+                onSearchIpDialogOk(getKDS().getUsers().getUser(userID),toStation);
+            }
+            else
+            {
+                String s = getString(R.string.transfer_default_station_offline);
+                s = s.replace("#", stationID);
+                showToastMessage(s);
+                KDSLog.i(TAG,KDSLog._FUNCLINE_() + s);
+            }
+
+        }
+        else {
+            KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Single, this, this.getString(R.string.transfer_select_station_title));
+            dlg.setSelf(true);
+            dlg.setShowMultipleUsers(true);
+            dlg.setDefaultStationID(stationID);
+            //dlg.setTag(v);
+            dlg.setKDSUser(getKDS().getUsers().getUser(userID));
+            dlg.show();
+            dlg.setKDSUser(getKDS().getUsers().getUser(userID));
+        }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
