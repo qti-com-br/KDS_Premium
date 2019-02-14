@@ -4346,11 +4346,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * KPP1-41
      * @param order
      */
-    public boolean syncOrderToWebDatabase(KDSDataOrder order, ActivationRequest.iOSOrderState iosState)
+    public boolean syncOrderToWebDatabase(KDSDataOrder order, ActivationRequest.iOSOrderState iosState, ActivationRequest.SyncDataFromOperation fromOperation)
     {
         if (m_activationSMS == null)
             return false;
-        m_activationSMS.postOrderRequest(order, iosState);
+        m_activationSMS.postOrderRequest(order, iosState, fromOperation);
         return true;
 
     }

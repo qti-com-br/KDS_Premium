@@ -35,7 +35,7 @@ import java.util.List;
  * Created by David.Wong on 2018/7/10.
  * Rev:
  */
-public class Activation implements ActivationHttp.ActivationHttpEvent {
+public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable {
 
     static final String TAG = "ACTIVATION";
 
@@ -1448,11 +1448,14 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             if (obj == null) return;
 
             try {
+                KDSDataOrder order = (KDSDataOrder) obj;
+                ActivationRequest.SyncDataFromOperation syncOp = request.getSyncDataFromOperation();
 
-                KDSDataOrder order = (KDSDataOrder)obj;
-                postItemsRequest(order);
-                postCondimentsRequest(order);
+                if (syncOp != ActivationRequest.SyncDataFromOperation.Unbump_order) { //unbump order just sync order, no items/condiments
 
+                    postItemsRequest(order);
+                    postCondimentsRequest(order);
+                }
                 if (m_receiver != null)
                     m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getGUID(), SyncDataResult.OK);
             }
@@ -1494,9 +1497,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
      * @param order
      * @param state
      */
-    public void postOrderRequest(KDSDataOrder order, ActivationRequest.iOSOrderState state)
+    public void postOrderRequest(KDSDataOrder order, ActivationRequest.iOSOrderState state, ActivationRequest.SyncDataFromOperation fromOperation)
     {
         ActivationRequest r = ActivationRequest.createSyncOrderRequest(m_storeGuid,  order, state);
+        r.setSyncDataFromOperation(fromOperation);
         m_http.request(r);
 
     }
@@ -1518,12 +1522,17 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void onSyncDataHttpException(ActivationHttp http, ActivationRequest request)
     {
         System.out.println(request.m_httpResponseCode);
+        //prepare for next try
+        request.resetFailedTime();
+        addRetryRequest(request);
+
         if (m_receiver != null)
         {
             Object obj = request.getTag();
             if (obj == null) return;
             KDSDataOrder order = (KDSDataOrder) obj;
             m_receiver.onSyncWebReturnResult(request.getCommand(), order.getGUID(), SyncDataResult.Fail_Http_exception);
+
         }
 
     }
@@ -1539,5 +1548,85 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         }
 
 
+    }
+
+    ArrayList<ActivationRequest> m_arFailedRequest = new ArrayList<>();
+    Thread m_retryThread = null;
+    Object m_locker = new Object();
+
+    private void addRetryRequest(ActivationRequest r)
+    {
+        synchronized(m_locker)
+        {
+            m_arFailedRequest.add(r);
+        }
+        start();
+    }
+    public void start()
+    {
+        if (m_retryThread == null ||
+            !m_retryThread.isAlive())
+        {
+            m_retryThread = new Thread(this);
+            m_retryThread.start();
+        }
+
+    }
+    public void run()
+    {
+        while (true)
+        {
+            int ncount = 0;
+            synchronized (m_locker)
+            {
+                ncount = m_arFailedRequest.size();
+                if (ncount <=0)
+                    return;
+            }
+            ArrayList<ActivationRequest> ar = new ArrayList<>();
+
+            for (int i=0; i< ncount; i++) {
+                ActivationRequest r = m_arFailedRequest.get(i);
+                if (retryFailedRequest(r))
+                    ar.add(r);
+            }
+            for (int i=0; i< ar.size(); i++)
+            {
+                m_arFailedRequest.remove(ar.get(i));
+            }
+            ar.clear();
+            try {
+                Thread.sleep(RETRY_TIMEOUT);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+        }
+    }
+
+    final int RETRY_TIMEOUT = 5000;
+    final int RETRY_MAX_COUNT = 50;
+    /**
+     *
+     * @param r
+     * @return
+     *  True: try it again.
+     *  false: keep it for next loop
+     */
+    private boolean retryFailedRequest(ActivationRequest r)
+    {
+        Date dtStart = r.getFailedTime();
+        if (r.getRetryCount() > RETRY_MAX_COUNT)
+            return true;
+        TimeDog td = new TimeDog(dtStart);
+        if (td.is_timeout(RETRY_TIMEOUT))
+        {
+            r.updateRetryCount();
+            m_http.request(r);
+            return true;
+        }
+        return false;
     }
 }

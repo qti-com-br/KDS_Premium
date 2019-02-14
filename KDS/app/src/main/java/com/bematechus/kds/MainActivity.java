@@ -2165,7 +2165,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().checkSMS(order, true, null);
         getKDS().checkBroadcastSMSStationStateChanged(orderGuid, order.getOrderName(),order.isAllItemsFinished(), true);
         //KPP1-41
-        getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done);
+        getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump_order);
     }
 
     /**
@@ -2682,7 +2682,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             ActivationRequest.iOSOrderState iosstate = ActivationRequest.iOSOrderState.New;
             if (order.getFinishedItemsCount()>0)
                 iosstate = ActivationRequest.iOSOrderState.Preparation;
-            getKDS().syncOrderToWebDatabase(order, iosstate);
+            getKDS().syncOrderToWebDatabase(order, iosstate, ActivationRequest.SyncDataFromOperation.Unbump_order);
         }
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -6040,7 +6040,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, Activation.SyncDataResult result)
     {
+        switch (result)
+        {
 
+            case OK:
+                Toast.makeText(this, "Sync OK:"+stage.name()+ " " + orderGuid, Toast.LENGTH_LONG).show();
+                break;
+            case Fail_Http_exception:
+                Toast.makeText(this, "Sync failed(Internet error): " +stage.name()+ " "+ orderGuid, Toast.LENGTH_LONG).show();
+                break;
+            case Fail_reponse_error:
+                Toast.makeText(this, "Sync failed(Server error): " + stage.name()+ " " + orderGuid, Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 
 }

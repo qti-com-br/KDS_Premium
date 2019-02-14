@@ -92,9 +92,14 @@ public class ActivationHttp  extends Handler implements Runnable {
     {
         this.start();
     }
+    Thread m_httpThread = null;
     private void start()
     {
-        (new Thread(this)).start();
+        if (m_httpThread == null ||
+        !m_httpThread.isAlive()) {
+           m_httpThread = (new Thread(this));//.start();
+            m_httpThread.start();
+        }
     }
 
     @Override
@@ -206,27 +211,29 @@ public class ActivationHttp  extends Handler implements Runnable {
         //m_debugID = Debug_Response.Orders;
         //debug_process();
 
-        m_bRunning = true;
-        ActivationRequest r = popRequest();
+        //m_bRunning = true;
+        while (true) {
+            ActivationRequest r = popRequest();
+            if (r == null)
+                return;
 
-
-        //if (m_debugID == Debug_Response.No_Debug)
-        //    getResultFromHttpGet(m_uri);
-        if (r != null) {
-            //TableTracker.log2File(KDSLog._FUNCLINE_()+ "HTTP Request=" + r.toString());
-           // if (r.isPOSTmethod())
-            {
-                getJsonResultFromHttpPost2(r);
-            }
+            //if (m_debugID == Debug_Response.No_Debug)
+            //    getResultFromHttpGet(m_uri);
+            if (r != null) {
+                //TableTracker.log2File(KDSLog._FUNCLINE_()+ "HTTP Request=" + r.toString());
+                // if (r.isPOSTmethod())
+                {
+                    getJsonResultFromHttpPost2(r);
+                }
 //            else {
 //                getResultFromHttpGet2(r);
 //            }
+            }
+            //else
+            //    debug_process();
+
         }
-        //else
-        //    debug_process();
-
-
-        m_bRunning = false;
+        //m_bRunning = false;
 
     }
     public boolean isRunning()

@@ -74,6 +74,15 @@ public class ActivationRequest {
         api, //for api data sync, see api_url
         db, //for database sync. see db_url
     }
+
+    public enum SyncDataFromOperation
+    {
+        Unknown,
+        Bump_order,
+        Unbump_order,
+
+    }
+
     public enum COMMAND
     {
         Unknown,
@@ -1038,6 +1047,35 @@ public class ActivationRequest {
             default:
                 return API_URL;
         }
+    }
+
+    Date m_dtFailedTime = new Date();
+    public void resetFailedTime()
+    {
+        m_dtFailedTime = new Date();
+    }
+    public Date getFailedTime()
+    {
+        return m_dtFailedTime;
+    }
+    int m_nRetryCount = 0;
+    public void updateRetryCount()
+    {
+        m_nRetryCount ++;
+    }
+    public int getRetryCount()
+    {
+        return m_nRetryCount;
+    }
+
+    SyncDataFromOperation m_syncDataFromOperations = SyncDataFromOperation.Unknown;
+    public void setSyncDataFromOperation(SyncDataFromOperation op)
+    {
+        m_syncDataFromOperations = op;
+    }
+    public SyncDataFromOperation getSyncDataFromOperation()
+    {
+        return m_syncDataFromOperations;
     }
 
 }
