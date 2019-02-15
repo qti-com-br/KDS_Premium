@@ -543,5 +543,11 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     }
 
 
+    public boolean isBufferTooManyWritingData(int nMaxCount)
+    {
+        return (m_writeBuffer.count() > nMaxCount);
+
+    }
+
 }
 

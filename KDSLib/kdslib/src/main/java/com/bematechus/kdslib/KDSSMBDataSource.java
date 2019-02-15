@@ -11,6 +11,11 @@ import java.util.ArrayList;
  */
 public class KDSSMBDataSource implements Runnable {
     private static final String TAG = "KDSSMBDataSource";
+    //for sock stuck issue
+    public interface BufferStateChecker {
+        boolean bufferCheckerIsTooManyDataBuffered();
+    }
+
     final static public String PATH_LOST = "SMBLOST";
     final static public String PATH_PERMISSION = "SMBPERMISSION";
     public static final String TAG_SMBERROR_START =  "<SMBError>";
@@ -23,9 +28,26 @@ public class KDSSMBDataSource implements Runnable {
     private String m_strRemoteFolder = ""; //with the last "/"
     private boolean m_bThreadRunning = false;
     private Thread m_thread = null;
+    //for buffer full when smb read data.
+    BufferStateChecker m_bufferStateChecker = null;
+    public void setBufferStateChecker(BufferStateChecker checker)
+    {
+        m_bufferStateChecker = checker;
+    }
+    public BufferStateChecker getBufferStateChecker()
+    {
+        return m_bufferStateChecker;
+    }
+
     public KDSSMBDataSource(KDSSocketMessageHandler handler)
     {
         this.setMessageHandler(handler);
+    }
+
+    public KDSSMBDataSource(KDSSocketMessageHandler handler, BufferStateChecker checker)
+    {
+        this.setMessageHandler(handler);
+        this.setBufferStateChecker(checker);
     }
 
     public void setMessageHandler(KDSSocketMessageHandler handler)
@@ -166,6 +188,15 @@ public class KDSSMBDataSource implements Runnable {
                 continue;
             }
             try {
+                //check buffer, KPP1-Coke
+                if (m_bufferStateChecker != null)
+                {
+                    if (m_bufferStateChecker.bufferCheckerIsTooManyDataBuffered())
+                    {
+                        sleep(500);
+                        continue;
+                    }
+                }
                 if (KDSSmbFile.isValidPath(m_strRemoteFolder)) {
                     if (isRemoteFolderPermissionError())
                     {

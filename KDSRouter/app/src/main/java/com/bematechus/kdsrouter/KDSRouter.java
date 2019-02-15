@@ -65,7 +65,7 @@ import java.util.List;
 /**
  *
  */
-public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnable {
+public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnable, KDSSMBDataSource.BufferStateChecker {
 
     private final String TAG = "KDSRouter";
     private final int MAX_OFFLINE_ORDERS_COUNT = 200;
@@ -126,7 +126,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     KDSRouterSettings m_settings = null; //this the root all others settings pointer
 
-    KDSSMBDataSource m_smbDataSource = new KDSSMBDataSource(m_sockEventsMessageHandler);
+    //KDSSMBDataSource m_smbDataSource = new KDSSMBDataSource(m_sockEventsMessageHandler);
+    KDSSMBDataSource m_smbDataSource = new KDSSMBDataSource(m_sockEventsMessageHandler, this);
 
     KDSState m_kdsState = new KDSState();
 
@@ -2265,7 +2266,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         }
         else {
 
-            writeToAllStations(xmlOrder);
+            ArrayList<KDSToStation>  ar = KDSDataOrder.getOrderTargetStations(order);
+            ar.addAll(getAllAcceptAnyItemsStations());
+            ArrayList<String> arToStations = RouterAck.getSendToStations(ar);
+            //send order xml data to necessary stations, for 24 stations lost certain prep issue
+            writeToAllStations(xmlOrder, arToStations);
+            //writeToAllStations(xmlOrder);
         }
 
 
@@ -2517,7 +2523,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     }
 
-
+    final int MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION = 100;
     /**
      * 2.0.17
      * for order ack
@@ -2545,7 +2551,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             KDSLog.d(TAG, "Write to KDSStation #" +station.getID() + ",ip=" +station.getIP() + ", port="+station.getPort() +",length="+xmlData.length());
 
             //if (m_stationsConnection.findActivedStationByID(stationID) != null)
-            m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData);
+            m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData,MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
         }
 
     }
@@ -3274,6 +3280,69 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             item.setFG(colorItem.getFG());
         }
 
+    }
+    /**
+     * The expo, track, and queue accept any items
+
+     * @return
+     */
+    private ArrayList<KDSToStation> getAllAcceptAnyItemsStations()
+    {
+        int ncount = m_stationsConnection.getRelations().getRelationsSettings().size();
+
+        ArrayList<KDSToStation> ar = new ArrayList<>();
+
+
+        for (int i=0; i< ncount; i++) {
+            KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
+            if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Queue_Expo ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker )
+            {
+                KDSToStation toStation = new KDSToStation();
+                toStation.setPrimaryStation(stationRelation.getID());
+                ar.add(toStation);
+            }
+
+        }
+        return ar;
+
+    }
+
+    final int MAX_SOCK_BUFFER_SIZE = 10; //the buffer has save these data, don't save more.
+    /**
+     * 20190215 KPP1-Coke
+     * As I save all data to buffer, this cause router haust all resources.
+     * Check if there is any alive station buffer too many data.
+     * If so, don't read more data.
+     * For Coke company
+     * @return
+     */
+    public boolean isEthernetBufferedTooManyData()
+    {
+        ArrayList<KDSStationIP> ar = m_stationsConnection.getAllActiveStations();
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (i >= ar.size()) return false;
+            KDSStationIP station = ar.get(i);
+            if (station == null) return false;
+            KDSStationConnection connection = m_stationsConnection.getConnection(station);
+            //just check connected station
+            if (connection == null ||
+                    !connection.isConnected() ||
+                    connection.isConnecting()
+                    )
+                continue;
+            if (connection.getSock().isBufferTooManyWritingData(MAX_SOCK_BUFFER_SIZE))
+                return true;
+
+        }
+        return false;
+    }
+
+    public boolean bufferCheckerIsTooManyDataBuffered()
+    {
+        return isEthernetBufferedTooManyData();
     }
 
 //    protected void fireStationAnnounceReceivedEvent(KDSStationActived station)
