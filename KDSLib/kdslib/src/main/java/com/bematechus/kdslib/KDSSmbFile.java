@@ -105,6 +105,7 @@ public class KDSSmbFile extends Handler implements Runnable {
 
         //long t1 = System.currentTimeMillis();
         try {
+
             files = file.listFiles();
         } catch (Exception e) {
             KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
@@ -123,6 +124,7 @@ public class KDSSmbFile extends Handler implements Runnable {
                 ar.add(files[i].getName());
             }
         }
+        files = null;
         return ar;
         //System.out.println();
         //System.out.println( files.length + " files in " + t2 + "ms"
