@@ -1639,6 +1639,7 @@ public class KDSStationsConnection {
      */
     public  void connectStationWithData(KDSStationIP station, String strXml, int nMaxBufferCount)
     {
+
         KDSStationConnection connection = getConnection(station);
         if (connection == null)
         {//this station is closed

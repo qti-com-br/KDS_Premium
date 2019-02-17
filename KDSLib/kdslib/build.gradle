@@ -20,6 +20,11 @@ android {
 }
 
 dependencies {
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    //releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    // Optional, if you use support library fragments:
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6'
+
     api fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     api 'com.android.support:appcompat-v7:23.3.0'

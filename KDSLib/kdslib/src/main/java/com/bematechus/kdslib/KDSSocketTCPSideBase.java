@@ -180,6 +180,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         if (!this.isConnected()) return;
         ByteBuffer buf = m_writeBuffer.popup();
         if (buf != null) {
+
             write_to_socket(buf);
 
         }
@@ -187,18 +188,47 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     public boolean interface_isUDP(){return false;}
     public boolean interface_isTCPListen(){return false;}
     public boolean interface_isTCPClient(){return true;}
+    ByteBuffer m_directByteBuffer = ByteBuffer.allocateDirect(1024); //1k
 
     protected  boolean write_to_socket(ByteBuffer buf)
     {
         try
         {
             //buf.rewind();
-            int nwrite =  m_socketChannel.write(buf);
-            if (nwrite >0) {
-                if (m_eventHandler != null)
-                    m_eventHandler.sendWriteDoneMessage(this,this.getRemoteIP(), nwrite );
-            }
-            return true;
+//            if (KDSConst._DEBUG)
+//            {
+//                int nwrite = buf.capacity();
+//                if (nwrite > 0) {
+//                    if (m_eventHandler != null)
+//                        m_eventHandler.sendWriteDoneMessage(this, this.getRemoteIP(), nwrite);
+//                }
+//                return true;
+//            }
+//            else
+                //Unsafe unsafe = GetUsafeInstance.getUnsafeInstance();
+
+                if (m_directByteBuffer.capacity() < buf.capacity())
+                {
+                    m_directByteBuffer = ByteBuffer.allocateDirect(buf.capacity());
+                }
+                //ByteBuffer byteBuffer = ByteBuffer.allocateDirect(buf.capacity());
+                System.arraycopy(buf.array(),0,  m_directByteBuffer.array(), 0, buf.capacity());
+            m_directByteBuffer.limit(buf.limit());
+            m_directByteBuffer.position(buf.position());
+
+                int nwrite = m_socketChannel.write(m_directByteBuffer); //memory leak
+                buf.clear();
+
+            m_directByteBuffer.clear();
+
+
+                if (nwrite > 0) {
+                    if (m_eventHandler != null)
+                        m_eventHandler.sendWriteDoneMessage(this, this.getRemoteIP(), nwrite);
+                }
+
+                return true;
+
         }
         catch (Exception e)
         {
@@ -220,19 +250,23 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     protected  boolean write(String strText)
     {
 
+
         byte[] bytes = KDSUtil.convertStringToUtf8Bytes(strText);
         ByteBuffer buf = ByteBuffer.wrap(bytes);
 
         return write(buf);
+
 
     }
 
     public boolean writeXmlTextCommand(String strXml)
     {
 
+        //if (KDSConst._DEBUG) return true; //heap size issue here
 
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildXMLCommand(strXml);
         return write(buf);
+
 
     }
 
@@ -520,7 +554,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
             Process p = Runtime.getRuntime().exec("/system/bin/ping -W 1 -c " + pingNum + " " + strIP); // 10.83.50.111  m_strForNetAddress
             int status = p.waitFor();
 
-            BufferedReader buf = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            InputStreamReader ir = new InputStreamReader(p.getInputStream());
+            BufferedReader buf = new BufferedReader(ir);//new InputStreamReader(p.getInputStream()));
 
             String str = new String();
             String strInfo = "";
@@ -530,6 +565,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
                 strInfo+=str;
             }
             KDSLog.i(TAG,KDSLog._FUNCLINE_()+ strInfo);
+            buf.close();
+            ir.close();
             if (strInfo.indexOf("time=") >=0)
                 return true;
             return false;//strInfo;

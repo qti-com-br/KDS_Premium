@@ -77,7 +77,7 @@ public class KDSSmbFile extends Handler implements Runnable {
      *  smb://[[[domain;]username[:password]@]server[:port]/[[share/[dir/]file]]][?param=value[param2=value2[...]]]
      * @return
      */
-    static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles)
+    static public ArrayList<String> findAllXmlFiles_old(String remoteUriFolder, int nMaxFiles)
     {
         ArrayList<String> ar = new ArrayList<String>();
         SmbFile file;
@@ -129,6 +129,59 @@ public class KDSSmbFile extends Handler implements Runnable {
         //System.out.println();
         //System.out.println( files.length + " files in " + t2 + "ms"
     }
+
+    /**
+     * Please notice, it use the list() to retrieve all files name.
+     *  The dir and file is same ,just name.
+     *  For speed and memory
+     * @param remoteUriFolder
+     * @param nMaxFiles
+     * @return
+     */
+    static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles)
+    {
+        ArrayList<String> ar = new ArrayList<String>();
+        SmbFile file;
+        String[] files = null;//new SmbFile[0];
+
+        try {
+            file = openSmbUri(remoteUriFolder);
+            if (file == null) return ar;
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return ar;
+        }
+
+        //long t1 = System.currentTimeMillis();
+        try {
+
+            files = file.list();
+        } catch (Exception e) {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        //long t2 = System.currentTimeMillis() - t1;
+
+        for( int i = 0; i < files.length; i++ ) {
+            if (nMaxFiles >0)
+                if (ar.size() >= nMaxFiles) break;
+            String fileName =files[i];//.getName();
+            fileName = fileName.toUpperCase();
+            //if(files[i].getName().indexOf(".xml")!=-1)//fix bug, if the xml is XML, we lost this file.
+            if (fileName.indexOf(".XML") != -1)
+            {
+                ar.add(files[i]);//.getName());
+            }
+        }
+        files = null;
+        return ar;
+        //System.out.println();
+        //System.out.println( files.length + " files in " + t2 + "ms"
+    }
+
 
     static public boolean isValidPath(String remoteUriFolder)
     {

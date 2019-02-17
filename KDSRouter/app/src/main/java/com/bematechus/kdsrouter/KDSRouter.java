@@ -1826,7 +1826,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             doAskOrderState(objSource, order, xmlData);
         }
         else {
-
+            //if (!KDSConst._DEBUG) //no heap size increasing issue, it should in doOrderFilter function
             doOrderFilter(order, xmlData, originalFileName);
         }
         String ip = "";
@@ -2260,7 +2260,6 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         {
             RouterAck ack = m_acks.add(order, xmlData, originalFileName);
             ArrayList<String> ar = ack.getSendToStations();
-
             writeToAllStations(xmlOrder, ar);
 
         }
@@ -2270,6 +2269,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             ar.addAll(getAllAcceptAnyItemsStations());
             ArrayList<String> arToStations = RouterAck.getSendToStations(ar);
             //send order xml data to necessary stations, for 24 stations lost certain prep issue
+            //if (!KDSConst._DEBUG) //heap size issue in this function
             writeToAllStations(xmlOrder, arToStations);
             //writeToAllStations(xmlOrder);
         }
@@ -2551,6 +2551,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             KDSLog.d(TAG, "Write to KDSStation #" +station.getID() + ",ip=" +station.getIP() + ", port="+station.getPort() +",length="+xmlData.length());
 
             //if (m_stationsConnection.findActivedStationByID(stationID) != null)
+            //if (!KDSConst._DEBUG) //heap size issue is here
             m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData,MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
         }
 

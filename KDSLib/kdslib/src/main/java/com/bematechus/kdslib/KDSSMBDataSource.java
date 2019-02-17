@@ -217,6 +217,7 @@ public class KDSSMBDataSource implements Runnable {
                     sleep(500);
                     continue;
                 }
+                //if (!KDSConst._DEBUG)
                 checkXmlFiles(ar);
             }
             catch (Exception e)
@@ -239,6 +240,7 @@ public class KDSSMBDataSource implements Runnable {
             smbFileName = m_strRemoteFolder + smbFileName;
             String text = readFileContent(smbFileName);
             if (text.isEmpty()) continue;
+
             doReceivedXmlText(smbFileName,text);
             //remove this file.
             removeSmbFile(smbFileName);
