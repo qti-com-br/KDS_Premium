@@ -174,6 +174,9 @@ public class KDSSMBDataSource implements Runnable {
 
     }
 
+    //save them for next loop
+    ArrayList<String> m_arExistedFiles = new ArrayList<>();
+    final int BUFFER_FILES_COUNT = -1;
     /**
      *
      */
@@ -181,6 +184,7 @@ public class KDSSMBDataSource implements Runnable {
     {
         m_tdLastCheckPermission.reset(KDSUtil.createInvalidDate());
         m_bPermissionError = true;
+        ArrayList<String> ar = new ArrayList<>();
         while(m_bThreadRunning)
         {
             if (m_strRemoteFolder.isEmpty()) {
@@ -212,13 +216,29 @@ public class KDSSMBDataSource implements Runnable {
                 }
 
                 //read data
-                ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
+                //ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
+                ar.clear();
+                if (m_arExistedFiles.size() <=0)
+                    m_arExistedFiles = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder, BUFFER_FILES_COUNT);
+
+                if (m_arExistedFiles.size() >0)
+                {
+                    int ncount = MAX_ORDERS_COUNT>m_arExistedFiles.size()?m_arExistedFiles.size():MAX_ORDERS_COUNT;
+
+                    for (int i=0; i< ncount; i++) {
+                        ar.add(m_arExistedFiles.get(0));
+                        m_arExistedFiles.remove(0);
+                    }
+                }
+
+
                 if (ar.size() <= 0) {
                     sleep(500);
                     continue;
                 }
                 //if (!KDSConst._DEBUG)
                 checkXmlFiles(ar);
+                sleep(500); //slow down.
             }
             catch (Exception e)
             {

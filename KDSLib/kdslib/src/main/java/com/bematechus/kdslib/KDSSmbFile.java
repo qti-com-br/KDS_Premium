@@ -136,6 +136,7 @@ public class KDSSmbFile extends Handler implements Runnable {
      *  For speed and memory
      * @param remoteUriFolder
      * @param nMaxFiles
+     *  -1,0: read all
      * @return
      */
     static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles)
