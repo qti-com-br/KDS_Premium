@@ -657,7 +657,9 @@ public class KDSLog {
 
     static public void logAppStarted()
     {
-        i(TAG, "*************** "+getAppNameAndVersion() + " Started" + " ***************");
+        String ip =  KDSSocketManager.getLocalIpAddress();
+
+        i(TAG, "*************** "+getAppNameAndVersion() + " Started [" +ip+ "] ***************");
     }
 
     public static String _FUNCLINE_() {

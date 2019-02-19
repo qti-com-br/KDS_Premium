@@ -34,6 +34,8 @@ public class KDSStationFunc {
      */
     static public  void sync_with_backup(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
     {
+        if (kds.getStationsConnections().getRelations().getBackupStations().size() <=0)
+            return; //for speed
         String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
         kds.getStationsConnections().writeToBackups(kds.getStationID(), strXml);
 
@@ -41,6 +43,8 @@ public class KDSStationFunc {
 
     static public void sync_with_mirror(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
     {
+        if (kds.getStationsConnections().getRelations().getMirrorStations().size() <=0)
+            return;//for speed
         String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
         kds.getStationsConnections().writeToMirrors(kds.getStationID(), strXml);
 
@@ -155,6 +159,8 @@ public class KDSStationFunc {
      */
     static private void sync_with_exp(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
     {
+        if (kds.getStationsConnections().getRelations().getExpStations().size() <=0)
+            return;//for speed
         String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
         //writeToStations(m_stationsConnection.getExpStations(), strXml);
         kds.getStationsConnections().writeToExps(kds.getStationID(),strXml);
@@ -2046,6 +2052,8 @@ public class KDSStationFunc {
      */
     static public void sync_with_queue(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
     {
+        if (kds.getStationsConnections().getRelations().getQueueStations().size() <=0)
+            return;//for speed
         String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
         kds.getStationsConnections().writeToQueue(kds.getStationID(), strXml);
 
@@ -2053,6 +2061,8 @@ public class KDSStationFunc {
 
     static public void sync_with_tt(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
     {
+        if (kds.getStationsConnections().getRelations().getTTStations().size() <=0)
+            return;//for speed
         String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
         kds.getStationsConnections().writeToTT(kds.getStationID(), strXml);
 

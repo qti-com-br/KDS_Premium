@@ -2191,9 +2191,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public boolean checkAutoBumping()
     {
         if (!isKDSValid()) return false;
+
         boolean bEnabled = this.getSettings().getBoolean(KDSSettings.ID.Auto_bump_enabled);
 
         if (!bEnabled) return false;
+
+        //there is one bug here, this function auto bump queue orders too.
+        //add following code.
+        if (getKDS().isQueueView() ||
+                getKDS().isQueueExpo()) return false;
+
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
         //limit its size
         ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT);

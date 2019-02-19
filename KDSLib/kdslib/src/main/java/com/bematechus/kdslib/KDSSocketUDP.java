@@ -416,4 +416,9 @@ public class KDSSocketUDP implements KDSSocketInterface{
         return null;
     }
 
+    public boolean interface_WriteBufferIsFull()
+    {
+        return false;
+    }
+
 }

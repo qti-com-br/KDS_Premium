@@ -323,23 +323,29 @@ public class KDSStationsConnection {
         {
             ncount = m_arConnection.size();
             for (int i = ncount - 1; i >= 0; i--) {
-                int nErrorCode = m_arConnection.get(i).isConnectionTimeoutWithErrorCode();
+                KDSStationConnection conn = m_arConnection.get(i);
+                int nErrorCode = conn.isConnectionTimeoutWithErrorCode();
+
+                String loginfo = "ID=" + conn.getID() + ",ip=" + conn.getIP()+",port="+ conn.getPort();
                 //if (m_arConnection.get(i).isConnectionTimeout()) {
                 if (nErrorCode != 0) {
                     //debug_info("remove timeout(" +KDSUtil.convertIntToString(nErrorCode) +") " + m_arConnection.get(i).getIP());
-                    m_arConnection.get(i).getSock().close();
-                    if (m_arConnection.get(i).getBufferedCount() >0)
-                        m_arTimeoutConnecting.add(m_arConnection.get(i)); //save it, for next use
-                    m_arConnection.get(i).getSock().freeCommandBuffer();
+
+                    KDSLog.e(TAG, KDSLog._FUNCLINE_() + "connect timeout, remove it:"+loginfo);
+                    conn.getSock().close();
+                    if (conn.getBufferedCount() >0)
+                        m_arTimeoutConnecting.add(conn); //save it, for next use
+                    conn.getSock().freeCommandBuffer();
                     m_arConnection.remove(i);
                 }
-                else if (findActiveStationByIP(arLostStations, m_arConnection.get(i).getIP()) != null)
+                else if (findActiveStationByIP(arLostStations, conn.getIP()) != null)
                 {//lost
-                    m_arConnection.get(i).getSock().close();
-                    if (m_arConnection.get(i).getBufferedCount() >0)
-                        m_arTimeoutConnecting.add(m_arConnection.get(i)); //save it, for later
+                    KDSLog.e(TAG, KDSLog._FUNCLINE_() + "station inactive, close it:"+loginfo);
+                    conn.getSock().close();
+                    if (conn.getBufferedCount() >0)
+                        m_arTimeoutConnecting.add(conn); //save it, for later
                     //debug_info("remove "+m_arConnection.get(i).getIP() + " station lost");
-                    m_arConnection.get(i).getSock().freeCommandBuffer();
+                    conn.getSock().freeCommandBuffer();
                     m_arConnection.remove(i);
                 }
 

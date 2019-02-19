@@ -188,4 +188,9 @@ public class KDSSocketTCPListen implements KDSSocketInterface{
     {
 
     }
+
+    public boolean interface_WriteBufferIsFull()
+    {
+        return false;
+    }
 }

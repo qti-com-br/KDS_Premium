@@ -133,6 +133,7 @@ public class KDSSocketManager implements Runnable {
 //                    if (m_selector.keys().size() <= 0) {
 //                        bSleep = true;
 //                    } else {
+
                         if (m_selector.select(SELECT_TIMEOUT) > 0) {
                             //Thread.sleep(100);
                             Iterator<SelectionKey> keyIterator = m_selector.selectedKeys().iterator();
@@ -250,6 +251,10 @@ public class KDSSocketManager implements Runnable {
 
             //check read
             if (key.isReadable()) {
+                if (isAnySocketWriteBufferFull())
+                {//make sure it is stable. KPP1-Coke
+                    return true;
+                }
                 obj.interface_OnTCPClientRead(channel);
             }
             if ( key.isWritable()) {
@@ -548,6 +553,35 @@ public class KDSSocketManager implements Runnable {
             //e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Write buffer contains 10 pieces of data.
+     * Just waiting...
+     * @return
+     */
+    public boolean isAnySocketWriteBufferFull()
+    {
+        Iterator<SelectionKey> keyIterator = m_selector.keys().iterator();
+        while (keyIterator.hasNext()) {
+            SelectionKey key = keyIterator.next();
+            if (!key.isValid()) continue;
+
+            KDSSocketInterface obj = (KDSSocketInterface) key.attachment();
+            if (obj == null) continue;
+            if (obj.interface_isUDP()) {
+                continue;
+            }
+            else if (obj.interface_isTCPListen()) {
+                continue;
+            }
+            else if (obj.interface_isTCPClient()) {
+                if (obj.interface_WriteBufferIsFull())
+                    return true;
+            }
+
+        }
+        return false;
     }
 
 

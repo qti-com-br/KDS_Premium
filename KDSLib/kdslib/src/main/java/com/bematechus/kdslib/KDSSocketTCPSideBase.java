@@ -383,6 +383,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     public void interface_OnTCPClientRead(SocketChannel channel)
     {
         if (channel.socket() == null) return;
+
     //            if (this.m_bServerSide)
     //                KDSUtil.debug(" ----------Server read------------");
     //            else
@@ -403,7 +404,12 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
             {//20160930, use it again, as unormal close kds app, we don't know connect closed.
                 //it cause kds app start again, can not been reconnected
                 //if (channel.socket() == null) {
-                KDSLog.e(TAG,KDSLog._FUNCLINE_()+ "read data <0");
+
+                String remote_ip = "unkown ip";
+
+                if (channel.socket() != null)
+                    remote_ip = channel.socket().getInetAddress().getHostAddress() + ",local port=" +KDSUtil.convertIntToString(channel.socket().getLocalPort());
+                KDSLog.e(TAG,KDSLog._FUNCLINE_()+ "read from ["+remote_ip + "] data <0");
                     interface_OnTCPClientDisconnected(channel);
                     return;
                 //}
@@ -445,6 +451,10 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         }
         catch (Exception e)
         {
+            String remote_ip = "unkown ip";
+            if (channel.socket() != null)
+                remote_ip = channel.socket().getInetAddress().getHostAddress() + ", local port=" +KDSUtil.convertIntToString(channel.socket().getLocalPort());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() +"Exception when read from: "+remote_ip);//+ KDSLog.getStackTrace(e));
             KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ KDSLog.getStackTrace(e));
             //KDSLog.e(TAG,KDSLog._FUNCLINE_()+ e.toString());
             //Log.e(TAG,KDSLog._FUNCLINE_() + KDSUtil.error(e) );
@@ -604,6 +614,12 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     {
         return (m_writeBuffer.count() > nMaxCount);
 
+    }
+
+    final int MAX_WRITE_BUFFER_SIZE = 10;
+    public boolean interface_WriteBufferIsFull()
+    {
+        return isBufferTooManyWritingData(MAX_WRITE_BUFFER_SIZE);
     }
 
 }
