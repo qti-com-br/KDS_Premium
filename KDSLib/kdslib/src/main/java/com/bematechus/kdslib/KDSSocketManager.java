@@ -140,6 +140,7 @@ public class KDSSocketManager implements Runnable {
                             while (keyIterator.hasNext()) {
                                 SelectionKey key = keyIterator.next();
                                 if (key ==null) continue;
+
                                 if (key.isValid()) {
                                     KDSSocketInterface obj = (KDSSocketInterface) key.attachment();
                                     if (obj == null) continue;
@@ -160,6 +161,7 @@ public class KDSSocketManager implements Runnable {
                                 keyIterator.remove();
 
                             }
+
                         }
 //                        else {
 //                            bSleep = true;
@@ -253,9 +255,14 @@ public class KDSSocketManager implements Runnable {
             if (key.isReadable()) {
                 if (isAnySocketWriteBufferFull())
                 {//make sure it is stable. KPP1-Coke
-                    return true;
+                    //Suspend others reading, just I can read new data.
+                    if (isSocketWriteBufferFull(key)) //Myself is full, still reading.
+                        obj.interface_OnTCPClientRead(channel);
+
                 }
-                obj.interface_OnTCPClientRead(channel);
+                else
+                    obj.interface_OnTCPClientRead(channel);
+
             }
             if ( key.isWritable()) {
                 obj.interface_OnTCPClientWrite(channel);
@@ -565,23 +572,29 @@ public class KDSSocketManager implements Runnable {
         Iterator<SelectionKey> keyIterator = m_selector.keys().iterator();
         while (keyIterator.hasNext()) {
             SelectionKey key = keyIterator.next();
-            if (!key.isValid()) continue;
-
-            KDSSocketInterface obj = (KDSSocketInterface) key.attachment();
-            if (obj == null) continue;
-            if (obj.interface_isUDP()) {
-                continue;
-            }
-            else if (obj.interface_isTCPListen()) {
-                continue;
-            }
-            else if (obj.interface_isTCPClient()) {
-                if (obj.interface_WriteBufferIsFull())
-                    return true;
-            }
+            if (isSocketWriteBufferFull(key))
+                return true;
 
         }
         return false;
+    }
+
+    public boolean isSocketWriteBufferFull(SelectionKey key)
+    {
+
+
+        if (!key.isValid()) return false;
+
+        KDSSocketInterface obj = (KDSSocketInterface) key.attachment();
+        if (obj == null) return false;
+        if (obj.interface_isTCPClient()) {
+            if (obj.interface_WriteBufferIsFull())
+                return true;
+        }
+        return false;
+
+
+
     }
 
 
