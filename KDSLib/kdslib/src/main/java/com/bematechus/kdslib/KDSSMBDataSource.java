@@ -197,7 +197,7 @@ public class KDSSMBDataSource implements Runnable {
                 {
                     if (m_bufferStateChecker.bufferCheckerIsTooManyDataBuffered())
                     {
-                        sleep(500);
+                        sleep(100);
                         continue;
                     }
                 }
@@ -249,15 +249,15 @@ public class KDSSMBDataSource implements Runnable {
         }
     }
 
-    final int MAX_ORDERS_COUNT = 10;
+    final int MAX_ORDERS_COUNT = 20;
     private void checkXmlFiles(ArrayList<String> arFiles) {
         int ncount = arFiles.size();
-        if (ncount >MAX_ORDERS_COUNT)
-            ncount = MAX_ORDERS_COUNT;
+//        if (ncount >MAX_ORDERS_COUNT)
+//            ncount = MAX_ORDERS_COUNT;
         for (int i = 0; i < ncount; i++)
         {
-            String smbFileName = arFiles.get(i);
-            smbFileName = m_strRemoteFolder + smbFileName;
+            String smbFileName = m_strRemoteFolder +arFiles.get(i);
+            //smbFileName =  smbFileName;
             String text = readFileContent(smbFileName);
             if (text.isEmpty()) continue;
 

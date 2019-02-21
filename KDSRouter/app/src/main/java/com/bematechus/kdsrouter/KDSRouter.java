@@ -1411,7 +1411,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             doSmbError(xmlData);
         }
         else {
-            doOrderXml(smb,smbFileName, xmlData);
+            doOrderXmlInThread(smb,smbFileName, xmlData);//
         }
 
     }
@@ -1456,7 +1456,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             case Unknown:
                 return;
             case Order:
-                doOrderXml(sock, "",xmlData);
+                doOrderXmlInThread(sock, "",xmlData);
                 break;
 
             case Command:
@@ -1469,7 +1469,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             break;
             case Notification:
             {
-                doNotificationXml(sock, xmlData);
+                doNotificationXmlInThread(sock, xmlData);
             }
             break;
             case Acknowledgement:
@@ -1760,11 +1760,23 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     static final private String NOTIFY_FILE_NAME = "FileName";
     private boolean writePOSNotification(String xmlData)
     {
+        String s = xmlData;
+        int nindex = s.indexOf(NOTIFY_FILE_NAME);
+        if (nindex <0) return false;
+        int nStart = s.indexOf("\"", nindex);
+        if (nStart < 0) return false;
+        nStart ++;
+        int nEnd = s.indexOf("\"", nStart);
+        if (nEnd <0) return false;
 
-        KDSXML xml = new KDSXML();
-        xml.loadString(xmlData);
-        xml.back_to_root();
-        String fileName = xml.getAttribute(NOTIFY_FILE_NAME, "");
+        nEnd --;
+        if (nEnd<=nStart) return false;
+        String fileName = s.substring(nStart, nEnd);
+
+//        KDSXML xml = new KDSXML();
+//        xml.loadString(xmlData);
+//        xml.back_to_root();
+//        String fileName = xml.getAttribute(NOTIFY_FILE_NAME, "");
 
 
         return writeXmlToPOSNotification(xmlData, fileName);
@@ -3120,8 +3132,28 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         }
         return 1;
     }
+    android.os.Handler m_msgHandler = new android.os.Handler(new android.os.Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            showMessageToMainUI((String)msg.obj);
+            return true;
+        }
 
+    });
     public void showMessage(String msg)
+    {
+        Message m = new Message();
+        m.what = 0;
+        m.obj = msg;
+        m_msgHandler.sendMessage(m);
+
+//        int ncount = m_arKdsEventsReceiver.size();
+//        for (int i=0; i< ncount; i++)
+//        {
+//            m_arKdsEventsReceiver.get(i).onShowMessage(msg);
+//        }
+    }
+    public void showMessageToMainUI(String msg)
     {
         int ncount = m_arKdsEventsReceiver.size();
         for (int i=0; i< ncount; i++)
@@ -3343,88 +3375,118 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     public boolean bufferCheckerIsTooManyDataBuffered()
     {
-        return isEthernetBufferedTooManyData();
+        return (m_xmlDataBuffer.size() > 5);//MAX_SOCK_BUFFER_SIZE );
+
+        //return isEthernetBufferedTooManyData();
+    }
+    ///////////////////////// 20190121 ///////////////////
+    Thread m_threadOrdersXml = null;
+    Object m_lockerForOrdersThread = new Object();
+    ArrayList<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new ArrayList<>();
+
+    public void doOrderXmlInThread(final Object objSource, final String originalFileName, final String xmlData)
+    {
+
+        DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
+        data.m_objSource = objSource;
+        data.m_originalFileName = originalFileName;
+        data.m_xmlData = xmlData;
+        synchronized (m_lockerForOrdersThread) {
+            m_xmlDataBuffer.add(data);
+        }
+
+        if (m_threadOrdersXml == null ||
+            !m_threadOrdersXml.isAlive())
+        {
+            m_threadOrdersXml = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                        while (m_bRunning) {
+                            int ncount = m_xmlDataBuffer.size();
+                            if (ncount <=0) {
+                                try {
+                                    Thread.sleep(500);
+                                    continue;
+                                }
+                                catch (Exception e){}
+
+                            }
+                            DoOrdersXmlThreadBuffer data = null;
+                            for (int i = 0; i < ncount; i++) {
+                                try {
+                                    synchronized (m_lockerForOrdersThread) {
+                                        data = m_xmlDataBuffer.get(0);
+                                        m_xmlDataBuffer.remove(0);
+                                    }
+                                    doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+
+                                    Thread.sleep(200);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                }
+            });
+            m_threadOrdersXml.start();
+        }
+
+
     }
 
-//    protected void fireStationAnnounceReceivedEvent(KDSStationActived station)
-//    {
-//         if (m_stationAnnounceEvents != null)
-//             m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
-//    }
+    Thread m_threadNotificationXml = null;
+    Object m_lockerForNotificationThread = new Object();
+    ArrayList<String> m_xmlDataNotificationBuffer = new ArrayList<>();
 
-//
-//    class StationAnnounceRunnable implements Runnable
-//    {
-////        String m_strStationAnnounce = "";
-////
-////        public StationAnnounceRunnable(String strAnnounce)
-////        {
-////            setAnnounce(strAnnounce);
-////        }
-////        public void setAnnounce(String strAnnounce)
-////        {
-////            m_strStationAnnounce = strAnnounce;
-////        }
-////
-////
-////        public void run()
-////        {
-////            doStationAnnounce(m_strStationAnnounce);
-////        }
-//
-//
-//        ArrayList<String> m_arStationAnnounces = new ArrayList<>();
-//        private Object m_locker = new Object();
-//
-//        public boolean append(String strAnnounce)
-//        {
-//            synchronized (m_locker) {
-//                if (KDSUtil.isExistedInArray(m_arStationAnnounces, strAnnounce))
-//                    return false;
-//                m_arStationAnnounces.add(strAnnounce);
-//                return true;
-//            }
-//        }
-//
-//        public StationAnnounceRunnable(String strAnnounce)
-//        {
-//            append(strAnnounce);
-//        }
-//
-//        public void run()
-//        {
-//            int ncount = 0;
-//            while (true) {
-//                synchronized (m_locker) {
-//                    ncount = m_arStationAnnounces.size();
-//                }
-//                if (ncount <= 0) {
-//                    try {
-//
-//                        Thread.sleep(200);
-//                    } catch (Exception e) {
-//
-//                    }
-//                    continue;
-//                }
-//                //deal with the announces
-//                for (int i = 0; i < ncount; i++) {
-//                    //doStationAnnounce(m_strStationAnnounce);
-//                    String s = m_arStationAnnounces.get(0);
-//                    synchronized (m_locker) {
-//                        m_arStationAnnounces.remove(0);
-//                    }
-//                    try {
-//                        doStationAnnounce(s);
-//                        Thread.sleep(10);
-//                    } catch (Exception e) {
-//                        KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
-//                    }
-//                }
-//
-//            }
-//
-//        }
-//
-//    }
+    public void doNotificationXmlInThread(final Object objSource, String xmlData)
+    {
+        synchronized (m_lockerForNotificationThread) {
+            m_xmlDataNotificationBuffer.add(xmlData);
+        }
+
+        if (m_threadNotificationXml == null ||
+                !m_threadNotificationXml.isAlive())
+        {
+            m_threadNotificationXml = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (m_bRunning) {
+                        int ncount = m_xmlDataNotificationBuffer.size();
+                        if (ncount <=0) {
+                            try {
+                                Thread.sleep(500);
+                                continue;
+                            }
+                            catch (Exception e){}
+
+                        }
+                        String data = "";
+                        for (int i = 0; i < ncount; i++) {
+                            try {
+                                synchronized (m_lockerForNotificationThread) {
+                                    data = m_xmlDataNotificationBuffer.get(0);
+                                    m_xmlDataNotificationBuffer.remove(0);
+                                }
+                                doNotificationXml(null, data);
+
+                                Thread.sleep(50);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            });
+
+            m_threadNotificationXml.start();
+        }
+
+    }
+
+    static class DoOrdersXmlThreadBuffer
+    {
+        Object m_objSource = null;
+        String m_originalFileName = "";
+        String m_xmlData = "";
+    }
 }

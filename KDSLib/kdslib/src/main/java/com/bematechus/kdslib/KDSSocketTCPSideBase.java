@@ -120,6 +120,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     {
         try {
             m_socketChannel.socket().setSoLinger(true, 0);
+
+
         }
         catch (Exception e)
         {
@@ -222,7 +224,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
                     if (buf.hasRemaining() ) {
                         nwrite += m_socketChannel.write(buf); //memory leak
 
-                        Thread.sleep(200);
+                        Thread.sleep(50);
                     }
                     else
                         break;
@@ -520,12 +522,17 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         if (m_eventHandler != null)
             m_eventHandler.sendReceiveXmlMessage(this, strXml);
         //slow down socket speed, let the gui drawing
-        try {
-            Thread.sleep(500);
-        }
-        catch (Exception e)
-        {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+        String s = KDSApplication.getContext().getString(R.string.app_name);
+
+        s = s.toUpperCase();
+        if (s.indexOf("ROUTER")<0) {
+            try {
+                Thread.sleep(500);
+            }
+            catch (Exception e)
+            {
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+            }
         }
     }
 
@@ -616,7 +623,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
 
     }
 
-    final int MAX_WRITE_BUFFER_SIZE = 10;
+    final int MAX_WRITE_BUFFER_SIZE = 30;
     public boolean interface_WriteBufferIsFull()
     {
         return isBufferTooManyWritingData(MAX_WRITE_BUFFER_SIZE);

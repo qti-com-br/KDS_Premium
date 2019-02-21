@@ -134,8 +134,9 @@ public class KDSSocketTCPCommandBuffer {
         int len = 0;
         len = m_fill-ncount;
         if (len <0) len = 0;
-        for (int i = ncount; i< m_fill; i++)
-            m_buffer.put(i-ncount, m_buffer.get(i));
+        System.arraycopy(m_buffer.array(), 0, m_buffer.array(), ncount, len);
+//        for (int i = ncount; i< m_fill; i++)
+//            m_buffer.put(i-ncount, m_buffer.get(i));
 
         m_fill = len;
 

@@ -1667,6 +1667,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 //doCommandXml(sock, xmlData); //20170612
                 break;
         }
+        try {
+            Thread.sleep(500);
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+        }
     }
 
 
