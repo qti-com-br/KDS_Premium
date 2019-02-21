@@ -253,15 +253,19 @@ public class KDSSocketManager implements Runnable {
 
             //check read
             if (key.isReadable()) {
-//                if (isAnySocketWriteBufferFull())
-//                {//make sure it is stable. KPP1-Coke
-//                    //Suspend others reading, just I can read new data.
-//                    if (isSocketWriteBufferFull(key)) //Myself is full, still reading.
-//                        obj.interface_OnTCPClientRead(channel);
-//
-//                }
-//                else
+                if (!KDSApplication.isRouterApp()) {
+                    if (isAnySocketWriteBufferFull()) {//make sure it is stable. KPP1-Coke
+                        //Suspend others reading, just I can read new data.
+                        if (isSocketWriteBufferFull(key)) //Myself is full, still reading.
+                            obj.interface_OnTCPClientRead(channel);
+
+                    } else {
+                        obj.interface_OnTCPClientRead(channel);
+                    }
+                }
+                else {
                     obj.interface_OnTCPClientRead(channel);
+                }
 
             }
             if ( key.isWritable()) {

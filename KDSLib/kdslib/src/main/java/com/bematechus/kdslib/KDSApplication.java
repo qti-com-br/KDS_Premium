@@ -70,4 +70,15 @@ public class KDSApplication extends Application {
 
         System.exit(0); // kill off the crashed app
     }
+
+    static public boolean isRouterApp()
+    {
+        if (getContext() == null) return false;
+        String s = getContext().getString(R.string.app_name);
+
+        s = s.toUpperCase();
+        return (s.indexOf("ROUTER")>=0);
+    }
+
+
 }

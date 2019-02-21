@@ -522,10 +522,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         if (m_eventHandler != null)
             m_eventHandler.sendReceiveXmlMessage(this, strXml);
         //slow down socket speed, let the gui drawing
-        String s = KDSApplication.getContext().getString(R.string.app_name);
-
-        s = s.toUpperCase();
-        if (s.indexOf("ROUTER")<0) {
+        if (!KDSApplication.isRouterApp())
+        {
             try {
                 Thread.sleep(500);
             }
