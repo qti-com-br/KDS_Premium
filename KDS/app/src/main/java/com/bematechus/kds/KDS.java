@@ -1667,13 +1667,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 //doCommandXml(sock, xmlData); //20170612
                 break;
         }
-        try {
-            Thread.sleep(500);
-        }
-        catch (Exception e)
-        {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
-        }
+//        try {
+//            Thread.sleep(500);
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+//        }
     }
 
 
@@ -1836,7 +1836,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 case Order:
                     MessageParam xcode = (MessageParam)msg.obj;
 
-                    doOrderXml((KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
+                    doOrderXmlInThread((KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
                     break;
 
             }
@@ -2888,6 +2888,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         Message msg = new Message();
         msg.what = MESSAGE_TO_MAIN.REFRESH_ALL.ordinal();
+
         m_refreshHandler.sendMessage(msg);
     }
 
@@ -4113,8 +4114,76 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
     }
 
+    public boolean isThreadRunning()
+    {
+        return m_bRunning;
+    }
+    Thread m_threadOrdersXml = null;
+    Object m_lockerForOrdersThread = new Object();
+    ArrayList<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new ArrayList<>();
+    /**
+     * 20190222
+     * Release UI works.
+     * @param objSource
+     * @param xmlData
+     * @param originalFileName
+     * @param bForceAcceptThisOrder
+     */
+    public void doOrderXmlInThread(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder)
+    {
+        DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
+        data.m_objSource = objSource;
+        data.m_originalFileName = originalFileName;
+        data.m_xmlData = xmlData;
+        data.m_bForceAcceptThisOrder = bForceAcceptThisOrder;
 
+        synchronized (m_lockerForOrdersThread) {
+            m_xmlDataBuffer.add(data);
+        }
 
+        if (m_threadOrdersXml == null ||
+                !m_threadOrdersXml.isAlive())
+        {
+            m_threadOrdersXml = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (m_bRunning) {
+                        int ncount = m_xmlDataBuffer.size();
+                        if (ncount <=0) {
+                            try {
+                                Thread.sleep(500);
+                                continue;
+                            }
+                            catch (Exception e){}
 
+                        }
+                        DoOrdersXmlThreadBuffer data = null;
+                        for (int i = 0; i < ncount; i++) {
+                            try {
+                                synchronized (m_lockerForOrdersThread) {
+                                    data = m_xmlDataBuffer.get(0);
+                                    m_xmlDataBuffer.remove(0);
+                                }
+                                doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder);
+
+                                Thread.sleep(200);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            });
+            m_threadOrdersXml.start();
+        }
+    }
+
+    static class DoOrdersXmlThreadBuffer
+    {
+        Object m_objSource = null;
+        String m_originalFileName = "";
+        String m_xmlData = "";
+        boolean m_bForceAcceptThisOrder = false;
+    }
 
 }

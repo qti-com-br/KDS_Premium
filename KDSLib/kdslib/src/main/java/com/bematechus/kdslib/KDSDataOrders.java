@@ -581,7 +581,7 @@ public class KDSDataOrders extends KDSDataArray {
      *  >0: max return count
      * @return
      */
-    public ArrayList<String> findTimeoutOrders(int nTimeoutMinutes, int nMaxCount)
+    public ArrayList<String> findTimeoutOrders(int nTimeoutMinutes, int nMaxCount, boolean bIncludeScheduleOrders)
     {
         synchronized (m_locker) {
             ArrayList<String> ar = new ArrayList<>();
@@ -591,6 +591,9 @@ public class KDSDataOrders extends KDSDataArray {
             int ncount = this.getCount();
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = this.get(i);
+                if (!bIncludeScheduleOrders) {
+                    if (order.is_schedule_process_order()) continue;
+                }
                 //td.reset(order.getStartTime());
                 td.reset(order.getAutoBumpStartCountTime());
                 if (td.is_timeout(nms)) {

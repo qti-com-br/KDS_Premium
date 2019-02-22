@@ -238,6 +238,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!m_bEnableRefreshTimer) return;
 
         updateTime();
+
         if (isKDSValid()) {
             getKDS().on1sTimer();
             SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
@@ -265,15 +266,17 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         checkNetworkState();
 
-        checkAutoBumping();
-
-        checkAutoBackup();
-
-        checkLogFilesDeleting();
+        //move it to thread
+//        checkAutoBumping();
+//        //move it to thread
+//        checkAutoBackup();
+//        //move it to thread
+//        checkLogFilesDeleting();
 
         refreshAvgPrepTime();
 
         checkAutoActivation();
+        startCheckingThread();
         //testException();
     }
 
@@ -2103,6 +2106,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         boolean isScheduleOrder = isScheduleOrder(userID, orderGuid);
         if (isScheduleOrder)
         {
+
             if (onBumpScheduleOrder(userID, orderGuid))
                 return;
         }
@@ -2182,7 +2186,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
-    final int MAX_AUTO_BUMP_COUNT = 1;
+    final int MAX_AUTO_BUMP_COUNT = 2;
     /**
      *
      * @return
@@ -2203,7 +2207,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
         //limit its size
-        ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT);
+        ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
 
 
         //
@@ -2211,36 +2215,22 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (ar.size() >0)
         {
             for (int i=0; i< ar.size(); i++) {
-                String guid = ar.get(i);
-
-                bumpOrderOperation(KDSUser.USER.USER_A, guid, true);
-//                if (ar.size()>1 && i != (ar.size()-1)) {
-//                    try {
-//                        Thread.sleep(500);
-//                    }catch ( Exception e)
-//                    {
-//
-//                    }
-//                }
-
+                bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
             }
-            //refreshView();
 
-
+            getKDS().refreshView(); //use message
             bReturn = true;
-
-
         }
         if (getKDS().isMultpleUsersMode())
         {
-            ar =  getKDS().getUsers().getUserB().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT);
+            ar =  getKDS().getUsers().getUserB().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
             if (ar.size() >0)
             {
                 for (int i=0; i< ar.size(); i++) {
                     String guid = ar.get(i);
                     bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
                 }
-                refreshView();
+                getKDS().refreshView();
                 //bumpOrderInThread(KDSUser.USER.USER_A, ar);
                 bReturn = true;
             }
@@ -3885,6 +3875,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
+
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -3917,6 +3908,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshSummary(KDSUser.USER userID) {
         if (!isKDSValid()) return ;
+
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
         this.getUserUI(userID).refreshSum(userID, pos);
@@ -5982,5 +5974,54 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         getKDS().onSMSSuccess(orderGuid, smsState);
     }
+
+    Thread m_threadChecking = null;
+
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startCheckingThread()
+    {
+        if (m_threadChecking == null ||
+                !m_threadChecking.isAlive())
+        {
+            m_threadChecking = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (getKDS().isThreadRunning())
+                    {
+                        try {
+                            checkAutoBumping();
+                            //move it to thread
+                            checkAutoBackup();
+                            //move it to thread
+                            checkLogFilesDeleting();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadChecking.start();
+        }
+    }
+
+    Handler m_autoBumpScheduleOrder = new Handler()
+    {
+        public void handleMessage(Message msg) {
+
+        }
+    };
+
 }
 

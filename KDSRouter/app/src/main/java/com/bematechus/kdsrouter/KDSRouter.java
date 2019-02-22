@@ -2555,7 +2555,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             String stationID = stationRelation.getID();
 
             KDSStationIP station = stationRelation.getStationIP();
-            if (!RouterAck.isExistedInArray(toStations, stationID)) continue; //
+            //Here, it the xml is "delete" order command, it don't contain any stations target.
+            //so I just send it to any station
+            if (toStations.size() >0)
+                if (!RouterAck.isExistedInArray(toStations, stationID)) continue; //
             //in relations settings, the station port is 3001 for communication of each other.
             //So, I have to change its port before send data.
             station.setPort(getSettings().getString(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort));

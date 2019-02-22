@@ -190,7 +190,7 @@ public class KDSUser {
 
     public int autoBumpParkOrder(int nTimeoutMins)
     {
-        ArrayList<String> ar =  m_parkedOrders.findTimeoutOrders(nTimeoutMins, -1);
+        ArrayList<String> ar =  m_parkedOrders.findTimeoutOrders(nTimeoutMins, -1, false);
 
         for (int i=0; i< ar.size(); i++)
         {
