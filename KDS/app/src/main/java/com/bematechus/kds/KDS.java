@@ -1589,14 +1589,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         {
             //doSmbError(xmlData); //20170612
             Message msg = new Message();
-            msg.obj = xmlData;
+            msg.obj = new String(xmlData);
             msg.what = MESSAGE_TO_MAIN.SMB_ERROR.ordinal();
             //m_smbErrorHandler.sendMessage(msg);
             m_refreshHandler.sendMessage(msg);
 
         }
         else {
-            doOrderXml(null, xmlData,smbFileName, true); //2.0.34
+            doOrderXmlInThread(MESSAGE_TO_MAIN.Order, null, xmlData,smbFileName, true); //2.0.34
         }
         //Log.d("SMB Text", xmlData);
     }
@@ -1650,9 +1650,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 msgOrder.what = MESSAGE_TO_MAIN.Order.ordinal();
                 MessageParam paramOrder = new MessageParam();
                 paramOrder.obj0 = sock;
-                paramOrder.obj1 = xmlData;
-
+                paramOrder.obj1 = new String(xmlData);
                 msgOrder.obj = paramOrder;
+
+//                KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), xmlData);
+//                Log.i(TAG, "receive order: " + order.getOrderName());
+//
 
                 m_refreshHandler.sendMessage(msgOrder);
                 break;
@@ -1831,12 +1834,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 case COMMAND_XML:
                     MessageParam x = (MessageParam)msg.obj;
 
-                    doCommandXml((KDSSocketInterface) x.obj0, (String)x.obj1);
+                    //doCommandXml((KDSSocketInterface) x.obj0, (String)x.obj1);
+                    if (!doCommandXmlInMainUI((KDSSocketInterface) x.obj0, (String)x.obj1))
+                        doOrderXmlInThread(w, (KDSSocketInterface) x.obj0, (String)x.obj1, "",false); //2.0.34
                     break;
                 case Order:
                     MessageParam xcode = (MessageParam)msg.obj;
+//                    String s = (String)xcode.obj1;
+//                    KDSDataOrder data =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), s);
+//                    Log.i(TAG, "receive order: " + data.getOrderName());
 
-                    doOrderXmlInThread((KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
+                    doOrderXmlInThread(w, (KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
                     break;
 
             }
@@ -1866,10 +1874,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @param xmlData
      */
     //private void doOrderXml(KDSSocketInterface sock, String xmlData)
-    public void doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder)
+    public void doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder, boolean bRefreshView)
     {
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), xmlData);
-
+        //Log.i(TAG, "receive order: " + order.getOrderName());
         //2.0.39
         if (order == null) {
             if (KDSConst.ENABLE_FEATURE_ORDER_ACKNOWLEDGEMENT) {
@@ -1938,8 +1946,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             nAcceptItemsCount = doOrderFilter(order, bForceAcceptThisOrder);
             schedule_process_update_after_receive_new_order();
         }
-
-        refreshView();
+        if (bRefreshView)
+            refreshView();
         if (this.getSettings().getBoolean(KDSSettings.ID.Notification_order_acknowledgement))
         {
             doOrderAcknowledgement(objSource,order,nAcceptItemsCount,originalFileName, xmlData, order.getOrderName(),KDSPosNotificationFactory.ACK_ERR_OK, true);
@@ -2030,7 +2038,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 doConfigRequireXmlCommand(sock, command, xmlData);
                 break;
             case Broadcast_Station_Configuration: //I received configuation from other
-                doConfigReceivedXmlCommand( command, xmlData);
+                doConfigReceivedXmlCommand( command, xmlData); //it need UI.
                 break;
             case Broadcast_Station_Active:
                 break;
@@ -2315,6 +2323,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     public int  doOrderFilter(KDSDataOrder order, boolean bForceAcceptThisOrderNoStationIDItems)
     {
+
+
         bForceAcceptThisOrderNoStationIDItems = true;//2.0.36
         //if (bForceAcceptThisOrderNoStationIDItems)//2.0.36
             assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
@@ -2895,6 +2905,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void doRefreshView()
     {
         KDSLog.d(TAG, KDSUtil.getCurrentTimeForLog()+ " refreshView");
+        m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_ALL.ordinal());
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++) {
             m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_A, m_users.getUserA().getOrders(), RefreshViewParam.None);
             m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_A);
@@ -3355,6 +3366,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         m_users.ordersClear();
         this.getCurrentDB().clear();
         this.getSupportDB().clear();
+        m_xmlDataBuffer.clear(); //For speed.
+        m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.Order.ordinal());
         //this.getStatisticDB().clear();
         this.refreshView();
     }
@@ -4129,13 +4142,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @param originalFileName
      * @param bForceAcceptThisOrder
      */
-    public void doOrderXmlInThread(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder)
+    public void doOrderXmlInThread(MESSAGE_TO_MAIN xmlType, Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder)
     {
+
         DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
         data.m_objSource = objSource;
         data.m_originalFileName = originalFileName;
-        data.m_xmlData = xmlData;
+        data.m_xmlData = new String(xmlData);
         data.m_bForceAcceptThisOrder = bForceAcceptThisOrder;
+        data.m_xmlType = xmlType;
 
         synchronized (m_lockerForOrdersThread) {
             m_xmlDataBuffer.add(data);
@@ -4161,16 +4176,33 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                         for (int i = 0; i < ncount; i++) {
                             try {
                                 synchronized (m_lockerForOrdersThread) {
-                                    data = m_xmlDataBuffer.get(0);
-                                    m_xmlDataBuffer.remove(0);
+                                    if (m_xmlDataBuffer.size() >0) {
+                                        data = m_xmlDataBuffer.get(0);
+                                        m_xmlDataBuffer.remove(0);
+                                    }
+                                    else
+                                        break;
                                 }
-                                doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder);
+                                switch (data.m_xmlType)
+                                {
+                                    case Order:
+                                        doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
+                                        break;
+                                    case COMMAND_XML:
+                                        doCommandXml((KDSSocketInterface) data.m_objSource, data.m_xmlData);
+                                        break;
+                                    default:
+                                        break;
 
-                                Thread.sleep(200);
+                                }
+
+
+                                Thread.sleep(50);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
+                        refreshView();
                     }
                 }
             });
@@ -4184,6 +4216,35 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         String m_originalFileName = "";
         String m_xmlData = "";
         boolean m_bForceAcceptThisOrder = false;
+        MESSAGE_TO_MAIN m_xmlType = MESSAGE_TO_MAIN.REFRESH_A;
+    }
+
+    private boolean doCommandXmlInMainUI(KDSSocketInterface sock, String xmlData)
+    {
+        String s = xmlData;
+        int nStart = s.indexOf("<Code>");
+        nStart += 6;
+
+        int nEnd = s.indexOf("</Code>");
+        //nEnd --;
+
+        s = s.substring(nStart, nEnd);
+        int n = KDSUtil.convertStringToInt(s, -1);
+        if (n <0 ) return true;
+
+        KDSXMLParserCommand.KDSCommand code = KDSXMLParserCommand.KDSCommand.values()[n];
+        switch (code)
+        {
+            case Station_Bump_Order:
+            case Station_Add_New_Order:
+                return false;
+            default:
+                doCommandXml(sock, xmlData);
+                return false;
+
+        }
+
+
     }
 
 }

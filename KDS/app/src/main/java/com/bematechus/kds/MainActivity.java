@@ -3876,6 +3876,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
 
+
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -4031,6 +4032,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void refreshView() {
         if (!isKDSValid()) return ;
+
+
 
         if (getKDS().getUsers().getUsersCount() == 0)
             return;
@@ -6016,12 +6019,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
-    Handler m_autoBumpScheduleOrder = new Handler()
-    {
-        public void handleMessage(Message msg) {
-
-        }
-    };
+//    Handler m_autoBumpScheduleOrder = new Handler()
+//    {
+//        public void handleMessage(Message msg) {
+//
+//        }
+//    };
 
 }
 

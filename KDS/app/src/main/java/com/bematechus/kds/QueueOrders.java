@@ -139,6 +139,10 @@ public class QueueOrders {
         int nReadyItemsCounter = 0;
         for (int i=0; i< ncount; i++)
         {
+            if (order.getItems() == null)
+                return status;
+            if (order.getItems().getItem(i) == null)
+                return status;
             KDSDataItem item = order.getItems().getItem(i);
             if (item.isMarked() ||
                     item.getLocalBumped() ||

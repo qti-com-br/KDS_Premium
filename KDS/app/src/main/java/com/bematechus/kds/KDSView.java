@@ -21,6 +21,7 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 
@@ -485,6 +486,7 @@ public class KDSView extends View {
     private  boolean m_bForceFullDrawing = false;
     public void refresh()
     {
+
         m_bForceFullDrawing = true;
         m_bJustRedrawTimer = false;
         this.invalidate();
@@ -511,9 +513,17 @@ public class KDSView extends View {
                 if (m_bJustRedrawTimer && (!m_bForceFullDrawing)) {
 
                     Canvas g = get_double_buffer();
-                    int ncount = panelsGetCount();
-                    for (int i = 0; i < ncount; i++) {
-                        m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
+                    try {
+
+
+                        int ncount = panelsGetCount();
+                        for (int i = 0; i < ncount; i++) {
+                            if (i >= panelsGetCount()) break;
+                            m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
+                        }
+                    }catch (Exception e)
+                    {
+                        KDSLog.e(TAG, KDSLog._FUNCLINE_() , e);
                     }
                     commit_double_buffer(canvas);
                     m_bJustRedrawTimer = false;
@@ -584,6 +594,8 @@ public class KDSView extends View {
         int ncount = panelsGetCount();
         for (int i=0; i< ncount; i++)
         {
+            if (i >= panelsGetCount())
+                break;
             m_arPanels.get(i).onDraw(g, i);
         }
 

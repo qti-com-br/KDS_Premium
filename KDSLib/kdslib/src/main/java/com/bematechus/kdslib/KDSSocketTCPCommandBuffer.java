@@ -134,7 +134,7 @@ public class KDSSocketTCPCommandBuffer {
         int len = 0;
         len = m_fill-ncount;
         if (len <0) len = 0;
-        System.arraycopy(m_buffer.array(), 0, m_buffer.array(), ncount, len);
+        System.arraycopy(m_buffer.array(), ncount, m_buffer.array(), 0, len);
 //        for (int i = ncount; i< m_fill; i++)
 //            m_buffer.put(i-ncount, m_buffer.get(i));
 
@@ -172,17 +172,22 @@ public class KDSSocketTCPCommandBuffer {
 
         int nidx = 0;
         int naccept = 0;
-        for (int i=m_fill; i< BUFFER_SIZE; i++)
-        {
-            nidx = i-m_fill;
-            if (nidx < ncount)
-            {
-                m_buffer.put(i, buffer.get(i-m_fill));
-                naccept ++;
-            }
-            else
-                break;
-        }
+        naccept = BUFFER_SIZE - m_fill;
+        if (naccept >ncount)
+            naccept = ncount;
+        System.arraycopy(buffer.array(), 0, m_buffer.array(), m_fill, naccept);
+
+//        for (int i=m_fill; i< BUFFER_SIZE; i++)
+//        {
+//            nidx = i-m_fill;
+//            if (nidx < ncount)
+//            {
+//                m_buffer.put(i, buffer.get(i-m_fill));
+//                naccept ++;
+//            }
+//            else
+//                break;
+//        }
         m_fill += naccept;
         return nidx;
     }
@@ -240,10 +245,11 @@ public class KDSSocketTCPCommandBuffer {
     {
         int ncount = getDataLength();
         byte[] bytes = new byte[ncount];
-        for (int i=0; i< ncount; i++)
-        {
-            bytes[i] = m_buffer.get(i + 6);
-        }
+        System.arraycopy(m_buffer.array(), 6, bytes, 0, ncount);
+//        for (int i=0; i< ncount; i++)
+//        {
+//            bytes[i] = m_buffer.get(i + 6);
+//        }
         return bytes;
     }
 
@@ -252,10 +258,12 @@ public class KDSSocketTCPCommandBuffer {
     {
         int ncount = getWinKdsXmlDataLength();
         byte[] bytes = new byte[ncount];
-        for (int i=0; i< ncount; i++)
-        {
-            bytes[i] = m_buffer.get(i + 4);
-        }
+        System.arraycopy(m_buffer.array(), 4, bytes, 0, ncount);
+
+//        for (int i=0; i< ncount; i++)
+//        {
+//            bytes[i] = m_buffer.get(i + 4);
+//        }
         return bytes;
     }
 

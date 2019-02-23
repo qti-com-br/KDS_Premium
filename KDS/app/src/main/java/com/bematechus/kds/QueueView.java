@@ -840,8 +840,13 @@ public class QueueView  extends View {
 
     }
 
+
     public void showOrders(KDSDataOrders orders)
     {
+        m_queueOrders.setOrders(orders);
+        m_nRedrawRequestCounter ++;
+        startShowOrdersThread();
+        /*
         synchronized (m_locker) {
             m_queueOrders.setOrders(orders);
 //            if (m_sortMode != QueueOrders.QueueSort.Default )
@@ -862,6 +867,7 @@ public class QueueView  extends View {
             }
         }
         refresh();
+        */
     }
 
     private void moveReadyFront(KDSDataOrders orders)
@@ -2218,5 +2224,88 @@ public class QueueView  extends View {
             refresh();
     }
 
+    Thread m_threadShowOrders = null;
+    int m_nRedrawRequestCounter = 0;
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startShowOrdersThread()
+    {
+        if (m_threadShowOrders == null ||
+                !m_threadShowOrders.isAlive())
+        {
+            m_threadShowOrders = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true)
+                    {
+                        if (m_nRedrawRequestCounter <=0)
+                        {
+                            try {
+                                Thread.sleep(200);
+                                continue;
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        int nOld = m_nRedrawRequestCounter;
+                        try {
+                            showOrdersWithoutUIRefresh();
+                            refreshThroughMessage();
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                        m_nRedrawRequestCounter -= nOld;
+                        if (m_nRedrawRequestCounter<0)
+                            m_nRedrawRequestCounter = 0;
+                    }
+                }
+            });
+            m_threadShowOrders.start();
+        }
+    }
+
+
+    public void showOrdersWithoutUIRefresh()
+    {
+
+        synchronized (m_locker) {
+
+            KDSDataOrders orders = m_queueOrders.getOrders();
+            if (m_nViewMode == KDSSettings.QueueMode.Simple)
+                m_queueOrders.sortByStateTime(m_status1Sort,m_status2Sort,m_status3Sort,m_status4Sort );
+
+            if (m_bMoveReadyFront)
+                moveReadyFront(orders);
+
+            if (m_queueOrders.getFocusedOrderGUID().isEmpty()) {
+                if (orders.getCount() > 0) {
+                    if (!isQueueExpo())
+                        m_queueOrders.setFocusedOrderGuid(orders.getFirstOrderGuid());
+                }
+            }
+        }
+        //refresh();
+    }
+
+    public void refreshThroughMessage()
+    {
+        Message m = new Message();
+        m.what = 0;
+        m_refreshHandler.sendMessage(m);
+
+    }
+
+    Handler m_refreshHandler = new Handler()
+    {
+        public void handleMessage(Message msg) {
+            QueueView.this.refresh();
+        }
+    };
 
 }
