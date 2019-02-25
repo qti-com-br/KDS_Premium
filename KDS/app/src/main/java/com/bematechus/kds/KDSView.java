@@ -322,14 +322,22 @@ public class KDSView extends View {
     }
     private Rect getLastPanelLastBlockBounds()
     {
-        int ncount = panelsGetCount();
-        if (ncount <=0)
+        try {
+
+
+            int ncount = panelsGetCount();
+            if (ncount <= 0)
+                return null;
+            KDSViewPanel panel = m_arPanels.get(ncount - 1);
+            KDSViewBlock block = panel.getLastBlock();
+            if (block == null)
+                return null;
+            return block.getBounds();//.getBounds();
+        }
+        catch (Exception e)
+        {
             return null;
-        KDSViewPanel panel =  m_arPanels.get(ncount - 1);
-        KDSViewBlock block = panel.getLastBlock();
-        if (block == null)
-            return null;
-        return block.getBounds();//.getBounds();
+        }
     }
 
     protected Rect getValidRect()
@@ -807,6 +815,18 @@ public class KDSView extends View {
                 return m_arPanels.get(i);
         }
         return null;
+    }
+
+    /**
+     * check if whole screen full blocks.
+     * @return
+     */
+    public boolean isFull()
+    {
+        Rect rtLast = getLastPanelLastBlockBounds();
+        Point pt = getNextPanelStartPoint(rtLast);
+        return (pt == null);
+
     }
 
 

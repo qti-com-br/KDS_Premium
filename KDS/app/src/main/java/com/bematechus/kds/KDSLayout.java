@@ -1582,11 +1582,27 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (guid.isEmpty()) {
             if (m_orders != null && m_orders.getCount() >0)
             {//as drawing in thread, maybe ui don't refresh. So change nothing.
+
                 return -1;
             }
             return 0;
         }
 
+        if (!this.isLayoutFull())
+        {
+            if (m_orders.getCount() >= getMaxBlocksOrRows()) {
+                String firstGuid = this.getEnv().getStateValues().getFirstShowingOrderGUID();
+                if (!firstGuid.isEmpty()) {
+                    int nFirst = m_orders.getIndex(firstGuid);
+                    if (nFirst == 0)
+                        return -1;//In different thread drawing, we have to check this.
+                }
+
+
+            }
+
+            return 0;
+        }
         int n = m_orders.getIndex(guid);
 
         return m_orders.getCount() - n -1;
@@ -2340,4 +2356,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         }
     };
 
+
+    public boolean isLayoutFull()
+    {
+        return this.getView().isFull();
+
+
+    }
 }

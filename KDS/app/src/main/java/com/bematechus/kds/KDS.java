@@ -1835,8 +1835,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     MessageParam x = (MessageParam)msg.obj;
 
                     //doCommandXml((KDSSocketInterface) x.obj0, (String)x.obj1);
-                    if (!doCommandXmlInMainUI((KDSSocketInterface) x.obj0, (String)x.obj1))
-                        doOrderXmlInThread(w, (KDSSocketInterface) x.obj0, (String)x.obj1, "",false); //2.0.34
+                    if (!doCommandXmlInMainUI((KDSSocketInterface) x.obj0, (String) x.obj1))
+                        doOrderXmlInThread(MESSAGE_TO_MAIN.COMMAND_XML, (KDSSocketInterface) x.obj0, (String) x.obj1, "", false); //2.0.34
+
                     break;
                 case Order:
                     MessageParam xcode = (MessageParam)msg.obj;
@@ -1844,7 +1845,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 //                    KDSDataOrder data =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), s);
 //                    Log.i(TAG, "receive order: " + data.getOrderName());
 
-                    doOrderXmlInThread(w, (KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
+                    doOrderXmlInThread(MESSAGE_TO_MAIN.Order, (KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
                     break;
 
             }
@@ -4189,6 +4190,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                         doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
                                         break;
                                     case COMMAND_XML:
+                                        //data.m_xmlData = data.m_xmlData.replace("#2", "bumped @2");
                                         doCommandXml((KDSSocketInterface) data.m_objSource, data.m_xmlData);
                                         break;
                                     default:
@@ -4236,7 +4238,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         switch (code)
         {
             case Station_Bump_Order:
-            case Station_Add_New_Order:
+            case Station_Add_New_Order: //Please notice: add_new, if local don't have this order, expo will add a new one.
                 return false;
             default:
                 doCommandXml(sock, xmlData);

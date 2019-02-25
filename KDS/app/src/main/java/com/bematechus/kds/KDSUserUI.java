@@ -421,7 +421,9 @@ public class KDSUserUI {
     public String getNextCountString()
     {
         if (m_layout == null) return "";
+
         int nnext =m_layout.getNextCount();
+
         if (nnext <0)
         {//unknown. Need to refresh UI, then we can not this number.
             return "-1";
