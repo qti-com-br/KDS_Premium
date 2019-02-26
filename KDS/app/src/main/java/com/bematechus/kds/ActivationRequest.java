@@ -2,6 +2,7 @@ package com.bematechus.kds;
 
 //import com.bematechus.kdslib.KDSUtil;
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
@@ -128,7 +129,8 @@ public class ActivationRequest {
 
     public ActivationRequest()
     {
-        if (KDSConst._DEBUG)
+        //if (KDSConst._DEBUG)
+        if (BuildVer.isDebug())
             this.URL = URL_TEST;
         else
             this.URL = URL_PRODUCTION;

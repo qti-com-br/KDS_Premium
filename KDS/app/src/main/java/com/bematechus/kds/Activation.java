@@ -20,6 +20,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
@@ -1156,7 +1157,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void showLoginActivity(Activity caller, String showErrorMessage)
     {
 
-        if (KDSConst._DEBUG)
+        //if (KDSConst._DEBUG)
+        if (BuildVer.isDebug())
             return;
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");

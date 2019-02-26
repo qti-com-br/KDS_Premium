@@ -29,6 +29,7 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:largeHeap="true"
+        android:testOnly="false"
         android:theme="@style/kds_style">
         <receiver android:name=".BootBroadcastReceiver">
             <intent-filter>
