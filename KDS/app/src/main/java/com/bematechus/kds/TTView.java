@@ -393,8 +393,16 @@ public class TTView  extends View implements TableTracker.TT_Event {
     @Override
     protected void onDraw(Canvas canvas)
     {
-        m_ttOrders.moveUnassignedToEnd();
-        onDrawTT(canvas);
+        try {
+
+
+            m_ttOrders.moveUnassignedToEnd();
+            onDrawTT(canvas);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     int checkStringWidth(KDSViewFontFace ft, String s) {
@@ -1100,12 +1108,21 @@ public class TTView  extends View implements TableTracker.TT_Event {
     }
     public void onTimer()
     {
-        refreshTimer();
-        checkExpoRemovedOrder();
-        checkAllItemsBumpedOrder();
-        checkPageCounter();
-        m_tt.onTimer();
-        checkTTOrders();
+        try {
+
+
+            refreshTimer();
+            checkExpoRemovedOrder();
+            checkAllItemsBumpedOrder();
+            checkPageCounter();
+            m_tt.onTimer();
+            checkTTOrders();
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            //e.printStackTrace();
+        }
     }
 
     public void checkExpoRemovedOrder()

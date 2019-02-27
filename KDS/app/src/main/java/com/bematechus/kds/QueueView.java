@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.TimeDog;
@@ -37,6 +38,7 @@ import java.util.Date;
  */
 public class QueueView  extends View {
 
+    final String TAG = "QueueView";
 
     private int ITEM_AVERAGE_HEIGHT = 80;
     final int BORDER_GAP = 4;
@@ -430,22 +432,28 @@ public class QueueView  extends View {
 //        {//2.0.35
 //            m_queueOrders.sortByStateTime(m_sortMode == QueueOrders.QueueSort.State_descend);
 //        }
-        switch (m_nViewMode)
-        {
-            case Panels:
-                onDrawPanelMode(canvas);
-                break;
-            case Simple:
-                m_queueOrders.sortByStateTime(m_status1Sort,m_status2Sort,m_status3Sort,m_status4Sort );//2.0.36
-                onDrawSimpleMode(canvas);
-                break;
-        }
-        if (!m_strInputOrderID.isEmpty())
-        {
+        try {
 
-            drawInputingIDIcon(canvas);
-        }
 
+            switch (m_nViewMode) {
+                case Panels:
+                    onDrawPanelMode(canvas);
+                    break;
+                case Simple:
+                    m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
+                    onDrawSimpleMode(canvas);
+                    break;
+            }
+            if (!m_strInputOrderID.isEmpty()) {
+
+                drawInputingIDIcon(canvas);
+            }
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+
+        }
 
     }
 
@@ -1903,9 +1911,17 @@ public class QueueView  extends View {
     }
     public void onTimer()
     {
-        refreshTimer();
-        checkPageCounter();
-        checkAutoBump();
+        try {
+
+
+            refreshTimer();
+            checkPageCounter();
+            checkAutoBump();
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+        }
     }
     public KDSDataOrders getOrders()
     {
@@ -2179,49 +2195,52 @@ public class QueueView  extends View {
     {
         if (m_nAutoBumpTimeoutMs <=0) return;
 
-        int ncount =  m_queueOrders.getOrders().getCount();
-        long dtNow = System.currentTimeMillis();
+        try {
 
-        ArrayList<KDSDataOrder> ar = new ArrayList<>();
-        ArrayList<QueueOrders.QueueStatus> arReadyStatus = getSimpleColStatus(QueueOrders.QueueStatus.Ready);
-        ArrayList<QueueOrders.QueueStatus> arPickupStatus = getSimpleColStatus(QueueOrders.QueueStatus.Pickup);
-        arReadyStatus.addAll(arPickupStatus);
 
-        for (int i=0; i< ncount; i++)
-        {
-            KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
-            if (m_nViewMode == KDSSettings.QueueMode.Panels) {
-                if (status != QueueOrders.QueueStatus.Ready &&
-                        status != QueueOrders.QueueStatus.Pickup)
-                    continue;
-            }
-            else if (m_nViewMode == KDSSettings.QueueMode.Simple)
-            {
-                boolean bBumpIt = false;
-                for (int j=0; j< arReadyStatus.size(); j++)
-                {
-                    if (arReadyStatus.get(j) == status) {
-                        bBumpIt = true;
-                        break;
+            int ncount = m_queueOrders.getOrders().getCount();
+            long dtNow = System.currentTimeMillis();
+
+            ArrayList<KDSDataOrder> ar = new ArrayList<>();
+            ArrayList<QueueOrders.QueueStatus> arReadyStatus = getSimpleColStatus(QueueOrders.QueueStatus.Ready);
+            ArrayList<QueueOrders.QueueStatus> arPickupStatus = getSimpleColStatus(QueueOrders.QueueStatus.Pickup);
+            arReadyStatus.addAll(arPickupStatus);
+
+            for (int i = 0; i < ncount; i++) {
+                KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                if (order == null) break;
+                QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
+                if (m_nViewMode == KDSSettings.QueueMode.Panels) {
+                    if (status != QueueOrders.QueueStatus.Ready &&
+                            status != QueueOrders.QueueStatus.Pickup)
+                        continue;
+                } else if (m_nViewMode == KDSSettings.QueueMode.Simple) {
+                    boolean bBumpIt = false;
+                    for (int j = 0; j < arReadyStatus.size(); j++) {
+                        if (arReadyStatus.get(j) == status) {
+                            bBumpIt = true;
+                            break;
+                        }
                     }
+                    if (!bBumpIt) continue;
                 }
-                if (!bBumpIt) continue;
+                Date dtStart = order.getQueueStateTime();//.getStartTime();
+                if (dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs) {
+                    ar.add(order);
+                }
             }
-            Date dtStart = order.getQueueStateTime();//.getStartTime();
-            if ( dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs)
-            {
-                ar.add(order);
-            }
-        }
-        for (int i=0; i< ar.size(); i++)
-        {
-            m_queueOrders.getOrders().removeComponent(ar.get(i));
-            KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
+            for (int i = 0; i < ar.size(); i++) {
+                m_queueOrders.getOrders().removeComponent(ar.get(i));
+                KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
 
+            }
+            if (ar.size() > 0)
+                refresh();
         }
-        if (ar.size() >0)
-            refresh();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     Thread m_threadShowOrders = null;

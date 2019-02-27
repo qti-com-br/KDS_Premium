@@ -132,7 +132,9 @@ public class QueueOrders {
     static public QueueStatus getOrderQueueStatus( KDSDataOrder order)
     {
 
+
         QueueStatus status = QueueStatus.Received;
+        if (order == null) return status;
         if (order.getQueueReady())
             return QueueStatus.Pickup;
         int ncount = order.getItems().getCount();
@@ -182,11 +184,21 @@ public class QueueOrders {
 
     private ArrayList<KDSDataOrder> getStatusOrders(ArrayList<KDSDataOrder> orders, QueueStatus status)
     {
+
         ArrayList<KDSDataOrder> arOrders = new ArrayList<>();
-        for (int i=0; i< orders.size(); i++)
+        try {
+            for (int i = 0; i < orders.size(); i++) {
+
+                KDSDataOrder order = orders.get(i);
+                if (order == null) break;
+                if (getOrderQueueStatus(order) == status)
+                    arOrders.add(orders.get(i));
+            }
+            return arOrders;
+        }
+        catch (Exception e)
         {
-            if (getOrderQueueStatus(orders.get(i)) == status)
-                arOrders.add(orders.get(i));
+
         }
         return arOrders;
     }
