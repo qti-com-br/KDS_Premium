@@ -189,10 +189,11 @@ public class QueueOrders {
         try {
             for (int i = 0; i < orders.size(); i++) {
 
+
                 KDSDataOrder order = orders.get(i);
                 if (order == null) break;
                 if (getOrderQueueStatus(order) == status)
-                    arOrders.add(orders.get(i));
+                    arOrders.add(order);
             }
             return arOrders;
         }

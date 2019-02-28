@@ -2207,26 +2207,36 @@ public class QueueView  extends View {
             arReadyStatus.addAll(arPickupStatus);
 
             for (int i = 0; i < ncount; i++) {
-                KDSDataOrder order = m_queueOrders.getOrders().get(i);
-                if (order == null) break;
-                QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
-                if (m_nViewMode == KDSSettings.QueueMode.Panels) {
-                    if (status != QueueOrders.QueueStatus.Ready &&
-                            status != QueueOrders.QueueStatus.Pickup)
-                        continue;
-                } else if (m_nViewMode == KDSSettings.QueueMode.Simple) {
-                    boolean bBumpIt = false;
-                    for (int j = 0; j < arReadyStatus.size(); j++) {
-                        if (arReadyStatus.get(j) == status) {
-                            bBumpIt = true;
-                            break;
+                if (i >= m_queueOrders.getOrders().getCount())
+                    break;
+                try {
+
+
+                    KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                    if (order == null) break;
+                    QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
+                    if (m_nViewMode == KDSSettings.QueueMode.Panels) {
+                        if (status != QueueOrders.QueueStatus.Ready &&
+                                status != QueueOrders.QueueStatus.Pickup)
+                            continue;
+                    } else if (m_nViewMode == KDSSettings.QueueMode.Simple) {
+                        boolean bBumpIt = false;
+                        for (int j = 0; j < arReadyStatus.size(); j++) {
+                            if (arReadyStatus.get(j) == status) {
+                                bBumpIt = true;
+                                break;
+                            }
                         }
+                        if (!bBumpIt) continue;
                     }
-                    if (!bBumpIt) continue;
+                    Date dtStart = order.getQueueStateTime();//.getStartTime();
+                    if (dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs) {
+                        ar.add(order);
+                    }
                 }
-                Date dtStart = order.getQueueStateTime();//.getStartTime();
-                if (dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs) {
-                    ar.add(order);
+                catch (Exception e)
+                {
+                    break;
                 }
             }
             for (int i = 0; i < ar.size(); i++) {
@@ -2241,6 +2251,8 @@ public class QueueView  extends View {
         {
             e.printStackTrace();
         }
+
+        checkAutoBumpForReceivedState();//24 stations, prevent from stack in queue
     }
 
     Thread m_threadShowOrders = null;
@@ -2326,5 +2338,66 @@ public class QueueView  extends View {
             QueueView.this.refresh();
         }
     };
+
+    private void checkAutoBumpForReceivedState()
+    {
+        if (m_nAutoBumpTimeoutMs <=0) return;
+
+        try {
+
+
+            int ncount = m_queueOrders.getOrders().getCount();
+            long dtNow = System.currentTimeMillis();
+
+            ArrayList<KDSDataOrder> ar = new ArrayList<>();
+            ArrayList<QueueOrders.QueueStatus> arReadyStatus = getSimpleColStatus(QueueOrders.QueueStatus.Received);
+            ArrayList<QueueOrders.QueueStatus> arPickupStatus = getSimpleColStatus(QueueOrders.QueueStatus.Preparation);
+            arReadyStatus.addAll(arPickupStatus);
+
+            for (int i = 0; i < ncount; i++) {
+                if (i >= m_queueOrders.getOrders().getCount())
+                    break;
+                try {
+
+                    KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                    if (order == null) break;
+                    QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
+                    if (m_nViewMode == KDSSettings.QueueMode.Panels) {
+                        if (status != QueueOrders.QueueStatus.Received &&
+                                status != QueueOrders.QueueStatus.Preparation)
+                            continue;
+                    } else if (m_nViewMode == KDSSettings.QueueMode.Simple) {
+                        boolean bBumpIt = false;
+                        for (int j = 0; j < arReadyStatus.size(); j++) {
+                            if (arReadyStatus.get(j) == status) {
+                                bBumpIt = true;
+                                break;
+                            }
+                        }
+                        if (!bBumpIt) continue;
+                    }
+                    Date dtStart = order.getQueueStateTime();//.getStartTime();
+                    if (dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs*2) {
+                        ar.add(order);
+                    }
+                }
+                catch (Exception e)
+                {
+                    break;
+                }
+            }
+            for (int i = 0; i < ar.size(); i++) {
+                m_queueOrders.getOrders().removeComponent(ar.get(i));
+                KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
+
+            }
+            if (ar.size() > 0)
+                refresh();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
 }

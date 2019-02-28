@@ -2046,6 +2046,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case Broadcast_All_Configurations:
                 break;
             case Station_Add_New_Order:
+                //Just for coke 24 stations. As they use smb data source, we don't need this.
+                //And, it can cause expo stack issue.
+                if (this.isQueueExpo() || this.isExpeditorStation() || this.isTrackerView())
+                    break;
+
                 KDSStationFunc.doSyncCommandOrderNew(this, command, xmlData);
                 setFocusAfterReceiveOrder();
                 schedule_process_update_after_receive_new_order();
@@ -4248,5 +4253,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
 
     }
+
+
 
 }
