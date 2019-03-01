@@ -1158,8 +1158,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
 
         //if (KDSConst._DEBUG)
-        if (BuildVer.isDebug())
-            return;
+        //if (BuildVer.isDebug())
+        //    return;
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         m_bDoLicensing = true;
