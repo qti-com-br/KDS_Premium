@@ -2045,7 +2045,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 break;
             case Broadcast_All_Configurations:
                 break;
-            case Station_Add_New_Order:
+            case Station_Add_New_Order: //in thread
                 //Just for coke 24 stations. As they use smb data source, we don't need this.
                 //And, it can cause expo stack issue.
                 if (this.isQueueExpo() || this.isExpeditorStation() || this.isTrackerView())
@@ -2055,7 +2055,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 setFocusAfterReceiveOrder();
                 schedule_process_update_after_receive_new_order();
                 break;
-            case Station_Bump_Order:
+            case Station_Bump_Order://in thread
 
                 checkLostFocusAfterSyncBumpOrderName(command, xmlData);
                 orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData);
@@ -4244,6 +4244,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         {
             case Station_Bump_Order:
             case Station_Add_New_Order: //Please notice: add_new, if local don't have this order, expo will add a new one.
+            case Queue_Pickup: //for queue,
+            case Queue_Unready:
+            case Queue_Ready:
+            case Expo_Bump_Order:
+            case Expo_Bump_Item:
+            case Expo_Unbump_Item:
+            case Expo_Unbump_Order: //end for queue
                 return false;
             default:
                 doCommandXml(sock, xmlData);
