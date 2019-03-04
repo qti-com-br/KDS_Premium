@@ -1959,7 +1959,9 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             if (r == null) return  KDSSettings.StationFunc.Queue; //show nothing
             if (r.getFunction() != KDSSettings.StationFunc.Expeditor &&
                     r.getFunction() != KDSSettings.StationFunc.Normal &&
-                    r.getFunction() != KDSSettings.StationFunc.Queue_Expo) {
+                    r.getFunction() != KDSSettings.StationFunc.Queue_Expo &&
+                    r.getFunction() != KDSSettings.StationFunc.Queue) //add this line, in old version, it add queue as expo
+            {
                 String primary = getMyPrimaryStation(stationID);
                 if (primary.isEmpty()) return KDSSettings.StationFunc.Queue;
                 if (primary.equals(whoUseMeAsSlave)) return r.getFunction();
