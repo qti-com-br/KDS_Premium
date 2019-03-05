@@ -45,6 +45,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
@@ -232,7 +233,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * the interface of timer
      */
     public void onTime() {
-        // return;
+
 
         KDSGlobalVariables.toggleBlinkingStep();
         if (!m_bEnableRefreshTimer) return;
@@ -2195,6 +2196,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public boolean checkAutoBumping()
     {
         if (!isKDSValid()) return false;
+        if (getKDS().isQueueView() ||
+                getKDS().isQueueExpo()) {
+            m_queueView.checkAutoBump();
+            return false;
+        }
 
         boolean bEnabled = this.getSettings().getBoolean(KDSSettings.ID.Auto_bump_enabled);
 
@@ -2203,7 +2209,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //there is one bug here, this function auto bump queue orders too.
         //add following code.
         if (getKDS().isQueueView() ||
-                getKDS().isQueueExpo()) return false;
+                getKDS().isQueueExpo()) {
+            m_queueView.checkAutoBump();
+            return false;
+        }
 
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
         //limit its size
