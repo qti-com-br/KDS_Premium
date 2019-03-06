@@ -336,8 +336,11 @@ public class TTViewOrders {
             }
         }
 
-        for (int i=0; i< ar.size(); i++)
-            m_orders.removeComponent(ar.get(i));
+        //m_orders.getComponents().removeAll(ar);
+        //m_orders.sortOrders();
+        m_orders.removeComponents(ar);
+//        for (int i=0; i< ar.size(); i++)
+//            m_orders.removeComponent(ar.get(i));
 
        ar.clear();
     }

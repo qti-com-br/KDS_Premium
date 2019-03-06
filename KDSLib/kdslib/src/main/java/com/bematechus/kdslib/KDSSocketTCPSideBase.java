@@ -522,16 +522,17 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         if (m_eventHandler != null)
             m_eventHandler.sendReceiveXmlMessage(this, strXml);
         //slow down socket speed, let the gui drawing
-        if (!KDSApplication.isRouterApp())
-        {
-            try {
-                Thread.sleep(500);
-            }
-            catch (Exception e)
-            {
-                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
-            }
-        }
+        //don't need this, we have pass most command xml to thread.
+//        if (!KDSApplication.isRouterApp())
+//        {
+//            try {
+//                //Thread.sleep(500);
+//            }
+//            catch (Exception e)
+//            {
+//                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+//            }
+//        }
     }
 
     public void closeChannel(SocketChannel channel)

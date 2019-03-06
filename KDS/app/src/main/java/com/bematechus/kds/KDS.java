@@ -1818,12 +1818,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             MESSAGE_TO_MAIN w = MESSAGE_TO_MAIN.values()[n];
             switch (w) {
                 case REFRESH_ALL:
+                    m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_ALL.ordinal());
                     KDS.this.doRefreshView();
                     break;
                 case REFRESH_A:
+                    m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_A.ordinal());
                     KDS.this.doRefreshView(KDSUser.USER.USER_A, (RefreshViewParam) msg.obj);
                     break;
                 case REFRESH_B:
+                    m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_B.ordinal());
                     KDS.this.doRefreshView(KDSUser.USER.USER_B, (RefreshViewParam) msg.obj);
                     break;
                 case ASK_ORDER_STATUS:
@@ -1845,6 +1848,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
                     break;
                 case Order:
+
                     MessageParam xcode = (MessageParam)msg.obj;
 //                    String s = (String)xcode.obj1;
 //                    KDSDataOrder data =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), s);
@@ -4164,7 +4168,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     Object m_lockerForOrdersThread = new Object();
     ArrayList<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new ArrayList<>();
 
-    final int BATCH_MAX_COUNT = 10;
+    final int BATCH_MAX_COUNT = 5;
     /**
      * 20190222
      * Release UI works.
@@ -4200,6 +4204,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     ArrayList<DoOrdersXmlThreadBuffer> arDone = new ArrayList();
                     while (m_bRunning) {
                         int ncount = m_xmlDataBuffer.size();
+                        //Log.i(TAG, KDSUtil.convertIntToString(ncount));
                         if (ncount <=0) {
                             try {
                                 Thread.sleep(50);
@@ -4213,7 +4218,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                         DoOrdersXmlThreadBuffer data = null;
                         for (int i = 0; i < ncount; i++) {
                             try {
-                                synchronized (m_lockerForOrdersThread) {
+                                //synchronized (m_lockerForOrdersThread)
+                                {
                                     //if (m_xmlDataBuffer.size() >0) {
                                         data = m_xmlDataBuffer.get(i);
                                         arDone.add(data);
@@ -4248,10 +4254,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                         }
                         arDone.clear();
                         refreshView();
-                        try {
-                            Thread.sleep(10);
-                        }
-                        catch (Exception e){}
+//                        try {
+//                            Thread.sleep(10);
+//                        }
+//                        catch (Exception e){}
                     }
                 }
             });

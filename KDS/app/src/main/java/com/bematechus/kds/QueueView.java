@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSLog;
@@ -33,6 +34,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Administrator on 2016/12/23.
@@ -424,6 +426,7 @@ public class QueueView  extends View {
         int nRow = (nOrderIndex % nRows);//getRows());
         return getItemRect(rect, nRows,nCols, nRow, nCol);
     }
+
 
 
 
@@ -1612,6 +1615,8 @@ public class QueueView  extends View {
 
     public void focusOrder(String orderGuid)
     {
+        if (orderGuid.equals(KDSConst.RESET_ORDERS_LAYOUT))
+            return;
         synchronized (m_locker) {
             m_queueOrders.setFocusedOrderGuid(orderGuid);
             if (isQueueExpo()) {//if multiple pages, move to focused order page.
@@ -1775,7 +1780,7 @@ public class QueueView  extends View {
             int nPanelIndex = 0;
             int nTotalPanels = nRows * getCols();
             //for page
-            int nPagesCount = getPageCount(status, nRows, getCols());
+            //int nPagesCount = getPageCount(status, nRows, getCols());
             int nPageIndex = 0;//getCurrentPageIndex(nPagesCount);
 
             for (int i = 0; i < ncount; i++) {

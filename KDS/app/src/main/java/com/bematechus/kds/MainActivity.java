@@ -2189,7 +2189,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     final int MAX_AUTO_BUMP_COUNT = 2;
     /**
-     *
+     * call it in thread
      * @return
      * true: bumped some orders
      */
@@ -2199,6 +2199,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (getKDS().isQueueView() ||
                 getKDS().isQueueExpo()) {
             m_queueView.checkAutoBump();
+            return false;
+        }
+        if (getKDS().isTrackerView())
+        {
+            m_ttView.checkAutoBumping();//
             return false;
         }
 

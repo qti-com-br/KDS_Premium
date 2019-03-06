@@ -677,4 +677,14 @@ public class KDSDataOrders extends KDSDataArray {
         }
         return (!bFindActiveItem);
     }
+
+    public boolean removeComponents(ArrayList<KDSDataOrder> ar)
+    {
+        synchronized (m_locker) {
+            this.getComponents().removeAll(ar);
+            //super.removeComponent(obj);
+            sortOrders();
+            return true;
+        }
+    }
 }

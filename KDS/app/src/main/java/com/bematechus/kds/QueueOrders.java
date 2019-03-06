@@ -11,6 +11,7 @@ import com.bematechus.kdslib.KDSDataOrders;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * Created by Administrator on 2016/12/23.
@@ -137,24 +138,25 @@ public class QueueOrders {
         if (order == null) return status;
         if (order.getQueueReady())
             return QueueStatus.Pickup;
-        int ncount = order.getItems().getCount();
-        int nReadyItemsCounter = 0;
-        for (int i=0; i< ncount; i++)
-        {
-            if (order.getItems() == null)
-                return status;
-            if (order.getItems().getItem(i) == null)
-                return status;
-            KDSDataItem item = order.getItems().getItem(i);
-            if (item.isMarked() ||
-                    item.getLocalBumped() ||
-                    item.isReady()||
-                    (!item.getBumpedStationsString().isEmpty()))
-            {
-                nReadyItemsCounter ++;
-            }
-        }
-        if (nReadyItemsCounter == order.getItems().getCount())
+        //int ncount = order.getItems().getCount();
+
+        int nReadyItemsCounter = order.getFinishedItemsCount();
+//        for (int i=0; i< ncount; i++)
+//        {
+//            if (order.getItems() == null)
+//                return status;
+//            if (order.getItems().getItem(i) == null)
+//                return status;
+//            KDSDataItem item = order.getItems().getItem(i);
+//            if (item.isMarked() ||
+//                    item.getLocalBumped() ||
+//                    item.isReady()||
+//                    (!item.getBumpedStationsString().isEmpty()))
+//            {
+//                nReadyItemsCounter ++;
+//            }
+//        }
+        if (nReadyItemsCounter!=0 && nReadyItemsCounter == order.getItems().getCount())
         {
             status = QueueStatus.Ready;
         }

@@ -111,20 +111,51 @@ public class KDSStationFunc {
     }
     static public void sync_with_stations(KDS kds,KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
     {
-        String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+        String strXml = "";//KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
         //writeToStations(m_stationsConnection.getExpStations(), strXml);
-        kds.getStationsConnections().writeToExps(kds.getStationID(), strXml);
-        kds.getStationsConnections().writeToMirrors(kds.getStationID(), strXml);
-        kds.getStationsConnections().writeToBackups(kds.getStationID(), strXml);
-        kds.getStationsConnections().writeToPrimaryMirror(kds.getStationID(), strXml);
-        if (is_send_to_duplicated(syncMode))
-            kds.getStationsConnections().writeToDuplicated(kds.getStationID(), strXml);
-        kds.getStationsConnections().writeToQueue(kds.getStationID(), strXml);
-        kds.getStationsConnections().writeToTT(kds.getStationID(), strXml);
+        if (kds.getStationsConnections().getRelations().getExpStations().size()>0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+            kds.getStationsConnections().writeToExps(kds.getStationID(), strXml);
+        }
+        if (kds.getStationsConnections().getRelations().getMirrorStations().size()>0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+            kds.getStationsConnections().writeToMirrors(kds.getStationID(), strXml);
+        }
+        if (kds.getStationsConnections().getRelations().getBackupStations().size()>0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+            kds.getStationsConnections().writeToBackups(kds.getStationID(), strXml);
+        }
+        if (kds.getStationsConnections().getRelations().getPrimaryStationsWhoUseMeAsMirror().size()>0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+            kds.getStationsConnections().writeToPrimaryMirror(kds.getStationID(), strXml);
+        }
+        if (is_send_to_duplicated(syncMode)) {
+            if (kds.getStationsConnections().getRelations().getDuplicatedStations().size() >0) {
+                if (strXml.isEmpty())
+                    strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+                kds.getStationsConnections().writeToDuplicated(kds.getStationID(), strXml);
+            }
+        }
+        if (kds.getStationsConnections().getRelations().getQueueStations().size() >0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+            kds.getStationsConnections().writeToQueue(kds.getStationID(), strXml);
+        }
+        if (kds.getStationsConnections().getRelations().getTTStations().size() >0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+            kds.getStationsConnections().writeToTT(kds.getStationID(), strXml);
+        }
         //if the backup station find its primary is offline, send data to primary's mirror.
         if (kds.getStationsConnections().isBackupOfOthers())
         {
             ArrayList<KDSStationIP> primaryBackups = kds.getAllActiveConnections().getRelations().getPrimaryStationsWhoUseMeAsBackup();
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
             //If my primary backup station is the primary mirror of others,
             //check if this primary station is offline. If so, write data to the slave mirror of primary.
             for (int i=0; i< primaryBackups.size();i ++)

@@ -2427,16 +2427,21 @@ get the total qty of all found items
     public int getFinishedItemsCount()
     {
         int nFinished = 0;
-        int ncount = this.getItems().getCount();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSDataItem item = this.getItems().getItem(i);
-            if (item.getLocalBumped() ||
-               (!item.getBumpedStationsString().isEmpty()) ||
-                item.isReady() ||
-                item.isMarked() )
-                    nFinished ++;
+        try {
+            int ncount = this.getItems().getCount();
+            for (int i = 0; i < ncount; i++) {
+                KDSDataItem item = this.getItems().getItem(i);
+                if (item.getLocalBumped() ||
+                        (!item.getBumpedStationsString().isEmpty()) ||
+                        item.isReady() ||
+                        item.isMarked())
+                    nFinished++;
 
+
+            }
+        }
+        catch ( Exception e)
+        {
 
         }
         return nFinished;
