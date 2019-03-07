@@ -2413,11 +2413,11 @@ public class QueueView  extends View {
                     {
                         nTimeout *= 2;
                     }
-                    else {
-                        if (dtNow - dtStart.getTime() > nTimeout) {
-                            ar.add(order);
-                        }
+
+                    if (dtNow - dtStart.getTime() > nTimeout) {
+                        ar.add(order);
                     }
+
                 }
                 catch (Exception e)
                 {
