@@ -195,6 +195,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
 
     protected  boolean write_to_socket(ByteBuffer buf)
     {
+
         try {
             //buf.rewind();
 //            if (false)

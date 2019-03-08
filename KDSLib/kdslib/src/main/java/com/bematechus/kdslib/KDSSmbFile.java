@@ -139,9 +139,9 @@ public class KDSSmbFile extends Handler implements Runnable {
      *  -1,0: read all
      * @return
      */
-    static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles)
+    static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles, ArrayList<String> ar)
     {
-        ArrayList<String> ar = new ArrayList<String>();
+        //ArrayList<String> ar = new ArrayList<String>();
         SmbFile file;
         String[] files = null;//new SmbFile[0];
 
@@ -323,10 +323,10 @@ public class KDSSmbFile extends Handler implements Runnable {
 
             int length=rmifile.getContentLength();
             byte[] buffer=new byte[length];
-            bis.read(buffer); //utf8 bytes
+            int nsize = bis.read(buffer); //utf8 bytes
             int noffset = 0;
-            int ncount = buffer.length;
-            if (buffer.length >3)
+            int ncount = nsize;//buffer.length;
+            if (nsize>3)
             {
                 //BOM: EF BB BF, start for UTF-8 file.
                 if (buffer[0] ==(byte) 0xEF &&
@@ -342,6 +342,8 @@ public class KDSSmbFile extends Handler implements Runnable {
             text = KDSUtil.convertUtf8BytesToString(buffer, noffset, ncount);
 
             try {
+                buffer = null;
+                rmifile = null;
 
                 bis.close();
             } catch (IOException e) {

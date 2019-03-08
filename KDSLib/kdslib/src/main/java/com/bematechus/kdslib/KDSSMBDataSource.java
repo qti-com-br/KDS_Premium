@@ -218,17 +218,20 @@ public class KDSSMBDataSource implements Runnable {
                 //read data
                 //ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
                 ar.clear();
-                if (m_arExistedFiles.size() <=0)
-                    m_arExistedFiles = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder, BUFFER_FILES_COUNT);
+                if (m_arExistedFiles.size() <=0) {
+                    m_arExistedFiles.clear();
+                    m_arExistedFiles = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder, BUFFER_FILES_COUNT, m_arExistedFiles);
+                }
 
                 if (m_arExistedFiles.size() >0)
                 {
                     int ncount = MAX_ORDERS_COUNT>m_arExistedFiles.size()?m_arExistedFiles.size():MAX_ORDERS_COUNT;
 
                     for (int i=0; i< ncount; i++) {
-                        ar.add(m_arExistedFiles.get(0));
-                        m_arExistedFiles.remove(0);
+                        ar.add(m_arExistedFiles.get(i));
+                        //m_arExistedFiles.remove(0);
                     }
+                    m_arExistedFiles.removeAll(ar);
                 }
 
 
@@ -251,6 +254,7 @@ public class KDSSMBDataSource implements Runnable {
 
     final int MAX_ORDERS_COUNT = 20;
     private void checkXmlFiles(ArrayList<String> arFiles) {
+
         int ncount = arFiles.size();
 //        if (ncount >MAX_ORDERS_COUNT)
 //            ncount = MAX_ORDERS_COUNT;
@@ -258,17 +262,22 @@ public class KDSSMBDataSource implements Runnable {
         {
             String smbFileName = m_strRemoteFolder +arFiles.get(i);
             //smbFileName =  smbFileName;
+
             String text = readFileContent(smbFileName);
+
             if (text.isEmpty()) continue;
 
-            doReceivedXmlText(smbFileName,text);
+            doReceivedXmlText(smbFileName, text);
+
             //remove this file.
             removeSmbFile(smbFileName);
             if (i < ncount-1)
                 sleep(500); //delay, Too many orders will lock the router.
         }
+        arFiles.clear();
     }
 
+    //byte[] m_readTextBuffer = new byte[1024*1024*5];
     /**
      * read text from the smb server
      *
@@ -400,9 +409,9 @@ public class KDSSMBDataSource implements Runnable {
                     ncount = m_arData.size();
                 }
                 ArrayList<UploadData> arFinished = new ArrayList<>();
-
+                UploadData d = null;
                 for (int i=0; i< ncount ; i++) {
-                    UploadData d = null;
+
                     synchronized (m_locker) {
                         d = m_arData.get(i);
                     }
@@ -418,7 +427,7 @@ public class KDSSMBDataSource implements Runnable {
                     remoteFolder += (d.m_strSubFolder +"/");
                     boolean b = KDSSmbFile.smbPut(remoteFolder, d.m_fileName, d.m_fileContent);
                     d.m_bResult = b;
-                    if (b)
+                    //if (b)//just remove this. It is for saving heap size.20190308
                     {
                         arFinished.add(d);
                     }
@@ -426,10 +435,11 @@ public class KDSSMBDataSource implements Runnable {
                 }
                 //remove finished
                 synchronized (m_locker) {
-                    for (int i= 0; i< arFinished.size(); i++)
-                    {
-                        m_arData.remove(arFinished.get(i));
-                    }
+                    m_arData.removeAll(arFinished);
+//                    for (int i= 0; i< arFinished.size(); i++)
+//                    {
+//                        m_arData.remove(arFinished.get(i));
+//                    }
                 }
                 arFinished.clear();
             }

@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
@@ -3396,6 +3397,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     public void doOrderXmlInThread(final Object objSource, final String originalFileName, final String xmlData)
     {
 
+
+
         DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
         data.m_objSource = objSource;
         data.m_originalFileName = originalFileName;
@@ -3410,6 +3413,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             m_threadOrdersXml = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    DoOrdersXmlThreadBuffer data = null;
+                    ArrayList<DoOrdersXmlThreadBuffer> arDone = new ArrayList<>();
                         while (m_bRunning) {
                             int ncount = m_xmlDataBuffer.size();
                             if (ncount <=0) {
@@ -3420,20 +3425,27 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                                 catch (Exception e){}
 
                             }
-                            DoOrdersXmlThreadBuffer data = null;
+
                             for (int i = 0; i < ncount; i++) {
                                 try {
                                     synchronized (m_lockerForOrdersThread) {
-                                        data = m_xmlDataBuffer.get(0);
-                                        m_xmlDataBuffer.remove(0);
+                                        data = m_xmlDataBuffer.get(i);
+                                        arDone.add(data);
+                                        //m_xmlDataBuffer.remove(0);
                                     }
-                                    doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
 
+                                    doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                    data.clear();
                                     Thread.sleep(200);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
+                            synchronized (m_lockerForOrdersThread) {
+                                m_xmlDataBuffer.removeAll(arDone);
+                            }
+                            arDone.clear();
+
                         }
                 }
             });
@@ -3459,6 +3471,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             m_threadNotificationXml = new Thread(new Runnable() {
                 @Override
                 public void run() {
+
+                    ArrayList<String> arDone = new ArrayList<>();
+                    String data = "";
                     while (m_bRunning) {
                         int ncount = m_xmlDataNotificationBuffer.size();
                         if (ncount <=0) {
@@ -3469,12 +3484,15 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                             catch (Exception e){}
 
                         }
-                        String data = "";
+
+                        arDone.clear();
                         for (int i = 0; i < ncount; i++) {
                             try {
+
                                 synchronized (m_lockerForNotificationThread) {
-                                    data = m_xmlDataNotificationBuffer.get(0);
-                                    m_xmlDataNotificationBuffer.remove(0);
+                                    data = m_xmlDataNotificationBuffer.get(i);
+                                    arDone.add(data);
+                                    //m_xmlDataNotificationBuffer.remove(0);
                                 }
                                 doNotificationXml(null, data);
 
@@ -3483,6 +3501,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                                 e.printStackTrace();
                             }
                         }
+                        synchronized (m_lockerForNotificationThread) {
+                            m_xmlDataNotificationBuffer.removeAll(arDone);
+
+                        }
+                        arDone.clear();
                     }
                 }
             });
@@ -3497,6 +3520,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         Object m_objSource = null;
         String m_originalFileName = "";
         String m_xmlData = "";
+        public void clear()
+        {
+            m_objSource = null;
+            m_originalFileName = "";
+            m_xmlData = "";
+        }
     }
 
     /*********************************************************************************************/

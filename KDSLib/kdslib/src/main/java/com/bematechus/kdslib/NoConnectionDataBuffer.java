@@ -32,7 +32,9 @@ public class NoConnectionDataBuffer {
      *  -1: No limitation
      */
     public void addBufferedData(String data, int nMaxCount) {
+
         if (data.isEmpty()) return;
+
         m_arBufferedData.add(KDSStationDataBuffered.create(data));
         if (nMaxCount<0) return;
         if (m_arBufferedData.size() >nMaxCount)
