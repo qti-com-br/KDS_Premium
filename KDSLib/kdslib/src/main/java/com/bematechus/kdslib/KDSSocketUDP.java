@@ -224,6 +224,7 @@ public class KDSSocketUDP implements KDSSocketInterface{
 
                 m_bufferRead.clear();
                 m_eventHandler.sendReceiveDataMessage(this, client.toString(), buffer, nlength);
+                buffer = null;
             }
         }
         catch (Exception e)

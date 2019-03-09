@@ -574,6 +574,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         return m_strLocalMAC;
     }
 
+    ByteBuffer m_bufferRouterBroadcast = ByteBuffer.allocate(100);
     /**
      * broadcast this router
      */
@@ -581,21 +582,33 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     {
         int port =  this.m_nRouterBackupPort; //this station opened this port for TCP/IP connection
         String strport = KDSUtil.convertIntToString(port);
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(m_strStationID,m_strLocalIP, strport, getLocalMacAddress());
-        m_udpStationAnnouncer.broadcastData(buf);
+
+        if (m_strStationID.isEmpty() || m_strLocalIP.isEmpty() || strport.isEmpty()) return;
+        //int nlenght = KDSSocketTCPCommandBuffer.getReturnStationIPCommandLength(m_strStationID,m_strLocalIP, strport, getLocalMacAddress());
+        m_bufferRouterBroadcast.clear();
+//        if (nlenght != m_bufferRouterBroadcast.capacity())
+//            m_bufferRouterBroadcast = ByteBuffer.allocate(nlenght);
+        //ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(), m_bufferRouterBroadcast);
+        KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(), m_bufferRouterBroadcast);
+        m_udpStationAnnouncer.broadcastData(m_bufferRouterBroadcast);
     }
 
+    /**
+     * don't need this function.
+     * The station announce is broadcast in thread.
+     */
     public void broadcastStationAnnounceInThread()
     {
 
-
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                KDSRouter.this.broadcastStationAnnounce();
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        if (!BuildVer.isDebug()) {
+//            AsyncTask task = new AsyncTask() {
+//                @Override
+//                protected Object doInBackground(Object[] params) {
+//                    KDSRouter.this.broadcastStationAnnounce();
+//                    return null;
+//                }
+//            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        }
     }
 
     public void broadcastRequireStationsUDPInThread()
@@ -617,8 +630,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         String strport = KDSUtil.convertIntToString(port);
         boolean bEnabled = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
         boolean bBackupMode = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Backup);
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildRouterStationAnnounceCommand(getStationID(), m_strLocalIP, strport, getLocalMacAddress(), bEnabled, bBackupMode);
-        return buf;
+        return KDSSocketTCPCommandBuffer.buildRouterStationAnnounceCommand(getStationID(), m_strLocalIP, strport, getLocalMacAddress(), bEnabled, bBackupMode);
+
     }
 
     public void broadcastRouterAnnounceInThread()
@@ -638,6 +651,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     public void onUdpReceiveData(KDSSocketInterface sock,String remoteIP,  ByteBuffer buffer, int nLength) {
         //m_udpBuffer.appendData(buffer, nLength);
+        m_udpBuffer.freeBuffer();
+        m_udpBuffer.reset();
         m_udpBuffer.replaceBuffer(buffer, nLength);
 
         while (true) {
@@ -1467,20 +1482,24 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 break;
 
             case Command:
-                doCommandXml(sock, xmlData);
+
+                    doCommandXml(sock, xmlData);
                 break;
             case Feedback_OrderStatus:
             {
+
                 doFeedbackOrderStatus(xmlData);
             }
             break;
             case Notification:
             {
+
                 doNotificationXmlInThread(sock, xmlData);
             }
             break;
             case Acknowledgement:
             {
+
                 doOrderAcknowledgement(sock, xmlData);
             }
             break;
@@ -1815,6 +1834,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         KDSLogOrderFile.i(TAG, xmlData);
 
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(m_strStationID, xmlData);
+
         if (order == null) {
             if (this.getSettings().getBoolean(KDSSettings.ID.Order_ack))
             {//ack error ack
@@ -2227,8 +2247,6 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
      */
     public void  doOrderFilter(KDSDataOrder order,String xmlData, String originalFileName)
     {
-
-
 
         //if there are item for expeditor station, pass them
         if (orderHaveExpItems(order))
@@ -2988,18 +3006,22 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     public void run()
     {
 
+
         while (m_bRunning) {
 
             if (m_dogAnnounce.is_timeout(KDSConst.ACTIVE_PLUS_FREQUENCE))
             {
                 m_dogAnnounce.reset();
                 //if (!DEBUG)
-                    m_stationsConnection.checkAllNoResponseStations();
+                m_stationsConnection.checkAllNoResponseStations();
                 this.broadcastStationAnnounce();
                 checkLostStationInThread();
-                broadcastRouterAnnounceInThread();
+                    //broadcastRouterAnnounceInThread();
+                broadcastRouterAnnounce();
+
                 //this.broadcastRequireStationsUDP(); //get all station's ip address.
             }
+
             if (this.isEnabled())
                 m_stationsConnection.connectAllStations();
 
@@ -3526,6 +3548,23 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             m_originalFileName = "";
             m_xmlData = "";
         }
+    }
+
+    ByteBuffer m_bufferForRouterAnnounce = ByteBuffer.allocate(100);
+    private void broadcastRouterAnnounce()
+    {
+        m_bufferForRouterAnnounce.clear();
+        m_udpStationAnnouncer.broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeAnnounceToRouterBuffer(m_bufferForRouterAnnounce));
+    }
+
+    private ByteBuffer makeAnnounceToRouterBuffer(ByteBuffer buf)
+    {
+        int port = KDSSettings.UDP_ROUTER_ANNOUNCER_PORT;
+        String strport = KDSUtil.convertIntToString(port);
+        boolean bEnabled = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
+        boolean bBackupMode = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Backup);
+        return KDSSocketTCPCommandBuffer.buildRouterStationAnnounceCommand(getStationID(), m_strLocalIP, strport, getLocalMacAddress(), bEnabled, bBackupMode, buf);
+
     }
 
     /*********************************************************************************************/

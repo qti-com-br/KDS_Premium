@@ -628,5 +628,62 @@ public class KDSSocketTCPCommandBuffer {
 
     }
 
+    static public ByteBuffer buildReturnStationIPCommand(String stationID, String IP, String strPort, String macAddress, ByteBuffer buf)
+    {
+        String s = stationID;
+        s += ",";
+        s += IP;
+        s +=",";
+        s += strPort;
+        s +=",";
+        s += macAddress;
+        byte[] bytes = KDSUtil.convertStringToUtf8Bytes(s);
+        int nsize = bytes.length + 1+1+1+1;
+
+
+        buf.put(STX);
+        buf.put(UDP_RET_STATION);
+        buf.put((byte)(bytes.length));
+        buf.put(bytes);
+        buf.put(ETX);
+        buf.position(0);
+        buf.limit(nsize);
+
+        return buf;
+    }
+
+    static public ByteBuffer buildRouterStationAnnounceCommand(String stationID, String IP, String strPort, String macAddress, boolean bEnabled, boolean backupMode, ByteBuffer buf)
+    {
+        String s = stationID;
+        s += ",";
+        s += IP;
+        s +=",";
+        s += strPort;
+        s +=",";
+        s += macAddress;
+        s +=",";
+        if (bEnabled)
+            s += "1";
+        else
+            s += "0";
+        s +=",";
+        if (backupMode)
+            s += "1";
+        else
+            s += "0";
+
+        byte[] bytes = KDSUtil.convertStringToUtf8Bytes(s);
+        int nsize = bytes.length + 1+1+1+1;
+        //ByteBuffer buf = ByteBuffer.allocate(bytes.length + 1+1+1+1); //STX , Code , length(1 bytes) ,data,  ETX
+        buf.put(STX);
+        buf.put(UDP_RET_ROUTER);
+        buf.put((byte)(bytes.length));
+        buf.put(bytes);
+        buf.put(ETX);
+        buf.position(0);
+        buf.limit(nsize);
+        return buf;
+    }
+
 
 }

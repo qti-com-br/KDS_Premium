@@ -27,11 +27,13 @@ import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,6 +179,7 @@ public class KDSSmbFile extends Handler implements Runnable {
                 ar.add(files[i]);//.getName());
             }
         }
+
         files = null;
         return ar;
         //System.out.println();
@@ -310,15 +313,7 @@ public class KDSSmbFile extends Handler implements Runnable {
         try {
             SmbFile rmifile = openSmbUri(smbFileName);
             if (rmifile == null) return "";
-//            if (isAnonymous(smbFileName))
-//            {
-//                NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, null, null);
-//                rmifile = new SmbFile(smbFileName, auth);
-//            }
-//            else {
-//                rmifile = new SmbFile(smbFileName);
-//            }
-            //String filename=rmifile.getName();
+
             bis=new BufferedInputStream(new SmbFileInputStream(rmifile));
 
             int length=rmifile.getContentLength();
@@ -1224,6 +1219,77 @@ public class KDSSmbFile extends Handler implements Runnable {
             m_progressDialog.hide();
     }
 
+//    public static String readFromUtf8SmbText2(String smbFileName)
+//    {
+//
+//        InputStream bis=null;
+//        String text = "";
+//        try {
+//            SmbFile rmifile = openSmbUri(smbFileName);
+//            if (rmifile == null) return "";
+//            bis=new BufferedInputStream(new SmbFileInputStream(rmifile));
+//            String str = ""; // 保存读取的全部内容
+//            StringBuffer sb = new StringBuffer(str); // 使用StringBuffer来拼接字符串
+//
+//            int len = 0;
+//            byte[] temp = new byte[1024];
+//            while ((len = bis.read(temp)) != -1) {
+//                sb.append(new String(temp, 0, len));
+//            }
+//            text = sb.toString();
+//            sb = null;
+////            int length=rmifile.getContentLength();
+////            byte[] buffer=new byte[length];
+////            int nsize = bis.read(buffer); //utf8 bytes
+////            int noffset = 0;
+////            int ncount = nsize;//buffer.length;
+////            if (nsize>3)
+////            {
+////                //BOM: EF BB BF, start for UTF-8 file.
+////                if (buffer[0] ==(byte) 0xEF &&
+////                        buffer[1] == (byte)0xBB &&
+////                        buffer[2] == (byte)0xBF )
+////                {
+////                    noffset = 3;
+////                    ncount = length - 3;
+////                    //buffer = removeHeaders(buffer, 3);
+////
+////                }
+////            }
+////            text = KDSUtil.convertUtf8BytesToString(buffer, noffset, ncount);
+//
+//            try {
+//                //buffer = null;
+//                rmifile = null;
+//
+//                bis.close();
+//            } catch (IOException e) {
+//                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+//                //KDSLog.e(TAG, KDSUtil.error( e));
+//            }
+//
+//        } catch (Exception e) {
+//
+//            KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Error file:" + smbFileName);
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+//            //KDSLog.e(TAG, KDSUtil.error( e));
+//        }
+//
+//        //BOM: EF BB BF, start for UTF-8 file.
+////
+////        if (text.length() >1) {
+////            if (text.charAt(0) == 0xfeff)
+//////            if (text.charAt(0) == 0xEF ||
+//////                    text.charAt(1) == 0xBB ||
+//////                    text.charAt(2) == 0xBF )
+////            {
+////                text = text.substring(1);
+////            }
+////
+////        }
+//
+//        return text;
+//    }
 }
 
 
