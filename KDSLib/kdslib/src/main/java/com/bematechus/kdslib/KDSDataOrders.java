@@ -16,7 +16,7 @@ import java.util.Comparator;
  */
 public class KDSDataOrders extends KDSDataArray {
 
-
+    public Object m_locker = new Object(); //locker for multiple thread.
     KDSConst.OrderSortBy m_sortBy = KDSConst.OrderSortBy.Unknown;//.Waiting_Time;
     KDSConst.SortSequence m_sortSequence = KDSConst.SortSequence.Ascend;
     public boolean m_bMoveRushFront = true;

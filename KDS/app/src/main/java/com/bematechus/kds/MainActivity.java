@@ -2228,8 +2228,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         boolean bReturn = false;
         if (ar.size() >0)
         {
-            for (int i=0; i< ar.size(); i++) {
-                bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+            synchronized (getKDS().getUsers().getUserA().getOrders().m_locker) {
+                for (int i = 0; i < ar.size(); i++) {
+                    bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+                }
             }
 
             getKDS().refreshView(); //use message
@@ -2240,9 +2242,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             ar =  getKDS().getUsers().getUserB().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
             if (ar.size() >0)
             {
-                for (int i=0; i< ar.size(); i++) {
-                    String guid = ar.get(i);
-                    bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
+                synchronized (getKDS().getUsers().getUserB().getOrders().m_locker) {
+                    for (int i = 0; i < ar.size(); i++) {
+                        String guid = ar.get(i);
+                        bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
+                    }
                 }
                 getKDS().refreshView();
                 //bumpOrderInThread(KDSUser.USER.USER_A, ar);

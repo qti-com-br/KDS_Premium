@@ -2250,7 +2250,9 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                             }
                         }
                         try {
-                            showOrdersWithoutUIRefresh(m_orders);
+                            synchronized (m_orders.m_locker) {
+                                showOrdersWithoutUIRefresh(m_orders);
+                            }
                             refreshThroughMessage();
                         }
                         catch ( Exception e)
