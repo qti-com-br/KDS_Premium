@@ -26,6 +26,7 @@ import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
+import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSocketEventReceiver;
 import com.bematechus.kdslib.KDSSocketInterface;
 import com.bematechus.kdslib.KDSSocketManager;
@@ -1795,7 +1796,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         int nEnd = s.indexOf("\"", nStart);
         if (nEnd <0) return false;
 
-        nEnd --;
+       // nEnd --;
         if (nEnd<=nStart) return false;
         String fileName = s.substring(nStart, nEnd);
 
@@ -3567,65 +3568,22 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     }
 
-    /*********************************************************************************************/
-//
-//    static class UDPDataThreadBuffer
-//    {
-//        KDSSocketInterface m_sock = null;
-//        String m_remoteIP = "";
-//        ByteBuffer m_buffer = null;
-//        int m_len = 0;
-//    }
-//    Thread m_threadUDP = null;
-//    Object m_lockerForUDPThread = new Object();
-//    ArrayList<UDPDataThreadBuffer> m_udpDataBuffer = new ArrayList<>();
-//    public void doUdpReceiveDataInThread(KDSSocketInterface sock,String remoteIP,  ByteBuffer buffer, int nLength)
-//    {
-//        UDPDataThreadBuffer data = new UDPDataThreadBuffer();
-//        data.m_sock = sock;
-//        data.m_remoteIP = remoteIP;
-//        data.m_buffer = buffer;
-//        data.m_len = nLength;
-//
-//        synchronized (m_lockerForUDPThread) {
-//            m_udpDataBuffer.add(data);
-//        }
-//        if (m_threadUDP == null ||
-//                !m_threadUDP.isAlive())
-//        {
-//            m_threadUDP = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    while (m_bRunning) {
-//                        int ncount = m_udpDataBuffer.size();
-//                        if (ncount <=0) {
-//                            try {
-//                                Thread.sleep(500);
-//                                continue;
-//                            }
-//                            catch (Exception e){}
-//
-//                        }
-//                        UDPDataThreadBuffer data = null;
-//                        for (int i = 0; i < ncount; i++) {
-//                            try {
-//                                synchronized (m_lockerForUDPThread) {
-//                                    data = m_udpDataBuffer.get(0);
-//                                    m_udpDataBuffer.remove(0);
-//                                }
-//                                onUdpReceiveData(data.m_sock, data.m_remoteIP, data.m_buffer, data.m_len);
-//
-//                                Thread.sleep(200);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                }
-//            });
-//            m_threadOrdersXml.start();
-//        }
-//
-//
-//    }
+    public boolean isThreadRunning()
+    {
+        return m_bRunning;
+    }
+
+    public int removeNotifications()
+    {
+
+        KDSSettings.KDSDataSource source = KDSSettings.KDSDataSource.values()[getSettings().getInt(KDSSettings.ID.KDSRouter_Data_Source)];
+
+        if (source == KDSSettings.KDSDataSource.Folder) {
+            int nMinutes = getSettings().getInt(KDSRouterSettings.ID.notification_minutes);
+            if (nMinutes <=0) return 0;
+            return m_smbDataSource.removeTimeoutNotificationFiles(KDSConst.SMB_FOLDER_NOTIFICATION, nMinutes);
+        }
+        return 0;
+
+    }
 }

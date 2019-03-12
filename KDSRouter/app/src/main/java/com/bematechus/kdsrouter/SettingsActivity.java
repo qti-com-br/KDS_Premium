@@ -391,6 +391,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             bindPreferenceSummaryToValue(findPreference("general_router_primary"));
             bindPreferenceSummaryToValue(findPreference("general_router_slave"));
             bindPreferenceSummaryToValue(findPreference("kds_general_language"));
+            bindPreferenceSummaryToValue(findPreference("notification_minutes"));
 
             KDSRouterSettings.KDSDataSource dataType =getDataSourceType(pref);
 

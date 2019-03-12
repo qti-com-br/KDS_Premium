@@ -1219,6 +1219,36 @@ public class KDSSmbFile extends Handler implements Runnable {
             m_progressDialog.hide();
     }
 
+    static public SmbFile[] findAllFiles(String remoteUriFolder)
+    {
+
+        SmbFile file;
+        SmbFile[] files = new SmbFile[0];
+
+        try {
+            file = openSmbUri(remoteUriFolder);
+            if (file == null) return files;
+
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return files;
+        }
+
+        //long t1 = System.currentTimeMillis();
+        try {
+
+            files = file.listFiles();
+        } catch (Exception e) {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        return files;
+    }
+
+
 //    public static String readFromUtf8SmbText2(String smbFileName)
 //    {
 //

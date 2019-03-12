@@ -129,6 +129,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         checkNetworkState();
         checkLogFilesDeleting();
+        startCheckRemoteFolderNotificationThread();
 
     }
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -1027,6 +1028,50 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
     }
+    TimeDog m_notificationDog = new TimeDog();
+
+    Thread m_threadCheckingNotification = null;
+    final int NOTIFICATION_INTERVAL = 60000;// 1800000;
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startCheckRemoteFolderNotificationThread()
+    {
+        if (m_threadCheckingNotification == null ||
+                !m_threadCheckingNotification.isAlive())
+        {
+            m_threadCheckingNotification = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (getKDSRouter().isThreadRunning())
+                    {
+                        try {
+                            if (!m_notificationDog.is_timeout(NOTIFICATION_INTERVAL)) //30 minutes
+                            {
+                                try {
+                                    Thread.sleep(10000);
+                                } catch (Exception e) { }
+                                continue;
+                            }
+                            m_notificationDog.reset();
+                            getKDSRouter().removeNotifications();
+
+
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadCheckingNotification.start();
+        }
+    }
+
 
     /**
      * 2.0.12

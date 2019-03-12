@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import jcifs.smb.SmbFile;
+
 /**
  *
  * The xml data comes from remote folder.
@@ -483,6 +485,46 @@ public class KDSSMBDataSource implements Runnable {
                 writeDataToFile();
             }
         }
+    }
+
+    public int removeTimeoutNotificationFiles(String subFolder, int nMinutes)
+    {
+        return removeTimeoutFiles(m_strRemoteFolder, subFolder, nMinutes);
+    }
+    public int removeTimeoutFiles(String remoteFolder, String subFolder, int nMinutes)
+    {
+        SmbFile[] files = null;
+        files = KDSSmbFile.findAllFiles(remoteFolder + subFolder+"/");
+        if (files == null ||
+            files.length<=0)
+            return 0;
+        int ncounter = 0;
+        //TimeDog td = new TimeDog();
+        long timeout = nMinutes * 60 * 1000; //ms
+        for (int i=0; i< files.length; i++)
+        {
+
+            try {
+                SmbFile file = files[i];
+                if (file == null)
+                    return ncounter;
+                long creatTime =  file.lastModified();
+                long now = System.currentTimeMillis();
+                long d = now - creatTime;
+                if (d >timeout)
+                {
+                    file.delete();
+                    ncounter ++;
+                }
+                sleep(10);
+
+            }
+            catch ( Exception e){}
+
+        }
+        files = null;
+
+        return ncounter;
     }
 
 
