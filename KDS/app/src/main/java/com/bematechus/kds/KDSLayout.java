@@ -1547,17 +1547,19 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     public String getLastShowingOrderGuid()
     {
         try {
-            if (this.getView().getPanels().size()<=0)
-                return "";
-            if (this.getView().getLastPanel() == null) return "";
+            synchronized (this.getView().m_panelsLocker) {
+                if (this.getView().getPanels().size() <= 0)
+                    return "";
+                if (this.getView().getLastPanel() == null) return "";
 
-            Object obj = this.getView().getLastPanel().getFirstBlockFirstRowData();
-            if (obj == null)
-                return "";
-            if (!(obj instanceof KDSDataOrder))
-                return "";
-            String guid = ((KDSDataOrder) obj).getGUID();
-            return guid;
+                Object obj = this.getView().getLastPanel().getFirstBlockFirstRowData();
+                if (obj == null)
+                    return "";
+                if (!(obj instanceof KDSDataOrder))
+                    return "";
+                String guid = ((KDSDataOrder) obj).getGUID();
+                return guid;
+            }
         }
         catch (Exception e)
         {
@@ -2274,72 +2276,73 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //m_orders = orders;
 
         //m_view.clear();
-        m_view.getPanels().clear();
+        synchronized (m_view.m_panelsLocker) {
+            m_view.getPanels().clear();
+        }
 
         if (orders == null || orders.getCount() <= 0) {
             //this.getView().refresh();
             //m_view.clear();
             return true;
         }
-
-        if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.Normal) {
-            int nBlockRows = m_view.getAverageRowsInBlock();
-            int nStartOrderIndex = 0;
-            if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
-                getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
-            else {
-                nStartOrderIndex = orders.getIndex(getEnv().getStateValues().getFirstShowingOrderGUID());
-            }
-            //check if the focused order is hidden at left side.
-            int nFocusedOrderIndex = orders.getOrderIndexByGUID(getEnv().getStateValues().getFocusedOrderGUID());
-            if (nFocusedOrderIndex >=0)
-            {
-                if (nFocusedOrderIndex<nStartOrderIndex) //adjust it
-                {
-                    getEnv().getStateValues().setFirstShowingOrderGUID(getEnv().getStateValues().getFocusedOrderGUID());
-                    nStartOrderIndex = nFocusedOrderIndex;
+        synchronized (m_view.m_panelsLocker) {
+            if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.Normal) {
+                int nBlockRows = m_view.getAverageRowsInBlock();
+                int nStartOrderIndex = 0;
+                if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
+                    getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
+                else {
+                    nStartOrderIndex = orders.getIndex(getEnv().getStateValues().getFirstShowingOrderGUID());
                 }
-            }
+                //check if the focused order is hidden at left side.
+                int nFocusedOrderIndex = orders.getOrderIndexByGUID(getEnv().getStateValues().getFocusedOrderGUID());
+                if (nFocusedOrderIndex >= 0) {
+                    if (nFocusedOrderIndex < nStartOrderIndex) //adjust it
+                    {
+                        getEnv().getStateValues().setFirstShowingOrderGUID(getEnv().getStateValues().getFocusedOrderGUID());
+                        nStartOrderIndex = nFocusedOrderIndex;
+                    }
+                }
 
-            //t.debug_print_Duration("showOrders2");
-            if (nStartOrderIndex < 0)
-                nStartOrderIndex = 0;
-            int ncount = orders.getCount();
-            for (int i = nStartOrderIndex; i < ncount; i++) {
-                // t.debug_print_Duration("showOrders1");
-                KDSDataOrder order = orders.get(i);
-                // t.debug_print_Duration("showOrders2");
-                if (!showOrder(order, nBlockRows))
-                    break;
+                //t.debug_print_Duration("showOrders2");
+                if (nStartOrderIndex < 0)
+                    nStartOrderIndex = 0;
+                int ncount = orders.getCount();
+                for (int i = nStartOrderIndex; i < ncount; i++) {
+                    // t.debug_print_Duration("showOrders1");
+                    KDSDataOrder order = orders.get(i);
+                    // t.debug_print_Duration("showOrders2");
+                    if (!showOrder(order, nBlockRows))
+                        break;
+                    //t.debug_print_Duration("showOrders3");
+                }
+
                 //t.debug_print_Duration("showOrders3");
-            }
-            //t.debug_print_Duration("showOrders3");
-            //this.getView().refresh();//.invalidate();
-            //t.debug_print_Duration("showOrders4");
-            return true;
-        }
-        else if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.LineItems)
-        {
-            if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
-                getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
-            if (getEnv().getStateValues().getFocusedOrderGUID().isEmpty()) {
-                getEnv().getStateValues().setFocusedOrderGUID(orders.get(0).getGUID());
+                //this.getView().refresh();//.invalidate();
+                //t.debug_print_Duration("showOrders4");
+                return true;
+            } else if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.LineItems) {
+                if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
+                    getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
+                if (getEnv().getStateValues().getFocusedOrderGUID().isEmpty()) {
+                    getEnv().getStateValues().setFocusedOrderGUID(orders.get(0).getGUID());
 
-            }
-            if (getEnv().getStateValues().getFocusedItemGUID().isEmpty()) {
-                //getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getItem(0).getGUID());
-                getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+                }
+                if (getEnv().getStateValues().getFocusedItemGUID().isEmpty()) {
+                    //getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getItem(0).getGUID());
+                    getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getFirstUnbumpedItemGuid());
 
-            }
-            if (getEnv().getStateValues().getFirstItemGuid().isEmpty()) {
-                //getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getItem(0).getGUID());
-                getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getFirstUnbumpedItemGuid());
-            }
+                }
+                if (getEnv().getStateValues().getFirstItemGuid().isEmpty()) {
+                    //getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getItem(0).getGUID());
+                    getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+                }
 
-            showOrdersInLineItemsMode(orders);
+                showOrdersInLineItemsMode(orders);
 
-            //m_view.getLineItemsViewer().showOrders(orders);
-            //this.getView().refresh();//.invalidate();
+                //m_view.getLineItemsViewer().showOrders(orders);
+                //this.getView().refresh();//.invalidate();
+            }
         }
         return true;
     }

@@ -27,7 +27,7 @@ import com.bematechus.kdslib.KDSUtil;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-
+import java.util.Vector;
 
 
 /**
@@ -55,6 +55,7 @@ public class KDSView extends View {
     }
 
 
+    public Object m_panelsLocker = new Object(); //lock panels
 
     GestureDetector m_gesture = null;//new GestureDetector(this);
 
@@ -65,7 +66,7 @@ public class KDSView extends View {
 
 
     //the panels
-    ArrayList<KDSViewPanel> m_arPanels = new ArrayList<KDSViewPanel>(); //KDSGUIPanel array
+    Vector<KDSViewPanel> m_arPanels = new Vector<KDSViewPanel>(); //KDSGUIPanel array
 
 
     KDSViewSettings m_env = new KDSViewSettings(this);
@@ -104,7 +105,7 @@ public class KDSView extends View {
         return getEnv().getSettings();
     }
 
-    public  ArrayList<KDSViewPanel> getPanels()
+    public  Vector<KDSViewPanel> getPanels()
     {
         return m_arPanels;
     }
@@ -511,47 +512,45 @@ public class KDSView extends View {
 
         if (m_bDrawing) return;
         m_bDrawing = true;
-        try {
+        synchronized (m_panelsLocker) {
+            try {
 
 
 //        m_canvasOld = canvas;
 //        if (m_bJustRedrawTimer) return;
-            //drawMe_DoubleBuffer(canvas);
-            if (getOrdersViewMode() == OrdersViewMode.Normal) {
-                if (m_bJustRedrawTimer && (!m_bForceFullDrawing)) {
+                //drawMe_DoubleBuffer(canvas);
+                if (getOrdersViewMode() == OrdersViewMode.Normal) {
+                    if (m_bJustRedrawTimer && (!m_bForceFullDrawing)) {
 
-                    Canvas g = get_double_buffer();
-                    try {
+                        Canvas g = get_double_buffer();
+                        try {
 
 
-                        int ncount = panelsGetCount();
-                        for (int i = 0; i < ncount; i++) {
-                            if (i >= panelsGetCount()) break;
-                            m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
+                            int ncount = panelsGetCount();
+                            for (int i = 0; i < ncount; i++) {
+                                if (i >= panelsGetCount()) break;
+                                m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
+                            }
+                        } catch (Exception e) {
+                            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
                         }
-                    }catch (Exception e)
-                    {
-                        KDSLog.e(TAG, KDSLog._FUNCLINE_() , e);
+                        commit_double_buffer(canvas);
+                        m_bJustRedrawTimer = false;
+                    } else {
+                        drawMe_DoubleBuffer(canvas);
+                        m_bForceFullDrawing = false;
                     }
-                    commit_double_buffer(canvas);
-                    m_bJustRedrawTimer = false;
                 } else {
-                    drawMe_DoubleBuffer(canvas);
-                    m_bForceFullDrawing = false;
+                    Canvas g = get_double_buffer();
+                    m_lineItemsViewer.onDraw(g);
+                    commit_double_buffer(canvas);
                 }
-            } else {
-                Canvas g = get_double_buffer();
-                m_lineItemsViewer.onDraw(g);
-                commit_double_buffer(canvas);
+            } catch (Exception err) {
+                //KDSLog.e(TAG, err.toString());
+                KDSLog.e(TAG, KDSLog._FUNCLINE_(), err);
             }
-        }
-        catch(Exception err)
-        {
-            //KDSLog.e(TAG, err.toString());
-            KDSLog.e(TAG, KDSLog._FUNCLINE_() , err);
-        }
 
-
+        }
 
         m_bDrawing = false;
 

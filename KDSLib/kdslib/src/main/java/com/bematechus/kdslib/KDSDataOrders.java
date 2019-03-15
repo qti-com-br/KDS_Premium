@@ -588,6 +588,8 @@ public class KDSDataOrders extends KDSDataArray {
 
             TimeDog td = new TimeDog();
             int nms = nTimeoutMinutes * 60 * 1000; //ms
+
+
             int ncount = this.getCount();
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = this.get(i);

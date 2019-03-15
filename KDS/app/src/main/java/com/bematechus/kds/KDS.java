@@ -54,6 +54,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * The KDS app main interface.
@@ -1886,7 +1887,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     //private void doOrderXml(KDSSocketInterface sock, String xmlData)
     public void doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder, boolean bRefreshView)
     {
+
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), xmlData);
+
         //Log.i(TAG, "receive order: " + order.getOrderName());
         //2.0.39
         if (order == null) {
@@ -4166,7 +4169,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     }
     Thread m_threadOrdersXml = null;
     Object m_lockerForOrdersThread = new Object();
-    ArrayList<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new ArrayList<>();
+    Vector<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new Vector<>();
 
     final int BATCH_MAX_COUNT = 5;
     /**
@@ -4179,6 +4182,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     public void doOrderXmlInThread(MESSAGE_TO_MAIN xmlType, Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder)
     {
+
 
         if (xmlType == MESSAGE_TO_MAIN.COMMAND_XML &&
                 doNotHandleThisCommand(xmlData))
@@ -4201,63 +4205,57 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             m_threadOrdersXml = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ArrayList<DoOrdersXmlThreadBuffer> arDone = new ArrayList();
-                    while (m_bRunning) {
-                        int ncount = m_xmlDataBuffer.size();
-                        //Log.i(TAG, KDSUtil.convertIntToString(ncount));
-                        if (ncount <=0) {
-                            try {
-                                Thread.sleep(50);
-                                continue;
-                            }
-                            catch (Exception e){}
-
-                        }
-                        if (ncount >BATCH_MAX_COUNT) ncount = BATCH_MAX_COUNT;
-                        arDone.clear();
-                        DoOrdersXmlThreadBuffer data = null;
-                        for (int i = 0; i < ncount; i++) {
-                            try {
-                                //synchronized (m_lockerForOrdersThread)
-                                {
-                                    //if (m_xmlDataBuffer.size() >0) {
-                                        data = m_xmlDataBuffer.get(i);
-                                        arDone.add(data);
-                                        //m_xmlDataBuffer.remove(0);
-                                    //}
-                                    //else
-                                    //    break;
-                                }
-                                switch (data.m_xmlType)
-                                {
-                                    case Order:
-                                        doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
-                                        break;
-                                    case COMMAND_XML:
-                                        //data.m_xmlData = data.m_xmlData.replace("#2", "bumped @2");
-                                        doCommandXml((KDSSocketInterface) data.m_objSource, data.m_xmlData);
-                                        break;
-                                    default:
-                                        break;
-
+                    try {
+                        Vector<DoOrdersXmlThreadBuffer> arDone = new Vector<>();
+                        //List<DoOrdersXmlThreadBuffer> arDoing = null;
+                        while (m_bRunning) {
+                            int ncount = m_xmlDataBuffer.size();
+                            //Log.i(TAG, KDSUtil.convertIntToString(ncount));
+                            if (ncount <= 0) {
+                                try {
+                                    Thread.sleep(50);
+                                    continue;
+                                } catch (Exception e) {
                                 }
 
-
-                                //Thread.sleep(10);
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
+                            //Log.i(TAG, "Waiting order xml=" + KDSUtil.convertIntToString(ncount));
+                            if (ncount > BATCH_MAX_COUNT) ncount = BATCH_MAX_COUNT;
+                            arDone.clear();
+                            //arDoing = m_xmlDataBuffer.subList(0, ncount);
+                            DoOrdersXmlThreadBuffer data = null;
+                            for (int i = 0; i < ncount; i++) {
+                                try {
+                                    data = m_xmlDataBuffer.get(i);
+                                    switch (data.m_xmlType) {
+                                        case Order:
+                                            doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
+                                            break;
+                                        case COMMAND_XML:
+                                            doCommandXml((KDSSocketInterface) data.m_objSource, data.m_xmlData);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    arDone.add(data);
+                                    //Thread.sleep(10);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            //remove finished xml
+                            synchronized (m_lockerForOrdersThread) {
+                                //arDoing.clear();
+                                m_xmlDataBuffer.removeAll(arDone);
+                            }
+                            arDone.clear();
+                            refreshView();
+
                         }
-                        //remove finished xml
-                        synchronized (m_lockerForOrdersThread) {
-                            m_xmlDataBuffer.removeAll(arDone);
-                        }
-                        arDone.clear();
-                        refreshView();
-//                        try {
-//                            Thread.sleep(10);
-//                        }
-//                        catch (Exception e){}
+                    }
+                    catch (Exception e)
+                    {
+                        KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
                     }
                 }
             });
@@ -4269,10 +4267,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     static class DoOrdersXmlThreadBuffer
     {
         Object m_objSource = null;
-        String m_originalFileName = "";
-        String m_xmlData = "";
+        String m_originalFileName = null;
+        String m_xmlData = null;
         boolean m_bForceAcceptThisOrder = false;
-        MESSAGE_TO_MAIN m_xmlType = MESSAGE_TO_MAIN.REFRESH_A;
+        MESSAGE_TO_MAIN m_xmlType = null;//MESSAGE_TO_MAIN.REFRESH_A;
     }
 
     private boolean doCommandXmlInMainUI(KDSSocketInterface sock, String xmlData)

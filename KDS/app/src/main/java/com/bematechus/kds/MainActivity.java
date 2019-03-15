@@ -2187,7 +2187,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
-    final int MAX_AUTO_BUMP_COUNT = 2;
+    //final int MAX_AUTO_BUMP_COUNT = 2;
+    int MAX_AUTO_BUMP_COUNT = 2;
+
     /**
      * call it in thread
      * @return
@@ -2195,6 +2197,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public boolean checkAutoBumping()
     {
+
         if (!isKDSValid()) return false;
         if (getKDS().isQueueView() ||
                 getKDS().isQueueExpo()) {
@@ -2220,9 +2223,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
-        //limit its size
-        ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
 
+        //limit its size
+
+
+        ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
+        //Log.i(TAG, "Auto bumping=" + KDSUtil.convertIntToString(ar.size()));
 
         //
         boolean bReturn = false;

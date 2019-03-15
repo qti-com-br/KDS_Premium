@@ -314,6 +314,7 @@ public class KDSXML {
                 ByteArrayOutputStream bos   =   new ByteArrayOutputStream();
                 t.transform(new DOMSource(m_doc), new StreamResult(bos));
                 String xmlStr = bos.toString();
+                bos.close();
                 return xmlStr;
             }
             catch (Exception e)

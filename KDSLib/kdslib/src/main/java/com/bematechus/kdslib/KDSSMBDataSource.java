@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import jcifs.smb.SmbFile;
 
@@ -373,10 +374,11 @@ public class KDSSMBDataSource implements Runnable {
         boolean m_bResult = false;
     }
 
+
     class UploadRunnable implements Runnable
     {
 
-        ArrayList<UploadData> m_arData = new ArrayList<>();
+        Vector<UploadData> m_arData = new Vector<>();
         String m_lastExistedRemoteSubFolder = ""; //last passed check
 
         private Object m_locker = new Object();
@@ -387,6 +389,7 @@ public class KDSSMBDataSource implements Runnable {
         }
         public void add(String remoteFolder, String subFolder, String fileContent, String toFileName)
         {
+
             UploadData d = new UploadData();
             d.m_strRemoteFolder = remoteFolder;
             d.m_strSubFolder = subFolder;
@@ -394,6 +397,12 @@ public class KDSSMBDataSource implements Runnable {
             d.m_fileName = toFileName;
             synchronized (m_locker) {
                 m_arData.add(d);
+//                if (m_arData.size() > MAX_UPLOAD_WAITING_COUNT)
+//                {
+//                    int n = MAX_UPLOAD_WAITING_COUNT - m_arData.size();
+//                    for (int i=0; i< n; i++)
+//                        m_arData.remove(0);
+//                }
             }
         }
 
@@ -414,7 +423,8 @@ public class KDSSMBDataSource implements Runnable {
                 synchronized (m_locker) {
                     ncount = m_arData.size();
                 }
-                ArrayList<UploadData> arFinished = new ArrayList<>();
+                //Log.i(TAG, "notification waiting =" + KDSUtil.convertIntToString(ncount));
+                Vector<UploadData> arFinished = new Vector<>();
                 UploadData d = null;
                 for (int i=0; i< ncount ; i++) {
 
