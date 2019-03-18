@@ -1563,7 +1563,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         }
         catch (Exception e)
         {
-            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            //KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
             return "";
         }
     }

@@ -280,7 +280,7 @@ public class KDSSocketManager implements Runnable {
             }
             return true;
         } catch (Exception e) {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG,KDSLog._FUNCLINE_() + KDSUtil.error(e) );
             return false;
 

@@ -1,6 +1,7 @@
 package com.bematechus.kdslib;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by David.Wong on 2019/2/15.
@@ -9,7 +10,7 @@ import java.util.ArrayList;
  * Rev:
  */
 public class NoConnectionDataBuffers {
-    ArrayList<NoConnectionDataBuffer> m_arBufferForWaitingConnection = new ArrayList<>(); //KPP1-Coke
+    Vector<NoConnectionDataBuffer> m_arBufferForWaitingConnection = new Vector<>(); //KPP1-Coke
 
     public void add(String stationID, String strXml, int nMaxBufferCount)
     {

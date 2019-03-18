@@ -440,15 +440,17 @@ public class QueueView  extends View {
 //        }
         try {
 
-
-            switch (m_nViewMode) {
-                case Panels:
-                    onDrawPanelMode(canvas);
-                    break;
-                case Simple:
-                    m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
-                    onDrawSimpleMode(canvas);
-                    break;
+            //synchronized (m_queueOrders.getOrders().m_locker)
+            {
+                switch (m_nViewMode) {
+                    case Panels:
+                        onDrawPanelMode(canvas);
+                        break;
+                    case Simple:
+                        m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
+                        onDrawSimpleMode(canvas);
+                        break;
+                }
             }
             if (!m_strInputOrderID.isEmpty()) {
 
@@ -857,8 +859,10 @@ public class QueueView  extends View {
 
     public void showOrders(KDSDataOrders orders)
     {
-        m_queueOrders.setOrders(orders);
-        m_nRedrawRequestCounter ++;
+        synchronized (m_locker) {
+            m_queueOrders.setOrders(orders);
+            m_nRedrawRequestCounter++;
+        }
         startShowOrdersThread();
         /*
         synchronized (m_locker) {
@@ -2004,25 +2008,23 @@ public class QueueView  extends View {
         int nItemsStartIndex = nPageIndex * nTotalPanels;
 
         int nItemCurrentIndex = -1;
-        for (int i=0; i< ncount; i++)
-        {
-            KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order)) )
-            {
-                nItemCurrentIndex ++;
-                if (nItemCurrentIndex < nItemsStartIndex) continue;
+        synchronized (m_locker) {
+            for (int i = 0; i < ncount; i++) {
+                KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order))) {
+                    nItemCurrentIndex++;
+                    if (nItemCurrentIndex < nItemsStartIndex) continue;
 
-                if (nPanelIndex>= nTotalPanels)
-                {
-                    break;
+                    if (nPanelIndex >= nTotalPanels) {
+                        break;
+                    }
+
+                    drawSimpleItem(g, rtData, nRows, getCols(), order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                    nPanelIndex++;
+
                 }
-
-                drawSimpleItem(g, rtData, nRows, getCols(), order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
-                nPanelIndex++;
-
             }
         }
-
         arPages.clear();
         arPages.add(nPageIndex);
         arPages.add(nPagesCount);

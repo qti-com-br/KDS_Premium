@@ -1528,7 +1528,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (order == null) return;
         if (order != null)
         {
-            orderBump(kds.getUsers().getUserA(), order.getGUID());
+            orderBump(kds.getUsers().getUserA(), order.getGUID(), false);
 
             kds.refreshView();
         }

@@ -755,7 +755,7 @@ public class KDSStationFunc {
      * @param kdsuser
      * @param orderGuid
      */
-    static public void orderBump(KDSUser kdsuser, String orderGuid)
+    static public void orderBump(KDSUser kdsuser, String orderGuid, boolean bRefreshView)
     {
         KDSDataOrder order = kdsuser.getOrders().getOrderByGUID(orderGuid);
         if (order == null)
@@ -771,8 +771,8 @@ public class KDSStationFunc {
         else {
             kdsuser.getStatisticDB().orderAdd(order);
         }
-
-        kdsuser.refreshView();
+        if (bRefreshView)
+            kdsuser.refreshView();
 
 
         if (kdsuser.getKDS().isExpeditorStation()||

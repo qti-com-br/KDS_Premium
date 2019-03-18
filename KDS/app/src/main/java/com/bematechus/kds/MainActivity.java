@@ -259,10 +259,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     if (getKDS().isValidUser(KDSUser.USER.USER_B))
                         f.updateTimer(KDSUser.USER.USER_B);
                 }
-                this.refreshPrevNext(KDSUser.USER.USER_A);
-
-                if (getKDS().isValidUser(KDSUser.USER.USER_B))
-                    this.refreshPrevNext(KDSUser.USER.USER_B);
+//                this.refreshPrevNext(KDSUser.USER.USER_A);
+//
+//                if (getKDS().isValidUser(KDSUser.USER.USER_B))
+//                    this.refreshPrevNext(KDSUser.USER.USER_B);
             }
         }
         checkNetworkState();
@@ -1886,7 +1886,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        }
 //
 //    }
-    public KDSDataOrder bumpOrder(KDSUser.USER userID, String orderGuid) {
+    public KDSDataOrder bumpOrder(KDSUser.USER userID, String orderGuid, boolean bRefreshView) {
         if (!isKDSValid()) return new KDSDataOrder();
         if (!isUserLayoutReady(userID)) return new KDSDataOrder();
         //save it for printing.
@@ -1927,7 +1927,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(nextFirstOrder);
             }
         }
-        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid);
+        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid,bRefreshView );
 
         //notification
         //if (!getKDS().isQueueStation() &&
@@ -2119,7 +2119,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
           nextGuid = getNextOrderGuidToFocus(userID, orderGuid);//"";
         }
         //save it for printing.
-        KDSDataOrder order = bumpOrder(userID, orderGuid);
+        KDSDataOrder order = bumpOrder(userID, orderGuid, bRefresView);
         if (order == null) return;
         if (isFixedSingleScreenView())
 //        if (getKDS().isQueueStation() || getKDS().isQueueExpo())
@@ -2187,8 +2187,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
-    //final int MAX_AUTO_BUMP_COUNT = 2;
-    int MAX_AUTO_BUMP_COUNT = 2;
+    final int MAX_AUTO_BUMP_COUNT = 10;
+    //int MAX_AUTO_BUMP_COUNT = 2;
 
     /**
      * call it in thread
@@ -2319,7 +2319,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         if (order.getItems().isLastActiveItem(focusedItemGuid))
         {
-            bumpOrder(userID, focusedOrderGuid);
+            bumpOrder(userID, focusedOrderGuid, true);
         }
 
 
@@ -4282,7 +4282,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (getSelectedOrderGuid(user).equals(orderGuid)) {
                 onBumpOrder(user);
             } else {
-                KDSDataOrder bumpedOrder = bumpOrder(user, orderGuid);
+                KDSDataOrder bumpedOrder = bumpOrder(user, orderGuid, true);
                 if (bumpedOrder == null) return;
                 this.getSummaryFragment().refreshSummary();
                 refreshView();
@@ -5423,7 +5423,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //save it for printing.
         KDSDataOrder order = m_queueView.getOrders().getOrderByGUID(orderGuid);// getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
 
-        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid);
+        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid, true);
         //notification
         notifyPOSOrderBump(userID, order);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");

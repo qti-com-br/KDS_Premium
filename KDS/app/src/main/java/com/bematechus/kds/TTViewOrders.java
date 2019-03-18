@@ -165,7 +165,7 @@ public class TTViewOrders {
         for (int i=0; i< arWillRemoved.size(); i++)
         {
             if (arWillRemoved.get(i).getTTFindMyTrackerID())//.m_bTTFindMyTrackerID) //has existed in gateway before, not lost. That means the tt was removed.
-                KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A),arWillRemoved.get(i).getGUID());
+                KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A),arWillRemoved.get(i).getGUID(), true);
         }
         arWillRemoved.clear();
     }
@@ -269,9 +269,10 @@ public class TTViewOrders {
     public void clearOrders()
     {
         for (int i=0; i< getOrders().getCount(); i++) {
-            KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A), getOrders().get(i).getGUID());
+            KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A), getOrders().get(i).getGUID(), false);
         }
         getOrders().clear();
+        KDSGlobalVariables.getKDS().refreshView();
     }
 
     final String HOLDER_ID_EMPTY = "-1";
