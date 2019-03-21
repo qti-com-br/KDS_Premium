@@ -35,7 +35,7 @@ public class KDSBroadcastThread implements Runnable {
     }
     public void start()
     {
-        (new Thread(this)).start();
+        (new Thread(this, "Broadcast")).start();
     }
     @Override
     public void run() {

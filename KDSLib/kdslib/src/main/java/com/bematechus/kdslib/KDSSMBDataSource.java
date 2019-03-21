@@ -70,7 +70,7 @@ public class KDSSMBDataSource implements Runnable {
             return true;
         m_bThreadRunning = true;
 
-        m_thread = new Thread(this, "SocketPing");
+        m_thread = new Thread(this, "SMBSrc");
         m_thread.start();
 
         return true;
@@ -195,7 +195,8 @@ public class KDSSMBDataSource implements Runnable {
                 sleep(500);
                 continue;
             }
-            try {
+            try
+            {
                 //check buffer, KPP1-Coke
                 if (m_bufferStateChecker != null)
                 {
@@ -222,7 +223,7 @@ public class KDSSMBDataSource implements Runnable {
                 //ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
                 ar.clear();
                 if (m_arExistedFiles.size() <=0) {
-                    m_arExistedFiles.clear();
+                    //m_arExistedFiles.clear();
 
                     m_arExistedFiles = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder, BUFFER_FILES_COUNT, m_arExistedFiles);
                 }
@@ -280,7 +281,7 @@ public class KDSSMBDataSource implements Runnable {
             if (i < ncount-1)
                 sleep(500); //delay, Too many orders will lock the router.
         }
-        arFiles.clear();
+        //arFiles.clear();
     }
 
     //byte[] m_readTextBuffer = new byte[1024*1024*5];
@@ -358,7 +359,7 @@ public class KDSSMBDataSource implements Runnable {
             m_uploadRunnable = new UploadRunnable();
         m_uploadRunnable.add(m_strRemoteFolder, strSubFolder, strFileContent, smbFileName);
         if (m_threadUploading == null) {
-            m_threadUploading = new Thread(m_uploadRunnable);
+            m_threadUploading = new Thread(m_uploadRunnable, "SMBUpload");
             m_threadUploading.start();
         }
         return true;

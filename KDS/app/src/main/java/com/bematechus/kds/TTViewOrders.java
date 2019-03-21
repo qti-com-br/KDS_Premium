@@ -9,6 +9,7 @@ import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2017/4/12.
@@ -74,7 +75,7 @@ public class TTViewOrders {
 
     public String getNextOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
+        Vector ar = this.getOrders().getComponents();
         if (ar.size() <=0) return "";
         int nIndex =  this.getOrders().getOrderIndexByGUID(fromGuid);
         nIndex ++;
@@ -87,7 +88,7 @@ public class TTViewOrders {
 
     public String getPrevOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
+        Vector ar = this.getOrders().getComponents();
         if (ar.size() <=0)  return "";
         int nIndex = this.getOrders().getOrderIndexByGUID(fromGuid);
         nIndex --;

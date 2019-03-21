@@ -91,7 +91,7 @@ public class KDSBase {
             Log.d(TAG, "start announce thread");
 
             m_stationAnnounceRunnable = new StationAnnounceRunnable(strInfo);
-            m_stationAnnounceThread = new Thread(m_stationAnnounceRunnable);
+            m_stationAnnounceThread = new Thread(m_stationAnnounceRunnable, "DoAnnounce");
             m_stationAnnounceThread.setPriority(Thread.MAX_PRIORITY);
             m_stationAnnounceThread.start();
         }

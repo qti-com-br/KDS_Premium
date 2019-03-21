@@ -107,7 +107,7 @@ public class KDSHttp extends Handler implements Runnable {
     }
     private void start()
     {
-        (new Thread(this)).start();
+        (new Thread(this, "KDSHttp")).start();
     }
 
     @Override

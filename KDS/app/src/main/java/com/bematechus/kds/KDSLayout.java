@@ -2265,6 +2265,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     }
                 }
             });
+            m_threadShowOrders.setName("ShowOrders");
             m_threadShowOrders.start();
         }
     }

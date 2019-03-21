@@ -168,22 +168,24 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * @return
      */
     public boolean isMacMatch2() {
-        ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        String strMac = "";
-
-        if (ar.size() <=0) {
-            strMac = KDSSocketManager.getMacAddressFromFile();
-            return isAcceptMac(strMac);
-            //return false;
-        } else {
-            for (int i=0; i< ar.size(); i++) {
-                strMac = ar.get(i);
-                if (isAcceptMac(strMac))
-                    return true;
-            }
-        }
-
-        return false;
+        return true;
+        //for KPP1-coke, Please remove the mac limit in router, we have new hardware that don’t have the our mac here to test.
+//        ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
+//        String strMac = "";
+//
+//        if (ar.size() <=0) {
+//            strMac = KDSSocketManager.getMacAddressFromFile();
+//            return isAcceptMac(strMac);
+//            //return false;
+//        } else {
+//            for (int i=0; i< ar.size(); i++) {
+//                strMac = ar.get(i);
+//                if (isAcceptMac(strMac))
+//                    return true;
+//            }
+//        }
+//
+//        return false;
     }
 
     private boolean isAcceptMac(String strMac)
@@ -268,6 +270,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_timer.start(this, this, 1000);
 
         updateTitle();
+
+
+
 
     }
 
@@ -1068,6 +1073,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     }
                 }
             });
+            m_threadCheckingNotification.setName("RemoveNotification");
             m_threadCheckingNotification.start();
         }
     }

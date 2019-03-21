@@ -447,7 +447,7 @@ public class QueueView  extends View {
                         onDrawPanelMode(canvas);
                         break;
                     case Simple:
-                        m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
+                        //m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
                         onDrawSimpleMode(canvas);
                         break;
                 }
@@ -768,8 +768,7 @@ public class QueueView  extends View {
         for (int i=0; i< ncount; i++)
         {
             KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            if (QueueOrders.getOrderQueueStatus(order) == QueueOrders.QueueStatus.Received)
-
+            if (m_queueOrders.getStatus(order) == QueueOrders.QueueStatus.Received)
             {
                 nCurrentItemIndex ++;
                 if (nCurrentItemIndex < nItemsStartIndex) continue;
@@ -861,6 +860,10 @@ public class QueueView  extends View {
     {
         synchronized (m_locker) {
             m_queueOrders.setOrders(orders);
+            if (m_nViewMode == KDSSettings.QueueMode.Simple)
+            {//move from ondraw to here.
+                m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
+            }
             m_nRedrawRequestCounter++;
         }
         startShowOrdersThread();
@@ -1026,7 +1029,7 @@ public class QueueView  extends View {
     {
         if (order == null) return false;
         synchronized (m_locker) {
-            QueueOrders.QueueStatus orderStatus = QueueOrders.getOrderQueueStatus(order);
+            QueueOrders.QueueStatus orderStatus = m_queueOrders.getStatus(order);
 
             if (orderStatus == QueueOrders.QueueStatus.Ready)//||
             //orderStatus == QueueOrders.QueueStatus.Preparation ||
@@ -1041,7 +1044,7 @@ public class QueueView  extends View {
     private boolean isPickupOrder(KDSDataOrder order)
     {
         synchronized (m_locker) {
-            QueueOrders.QueueStatus orderStatus = QueueOrders.getOrderQueueStatus(order);
+            QueueOrders.QueueStatus orderStatus = m_queueOrders.getStatus(order);
             if (
                     orderStatus == QueueOrders.QueueStatus.Pickup) {
                 return true;
@@ -1052,7 +1055,7 @@ public class QueueView  extends View {
 
     private boolean isPreparationOrder(KDSDataOrder order)
     {
-        QueueOrders.QueueStatus orderStatus =QueueOrders.getOrderQueueStatus(order);
+        QueueOrders.QueueStatus orderStatus =m_queueOrders.getStatus(order);
         return ( orderStatus == QueueOrders.QueueStatus.Preparation );
 
     }
@@ -1380,7 +1383,7 @@ public class QueueView  extends View {
 
     private void drawStatus(Canvas g, Rect rt, KDSDataOrder order, boolean bReverseReadyColorForFlash)
     {
-        QueueOrders.QueueStatus status =  m_queueOrders.getOrderQueueStatus( order);
+        QueueOrders.QueueStatus status =  m_queueOrders.getStatus( order);
         drawStatus(g, rt, status, bReverseReadyColorForFlash);
 
     }
@@ -1709,7 +1712,7 @@ public class QueueView  extends View {
         for (int i=0; i< ncount; i++)
         {
             KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            if (QueueOrders.getOrderQueueStatus(order) == QueueOrders.QueueStatus.Received)
+            if (m_queueOrders.getStatus(order) == QueueOrders.QueueStatus.Received)
 
             {
 //                nCurrentItemIndex ++;
@@ -1789,7 +1792,7 @@ public class QueueView  extends View {
 
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = m_queueOrders.getOrders().get(i);
-                if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order))) {
+                if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
 //                nItemCurrentIndex ++;
 //                if (nItemCurrentIndex < nItemsStartIndex) continue;
                     if (order.getGUID().equals(getFocusedGuid()))
@@ -1959,7 +1962,7 @@ public class QueueView  extends View {
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = m_queueOrders.getOrders().get(i);
                 if (order == null) continue;
-                if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order))) {
+                if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
                     ncounter++;
                 }
             }
@@ -2011,7 +2014,7 @@ public class QueueView  extends View {
         synchronized (m_locker) {
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = m_queueOrders.getOrders().get(i);
-                if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order))) {
+                if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
                     nItemCurrentIndex++;
                     if (nItemCurrentIndex < nItemsStartIndex) continue;
 
@@ -2205,74 +2208,6 @@ public class QueueView  extends View {
     {
         checkAutoBump(QueueOrders.QueueStatus.Ready,QueueOrders.QueueStatus.Pickup , false);
         checkAutoBump(QueueOrders.QueueStatus.Received,QueueOrders.QueueStatus.Preparation , true);
-        //checkAutoBumpForReceivedState();//24 stations, prevent from stack in queue
-//        if (m_nAutoBumpTimeoutMs <=0) return;
-//
-//        try {
-//
-//
-//            int ncount = m_queueOrders.getOrders().getCount();
-//            long dtNow = System.currentTimeMillis();
-//
-//            ArrayList<KDSDataOrder> ar = new ArrayList<>();
-//            ArrayList<QueueOrders.QueueStatus> arReadyStatus = getSimpleColStatus(QueueOrders.QueueStatus.Ready);
-//            ArrayList<QueueOrders.QueueStatus> arPickupStatus = getSimpleColStatus(QueueOrders.QueueStatus.Pickup);
-//            arReadyStatus.addAll(arPickupStatus);
-//
-//            for (int i = 0; i < ncount; i++) {
-//                if (i >= m_queueOrders.getOrders().getCount())
-//                    break;
-//                try {
-//
-//
-//                    KDSDataOrder order = m_queueOrders.getOrders().get(i);
-//                    if (order == null) break;
-//                    QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
-//                    if (m_nViewMode == KDSSettings.QueueMode.Panels) {
-//                        if (status != QueueOrders.QueueStatus.Ready &&
-//                                status != QueueOrders.QueueStatus.Pickup)
-//                            continue;
-//                    } else if (m_nViewMode == KDSSettings.QueueMode.Simple) {
-//                        boolean bBumpIt = false;
-//                        for (int j = 0; j < arReadyStatus.size(); j++) {
-//                            if (arReadyStatus.get(j) == status) {
-//                                bBumpIt = true;
-//                                break;
-//                            }
-//                        }
-//                        if (!bBumpIt) continue;
-//                    }
-//                    Date dtStart = order.getQueueStateTime();//.getStartTime();
-//                    if (dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs) {
-//                        ar.add(order);
-//                    }
-//                }
-//                catch (Exception e)
-//                {
-//                    break;
-//                }
-//            }
-//            boolean bFromMe = false;
-//            if (ar.size()>0)
-//                bFromMe = KDSGlobalVariables.getKDS().getCurrentDB().startTransaction();
-//            for (int i = 0; i < ar.size(); i++) {
-//                m_queueOrders.getOrders().removeComponent(ar.get(i));
-//                KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
-//
-//            }
-//            if (ar.size()>0) {
-//                KDSGlobalVariables.getKDS().getCurrentDB().finishTransaction(bFromMe);
-//
-//                refresh();
-//                ar.clear();
-//            }
-//        }
-//        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//
-//        checkAutoBumpForReceivedState();//24 stations, prevent from stack in queue
     }
 
     Thread m_threadShowOrders = null;
@@ -2317,6 +2252,7 @@ public class QueueView  extends View {
                     }
                 }
             });
+            m_threadShowOrders.setName("QueueShowOrders");
             m_threadShowOrders.start();
         }
     }
@@ -2394,7 +2330,7 @@ public class QueueView  extends View {
 
                     KDSDataOrder order = m_queueOrders.getOrders().get(i);
                     if (order == null) break;
-                    QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
+                    QueueOrders.QueueStatus status = m_queueOrders.getStatus(order);
                     if (m_nViewMode == KDSSettings.QueueMode.Panels) {
                         if (status != status0 &&
                                 status != status1)
@@ -2430,13 +2366,15 @@ public class QueueView  extends View {
             if (ar.size()>0)
                 bFromMe = KDSGlobalVariables.getKDS().getCurrentDB().startTransaction();
             for (int i = 0; i < ar.size(); i++) {
-                m_queueOrders.getOrders().removeComponent(ar.get(i));
+                //m_queueOrders.getOrders().removeComponent(ar.get(i));//move to end
                 KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
 
             }
             if (ar.size()>0) {
                 KDSGlobalVariables.getKDS().getCurrentDB().finishTransaction(bFromMe);
-
+                synchronized (m_locker) {
+                    m_queueOrders.getOrders().getComponents().removeAll(ar);//clear once
+                }
                 refresh();
                 ar.clear();
             }

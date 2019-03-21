@@ -7,6 +7,7 @@
 package com.bematechus.kdslib;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
@@ -21,7 +22,7 @@ public class KDSDataCondiments extends KDSDataArray {
     {
         String s = "";
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
 
                 KDSDataCondiment original = (KDSDataCondiment) ar.get(i);
@@ -40,7 +41,7 @@ public class KDSDataCondiments extends KDSDataArray {
     {
         String s = "";
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
 
                 KDSDataCondiment original = (KDSDataCondiment) ar.get(i);
@@ -58,7 +59,7 @@ public class KDSDataCondiments extends KDSDataArray {
     public void copyTo(KDSDataArray objs)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
                 KDSDataCondiment msg = new KDSDataCondiment();
                 KDSDataCondiment original = (KDSDataCondiment) ar.get(i);

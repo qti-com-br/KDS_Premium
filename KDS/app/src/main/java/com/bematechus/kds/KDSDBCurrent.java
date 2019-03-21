@@ -898,6 +898,7 @@ public class KDSDBCurrent extends KDSDBBase {
         String sql = KDSDataOrder.sqlDelete("orders", guid);
         if (!this.executeDML(sql))
             return false;
+
         sql = "select guid from items where orderguid='" + guid + "'";// Common.KDSUtil.ConvertIntToString(nID);
 
         Cursor c = getDB().rawQuery(sql, null);
@@ -911,6 +912,27 @@ public class KDSDBCurrent extends KDSDBBase {
         sql = "delete from messages where ObjType=0 and ObjGUID='" + guid + "'";
         if (!this.executeDML(sql))
             return false;
+//        //remove modifiers
+//        sql = String.format("delete from modifiers where modifiers.ItemGUID in (select guid from items where items.orderguid='%s')", guid);
+//        if (!this.executeDML(sql)) return false;
+//
+//        //remove condiments
+//        sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid='%s')", guid);
+//        if (!this.executeDML(sql))
+//            return false;
+//        //remove condiments messages
+//        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+//        if (!this.executeDML(sql))
+//            return false;
+//        //remove items messages
+//        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+//        if (!this.executeDML(sql))
+//            return false;
+//        //remove items
+//        sql = String.format("delete from items where items.orderguid='%s'", guid);
+//        if (!this.executeDML(sql))
+//            return false;
+
         updateDbTimeStamp();
 
         prep_remove(guid);

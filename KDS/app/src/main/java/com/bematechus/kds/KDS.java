@@ -3813,6 +3813,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         t.m_command = command;
         t.m_kds = this;
         Thread c = new Thread(t);
+        c.setName("SosReport");
         c.start();
     }
 
@@ -3824,6 +3825,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         t.m_command = command;
         t.m_kds = this;
         Thread c = new Thread(t);
+        c.setName("StatisticReport");
         c.start();
 
 
@@ -4202,6 +4204,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         if (m_threadOrdersXml == null ||
                 !m_threadOrdersXml.isAlive())
         {
+
             m_threadOrdersXml = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -4219,7 +4222,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                 }
 
                             }
-                            //Log.i(TAG, "Waiting order xml=" + KDSUtil.convertIntToString(ncount));
+                            if (BuildVer.isDebug())
+                                Log.i(TAG, "Waiting order xml=" + KDSUtil.convertIntToString(ncount));
                             if (ncount > BATCH_MAX_COUNT) ncount = BATCH_MAX_COUNT;
                             arDone.clear();
                             //arDoing = m_xmlDataBuffer.subList(0, ncount);
@@ -4259,6 +4263,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     }
                 }
             });
+            m_threadOrdersXml.setName("DoXml");
             m_threadOrdersXml.setPriority(Thread.MAX_PRIORITY);
             m_threadOrdersXml.start();
         }

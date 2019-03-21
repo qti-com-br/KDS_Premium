@@ -3472,6 +3472,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                         }
                 }
             });
+            m_threadOrdersXml.setName("DoXml");
             m_threadOrdersXml.start();
         }
 
@@ -3532,7 +3533,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                     }
                 }
             });
-
+            m_threadNotificationXml.setName("DoNotification");
             m_threadNotificationXml.start();
         }
 

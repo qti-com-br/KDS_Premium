@@ -53,6 +53,7 @@ import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataFromPrimaryIndicator;
 import com.bematechus.kdslib.KDSDataItem;
+import com.bematechus.kdslib.KDSDataItems;
 import com.bematechus.kdslib.KDSDataMoreIndicator;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
@@ -5155,7 +5156,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //we must init it.
         //if (this.getLayout(KDSUser.USER.USER_A) == null) return;
         if (!isUserLayoutReady(KDSUser.USER.USER_A)) return;
-        this.getLayout(KDSUser.USER.USER_A).getEnv().setSettings(getKDS().getSettings());
+        if (this.getLayout(KDSUser.USER.USER_A) != null)
+            this.getLayout(KDSUser.USER.USER_A).getEnv().setSettings(getKDS().getSettings());
 
         init_user_screen_gui_variables();
         init_summary_gui();
@@ -6039,6 +6041,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     }
                 }
             });
+            m_threadChecking.setName("Checking");
             m_threadChecking.start();
         }
     }

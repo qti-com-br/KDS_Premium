@@ -2,6 +2,7 @@ package com.bematechus.kdslib;
 
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Translate the summary name.
@@ -26,7 +27,7 @@ public class KDSDataSumNames extends KDSDataArray{
         return ( KDSDataSumName)this.get(nIndex);
     }
 
-    public ArrayList getArray()
+    public Vector getArray()
     {
         return getComponents();
     }

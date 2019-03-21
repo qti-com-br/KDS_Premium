@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2016/12/23.
@@ -38,6 +40,7 @@ public class QueueOrders {
 
     ArrayList<Rect> m_rects = new ArrayList();
 
+    Hashtable<String, QueueStatus> m_ordersStatus = new Hashtable<>();
 
     public String getFocusedOrderGUID()
     {
@@ -52,6 +55,7 @@ public class QueueOrders {
     public void setOrders(KDSDataOrders orders)
     {
         m_orders = orders;
+        refreshOrdersStatus();
     }
     public KDSDataOrders getOrders()
     {
@@ -83,7 +87,7 @@ public class QueueOrders {
 
     public String getNextOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
+        Vector ar = this.getOrders().getComponents();
         if (ar.size() <=0) return "";
         int nIndex =  this.getOrders().getOrderIndexByGUID(fromGuid);
         nIndex ++;
@@ -96,7 +100,7 @@ public class QueueOrders {
 
     public String getPrevOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
+        Vector ar = this.getOrders().getComponents();
         if (ar.size() <=0)  return "";
         int nIndex = this.getOrders().getOrderIndexByGUID(fromGuid);
         nIndex --;
@@ -184,10 +188,10 @@ public class QueueOrders {
 //
 //    }
 
-    private ArrayList<KDSDataOrder> getStatusOrders(ArrayList<KDSDataOrder> orders, QueueStatus status)
+    private Vector<KDSDataOrder> getStatusOrders(Vector<KDSDataOrder> orders, QueueStatus status)
     {
 
-        ArrayList<KDSDataOrder> arOrders = new ArrayList<>();
+        Vector<KDSDataOrder> arOrders = new Vector<>();
         try {
             for (int i = 0; i < orders.size(); i++) {
 
@@ -205,7 +209,7 @@ public class QueueOrders {
         }
         return arOrders;
     }
-    private void removeOrderInArray(ArrayList<KDSDataOrder> arOrders, ArrayList<KDSDataOrder> arOrdersRemove)
+    private void removeOrderInArray(Vector<KDSDataOrder> arOrders, Vector<KDSDataOrder> arOrdersRemove)
     {
         for (int i=0; i< arOrdersRemove.size(); i++)
         {
@@ -223,12 +227,12 @@ public class QueueOrders {
     public void sortByStateTime(QueueSort status1Sort,QueueSort status2Sort,QueueSort status3Sort,QueueSort status4Sort)
     {
         if (getOrders() == null) return;
-        ArrayList<KDSDataOrder> arOrders = getOrders().getComponents();
+        Vector<KDSDataOrder> arOrders = getOrders().getComponents();
 
-        ArrayList<KDSDataOrder> arStatus1 = getStatusOrders(arOrders, QueueStatus.Received);
-        ArrayList<KDSDataOrder> arStatus2 = getStatusOrders(arOrders, QueueStatus.Preparation);
-        ArrayList<KDSDataOrder> arStatus3 = getStatusOrders(arOrders, QueueStatus.Ready);
-        ArrayList<KDSDataOrder> arStatus4 = getStatusOrders(arOrders, QueueStatus.Pickup);
+        Vector<KDSDataOrder> arStatus1 = getStatusOrders(arOrders, QueueStatus.Received);
+        Vector<KDSDataOrder> arStatus2 = getStatusOrders(arOrders, QueueStatus.Preparation);
+        Vector<KDSDataOrder> arStatus3 = getStatusOrders(arOrders, QueueStatus.Ready);
+        Vector<KDSDataOrder> arStatus4 = getStatusOrders(arOrders, QueueStatus.Pickup);
 
         if (sortByStateTime(arStatus1, status1Sort))
         {
@@ -253,7 +257,7 @@ public class QueueOrders {
 
     }
 
-    public boolean sortByStateTime(ArrayList<KDSDataOrder> arOrders ,QueueSort sortMode)
+    public boolean sortByStateTime(Vector<KDSDataOrder> arOrders ,QueueSort sortMode)
     {
         //ArrayList<KDSDataOrder> arOrders = getOrders().getComponents();
         if (arOrders == null) return false;
@@ -306,5 +310,31 @@ public class QueueOrders {
 
         return true;
 
+    }
+
+    private void refreshOrdersStatus()
+    {
+
+        m_ordersStatus.clear();
+        for (int i=0; i< m_orders.getCount(); i++)
+        {
+            KDSDataOrder order = m_orders.get(i);
+            if (order == null) break;
+            QueueStatus status = getOrderQueueStatus(order);
+            m_ordersStatus.put(order.getGUID(), status);
+        }
+
+    }
+
+    public QueueOrders.QueueStatus getStatus(KDSDataOrder order)
+    {
+        String guid = order.getGUID();
+        if (m_ordersStatus.containsKey(guid))
+            return m_ordersStatus.get(guid);
+        else {
+            QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
+            m_ordersStatus.put(guid, status);
+            return status;
+        }
     }
 }

@@ -38,7 +38,7 @@ public class KDSSocketTCPSideClient extends KDSSocketTCPSideBase implements Runn
              // SocketAddress address = new InetSocketAddress(ip , nPort) ;
               // m_socketChannel.connect(address);
                m_socketManager = manager;
-              (new Thread(this)).start();
+              (new Thread(this, "Connect")).start();
                //this.run();
               return true;
           }

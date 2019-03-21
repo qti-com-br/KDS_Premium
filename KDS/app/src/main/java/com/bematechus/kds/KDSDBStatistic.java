@@ -227,15 +227,27 @@ public class KDSDBStatistic extends KDSDBBase {
         String sql = KDSDataOrder.sqlDelete("orders",guid);
         if (!this.executeDML(sql))
             return false;
-        sql = "select guid from items where orderguid='" +guid+"'";// + Common.KDSUtil.ConvertIntToString(nID);
 
-        Cursor c = getDB().rawQuery(sql, null);
+//        sql = "select guid from items where orderguid='" +guid+"'";// + Common.KDSUtil.ConvertIntToString(nID);
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        while (c.moveToNext())
+//        {
+//            String itemguid = getString(c,0);
+//            itemDelete(itemguid);
+//        }
+        sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid='%s')", guid);
+        if (!this.executeDML(sql))
+            return false;
+        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+        if (!this.executeDML(sql))
+            return false;
 
-        while (c.moveToNext())
-        {
-            String itemguid = getString(c,0);
-            itemDelete(itemguid);
-        }
+        sql = String.format("delete from items where items.orderguid='%s'", guid);
+        if (!this.executeDML(sql))
+            return false;
+
         return true;
     }
     public boolean itemDelete(String itemguid)//int nID)
