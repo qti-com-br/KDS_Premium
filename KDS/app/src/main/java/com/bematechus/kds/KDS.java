@@ -1956,7 +1956,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             //update the hidden option accroding to my station ID.
             order.setItemHiddenOptionAfterGetNewOrder(getStationID());
 
-            nAcceptItemsCount = doOrderFilter(order, bForceAcceptThisOrder);
+            nAcceptItemsCount = doOrderFilter(order, bForceAcceptThisOrder, bRefreshView);
             schedule_process_update_after_receive_new_order();
         }
         if (bRefreshView)
@@ -2093,7 +2093,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 break;
             case Station_Unbump_Order:
                 KDSStationFunc.doSyncCommandOrderUnbumped(this,command, xmlData);
-                schedule_process_update_to_be_prepare_qty();
+                schedule_process_update_to_be_prepare_qty(true);
                 schedule_process_update_after_receive_new_order();
                 sortOrderForMoveFinishedToFront();
                 break;
@@ -2113,7 +2113,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case Station_Unbump_Item:
                 orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData);
                 sortOrderForMoveFinishedToFront();
-                schedule_process_update_to_be_prepare_qty();
+                schedule_process_update_to_be_prepare_qty(true);
 
                 checkSMS(orderGuid, false); //2.1.10
                 break;
@@ -2356,7 +2356,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @param order
      *
      */
-    public int  doOrderFilter(KDSDataOrder order, boolean bForceAcceptThisOrderNoStationIDItems)
+    public int  doOrderFilter(KDSDataOrder order, boolean bForceAcceptThisOrderNoStationIDItems, boolean bRefreshView)
     {
 
 
@@ -2383,7 +2383,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (writeOrderToWorkLoad(order))
                     return nItemsCount;
             }
-            filterInNormalStation(order, arTargetStations);
+            filterInNormalStation(order, arTargetStations, bRefreshView);
 
         }
         return nItemsCount;
@@ -2403,7 +2403,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (writeOrderToWorkLoad(schOrder))
                     continue;
             }
-            filterInNormalStation(schOrder, null);
+            filterInNormalStation(schOrder, null, true);
 
         }
 
@@ -2684,7 +2684,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @return
      *  items count
      */
-    public int filterInNormalStation(KDSDataOrder order, ArrayList<KDSToStation> arOriginalTargetStations)
+    public int filterInNormalStation(KDSDataOrder order, ArrayList<KDSToStation> arOriginalTargetStations, boolean bRefreshView)
     {
         int nItemsCount = 0;
         if (order != null)
@@ -2753,7 +2753,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 //                if (ordersAdded.size() == 1)
 //                { //focus first one
 
-                schedule_process_update_to_be_prepare_qty();
+                schedule_process_update_to_be_prepare_qty(bRefreshView);
                 setFocusAfterReceiveOrder();
 
                 resetOrdersForSaveMemoryAfterGetNewOrder(ordersAdded);
@@ -2772,7 +2772,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case KDSDataOrder. TRANSTYPE_MODIFY:{
                 //KDSStationFunc.orderInfoModify(this, order);
                 m_users.orderInfoModify(order, false);
-                schedule_process_update_to_be_prepare_qty();
+                schedule_process_update_to_be_prepare_qty(true);
                 getSoundManager().playSound(KDSSettings.ID.Sound_modify_order);
                 //send sms
                 checkSMS(order, false, null); //2.1.10
@@ -3052,6 +3052,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         while (m_bRunning) {
 
+            if (m_threadPing != Thread.currentThread()) return;
             if (m_dogAnnounce.is_timeout(KDSConst.ACTIVE_PLUS_FREQUENCE))
             {
                 m_dogAnnounce.reset();
@@ -3727,18 +3728,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         }
         this.getCurrentDB().schedule_process_set_item_ready_qty(pScheduleOrder);//->m_nInStation,pOrder->m_nUser, orderID, pOrder->get_prepare_item()->GetID(), nnewready );
-        schedule_process_update_to_be_prepare_qty();
+        schedule_process_update_to_be_prepare_qty(true);
       //  if (bchanged) refreshView();
     }
 
     /**
      * check all schedule order, and update its to_be_prepared qty
      */
-    public void schedule_process_update_to_be_prepare_qty()
+    public void schedule_process_update_to_be_prepare_qty(boolean bRefreshView)
     {
-        schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_A);
+        schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_A, bRefreshView);
         if (isMultpleUsersMode())
-            schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_B);
+            schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_B, bRefreshView);
     }
 
     /**
@@ -3746,7 +3747,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      *      It load all items to buffer, this will slow down the showing speed
      * @param userID
      */
-    public void schedule_process_update_to_be_prepare_qty(KDSUser.USER userID)
+    public void schedule_process_update_to_be_prepare_qty(KDSUser.USER userID, boolean bRefreshView)
     {
         if (getUsers() == null) return;
         if (getUsers().getUser(userID) == null) return;
@@ -3767,6 +3768,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         }
   //      if (bchanged)
+        if (bRefreshView)
             refreshView();
     }
 

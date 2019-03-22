@@ -128,6 +128,8 @@ public class KDSSocketManager implements Runnable {
     private void threadSelect() {
         while (m_bRunning) {
            // boolean bSleep =true;// false; force it sleep 100 ms
+            if (m_threadSocket != Thread.currentThread())
+                return;
             try {
                 synchronized (m_locker) {
 //                    if (m_selector.keys().size() <= 0) {

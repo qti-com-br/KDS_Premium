@@ -47,7 +47,7 @@ public class KDSViewBlock {
         Bottom
     }
 
-    ArrayList<KDSViewBlockCell> m_arCells = new ArrayList<KDSViewBlockCell>();
+    Vector<KDSViewBlockCell> m_arCells = new Vector<>();
 
     private int m_nCols = 1;
     //While this changed, we need to calculate all rows
@@ -296,11 +296,11 @@ public class KDSViewBlock {
 //        m_viewerEnv = env;
 //    }
 //    
-    public ArrayList<KDSViewBlockCell> getCells() {
+    public Vector<KDSViewBlockCell> getCells() {
         return m_arCells;
     }
 
-    public void setCells(ArrayList ar) {
+    public void setCells(Vector ar) {
         m_arCells = ar;
     }
 
@@ -901,8 +901,8 @@ public class KDSViewBlock {
         int nCols = this.getCols() - nStartCol + 1;
         p.setCols( nCols);
         int nIndex = nStartCol * this.getColTotalRows();
-        ArrayList rows = this.getCells();
-        ArrayList newRows = p.getCells();
+        Vector rows = this.getCells();
+        Vector newRows = p.getCells();
         //copy data
         for (int i=nIndex; i< rows.size(); i++)
         {

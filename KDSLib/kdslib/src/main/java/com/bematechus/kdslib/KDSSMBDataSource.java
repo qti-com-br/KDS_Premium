@@ -85,6 +85,7 @@ public class KDSSMBDataSource implements Runnable {
                 KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
             }
         }
+
         m_thread = null;
 
         //for uploading thread
@@ -191,6 +192,8 @@ public class KDSSMBDataSource implements Runnable {
         List<String> ar = new ArrayList<>();
         while(m_bThreadRunning)
         {
+            if (m_thread != Thread.currentThread())
+                return;
             if (m_strRemoteFolder.isEmpty()) {
                 sleep(500);
                 continue;
@@ -206,18 +209,18 @@ public class KDSSMBDataSource implements Runnable {
                         continue;
                     }
                 }
-
-                    if (KDSSmbFile.isValidPath(m_strRemoteFolder)) {
-                        if (isRemoteFolderPermissionError()) {
-                            continue;
-                        }
-                        informSmbOK();
-                    } else {
-                        informSmbLostError();
-                        sleep(500);
+                if (!m_bThreadRunning) return;
+                if (KDSSmbFile.isValidPath(m_strRemoteFolder)) {
+                    if (isRemoteFolderPermissionError()) {
                         continue;
                     }
-
+                    informSmbOK();
+                } else {
+                    informSmbLostError();
+                    sleep(500);
+                    continue;
+                }
+                if (!m_bThreadRunning) return;
 
                 //read data
                 //ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
@@ -227,7 +230,7 @@ public class KDSSMBDataSource implements Runnable {
 
                     m_arExistedFiles = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder, BUFFER_FILES_COUNT, m_arExistedFiles);
                 }
-
+                if (!m_bThreadRunning) return;
                 if (m_arExistedFiles.size() >0)
                 {
                     int ncount = MAX_ORDERS_COUNT>m_arExistedFiles.size()?m_arExistedFiles.size():MAX_ORDERS_COUNT;
@@ -239,7 +242,7 @@ public class KDSSMBDataSource implements Runnable {
 //                    }
 //                    m_arExistedFiles.removeAll(ar);
                 }
-
+                if (!m_bThreadRunning) return;
 
                 if (ar.size() <= 0) {
                     sleep(500);
@@ -247,11 +250,14 @@ public class KDSSMBDataSource implements Runnable {
                 }
                 //if (!KDSConst._DEBUG)
                 checkXmlFiles(ar);
+                if (!m_bThreadRunning) return;
                 ar.clear();
+                if (!m_bThreadRunning) return;
                 sleep(500); //slow down.
             }
             catch (Exception e)
             {
+                if (!m_bThreadRunning) return;
                 KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
                 //KDSLog.e(TAG, KDSUtil.error( e));
             }
@@ -267,6 +273,7 @@ public class KDSSMBDataSource implements Runnable {
 //            ncount = MAX_ORDERS_COUNT;
         for (int i = 0; i < ncount; i++)
         {
+            if (!m_bThreadRunning) return;
             String smbFileName = m_strRemoteFolder +arFiles.get(i);
             //smbFileName =  smbFileName;
 
@@ -275,9 +282,10 @@ public class KDSSMBDataSource implements Runnable {
             if (text.isEmpty()) continue;
 
             doReceivedXmlText(smbFileName, text);
-
+            if (!m_bThreadRunning) return;
             //remove this file.
             removeSmbFile(smbFileName);
+            if (!m_bThreadRunning) return;
             if (i < ncount-1)
                 sleep(500); //delay, Too many orders will lock the router.
         }

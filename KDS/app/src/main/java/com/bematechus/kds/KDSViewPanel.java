@@ -8,12 +8,13 @@ import android.view.View;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2015/8/13 0013.
  */
 public class KDSViewPanel {
-    ArrayList<KDSViewBlock> m_arBlocks = new ArrayList<KDSViewBlock>();
+    Vector<KDSViewBlock> m_arBlocks = new Vector<>();
 
     KDSView m_viewParent = null;
     Point m_ptStartLocation = new Point(0,0); //absolute location

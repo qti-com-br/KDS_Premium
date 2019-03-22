@@ -1840,7 +1840,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 onBumpItem(userID);
             }
         }
-        getKDS().schedule_process_update_to_be_prepare_qty();
+        getKDS().schedule_process_update_to_be_prepare_qty(true);
         getKDS().getCurrentDB().clearExpiredBumpedOrders( getSettings().getBumpReservedCount());
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -2511,7 +2511,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 onUnbumpItem(userID);
             }
         }
-        getKDS().schedule_process_update_to_be_prepare_qty();
+        getKDS().schedule_process_update_to_be_prepare_qty(true);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -2533,7 +2533,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 return;
             }
             restoreOrder(orderGuid);
-            getKDS().schedule_process_update_to_be_prepare_qty();
+            getKDS().schedule_process_update_to_be_prepare_qty(true);
         }
         else
         {
@@ -2569,7 +2569,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         unbumpItem(userID, orderGuid, itemGuid);
 
-        getKDS().schedule_process_update_to_be_prepare_qty();
+        getKDS().schedule_process_update_to_be_prepare_qty(true);
         refreshView(userID);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -3260,7 +3260,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().getCurrentDB().prep_add_order_items(order);
 
 
-        getKDS().doOrderFilter(order, false);
+        getKDS().doOrderFilter(order, false, true);
         //t.debug_print_Duration("opAddNewOrder2");
         getKDS().refreshView(KDSUser.USER.USER_A, KDS.RefreshViewParam.None);
         getKDS().refreshView(KDSUser.USER.USER_B, KDS.RefreshViewParam.None);
