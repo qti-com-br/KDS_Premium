@@ -892,52 +892,53 @@ public class KDSDBCurrent extends KDSDBBase {
 
     public boolean orderDelete(String guid)
     {
-
-        if (getDB() == null) return false;
-
-        String sql = KDSDataOrder.sqlDelete("orders", guid);
-        if (!this.executeDML(sql))
-            return false;
-
-        sql = "select guid from items where orderguid='" + guid + "'";// Common.KDSUtil.ConvertIntToString(nID);
-
-        Cursor c = getDB().rawQuery(sql, null);
-
-        while (c.moveToNext()) {
-            String itemguid = getString(c,0);
-            deleteItem(itemguid);
-        }
-        c.close();
-        //remove order messages.
-        sql = "delete from messages where ObjType=0 and ObjGUID='" + guid + "'";
-        if (!this.executeDML(sql))
-            return false;
-//        //remove modifiers
-//        sql = String.format("delete from modifiers where modifiers.ItemGUID in (select guid from items where items.orderguid='%s')", guid);
-//        if (!this.executeDML(sql)) return false;
+        return orderDeleteQuick(guid);
 //
-//        //remove condiments
-//        sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid='%s')", guid);
+//        if (getDB() == null) return false;
+//
+//        String sql = KDSDataOrder.sqlDelete("orders", guid);
 //        if (!this.executeDML(sql))
 //            return false;
-//        //remove condiments messages
-//        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+//
+//        sql = "select guid from items where orderguid='" + guid + "'";// Common.KDSUtil.ConvertIntToString(nID);
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        while (c.moveToNext()) {
+//            String itemguid = getString(c,0);
+//            deleteItem(itemguid);
+//        }
+//        c.close();
+//        //remove order messages.
+//        sql = "delete from messages where ObjType=0 and ObjGUID='" + guid + "'";
 //        if (!this.executeDML(sql))
 //            return false;
-//        //remove items messages
-//        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
-//        if (!this.executeDML(sql))
-//            return false;
-//        //remove items
-//        sql = String.format("delete from items where items.orderguid='%s'", guid);
-//        if (!this.executeDML(sql))
-//            return false;
-
-        updateDbTimeStamp();
-
-        prep_remove(guid);
-
-        return true;
+////        //remove modifiers
+////        sql = String.format("delete from modifiers where modifiers.ItemGUID in (select guid from items where items.orderguid='%s')", guid);
+////        if (!this.executeDML(sql)) return false;
+////
+////        //remove condiments
+////        sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid='%s')", guid);
+////        if (!this.executeDML(sql))
+////            return false;
+////        //remove condiments messages
+////        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+////        if (!this.executeDML(sql))
+////            return false;
+////        //remove items messages
+////        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+////        if (!this.executeDML(sql))
+////            return false;
+////        //remove items
+////        sql = String.format("delete from items where items.orderguid='%s'", guid);
+////        if (!this.executeDML(sql))
+////            return false;
+//
+//        updateDbTimeStamp();
+//
+//        prep_remove(guid);
+//
+//        return true;
     }
 
     /**
@@ -2751,7 +2752,7 @@ return:
             ncounter ++;
             if (ncounter <nMaxCount) continue;
             String orderGuid = getString(c,0);
-            this.orderDelete(orderGuid);
+            this.orderDeleteQuick(orderGuid);
             nBumpedCount ++;
         }
         return nBumpedCount;
@@ -3408,6 +3409,53 @@ update the schedule item ready qty
         getDB().execSQL(sql);
     }
 
+    /**
+     * use sql to delete order quickly.
+     * @param guid
+     * @return
+     */
+    public boolean orderDeleteQuick(String guid)
+    {
+
+        if (getDB() == null) return false;
+
+        String sql = KDSDataOrder.sqlDelete("orders", guid);
+        if (!this.executeDML(sql))
+            return false;
+
+        //remove order messages.
+        sql = "delete from messages where ObjType=0 and ObjGUID='" + guid + "'";
+        if (!this.executeDML(sql))
+            return false;
+
+//        //remove items modifiers
+        sql = String.format("delete from modifiers where modifiers.ItemGUID in (select guid from items where items.orderguid='%s')", guid);
+        if (!this.executeDML(sql)) return false;
+        //remove items messages
+        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+        if (!this.executeDML(sql))
+            return false;
+//        //remove condiments messages
+        sql = String.format("delete from messages where ObjType=2 and messages.ObjGUID in (select condiments.guid from condiments,items where condiments.itemguid=items.guid and items.orderguid='%s')", guid);
+        if (!this.executeDML(sql))
+            return false;
+//
+//        //remove condiments
+        sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid='%s')", guid);
+        if (!this.executeDML(sql))
+            return false;
+
+        //remove items
+        sql = String.format("delete from items where items.orderguid='%s'", guid);
+        if (!this.executeDML(sql))
+            return false;
+
+        updateDbTimeStamp();
+
+        prep_remove(guid);
+
+        return true;
+    }
 
 
     /***************************************************************************

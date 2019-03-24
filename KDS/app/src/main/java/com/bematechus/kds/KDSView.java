@@ -261,11 +261,25 @@ public class KDSView extends View {
 
     public boolean clear()
     {
-
-        m_arPanels.clear();
+        clearPanels();
+        //m_arPanels.clear();
         this.invalidate();
         return true;
     }
+
+    public void clearPanels()
+    {
+        synchronized (m_panelsLocker)
+        {
+            for (int i=0; i< m_arPanels.size(); i++)
+            {
+                m_arPanels.get(i).clear();
+            }
+            m_arPanels.clear();
+        }
+
+    }
+
     public Rect getBounds()
     {
         Rect rc = new Rect();
@@ -316,11 +330,11 @@ public class KDSView extends View {
     {
         return m_arPanels.size();
     }
-    public boolean panelsClear()
-    {
-        m_arPanels.clear();
-        return true;
-    }
+//    public boolean panelsClear()
+//    {
+//        m_arPanels.clear();
+//        return true;
+//    }
     private Rect getLastPanelLastBlockBounds()
     {
         try {

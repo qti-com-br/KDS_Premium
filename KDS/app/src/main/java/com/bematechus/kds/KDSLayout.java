@@ -2242,6 +2242,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 public void run() {
                     while (true)
                     {
+                        if (m_threadShowOrders != Thread.currentThread())
+                            return;
                         if (m_nRedrawRequestCounter <=0)
                         {
                             try {
@@ -2278,7 +2280,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         //m_view.clear();
         synchronized (m_view.m_panelsLocker) {
-            m_view.getPanels().clear();
+            m_view.clearPanels();
+
         }
 
         if (orders == null || orders.getCount() <= 0) {

@@ -4211,6 +4211,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 @Override
                 public void run() {
                     try {
+                        if (m_threadOrdersXml != Thread.currentThread())
+                            return;
                         Vector<DoOrdersXmlThreadBuffer> arDone = new Vector<>();
                         //List<DoOrdersXmlThreadBuffer> arDoing = null;
                         while (m_bRunning) {
@@ -4224,8 +4226,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                 }
 
                             }
-                            if (BuildVer.isDebug())
-                                Log.i(TAG, "Waiting order xml=" + KDSUtil.convertIntToString(ncount));
+//                            if (BuildVer.isDebug())
+//                                Log.i(TAG, "Waiting order xml=" + KDSUtil.convertIntToString(ncount));
                             if (ncount > BATCH_MAX_COUNT) ncount = BATCH_MAX_COUNT;
                             arDone.clear();
                             //arDoing = m_xmlDataBuffer.subList(0, ncount);

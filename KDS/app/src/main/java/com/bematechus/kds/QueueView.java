@@ -2228,6 +2228,8 @@ public class QueueView  extends View {
                 public void run() {
                     while (true)
                     {
+                        if (m_threadShowOrders != Thread.currentThread())
+                            return;
                         if (m_nRedrawRequestCounter <=0)
                         {
                             try {

@@ -82,9 +82,13 @@ public class KDSViewBlock {
 
     private boolean m_bDrawBorderInsideLine = false; //in order to sharp the border.
 
+    private Object m_locker = new Object();
+
     public KDSViewBlock(KDSView parent) {
         m_parentViewer = parent;
-        m_arCells.clear();
+        synchronized (m_locker) {
+            m_arCells.clear();
+        }
         //m_panelEnv.getBorderInsets().set(m_nDefaultInset, m_nDefaultInset, m_nDefaultInset, m_nDefaultInset);
         //m_viewerEnv.setPanelFont(this.getFont());
         //this.setOpaque(true);
@@ -104,13 +108,15 @@ public class KDSViewBlock {
     }
 
     private void debug_me() {
-        m_arCells.clear();
-        for (int i = 0; i < 5; i++) {
-            KDSViewBlockCell c = new KDSViewBlockCell();
-            c.getFont().setBG(Color.GREEN);
-            c.getFont().setBG(Color.WHITE);
+        synchronized (m_locker) {
+            m_arCells.clear();
+            for (int i = 0; i < 5; i++) {
+                KDSViewBlockCell c = new KDSViewBlockCell();
+                c.getFont().setBG(Color.GREEN);
+                c.getFont().setBG(Color.WHITE);
 
-            m_arCells.add(c);
+                m_arCells.add(c);
+            }
         }
     }
 
@@ -301,28 +307,35 @@ public class KDSViewBlock {
     }
 
     public void setCells(Vector ar) {
-        m_arCells = ar;
+        synchronized (m_locker) {
+            m_arCells = ar;
+        }
     }
 
     public KDSViewBlockCell getCell(int nIndex) {
-        if (nIndex >= m_arCells.size())
-            return null;
-        if (nIndex < 0) return null;
-        return (KDSViewBlockCell) m_arCells.get(nIndex);
+        synchronized (m_locker) {
+            if (nIndex >= m_arCells.size())
+                return null;
+            if (nIndex < 0) return null;
+            return (KDSViewBlockCell) m_arCells.get(nIndex);
+        }
     }
 
     public int getCellIndex(KDSViewBlockCell c) {
-        for (int i =0; i< m_arCells.size(); i++)
-        {
-            if (m_arCells.get(i) == c)
-                return i;
+        synchronized (m_locker) {
+            for (int i = 0; i < m_arCells.size(); i++) {
+                if (m_arCells.get(i) == c)
+                    return i;
+            }
+            return -1;
         }
-        return -1;
     }
 
     public Object getFirstRowData() {
-        if (m_arCells.size() <= 0) return null;
-        return m_arCells.get(0).getData();
+        synchronized (m_locker) {
+            if (m_arCells.size() <= 0) return null;
+            return m_arCells.get(0).getData();
+        }
     }
 
     public void setCols(int nCols) {
@@ -484,33 +497,37 @@ public class KDSViewBlock {
     }
 
     public void invalidateCaptionAndFooter(View view) {
-        int ncount = m_arCells.size();
+        synchronized (m_locker) {
+            int ncount = m_arCells.size();
 
-        for (int i = 0; i < ncount; i++) {
-            KDSViewBlockCell c = (KDSViewBlockCell) m_arCells.get(i);
-            if (!(c.getData() instanceof KDSDataOrder))
-                continue;
+            for (int i = 0; i < ncount; i++) {
+                KDSViewBlockCell c = (KDSViewBlockCell) m_arCells.get(i);
+                if (!(c.getData() instanceof KDSDataOrder))
+                    continue;
 
-            Rect rc = this.getCellAbsoluteRect(i);
-            view.invalidate(rc.left, rc.top, rc.right, rc.bottom);
+                Rect rc = this.getCellAbsoluteRect(i);
+                view.invalidate(rc.left, rc.top, rc.right, rc.bottom);
 
+            }
         }
     }
 
     public void onJustDrawCaptionAndFooter(Canvas g) {
-        int ncount = m_arCells.size();
-        int colRows = this.getColTotalRows();
+        synchronized (m_locker) {
+            int ncount = m_arCells.size();
+            int colRows = this.getColTotalRows();
 
-        for (int i = 0; i < ncount; i++) {
-            KDSViewBlockCell c = (KDSViewBlockCell) m_arCells.get(i);
-            if (!(c.getData() instanceof KDSDataOrder))
-                continue;
-            int ncol = i / colRows;
-            //g.save();
-            //Rect rc = this.getCellAbsoluteRect(i);
-            //   g.clipRect(rc);
-            c.onDraw(g, this.getCellAbsoluteRect(i), getEnv(), ncol, this);
-            // g.restore();
+            for (int i = 0; i < ncount; i++) {
+                KDSViewBlockCell c = (KDSViewBlockCell) m_arCells.get(i);
+                if (!(c.getData() instanceof KDSDataOrder))
+                    continue;
+                int ncol = i / colRows;
+                //g.save();
+                //Rect rc = this.getCellAbsoluteRect(i);
+                //   g.clipRect(rc);
+                c.onDraw(g, this.getCellAbsoluteRect(i), getEnv(), ncol, this);
+                // g.restore();
+            }
         }
 
     }
@@ -548,19 +565,21 @@ public class KDSViewBlock {
      * @param g
      */
     public void paintCells(Canvas g) {
-        int ncount = m_arCells.size();
-        int colRows = this.getColTotalRows();
-        boolean bTextWrap = isTextWrap();
+        synchronized (m_locker) {
+            int ncount = m_arCells.size();
+            int colRows = this.getColTotalRows();
+            boolean bTextWrap = isTextWrap();
 
-        for (int i = 0; i < ncount; i++) {
-            KDSViewBlockCell c = (KDSViewBlockCell) m_arCells.get(i);
-            int ncol = i / colRows;
-            //Rect rcAbsoluteCell = this.getCellAbsoluteRect(i);
-            Rect rcAbsoluteCell = this.getCombinedCellAbsoluteRect(c,bTextWrap, i, (ncol + 1)* getColTotalRows());
+            for (int i = 0; i < ncount; i++) {
+                KDSViewBlockCell c = (KDSViewBlockCell) m_arCells.get(i);
+                int ncol = i / colRows;
+                //Rect rcAbsoluteCell = this.getCellAbsoluteRect(i);
+                Rect rcAbsoluteCell = this.getCombinedCellAbsoluteRect(c, bTextWrap, i, (ncol + 1) * getColTotalRows());
 
-            c.onDraw(g,rcAbsoluteCell , getEnv(), ncol, this);
+                c.onDraw(g, rcAbsoluteCell, getEnv(), ncol, this);
+            }
+            drawBorders(g);
         }
-        drawBorders(g);
     }
 
     int m_borderPhase = 0;
@@ -940,13 +959,14 @@ public class KDSViewBlock {
 
     public KDSViewBlockCell getClickedCell(int x, int y)
     {
-        for (int i=0; i< m_arCells.size(); i++)
-        {
-            Rect rc = this.getCellAbsoluteRect(i);
-            if (rc.contains(x, y))
-                return this.getCell(i);
+        synchronized (m_locker) {
+            for (int i = 0; i < m_arCells.size(); i++) {
+                Rect rc = this.getCellAbsoluteRect(i);
+                if (rc.contains(x, y))
+                    return this.getCell(i);
+            }
+            return null;
         }
-        return null;
     }
 
     /**
@@ -1007,5 +1027,12 @@ public class KDSViewBlock {
         return panel;
     }
 
+    public void clear()
+    {
+        synchronized (m_locker) {
+            m_arCells.clear();
+        }
+
+    }
 
 }

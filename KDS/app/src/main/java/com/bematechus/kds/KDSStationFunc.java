@@ -17,6 +17,7 @@ import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.ScheduleProcessOrder;
+import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -757,6 +758,7 @@ public class KDSStationFunc {
      */
     static public void orderBump(KDSUser kdsuser, String orderGuid, boolean bRefreshView)
     {
+        //TimeDog td = new TimeDog();
         KDSDataOrder order = kdsuser.getOrders().getOrderByGUID(orderGuid);
         if (order == null)
             return;
@@ -773,15 +775,17 @@ public class KDSStationFunc {
         }
         if (bRefreshView)
             kdsuser.refreshView();
-
+        //td.debug_print_Duration("func-1");
 
         if (kdsuser.getKDS().isExpeditorStation()||
                 kdsuser.getKDS().isQueueExpo())
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Bump_Order, order, null);
         else
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Bump_Order, order, null);
+        //td.debug_print_Duration("func-2");
         //20180314
         kdsuser.getCurrentDB().clearExpiredBumpedOrders( kdsuser.getKDS().getSettings().getBumpReservedCount());
+        //td.debug_print_Duration("func-3");
     }
 
     /**

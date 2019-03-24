@@ -144,6 +144,7 @@ public class KDSBase {
         {
             int ncount = 0;
             while (true) {
+
                 synchronized (m_locker) {
                     ncount = m_arStationAnnounces.size();
                 }

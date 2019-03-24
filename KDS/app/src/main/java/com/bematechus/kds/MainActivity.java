@@ -1921,15 +1921,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //        !getKDS().isTrackerStation() && !getKDS().isQueueExpo()) {
         if (!isFixedSingleScreenView()){
             String firstOrderGuid = getUserUI(userID).getLayout().getEnv().getStateValues().getFirstShowingOrderGUID();
-            if (orderGuid == firstOrderGuid) {
+            if (orderGuid.equals( firstOrderGuid) ) {
                 String nextFirstOrder = getNextOrderGuidToFocus(userID, firstOrderGuid);//  getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(firstOrderGuid);
                 if (nextFirstOrder.isEmpty())
                     nextFirstOrder = getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
                 getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(nextFirstOrder);
             }
         }
+        //TimeDog td = new TimeDog();
         KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid,bRefreshView );
-
+        //td.debug_print_Duration("Func-orderBump");
         //notification
         //if (!getKDS().isQueueStation() &&
         //        !getKDS().isTrackerStation() && !getKDS().isQueueExpo()) {
@@ -2120,7 +2121,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
           nextGuid = getNextOrderGuidToFocus(userID, orderGuid);//"";
         }
         //save it for printing.
+        //TimeDog td = new TimeDog();
         KDSDataOrder order = bumpOrder(userID, orderGuid, bRefresView);
+        //td.debug_print_Duration("bumpOrder");
         if (order == null) return;
         if (isFixedSingleScreenView())
 //        if (getKDS().isQueueStation() || getKDS().isQueueExpo())
@@ -2138,7 +2141,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else
         {
-            this.getSummaryFragment().refreshSummary();
+//            if (this.getSummaryFragment() != null)
+//                this.getSummaryFragment().refreshSummary(); //remove this. It do UI drawing in thread. Thre refreshView has refresh sum.
             if (bIsFocusedOrder) {
                 setSelectedOrderGuid(userID, nextGuid);
                 setSelectedItemGuid(userID, "");
@@ -2188,7 +2192,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
-    final int MAX_AUTO_BUMP_COUNT = 10;
+    final int MAX_AUTO_BUMP_COUNT = 5;
     //int MAX_AUTO_BUMP_COUNT = 2;
 
     /**
@@ -2237,7 +2241,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             synchronized (getKDS().getUsers().getUserA().getOrders().m_locker) {
                 for (int i = 0; i < ar.size(); i++) {
+                    //TimeDog td = new TimeDog();
+
                     bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+                    //td.debug_print_Duration("bump order time:");
                 }
             }
 
@@ -6023,6 +6030,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     while (getKDS().isThreadRunning())
                     {
                         try {
+                            if (m_threadChecking != Thread.currentThread())
+                                return;
                             checkAutoBumping();
                             //move it to thread
                             checkAutoBackup();
