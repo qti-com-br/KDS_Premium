@@ -439,7 +439,7 @@ public class QueueView  extends View {
 //            m_queueOrders.sortByStateTime(m_sortMode == QueueOrders.QueueSort.State_descend);
 //        }
         try {
-
+            //drawBackground(canvas);
             //synchronized (m_queueOrders.getOrders().m_locker)
             {
                 switch (m_nViewMode) {
@@ -618,13 +618,23 @@ public class QueueView  extends View {
      */
     private void onDrawSimpleMode(Canvas canvas)
     {
-        if (canvas == null) return;
+        if (canvas == null) {
+            //System.out.println("onDrawSimpleMode if (canvas == null)" );
+            return;
+        }
         Rect rect = this.getBounds();
 
         Canvas g = get_double_buffer();
-        if (g == null) return;
+        if (g == null) {
+            //System.out.println("onDrawSimpleMode if (g == null)" );
+            return;
+        }
         drawBackground(g);
-        if (m_queueOrders.getOrders() == null) return;
+        if (m_queueOrders.getOrders() == null) {
+            //System.out.println("onDrawSimpleMode if (m_queueOrders.getOrders() == null)" );
+
+            return;
+        }
 
 
         m_queueOrders.resetCoordinates();
@@ -2000,18 +2010,18 @@ public class QueueView  extends View {
     {
         Rect rtData = new Rect(rect);
         //rtData.bottom -= PAGE_NUMBER_ROW_HEIGHT;
-
-        int nRows = calculateRows(rtData,ITEM_AVERAGE_HEIGHT);
-        int ncount = m_queueOrders.getOrders().getCount();
-        int nPanelIndex = 0;
-        int nTotalPanels = nRows * getCols();
-        //for page
-        int nPagesCount = getPageCount(status, nRows, getCols());
-        int nPageIndex = getCurrentPageIndex(nPagesCount);
-        int nItemsStartIndex = nPageIndex * nTotalPanels;
-
-        int nItemCurrentIndex = -1;
         synchronized (m_locker) {
+            int nRows = calculateRows(rtData,ITEM_AVERAGE_HEIGHT);
+            int ncount = m_queueOrders.getOrders().getCount();
+            int nPanelIndex = 0;
+            int nTotalPanels = nRows * getCols();
+            //for page
+            int nPagesCount = getPageCount(status, nRows, getCols());
+            int nPageIndex = getCurrentPageIndex(nPagesCount);
+            int nItemsStartIndex = nPageIndex * nTotalPanels;
+
+            int nItemCurrentIndex = -1;
+
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = m_queueOrders.getOrders().get(i);
                 if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
@@ -2027,11 +2037,11 @@ public class QueueView  extends View {
 
                 }
             }
-        }
-        arPages.clear();
-        arPages.add(nPageIndex);
-        arPages.add(nPagesCount);
 
+            arPages.clear();
+            arPages.add(nPageIndex);
+            arPages.add(nPagesCount);
+        }
     }
 
 
