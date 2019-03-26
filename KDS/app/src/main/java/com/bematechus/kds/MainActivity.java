@@ -2192,7 +2192,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
-    final int MAX_AUTO_BUMP_COUNT = 5;
+    final int MAX_AUTO_BUMP_COUNT = 3;
     //int MAX_AUTO_BUMP_COUNT = 2;
 
     /**
@@ -3369,7 +3369,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         //backup all new settings to kdsdata folder.
         if (m_bSuspendChangedEvent) return;
-
+        if (Activation.isActivationPrefKey(key))
+            return;
         KDSSettings settingsBackup = new KDSSettings(this.getApplicationContext());
         settingsBackup.loadSettings(this.getApplicationContext());
         settingsBackup.exportToFolder(this.getApplicationContext(), KDSDBBase.getSDDBFolderWithLastDividChar());
@@ -4066,31 +4067,34 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
 
 
+        getKDS().refreshView();
 
-        if (getKDS().getUsers().getUsersCount() == 0)
-            return;
-        SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
-        //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
-        if (funcView == SettingsBase.StationFunc.Queue ||
-                funcView == SettingsBase.StationFunc.Queue_Expo)
-            refreshQueueView();
-        else if (funcView == SettingsBase.StationFunc.TableTracker)// (getKDS().isTrackerStation())
-            refreshTTView();
-        else {
-            refreshView(KDSUser.USER.USER_A);
-            if (getKDS().isValidUser(KDSUser.USER.USER_B))
-                refreshView(KDSUser.USER.USER_B);
-        }
+//        if (getKDS().getUsers().getUsersCount() == 0)
+//            return;
+//        SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
+//        //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
+//        if (funcView == SettingsBase.StationFunc.Queue ||
+//                funcView == SettingsBase.StationFunc.Queue_Expo)
+//            refreshQueueView();
+//        else if (funcView == SettingsBase.StationFunc.TableTracker)// (getKDS().isTrackerStation())
+//            refreshTTView();
+//        else {
+//            refreshView(KDSUser.USER.USER_A);
+//            if (getKDS().isValidUser(KDSUser.USER.USER_B))
+//                refreshView(KDSUser.USER.USER_B);
+//        }
     }
 
     public void refreshView(KDSUser.USER userID) {
         if (!isKDSValid()) return ;
-        if (getSelectedOrderGuid(userID).isEmpty()) {
-            String nextGuid =getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
-            setSelectedOrderGuid(userID, nextGuid);
-        }
         getKDS().refreshView(userID, KDS.RefreshViewParam.None);
-        refreshPrevNext(userID);
+
+//        if (getSelectedOrderGuid(userID).isEmpty()) {
+//            String nextGuid =getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
+//            setSelectedOrderGuid(userID, nextGuid);
+//        }
+//        getKDS().refreshView(userID, KDS.RefreshViewParam.None);
+//        refreshPrevNext(userID);
     }
 
     public void refreshPrevNext(KDSUser.USER userID) {
@@ -6037,6 +6041,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                             checkAutoBackup();
                             //move it to thread
                             checkLogFilesDeleting();
+                            //remove statistic data
+                            getKDS().checkRemovingStatisticExpiredData();
                             try {
                                 Thread.sleep(1000);
                             } catch (Exception e) {

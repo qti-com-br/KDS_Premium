@@ -1383,10 +1383,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    orderAdd(kds.getUsers().getUserA(), order, false, false); //don't check add-on
+                    orderAdd(kds.getUsers().getUserA(), order, false, false, true); //don't check add-on
                 else
                 {
-                    kds.getUsers().orderAdd(order, false);
+                    kds.getUsers().orderAdd(order, false, true);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
@@ -1395,9 +1395,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
         { //I am mirror slave station
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false);
+                orderAdd(kds.getUsers().getUserA(), order, false, false, true);
             else
-                kds.getUsers().orderAdd(order, false);
+                kds.getUsers().orderAdd(order, false, true);
 
         }
         else
@@ -1408,9 +1408,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //                          //I have to fix this bug, in 24 stations "coke" branch.
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false);
+                orderAdd(kds.getUsers().getUserA(), order, false, false, true);
             else
-                kds.getUsers().orderAdd(order, false);
+                kds.getUsers().orderAdd(order, false, true);
         }
 
         tt_checkAllItemsBumped(kds, order);

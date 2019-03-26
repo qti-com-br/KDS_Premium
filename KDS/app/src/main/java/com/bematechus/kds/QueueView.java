@@ -334,7 +334,7 @@ public class QueueView  extends View {
 
 
     }
-    Handler m_refreshHanlder = new Handler(new Handler.Callback() {
+    Handler m_refreshHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             m_refreshHandler.removeMessages(0);
@@ -349,7 +349,7 @@ public class QueueView  extends View {
         //this.invalidate();
         Message m = new Message();
         m.what = 0;
-        m_refreshHanlder.sendMessage(m);
+        m_refreshHandler.sendMessage(m);
     }
     public Rect getBounds()
     {
@@ -438,17 +438,23 @@ public class QueueView  extends View {
 //        {//2.0.35
 //            m_queueOrders.sortByStateTime(m_sortMode == QueueOrders.QueueSort.State_descend);
 //        }
+        boolean bReverseReadyColorForFlash = false;
+        Calendar c = Calendar.getInstance();
+        int second = c.get(Calendar.SECOND);
+        if ( (second%2)==0)
+            bReverseReadyColorForFlash = true;
+
         try {
             //drawBackground(canvas);
             //synchronized (m_queueOrders.getOrders().m_locker)
             {
                 switch (m_nViewMode) {
                     case Panels:
-                        onDrawPanelMode(canvas);
+                        onDrawPanelMode(canvas, bReverseReadyColorForFlash);
                         break;
                     case Simple:
                         //m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
-                        onDrawSimpleMode(canvas);
+                        onDrawSimpleMode(canvas, bReverseReadyColorForFlash);
                         break;
                 }
             }
@@ -478,7 +484,7 @@ public class QueueView  extends View {
         drawable.draw(canvas);
     }
 
-    private void onDrawPanelMode(Canvas canvas)
+    private void onDrawPanelMode(Canvas canvas, boolean bReverseColorForFlush)
     {
         if (canvas == null) return;
         Rect rect = this.getBounds();
@@ -492,9 +498,9 @@ public class QueueView  extends View {
             m_queueOrders.resetCoordinates();
 
             if (!m_bMoveReadyFront)
-                drawNormalQueue(g, rect);
+                drawNormalQueue(g, rect, bReverseColorForFlush);
             else
-                drawReadyMoveFrontQueue2(g, rect);
+                drawReadyMoveFrontQueue2(g, rect, bReverseColorForFlush);
         }
 
 
@@ -616,7 +622,7 @@ public class QueueView  extends View {
      * Just show order number
      * @param canvas
      */
-    private void onDrawSimpleMode(Canvas canvas)
+    private void onDrawSimpleMode(Canvas canvas, boolean bReverseReadyColorForFlash)
     {
         if (canvas == null) {
             //System.out.println("onDrawSimpleMode if (canvas == null)" );
@@ -635,8 +641,6 @@ public class QueueView  extends View {
 
             return;
         }
-
-
         m_queueOrders.resetCoordinates();
 
         if (isQueueExpo())
@@ -670,7 +674,7 @@ public class QueueView  extends View {
         if (m_bSimpleModeShowReceived) {
             Rect rt = new Rect(rect);
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Received));
+            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Received), bReverseReadyColorForFlash);
             nIndex ++;
         }
 
@@ -678,21 +682,21 @@ public class QueueView  extends View {
             Rect rt = new Rect(rect);
             rt.left = rt.left + (nColWidth+nGap) *nIndex;
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Preparation));
+            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Preparation), bReverseReadyColorForFlash);
             nIndex ++;
         }
         if (m_bSimpleModeShowReady) {
             Rect rt = new Rect(rect);
             rt.left = rt.left + (nColWidth+nGap) *nIndex;
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt,getSimpleColStatus( QueueOrders.QueueStatus.Ready));
+            drawSimpleModeCol(g, rt,getSimpleColStatus( QueueOrders.QueueStatus.Ready), bReverseReadyColorForFlash);
             nIndex ++;
         }
         if (m_bSimpleModeShowPickup) {
             Rect rt = new Rect(rect);
             rt.left = rt.left + (nColWidth+nGap) *nIndex;
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Pickup));
+            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Pickup), bReverseReadyColorForFlash);
             nIndex++;
         }
 
@@ -702,7 +706,7 @@ public class QueueView  extends View {
         commit_double_buffer(canvas);
     }
 
-    private void drawNormalQueue(Canvas g,Rect rect)
+    private void drawNormalQueue(Canvas g,Rect rect, boolean bReverseColorForFlush)
     {
         int ncount = m_queueOrders.getOrders().getCount();
         int nRows = calculateRows(rect, ITEM_AVERAGE_HEIGHT);
@@ -720,7 +724,7 @@ public class QueueView  extends View {
                 break;
             }
             else {
-                drawItem(g, rect, nRows, m_nCols, m_queueOrders.getOrders().get(i), i);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                drawItem(g, rect, nRows, m_nCols, m_queueOrders.getOrders().get(i), i, bReverseColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
             }
         }
     }
@@ -729,7 +733,7 @@ public class QueueView  extends View {
     final float READY_RECT_PERCENT = (float)0.75;
 
 
-    private void drawReadyMoveFrontQueue2(Canvas g,Rect rect) {
+    private void drawReadyMoveFrontQueue2(Canvas g,Rect rect, boolean bReverseColorForFlush) {
         movePreparationFront(m_queueOrders.getOrders());
         moveReadyFront(m_queueOrders.getOrders());
 
@@ -753,13 +757,13 @@ public class QueueView  extends View {
 
         ArrayList<Integer> arPages = new ArrayList<>();
 
-        drawReadyInMoveFrontMode2(g, rtReady, m_nCols, arPages);
+        drawReadyInMoveFrontMode2(g, rtReady, m_nCols, arPages, bReverseColorForFlush);
 
-        drawNotReadyInMoveFrontMode2(g, rtNotReady);
+        drawNotReadyInMoveFrontMode2(g, rtNotReady, bReverseColorForFlush);
 
     }
 
-    private void drawNotReadyInMoveFrontMode2(Canvas g, Rect rtNotReady)
+    private void drawNotReadyInMoveFrontMode2(Canvas g, Rect rtNotReady, boolean bReverseColorForFlush)
     {
         Rect rtData = new Rect(rtNotReady);
         rtData.bottom -= PAGE_NUMBER_ROW_HEIGHT;
@@ -788,7 +792,7 @@ public class QueueView  extends View {
                 {
                     break;
                 }
-                drawItem(g, rtData, nRows, NOT_READY_COLS, order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                drawItem(g, rtData, nRows, NOT_READY_COLS, order, nPanelIndex, bReverseColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
                 nPanelIndex++;
 
             }
@@ -818,7 +822,7 @@ public class QueueView  extends View {
         }
     }
 
-    private void drawReadyInMoveFrontMode2(Canvas g, Rect rtReady, int nMaxCols, ArrayList<Integer> arPages)
+    private void drawReadyInMoveFrontMode2(Canvas g, Rect rtReady, int nMaxCols, ArrayList<Integer> arPages, boolean bReversColorForFlush)
     {
         Rect rtData = new Rect(rtReady);
         rtData.bottom -= PAGE_NUMBER_ROW_HEIGHT;
@@ -851,7 +855,7 @@ public class QueueView  extends View {
                     break;
                 }
 
-                drawItem(g, rtData, nRows, nMaxCols, order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                drawItem(g, rtData, nRows, nMaxCols, order, nPanelIndex, bReversColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
                 nPanelIndex++;
 
             }
@@ -1095,7 +1099,7 @@ public class QueueView  extends View {
      *
      * @param g
      */
-    public void drawItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex)
+    public void drawItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex, boolean bReverseReadyColor)
     {
         Rect rtCell = getItemRect(rect, nRows,nCols,nPanelIndex);
         if (rtCell.isEmpty()) return;
@@ -1118,10 +1122,11 @@ public class QueueView  extends View {
             if (isReadyOrder(order))//||
                     //isPreparationOrder(order))
             {
-                Calendar c = Calendar.getInstance();
-                int second = c.get(Calendar.SECOND);
-                if ( (second%2)==0)
-                    bReverseReadyColorForFlash = true;
+                bReverseReadyColorForFlash = bReverseReadyColor;
+//                Calendar c = Calendar.getInstance();
+//                int second = c.get(Calendar.SECOND);
+//                if ( (second%2)==0)
+//                    bReverseReadyColorForFlash = true;
             }
         }
        // Paint paintBG = new Paint();
@@ -2006,7 +2011,7 @@ public class QueueView  extends View {
      * @param arPages
      *  return this values
      */
-    private void drawSimpleModeWithGiveOrderStatus2(Canvas g, Rect rect,ArrayList<QueueOrders.QueueStatus> status, ArrayList<Integer> arPages )
+    private void drawSimpleModeWithGiveOrderStatus2(Canvas g, Rect rect,ArrayList<QueueOrders.QueueStatus> status, ArrayList<Integer> arPages, boolean bReverseColorForFlush )
     {
         Rect rtData = new Rect(rect);
         //rtData.bottom -= PAGE_NUMBER_ROW_HEIGHT;
@@ -2021,21 +2026,28 @@ public class QueueView  extends View {
             int nItemsStartIndex = nPageIndex * nTotalPanels;
 
             int nItemCurrentIndex = -1;
+            try {
 
-            for (int i = 0; i < ncount; i++) {
-                KDSDataOrder order = m_queueOrders.getOrders().get(i);
-                if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
-                    nItemCurrentIndex++;
-                    if (nItemCurrentIndex < nItemsStartIndex) continue;
 
-                    if (nPanelIndex >= nTotalPanels) {
-                        break;
+                for (int i = 0; i < ncount; i++) {
+                    KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                    if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
+                        nItemCurrentIndex++;
+                        if (nItemCurrentIndex < nItemsStartIndex) continue;
+
+                        if (nPanelIndex >= nTotalPanels) {
+                            break;
+                        }
+
+                        drawSimpleItem(g, rtData, nRows, getCols(), order, nPanelIndex, bReverseColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                        nPanelIndex++;
+
                     }
-
-                    drawSimpleItem(g, rtData, nRows, getCols(), order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
-                    nPanelIndex++;
-
                 }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
 
             arPages.clear();
@@ -2054,7 +2066,7 @@ public class QueueView  extends View {
      *
      * @param g
      */
-    public void drawSimpleItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex)
+    public void drawSimpleItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex, boolean bReverseReadyColor )
     {
         Rect rtCell = getItemRect(rect, nRows,nCols,nPanelIndex);
         if (rtCell.isEmpty()) return;
@@ -2074,10 +2086,11 @@ public class QueueView  extends View {
             if (isReadyOrder(order))//||
                     //isPreparationOrder(order))
             {
-                Calendar c = Calendar.getInstance();
-                int second = c.get(Calendar.SECOND);
-                if ( (second%2)==0)
-                    bReverseReadyColorForFlash = true;
+                bReverseReadyColorForFlash = bReverseReadyColor;
+//                Calendar c = Calendar.getInstance();
+//                int second = c.get(Calendar.SECOND);
+//                if ( (second%2)==0)
+//                    bReverseReadyColorForFlash = true;
             }
         }
         // Paint paintBG = new Paint();
@@ -2100,7 +2113,7 @@ public class QueueView  extends View {
 
     final int SIMPLE_HEADER_HEIGHT = 35;
     final int PAGE_NUMBER_ROW_HEIGHT = 30;
-    private void drawSimpleModeCol(Canvas canvas, Rect rect, ArrayList<QueueOrders.QueueStatus> status)
+    private void drawSimpleModeCol(Canvas canvas, Rect rect, ArrayList<QueueOrders.QueueStatus> status, boolean bReverseColorForFlush)
     {
         Rect rt = new Rect(rect);
 
@@ -2112,7 +2125,7 @@ public class QueueView  extends View {
         rt.bottom -= PAGE_NUMBER_ROW_HEIGHT;
 
         ArrayList<Integer> arPages = new ArrayList<>();
-        drawSimpleModeWithGiveOrderStatus2(canvas,rt, status, arPages );
+        drawSimpleModeWithGiveOrderStatus2(canvas,rt, status, arPages ,bReverseColorForFlush);
 
         rt.top =rect.bottom - PAGE_NUMBER_ROW_HEIGHT+5;
         rt.bottom = rect.bottom;
@@ -2300,12 +2313,7 @@ public class QueueView  extends View {
 
     }
 
-    Handler m_refreshHandler = new Handler()
-    {
-        public void handleMessage(Message msg) {
-            QueueView.this.refresh();
-        }
-    };
+
 
 //    private void checkAutoBumpForReceivedState()
 //    {

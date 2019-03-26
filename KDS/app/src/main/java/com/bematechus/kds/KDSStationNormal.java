@@ -169,9 +169,9 @@ public class KDSStationNormal extends KDSStationFunc {
             else
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    orderAdd(kds.getUsers().getUserA(), orderReceived, false, false); //don't check add-on
+                    orderAdd(kds.getUsers().getUserA(), orderReceived, false, false, true); //don't check add-on
                 else
-                    kds.getUsers().orderAdd(orderReceived, false); //TODO: there are some issues !!!, it maybe is not same as primary
+                    kds.getUsers().orderAdd(orderReceived, false, true); //TODO: there are some issues !!!, it maybe is not same as primary
             }
         }
         else if (kds.getStationsConnections().getRelations().isMirrorStation())
@@ -186,16 +186,16 @@ public class KDSStationNormal extends KDSStationFunc {
 //                orderAdd(kds, order, false);
 //            }
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), orderReceived, false, false);
+                orderAdd(kds.getUsers().getUserA(), orderReceived, false, false, true);
             else
-                kds.getUsers().orderAdd(orderReceived, false);
+                kds.getUsers().orderAdd(orderReceived, false, true);
 
         }
         else
         { //I am common station, I am a expeditor.
             //check if current database contains this order.
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), orderReceived, false, false);
+                orderAdd(kds.getUsers().getUserA(), orderReceived, false, false, true);
         }
 
         //sync to others

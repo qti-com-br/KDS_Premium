@@ -584,22 +584,19 @@ public class KDSDataOrders extends KDSDataArray {
      */
     public ArrayList<String> findTimeoutOrders(int nTimeoutMinutes, int nMaxCount, boolean bIncludeScheduleOrders)
     {
+        ArrayList<String> ar = new ArrayList<>();
+
+        TimeDog td = new TimeDog();
+        int nms = nTimeoutMinutes * 60 * 1000; //ms
         synchronized (m_locker) {
-            ArrayList<String> ar = new ArrayList<>();
-
-            TimeDog td = new TimeDog();
-            int nms = nTimeoutMinutes * 60 * 1000; //ms
-
-
             int ncount = this.getCount();
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = this.get(i);
-                if (!bIncludeScheduleOrders) {
-                    if (order.is_schedule_process_order()) continue;
-                }
-                //td.reset(order.getStartTime());
                 td.reset(order.getAutoBumpStartCountTime());
                 if (td.is_timeout(nms)) {
+                    if (!bIncludeScheduleOrders) {
+                        if (order.is_schedule_process_order()) continue;
+                    }
                     ar.add(order.getGUID());
                     if (nMaxCount >0)
                     {

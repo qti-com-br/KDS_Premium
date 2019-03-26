@@ -383,7 +383,8 @@ public class KDSSMBDataSource implements Runnable {
         boolean m_bResult = false;
     }
 
-
+    final  int  MAX_UPLOAD_WAITING_COUNT = 100;
+    final int MAX_BATCH_COUNT = 5;
     class UploadRunnable implements Runnable
     {
 
@@ -399,6 +400,10 @@ public class KDSSMBDataSource implements Runnable {
         public void add(String remoteFolder, String subFolder, String fileContent, String toFileName)
         {
 
+            synchronized (m_locker) {
+                if (m_arData.size() >= MAX_UPLOAD_WAITING_COUNT)
+                    return; //ignore this one.
+            }
             UploadData d = new UploadData();
             d.m_strRemoteFolder = remoteFolder;
             d.m_strSubFolder = subFolder;
@@ -406,12 +411,7 @@ public class KDSSMBDataSource implements Runnable {
             d.m_fileName = toFileName;
             synchronized (m_locker) {
                 m_arData.add(d);
-//                if (m_arData.size() > MAX_UPLOAD_WAITING_COUNT)
-//                {
-//                    int n = MAX_UPLOAD_WAITING_COUNT - m_arData.size();
-//                    for (int i=0; i< n; i++)
-//                        m_arData.remove(0);
-//                }
+
             }
         }
 
@@ -435,6 +435,7 @@ public class KDSSMBDataSource implements Runnable {
                 //Log.i(TAG, "notification waiting =" + KDSUtil.convertIntToString(ncount));
                 Vector<UploadData> arFinished = new Vector<>();
                 UploadData d = null;
+                ncount = ncount > MAX_BATCH_COUNT?MAX_BATCH_COUNT:ncount;
                 for (int i=0; i< ncount ; i++) {
 
                     synchronized (m_locker) {
@@ -501,6 +502,8 @@ public class KDSSMBDataSource implements Runnable {
         public void run() {
 
             while (m_bRunning) {
+                if (m_threadUploading != Thread.currentThread())
+                    return;
                 writeDataToFile();
             }
         }

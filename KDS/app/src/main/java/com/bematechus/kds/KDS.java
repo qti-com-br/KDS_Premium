@@ -415,7 +415,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
     }
 
-    TimeDog m_clearDbTimeDog = new TimeDog();
+    //TimeDog m_clearDbTimeDog = new TimeDog();
     /**
      * check connection in a loop
      */
@@ -427,11 +427,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 getPagerManager().onTime();
         }
 
-        if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
-        {
-            remove_statistic_old_data();
-            m_clearDbTimeDog.reset();
-        }
+//        //if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
+//        if (m_clearDbTimeDog.is_timeout(18000)) //30x60x1000, 30mins //debug
+//        {
+//            remove_statistic_old_data();
+//            m_clearDbTimeDog.reset();
+//        }
     }
 
     public boolean startPOSListener()
@@ -1888,7 +1889,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder, boolean bRefreshView)
     {
 
-        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), xmlData);
+        Object obj = KDSXMLParser.parseXml(getStationID(), xmlData);
+        if (obj == null) return;
+        if (!(obj instanceof  KDSDataOrder))
+            return;
+        KDSDataOrder order =(KDSDataOrder) obj;// KDSXMLParser.parseXml(getStationID(), xmlData);
 
         //Log.i(TAG, "receive order: " + order.getOrderName());
         //2.0.39
@@ -2707,7 +2712,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (order.getItems().getCount()<=0) return nItemsCount;
                //KDSStationFunc.orderAdd(this, order, true, true);
                 //TimeDog t = new TimeDog();
-                ArrayList<KDSDataOrder> ordersAdded =  m_users.orderAdd(order, true);//////
+                ArrayList<KDSDataOrder> ordersAdded =  m_users.orderAdd(order, true, bRefreshView);//////
                 //set the preparation time mode sorts
                 for (int i=0; i< ordersAdded.size(); i++) {
                     ordersAdded.get(i).prep_set_sorts(order.prep_get_sorts());
@@ -4320,6 +4325,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     }
 
-
+    TimeDog m_clearDbTimeDog = new TimeDog();
+    /**
+     * Call it in mainactiviy checking thread.
+     */
+    public void checkRemovingStatisticExpiredData()
+    {
+        if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
+        {
+            remove_statistic_old_data();
+            m_clearDbTimeDog.reset();
+        }
+    }
 
 }

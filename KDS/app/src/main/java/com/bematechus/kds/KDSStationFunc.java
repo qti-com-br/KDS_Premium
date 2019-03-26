@@ -224,7 +224,7 @@ public class KDSStationFunc {
      * @return
      *  the order added
      */
-    static public  KDSDataOrder orderAdd(KDSUser kdsuser, KDSDataOrder order, boolean bCheckAddonTime, boolean bAutoSyncWithOthers)
+    static public  KDSDataOrder orderAdd(KDSUser kdsuser, KDSDataOrder order, boolean bCheckAddonTime, boolean bAutoSyncWithOthers, boolean bRefreshView)
     {
         KDSDataOrder orderReturn = null;
         //1. check if this order is existed in array.
@@ -251,7 +251,8 @@ public class KDSStationFunc {
             //t.debug_print_Duration("orderAdd1");
             kdsuser.getCurrentDB().orderAdd(order);
             //t.debug_print_Duration("orderAdd2");
-            kdsuser.refreshView();
+            if (bRefreshView)
+                kdsuser.refreshView();
             //t.debug_print_Duration("orderAdd3");
             orderReturn = order;
 
@@ -1546,19 +1547,19 @@ public class KDSStationFunc {
             }
             else
             { //primary is offline now, svae to current database.
-                orderAdd(kds.getUsers().getUser(userID), order, false, false); //don't check add-on
+                orderAdd(kds.getUsers().getUser(userID), order, false, false, true); //don't check add-on
             }
         }
         else if (kds.getStationsConnections().getRelations().isMirrorStation())
         { //I am mirror slave station
 
-            orderAdd(kds.getUsers().getUser(userID), order, false, false);
+            orderAdd(kds.getUsers().getUser(userID), order, false, false, true);
 
         }
         else
         { //I am common station,
             //check if current database contains this order.
-            orderAdd(kds.getUsers().getUser(userID), order, false, false);
+            orderAdd(kds.getUsers().getUser(userID), order, false, false, true);
         }
 
         //sync to others
