@@ -2106,25 +2106,30 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void bumpOrderOperation(KDSUser.USER userID, String orderGuid, boolean bRefresView) {
 
-        boolean isScheduleOrder = isScheduleOrder(userID, orderGuid);
-        if (isScheduleOrder)
-        {
+        if (!bRefresView) { //it is from auto bumping
+            boolean isScheduleOrder = isScheduleOrder(userID, orderGuid);
+            if (isScheduleOrder) {
 
-            if (onBumpScheduleOrder(userID, orderGuid))
-                return;
+                if (onBumpScheduleOrder(userID, orderGuid))
+                    return;
+            }
         }
         String guid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         boolean bIsFocusedOrder = orderGuid.equals(guid);
         //get next for focus
         String nextGuid = "";
-        if (bIsFocusedOrder) {
-          nextGuid = getNextOrderGuidToFocus(userID, orderGuid);//"";
-        }
-        //save it for printing.
-        //TimeDog td = new TimeDog();
-        KDSDataOrder order = bumpOrder(userID, orderGuid, bRefresView);
-        //td.debug_print_Duration("bumpOrder");
-        if (order == null) return;
+        KDSDataOrder order = null;
+        //synchronized (getKDS().getUsers().getUser(userID).getOrders().m_locker)
+        //{
+            if (bIsFocusedOrder) {
+                nextGuid = getNextOrderGuidToFocus(userID, orderGuid);//"";
+            }
+            //save it for printing.
+            //TimeDog td = new TimeDog();
+            order = bumpOrder(userID, orderGuid, bRefresView);
+            //td.debug_print_Duration("bumpOrder");
+            if (order == null) return;
+        //}
         if (isFixedSingleScreenView())
 //        if (getKDS().isQueueStation() || getKDS().isQueueExpo())
 //        {
@@ -2250,21 +2255,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             getKDS().refreshView(); //use message
             bReturn = true;
+            ar.clear();
         }
         if (getKDS().isMultpleUsersMode())
         {
             ar =  getKDS().getUsers().getUserB().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
             if (ar.size() >0)
             {
-                synchronized (getKDS().getUsers().getUserB().getOrders().m_locker) {
+                //synchronized (getKDS().getUsers().getUserB().getOrders().m_locker) {
                     for (int i = 0; i < ar.size(); i++) {
                         String guid = ar.get(i);
                         bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
                     }
-                }
+                //}
                 getKDS().refreshView();
                 //bumpOrderInThread(KDSUser.USER.USER_A, ar);
                 bReturn = true;
+                ar.clear();
             }
 
         }

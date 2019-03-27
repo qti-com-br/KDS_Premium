@@ -3758,19 +3758,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         if (getUsers().getUser(userID) == null) return;
         KDSDataOrdersDynamic orders = getUsers().getUser(userID).getOrders();
       //  boolean bchanged = false;
-        for (int i=0; i< orders.getCount(); i++)
-        {
-           // if (!orders.get(i).is_schedule_process_order()) continue;
-            KDSDataOrder order = orders.getOrderByIndexWithoutLoadData(i);
-            if (order == null) return;
-            if (!orders.getOrderByIndexWithoutLoadData(i).is_schedule_process_order()) continue;
+        synchronized (orders.m_locker) { //there is java.lang.NullPointerException
+            for (int i = 0; i < orders.getCount(); i++) {
+                // if (!orders.get(i).is_schedule_process_order()) continue;
+                KDSDataOrder order = orders.getOrderByIndexWithoutLoadData(i);
+                if (order == null) break;
+                if (!order.is_schedule_process_order()) continue;
 
-            if (getCurrentDB().schedule_order_update_not_ready_qty((ScheduleProcessOrder) orders.get(i)))
-            {//changed,
-                KDSStationFunc.sync_with_stations(this, KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed,  orders.get(i), orders.get(i).getItems().getItem(0));
-                //bchanged = true;
+                if (getCurrentDB().schedule_order_update_not_ready_qty((ScheduleProcessOrder) orders.get(i))) {//changed,
+                    KDSStationFunc.sync_with_stations(this, KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed, orders.get(i), orders.get(i).getItems().getItem(0));
+                    //bchanged = true;
+                }
+
             }
-
         }
   //      if (bchanged)
         if (bRefreshView)
@@ -4332,6 +4332,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void checkRemovingStatisticExpiredData()
     {
         if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
+        //if (m_clearDbTimeDog.is_timeout(18000)) //30x60x1000, 30mins
         {
             remove_statistic_old_data();
             m_clearDbTimeDog.reset();

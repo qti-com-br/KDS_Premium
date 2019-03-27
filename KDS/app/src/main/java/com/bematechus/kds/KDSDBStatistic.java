@@ -1194,10 +1194,11 @@ public class KDSDBStatistic extends KDSDBBase {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DAY_OF_YEAR, (-1) * nDaysBefore);
         Date dt = c.getTime();
+        String strDate = KDSUtil.convertDateToDbString(dt);
         boolean bstartedbyme = this.startTransaction();
-        String sql = String.format("delete from items where items.orderguid in (select guid from orders where date(finishedtime)<='%s')", KDSUtil.convertDateToDbString(dt));
+        String sql = String.format("delete from items where items.orderguid in (select guid from orders where date(finishedtime)<='%s')", strDate);
         this.executeDML(sql);
-        sql = String.format("delete from orders where date(finishedtime)<='%s'", KDSUtil.convertDateToDbString(dt));
+        sql = String.format("delete from orders where date(finishedtime)<='%s'", strDate);
         this.executeDML(sql);
         this.finishTransaction(bstartedbyme);
 
