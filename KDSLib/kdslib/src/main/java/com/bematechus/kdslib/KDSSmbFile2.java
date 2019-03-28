@@ -161,10 +161,66 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
                 ar.add(files[i].getName());
             }
         }
+        files = null;
         return ar;
         //System.out.println();
         //System.out.println( files.length + " files in " + t2 + "ms"
     }
+
+    /**
+     * Please notice, it use the list() to retrieve all files name.
+     *  The dir and file is same ,just name.
+     *  For speed and memory
+     * @param remoteUriFolder
+     * @param nMaxFiles
+     *  -1,0: read all
+     * @return
+     */
+    static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles, ArrayList<String> ar)
+    {
+        //ArrayList<String> ar = new ArrayList<String>();
+        SmbFile file;
+        String[] files = null;//new SmbFile[0];
+
+        try {
+            file = openSmbUri(remoteUriFolder);
+            if (file == null) return ar;
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return ar;
+        }
+
+        //long t1 = System.currentTimeMillis();
+        try {
+
+            files = file.list();
+        } catch (Exception e) {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        //long t2 = System.currentTimeMillis() - t1;
+
+        for( int i = 0; i < files.length; i++ ) {
+            if (nMaxFiles >0)
+                if (ar.size() >= nMaxFiles) break;
+            String fileName =files[i];//.getName();
+            fileName = fileName.toUpperCase();
+            //if(files[i].getName().indexOf(".xml")!=-1)//fix bug, if the xml is XML, we lost this file.
+            if (fileName.indexOf(".XML") != -1)
+            {
+                ar.add(files[i]);//.getName());
+            }
+        }
+
+        files = null;
+        return ar;
+        //System.out.println();
+        //System.out.println( files.length + " files in " + t2 + "ms"
+    }
+
 
     static public boolean isValidPath(String remoteUriFolder)
     {
@@ -327,7 +383,8 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
             text = KDSUtil.convertUtf8BytesToString(buffer, noffset, ncount);
 
             try {
-
+                buffer = null;
+                rmifile = null;
                 bis.close();
             } catch (IOException e) {
                 KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
@@ -1288,6 +1345,34 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
 //            m_progressDialog.hide();
 //    }
 
+    static public SmbFile[] findAllFiles(String remoteUriFolder)
+    {
+
+        SmbFile file;
+        SmbFile[] files = new SmbFile[0];
+
+        try {
+            file = openSmbUri(remoteUriFolder);
+            if (file == null) return files;
+
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return files;
+        }
+
+        //long t1 = System.currentTimeMillis();
+        try {
+
+            files = file.listFiles();
+        } catch (Exception e) {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        return files;
+    }
 }
 
 

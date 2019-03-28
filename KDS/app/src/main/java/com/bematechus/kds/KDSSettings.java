@@ -1508,7 +1508,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.Settings_password, "");
         set(ID.Message_item_above, false);
         set(ID.Message_order_bottom, false);
-        set(ID.POS_notification_enabled, true);//2.0.22, default should been true.
+        set(ID.POS_notification_enabled, false);//2.0.22, default should been true. 20190312, change default to false, as this create too many files in router.
 
         //set(ID.Item_void_mark_with_char,"(x)");
         //set(ID.Item_Changed_mark_with_char,"(E)");

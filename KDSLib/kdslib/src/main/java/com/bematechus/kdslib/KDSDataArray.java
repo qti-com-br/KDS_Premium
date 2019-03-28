@@ -7,17 +7,18 @@
 package com.bematechus.kdslib;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
  * @author David.Wong
  */
 public class KDSDataArray {
-    protected ArrayList m_arComponents = new ArrayList();
+    protected Vector m_arComponents = new Vector();
 
     protected Object m_locker = new Object();
 
-    public ArrayList getComponents()
+    public Vector getComponents()
     {
         return m_arComponents;
     }

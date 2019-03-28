@@ -45,6 +45,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.CSVStrings;
@@ -54,6 +55,7 @@ import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataFromPrimaryIndicator;
 import com.bematechus.kdslib.KDSDataItem;
+import com.bematechus.kdslib.KDSDataItems;
 import com.bematechus.kdslib.KDSDataMoreIndicator;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
@@ -235,12 +237,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * the interface of timer
      */
     public void onTime() {
-        // return;
+
 
         KDSGlobalVariables.toggleBlinkingStep();
         if (!m_bEnableRefreshTimer) return;
 
         updateTime();
+
         if (isKDSValid()) {
             getKDS().on1sTimer();
             SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
@@ -260,23 +263,25 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     if (getKDS().isValidUser(KDSUser.USER.USER_B))
                         f.updateTimer(KDSUser.USER.USER_B);
                 }
-                this.refreshPrevNext(KDSUser.USER.USER_A);
-
-                if (getKDS().isValidUser(KDSUser.USER.USER_B))
-                    this.refreshPrevNext(KDSUser.USER.USER_B);
+//                this.refreshPrevNext(KDSUser.USER.USER_A);
+//
+//                if (getKDS().isValidUser(KDSUser.USER.USER_B))
+//                    this.refreshPrevNext(KDSUser.USER.USER_B);
             }
         }
         checkNetworkState();
 
-        checkAutoBumping();
-
-        checkAutoBackup();
-
-        checkLogFilesDeleting();
+        //move it to thread
+//        checkAutoBumping();
+//        //move it to thread
+//        checkAutoBackup();
+//        //move it to thread
+//        checkLogFilesDeleting();
 
         refreshAvgPrepTime();
 
         checkAutoActivation();
+        startCheckingThread();
         //testException();
     }
 
@@ -1846,7 +1851,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 onBumpItem(userID);
             }
         }
-        getKDS().schedule_process_update_to_be_prepare_qty();
+        getKDS().schedule_process_update_to_be_prepare_qty(true);
         getKDS().getCurrentDB().clearExpiredBumpedOrders( getSettings().getBumpReservedCount());
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -1893,7 +1898,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        }
 //
 //    }
-    public KDSDataOrder bumpOrder(KDSUser.USER userID, String orderGuid) {
+    public KDSDataOrder bumpOrder(KDSUser.USER userID, String orderGuid, boolean bRefreshView) {
         if (!isKDSValid()) return new KDSDataOrder();
         if (!isUserLayoutReady(userID)) return new KDSDataOrder();
         //save it for printing.
@@ -1927,15 +1932,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //        !getKDS().isTrackerStation() && !getKDS().isQueueExpo()) {
         if (!isFixedSingleScreenView()){
             String firstOrderGuid = getUserUI(userID).getLayout().getEnv().getStateValues().getFirstShowingOrderGUID();
-            if (orderGuid == firstOrderGuid) {
+            if (orderGuid.equals( firstOrderGuid) ) {
                 String nextFirstOrder = getNextOrderGuidToFocus(userID, firstOrderGuid);//  getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(firstOrderGuid);
                 if (nextFirstOrder.isEmpty())
                     nextFirstOrder = getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
                 getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(nextFirstOrder);
             }
         }
-        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid);
-
+        //TimeDog td = new TimeDog();
+        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid,bRefreshView );
+        //td.debug_print_Duration("Func-orderBump");
         //notification
         //if (!getKDS().isQueueStation() &&
         //        !getKDS().isTrackerStation() && !getKDS().isQueueExpo()) {
@@ -2111,22 +2117,30 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void bumpOrderOperation(KDSUser.USER userID, String orderGuid, boolean bRefresView) {
 
-        boolean isScheduleOrder = isScheduleOrder(userID, orderGuid);
-        if (isScheduleOrder)
-        {
-            if (onBumpScheduleOrder(userID, orderGuid))
-                return;
+        if (!bRefresView) { //it is from auto bumping
+            boolean isScheduleOrder = isScheduleOrder(userID, orderGuid);
+            if (isScheduleOrder) {
+
+                if (onBumpScheduleOrder(userID, orderGuid))
+                    return;
+            }
         }
         String guid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         boolean bIsFocusedOrder = orderGuid.equals(guid);
         //get next for focus
         String nextGuid = "";
-        if (bIsFocusedOrder) {
-          nextGuid = getNextOrderGuidToFocus(userID, orderGuid);//"";
-        }
-        //save it for printing.
-        KDSDataOrder order = bumpOrder(userID, orderGuid);
-        if (order == null) return;
+        KDSDataOrder order = null;
+        //synchronized (getKDS().getUsers().getUser(userID).getOrders().m_locker)
+        //{
+            if (bIsFocusedOrder) {
+                nextGuid = getNextOrderGuidToFocus(userID, orderGuid);//"";
+            }
+            //save it for printing.
+            //TimeDog td = new TimeDog();
+            order = bumpOrder(userID, orderGuid, bRefresView);
+            //td.debug_print_Duration("bumpOrder");
+            if (order == null) return;
+        //}
         if (isFixedSingleScreenView())
 //        if (getKDS().isQueueStation() || getKDS().isQueueExpo())
 //        {
@@ -2143,7 +2157,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else
         {
-            this.getSummaryFragment().refreshSummary();
+//            if (this.getSummaryFragment() != null)
+//                this.getSummaryFragment().refreshSummary(); //remove this. It do UI drawing in thread. Thre refreshView has refresh sum.
             if (bIsFocusedOrder) {
                 setSelectedOrderGuid(userID, nextGuid);
                 setSelectedItemGuid(userID, "");
@@ -2193,60 +2208,81 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
-    final int MAX_AUTO_BUMP_COUNT = 1;
+    final int MAX_AUTO_BUMP_COUNT = 3;
+    //int MAX_AUTO_BUMP_COUNT = 2;
+
     /**
-     *
+     * call it in thread
      * @return
      * true: bumped some orders
      */
     public boolean checkAutoBumping()
     {
+
         if (!isKDSValid()) return false;
+        if (getKDS().isQueueView() ||
+                getKDS().isQueueExpo()) {
+            m_queueView.checkAutoBump();
+            return false;
+        }
+        if (getKDS().isTrackerView())
+        {
+            m_ttView.checkAutoBumping();//
+            return false;
+        }
+
         boolean bEnabled = this.getSettings().getBoolean(KDSSettings.ID.Auto_bump_enabled);
 
         if (!bEnabled) return false;
-        int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
-        //limit its size
-        ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT);
 
+        //there is one bug here, this function auto bump queue orders too.
+        //add following code.
+        if (getKDS().isQueueView() ||
+                getKDS().isQueueExpo()) {
+            m_queueView.checkAutoBump();
+            return false;
+        }
+
+        int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
+
+        //limit its size
+
+
+        ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
+        //Log.i(TAG, "Auto bumping=" + KDSUtil.convertIntToString(ar.size()));
 
         //
         boolean bReturn = false;
         if (ar.size() >0)
         {
-            for (int i=0; i< ar.size(); i++) {
-                String guid = ar.get(i);
+            synchronized (getKDS().getUsers().getUserA().getOrders().m_locker) {
+                for (int i = 0; i < ar.size(); i++) {
+                    //TimeDog td = new TimeDog();
 
-                bumpOrderOperation(KDSUser.USER.USER_A, guid, true);
-//                if (ar.size()>1 && i != (ar.size()-1)) {
-//                    try {
-//                        Thread.sleep(500);
-//                    }catch ( Exception e)
-//                    {
-//
-//                    }
-//                }
-
+                    bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+                    //td.debug_print_Duration("bump order time:");
+                }
             }
-            //refreshView();
 
-
+            getKDS().refreshView(); //use message
             bReturn = true;
-
-
+            ar.clear();
         }
         if (getKDS().isMultpleUsersMode())
         {
-            ar =  getKDS().getUsers().getUserB().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT);
+            ar =  getKDS().getUsers().getUserB().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
             if (ar.size() >0)
             {
-                for (int i=0; i< ar.size(); i++) {
-                    String guid = ar.get(i);
-                    bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
-                }
-                refreshView();
+                //synchronized (getKDS().getUsers().getUserB().getOrders().m_locker) {
+                    for (int i = 0; i < ar.size(); i++) {
+                        String guid = ar.get(i);
+                        bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
+                    }
+                //}
+                getKDS().refreshView();
                 //bumpOrderInThread(KDSUser.USER.USER_A, ar);
                 bReturn = true;
+                ar.clear();
             }
 
         }
@@ -2309,7 +2345,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         if (order.getItems().isLastActiveItem(focusedItemGuid))
         {
-            bumpOrder(userID, focusedOrderGuid);
+            bumpOrder(userID, focusedOrderGuid, true);
         }
 
 
@@ -2500,7 +2536,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 onUnbumpItem(userID);
             }
         }
-        getKDS().schedule_process_update_to_be_prepare_qty();
+        getKDS().schedule_process_update_to_be_prepare_qty(true);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -2522,7 +2558,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 return;
             }
             restoreOrder(orderGuid);
-            getKDS().schedule_process_update_to_be_prepare_qty();
+            getKDS().schedule_process_update_to_be_prepare_qty(true);
         }
         else
         {
@@ -2558,7 +2594,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         unbumpItem(userID, orderGuid, itemGuid);
 
-        getKDS().schedule_process_update_to_be_prepare_qty();
+        getKDS().schedule_process_update_to_be_prepare_qty(true);
         refreshView(userID);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -3270,7 +3306,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().getCurrentDB().prep_add_order_items(order);
 
 
-        getKDS().doOrderFilter(order, false);
+        getKDS().doOrderFilter(order, false, true);
         //t.debug_print_Duration("opAddNewOrder2");
         getKDS().refreshView(KDSUser.USER.USER_A, KDS.RefreshViewParam.None);
         getKDS().refreshView(KDSUser.USER.USER_B, KDS.RefreshViewParam.None);
@@ -3372,7 +3408,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         //backup all new settings to kdsdata folder.
         if (m_bSuspendChangedEvent) return;
-
+        if (Activation.isActivationPrefKey(key))
+            return;
         KDSSettings settingsBackup = new KDSSettings(this.getApplicationContext());
         settingsBackup.loadSettings(this.getApplicationContext());
         settingsBackup.exportToFolder(this.getApplicationContext(), KDSDBBase.getSDDBFolderWithLastDividChar());
@@ -3910,6 +3947,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
+
+
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -3942,6 +3981,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshSummary(KDSUser.USER userID) {
         if (!isKDSValid()) return ;
+
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
         this.getUserUI(userID).refreshSum(userID, pos);
@@ -4065,30 +4105,35 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void refreshView() {
         if (!isKDSValid()) return ;
 
-        if (getKDS().getUsers().getUsersCount() == 0)
-            return;
-        SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
-        //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
-        if (funcView == SettingsBase.StationFunc.Queue ||
-                funcView == SettingsBase.StationFunc.Queue_Expo)
-            refreshQueueView();
-        else if (funcView == SettingsBase.StationFunc.TableTracker)// (getKDS().isTrackerStation())
-            refreshTTView();
-        else {
-            refreshView(KDSUser.USER.USER_A);
-            if (getKDS().isValidUser(KDSUser.USER.USER_B))
-                refreshView(KDSUser.USER.USER_B);
-        }
+
+        getKDS().refreshView();
+
+//        if (getKDS().getUsers().getUsersCount() == 0)
+//            return;
+//        SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
+//        //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
+//        if (funcView == SettingsBase.StationFunc.Queue ||
+//                funcView == SettingsBase.StationFunc.Queue_Expo)
+//            refreshQueueView();
+//        else if (funcView == SettingsBase.StationFunc.TableTracker)// (getKDS().isTrackerStation())
+//            refreshTTView();
+//        else {
+//            refreshView(KDSUser.USER.USER_A);
+//            if (getKDS().isValidUser(KDSUser.USER.USER_B))
+//                refreshView(KDSUser.USER.USER_B);
+//        }
     }
 
     public void refreshView(KDSUser.USER userID) {
         if (!isKDSValid()) return ;
-        if (getSelectedOrderGuid(userID).isEmpty()) {
-            String nextGuid =getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
-            setSelectedOrderGuid(userID, nextGuid);
-        }
         getKDS().refreshView(userID, KDS.RefreshViewParam.None);
-        refreshPrevNext(userID);
+
+//        if (getSelectedOrderGuid(userID).isEmpty()) {
+//            String nextGuid =getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
+//            setSelectedOrderGuid(userID, nextGuid);
+//        }
+//        getKDS().refreshView(userID, KDS.RefreshViewParam.None);
+//        refreshPrevNext(userID);
     }
 
     public void refreshPrevNext(KDSUser.USER userID) {
@@ -4288,7 +4333,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (getSelectedOrderGuid(user).equals(orderGuid)) {
                 onBumpOrder(user);
             } else {
-                KDSDataOrder bumpedOrder = bumpOrder(user, orderGuid);
+                KDSDataOrder bumpedOrder = bumpOrder(user, orderGuid, true);
                 if (bumpedOrder == null) return;
                 this.getSummaryFragment().refreshSummary();
                 refreshView();
@@ -5180,7 +5225,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //we must init it.
         //if (this.getLayout(KDSUser.USER.USER_A) == null) return;
         if (!isUserLayoutReady(KDSUser.USER.USER_A)) return;
-        this.getLayout(KDSUser.USER.USER_A).getEnv().setSettings(getKDS().getSettings());
+        if (this.getLayout(KDSUser.USER.USER_A) != null)
+            this.getLayout(KDSUser.USER.USER_A).getEnv().setSettings(getKDS().getSettings());
 
         init_user_screen_gui_variables();
         init_summary_gui();
@@ -5448,7 +5494,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //save it for printing.
         KDSDataOrder order = m_queueView.getOrders().getOrderByGUID(orderGuid);// getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
 
-        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid);
+        KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid, true);
         //notification
         notifyPOSOrderBump(userID, order);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -6026,5 +6072,59 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         getKDS().onSMSSuccess(orderGuid, smsState);
     }
+
+    Thread m_threadChecking = null;
+
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startCheckingThread()
+    {
+        if (m_threadChecking == null ||
+                !m_threadChecking.isAlive())
+        {
+            m_threadChecking = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (getKDS().isThreadRunning())
+                    {
+                        try {
+                            if (m_threadChecking != Thread.currentThread())
+                                return;
+                            checkAutoBumping();
+                            //move it to thread
+                            checkAutoBackup();
+                            //move it to thread
+                            checkLogFilesDeleting();
+                            //remove statistic data
+                            getKDS().checkRemovingStatisticExpiredData();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadChecking.setName("Checking");
+            m_threadChecking.start();
+        }
+    }
+
+//    Handler m_autoBumpScheduleOrder = new Handler()
+//    {
+//        public void handleMessage(Message msg) {
+//
+//        }
+//    };
+
 }
 

@@ -216,4 +216,23 @@ public class RouterAck {
         }
         return ar;
     }
+
+    static public ArrayList<String> getSendToStations(ArrayList<KDSToStation> arStations)
+    {
+        ArrayList<String> ar = new ArrayList<>();
+
+        for (int i=0; i< arStations.size(); i++)
+        {
+            KDSToStation station = arStations.get(i);
+            String primary = station.getPrimaryStation();
+            String slave = station.getSlaveStation();
+            if (!isExistedInArray(ar, primary) && (!primary.isEmpty()) ) {
+                ar.add(primary);
+            }
+            if (!isExistedInArray(ar, slave) &&(!slave.isEmpty()))
+                ar.add(slave);
+
+        }
+        return ar;
+    }
 }

@@ -108,4 +108,52 @@ public class KDSXMLParser  {
     {
         return KDSXMLParserCommand.parseCommand(xml);
     }
+
+    static public KDSXMLParserCommand.KDSCommand quickGetCodeFromString(String xmlData)
+    {
+        String s = xmlData;
+        String tagStart = "<Code>";
+        String tagEnd = "</Code>";
+
+        int nStart = s.indexOf(tagStart);
+        if (nStart <0) return KDSXMLParserCommand.KDSCommand.Nothing;
+
+        nStart += tagStart.length();
+        int nEnd = s.indexOf(tagEnd);
+        if (nEnd <0) return KDSXMLParserCommand.KDSCommand.Nothing;
+        if (nEnd<= nStart) return KDSXMLParserCommand.KDSCommand.Nothing;
+        String strCommand = s.substring(nStart, nEnd);
+        if (strCommand.isEmpty()) return KDSXMLParserCommand.KDSCommand.Nothing;
+
+        int n = KDSUtil.convertStringToInt(strCommand, 0);
+        return KDSXMLParserCommand.KDSCommand.values()[n];
+
+
+
+
+
+    }
+    static public String quickGetOrderIDFromString(String xmlData)
+    {
+        String s = xmlData;
+        String tagStart = "<ID>";
+        String tagEnd = "</ID>";
+
+        int nStart = s.indexOf(tagStart);
+        if (nStart <0) return "";
+
+        nStart += tagStart.length();
+        int nEnd = s.indexOf(tagEnd);
+        if (nEnd <0) return "";
+        if (nEnd <= nStart) return "";
+        String strCommand = s.substring(nStart, nEnd);
+
+        return strCommand;
+
+
+
+
+
+
+    }
 }

@@ -19,8 +19,7 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
-
-    compileSdkVersion 23
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.bematechus.kdsrouter"
@@ -33,6 +32,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            zipAlignEnabled true
             signingConfig signingConfigs.config
             debuggable false
             jniDebuggable false
@@ -89,6 +92,10 @@ android {
             versionName '2.3.0.0'
             dimension "default"
         }
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 }
 

@@ -9,6 +9,7 @@ import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2017/4/12.
@@ -74,7 +75,7 @@ public class TTViewOrders {
 
     public String getNextOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
+        Vector ar = this.getOrders().getComponents();
         if (ar.size() <=0) return "";
         int nIndex =  this.getOrders().getOrderIndexByGUID(fromGuid);
         nIndex ++;
@@ -87,7 +88,7 @@ public class TTViewOrders {
 
     public String getPrevOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
+        Vector ar = this.getOrders().getComponents();
         if (ar.size() <=0)  return "";
         int nIndex = this.getOrders().getOrderIndexByGUID(fromGuid);
         nIndex --;
@@ -165,7 +166,7 @@ public class TTViewOrders {
         for (int i=0; i< arWillRemoved.size(); i++)
         {
             if (arWillRemoved.get(i).getTTFindMyTrackerID())//.m_bTTFindMyTrackerID) //has existed in gateway before, not lost. That means the tt was removed.
-                KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A),arWillRemoved.get(i).getGUID());
+                KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A),arWillRemoved.get(i).getGUID(), true);
         }
         arWillRemoved.clear();
     }
@@ -269,9 +270,10 @@ public class TTViewOrders {
     public void clearOrders()
     {
         for (int i=0; i< getOrders().getCount(); i++) {
-            KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A), getOrders().get(i).getGUID());
+            KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A), getOrders().get(i).getGUID(), false);
         }
         getOrders().clear();
+        KDSGlobalVariables.getKDS().refreshView();
     }
 
     final String HOLDER_ID_EMPTY = "-1";
@@ -336,8 +338,11 @@ public class TTViewOrders {
             }
         }
 
-        for (int i=0; i< ar.size(); i++)
-            m_orders.removeComponent(ar.get(i));
+        //m_orders.getComponents().removeAll(ar);
+        //m_orders.sortOrders();
+        m_orders.removeComponents(ar);
+//        for (int i=0; i< ar.size(); i++)
+//            m_orders.removeComponent(ar.get(i));
 
        ar.clear();
     }

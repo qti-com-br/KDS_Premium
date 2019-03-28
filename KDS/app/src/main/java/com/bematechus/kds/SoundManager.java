@@ -52,7 +52,7 @@ public class SoundManager {
     {
         SoundRunnable s = new SoundRunnable(sound);
 
-        Thread t = new Thread(s);
+        Thread t = new Thread(s, "PlaySound");
 
         t.start();
 

@@ -8,6 +8,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
+import com.bematechus.kdslib.TimeDog;
 
 import java.util.Date;
 
@@ -1402,10 +1403,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    orderAdd(kds.getUsers().getUserA(), order, false, false); //don't check add-on
+                    orderAdd(kds.getUsers().getUserA(), order, false, false, true); //don't check add-on
                 else
                 {
-                    kds.getUsers().orderAdd(order, false);
+                    kds.getUsers().orderAdd(order, false, true);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
@@ -1414,18 +1415,22 @@ public class KDSStationExpeditor extends KDSStationNormal {
         { //I am mirror slave station
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false);
+                orderAdd(kds.getUsers().getUserA(), order, false, false, true);
             else
-                kds.getUsers().orderAdd(order, false);
+                kds.getUsers().orderAdd(order, false, true);
 
         }
         else
         { //I am common station, I am a expeditor.
             //check if current database contains this order.
+//            if (isThisOrderJustBeenAutoBump(kds, order.getOrderName()))
+//                return; //in one hour, we don't accept same order name. When auto bump enabled, if expo has bump given order,this station_add_new will cause add a new same name one.
+//                          //I have to fix this bug, in 24 stations "coke" branch.
+
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false);
+                orderAdd(kds.getUsers().getUserA(), order, false, false, true);
             else
-                kds.getUsers().orderAdd(order, false);
+                kds.getUsers().orderAdd(order, false, true);
         }
 
         tt_checkAllItemsBumped(kds, order);
@@ -1543,7 +1548,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (order == null) return;
         if (order != null)
         {
-            orderBump(kds.getUsers().getUserA(), order.getGUID());
+            orderBump(kds.getUsers().getUserA(), order.getGUID(), false);
 
             kds.refreshView();
         }
@@ -1557,5 +1562,20 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
 
     }
+
+//    /*
+//       in one hour, we don't accept same order name.
+//       It is for Station_add_new_order command.
+//    */
+//    static private boolean isThisOrderJustBeenAutoBump(KDS kds, String orderName)
+//    {
+//        String guid =  kds.getCurrentDB().orderGetBumpedGuidFromName(orderName);
+//        if (guid.isEmpty()) return false;
+//        Date dt = kds.getCurrentDB().orderGetBumpedTime(guid);
+//        TimeDog td = new TimeDog(dt);
+//        return (!td.is_timeout(1 * 60 * 60 * 1000) );//one hour
+//
+//
+//    }
 
 }

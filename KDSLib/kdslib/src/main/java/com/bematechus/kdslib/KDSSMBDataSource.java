@@ -3,6 +3,10 @@ package com.bematechus.kdslib;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import jcifs.smb.SmbFile;
 
 /**
  *
@@ -11,6 +15,11 @@ import java.util.ArrayList;
  */
 public class KDSSMBDataSource implements Runnable {
     private static final String TAG = "KDSSMBDataSource";
+    //for sock stuck issue
+    public interface BufferStateChecker {
+        boolean bufferCheckerIsTooManyDataBuffered();
+    }
+
     final static public String PATH_LOST = "SMBLOST";
     final static public String PATH_PERMISSION = "SMBPERMISSION";
     public static final String TAG_SMBERROR_START =  "<SMBError>";
@@ -23,9 +32,26 @@ public class KDSSMBDataSource implements Runnable {
     private String m_strRemoteFolder = ""; //with the last "/"
     private boolean m_bThreadRunning = false;
     private Thread m_thread = null;
+    //for buffer full when smb read data.
+    BufferStateChecker m_bufferStateChecker = null;
+    public void setBufferStateChecker(BufferStateChecker checker)
+    {
+        m_bufferStateChecker = checker;
+    }
+    public BufferStateChecker getBufferStateChecker()
+    {
+        return m_bufferStateChecker;
+    }
+
     public KDSSMBDataSource(KDSSocketMessageHandler handler)
     {
         this.setMessageHandler(handler);
+    }
+
+    public KDSSMBDataSource(KDSSocketMessageHandler handler, BufferStateChecker checker)
+    {
+        this.setMessageHandler(handler);
+        this.setBufferStateChecker(checker);
     }
 
     public void setMessageHandler(KDSSocketMessageHandler handler)
@@ -44,7 +70,7 @@ public class KDSSMBDataSource implements Runnable {
             return true;
         m_bThreadRunning = true;
 
-        m_thread = new Thread(this, "SocketPing");
+        m_thread = new Thread(this, "SMBSrc");
         m_thread.start();
 
         return true;
@@ -59,6 +85,7 @@ public class KDSSMBDataSource implements Runnable {
                 KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
             }
         }
+
         m_thread = null;
 
         //for uploading thread
@@ -152,6 +179,9 @@ public class KDSSMBDataSource implements Runnable {
 
     }
 
+    //save them for next loop
+    ArrayList<String> m_arExistedFiles = new ArrayList<>();
+    final int BUFFER_FILES_COUNT = -1;
     /**
      *
      */
@@ -159,37 +189,75 @@ public class KDSSMBDataSource implements Runnable {
     {
         m_tdLastCheckPermission.reset(KDSUtil.createInvalidDate());
         m_bPermissionError = true;
+        List<String> ar = new ArrayList<>();
         while(m_bThreadRunning)
         {
+            if (m_thread != Thread.currentThread())
+                return;
             if (m_strRemoteFolder.isEmpty()) {
                 sleep(500);
                 continue;
             }
-            try {
-                if (KDSSmbFile2.isValidPath(m_strRemoteFolder)) {
-                    if (isRemoteFolderPermissionError())
+            try
+            {
+                //check buffer, KPP1-Coke
+                if (m_bufferStateChecker != null)
+                {
+                    if (m_bufferStateChecker.bufferCheckerIsTooManyDataBuffered())
                     {
+                        sleep(100);
+                        continue;
+                    }
+                }
+                if (!m_bThreadRunning) return;
+                if (KDSSmbFile.smb_isValidPath(m_strRemoteFolder)) {
+                    if (isRemoteFolderPermissionError()) {
                         continue;
                     }
                     informSmbOK();
-                }
-                else
-                {
+                } else {
                     informSmbLostError();
                     sleep(500);
                     continue;
                 }
+                if (!m_bThreadRunning) return;
 
                 //read data
-                ArrayList<String> ar = KDSSmbFile2.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
+                //ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
+                ar.clear();
+                if (m_arExistedFiles.size() <=0) {
+                    //m_arExistedFiles.clear();
+
+                    m_arExistedFiles = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder, BUFFER_FILES_COUNT, m_arExistedFiles);
+                }
+                if (!m_bThreadRunning) return;
+                if (m_arExistedFiles.size() >0)
+                {
+                    int ncount = MAX_ORDERS_COUNT>m_arExistedFiles.size()?m_arExistedFiles.size():MAX_ORDERS_COUNT;
+                    ar = m_arExistedFiles.subList(0, ncount);
+
+//                    for (int i=0; i< ncount; i++) {
+//                        ar.add(m_arExistedFiles.get(i));
+//                        //m_arExistedFiles.remove(0);
+//                    }
+//                    m_arExistedFiles.removeAll(ar);
+                }
+                if (!m_bThreadRunning) return;
+
                 if (ar.size() <= 0) {
                     sleep(500);
                     continue;
                 }
+                //if (!KDSConst._DEBUG)
                 checkXmlFiles(ar);
+                if (!m_bThreadRunning) return;
+                ar.clear();
+                if (!m_bThreadRunning) return;
+                sleep(500); //slow down.
             }
             catch (Exception e)
             {
+                if (!m_bThreadRunning) return;
                 KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
                 //KDSLog.e(TAG, KDSUtil.error( e));
             }
@@ -197,25 +265,34 @@ public class KDSSMBDataSource implements Runnable {
         }
     }
 
-    final int MAX_ORDERS_COUNT = 10;
-    private void checkXmlFiles(ArrayList<String> arFiles) {
+    final int MAX_ORDERS_COUNT = 20;
+    private void checkXmlFiles(List<String> arFiles) {
+
         int ncount = arFiles.size();
-        if (ncount >MAX_ORDERS_COUNT)
-            ncount = MAX_ORDERS_COUNT;
+//        if (ncount >MAX_ORDERS_COUNT)
+//            ncount = MAX_ORDERS_COUNT;
         for (int i = 0; i < ncount; i++)
         {
-            String smbFileName = arFiles.get(i);
-            smbFileName = m_strRemoteFolder + smbFileName;
+            if (!m_bThreadRunning) return;
+            String smbFileName = m_strRemoteFolder +arFiles.get(i);
+            //smbFileName =  smbFileName;
+
             String text = readFileContent(smbFileName);
+
             if (text.isEmpty()) continue;
-            doReceivedXmlText(smbFileName,text);
+
+            doReceivedXmlText(smbFileName, text);
+            if (!m_bThreadRunning) return;
             //remove this file.
             removeSmbFile(smbFileName);
+            if (!m_bThreadRunning) return;
             if (i < ncount-1)
                 sleep(500); //delay, Too many orders will lock the router.
         }
+        //arFiles.clear();
     }
 
+    //byte[] m_readTextBuffer = new byte[1024*1024*5];
     /**
      * read text from the smb server
      *
@@ -290,7 +367,7 @@ public class KDSSMBDataSource implements Runnable {
             m_uploadRunnable = new UploadRunnable();
         m_uploadRunnable.add(m_strRemoteFolder, strSubFolder, strFileContent, smbFileName);
         if (m_threadUploading == null) {
-            m_threadUploading = new Thread(m_uploadRunnable);
+            m_threadUploading = new Thread(m_uploadRunnable, "SMBUpload");
             m_threadUploading.start();
         }
         return true;
@@ -306,10 +383,13 @@ public class KDSSMBDataSource implements Runnable {
         boolean m_bResult = false;
     }
 
+    final  int  MAX_UPLOAD_WAITING_COUNT = 100;
+    final int MAX_BATCH_COUNT = 5;
     class UploadRunnable implements Runnable
     {
 
-        ArrayList<UploadData> m_arData = new ArrayList<>();
+        Vector<UploadData> m_arData = new Vector<>();
+        String m_lastExistedRemoteSubFolder = ""; //last passed check
 
         private Object m_locker = new Object();
         private boolean m_bRunning = true;
@@ -319,6 +399,11 @@ public class KDSSMBDataSource implements Runnable {
         }
         public void add(String remoteFolder, String subFolder, String fileContent, String toFileName)
         {
+
+            synchronized (m_locker) {
+                if (m_arData.size() >= MAX_UPLOAD_WAITING_COUNT)
+                    return; //ignore this one.
+            }
             UploadData d = new UploadData();
             d.m_strRemoteFolder = remoteFolder;
             d.m_strSubFolder = subFolder;
@@ -326,6 +411,7 @@ public class KDSSMBDataSource implements Runnable {
             d.m_fileName = toFileName;
             synchronized (m_locker) {
                 m_arData.add(d);
+
             }
         }
 
@@ -346,49 +432,141 @@ public class KDSSMBDataSource implements Runnable {
                 synchronized (m_locker) {
                     ncount = m_arData.size();
                 }
-                ArrayList<UploadData> arFinished = new ArrayList<>();
-
+                //Log.i(TAG, "notification waiting =" + KDSUtil.convertIntToString(ncount));
+                Vector<UploadData> arFinished = new Vector<>();
+                UploadData d = null;
+                ncount = ncount > MAX_BATCH_COUNT?MAX_BATCH_COUNT:ncount;
                 for (int i=0; i< ncount ; i++) {
-                    UploadData d = null;
+
                     synchronized (m_locker) {
                         d = m_arData.get(i);
                     }
-                    String remoteFolder = d.m_strRemoteFolder;
-                    if (!KDSSmbFile2.isExistedSubFolder(d.m_strRemoteFolder, d.m_strSubFolder)) {
 
-                        if (!KDSSmbFile2.createSubDir(remoteFolder+d.m_strSubFolder)) {
-                            d.m_bResult = false;
-                            continue;
-                        }
+
+                    if (!checkRemoteSubfolder(d.m_strRemoteFolder, d.m_strSubFolder)) {
+                        d.m_bResult = false;
+                        continue;
                     }
+                    String remoteFolder = d.m_strRemoteFolder + (d.m_strSubFolder +"/");;
 
-                    remoteFolder += (d.m_strSubFolder +"/");
                     boolean b = KDSSmbFile2.smbPut(remoteFolder, d.m_fileName, d.m_fileContent);
                     d.m_bResult = b;
-                    if (b)
+                    if (!b)
                     {
-                        arFinished.add(d);
+                        m_lastExistedRemoteSubFolder = "";
+                        checkRemoteSubfolder(d.m_strRemoteFolder, d.m_strSubFolder);
                     }
+                    arFinished.add(d);
+                    try {
+                        Thread.sleep(10);
+                    }
+                    catch (Exception e)
+                    {
 
+                    }
                 }
                 //remove finished
                 synchronized (m_locker) {
-                    for (int i= 0; i< arFinished.size(); i++)
-                    {
-                        m_arData.remove(arFinished.get(i));
-                    }
+                    m_arData.removeAll(arFinished);
                 }
                 arFinished.clear();
             }
         }
 
+        private boolean checkRemoteSubfolder(String remoteFolder, String subFolder)
+        {
+            String remoteSubfolder = remoteFolder+subFolder;
+            if (!remoteSubfolder.equals(m_lastExistedRemoteSubFolder) ) {
+                if (!KDSSmbFile.isExistedSubFolder(remoteFolder, subFolder)) {
+
+                    if (!KDSSmbFile.createSubDir(remoteSubfolder)) {
+
+                        m_lastExistedRemoteSubFolder = "";
+                        return false;
+                    }
+                    else
+                    {
+                        m_lastExistedRemoteSubFolder = remoteSubfolder;
+                        return true;
+                    }
+                }
+                else
+                {
+                    m_lastExistedRemoteSubFolder = remoteSubfolder;
+                    return true;
+                }
+            }
+            return true;
+        }
         @Override
         public void run() {
 
             while (m_bRunning) {
+                if (m_threadUploading != Thread.currentThread())
+                    return;
                 writeDataToFile();
             }
         }
+    }
+
+    public int removeTimeoutNotificationFiles(String subFolder, int nMinutes)
+    {
+        return removeTimeoutFiles(m_strRemoteFolder, subFolder, nMinutes);
+    }
+    public int removeTimeoutFiles(String remoteFolder, String subFolder, int nMinutes)
+    {
+        Object[] files = null;
+        files = KDSSmbFile.findAllFiles(remoteFolder + subFolder+"/");
+        if (files == null ||
+            files.length<=0)
+            return 0;
+        int ncounter = 0;
+        //TimeDog td = new TimeDog();
+        long timeout = nMinutes * 60 * 1000; //ms
+        for (int i=0; i< files.length; i++)
+        {
+
+            try {
+                Object obj = files[i];
+                if (obj == null)
+                    return ncounter;
+                long creatTime = 0;// file.lastModified();
+                if (obj instanceof jcifs.smb.SmbFile) {
+                    jcifs.smb.SmbFile file = (jcifs.smb.SmbFile) obj;
+                    creatTime =  file.lastModified();
+                    long now = System.currentTimeMillis();
+                    long d = now - creatTime;
+                    if (d >timeout)
+                    {
+                        file.delete();
+                        ncounter ++;
+                    }
+                }
+                else if (obj instanceof jcifsng.smb.SmbFile)
+                {
+                    jcifsng.smb.SmbFile file = (jcifsng.smb.SmbFile) obj;
+                    creatTime =  file.lastModified();
+                    long now = System.currentTimeMillis();
+                    long d = now - creatTime;
+                    if (d >timeout)
+                    {
+                        file.delete();
+                        ncounter ++;
+                    }
+                }
+
+
+
+
+                sleep(10);
+
+            }
+            catch ( Exception e){}
+
+        }
+        files = null;
+
+        return ncounter;
     }
 
 

@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -311,7 +313,10 @@ public class TTView  extends View implements TableTracker.TT_Event {
     }
     public void refresh()
     {
-        this.invalidate();
+        Message m = new Message();
+        m.what = 0;
+        m_refreshHandler.sendMessage(m);
+        //this.invalidate();
     }
     public Rect getBounds()
     {
@@ -393,8 +398,16 @@ public class TTView  extends View implements TableTracker.TT_Event {
     @Override
     protected void onDraw(Canvas canvas)
     {
-        m_ttOrders.moveUnassignedToEnd();
-        onDrawTT(canvas);
+        try {
+
+
+            m_ttOrders.moveUnassignedToEnd();
+            onDrawTT(canvas);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     int checkStringWidth(KDSViewFontFace ft, String s) {
@@ -1100,12 +1113,21 @@ public class TTView  extends View implements TableTracker.TT_Event {
     }
     public void onTimer()
     {
-        refreshTimer();
-        checkExpoRemovedOrder();
-        checkAllItemsBumpedOrder();
-        checkPageCounter();
-        m_tt.onTimer();
-        checkTTOrders();
+        try {
+
+
+            refreshTimer();
+            //checkExpoRemovedOrder(); //move to mainactivity.java
+            //checkAllItemsBumpedOrder(); //move to mainactivity.java
+            checkPageCounter();
+            m_tt.onTimer();
+            checkTTOrders();
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            //e.printStackTrace();
+        }
     }
 
     public void checkExpoRemovedOrder()
@@ -1358,4 +1380,28 @@ public class TTView  extends View implements TableTracker.TT_Event {
         order.setTrackerID(trackerID);
         KDSGlobalVariables.getKDS().getCurrentDB().orderSetTrackerID(orderGuid, trackerID);
     }
+
+    public void doRefresh()
+    {
+        this.invalidate();
+    }
+    Handler m_refreshHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            m_refreshHandler.removeMessages(0);
+            doRefresh();
+            return false;
+        }
+    });
+
+    /**
+     * call it from mainactivity thread.
+     * @return
+     */
+    public void checkAutoBumping()
+    {
+        checkExpoRemovedOrder();
+        checkAllItemsBumpedOrder();
+    }
+
 }

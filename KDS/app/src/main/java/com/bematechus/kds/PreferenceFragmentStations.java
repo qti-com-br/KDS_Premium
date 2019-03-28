@@ -1264,7 +1264,11 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                         if (relation.getFunction() != KDSSettings.StationFunc.Queue_Expo) {
                             relation.setFunction(KDSSettings.StationFunc.Queue_Expo);
                             relation.setExpStations(""); //clear expo'expo
-                            MyAdapter.this.addExpeditorToAll(relation.getID());
+                            //Comment it:
+                            //There is another minor bug that can be fixed. When you set a station to queue-expo all of the prep stations get pointed to that queue expo.
+                            // When testing on 24 stations you have to remove most of them and takes a lot of time.
+                            //Can you make it so it does not do that. When you set to queue-expo you have to manually put the expo stations in for each prep.
+                            //MyAdapter.this.addExpeditorToAll(relation.getID());
                             MyAdapter.this.notifyDataSetChanged();
                         }
                         break;
@@ -1969,7 +1973,9 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             if (r == null) return  KDSSettings.StationFunc.Queue; //show nothing
             if (r.getFunction() != KDSSettings.StationFunc.Expeditor &&
                     r.getFunction() != KDSSettings.StationFunc.Normal &&
-                    r.getFunction() != KDSSettings.StationFunc.Queue_Expo) {
+                    r.getFunction() != KDSSettings.StationFunc.Queue_Expo &&
+                    r.getFunction() != KDSSettings.StationFunc.Queue) //add this line, in old version, it add queue as expo
+            {
                 String primary = getMyPrimaryStation(stationID);
                 if (primary.isEmpty()) return KDSSettings.StationFunc.Queue;
                 if (primary.equals(whoUseMeAsSlave)) return r.getFunction();

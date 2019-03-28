@@ -150,6 +150,7 @@ public class KDSSocketMessageHandler extends Handler
 
     @Override
     public void handleMessage(Message msg) {
+
         switch (msg.what) {
             case SOCK_MSG_CONNECTED:
             {
@@ -171,6 +172,7 @@ public class KDSSocketMessageHandler extends Handler
                 byte[] bytes = b.getByteArray("data");
                 String ip = b.getString("ip");
                 ByteBuffer buf = ByteBuffer.wrap(bytes);
+                b.clear();
                 m_eventReceiver.sockevent_onReceiveData((KDSSocketInterface) obj, ip, buf, nLength );
 
             }
@@ -180,6 +182,7 @@ public class KDSSocketMessageHandler extends Handler
                 Object obj = msg.obj;
                 Bundle b = msg.getData();
                 String xml = b.getString("xml");
+                b.clear();
                 m_eventReceiver.sockevent_onTCPReceiveXml((KDSSocketInterface) obj, xml);
             }
             break;

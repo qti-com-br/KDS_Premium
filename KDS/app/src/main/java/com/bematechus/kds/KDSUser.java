@@ -95,12 +95,12 @@ public class KDSUser {
      * @return
      * order added
      */
-    public KDSDataOrder orderAdd(KDSDataOrder order, boolean bAutoSyncWithOthers)
+    public KDSDataOrder orderAdd(KDSDataOrder order, boolean bAutoSyncWithOthers, boolean bRefreshView)
     {
         if (order.getItems().getCount() <=0)
             return null;
         order.setScreen(this.getUserID().ordinal());
-        return KDSStationFunc.orderAdd(this, order, true, bAutoSyncWithOthers);
+        return KDSStationFunc.orderAdd(this, order, true, bAutoSyncWithOthers, bRefreshView);
     }
 
     public KDSDataOrder orderUpdate(KDSDataOrder orderReceived, boolean bAutoSyncWithOthers)
@@ -190,7 +190,7 @@ public class KDSUser {
 
     public int autoBumpParkOrder(int nTimeoutMins)
     {
-        ArrayList<String> ar =  m_parkedOrders.findTimeoutOrders(nTimeoutMins, -1);
+        ArrayList<String> ar =  m_parkedOrders.findTimeoutOrders(nTimeoutMins, -1, false);
 
         for (int i=0; i< ar.size(); i++)
         {

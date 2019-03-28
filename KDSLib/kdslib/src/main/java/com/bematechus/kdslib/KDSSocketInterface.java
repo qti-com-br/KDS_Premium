@@ -31,5 +31,7 @@ public interface  KDSSocketInterface {
     public void interface_OnTCPClientConnected(SocketChannel channel);
     public void interface_OnSockFreeTime();
     public void interface_OnSocketDisconnected(SocketChannel channel);
+    //
+    public boolean interface_WriteBufferIsFull();
 
 }

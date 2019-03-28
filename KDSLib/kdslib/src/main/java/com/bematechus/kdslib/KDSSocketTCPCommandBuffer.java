@@ -134,8 +134,9 @@ public class KDSSocketTCPCommandBuffer {
         int len = 0;
         len = m_fill-ncount;
         if (len <0) len = 0;
-        for (int i = ncount; i< m_fill; i++)
-            m_buffer.put(i-ncount, m_buffer.get(i));
+        System.arraycopy(m_buffer.array(), ncount, m_buffer.array(), 0, len);
+//        for (int i = ncount; i< m_fill; i++)
+//            m_buffer.put(i-ncount, m_buffer.get(i));
 
         m_fill = len;
 
@@ -171,17 +172,22 @@ public class KDSSocketTCPCommandBuffer {
 
         int nidx = 0;
         int naccept = 0;
-        for (int i=m_fill; i< BUFFER_SIZE; i++)
-        {
-            nidx = i-m_fill;
-            if (nidx < ncount)
-            {
-                m_buffer.put(i, buffer.get(i-m_fill));
-                naccept ++;
-            }
-            else
-                break;
-        }
+        naccept = BUFFER_SIZE - m_fill;
+        if (naccept >ncount)
+            naccept = ncount;
+        System.arraycopy(buffer.array(), 0, m_buffer.array(), m_fill, naccept);
+
+//        for (int i=m_fill; i< BUFFER_SIZE; i++)
+//        {
+//            nidx = i-m_fill;
+//            if (nidx < ncount)
+//            {
+//                m_buffer.put(i, buffer.get(i-m_fill));
+//                naccept ++;
+//            }
+//            else
+//                break;
+//        }
         m_fill += naccept;
         return nidx;
     }
@@ -239,10 +245,11 @@ public class KDSSocketTCPCommandBuffer {
     {
         int ncount = getDataLength();
         byte[] bytes = new byte[ncount];
-        for (int i=0; i< ncount; i++)
-        {
-            bytes[i] = m_buffer.get(i + 6);
-        }
+        System.arraycopy(m_buffer.array(), 6, bytes, 0, ncount);
+//        for (int i=0; i< ncount; i++)
+//        {
+//            bytes[i] = m_buffer.get(i + 6);
+//        }
         return bytes;
     }
 
@@ -251,10 +258,12 @@ public class KDSSocketTCPCommandBuffer {
     {
         int ncount = getWinKdsXmlDataLength();
         byte[] bytes = new byte[ncount];
-        for (int i=0; i< ncount; i++)
-        {
-            bytes[i] = m_buffer.get(i + 4);
-        }
+        System.arraycopy(m_buffer.array(), 4, bytes, 0, ncount);
+
+//        for (int i=0; i< ncount; i++)
+//        {
+//            bytes[i] = m_buffer.get(i + 4);
+//        }
         return bytes;
     }
 
@@ -651,5 +660,87 @@ public class KDSSocketTCPCommandBuffer {
 
     }
 
+    static public ByteBuffer buildReturnStationIPCommand(String stationID, String IP, String strPort, String macAddress, ByteBuffer buf)
+    {
+        String s = stationID;
+        s += ",";
+        s += IP;
+        s +=",";
+        s += strPort;
+        s +=",";
+        s += macAddress;
+        byte[] bytes = KDSUtil.convertStringToUtf8Bytes(s);
+        int nsize = bytes.length + 1+1+1+1;
 
+
+        buf.put(STX);
+        buf.put(UDP_RET_STATION);
+        buf.put((byte)(bytes.length));
+        buf.put(bytes);
+        buf.put(ETX);
+        buf.position(0);
+        buf.limit(nsize);
+
+        return buf;
+    }
+
+    static public ByteBuffer buildRouterStationAnnounceCommand(String stationID, String IP, String strPort, String macAddress, boolean bEnabled, boolean backupMode, ByteBuffer buf)
+    {
+        String s = stationID;
+        s += ",";
+        s += IP;
+        s +=",";
+        s += strPort;
+        s +=",";
+        s += macAddress;
+        s +=",";
+        if (bEnabled)
+            s += "1";
+        else
+            s += "0";
+        s +=",";
+        if (backupMode)
+            s += "1";
+        else
+            s += "0";
+
+        byte[] bytes = KDSUtil.convertStringToUtf8Bytes(s);
+        int nsize = bytes.length + 1+1+1+1;
+        //ByteBuffer buf = ByteBuffer.allocate(bytes.length + 1+1+1+1); //STX , Code , length(1 bytes) ,data,  ETX
+        buf.put(STX);
+        buf.put(UDP_RET_ROUTER);
+        buf.put((byte)(bytes.length));
+        buf.put(bytes);
+        buf.put(ETX);
+        buf.position(0);
+        buf.limit(nsize);
+        return buf;
+    }
+
+
+    static public ByteBuffer buildReturnStationIPCommand2(String stationID, String IP, String strPort, String macAddress, int nActiveOrdersCount, int nUserMode, String storeGuid, ByteBuffer buf)
+    {
+        String s = stationID;
+        s += ",";
+        s += IP;
+        s +=",";
+        s += strPort;
+        s +=",";
+        s += macAddress;
+        s +=",";
+        s += KDSUtil.convertIntToString(nActiveOrdersCount);
+        s +=",";
+        s += KDSUtil.convertIntToString(nUserMode);
+        s +=","; //KPP1-21
+        s +=storeGuid;
+        byte[] bytes = KDSUtil.convertStringToUtf8Bytes(s);
+        //ByteBuffer buf = ByteBuffer.allocate(bytes.length + 1+1+1+1); //STX , Code , length(1 bytes) ,data,  ETX
+        buf.put(STX);
+        buf.put(UDP_RET_STATION);
+        buf.put((byte)(bytes.length));
+        buf.put(bytes);
+        buf.put(ETX);
+        buf.position(0);
+        return buf;
+    }
 }

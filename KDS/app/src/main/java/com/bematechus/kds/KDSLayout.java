@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSDataVoidItemIndicator;
 import com.bematechus.kdslib.KDSDataVoidItemQtyChanged;
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
  */
 public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer.LineItemViewerEvents{
 
+    final String TAG = "KDSLayout";
     public interface KDSLayoutEvents
     {
         public  void onViewPanelDoubleClicked(KDSLayout layout);
@@ -84,8 +88,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         //TimeDog t = new TimeDog();
         m_orders = orders;
+        m_nRedrawRequestCounter ++;
+        startShowOrdersThread();
+        return true;
+        /*
+        //m_view.clear();
+        m_view.getPanels().clear();
 
-        m_view.clear();
         if (orders == null || orders.getCount() <= 0) {
             this.getView().refresh();
             //m_view.clear();
@@ -152,6 +161,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             this.getView().refresh();//.invalidate();
         }
         return true;
+        */
     }
 
     public void adjustFocusOrderLayoutFirstShowingOrder()
@@ -1541,15 +1551,26 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     public String getLastShowingOrderGuid()
     {
-        if (this.getView().getPanels().size()<=0)
+        try {
+            synchronized (this.getView().m_panelsLocker) {
+                if (this.getView().getPanels().size() <= 0)
+                    return "";
+                if (this.getView().getLastPanel() == null) return "";
+
+                Object obj = this.getView().getLastPanel().getFirstBlockFirstRowData();
+                if (obj == null)
+                    return "";
+                if (!(obj instanceof KDSDataOrder))
+                    return "";
+                String guid = ((KDSDataOrder) obj).getGUID();
+                return guid;
+            }
+        }
+        catch (Exception e)
+        {
+            //KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
             return "";
-        Object obj = this.getView().getLastPanel().getFirstBlockFirstRowData();
-        if (obj == null)
-            return "";
-        if (!(obj instanceof  KDSDataOrder ))
-            return "";
-        String guid = ((KDSDataOrder)obj).getGUID();
-        return guid;
+        }
     }
     public int getNextCount()
     {
@@ -1565,7 +1586,30 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 //        String guid = ((KDSDataOrder)obj).getGUID();
 //
         String guid = getLastShowingOrderGuid();
-        if (guid.isEmpty()) return 0;
+        if (guid.isEmpty()) {
+            if (m_orders != null && m_orders.getCount() >0)
+            {//as drawing in thread, maybe ui don't refresh. So change nothing.
+
+                return -1;
+            }
+            return 0;
+        }
+
+        if (!this.isLayoutFull())
+        {
+            if (m_orders.getCount() >= getMaxBlocksOrRows()) {
+                String firstGuid = this.getEnv().getStateValues().getFirstShowingOrderGUID();
+                if (!firstGuid.isEmpty()) {
+                    int nFirst = m_orders.getIndex(firstGuid);
+                    if (nFirst == 0)
+                        return -1;//In different thread drawing, we have to check this.
+                }
+
+
+            }
+
+            return 0;
+        }
         int n = m_orders.getIndex(guid);
 
         return m_orders.getCount() - n -1;
@@ -1576,8 +1620,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (this.getView().getPanels().size()<=0)
             return 0;
         String guid = this.getEnv().getStateValues().getFirstShowingOrderGUID();
-        if (guid.isEmpty())
+        if (guid.isEmpty()) {
+            if (m_orders!= null &&
+                m_orders.getCount()>0)
+                return -1;
             return 0;
+        }
         if (m_orders == null)
             return 0;
         int n = m_orders.getIndex(guid);
@@ -2179,5 +2227,154 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     public void onLineItemViewerNextPageClicked()
     {
         focusNextPageLineItem();
+    }
+
+    Thread m_threadShowOrders = null;
+    int m_nRedrawRequestCounter = 0;
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startShowOrdersThread()
+    {
+        if (m_threadShowOrders == null ||
+                !m_threadShowOrders.isAlive())
+        {
+            m_threadShowOrders = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true)
+                    {
+                        if (m_threadShowOrders != Thread.currentThread())
+                            return;
+                        if (m_nRedrawRequestCounter <=0)
+                        {
+                            try {
+                                Thread.sleep(200);
+                                continue;
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        try {
+                            synchronized (m_orders.m_locker) {
+                                showOrdersWithoutUIRefresh(m_orders);
+                            }
+                            refreshThroughMessage();
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                        m_nRedrawRequestCounter = 0;
+                    }
+                }
+            });
+            m_threadShowOrders.setName("ShowOrders");
+            m_threadShowOrders.start();
+        }
+    }
+
+    public boolean showOrdersWithoutUIRefresh(KDSDataOrders orders) {
+
+        if (orders == null) return false;
+        //TimeDog t = new TimeDog();
+        //m_orders = orders;
+
+        //m_view.clear();
+        synchronized (m_view.m_panelsLocker) {
+            m_view.clearPanels();
+
+        }
+
+        if (orders == null || orders.getCount() <= 0) {
+            //this.getView().refresh();
+            //m_view.clear();
+            return true;
+        }
+        synchronized (m_view.m_panelsLocker) {
+            if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.Normal) {
+                int nBlockRows = m_view.getAverageRowsInBlock();
+                int nStartOrderIndex = 0;
+                if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
+                    getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
+                else {
+                    nStartOrderIndex = orders.getIndex(getEnv().getStateValues().getFirstShowingOrderGUID());
+                }
+                //check if the focused order is hidden at left side.
+                int nFocusedOrderIndex = orders.getOrderIndexByGUID(getEnv().getStateValues().getFocusedOrderGUID());
+                if (nFocusedOrderIndex >= 0) {
+                    if (nFocusedOrderIndex < nStartOrderIndex) //adjust it
+                    {
+                        getEnv().getStateValues().setFirstShowingOrderGUID(getEnv().getStateValues().getFocusedOrderGUID());
+                        nStartOrderIndex = nFocusedOrderIndex;
+                    }
+                }
+
+                //t.debug_print_Duration("showOrders2");
+                if (nStartOrderIndex < 0)
+                    nStartOrderIndex = 0;
+                int ncount = orders.getCount();
+                for (int i = nStartOrderIndex; i < ncount; i++) {
+                    // t.debug_print_Duration("showOrders1");
+                    KDSDataOrder order = orders.get(i);
+                    // t.debug_print_Duration("showOrders2");
+                    if (!showOrder(order, nBlockRows))
+                        break;
+                    //t.debug_print_Duration("showOrders3");
+                }
+
+                //t.debug_print_Duration("showOrders3");
+                //this.getView().refresh();//.invalidate();
+                //t.debug_print_Duration("showOrders4");
+                return true;
+            } else if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.LineItems) {
+                if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
+                    getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
+                if (getEnv().getStateValues().getFocusedOrderGUID().isEmpty()) {
+                    getEnv().getStateValues().setFocusedOrderGUID(orders.get(0).getGUID());
+
+                }
+                if (getEnv().getStateValues().getFocusedItemGUID().isEmpty()) {
+                    //getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getItem(0).getGUID());
+                    getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+
+                }
+                if (getEnv().getStateValues().getFirstItemGuid().isEmpty()) {
+                    //getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getItem(0).getGUID());
+                    getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+                }
+
+                showOrdersInLineItemsMode(orders);
+
+                //m_view.getLineItemsViewer().showOrders(orders);
+                //this.getView().refresh();//.invalidate();
+            }
+        }
+        return true;
+    }
+
+    public void refreshThroughMessage()
+    {
+        Message m = new Message();
+        m.what = 0;
+        m_refreshHandler.sendMessage(m);
+
+    }
+    Handler m_refreshHandler = new Handler()
+    {
+        public void handleMessage(Message msg) {
+            KDSLayout.this.getView().refresh();
+        }
+    };
+
+
+    public boolean isLayoutFull()
+    {
+        return this.getView().isFull();
+
+
     }
 }

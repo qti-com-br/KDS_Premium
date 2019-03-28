@@ -21,12 +21,13 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-
+import java.util.Vector;
 
 
 /**
@@ -54,6 +55,7 @@ public class KDSView extends View {
     }
 
 
+    public Object m_panelsLocker = new Object(); //lock panels
 
     GestureDetector m_gesture = null;//new GestureDetector(this);
 
@@ -64,7 +66,7 @@ public class KDSView extends View {
 
 
     //the panels
-    ArrayList<KDSViewPanel> m_arPanels = new ArrayList<KDSViewPanel>(); //KDSGUIPanel array
+    Vector<KDSViewPanel> m_arPanels = new Vector<KDSViewPanel>(); //KDSGUIPanel array
 
 
     KDSViewSettings m_env = new KDSViewSettings(this);
@@ -103,7 +105,7 @@ public class KDSView extends View {
         return getEnv().getSettings();
     }
 
-    public  ArrayList<KDSViewPanel> getPanels()
+    public  Vector<KDSViewPanel> getPanels()
     {
         return m_arPanels;
     }
@@ -259,11 +261,25 @@ public class KDSView extends View {
 
     public boolean clear()
     {
-
-        m_arPanels.clear();
+        clearPanels();
+        //m_arPanels.clear();
         this.invalidate();
         return true;
     }
+
+    public void clearPanels()
+    {
+        synchronized (m_panelsLocker)
+        {
+            for (int i=0; i< m_arPanels.size(); i++)
+            {
+                m_arPanels.get(i).clear();
+            }
+            m_arPanels.clear();
+        }
+
+    }
+
     public Rect getBounds()
     {
         Rect rc = new Rect();
@@ -314,21 +330,29 @@ public class KDSView extends View {
     {
         return m_arPanels.size();
     }
-    public boolean panelsClear()
-    {
-        m_arPanels.clear();
-        return true;
-    }
+//    public boolean panelsClear()
+//    {
+//        m_arPanels.clear();
+//        return true;
+//    }
     private Rect getLastPanelLastBlockBounds()
     {
-        int ncount = panelsGetCount();
-        if (ncount <=0)
+        try {
+
+
+            int ncount = panelsGetCount();
+            if (ncount <= 0)
+                return null;
+            KDSViewPanel panel = m_arPanels.get(ncount - 1);
+            KDSViewBlock block = panel.getLastBlock();
+            if (block == null)
+                return null;
+            return block.getBounds();//.getBounds();
+        }
+        catch (Exception e)
+        {
             return null;
-        KDSViewPanel panel =  m_arPanels.get(ncount - 1);
-        KDSViewBlock block = panel.getLastBlock();
-        if (block == null)
-            return null;
-        return block.getBounds();//.getBounds();
+        }
     }
 
     protected Rect getValidRect()
@@ -485,6 +509,7 @@ public class KDSView extends View {
     private  boolean m_bForceFullDrawing = false;
     public void refresh()
     {
+
         m_bForceFullDrawing = true;
         m_bJustRedrawTimer = false;
         this.invalidate();
@@ -501,39 +526,45 @@ public class KDSView extends View {
 
         if (m_bDrawing) return;
         m_bDrawing = true;
-        try {
+        synchronized (m_panelsLocker) {
+            try {
 
 
 //        m_canvasOld = canvas;
 //        if (m_bJustRedrawTimer) return;
-            //drawMe_DoubleBuffer(canvas);
-            if (getOrdersViewMode() == OrdersViewMode.Normal) {
-                if (m_bJustRedrawTimer && (!m_bForceFullDrawing)) {
+                //drawMe_DoubleBuffer(canvas);
+                if (getOrdersViewMode() == OrdersViewMode.Normal) {
+                    if (m_bJustRedrawTimer && (!m_bForceFullDrawing)) {
 
-                    Canvas g = get_double_buffer();
-                    int ncount = panelsGetCount();
-                    for (int i = 0; i < ncount; i++) {
-                        m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
+                        Canvas g = get_double_buffer();
+                        try {
+
+
+                            int ncount = panelsGetCount();
+                            for (int i = 0; i < ncount; i++) {
+                                if (i >= panelsGetCount()) break;
+                                m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
+                            }
+                        } catch (Exception e) {
+                            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+                        }
+                        commit_double_buffer(canvas);
+                        m_bJustRedrawTimer = false;
+                    } else {
+                        drawMe_DoubleBuffer(canvas);
+                        m_bForceFullDrawing = false;
                     }
-                    commit_double_buffer(canvas);
-                    m_bJustRedrawTimer = false;
                 } else {
-                    drawMe_DoubleBuffer(canvas);
-                    m_bForceFullDrawing = false;
+                    Canvas g = get_double_buffer();
+                    m_lineItemsViewer.onDraw(g);
+                    commit_double_buffer(canvas);
                 }
-            } else {
-                Canvas g = get_double_buffer();
-                m_lineItemsViewer.onDraw(g);
-                commit_double_buffer(canvas);
+            } catch (Exception err) {
+                //KDSLog.e(TAG, err.toString());
+                KDSLog.e(TAG, KDSLog._FUNCLINE_(), err);
             }
-        }
-        catch(Exception err)
-        {
-            //KDSLog.e(TAG, err.toString());
-            KDSLog.e(TAG, KDSLog._FUNCLINE_() , err);
-        }
 
-
+        }
 
         m_bDrawing = false;
         //fireViewAfterDrawing();
@@ -584,6 +615,8 @@ public class KDSView extends View {
         int ncount = panelsGetCount();
         for (int i=0; i< ncount; i++)
         {
+            if (i >= panelsGetCount())
+                break;
             m_arPanels.get(i).onDraw(g, i);
         }
 
@@ -812,6 +845,18 @@ public class KDSView extends View {
                 return m_arPanels.get(i);
         }
         return null;
+    }
+
+    /**
+     * check if whole screen full blocks.
+     * @return
+     */
+    public boolean isFull()
+    {
+        Rect rtLast = getLastPanelLastBlockBounds();
+        Point pt = getNextPanelStartPoint(rtLast);
+        return (pt == null);
+
     }
 
 

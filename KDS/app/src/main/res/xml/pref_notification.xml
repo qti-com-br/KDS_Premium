@@ -3,7 +3,7 @@
     <CheckBoxPreference
         android:key="kds_general_notification_enable"
         android:title="@string/pref_kds_notification_enabled"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
     <CheckBoxPreference
         android:key="notification_order_status_enabled"
         android:title="@string/enable_order_status_notify"

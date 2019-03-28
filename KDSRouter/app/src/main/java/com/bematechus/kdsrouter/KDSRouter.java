@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
@@ -68,7 +69,7 @@ import java.util.List;
 /**
  *
  */
-public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnable {
+public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnable, KDSSMBDataSource.BufferStateChecker {
 
     private final String TAG = "KDSRouter";
     private final int MAX_OFFLINE_ORDERS_COUNT = 200;
@@ -129,7 +130,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     KDSRouterSettings m_settings = null; //this the root all others settings pointer
 
-    KDSSMBDataSource m_smbDataSource = new KDSSMBDataSource(m_sockEventsMessageHandler);
+    //KDSSMBDataSource m_smbDataSource = new KDSSMBDataSource(m_sockEventsMessageHandler);
+    KDSSMBDataSource m_smbDataSource = new KDSSMBDataSource(m_sockEventsMessageHandler, this);
 
     KDSState m_kdsState = new KDSState();
 
@@ -540,8 +542,14 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     public void sockevent_onReceiveData(KDSSocketInterface sock, String remoteIP, ByteBuffer buffer, int nLength)
     {
 
-        if (sock instanceof KDSSocketUDP)
-            onUdpReceiveData(sock, remoteIP, buffer, nLength);
+        try {
+            if (sock instanceof KDSSocketUDP)
+                onUdpReceiveData(sock, remoteIP, buffer, nLength);
+        }
+        catch ( Exception e)
+        {
+
+        }
 
     }
 
@@ -571,6 +579,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         return m_strLocalMAC;
     }
 
+    ByteBuffer m_bufferRouterBroadcast = ByteBuffer.allocate(100);
     /**
      * broadcast this router
      */
@@ -578,22 +587,33 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     {
         int port =  this.m_nRouterBackupPort; //this station opened this port for TCP/IP connection
         String strport = KDSUtil.convertIntToString(port);
-        //ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(), Activation.getStoreGuid());
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(),0, 0, Activation.getStoreGuid());
-        m_udpStationAnnouncer.broadcastData(buf);
+
+        if (m_strStationID.isEmpty() || m_strLocalIP.isEmpty() || strport.isEmpty()) return;
+        //int nlenght = KDSSocketTCPCommandBuffer.getReturnStationIPCommandLength(m_strStationID,m_strLocalIP, strport, getLocalMacAddress());
+        m_bufferRouterBroadcast.clear();
+//        if (nlenght != m_bufferRouterBroadcast.capacity())
+//            m_bufferRouterBroadcast = ByteBuffer.allocate(nlenght);
+        //ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(), m_bufferRouterBroadcast);
+        KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(m_strStationID,m_strLocalIP, strport, getLocalMacAddress(), 0,0, Activation.getStoreGuid(),m_bufferRouterBroadcast); // TODO: Conflicts!!!
+        m_udpStationAnnouncer.broadcastData(m_bufferRouterBroadcast);
     }
 
+    /**
+     * don't need this function.
+     * The station announce is broadcast in thread.
+     */
     public void broadcastStationAnnounceInThread()
     {
 
-
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                KDSRouter.this.broadcastStationAnnounce();
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        if (!BuildVer.isDebug()) {
+//            AsyncTask task = new AsyncTask() {
+//                @Override
+//                protected Object doInBackground(Object[] params) {
+//                    KDSRouter.this.broadcastStationAnnounce();
+//                    return null;
+//                }
+//            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        }
     }
 
     public void broadcastRequireStationsUDPInThread()
@@ -636,6 +656,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     public void onUdpReceiveData(KDSSocketInterface sock,String remoteIP,  ByteBuffer buffer, int nLength) {
         //m_udpBuffer.appendData(buffer, nLength);
+        m_udpBuffer.freeBuffer();
+        m_udpBuffer.reset();
         m_udpBuffer.replaceBuffer(buffer, nLength);
         String remoteStationIP = KDSUtil.parseRemoteUDPIP(remoteIP);
 
@@ -1446,7 +1468,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             doSmbError(xmlData);
         }
         else {
-            doOrderXml(smb,smbFileName, xmlData);
+            doOrderXmlInThread(smb,smbFileName, xmlData);//
         }
 
     }
@@ -1491,24 +1513,28 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             case Unknown:
                 return;
             case Order:
-                doOrderXml(sock, "",xmlData);
+                doOrderXmlInThread(sock, "",xmlData);
                 break;
 
             case Command:
-                doCommandXml(sock, xmlData);
+
+                    doCommandXml(sock, xmlData);
                 break;
             case Feedback_OrderStatus:
             {
+
                 doFeedbackOrderStatus(xmlData);
             }
             break;
             case Notification:
             {
-                doNotificationXml(sock, xmlData);
+
+                doNotificationXmlInThread(sock, xmlData);
             }
             break;
             case Acknowledgement:
             {
+
                 doOrderAcknowledgement(sock, xmlData);
             }
             break;
@@ -1795,11 +1821,23 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     static final private String NOTIFY_FILE_NAME = "FileName";
     private boolean writePOSNotification(String xmlData)
     {
+        String s = xmlData;
+        int nindex = s.indexOf(NOTIFY_FILE_NAME);
+        if (nindex <0) return false;
+        int nStart = s.indexOf("\"", nindex);
+        if (nStart < 0) return false;
+        nStart ++;
+        int nEnd = s.indexOf("\"", nStart);
+        if (nEnd <0) return false;
 
-        KDSXML xml = new KDSXML();
-        xml.loadString(xmlData);
-        xml.back_to_root();
-        String fileName = xml.getAttribute(NOTIFY_FILE_NAME, "");
+       // nEnd --;
+        if (nEnd<=nStart) return false;
+        String fileName = s.substring(nStart, nEnd);
+
+//        KDSXML xml = new KDSXML();
+//        xml.loadString(xmlData);
+//        xml.back_to_root();
+//        String fileName = xml.getAttribute(NOTIFY_FILE_NAME, "");
 
 
         return writeXmlToPOSNotification(xmlData, fileName);
@@ -1831,6 +1869,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         KDSLogOrderFile.i(TAG, xmlData);
 
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(m_strStationID, xmlData);
+
         if (order == null) {
             if (this.getSettings().getBoolean(KDSSettings.ID.Order_ack))
             {//ack error ack
@@ -1861,7 +1900,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             doAskOrderState(objSource, order, xmlData);
         }
         else {
-
+            //if (!KDSConst._DEBUG) //no heap size increasing issue, it should in doOrderFilter function
             doOrderFilter(order, xmlData, originalFileName);
         }
         String ip = "";
@@ -2244,8 +2283,6 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     public void  doOrderFilter(KDSDataOrder order,String xmlData, String originalFileName)
     {
 
-
-
         //if there are item for expeditor station, pass them
         if (orderHaveExpItems(order))
         {
@@ -2295,13 +2332,18 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         {
             RouterAck ack = m_acks.add(order, xmlData, originalFileName);
             ArrayList<String> ar = ack.getSendToStations();
-
             writeToAllStations(xmlOrder, ar);
 
         }
         else {
 
-            writeToAllStations(xmlOrder);
+            ArrayList<KDSToStation>  ar = KDSDataOrder.getOrderTargetStations(order);
+            ar.addAll(getAllAcceptAnyItemsStations());
+            ArrayList<String> arToStations = RouterAck.getSendToStations(ar);
+            //send order xml data to necessary stations, for 24 stations lost certain prep issue
+            //if (!KDSConst._DEBUG) //heap size issue in this function
+            writeToAllStations(xmlOrder, arToStations);
+            //writeToAllStations(xmlOrder);
         }
 
 
@@ -2553,7 +2595,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     }
 
-
+    final int MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION = 100;
     /**
      * 2.0.17
      * for order ack
@@ -2573,7 +2615,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             String stationID = stationRelation.getID();
 
             KDSStationIP station = stationRelation.getStationIP();
-            if (!RouterAck.isExistedInArray(toStations, stationID)) continue; //
+            //Here, it the xml is "delete" order command, it don't contain any stations target.
+            //so I just send it to any station
+            if (toStations.size() >0)
+                if (!RouterAck.isExistedInArray(toStations, stationID)) continue; //
             //in relations settings, the station port is 3001 for communication of each other.
             //So, I have to change its port before send data.
             station.setPort(getSettings().getString(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort));
@@ -2581,7 +2626,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             KDSLog.d(TAG, "Write to KDSStation #" +station.getID() + ",ip=" +station.getIP() + ", port="+station.getPort() +",length="+xmlData.length());
 
             //if (m_stationsConnection.findActivedStationByID(stationID) != null)
-            m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData);
+            //if (!KDSConst._DEBUG) //heap size issue is here
+            m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData,MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
         }
 
     }
@@ -2995,18 +3041,22 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     public void run()
     {
 
+
         while (m_bRunning) {
 
             if (m_dogAnnounce.is_timeout(KDSConst.ACTIVE_PLUS_FREQUENCE))
             {
                 m_dogAnnounce.reset();
                 //if (!DEBUG)
-                    m_stationsConnection.checkAllNoResponseStations();
+                m_stationsConnection.checkAllNoResponseStations();
                 this.broadcastStationAnnounce();
                 checkLostStationInThread();
-                broadcastRouterAnnounceInThread();
+                    //broadcastRouterAnnounceInThread();
+                broadcastRouterAnnounce();
+
                 //this.broadcastRequireStationsUDP(); //get all station's ip address.
             }
+
             if (this.isEnabled())
                 m_stationsConnection.connectAllStations();
 
@@ -3149,8 +3199,28 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         }
         return 1;
     }
+    android.os.Handler m_msgHandler = new android.os.Handler(new android.os.Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            showMessageToMainUI((String)msg.obj);
+            return true;
+        }
 
+    });
     public void showMessage(String msg)
+    {
+        Message m = new Message();
+        m.what = 0;
+        m.obj = msg;
+        m_msgHandler.sendMessage(m);
+
+//        int ncount = m_arKdsEventsReceiver.size();
+//        for (int i=0; i< ncount; i++)
+//        {
+//            m_arKdsEventsReceiver.get(i).onShowMessage(msg);
+//        }
+    }
+    public void showMessageToMainUI(String msg)
     {
         int ncount = m_arKdsEventsReceiver.size();
         for (int i=0; i< ncount; i++)
@@ -3326,86 +3396,244 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         }
 
     }
+    /**
+     * The expo, track, and queue accept any items
 
-//    protected void fireStationAnnounceReceivedEvent(KDSStationActived station)
-//    {
-//         if (m_stationAnnounceEvents != null)
-//             m_stationAnnounceEvents.onReceivedStationAnnounce(station);//id, ip, port, mac);
-//    }
+     * @return
+     */
+    private ArrayList<KDSToStation> getAllAcceptAnyItemsStations()
+    {
+        int ncount = m_stationsConnection.getRelations().getRelationsSettings().size();
 
-//
-//    class StationAnnounceRunnable implements Runnable
-//    {
-////        String m_strStationAnnounce = "";
-////
-////        public StationAnnounceRunnable(String strAnnounce)
-////        {
-////            setAnnounce(strAnnounce);
-////        }
-////        public void setAnnounce(String strAnnounce)
-////        {
-////            m_strStationAnnounce = strAnnounce;
-////        }
-////
-////
-////        public void run()
-////        {
-////            doStationAnnounce(m_strStationAnnounce);
-////        }
-//
-//
-//        ArrayList<String> m_arStationAnnounces = new ArrayList<>();
-//        private Object m_locker = new Object();
-//
-//        public boolean append(String strAnnounce)
-//        {
-//            synchronized (m_locker) {
-//                if (KDSUtil.isExistedInArray(m_arStationAnnounces, strAnnounce))
-//                    return false;
-//                m_arStationAnnounces.add(strAnnounce);
-//                return true;
-//            }
-//        }
-//
-//        public StationAnnounceRunnable(String strAnnounce)
-//        {
-//            append(strAnnounce);
-//        }
-//
-//        public void run()
-//        {
-//            int ncount = 0;
-//            while (true) {
-//                synchronized (m_locker) {
-//                    ncount = m_arStationAnnounces.size();
-//                }
-//                if (ncount <= 0) {
-//                    try {
-//
-//                        Thread.sleep(200);
-//                    } catch (Exception e) {
-//
-//                    }
-//                    continue;
-//                }
-//                //deal with the announces
-//                for (int i = 0; i < ncount; i++) {
-//                    //doStationAnnounce(m_strStationAnnounce);
-//                    String s = m_arStationAnnounces.get(0);
-//                    synchronized (m_locker) {
-//                        m_arStationAnnounces.remove(0);
-//                    }
-//                    try {
-//                        doStationAnnounce(s);
-//                        Thread.sleep(10);
-//                    } catch (Exception e) {
-//                        KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
-//                    }
-//                }
-//
-//            }
-//
-//        }
-//
-//    }
+        ArrayList<KDSToStation> ar = new ArrayList<>();
+
+
+        for (int i=0; i< ncount; i++) {
+            KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
+            if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Queue_Expo ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker )
+            {
+                KDSToStation toStation = new KDSToStation();
+                toStation.setPrimaryStation(stationRelation.getID());
+                ar.add(toStation);
+            }
+
+        }
+        return ar;
+
+    }
+
+    final int MAX_SOCK_BUFFER_SIZE = 10; //the buffer has save these data, don't save more.
+    /**
+     * 20190215 KPP1-Coke
+     * As I save all data to buffer, this cause router haust all resources.
+     * Check if there is any alive station buffer too many data.
+     * If so, don't read more data.
+     * For Coke company
+     * @return
+     */
+    public boolean isEthernetBufferedTooManyData()
+    {
+        ArrayList<KDSStationIP> ar = m_stationsConnection.getAllActiveStations();
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (i >= ar.size()) return false;
+            KDSStationIP station = ar.get(i);
+            if (station == null) return false;
+            KDSStationConnection connection = m_stationsConnection.getConnection(station);
+            //just check connected station
+            if (connection == null ||
+                    !connection.isConnected() ||
+                    connection.isConnecting()
+                    )
+                continue;
+            if (connection.getSock().isBufferTooManyWritingData(MAX_SOCK_BUFFER_SIZE))
+                return true;
+
+        }
+        return false;
+    }
+
+    public boolean bufferCheckerIsTooManyDataBuffered()
+    {
+        return (m_xmlDataBuffer.size() > 5);//MAX_SOCK_BUFFER_SIZE );
+
+        //return isEthernetBufferedTooManyData();
+    }
+    ///////////////////////// 20190121 ///////////////////
+    Thread m_threadOrdersXml = null;
+    Object m_lockerForOrdersThread = new Object();
+    ArrayList<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new ArrayList<>();
+
+    public void doOrderXmlInThread(final Object objSource, final String originalFileName, final String xmlData)
+    {
+
+
+
+        DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
+        data.m_objSource = objSource;
+        data.m_originalFileName = originalFileName;
+        data.m_xmlData = xmlData;
+        synchronized (m_lockerForOrdersThread) {
+            m_xmlDataBuffer.add(data);
+        }
+
+        if (m_threadOrdersXml == null ||
+            !m_threadOrdersXml.isAlive())
+        {
+            m_threadOrdersXml = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    DoOrdersXmlThreadBuffer data = null;
+                    ArrayList<DoOrdersXmlThreadBuffer> arDone = new ArrayList<>();
+                        while (m_bRunning) {
+                            int ncount = m_xmlDataBuffer.size();
+                            if (ncount <=0) {
+                                try {
+                                    Thread.sleep(500);
+                                    continue;
+                                }
+                                catch (Exception e){}
+
+                            }
+
+                            for (int i = 0; i < ncount; i++) {
+                                try {
+                                    synchronized (m_lockerForOrdersThread) {
+                                        data = m_xmlDataBuffer.get(i);
+                                        arDone.add(data);
+                                        //m_xmlDataBuffer.remove(0);
+                                    }
+
+                                    doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                    data.clear();
+                                    Thread.sleep(200);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            synchronized (m_lockerForOrdersThread) {
+                                m_xmlDataBuffer.removeAll(arDone);
+                            }
+                            arDone.clear();
+
+                        }
+                }
+            });
+            m_threadOrdersXml.setName("DoXml");
+            m_threadOrdersXml.start();
+        }
+
+
+    }
+
+    Thread m_threadNotificationXml = null;
+    Object m_lockerForNotificationThread = new Object();
+    ArrayList<String> m_xmlDataNotificationBuffer = new ArrayList<>();
+
+    public void doNotificationXmlInThread(final Object objSource, String xmlData)
+    {
+        synchronized (m_lockerForNotificationThread) {
+            m_xmlDataNotificationBuffer.add(xmlData);
+        }
+
+        if (m_threadNotificationXml == null ||
+                !m_threadNotificationXml.isAlive())
+        {
+            m_threadNotificationXml = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    ArrayList<String> arDone = new ArrayList<>();
+                    String data = "";
+                    while (m_bRunning) {
+                        int ncount = m_xmlDataNotificationBuffer.size();
+                        if (ncount <=0) {
+                            try {
+                                Thread.sleep(500);
+                                continue;
+                            }
+                            catch (Exception e){}
+
+                        }
+
+                        arDone.clear();
+                        for (int i = 0; i < ncount; i++) {
+                            try {
+
+                                synchronized (m_lockerForNotificationThread) {
+                                    data = m_xmlDataNotificationBuffer.get(i);
+                                    arDone.add(data);
+                                    //m_xmlDataNotificationBuffer.remove(0);
+                                }
+                                doNotificationXml(null, data);
+
+                                Thread.sleep(50);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        synchronized (m_lockerForNotificationThread) {
+                            m_xmlDataNotificationBuffer.removeAll(arDone);
+
+                        }
+                        arDone.clear();
+                    }
+                }
+            });
+            m_threadNotificationXml.setName("DoNotification");
+            m_threadNotificationXml.start();
+        }
+
+    }
+
+    static class DoOrdersXmlThreadBuffer
+    {
+        Object m_objSource = null;
+        String m_originalFileName = "";
+        String m_xmlData = "";
+        public void clear()
+        {
+            m_objSource = null;
+            m_originalFileName = "";
+            m_xmlData = "";
+        }
+    }
+
+    ByteBuffer m_bufferForRouterAnnounce = ByteBuffer.allocate(100);
+    private void broadcastRouterAnnounce()
+    {
+        m_bufferForRouterAnnounce.clear();
+        m_udpStationAnnouncer.broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeAnnounceToRouterBuffer(m_bufferForRouterAnnounce));
+    }
+
+    private ByteBuffer makeAnnounceToRouterBuffer(ByteBuffer buf)
+    {
+        int port = KDSSettings.UDP_ROUTER_ANNOUNCER_PORT;
+        String strport = KDSUtil.convertIntToString(port);
+        boolean bEnabled = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
+        boolean bBackupMode = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Backup);
+        return KDSSocketTCPCommandBuffer.buildRouterStationAnnounceCommand(getStationID(), m_strLocalIP, strport, getLocalMacAddress(), bEnabled, bBackupMode, buf);
+
+    }
+
+    public boolean isThreadRunning()
+    {
+        return m_bRunning;
+    }
+
+    public int removeNotifications()
+    {
+
+        KDSSettings.KDSDataSource source = KDSSettings.KDSDataSource.values()[getSettings().getInt(KDSSettings.ID.KDSRouter_Data_Source)];
+
+        if (source == KDSSettings.KDSDataSource.Folder) {
+            int nMinutes = getSettings().getInt(KDSRouterSettings.ID.notification_minutes);
+            if (nMinutes <=0) return 0;
+            return m_smbDataSource.removeTimeoutNotificationFiles(KDSConst.SMB_FOLDER_NOTIFICATION, nMinutes);
+        }
+        return 0;
+
+    }
 }

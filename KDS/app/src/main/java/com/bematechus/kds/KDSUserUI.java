@@ -409,6 +409,9 @@ public class KDSUserUI {
     {
         if (m_layout == null) return "";
         int nprev = m_layout.getPrevCount();
+        if (nprev<0)
+            return "-1";
+
         String strPrev = "";
         if (nprev >0)
             strPrev = Integer.toString(nprev) + " ";//<--";
@@ -418,7 +421,13 @@ public class KDSUserUI {
     public String getNextCountString()
     {
         if (m_layout == null) return "";
+
         int nnext =m_layout.getNextCount();
+
+        if (nnext <0)
+        {//unknown. Need to refresh UI, then we can not this number.
+            return "-1";
+        }
         String strNext = "";
         if (nnext >0)
             strNext = " " + Integer.toString(nnext) ;
@@ -482,13 +491,17 @@ public class KDSUserUI {
         if (KDSGlobalVariables.getKDS().isMultpleUsersMode())
         {
             TextView t =  (TextView)m_layoutScreenTitle.findViewById(m_nScreenTitleNextID);
-            showNextCount(t, strNext);
+            if (!strNext.equals("-1"))
+                showNextCount(t, strNext);
             TextView tv =  (TextView)m_layoutScreenTitle.findViewById(m_nScreenTitlePrevID);
-            showPrevCount(tv, strPrev);
+            if (!strPrev.equals("-1"))
+                showPrevCount(tv, strPrev);
         }
         else {
-            showNextCount(m_txtNext, strNext);
-            showPrevCount(m_txtPrev, strPrev);
+            if (!strNext.equals("-1"))
+                showNextCount(m_txtNext, strNext);
+            if (!strPrev.equals("-1"))
+                showPrevCount(m_txtPrev, strPrev);
         }
 
     }
