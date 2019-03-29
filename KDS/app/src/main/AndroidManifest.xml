@@ -38,6 +38,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:persistent="true"
+        android:testOnly="false"
         android:theme="@style/AppTheme">
         <receiver android:name=".BootBroadcastReceiver">
             <intent-filter>

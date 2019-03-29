@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by David.Wong on 2018/7/2.
@@ -49,13 +50,17 @@ public class ActivationHttp  extends Handler implements Runnable {
 
 
     Object m_locker = new Object();
-    ArrayList<ActivationRequest> m_arRequests = new ArrayList<>();
-
-    private void addRequest(ActivationRequest r)
+    Vector<ActivationRequest> m_arRequests = new Vector<>();
+    final int MAX_WAITING_COUNT = 100;
+    private boolean addRequest(ActivationRequest r)
     {
         synchronized (m_locker)
         {
+            if (m_arRequests.size() > MAX_WAITING_COUNT)
+                return false; //prevent exhaust all resources.
+
             m_arRequests.add(r);
+            return true;
         }
     }
     private ActivationRequest popRequest()
@@ -98,6 +103,7 @@ public class ActivationHttp  extends Handler implements Runnable {
         if (m_httpThread == null ||
         !m_httpThread.isAlive()) {
            m_httpThread = (new Thread(this));//.start();
+            m_httpThread.setName("HttpThread");
             m_httpThread.start();
         }
     }
@@ -213,28 +219,22 @@ public class ActivationHttp  extends Handler implements Runnable {
 
         //m_bRunning = true;
         while (true) {
+            if (m_httpThread != Thread.currentThread())
+                return;
             ActivationRequest r = popRequest();
             if (r == null)
                 return;
-
-            //if (m_debugID == Debug_Response.No_Debug)
-            //    getResultFromHttpGet(m_uri);
             if (r != null) {
-                //TableTracker.log2File(KDSLog._FUNCLINE_()+ "HTTP Request=" + r.toString());
-                // if (r.isPOSTmethod())
-                {
-                    getJsonResultFromHttpPost2(r);
-                }
-//            else {
-//                getResultFromHttpGet2(r);
-//            }
+                getJsonResultFromHttpPost2(r);
             }
-            //else
-            //    debug_process();
+            try {
+                Thread.sleep(100);
+            }
+            catch (Exception e)
+            {
 
+            }
         }
-        //m_bRunning = false;
-
     }
     public boolean isRunning()
     {

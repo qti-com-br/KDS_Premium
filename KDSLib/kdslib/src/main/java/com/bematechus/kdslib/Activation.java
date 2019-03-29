@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
@@ -38,6 +39,14 @@ import java.util.List;
 public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable {
 
     static final String TAG = "ACTIVATION";
+    static public final String PREF_KEY_ACTIVATION_GUID = "activation_guid";
+    static public final String PREF_KEY_ACTIVATION_DATE = "activation_date";
+    static public final String PREF_KEY_ACTIVATION_LOST_COUNT = "activation_lost";
+    static public final String PREF_KEY_ACTIVATION_FAILED_DATE = "failed_date";
+    static public final String PREF_KEY_ACTIVATION_FAILED_REASON = "activation_fail_reason";
+    static public final String PREF_KEY_ACTIVATION_USER_NAME = "activation_user_name";
+    static public final String PREF_KEY_ACTIVATION_PWD = "activation_password";
+
 
     /**
      *
@@ -264,7 +273,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
             m_storeName =  json.getString("store_name");//2.0.50
             m_storeKey =  json.getString("store_key");//2.0.50
 
-            System.out.println(m_storeGuid);
+            //System.out.println(m_storeGuid);
 
             //postSyncMac(m_licenseGuid, m_myMacAddress);
             postGetSettingsRequest();
@@ -387,7 +396,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
             int ncount = json.getInt("licenses_quantity");
             m_nMaxLicenseCount = ncount;
 
-            System.out.println(ar.toString());
+            //System.out.println(ar.toString());
 
             postGetDevicesRequest();
         }
@@ -456,7 +465,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
         try
         {
             JSONArray ar = new JSONArray(request.m_result);
-            System.out.println(ar.toString());
+            //System.out.println(ar.toString());
             m_devices.clear();
             for (int i=0; i< ar.length() ; i++)
             {
@@ -706,7 +715,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     public void onActivationResponseError(ActivationHttp http, ActivationRequest request)
     {
         showProgressDialog(false, "");
-        System.out.println(request.m_httpResponseCode);
+        //System.out.println(request.m_httpResponseCode);
         if (request.m_httpResponseCode == 301)
             resetUserNamePassword();
         if (request.m_httpResponseCode == 404)
@@ -722,7 +731,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     public void onActivationHttpException(ActivationHttp http, ActivationRequest request)
     {
         showProgressDialog(false, "");
-        System.out.println(request.m_httpResponseCode);
+        //System.out.println(request.m_httpResponseCode);
         fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_exception, request.getResult());
 
     }
@@ -1013,7 +1022,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     static public String loadUserName()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("activation_user_name", "");
+        String s = pref.getString(PREF_KEY_ACTIVATION_USER_NAME, "");
         return s;
     }
 
@@ -1021,8 +1030,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("activation_user_name", userName);
-        editor.putString("activation_password", pwd);
+        editor.putString(PREF_KEY_ACTIVATION_USER_NAME, userName);
+        editor.putString(PREF_KEY_ACTIVATION_PWD, pwd);
         editor.putString("store_guid", m_storeGuid);
         editor.putString("store_name", m_storeName);
 
@@ -1034,7 +1043,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     static public String loadPassword()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("activation_password", "");
+        String s = pref.getString(PREF_KEY_ACTIVATION_PWD, "");
         return s;
     }
 
@@ -1052,7 +1061,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     static public ActivationRequest.ErrorType loadLastFailedReason()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        int n = pref.getInt("activation_fail_reason", ActivationRequest.ErrorType.OK.ordinal());
+        int n = pref.getInt(PREF_KEY_ACTIVATION_FAILED_REASON, ActivationRequest.ErrorType.OK.ordinal());
         ActivationRequest.ErrorType e = ActivationRequest.ErrorType.values()[n];
         return e;
 
@@ -1064,7 +1073,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
         int n = e.ordinal();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("activation_fail_reason", n);
+        editor.putInt(PREF_KEY_ACTIVATION_FAILED_REASON, n);
         editor.apply();
         editor.commit();
 
@@ -1085,7 +1094,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     static public int loadFailedCount()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        int ncount = pref.getInt("activation_lost", 0);
+        int ncount = pref.getInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
         return ncount;
     }
 
@@ -1093,8 +1102,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     public int updateFailedCount()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        int ncount = pref.getInt("activation_lost", 0);
-        long nTime = pref.getLong("failed_date", 0);
+        int ncount = pref.getInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
+        long nTime = pref.getLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
 
         Date dt = new Date();
         long nDelay = dt.getTime() - nTime;
@@ -1109,8 +1118,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
         }
 
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("activation_lost", ncount);
-        editor.putLong("failed_date", dt.getTime());
+        editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, ncount);
+        editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, dt.getTime());
 
         editor.apply();
         editor.commit();
@@ -1121,8 +1130,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("activation_lost", 0);
-        editor.putLong("failed_date", 0);
+        editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
+        editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
         editor.apply();
         editor.commit();
         return 0;
@@ -1132,12 +1141,13 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("activation_guid", guid);
+        editor.putString(PREF_KEY_ACTIVATION_GUID, guid);
         Date dt = new Date();
 
-        editor.putLong("activation_date",dt.getTime());
+        editor.putLong(PREF_KEY_ACTIVATION_DATE,dt.getTime());
         editor.apply();
         editor.commit();
+
     }
 
 
@@ -1426,6 +1436,20 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
     }
 
 
+    static public boolean isActivationPrefKey(String key)
+    {
+        switch (key) {
+            case PREF_KEY_ACTIVATION_GUID:
+            case PREF_KEY_ACTIVATION_DATE:
+            case PREF_KEY_ACTIVATION_LOST_COUNT:
+            case PREF_KEY_ACTIVATION_FAILED_DATE:
+            case PREF_KEY_ACTIVATION_FAILED_REASON :
+            case PREF_KEY_ACTIVATION_USER_NAME:
+            case PREF_KEY_ACTIVATION_PWD:
+                return true;
+        }
+        return false;
+    }
     /**
      * The order sync request return OK.
      * Then, we start to send items and condiments in two request.

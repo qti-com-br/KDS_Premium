@@ -227,15 +227,27 @@ public class KDSDBStatistic extends KDSDBBase {
         String sql = KDSDataOrder.sqlDelete("orders",guid);
         if (!this.executeDML(sql))
             return false;
-        sql = "select guid from items where orderguid='" +guid+"'";// + Common.KDSUtil.ConvertIntToString(nID);
 
-        Cursor c = getDB().rawQuery(sql, null);
+//        sql = "select guid from items where orderguid='" +guid+"'";// + Common.KDSUtil.ConvertIntToString(nID);
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        while (c.moveToNext())
+//        {
+//            String itemguid = getString(c,0);
+//            itemDelete(itemguid);
+//        }
+        sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid='%s')", guid);
+        if (!this.executeDML(sql))
+            return false;
+        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+        if (!this.executeDML(sql))
+            return false;
 
-        while (c.moveToNext())
-        {
-            String itemguid = getString(c,0);
-            itemDelete(itemguid);
-        }
+        sql = String.format("delete from items where items.orderguid='%s'", guid);
+        if (!this.executeDML(sql))
+            return false;
+
         return true;
     }
     public boolean itemDelete(String itemguid)//int nID)
@@ -1182,25 +1194,32 @@ public class KDSDBStatistic extends KDSDBBase {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DAY_OF_YEAR, (-1) * nDaysBefore);
         Date dt = c.getTime();
-
-        String sql = String.format("select guid from orders where date(finishedtime)<='%s'", KDSUtil.convertDateToDbString(dt));
-        Cursor q = getDB().rawQuery(sql, null);
-        ArrayList<String> ar = new ArrayList<>();
-
-        while (q.moveToNext())
-        {
-
-            String orderguid = getString(q,0);
-            ar.add(orderguid);
-        }
-        q.close();
-       if (ar.size() <=0) return;
+        String strDate = KDSUtil.convertDateToDbString(dt);
         boolean bstartedbyme = this.startTransaction();
-        for (int i=0; i< ar.size(); i++)
-        {
-            removeOrder(ar.get(i));
-        }
+        String sql = String.format("delete from items where items.orderguid in (select guid from orders where date(finishedtime)<='%s')", strDate);
+        this.executeDML(sql);
+        sql = String.format("delete from orders where date(finishedtime)<='%s'", strDate);
+        this.executeDML(sql);
         this.finishTransaction(bstartedbyme);
+
+//        String sql = String.format("select guid from orders where date(finishedtime)<='%s'", KDSUtil.convertDateToDbString(dt));
+//        Cursor q = getDB().rawQuery(sql, null);
+//        ArrayList<String> ar = new ArrayList<>();
+//
+//        while (q.moveToNext())
+//        {
+//
+//            String orderguid = getString(q,0);
+//            ar.add(orderguid);
+//        }
+//        q.close();
+//       if (ar.size() <=0) return;
+//        boolean bstartedbyme = this.startTransaction();
+//        for (int i=0; i< ar.size(); i++)
+//        {
+//            removeOrder(ar.get(i));
+//        }
+        //this.finishTransaction(bstartedbyme);
 
 
     }

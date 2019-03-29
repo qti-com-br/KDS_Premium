@@ -62,8 +62,31 @@ public class KDSStationConnection {
     }
 
     public void addBufferedData(String data) {
+//        if (data.isEmpty()) return;
+//        m_arBufferedData.add(KDSStationDataBuffered.create(data));
+        addBufferedData(data, -1);
+
+    }
+
+    /**
+     *  For KPP1-Coke
+     * @param data
+     * @param nMaxCount
+     *  If size more than this value, remove old data.
+     *  -1: No limitation
+     */
+    public void addBufferedData(String data, int nMaxCount) {
         if (data.isEmpty()) return;
         m_arBufferedData.add(KDSStationDataBuffered.create(data));
+        if (nMaxCount<0) return;
+        if (m_arBufferedData.size() >nMaxCount)
+        {
+            int ncount = m_arBufferedData.size() - nMaxCount;
+            for (int i=0; i< ncount; i++)
+            {
+                m_arBufferedData.remove(0);
+            }
+        }
 
     }
 
@@ -317,4 +340,8 @@ public class KDSStationConnection {
         return s;
     }
 
+    public void appendBufferedData(ArrayList<KDSStationDataBuffered> ar)
+    {
+        m_arBufferedData.addAll(ar);
+    }
 }

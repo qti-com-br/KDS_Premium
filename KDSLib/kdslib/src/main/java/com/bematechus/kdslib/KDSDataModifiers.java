@@ -1,6 +1,7 @@
 package com.bematechus.kdslib;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2018/1/31.
@@ -14,7 +15,7 @@ public class KDSDataModifiers extends KDSDataCondiments {
     public void copyTo(KDSDataArray objs)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
                 KDSDataModifier msg = new KDSDataModifier();
                 KDSDataModifier original = (KDSDataModifier) ar.get(i);
@@ -26,7 +27,7 @@ public class KDSDataModifiers extends KDSDataCondiments {
     public KDSDataModifier findModifier(String modifierDescription)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
                 KDSDataModifier original = (KDSDataModifier) ar.get(i);
                 if (original.getDescription().toUpperCase().equals(modifierDescription.toUpperCase()))

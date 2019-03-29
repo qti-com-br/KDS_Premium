@@ -176,22 +176,22 @@ public class KDSUsers {
      *   return it for printing.
      *   The orders was added.
      */
-    public  ArrayList<KDSDataOrder> orderAdd(KDSDataOrder orderOriginal, boolean bAutoSyncWithOthers)
+    public  ArrayList<KDSDataOrder> orderAdd(KDSDataOrder orderOriginal, boolean bAutoSyncWithOthers, boolean bRefreshView)
     {
         //TimeDog t = new TimeDog();
         ArrayList<KDSDataOrder> usersOrder = filterOrderToUsers(orderOriginal);
         //t.debug_print_Duration("orderAdd1");
         ArrayList<KDSDataOrder> ordersReturn = new  ArrayList<KDSDataOrder>();
         if (usersOrder.size() == 1) {
-            KDSDataOrder order =  getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers);
+            KDSDataOrder order =  getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers, bRefreshView);
             if (order != null)
                 ordersReturn.add(order);
             //t.debug_print_Duration("orderAdd2");
         }
         else if (usersOrder.size() >1)
         {
-            KDSDataOrder orderA = getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers);
-            KDSDataOrder orderB = getUserB().orderAdd(usersOrder.get(1), bAutoSyncWithOthers);
+            KDSDataOrder orderA = getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers, bRefreshView);
+            KDSDataOrder orderB = getUserB().orderAdd(usersOrder.get(1), bAutoSyncWithOthers, bRefreshView);
             if (orderA != null)
                 ordersReturn.add(orderA);
 

@@ -15,8 +15,8 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
-
-    compileSdkVersion 23
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.bematechus.kds"
         minSdkVersion 19
@@ -29,6 +29,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
+        }
+        debug {
         }
     }
     android.applicationVariants.all { variant ->
@@ -71,6 +73,10 @@ android {
             versionName '1.41.0.0'
             dimension "default"
         }
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
     buildToolsVersion '28.0.3'
 }

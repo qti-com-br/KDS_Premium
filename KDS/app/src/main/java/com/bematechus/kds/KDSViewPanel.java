@@ -8,18 +8,22 @@ import android.view.View;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2015/8/13 0013.
  */
 public class KDSViewPanel {
-    ArrayList<KDSViewBlock> m_arBlocks = new ArrayList<KDSViewBlock>();
+    Vector<KDSViewBlock> m_arBlocks = new Vector<>();
 
     KDSView m_viewParent = null;
     Point m_ptStartLocation = new Point(0,0); //absolute location
     KDSViewPanelNumber m_panelNumber = new KDSViewPanelNumber();
 
     int m_nBG = 0;
+
+    private Object m_locker = new Object();
+
 
     public KDSViewPanel(KDSView parent)
     {
@@ -82,17 +86,21 @@ public class KDSViewPanel {
 
     public void onJustDrawCaptionAndFooter(Canvas canvas, int nIndex)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-            m_arBlocks.get(i).onJustDrawCaptionAndFooter(canvas);
-        drawPanelNumber(canvas, nIndex);
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++)
+                m_arBlocks.get(i).onJustDrawCaptionAndFooter(canvas);
+            drawPanelNumber(canvas, nIndex);
+        }
     }
 
     public  void invalidateCaptionAndFooter(View v)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-            m_arBlocks.get(i).invalidateCaptionAndFooter(v);
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++)
+                m_arBlocks.get(i).invalidateCaptionAndFooter(v);
+        }
     }
 
 
@@ -108,11 +116,13 @@ public class KDSViewPanel {
 
     public  void onDraw(Canvas canvas, int nIndex)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-            m_arBlocks.get(i).onDraw(canvas, getBG());
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++)
+                m_arBlocks.get(i).onDraw(canvas, getBG());
 
-        drawPanelNumber(canvas, nIndex);
+            drawPanelNumber(canvas, nIndex);
+        }
 
     }
 
@@ -148,15 +158,19 @@ public class KDSViewPanel {
     }
     public KDSViewBlock getLastBlock()
     {
-        if (m_arBlocks.size() <=0)
-            return null;
-        return m_arBlocks.get(m_arBlocks.size() - 1);
+        synchronized (m_locker) {
+            if (m_arBlocks.size() <= 0)
+                return null;
+            return m_arBlocks.get(m_arBlocks.size() - 1);
+        }
     }
     public KDSViewBlock getFirstBlock()
     {
-        if (m_arBlocks.size() <=0)
-            return null;
-        return m_arBlocks.get(0);
+        synchronized (m_locker) {
+            if (m_arBlocks.size() <= 0)
+                return null;
+            return m_arBlocks.get(0);
+        }
     }
 
     public Object getFirstBlockFirstRowData()
@@ -171,35 +185,38 @@ public class KDSViewPanel {
 
     public void setBorderColor(Canvas g, int nColor)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSViewBlock block =  m_arBlocks.get(i);
-            block.setBorderColor(g, nColor);
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++) {
+                KDSViewBlock block = m_arBlocks.get(i);
+                block.setBorderColor(g, nColor);
 
+            }
         }
 
     }
     public void setBorderColorToDefault(Canvas g)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSViewBlock block =  m_arBlocks.get(i);
-            block.setBorderColorToDefault(g);
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++) {
+                KDSViewBlock block = m_arBlocks.get(i);
+                block.setBorderColorToDefault(g);
 
+            }
         }
     }
     public boolean containsBlock(KDSViewBlock blck)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSViewBlock block =  m_arBlocks.get(i);
-            if (blck == block)
-                return true;
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++) {
+                KDSViewBlock block = m_arBlocks.get(i);
+                if (blck == block)
+                    return true;
+            }
+            return false;
         }
-        return false;
     }
     /**
      *
@@ -209,57 +226,53 @@ public class KDSViewPanel {
      */
     public KDSViewBlock addCell(KDSViewBlockCell cell)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSViewBlock block =  m_arBlocks.get(i);
-            if ( block.isFull())
-            { //full filled
-                continue;
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++) {
+                KDSViewBlock block = m_arBlocks.get(i);
+                if (block.isFull()) { //full filled
+                    continue;
+                } else {
+                    block.getCells().add(cell);
+                    return block;
+                }
             }
-            else
-            {
-                block.getCells().add(cell);
-                return block;
-            }
+            return null;
         }
-        return null;
     }
 
 
     public KDSViewBlock addCellToLastRow(KDSViewBlockCell cell)
     {
-        int ncount = m_arBlocks.size();
-        KDSViewBlock block =  m_arBlocks.get(ncount - 1); //last
-        if ( block.isFull())
-        { //full filled
-            return null;
-        }
-        else
-        {
-            int nfree = block.getFreeRows();
-            for (int i=0; i< nfree-1; i++)
-            {
-                KDSViewBlockCell c = new KDSViewBlockCell();
-                c.setData(null);
-                block.getCells().add(c);
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            KDSViewBlock block = m_arBlocks.get(ncount - 1); //last
+            if (block.isFull()) { //full filled
+                return null;
+            } else {
+                int nfree = block.getFreeRows();
+                for (int i = 0; i < nfree - 1; i++) {
+                    KDSViewBlockCell c = new KDSViewBlockCell();
+                    c.setData(null);
+                    block.getCells().add(c);
+                }
+                block.getCells().add(cell);
+                return block;
             }
-            block.getCells().add(cell);
-            return block;
         }
-
 
     }
 
     public  KDSViewBlock getClickedBlock(int x, int y)
     {
-        int ncount = m_arBlocks.size();
-        for (int i=0; i< ncount; i++)
-        {
-            if (m_arBlocks.get(i).getDrawableRect().contains(x, y))
-                return m_arBlocks.get(i);
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            for (int i = 0; i < ncount; i++) {
+                if (m_arBlocks.get(i).getDrawableRect().contains(x, y))
+                    return m_arBlocks.get(i);
+            }
+            return null;
         }
-        return null;
     }
 
     public boolean pointInMe(int x, int y)
@@ -270,14 +283,26 @@ public class KDSViewPanel {
 
     public int getTotalRows()
     {
-        int ncount = m_arBlocks.size();
-        int ncounter = 0;
-        for (int i=0; i< ncount; i++)
-        {
-            ncounter +=  m_arBlocks.get(i).getTotalRows();
+        synchronized (m_locker) {
+            int ncount = m_arBlocks.size();
+            int ncounter = 0;
+            for (int i = 0; i < ncount; i++) {
+                ncounter += m_arBlocks.get(i).getTotalRows();
 
+            }
+            return ncounter;
         }
-        return ncounter;
+    }
+
+    public void clear()
+    {
+        synchronized (m_locker) {
+            for (int i=0; i< m_arBlocks.size(); i++)
+            {
+                m_arBlocks.get(i).clear();
+            }
+            m_arBlocks.clear();
+        }
     }
 
 }

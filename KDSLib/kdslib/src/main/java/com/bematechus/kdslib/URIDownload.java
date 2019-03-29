@@ -147,7 +147,7 @@ public class URIDownload {
         m_downingFileName = strUriFilePathName;
         m_downingFileSaveToFileName= strLocalFilePathName;
         m_progressPercent = 0;
-        downLoadThread = new Thread(m_downFileRunnable);
+        downLoadThread = new Thread(m_downFileRunnable, "URIDownload");
         downLoadThread.start();
 
     }

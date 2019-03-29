@@ -4,6 +4,7 @@ import com.bematechus.kdslib.KDSDataArray;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2018/1/30.
@@ -25,7 +26,7 @@ public class KDSRouterDataItemModifiers extends KDSDataArray {
         return ( KDSRouterDataItemModifier)this.get(nIndex);
     }
 
-    public ArrayList getArray()
+    public Vector getArray()
     {
         return getComponents();
     }

@@ -56,7 +56,7 @@ public class PagerManager implements Runnable {
     public void onTime()
     {
         if (m_bIsRunning) return;
-        Thread t =  new Thread(this);
+        Thread t =  new Thread(this, "Pager");
         t.start();
         //doPage();
     }

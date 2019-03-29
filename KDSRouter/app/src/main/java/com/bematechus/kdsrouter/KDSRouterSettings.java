@@ -66,6 +66,7 @@ public class KDSRouterSettings extends SettingsBase {
         Log_orders,
 
         Order_ack, //2.0.14
+        notification_minutes,
         Enable_smbv2, //2.0.20
 
     }
@@ -160,6 +161,7 @@ public class KDSRouterSettings extends SettingsBase {
         init_option(ID.Log_days,"string_log_days", "3");
         init_option(ID.Log_orders,"bool_log_orders",false);
         init_option(ID.Order_ack,"bool_notification_order_acknowledgement",false);
+        init_option(ID.notification_minutes,"string_notification_minutes","10");
 
         init_option(ID.Enable_smbv2,"bool_general_enable_smbv2",false);
 

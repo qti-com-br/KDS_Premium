@@ -9,6 +9,7 @@ package com.bematechus.kdslib;
 import android.graphics.Color;
 
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.Date;
 
 /**
@@ -328,7 +329,7 @@ public class KDSXMLParserOrder {
      */
     protected static void doOrderMessages(KDSXML xml,  KDSDataOrder order)
     {
-        ArrayList ar = getMessages(xml);
+        Vector ar = getMessages(xml);
         int ncount = ar.size();
         for (int i=0; i< ncount; i++)
         {
@@ -646,9 +647,9 @@ public class KDSXMLParserOrder {
         }
     }
 
-    protected static ArrayList getMessages(KDSXML xml)
+    protected static Vector getMessages(KDSXML xml)
     {
-        ArrayList ar = new ArrayList();
+        Vector ar = new Vector();
 
         String strVal = xml.getSubGrouValue("Count", "");
         if (strVal.isEmpty())
@@ -685,7 +686,7 @@ public class KDSXMLParserOrder {
     protected static void doItemPremodifier(KDSXML xml,String grpName,
                                             KDSDataOrder order, KDSDataItem item)
     {
-        ArrayList ar = getMessages(xml);
+        Vector ar = getMessages(xml);
         int ncount = ar.size();
         for (int i=0; i< ncount; i++)
         {
@@ -899,7 +900,7 @@ public class KDSXMLParserOrder {
     protected static void doCondimentPremodifier(KDSXML xml,String grpName,
                                                  KDSDataOrder order, KDSDataItem item, KDSDataCondiment condiment)
     {
-        ArrayList ar = getMessages(xml);
+        Vector ar = getMessages(xml);
         int ncount = ar.size();
         for (int i=0; i< ncount; i++)
         {

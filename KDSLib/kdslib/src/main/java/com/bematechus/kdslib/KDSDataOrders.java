@@ -9,6 +9,7 @@ package com.bematechus.kdslib;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Vector;
 
 /**
  *
@@ -16,7 +17,7 @@ import java.util.Comparator;
  */
 public class KDSDataOrders extends KDSDataArray {
 
-
+    public Object m_locker = new Object(); //locker for multiple thread.
     KDSConst.OrderSortBy m_sortBy = KDSConst.OrderSortBy.Unknown;//.Waiting_Time;
     KDSConst.SortSequence m_sortSequence = KDSConst.SortSequence.Ascend;
     public boolean m_bMoveRushFront = true;
@@ -25,7 +26,7 @@ public class KDSDataOrders extends KDSDataArray {
      public void copyTo(KDSDataOrders objs)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
                 KDSDataOrder c = new KDSDataOrder();
                 KDSDataOrder original = (KDSDataOrder) ar.get(i);
@@ -85,7 +86,7 @@ public class KDSDataOrders extends KDSDataArray {
      public KDSDataOrder getOrderByName(String orderName)
      {
          synchronized (m_locker) {
-             ArrayList ar = this.getComponents();
+             Vector ar = this.getComponents();
              for (int i = 0; i < ar.size(); i++) {
                  KDSDataOrder c = (KDSDataOrder) ar.get(i);
                  if (c.getOrderName().equals(orderName))
@@ -99,7 +100,7 @@ public class KDSDataOrders extends KDSDataArray {
      public KDSDataOrder getOrderByGUID(String orderGUID)
      {
          synchronized (m_locker) {
-             ArrayList ar = this.getComponents();
+             Vector ar = this.getComponents();
              for (int i = 0; i < ar.size(); i++) {
                  KDSDataOrder c = (KDSDataOrder) ar.get(i);
                  if (c.getGUID().equals(orderGUID))
@@ -113,7 +114,7 @@ public class KDSDataOrders extends KDSDataArray {
      public int getIndex(KDSDataOrder order)
      {
          synchronized (m_locker) {
-             ArrayList ar = this.getComponents();
+             Vector ar = this.getComponents();
              return ar.indexOf(order);
          }
      }
@@ -143,7 +144,7 @@ public class KDSDataOrders extends KDSDataArray {
      public  int getOrderIndexByGUID(String orderGUID)
      {
          synchronized (m_locker) {
-             ArrayList ar = this.getComponents();
+             Vector ar = this.getComponents();
              for (int i = 0; i < ar.size(); i++) {
                  KDSDataOrder c = (KDSDataOrder) ar.get(i);
                  if (c.getGUID().equals(orderGUID))
@@ -167,7 +168,7 @@ public class KDSDataOrders extends KDSDataArray {
         synchronized (m_locker) {
             if (getCount() <= 0) return "";
             int nIndex = 0;
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
                 KDSDataOrder c = (KDSDataOrder) ar.get(i);
                 if (c.isPaid()) {
@@ -190,7 +191,7 @@ public class KDSDataOrders extends KDSDataArray {
      public String getNextOrderGUID(String orderGUID)
      {
          synchronized (m_locker) {
-             ArrayList ar = this.getComponents();
+             Vector ar = this.getComponents();
              if (ar.size() <= 0) return "";
              int nIndex = getOrderIndexByGUID(orderGUID);
              nIndex++;
@@ -211,7 +212,7 @@ public class KDSDataOrders extends KDSDataArray {
     public String getNextPaidOrderGUID(String orderGUID)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             if (ar.size() <= 0) return "";
             int nIndex = getOrderIndexByGUID(orderGUID);
             for (int i = 0; i < ar.size(); i++) {
@@ -234,7 +235,7 @@ public class KDSDataOrders extends KDSDataArray {
     public String getPreviousOrderGUID(String orderGUID)
     {
          synchronized (m_locker) {
-             ArrayList ar = this.getComponents();
+             Vector ar = this.getComponents();
              if (ar.size() <= 0) return "";
              int nIndex = getOrderIndexByGUID(orderGUID);
              nIndex--;
@@ -248,7 +249,7 @@ public class KDSDataOrders extends KDSDataArray {
     public String getPrevPaidOrderGUID(String orderGUID)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             if (ar.size() <= 0) return "";
             int nIndex = getOrderIndexByGUID(orderGUID);
             for (int i = 0; i < ar.size(); i++) {
@@ -300,8 +301,8 @@ public class KDSDataOrders extends KDSDataArray {
             }
             else if (m_bMoveRushFront && (!m_bMoveFinishedFront))
             {
-                ArrayList arRush = new ArrayList();
-                ArrayList arNormal = new ArrayList();
+                Vector arRush = new Vector();
+                Vector arNormal = new Vector();
                 int ncount = this.getCount();
                 for (int i = 0; i < ncount; i++) {
                     KDSDataOrder order = this.get(i);
@@ -312,15 +313,15 @@ public class KDSDataOrders extends KDSDataArray {
                 }
                 sortOrders(arRush, m_sortBy, m_sortSequence);
                 sortOrders(arNormal, m_sortBy, m_sortSequence);
-                ArrayList arOrders = this.getComponents();
+                Vector arOrders = this.getComponents();
                 arOrders.clear();
                 arOrders.addAll(arRush);
                 arOrders.addAll(arNormal);
             }
             else if (m_bMoveFinishedFront && (!m_bMoveRushFront))
             {//2.0.14
-                ArrayList arFinished = new ArrayList();
-                ArrayList arNormal = new ArrayList();
+                Vector arFinished = new Vector();
+                Vector arNormal = new Vector();
                 int ncount = this.getCount();
                 for (int i = 0; i < ncount; i++) {
                     KDSDataOrder order = this.get(i);
@@ -331,16 +332,16 @@ public class KDSDataOrders extends KDSDataArray {
                 }
                 sortOrders(arFinished, m_sortBy, m_sortSequence);
                 sortOrders(arNormal, m_sortBy, m_sortSequence);
-                ArrayList arOrders = this.getComponents();
+                Vector arOrders = this.getComponents();
                 arOrders.clear();
                 arOrders.addAll(arFinished);
                 arOrders.addAll(arNormal);
             }
             else
             {//2.0.14
-                ArrayList arRush = new ArrayList();
-                ArrayList arFinished = new ArrayList();
-                ArrayList arNormal = new ArrayList();
+                Vector arRush = new Vector();
+                Vector arFinished = new Vector();
+                Vector arNormal = new Vector();
                 int ncount = this.getCount();
                 for (int i = 0; i < ncount; i++) {
                     KDSDataOrder order = this.get(i);
@@ -355,7 +356,7 @@ public class KDSDataOrders extends KDSDataArray {
                 sortOrders(arNormal, m_sortBy, m_sortSequence);
                 sortOrders(arRush, m_sortBy, m_sortSequence);
 
-                ArrayList arOrders = this.getComponents();
+                Vector arOrders = this.getComponents();
                 arOrders.clear();
 
                 arOrders.addAll(arFinished);
@@ -370,7 +371,7 @@ public class KDSDataOrders extends KDSDataArray {
      * @param sortBy
      * @param sortSequence 
      */
-    private void sortOrders(ArrayList arOrders, KDSConst.OrderSortBy sortBy, KDSConst.SortSequence sortSequence)
+    private void sortOrders(Vector arOrders, KDSConst.OrderSortBy sortBy, KDSConst.SortSequence sortSequence)
     {
         if (arOrders.size() <=1 )
             return;
@@ -581,19 +582,21 @@ public class KDSDataOrders extends KDSDataArray {
      *  >0: max return count
      * @return
      */
-    public ArrayList<String> findTimeoutOrders(int nTimeoutMinutes, int nMaxCount)
+    public ArrayList<String> findTimeoutOrders(int nTimeoutMinutes, int nMaxCount, boolean bIncludeScheduleOrders)
     {
-        synchronized (m_locker) {
-            ArrayList<String> ar = new ArrayList<>();
+        ArrayList<String> ar = new ArrayList<>();
 
-            TimeDog td = new TimeDog();
-            int nms = nTimeoutMinutes * 60 * 1000; //ms
+        TimeDog td = new TimeDog();
+        int nms = nTimeoutMinutes * 60 * 1000; //ms
+        synchronized (m_locker) {
             int ncount = this.getCount();
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = this.get(i);
-                //td.reset(order.getStartTime());
                 td.reset(order.getAutoBumpStartCountTime());
                 if (td.is_timeout(nms)) {
+                    if (!bIncludeScheduleOrders) {
+                        if (order.is_schedule_process_order()) continue;
+                    }
                     ar.add(order.getGUID());
                     if (nMaxCount >0)
                     {
@@ -673,6 +676,16 @@ public class KDSDataOrders extends KDSDataArray {
             }
         }
         return (!bFindActiveItem);
+    }
+
+    public boolean removeComponents(ArrayList<KDSDataOrder> ar)
+    {
+        synchronized (m_locker) {
+            this.getComponents().removeAll(ar);
+            //super.removeComponent(obj);
+            sortOrders();
+            return true;
+        }
     }
 
     /**

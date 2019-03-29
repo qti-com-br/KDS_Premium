@@ -18,6 +18,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 
 /**
  * For Table Tracker
@@ -62,7 +63,7 @@ public class KDSHttp extends Handler implements Runnable {
 
 
     Object m_locker = new Object();
-    ArrayList<HttpRequest> m_arRequests = new ArrayList<>();
+    Vector<HttpRequest> m_arRequests = new Vector<>();
 
     private void addRequest(HttpRequest r)
     {
@@ -105,9 +106,16 @@ public class KDSHttp extends Handler implements Runnable {
     {
         this.start();
     }
+
+    Thread m_httpThread = null;
+
     private void start()
     {
-        (new Thread(this)).start();
+        if (m_httpThread == null ||
+                !m_httpThread.isAlive()) {
+         m_httpThread = (new Thread(this, "KDSHttp"));
+         m_httpThread.start();
+        }
     }
 
     @Override
@@ -315,25 +323,26 @@ public class KDSHttp extends Handler implements Runnable {
         //debug_process();
 
         m_bRunning = true;
-        HttpRequest r = popRequest();
+        while (true) {
+            if (m_httpThread != Thread.currentThread())
+                break;
+            HttpRequest r = popRequest();
+            if (r == null) break;
 
+            //if (m_debugID == Debug_Response.No_Debug)
+            //    getResultFromHttpGet(m_uri);
+            if (r != null) {
+                TableTracker.log2File(KDSLog._FUNCLINE_() + "HTTP Request=" + r.toString());
+                if (r.isPOSTmethod()) {
+                    getResultFromHttpPost(r);
+                } else {
+                    getResultFromHttpGet2(r);
+                }
+            }
+            //else
+            //    debug_process();
 
-        //if (m_debugID == Debug_Response.No_Debug)
-        //    getResultFromHttpGet(m_uri);
-        if (r != null) {
-            TableTracker.log2File(KDSLog._FUNCLINE_()+ "HTTP Request=" + r.toString());
-            if (r.isPOSTmethod())
-            {
-                getResultFromHttpPost(r);
-            }
-            else {
-                getResultFromHttpGet2(r);
-            }
         }
-        //else
-        //    debug_process();
-
-
         m_bRunning = false;
 
     }

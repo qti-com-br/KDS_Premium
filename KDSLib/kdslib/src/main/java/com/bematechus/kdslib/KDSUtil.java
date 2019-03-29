@@ -142,6 +142,7 @@ public class KDSUtil {
     {
         try
         {
+            strID = strID.trim();
             if (strID.isEmpty()) return nDefault;
             int nID = Integer.parseInt(strID);
             return nID;
@@ -205,7 +206,7 @@ public class KDSUtil {
     static public String convertDateToString(Date dt)
     {
 
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf= m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String str=sdf.format(dt);
         return str;
@@ -217,9 +218,9 @@ public class KDSUtil {
         String s = strDate;
         SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf = m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            sdf = m_dateShortFormat2;// new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try
         {
@@ -239,9 +240,9 @@ public class KDSUtil {
         String s = strDate;
         SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat2;// new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
         try
         {
             Date date = sdf.parse(s, new ParsePosition(0));// null).parse(s);
@@ -256,6 +257,12 @@ public class KDSUtil {
     }
 
     static public Calendar g_calender = null;
+    static private SimpleDateFormat m_dateLongFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    static private SimpleDateFormat m_dateLongFormat2 =  new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+    static private SimpleDateFormat m_dateShortFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    static private SimpleDateFormat m_dateShortFormat2 =  new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+    static private SimpleDateFormat m_timeLongFormat =  new SimpleDateFormat("HH:mm:ss");
+    static private SimpleDateFormat m_timeShortFormat =  new SimpleDateFormat("HH:mm");
     /**
      * the format is fixed:
      *  "yyyy-MM-dd HH:mm:ss"
@@ -266,12 +273,14 @@ public class KDSUtil {
     {
 
         String s = strDate;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = null;//new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         //SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat2;// new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+        else
+            sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         //t.debug_print_Duration("load time");
         try
         {
@@ -290,7 +299,7 @@ public class KDSUtil {
         String s = strDate;
         if (s == null) return dtDefault;
         if (s.isEmpty()) return  dtDefault;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         try
         {
             Date date = sdf.parse(s, new ParsePosition(0));// null).parse(s);
@@ -1297,7 +1306,7 @@ just 16bits value
 
         // TimeDog d = new TimeDog();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd");
 
         String str = sdf.format(dt);
 
@@ -1307,7 +1316,7 @@ just 16bits value
 
         // TimeDog d = new TimeDog();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf = m_timeLongFormat;// new SimpleDateFormat("HH:mm:ss");
 
         String str = sdf.format(dt);
 
@@ -1318,7 +1327,7 @@ just 16bits value
 
         // TimeDog d = new TimeDog();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = m_timeShortFormat;// new SimpleDateFormat("HH:mm");
 
         String str = sdf.format(dt);
 
@@ -1341,9 +1350,9 @@ just 16bits value
        // sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf = m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            sdf = m_dateShortFormat2;// new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
         try
         {
