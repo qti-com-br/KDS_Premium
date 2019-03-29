@@ -9,9 +9,11 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.UUID;
 import java.util.Vector;
 
 /**
@@ -42,10 +44,10 @@ public class HttpBase extends Handler implements Runnable {
     public static final int HTTP_IM_Used= 226;
 
 
-    final int MSG_HTTP_GET_RESPONSE  =1;
-    final int MSG_HTTP_GET_ERROR = 2;
-    final int MSG_HTTP_EXCEPTION = 3;
-    HttpEvent m_receiver = null;
+    public final int MSG_HTTP_GET_RESPONSE  =1;
+    public final int MSG_HTTP_GET_ERROR = 2;
+    public final int MSG_HTTP_EXCEPTION = 3;
+    protected HttpEvent m_receiver = null;
 
 
     Object m_locker = new Object();
@@ -62,7 +64,7 @@ public class HttpBase extends Handler implements Runnable {
             return true;
         }
     }
-    private HttpRequestBase popRequest()
+    protected HttpRequestBase popRequest()
     {
         synchronized (m_locker)
         {
@@ -93,7 +95,7 @@ public class HttpBase extends Handler implements Runnable {
     {
         this.start();
     }
-    Thread m_httpThread = null;
+    protected Thread m_httpThread = null;
     private void start()
     {
         if (m_httpThread == null ||
@@ -124,7 +126,7 @@ public class HttpBase extends Handler implements Runnable {
 
     }
 
-    private String getJsonResultFromHttpPost2(HttpRequestBase request) {
+    protected String getJsonResultFromHttpPost2(HttpRequestBase request) {
         InputStream inputStream = null;
         HttpURLConnection urlConn = null;
 
@@ -261,7 +263,7 @@ public class HttpBase extends Handler implements Runnable {
         }
     }
 
-    private String getResultFromHttpGet(HttpURLConnection urlConn, HttpRequestBase request)
+    protected String getResultFromHttpGet(HttpURLConnection urlConn, HttpRequestBase request)
     {
 
         URL url = null;
@@ -313,7 +315,7 @@ public class HttpBase extends Handler implements Runnable {
     }
 
 
-    private String getResultFromHttpGet2(HttpRequestBase request)
+    protected String getResultFromHttpGet2(HttpRequestBase request)
     {
         String strUrl = request.m_url;// strUri;// String.format("http://%s:%d", ip, port,command );
         URL url = null;
@@ -336,7 +338,7 @@ public class HttpBase extends Handler implements Runnable {
     }
 
 
-    private String getResultFromHttpPost(HttpRequestBase request)
+    protected String getResultFromHttpPost(HttpRequestBase request)
     {
 
         URL url = null;
@@ -428,17 +430,59 @@ public class HttpBase extends Handler implements Runnable {
         return null;
     }
 
+    static public boolean isSuccessResponseCode(int nHttpResponseCode)
+    {
+        switch (nHttpResponseCode)
+        {
+            case HTTP_OK:
+            case HTTP_Created:
+            case HTTP_Accepted:
+                return true;
+            case HTTP_Non_authoritative_Information:
+            case HTTP_No_Content:
+            case HTTP_Reset_Content:
+            case HTTP_Partial_Content:
+            case HTTP_Multi_Status:
+            case HTTP_Already_Reported:
+            case HTTP_IM_Used:
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    public static String toUtf8(String str) {
+        String result = null;
+        try {
+            result = new String(str.getBytes("UTF-8"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     static public class HttpRequestBase
     {
-        String m_url = "";
-        String m_authen = "";
-        String m_params = "";
-        String m_result = "";
-        int m_httpResponseCode = 0;
-        static final String GET = "GET";
-        static final String DELETE = "DELETE";
-        static final String POST = "POST";
-        String m_method = "";
+        public String m_url = "";
+        public String m_authen = "";
+        public String m_params = "";
+        public String m_result = "";
+        public int m_httpResponseCode = 0;
+        public static final String GET = "GET";
+        public static final String DELETE = "DELETE";
+        public static final String POST = "POST";
+        public String m_method = "";
+        public Object m_tag = null;
+
+        public void setTag(Object obj)
+        {
+            m_tag = obj;
+        }
+        public Object getTag()
+        {
+            return m_tag;
+        }
         public void reset()
         {
 
@@ -448,6 +492,7 @@ public class HttpBase extends Handler implements Runnable {
             m_params = "";
             m_result = "";
             m_httpResponseCode = 0;
+            m_tag = null;
         }
         public void methodGET()
         {
@@ -515,6 +560,14 @@ public class HttpBase extends Handler implements Runnable {
         public String getUrl()
         {
            return m_url;
+        }
+
+        static public String createNewGUID()
+        {
+
+            String s = UUID.randomUUID().toString();//create new GUID
+            //s = s.replaceAll("-", "");
+            return s;
         }
 
     }

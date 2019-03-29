@@ -400,9 +400,10 @@ public class TTView  extends View implements TableTracker.TT_Event {
     {
         try {
 
-
-            m_ttOrders.moveUnassignedToEnd();
-            onDrawTT(canvas);
+            synchronized (m_ttOrders.getOrders().m_locker) {
+                m_ttOrders.moveUnassignedToEnd();
+                onDrawTT(canvas);
+            }
         }
         catch (Exception e)
         {
@@ -1400,8 +1401,10 @@ public class TTView  extends View implements TableTracker.TT_Event {
      */
     public void checkAutoBumping()
     {
-        checkExpoRemovedOrder();
-        checkAllItemsBumpedOrder();
+        synchronized (this.m_ttOrders.getOrders().m_locker) {
+            checkExpoRemovedOrder();
+            checkAllItemsBumpedOrder();
+        }
     }
 
 }

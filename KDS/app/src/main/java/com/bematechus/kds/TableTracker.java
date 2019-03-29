@@ -9,6 +9,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.HttpBase;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
@@ -25,7 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class TableTracker extends Handler implements KDSHttp.KDSHttpEvent {
+public class TableTracker extends Handler implements HttpBase.HttpEvent {
     static public String TAG = "TableTracker->";
     public enum TT_Command
     {
@@ -223,10 +224,10 @@ public class TableTracker extends Handler implements KDSHttp.KDSHttpEvent {
     {
         m_strAuthentication = "";
     }
-    private void debug_authen()
-    {
-        m_http.setDebug(KDSHttp.Debug_Response.Authen);
-    }
+    //private void debug_authen()
+//    {
+//        m_http.setDebug(KDSHttp.Debug_Response.Authen);
+//    }
 
 
     public void retrieveAuthentication()
@@ -461,12 +462,13 @@ public class TableTracker extends Handler implements KDSHttp.KDSHttpEvent {
 
     /**
      * see return code: https://table-tracker.readme.io/docs/api-code-glossary
-     * @param http
+     * @param httpBase
      * @param request
      */
-    public void onHttpResponse(KDSHttp http, HttpRequest request)
+    public void onHttpResponse(HttpBase httpBase, HttpBase.HttpRequestBase r)
     {
         //KDSSettings.saveTrackerAuthen("");
+        HttpRequest request = (HttpRequest)r;
         m_responeTimeDog.reset();
        // boolean bTTSendOutError = false;
         String strResponse = request.m_result;

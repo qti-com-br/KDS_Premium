@@ -36,7 +36,7 @@ import java.util.List;
  * Created by David.Wong on 2018/7/10.
  * Rev:
  */
-public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable {
+public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     static final String TAG = "ACTIVATION";
     static public final String PREF_KEY_ACTIVATION_GUID = "activation_guid";
@@ -151,8 +151,11 @@ public class Activation implements ActivationHttp.ActivationHttpEvent , Runnable
         loadStoreGuid();
         loadStoreName();
     }
-    public void onHttpResponse(ActivationHttp http, ActivationRequest request)
+    public void onHttpResponse(HttpBase httpBase, HttpBase.HttpRequestBase r)
     {
+        ActivationRequest request = (ActivationRequest)r;
+        ActivationHttp http = (ActivationHttp) httpBase;
+
         if (request.m_httpResponseCode == ActivationHttp.HTTP_OK) {
             switch (request.m_command) {
                 case Unknown:
