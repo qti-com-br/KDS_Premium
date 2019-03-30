@@ -1036,7 +1036,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, Activation.SyncDataResult result)
     {
-        
+
     }
     private void checkActivationResult(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType)
     {
