@@ -95,12 +95,12 @@ public class KDSUser {
      * @return
      * order added
      */
-    public KDSDataOrder orderAdd(KDSDataOrder order, boolean bAutoSyncWithOthers, boolean bRefreshView)
+    public KDSDataOrder orderAdd(KDSDataOrder order,String xmlData, boolean bAutoSyncWithOthers, boolean bRefreshView)
     {
         if (order.getItems().getCount() <=0)
             return null;
         order.setScreen(this.getUserID().ordinal());
-        return KDSStationFunc.orderAdd(this, order, true, bAutoSyncWithOthers, bRefreshView);
+        return KDSStationFunc.orderAdd(this, order, xmlData,true, bAutoSyncWithOthers, bRefreshView);
     }
 
     public KDSDataOrder orderUpdate(KDSDataOrder orderReceived, boolean bAutoSyncWithOthers)

@@ -1,6 +1,7 @@
 package com.bematechus.kdslib;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class KDSSocketFIFOBuffer {
             BufferData b = new BufferData();
             b.bytes = buf.duplicate().array();
             m_lstData.add(b);
+
         }
     }
     public void add(String strDestIP, ByteBuffer buf)

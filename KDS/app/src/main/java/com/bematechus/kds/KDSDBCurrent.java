@@ -1156,12 +1156,12 @@ public class KDSDBCurrent extends KDSDBBase {
      */
     public KDSDataOrders ordersLoadAll(ArrayList<String> arStationID, int nScreen, boolean bParked) {
 
-        TimeDog t = new TimeDog();
+        //TimeDog t = new TimeDog();
         KDSDataOrders orders = ordersLoadAllJustInfo(arStationID, nScreen, bParked);
-        t.debug_print_Duration("load after info");
+        //t.debug_print_Duration("load after info");
         if (orders.getCount()<=0) return orders;
         ordersLoadAllData(orders);
-        t.debug_print_Duration("load end");
+        //t.debug_print_Duration("load end");
         return orders;
 
 
@@ -1643,7 +1643,7 @@ public class KDSDBCurrent extends KDSDBBase {
     /************************************************************************/
     public ArrayList<KDSSummaryItem> summaryItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bCheckCondiments, boolean bAscend)//, boolean bEnableSummaryTranslation)
     {
-        TimeDog t = new TimeDog();
+        //TimeDog t = new TimeDog();
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
         if (getDB() == null) return arSums;
 
@@ -1675,7 +1675,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
         summaryItemsSortByQty(arSums, !bAscend);
         summaryRebuildNamesAndQty(arSums);
-        t.debug_print_Duration("load sumend");
+        //t.debug_print_Duration("load sumend");
         return arSums;
 
     }
@@ -1683,7 +1683,7 @@ public class KDSDBCurrent extends KDSDBBase {
     /************************************************************************/
     public ArrayList<KDSSummaryItem> summaryItemsAdvanced(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bCheckCondiments, boolean bAscend, ArrayList<String> arItemsFilter, boolean bCheckSmartQty)//, boolean bEnableSummaryTranslation)
     {
-        TimeDog t = new TimeDog();
+        //TimeDog t = new TimeDog();
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
         if (getDB() == null) return arSums;
         String sql = "";
@@ -1736,7 +1736,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
         summaryRebuildNamesAndQty(arSums);
 
-        t.debug_print_Duration("load sumend");
+        //t.debug_print_Duration("load sumend");
         return arSums;
 
     }
@@ -1762,7 +1762,7 @@ public class KDSDBCurrent extends KDSDBBase {
      */
     public ArrayList<KDSSummaryItem> summaryCondimentsAdvanced(int nUser,ArrayList<String> condimentsFilter)
     {
-        TimeDog t = new TimeDog();
+        //TimeDog t = new TimeDog();
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
         if (getDB() == null) return arSums;
 
@@ -1811,7 +1811,7 @@ public class KDSDBCurrent extends KDSDBBase {
 //            summaryItemsAdvancedAddSmartQty(arSums);
 
         //summaryRebuildNamesAndQty(arSums);
-        t.debug_print_Duration("load sumend");
+        //t.debug_print_Duration("load sumend");
         return arSums;
 
     }

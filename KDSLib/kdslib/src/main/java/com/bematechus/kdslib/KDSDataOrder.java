@@ -1345,11 +1345,16 @@ public class KDSDataOrder extends KDSData {
      */
     public String createXml()
     {
+        //TimeDog td = new TimeDog();
         KDSXML xml = new KDSXML();
         xml.new_doc_with_root( KDSConst.KDS_Str_Transaction);
         outputOrderInformationToXML(xml, true);
+        //td.debug_print_Duration("createXml-1");
         this.getItems().outputXml(xml);
-        return xml.get_xml_string();
+        //td.debug_print_Duration("createXml-2");
+        String s = xml.get_xml_string();
+        //td.debug_print_Duration("createXml");
+        return s;
     }
 
 //    public boolean outputToXml(KDSXML xml)
@@ -2722,5 +2727,45 @@ get the total qty of all found items
             s += m_bDone?"1":"0";
             return s;
         }
+    }
+
+    /**
+     * Just contains ID in it. Order ID, item ID. Without condiments ID.
+     * It is for order bump notification. Make the data flow shortly
+     * format:
+     *  <Order>
+     *      <ID><ID/>
+     *      <Item>
+     *          <ID></ID>
+     *      </Item>
+     *      <Item>
+     *         <ID></ID>
+     *      </Item>
+     *  </Order>
+     * @return
+     */
+    public String createIDXml()
+    {
+        //TimeDog td = new TimeDog();
+        KDSXML xml = new KDSXML();
+        xml.new_doc_with_root( KDSConst.KDS_Str_Transaction);
+        xml.back_to_root();
+        xml.getFirstGroup(KDSConst.KDS_Str_Transaction);
+
+        xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDER, true);
+
+        xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
+        //xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
+
+        for (int i=0; i< getItems().getCount(); i++)
+        {
+            xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ITEM, true);
+            xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,getItems().getItem(i).getItemName(), false);
+            xml.back_to_parent();
+        }
+
+        String s = xml.get_xml_string();
+
+        return s;
     }
 }

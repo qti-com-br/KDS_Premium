@@ -203,7 +203,7 @@ public class KDSUtil {
     static public String convertDateToString(Date dt)
     {
 
-        SimpleDateFormat sdf= m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf= m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String str=sdf.format(dt);
         return str;

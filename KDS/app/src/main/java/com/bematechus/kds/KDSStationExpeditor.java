@@ -351,7 +351,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
 
 
@@ -480,14 +480,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
         }
         else if (itemB != null)
         {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
         }
 
         return true;
@@ -583,7 +583,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
 
             return orderA.getGUID();
         }
@@ -592,7 +592,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
             return orderB.getGUID();
         }
 
@@ -686,13 +686,13 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (userID == KDSUser.USER.USER_A) {
             sync_with_mirror(kds, command.getCode(), orderA, item);
             sync_with_backup(kds, command.getCode(), orderA, item);
-            sync_with_queue(kds, command.getCode(), orderA, item);
+            sync_with_queue(kds, command.getCode(), orderA, item, "");
         }
         else
         {
             sync_with_mirror(kds, command.getCode(), orderB, item);
             sync_with_backup(kds, command.getCode(), orderB, item);
-            sync_with_queue(kds, command.getCode(), orderB, item);
+            sync_with_queue(kds, command.getCode(), orderB, item, "");
         }
 
     }
@@ -730,7 +730,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             return "";
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
-        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
+        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);//It just contains ID
 
         if (order == null)
             return "";
@@ -810,7 +810,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
         return orderGuid;
 //        if (order != null)
@@ -924,7 +924,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
 
 
@@ -1006,7 +1006,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
 
 
@@ -1132,14 +1132,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
         }
         else if (itemB != null)
         {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
         }
 
         if (kds.isExpeditorStation())
@@ -1231,14 +1231,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
         }
         else if (itemB != null)
         {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
         }
 
     }
@@ -1351,7 +1351,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
     }
 
     /**
@@ -1383,10 +1383,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    orderAdd(kds.getUsers().getUserA(), order, false, false, true); //don't check add-on
+                    orderAdd(kds.getUsers().getUserA(), order,strXml, false, false, true); //don't check add-on
                 else
                 {
-                    kds.getUsers().orderAdd(order, false, true);
+                    kds.getUsers().orderAdd(order, strXml,false, true);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
@@ -1395,9 +1395,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
         { //I am mirror slave station
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false, true);
+                orderAdd(kds.getUsers().getUserA(), order, strXml,false, false, true);
             else
-                kds.getUsers().orderAdd(order, false, true);
+                kds.getUsers().orderAdd(order, strXml,false, true);
 
         }
         else
@@ -1408,16 +1408,16 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //                          //I have to fix this bug, in 24 stations "coke" branch.
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false, true);
+                orderAdd(kds.getUsers().getUserA(), order, strXml,false, false, true);
             else
-                kds.getUsers().orderAdd(order, false, true);
+                kds.getUsers().orderAdd(order,strXml, false, true);
         }
 
         tt_checkAllItemsBumped(kds, order);
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
     }
 
     /**
@@ -1466,7 +1466,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
 
 
 
@@ -1508,7 +1508,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
     }
     /**
      *
@@ -1537,7 +1537,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
 
 
 

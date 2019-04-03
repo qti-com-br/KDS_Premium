@@ -1898,7 +1898,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (!order.getQueueReady()) {
                 order.setQueueReady(true);
                 getKDS().getCurrentDB().orderSetQueueReady(order.getGUID(), true);
-                KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Ready, order, null );
+                KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Ready, order, null, "" );
                 //page it, add it at 20130313
                 /**
                  * One “bug” to fix: The queue display mode has option to enable double bump from expo which works well.
@@ -1941,7 +1941,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (isDoubleBumpForQueue()) {
                 if (order.getQueueReady()) {
 
-                    KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Pickup, order, null);
+                    KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Pickup, order, null, "");
                     return order;
                 }
             }
@@ -3274,7 +3274,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().getCurrentDB().prep_add_order_items(order);
 
 
-        getKDS().doOrderFilter(order, false, true);
+        getKDS().doOrderFilter(order, "",false, true);
         //t.debug_print_Duration("opAddNewOrder2");
         getKDS().refreshView(KDSUser.USER.USER_A, KDS.RefreshViewParam.None);
         getKDS().refreshView(KDSUser.USER.USER_B, KDS.RefreshViewParam.None);
@@ -3934,7 +3934,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 // TimeDog t = new TimeDog();
                 this.getUserUI(userID).getLayout().showOrders(orders);
                 // t.debug_print_Duration("onRefreshView1");
-                if (nParam == KDS.RefreshViewParam.Focus_First) {
+                if (nParam == KDS.RefreshViewParam.Focus_First || getFocusedOrderGUID(userID).isEmpty()) {
                     String orderGuid = getFirstOrderGuidToFocus(userID);// orders.getFirstOrderGuid();
                     this.getUserUI(userID).getLayout().focusOrder(orderGuid);
                 }
@@ -5329,7 +5329,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         refreshView(userID);
 
-        KDSStationFunc.sync_with_stations(getKDS(), KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed, order, ScheduleProcessOrder.get_prepare_item(order));
+        KDSStationFunc.sync_with_stations(getKDS(), KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed, order, ScheduleProcessOrder.get_prepare_item(order), "");
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 

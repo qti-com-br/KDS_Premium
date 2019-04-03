@@ -34,17 +34,18 @@ public class NoConnectionDataBuffer {
     public void addBufferedData(String data, int nMaxCount) {
 
         if (data.isEmpty()) return;
+        if (nMaxCount >0 && m_arBufferedData.size() >nMaxCount) return ; //just keep first 100 data
 
         m_arBufferedData.add(KDSStationDataBuffered.create(data));
-        if (nMaxCount<0) return;
-        if (m_arBufferedData.size() >nMaxCount)
-        {
-            int ncount = m_arBufferedData.size() - nMaxCount;
-            for (int i=0; i< ncount; i++)
-            {
-                m_arBufferedData.remove(0);
-            }
-        }
+//        if (nMaxCount<0) return;
+//        if (m_arBufferedData.size() >nMaxCount)
+//        {
+//            int ncount = m_arBufferedData.size() - nMaxCount;
+//            for (int i=0; i< ncount; i++)
+//            {
+//                m_arBufferedData.remove(0);
+//            }
+//        }
 
     }
 }
