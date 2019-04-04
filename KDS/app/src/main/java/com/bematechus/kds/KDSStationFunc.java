@@ -112,6 +112,8 @@ public class KDSStationFunc {
     }
     static public void sync_with_stations(KDS kds,KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item, String xmlData )
     {
+        sync_with_stations(kds, syncMode, order, item, xmlData, true);
+        /*
         String strXml = "";//KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
         //writeToStations(m_stationsConnection.getExpStations(), strXml);
         if (kds.getStationsConnections().getRelations().getExpStations().size()>0) {
@@ -178,7 +180,7 @@ public class KDSStationFunc {
 
         }
 
-
+*/
 
     }
 
@@ -224,10 +226,12 @@ public class KDSStationFunc {
      * @param order
      * @param bCheckAddonTime
      * @param bAutoSyncWithOthers
+     * @param bAutoSyncWithExpo
+     *  It depend on bAutoSyncWithOthers.
      * @return
      *  the order added
      */
-    static public  KDSDataOrder orderAdd(KDSUser kdsuser, KDSDataOrder order,String xmlData, boolean bCheckAddonTime, boolean bAutoSyncWithOthers, boolean bRefreshView)
+    static public  KDSDataOrder func_orderAdd(KDSUser kdsuser, KDSDataOrder order,String xmlData, boolean bCheckAddonTime, boolean bAutoSyncWithOthers, boolean bAutoSyncWithExpo, boolean bRefreshView)
     {
         KDSDataOrder orderReturn = null;
         //1. check if this order is existed in array.
@@ -286,7 +290,7 @@ public class KDSStationFunc {
 
         if (bAutoSyncWithOthers) {
             if (order.getItems().getCount() > 0) {
-                sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Add_New_Order, order, null, xmlData);
+                sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Add_New_Order, order, null, xmlData, bAutoSyncWithExpo);
             }
         }
 
@@ -791,16 +795,20 @@ public class KDSStationFunc {
         if (bRefreshView)
             kdsuser.refreshView();
         //td.debug_print_Duration("func-1");
-
+        //TimeDog td = new TimeDog();
         if (kdsuser.getKDS().isExpeditorStation()||
                 kdsuser.getKDS().isQueueExpo())
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Bump_Order, order, null, "");
         else
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Bump_Order, order, null, "");
+        //td.debug_print_Duration("orderBump-->sync_with_stations");
         //td.debug_print_Duration("func-2");
         //20180314
-        kdsuser.getCurrentDB().clearExpiredBumpedOrders( kdsuser.getKDS().getSettings().getBumpReservedCount());
-        //td.debug_print_Duration("func-3");
+        //td.reset();
+        //TimeDog td = new TimeDog();
+        if (bRefreshView)
+            kdsuser.getCurrentDB().clearExpiredBumpedOrders( kdsuser.getKDS().getSettings().getBumpReservedCount());
+        //td.debug_print_Duration("clearExpiredBumpedOrders");
     }
 
     /**
@@ -1561,19 +1569,19 @@ public class KDSStationFunc {
             }
             else
             { //primary is offline now, svae to current database.
-                orderAdd(kds.getUsers().getUser(userID), order,"", false, false, true); //don't check add-on
+                func_orderAdd(kds.getUsers().getUser(userID), order,"", false, false, false,true); //don't check add-on
             }
         }
         else if (kds.getStationsConnections().getRelations().isMirrorStation())
         { //I am mirror slave station
 
-            orderAdd(kds.getUsers().getUser(userID), order,"", false, false, true);
+            func_orderAdd(kds.getUsers().getUser(userID), order,"", false, false, false,true);
 
         }
         else
         { //I am common station,
             //check if current database contains this order.
-            orderAdd(kds.getUsers().getUser(userID), order, "",false, false, true);
+            func_orderAdd(kds.getUsers().getUser(userID), order, "",false, false, false, true);
         }
 
         //sync to others
@@ -2116,6 +2124,93 @@ public class KDSStationFunc {
             return;//for speed
         String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, "");
         kds.getStationsConnections().writeToTT(kds.getStationID(), strXml);
+
+    }
+
+    /**
+     *
+     * @param kds
+     * @param syncMode
+     * @param order
+     * @param item
+     * @param xmlData
+     * @param bToExpoTypeStation
+     *  Just for save data when do communication.
+     *   If router running, the order has been send to expo/queue-expo/tt
+     */
+    static public void sync_with_stations(KDS kds,KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item, String xmlData, boolean bToExpoTypeStation )
+    {
+        String strXml = "";//KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item);
+        //writeToStations(m_stationsConnection.getExpStations(), strXml);
+        if (bToExpoTypeStation) {
+            if (kds.getStationsConnections().getRelations().getExpStations().size() > 0) {
+                if (strXml.isEmpty())
+                    strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+                kds.getStationsConnections().writeToExps(kds.getStationID(), strXml);
+            }
+        }
+        if (kds.getStationsConnections().getRelations().getMirrorStations().size()>0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);//);
+            kds.getStationsConnections().writeToMirrors(kds.getStationID(), strXml);
+        }
+        if (kds.getStationsConnections().getRelations().getBackupStations().size()>0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+            kds.getStationsConnections().writeToBackups(kds.getStationID(), strXml);
+        }
+        if (kds.getStationsConnections().getRelations().getPrimaryStationsWhoUseMeAsMirror().size()>0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+            kds.getStationsConnections().writeToPrimaryMirror(kds.getStationID(), strXml);
+        }
+        if (is_send_to_duplicated(syncMode)) {
+            if (kds.getStationsConnections().getRelations().getDuplicatedStations().size() >0) {
+                if (strXml.isEmpty())
+                    strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+                kds.getStationsConnections().writeToDuplicated(kds.getStationID(), strXml);
+            }
+        }
+        if (kds.getStationsConnections().getRelations().getQueueStations().size() >0) {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+            kds.getStationsConnections().writeToQueue(kds.getStationID(), strXml);
+        }
+        if (bToExpoTypeStation) {
+            if (kds.getStationsConnections().getRelations().getTTStations().size() > 0) {
+                if (strXml.isEmpty()) {
+                    //TimeDog td = new TimeDog();
+                    strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+                    //td.debug_print_Duration("KDSXMLCommandFactory.sync_with_others");
+                }
+                kds.getStationsConnections().writeToTT(kds.getStationID(), strXml);
+            }
+        }
+        //if the backup station find its primary is offline, send data to primary's mirror.
+        if (kds.getStationsConnections().isBackupOfOthers())
+        {
+            ArrayList<KDSStationIP> primaryBackups = kds.getAllActiveConnections().getRelations().getPrimaryStationsWhoUseMeAsBackup();
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+            //If my primary backup station is the primary mirror of others,
+            //check if this primary station is offline. If so, write data to the slave mirror of primary.
+            for (int i=0; i< primaryBackups.size();i ++)
+                kds.getStationsConnections().writeToMirrorOfPrimaryBackup(kds.getStationID(),primaryBackups.get(i).getID(),  strXml);
+        }
+        else if (kds.getStationsConnections().isWorkLoadOfOthers())
+        {
+
+        }
+        else if (kds.getStationsConnections().isDuplicatedOfOthers())
+        {
+
+        }
+        else if (kds.getStationsConnections().isMirrorOfOthers())
+        {
+
+        }
+
+
 
     }
 }

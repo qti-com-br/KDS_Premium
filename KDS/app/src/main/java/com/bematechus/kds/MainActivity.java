@@ -2235,27 +2235,29 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
 
         //limit its size
-
+        //TimeDog td = new TimeDog();
 
         ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
         //Log.i(TAG, "Auto bumping=" + KDSUtil.convertIntToString(ar.size()));
-
+        //td.debug_print_Duration("findTimeoutOrders");
         //
         boolean bReturn = false;
         if (ar.size() >0)
         {
             synchronized (getKDS().getUsers().getUserA().getOrders().m_locker) {
+                //td.debug_print_Duration("synchronized");
                 for (int i = 0; i < ar.size(); i++) {
                     //TimeDog td = new TimeDog();
 
                     bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
                     //td.debug_print_Duration("bump order time:");
                 }
+                //td.debug_print_Duration("bumpOrderOperation");
             }
 
             getKDS().refreshView(); //use message
             bReturn = true;
-            ar.clear();
+
         }
         if (getKDS().isMultpleUsersMode())
         {
@@ -2271,11 +2273,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().refreshView();
                 //bumpOrderInThread(KDSUser.USER.USER_A, ar);
                 bReturn = true;
-                ar.clear();
+
             }
 
         }
-
+        if (ar.size() >0) {
+            //TimeDog td = new TimeDog();
+            getKDS().getCurrentDB().clearExpiredBumpedOrders(getKDS().getSettings().getBumpReservedCount());
+            //td.debug_print_Duration("checkAutoBumping->clearExpiredBumpedOrders");
+        }
+        ar.clear();
         checkAutoBumpParkOrders();
 
         return bReturn;
@@ -3274,7 +3281,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().getCurrentDB().prep_add_order_items(order);
 
 
-        getKDS().doOrderFilter(order, "",false, true);
+        getKDS().doOrderFilter(order, "",false,true, true);
         //t.debug_print_Duration("opAddNewOrder2");
         getKDS().refreshView(KDSUser.USER.USER_A, KDS.RefreshViewParam.None);
         getKDS().refreshView(KDSUser.USER.USER_B, KDS.RefreshViewParam.None);
@@ -6043,13 +6050,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         try {
                             if (m_threadChecking != Thread.currentThread())
                                 return;
+                            //TimeDog td = new TimeDog();
                             checkAutoBumping();
+                            //td.debug_print_Duration("checkAutoBumping");
                             //move it to thread
                             checkAutoBackup();
+                            //td.debug_print_Duration("checkAutoBackup");
                             //move it to thread
                             checkLogFilesDeleting();
+                            //td.debug_print_Duration("checkLogFilesDeleting");
                             //remove statistic data
                             getKDS().checkRemovingStatisticExpiredData();
+                            //td.debug_print_Duration("checkRemovingStatisticExpiredData");
                             try {
                                 Thread.sleep(1000);
                             } catch (Exception e) {

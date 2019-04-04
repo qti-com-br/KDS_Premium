@@ -2739,23 +2739,38 @@ return:
 
         //2.0.37
         int nBumped = this.executeOneValue(sql);
-        int nMax = Math.round(nMaxCount * 1.5f);
-
+        //int nMax = Math.round(nMaxCount * 1.5f);
+        int nMax = Math.round(nMaxCount * 2);
         if (nBumped<nMax ) return 0;
+        int nNeedBumped = nBumped - nMaxCount;
+        //TimeDog td = new TimeDog();
+        sql = "select guid from orders where bumped=1 order by bumpedTime asc limit " + KDSUtil.convertIntToString(nNeedBumped);
+        this.orderDeleteQuickBatch(sql);
+
+//        Cursor c = getDB().rawQuery(sql, null);
+//        //int ncounter = -1;
+//
+//        int nBumpedCount = 0;
+//        while (c.moveToNext()) {
+//            String orderGuid = getString(c,0);
+//            TimeDog t = new TimeDog();
+//            this.orderDeleteQuick(orderGuid);
+//            t.debug_print_Duration("orderDeleteQuick");
+////            nBumpedCount ++;
+////            if (nBumpedCount >=nNeedBumped) break;
+//        }
 
 
-        sql = "select guid from orders where bumped=1 order by bumpedTime desc";
-        Cursor c = getDB().rawQuery(sql, null);
-        int ncounter = -1;
-        int nBumpedCount = 0;
-        while (c.moveToNext()) {
-            ncounter ++;
-            if (ncounter <nMaxCount) continue;
-            String orderGuid = getString(c,0);
-            this.orderDeleteQuick(orderGuid);
-            nBumpedCount ++;
-        }
-        return nBumpedCount;
+//        while (c.moveToNext()) {
+//            ncounter ++;
+//            if (ncounter <nMaxCount) continue;
+//            String orderGuid = getString(c,0);
+//            this.orderDeleteQuick(orderGuid);
+//            nBumpedCount ++;
+//        }
+//        c.close();
+        //td.debug_print_Duration("clearExpiredBumpedOrdersByCount");
+        return nNeedBumped;
     }
 
 
@@ -3453,6 +3468,58 @@ update the schedule item ready qty
         updateDbTimeStamp();
 
         prep_remove(guid);
+
+        return true;
+    }
+
+    /**
+     * use sql to delete order quickly.
+     * @param sqlOrderGuid
+     *  The guid what fit to delete condition
+     * @return
+     */
+    public boolean orderDeleteQuickBatch(String sqlOrderGuid)
+    {
+
+        if (getDB() == null) return false;
+
+        String sql = "delete from orders where guid in ("+sqlOrderGuid +")";// KDSDataOrder.sqlDelete("orders", guid);
+        if (!this.executeDML(sql))
+            return false;
+
+        //remove order messages.
+        //sql = "delete from messages where ObjType=0 and ObjGUID='" + guid + "'";
+        sql = String.format("delete from messages where ObjType=0 and (ObjGUID in (%s))", sqlOrderGuid );
+        if (!this.executeDML(sql))
+            return false;
+
+//        //remove items modifiers
+        //sql = String.format("delete from modifiers where modifiers.ItemGUID in (select guid from items where items.orderguid='%s')", guid);
+        sql = String.format("delete from modifiers where modifiers.ItemGUID in (select items.guid from items where items.orderguid in (%s))", sqlOrderGuid);
+        if (!this.executeDML(sql)) return false;
+        //remove items messages
+        sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid in (%s))", sqlOrderGuid);
+        if (!this.executeDML(sql))
+            return false;
+//        //remove condiments messages
+        sql = String.format("delete from messages where ObjType=2 and messages.ObjGUID in (select condiments.guid from condiments,items where condiments.itemguid=items.guid and (items.orderguid in (%s) ))", sqlOrderGuid);
+        if (!this.executeDML(sql))
+            return false;
+//
+//        //remove condiments
+        sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid in (%s))", sqlOrderGuid);
+        if (!this.executeDML(sql))
+            return false;
+
+        //remove items
+        sql = String.format("delete from items where items.orderguid in (%s)", sqlOrderGuid);
+        if (!this.executeDML(sql))
+            return false;
+
+        updateDbTimeStamp();
+        sql = String.format("delete from prepsort where orderguid in (%s)", sqlOrderGuid);
+        if (!this.executeDML(sql))
+            return false;
 
         return true;
     }

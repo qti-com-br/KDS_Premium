@@ -2,6 +2,7 @@ package com.bematechus.kds;
 
 import android.app.ProgressDialog;
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
@@ -734,7 +735,8 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
         if (order == null)
             return "";
-
+        //if (BuildVer.isDebug())
+        //    System.out.println("from="+fromStationID + ",orderid=" + order.getOrderName());
         String orderGuid = "";
 
         if (kds.getStationsConnections().getRelations().isBackupStation())
@@ -1383,10 +1385,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    orderAdd(kds.getUsers().getUserA(), order,strXml, false, false, true); //don't check add-on
+                    func_orderAdd(kds.getUsers().getUserA(), order,strXml, false, false,false, true); //don't check add-on
                 else
                 {
-                    kds.getUsers().orderAdd(order, strXml,false, true);
+                    kds.getUsers().users_orderAdd(order, strXml,false, false, true);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
@@ -1395,9 +1397,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
         { //I am mirror slave station
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, strXml,false, false, true);
+                func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
             else
-                kds.getUsers().orderAdd(order, strXml,false, true);
+                kds.getUsers().users_orderAdd(order, strXml,false,false, true);
 
         }
         else
@@ -1408,9 +1410,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //                          //I have to fix this bug, in 24 stations "coke" branch.
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, strXml,false, false, true);
+                func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
             else
-                kds.getUsers().orderAdd(order,strXml, false, true);
+                kds.getUsers().users_orderAdd(order,strXml, false, false,true);
         }
 
         tt_checkAllItemsBumped(kds, order);

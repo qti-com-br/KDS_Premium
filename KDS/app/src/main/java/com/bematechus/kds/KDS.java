@@ -1988,7 +1988,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             //update the hidden option accroding to my station ID.
             order.setItemHiddenOptionAfterGetNewOrder(getStationID());
 
-            nAcceptItemsCount = doOrderFilter(order, xmlData, bForceAcceptThisOrder, bRefreshView);
+            nAcceptItemsCount = doOrderFilter(order, xmlData, bForceAcceptThisOrder,false, bRefreshView);
             if (bRefreshView)
                 schedule_process_update_after_receive_new_order();
         }
@@ -2088,6 +2088,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             return; //don't do loop
         //String orderGuidDoOperation = "";
         String orderGuid = "";
+        //if (BuildVer.isDebug())
+        //    System.out.println("code="+KDSUtil.convertIntToString(code.ordinal()) + ",from=" + fromStationID);
         //showMessage("receive command="+KDSUtil.convertIntToString(code.ordinal()));
         switch (code)
         {
@@ -2394,9 +2396,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      *
      *   return accept items count
      * @param order
-     *
+     * @param xmlData
+     * @param bForceAcceptThisOrderNoStationIDItems
+     * @param bForceDeliverToExpo
+     *  For order test
+     * @param bRefreshView
+     * @return
      */
-    public int  doOrderFilter(KDSDataOrder order,String xmlData, boolean bForceAcceptThisOrderNoStationIDItems, boolean bRefreshView)
+    public int  doOrderFilter(KDSDataOrder order,String xmlData, boolean bForceAcceptThisOrderNoStationIDItems, boolean bForceDeliverToExpo,boolean bRefreshView)
     {
 
 
@@ -2426,7 +2433,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             //TimeDog td = new TimeDog();
             String manipulatedXmlData = manipulateOrderXml(xmlData, removedItems);
 
-            filterInNormalStation(order,manipulatedXmlData, arTargetStations, bRefreshView);
+            filterInNormalStation(order,manipulatedXmlData, arTargetStations,bForceDeliverToExpo, bRefreshView);
             //td.debug_print_Duration("filterInNormalStation=");
 
         }
@@ -2447,7 +2454,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (writeOrderToWorkLoad(schOrder))
                     continue;
             }
-            filterInNormalStation(schOrder, "", null, true);
+            filterInNormalStation(schOrder, "", null, false,true);
 
         }
 
@@ -2735,7 +2742,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @return
      *  items count
      */
-    public int filterInNormalStation(KDSDataOrder order,String xmlData, ArrayList<KDSToStation> arOriginalTargetStations, boolean bRefreshView)
+    public int filterInNormalStation(KDSDataOrder order,String xmlData, ArrayList<KDSToStation> arOriginalTargetStations,boolean bForceDeliverToExpo, boolean bRefreshView)
     {
         int nItemsCount = 0;
         if (order != null)
@@ -2758,8 +2765,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (order.getItems().getCount() <= 0) return nItemsCount;
                 //KDSStationFunc.orderAdd(this, order, true, true);
                 //TimeDog t = new TimeDog();
-                boolean bDeliverToOthers = getSettings().getBoolean(KDSSettings.ID.Deliver_new_order_to_slave_expo);
-                ArrayList<KDSDataOrder> ordersAdded = m_users.orderAdd(order, xmlData,bDeliverToOthers, bRefreshView);//////
+                boolean bDeliverToExpo = getSettings().getBoolean(KDSSettings.ID.Deliver_new_order_to_slave_expo);
+                if (bForceDeliverToExpo)
+                    bDeliverToExpo = true; //for test button
+                ArrayList<KDSDataOrder> ordersAdded = m_users.users_orderAdd(order, xmlData,true, bDeliverToExpo, bRefreshView);//////
                 //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts
                 for (int i = 0; i < ordersAdded.size(); i++) {
@@ -4312,7 +4321,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                             //TimeDog td1 = new TimeDog();
                                             doCommandXml((KDSSocketInterface) data.m_objSource, data.m_xmlData);
                                             //td1.debug_print_Duration("command duration:");
-                                            //td.debug_print_Duration("Command duration:");
+
                                             break;
                                         default:
                                             break;
