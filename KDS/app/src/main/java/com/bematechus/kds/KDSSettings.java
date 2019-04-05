@@ -1583,7 +1583,7 @@ public class KDSSettings extends SettingsBase {
 
         set(ID.Tracker_enable_auto_bump,true);
 
-        set(ID.Pager_enabled,true);
+        set(ID.Pager_enabled,false);
         set(ID.Pager_use_userinfo,false);
         set(ID.Pager_delay,"0");
 
