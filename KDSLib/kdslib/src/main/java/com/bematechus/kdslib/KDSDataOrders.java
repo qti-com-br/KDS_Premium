@@ -92,7 +92,7 @@ public class KDSDataOrders extends KDSDataArray {
      public KDSDataOrder getOrderByName(String orderName)
      {
          try {
-             //synchronized (m_locker) {
+             synchronized (m_locker) {
              Vector ar = this.getComponents();
              for (int i = 0; i < ar.size(); i++) {
                  KDSDataOrder c = (KDSDataOrder) ar.get(i);
@@ -101,7 +101,7 @@ public class KDSDataOrders extends KDSDataArray {
 
              }
              return null;
-             //}
+             }
          }
          catch (Exception e)
          {
@@ -111,53 +111,47 @@ public class KDSDataOrders extends KDSDataArray {
      
      public KDSDataOrder getOrderByGUID(String orderGUID)
      {
-         //synchronized (m_locker)
-         try
-         {
-             Vector ar = this.getComponents();
-             for (int i = 0; i < ar.size(); i++) {
-                 KDSDataOrder c = (KDSDataOrder) ar.get(i);
-                 if (c.getGUID().equals(orderGUID))
-                     return c;
+         synchronized (m_locker) {
+             try {
+                 Vector ar = this.getComponents();
+                 for (int i = 0; i < ar.size(); i++) {
+                     KDSDataOrder c = (KDSDataOrder) ar.get(i);
+                     if (c.getGUID().equals(orderGUID))
+                         return c;
 
+                 }
+                 return null;
+             } catch (Exception e) {
+                 return null;
              }
-             return null;
-         }
-         catch (Exception e)
-         {
-             return null;
          }
      }
      
      public int getIndex(KDSDataOrder order)
      {
-         //synchronized (m_locker)
-         try
-         {
-             Vector ar = this.getComponents();
-             return ar.indexOf(order);
-         }
-         catch (Exception e)
-         {
-            return -1;
+         synchronized (m_locker) {
+             try {
+                 Vector ar = this.getComponents();
+                 return ar.indexOf(order);
+             } catch (Exception e) {
+                 return -1;
+             }
          }
      }
      
     public int getIndex(String orderGUID)
     {
-        //synchronized (m_locker)
-        try
-        {
+        synchronized (m_locker) {
+            try {
 
-            KDSDataOrder order = this.getOrderByGUID(orderGUID);
-            if (order == null)
+                KDSDataOrder order = this.getOrderByGUID(orderGUID);
+                if (order == null)
+                    return -1;
+
+                return getIndex(order);
+            } catch (Exception e) {
                 return -1;
-
-            return getIndex(order);
-        }
-        catch (Exception e)
-        {
-            return -1;
+            }
         }
     }
      
