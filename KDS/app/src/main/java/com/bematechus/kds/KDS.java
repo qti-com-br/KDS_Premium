@@ -4306,7 +4306,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                     DoOrdersXmlThreadBuffer data = m_xmlDataBuffer.get(i);
                                     switch (data.m_xmlType) {
                                         case Order:
-                                            TimeDog td = new TimeDog();
+                                            //TimeDog td = new TimeDog();
                                             //td.debug_print_Duration("-------------------------");
                                             KDSDataOrder order = doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
                                             if (order != null)
@@ -4315,7 +4315,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                                     bAddNew = true;
                                                 order = null;
                                             }
-                                            td.debug_print_Duration("Order duration:");
+                                            //td.debug_print_Duration("Order duration:");
                                             break;
                                         case COMMAND_XML:
                                             //TimeDog td1 = new TimeDog();
