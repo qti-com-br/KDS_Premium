@@ -3096,7 +3096,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
         KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Single, this, this.getString(R.string.transfer_select_station_title));
-        dlg.setSelf(true);
+        dlg.setSelf(false); //hide self now. //Also on transfer the station you are on shows up. You should not be able to transfer a station to its own station.
         dlg.setShowMultipleUsers(true);
         //dlg.setTag(v);
         dlg.setKDSUser(getKDS().getUsers().getUser(userID));

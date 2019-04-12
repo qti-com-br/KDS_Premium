@@ -1111,38 +1111,43 @@ public class QueueView  extends View {
 
        g.save();
         //set the drawing area
+        try {
 
 
-       rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
-       g.clipRect(rtCell);
+            rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
+            g.clipRect(rtCell);
 
-        boolean bReverseReadyColorForFlash = false;
-        if (m_bFlashReadyOrder)
-        {
-            if (isReadyOrder(order))//||
-                    //isPreparationOrder(order))
-            {
-                bReverseReadyColorForFlash = bReverseReadyColor;
+            boolean bReverseReadyColorForFlash = false;
+            if (m_bFlashReadyOrder) {
+                if (isReadyOrder(order))//||
+                //isPreparationOrder(order))
+                {
+                    bReverseReadyColorForFlash = bReverseReadyColor;
 //                Calendar c = Calendar.getInstance();
 //                int second = c.get(Calendar.SECOND);
 //                if ( (second%2)==0)
 //                    bReverseReadyColorForFlash = true;
+                }
             }
+            // Paint paintBG = new Paint();
+            m_paintOrderTitle.setColor(getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+
+            int nTitleAreaWidth = (int) ((float) rtCell.width() * ORDERID_AREA_PERCENT);
+
+            Rect rtTitle = new Rect(rtCell);
+            rtTitle.right = rtTitle.left + nTitleAreaWidth;
+            drawTitle(g, rtTitle, order, false);// bReverseReadyColorForFlash);
+
+            Rect rtStatus = new Rect(rtCell);
+            rtStatus.left = rtStatus.left + nTitleAreaWidth;
+            drawStatus(g, rtStatus, order, bReverseReadyColorForFlash);
         }
-       // Paint paintBG = new Paint();
-        m_paintOrderTitle.setColor( getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
-
-        int nTitleAreaWidth =(int) ((float)rtCell.width() * ORDERID_AREA_PERCENT);
-
-        Rect rtTitle = new Rect(rtCell);
-        rtTitle.right = rtTitle.left + nTitleAreaWidth;
-        drawTitle(g, rtTitle, order,false);// bReverseReadyColorForFlash);
-
-        Rect rtStatus = new Rect(rtCell);
-        rtStatus.left = rtStatus.left + nTitleAreaWidth;
-        drawStatus(g, rtStatus, order, bReverseReadyColorForFlash);
+        catch ( Exception e)
+        {
+            e.printStackTrace();
+        }
         g.restore();
    //     g.clipRect(rect);
     }
@@ -1159,18 +1164,24 @@ public class QueueView  extends View {
         if (rtCell.isEmpty()) return;
 
         g.save();
-
-        rtCell = drawItemBorder(g, rtCell, false);
-        g.clipRect(rtCell);
+        try {
 
 
-        m_paintOrderTitle.setColor(m_ftOrderID.getBG());
-        g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+            rtCell = drawItemBorder(g, rtCell, false);
+            g.clipRect(rtCell);
 
-        m_paintOrderTitle.setColor(m_ftOrderID.getFG());
-        String s = makeMoreItemsString(nMoreItemsCount);
-        drawString(g, m_paintOrderTitle, rtCell, Paint.Align.CENTER, s);
 
+            m_paintOrderTitle.setColor(m_ftOrderID.getBG());
+            g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+
+            m_paintOrderTitle.setColor(m_ftOrderID.getFG());
+            String s = makeMoreItemsString(nMoreItemsCount);
+            drawString(g, m_paintOrderTitle, rtCell, Paint.Align.CENTER, s);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         g.restore();
 
     }
@@ -1486,24 +1497,32 @@ public class QueueView  extends View {
     private void drawWrapString(Canvas g,KDSViewFontFace ft,boolean bReverseColor, Rect rt, Paint.Align align, String string )
     {
         g.save();
-        TextPaint textPaint = new TextPaint();
-        textPaint.setTextSize(ft.getFontSize());
-        textPaint.setTypeface(ft.getTypeFace());
-        textPaint.setColor(getFG(ft, bReverseColor));// ft.getFG());
-        textPaint.setAntiAlias(true);
+        try {
 
-        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
-        if (align == Paint.Align.RIGHT)
-            al = Layout.Alignment.ALIGN_OPPOSITE;
-        else if (align == Paint.Align.LEFT)
-            al = Layout.Alignment.ALIGN_NORMAL;
-        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
-        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
 
-        int x = rt.left;
-        int y = rt.top + (rt.height() - sl.getHeight())/2;
-        g.translate(x,y);
-        sl.draw(g);
+            TextPaint textPaint = new TextPaint();
+            textPaint.setTextSize(ft.getFontSize());
+            textPaint.setTypeface(ft.getTypeFace());
+            textPaint.setColor(getFG(ft, bReverseColor));// ft.getFG());
+            textPaint.setAntiAlias(true);
+
+            Layout.Alignment al = Layout.Alignment.ALIGN_CENTER;
+            if (align == Paint.Align.RIGHT)
+                al = Layout.Alignment.ALIGN_OPPOSITE;
+            else if (align == Paint.Align.LEFT)
+                al = Layout.Alignment.ALIGN_NORMAL;
+            //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
+            StaticLayout sl = new StaticLayout(string, textPaint, rt.width(), al, 1.0f, 0.0f, true);
+
+            int x = rt.left;
+            int y = rt.top + (rt.height() - sl.getHeight()) / 2;
+            g.translate(x, y);
+            sl.draw(g);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         g.restore();
     }
 
@@ -2031,6 +2050,7 @@ public class QueueView  extends View {
 
                 for (int i = 0; i < ncount; i++) {
                     KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                    if (order == null) break;
                     if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
                         nItemCurrentIndex++;
                         if (nItemCurrentIndex < nItemsStartIndex) continue;
@@ -2075,37 +2095,43 @@ public class QueueView  extends View {
         if (order == null) return;
         //       Rect rtClip = g.getClipBounds();
         g.save();
-        //set the drawing area
-        // rtCell.inset(BORDER_GAP, BORDER_GAP);
-        rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
-        g.clipRect(rtCell);
+        try {
 
-        boolean bReverseReadyColorForFlash = false;
-        if (m_bFlashReadyOrder)
-        {
-            if (isReadyOrder(order))//||
-                    //isPreparationOrder(order))
-            {
-                bReverseReadyColorForFlash = bReverseReadyColor;
+
+            //set the drawing area
+            // rtCell.inset(BORDER_GAP, BORDER_GAP);
+            rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
+            g.clipRect(rtCell);
+
+            boolean bReverseReadyColorForFlash = false;
+            if (m_bFlashReadyOrder) {
+                if (isReadyOrder(order))//||
+                //isPreparationOrder(order))
+                {
+                    bReverseReadyColorForFlash = bReverseReadyColor;
 //                Calendar c = Calendar.getInstance();
 //                int second = c.get(Calendar.SECOND);
 //                if ( (second%2)==0)
 //                    bReverseReadyColorForFlash = true;
+                }
             }
+            // Paint paintBG = new Paint();
+            m_paintOrderTitle.setColor(getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            //m_paintOrderTitle.setAlpha(0);
+            g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+            //m_paintOrderTitle.setAlpha(255);
+            int nTitleAreaWidth = (int) ((float) rtCell.width() * ORDERID_AREA_PERCENT);
+
+            Rect rtTitle = new Rect(rtCell);
+            //rtTitle.right = rtTitle.left + nTitleAreaWidth;
+            drawTitle(g, rtTitle, order, bReverseReadyColorForFlash);
         }
-        // Paint paintBG = new Paint();
-        m_paintOrderTitle.setColor( getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        //m_paintOrderTitle.setAlpha(0);
-        g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
-        //m_paintOrderTitle.setAlpha(255);
-        int nTitleAreaWidth =(int) ((float)rtCell.width() * ORDERID_AREA_PERCENT);
-
-        Rect rtTitle = new Rect(rtCell);
-        //rtTitle.right = rtTitle.left + nTitleAreaWidth;
-        drawTitle(g, rtTitle, order,bReverseReadyColorForFlash);
-
-
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        //make sure "restore" was called
         g.restore();
 
     }

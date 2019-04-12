@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,6 +129,19 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
+        m_lstStations.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
+                     keyCode == KeyEvent.KEYCODE_DPAD_UP)
+                {
+                    if (event.getAction() == KeyEvent.ACTION_UP)
+                        KDSUtil.sendKeyCode(KeyEvent.KEYCODE_ENTER);
+
+                }
+                return false;
+            }
+        });
     }
 
     public void refresh()
@@ -216,10 +230,11 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
     public KDSStationIP getSelectedStation()
     {
 
-
+        if (!m_lstStations.isFocused())
+            return null;
         int ncount = m_lstStations.getCount();
         for (int i=0; i< ncount; i++) {
-            if ( m_lstStations.isFocused() || m_lstStations.isItemChecked(i))
+            if ( m_lstStations.isItemChecked(i))
             {//2.1.15.4 add isFocused to it.
                return ((MyAdapter) m_lstStations.getAdapter()).getListData().get(i);
 
@@ -319,7 +334,6 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
         }
 
     }
-
 
 
 }

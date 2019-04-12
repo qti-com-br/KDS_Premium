@@ -12,14 +12,14 @@ import java.util.Vector;
 public class NoConnectionDataBuffers {
     Vector<NoConnectionDataBuffer> m_arBufferForWaitingConnection = new Vector<>(); //KPP1-Coke
 
-    public void add(String stationID, String strXml, int nMaxBufferCount)
+    public KDSStationDataBuffered add(String stationID, String strXml, int nMaxBufferCount)
     {
         NoConnectionDataBuffer buffer = findStation(stationID);
         if (buffer == null) {
             buffer = new NoConnectionDataBuffer(stationID);
             m_arBufferForWaitingConnection.add(buffer);
         }
-        buffer.addBufferedData(strXml, nMaxBufferCount);
+        return buffer.addBufferedData(strXml, nMaxBufferCount);
 
 
     }

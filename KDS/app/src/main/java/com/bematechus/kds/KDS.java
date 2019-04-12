@@ -1498,8 +1498,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         if (conn != null) {
             if (conn.getSock().isConnected())
                 conn.getSock().writeXmlTextCommand(strXml);
-            else
-                conn.addBufferedData(strXml);
+            else {
+                //conn.addBufferedData(strXml);
+                m_stationsConnection.getNoConnectionBuffer().add(stationID, strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+            }
         }
         else
         {
@@ -3272,7 +3274,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_config_data));// "Waiting for config data...");
             }
             else {
-                conn.addBufferedData(s);
+                //conn.addBufferedData(s);
+                m_stationsConnection.getNoConnectionBuffer().add(stationID, s, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_new_connection));//"Waiting for new connection...");
             }
@@ -3292,7 +3295,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_config_data));//"Waiting for config data...");
             }
             else {
-                willConn.addBufferedData(s);
+                //willConn.addBufferedData(s);
+                m_stationsConnection.getNoConnectionBuffer().add(stationActive.getID(), s, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_connecting));//"Waiting for connecting...");
             }

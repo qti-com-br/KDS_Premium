@@ -36,7 +36,8 @@ public class KDSStationConnection {
     TimeDog m_timeStartConnecting = new TimeDog();
 
     //ArrayList<String> m_arBufferedData = new ArrayList<>(); ///these data need to been send out after connection build.
-    ArrayList<KDSStationDataBuffered> m_arBufferedData = new ArrayList<>(); ///these data need to been send out after connection build.
+    //use KDSStationsConnection-->m_buffersForWaitingConnection to save offline data
+   // ArrayList<KDSStationDataBuffered> m_arBufferedData = new ArrayList<>(); ///these data need to been send out after connection build.
 
     /********************************************************************************************/
     public KDSStationConnection() {
@@ -61,83 +62,83 @@ public class KDSStationConnection {
         return m_connectionType;
     }
 
-    public void addBufferedData(String data) {
+//    public void addBufferedData(String data) {
+////        if (data.isEmpty()) return;
+////        m_arBufferedData.add(KDSStationDataBuffered.create(data));
+//        addBufferedData(data, -1);
+//
+//    }
+
+//    /**
+//     *  For KPP1-Coke, move it to kdsstationsconnection-->m_buffersForWaitingConnection
+//     * @param data
+//     * @param nMaxCount
+//     *  If size more than this value, remove old data.
+//     *  -1: No limitation
+//     */
+//    public void addBufferedData(String data, int nMaxCount) {
 //        if (data.isEmpty()) return;
 //        m_arBufferedData.add(KDSStationDataBuffered.create(data));
-        addBufferedData(data, -1);
+//        if (nMaxCount<0) return;
+//        if (m_arBufferedData.size() >nMaxCount)
+//        {
+//            int ncount = m_arBufferedData.size() - nMaxCount;
+//            for (int i=0; i< ncount; i++)
+//            {
+//                m_arBufferedData.remove(0);
+//            }
+//        }
+//
+//    }
 
-    }
+//    public KDSStationDataBuffered addBufferedData(String data, String description) {
+//        if (data.isEmpty()) return null;
+//        KDSStationDataBuffered d = KDSStationDataBuffered.create(data, description);
+//        m_arBufferedData.add(d);
+//        return d;
+//
+//    }
 
-    /**
-     *  For KPP1-Coke
-     * @param data
-     * @param nMaxCount
-     *  If size more than this value, remove old data.
-     *  -1: No limitation
-     */
-    public void addBufferedData(String data, int nMaxCount) {
-        if (data.isEmpty()) return;
-        m_arBufferedData.add(KDSStationDataBuffered.create(data));
-        if (nMaxCount<0) return;
-        if (m_arBufferedData.size() >nMaxCount)
-        {
-            int ncount = m_arBufferedData.size() - nMaxCount;
-            for (int i=0; i< ncount; i++)
-            {
-                m_arBufferedData.remove(0);
-            }
-        }
+//    public String popupBufferedData() {
+//        if (m_arBufferedData.size() > 0) {
+//            KDSStationDataBuffered data = m_arBufferedData.get(0);
+//            m_arBufferedData.remove(0);
+//            return data.getData();
+//
+//        }
+//        else
+//            return "";
+//
+//    }
 
-    }
+//    public KDSStationDataBuffered popupStationBufferedData() {
+//        if (m_arBufferedData.size() > 0) {
+//            KDSStationDataBuffered data = m_arBufferedData.get(0);
+//            m_arBufferedData.remove(0);
+//            return data;
+//
+//        }
+//        else
+//            return null;
+//    }
 
-    public KDSStationDataBuffered addBufferedData(String data, String description) {
-        if (data.isEmpty()) return null;
-        KDSStationDataBuffered d = KDSStationDataBuffered.create(data, description);
-        m_arBufferedData.add(d);
-        return d;
+//    public int getBufferedCount() {
+//        return m_arBufferedData.size();
+//    }
 
-    }
-
-    public String popupBufferedData() {
-        if (m_arBufferedData.size() > 0) {
-            KDSStationDataBuffered data = m_arBufferedData.get(0);
-            m_arBufferedData.remove(0);
-            return data.getData();
-
-        }
-        else
-            return "";
-
-    }
-
-    public KDSStationDataBuffered popupStationBufferedData() {
-        if (m_arBufferedData.size() > 0) {
-            KDSStationDataBuffered data = m_arBufferedData.get(0);
-            m_arBufferedData.remove(0);
-            return data;
-
-        }
-        else
-            return null;
-    }
-
-    public int getBufferedCount() {
-        return m_arBufferedData.size();
-    }
-
-    /**
-     *
-     * @param conn
-     */
-    public void copyBufferedData(KDSStationConnection conn)
-    {
-        int ncount = conn.getBufferedCount();
-        for (int i=0; i< ncount; i++) {
-            String s = conn.popupBufferedData();
-            if (!s.isEmpty())
-                this.addBufferedData(s);
-        }
-    }
+//    /**
+//     *
+//     * @param conn
+//     */
+//    public void copyBufferedData(KDSStationConnection conn)
+//    {
+//        int ncount = conn.getBufferedCount();
+//        for (int i=0; i< ncount; i++) {
+//            String s = conn.popupBufferedData();
+//            if (!s.isEmpty())
+//                this.addBufferedData(s);
+//        }
+//    }
 
     public void setID(String strID) {
         m_strID = strID;
@@ -340,8 +341,8 @@ public class KDSStationConnection {
         return s;
     }
 
-    public void appendBufferedData(ArrayList<KDSStationDataBuffered> ar)
-    {
-        m_arBufferedData.addAll(ar);
-    }
+//    public void appendBufferedData(ArrayList<KDSStationDataBuffered> ar)
+//    {
+//        m_arBufferedData.addAll(ar);
+//    }
 }

@@ -14,6 +14,7 @@ import com.bematechus.kdslib.KDSStationActived;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationDataBuffered;
 import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSStationsConnection;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.ScheduleProcessOrder;
@@ -943,11 +944,13 @@ public class KDSStationFunc {
             {
                 //add the message after send
 
-                KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
-                data.setOrderGuid(orderWithTransferingItem.getGUID());
-                data.setItemGuid(itemGuid);
-                data.setDescription(orderWithTransferingItem.getItems().getItem(0).getDescription());
-
+                //KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
+                KDSStationDataBuffered data = kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(toStationID, strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                if (data != null) {
+                    data.setOrderGuid(orderWithTransferingItem.getGUID());
+                    data.setItemGuid(itemGuid);
+                    data.setDescription(orderWithTransferingItem.getItems().getItem(0).getDescription());
+                }
 
             }
 
@@ -1006,9 +1009,10 @@ public class KDSStationFunc {
             else
             {
                 //add the message after send
-
-                KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
-                data.setOrderGuid(orderGuid);
+                KDSStationDataBuffered data = kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(activeStation.getID(), strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                //KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
+                if (data != null)
+                    data.setOrderGuid(orderGuid);
 
             }
 

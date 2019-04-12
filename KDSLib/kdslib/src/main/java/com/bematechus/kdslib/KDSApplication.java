@@ -5,15 +5,15 @@ package com.bematechus.kdslib;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import org.acra.*;
-import org.acra.annotation.*;
+//import org.acra.*;
+//import org.acra.annotation.*;
 
 
 /**
  * Use this to save the context.
  */
-@AcraMailSender(mailTo = "david.wong@bematechus.com")
-@AcraCore(buildConfigClass = BuildConfig.class)
+//@AcraMailSender(mailTo = "david.wong@bematechus.com")
+//@AcraCore(buildConfigClass = BuildConfig.class)
 public class KDSApplication extends Application {
 
     public final String TAG = "KDSApplication";
@@ -83,12 +83,12 @@ public class KDSApplication extends Application {
         return (s.indexOf("ROUTER")>=0);
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-
-        // The following line triggers the initialization of ACRA
-        ACRA.init(this);
-    }
+//    @Override
+//    protected void attachBaseContext(Context base) {
+//        super.attachBaseContext(base);
+//
+//        // The following line triggers the initialization of ACRA
+//        ACRA.init(this);
+//    }
 
 }

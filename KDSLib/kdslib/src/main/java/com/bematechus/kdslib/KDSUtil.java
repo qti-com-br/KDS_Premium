@@ -1640,5 +1640,19 @@ just 16bits value
 
     }
 
+    /**
+     * simulate the physical keyboard
+     * @param keyCode
+     */
+    static public void sendKeyCode(int keyCode) {
+        try {
+
+            String keyCommand = "input keyevent " + KDSUtil.convertIntToString(keyCode);
+            Runtime.getRuntime().exec(keyCommand);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }
