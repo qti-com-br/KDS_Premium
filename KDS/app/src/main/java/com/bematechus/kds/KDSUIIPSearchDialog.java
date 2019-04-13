@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -15,7 +16,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSUtil;
@@ -128,20 +131,42 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-
-        m_lstStations.setOnKeyListener(new View.OnKeyListener() {
+//        m_lstStations.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//
+//                String s = v.toString();
+//                Toast.makeText(KDSApplication.getContext(), s, Toast.LENGTH_LONG).show();
+//
+//            }
+//        });
+        m_lstStations.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
-                     keyCode == KeyEvent.KEYCODE_DPAD_UP)
-                {
-                    if (event.getAction() == KeyEvent.ACTION_UP)
-                        KDSUtil.sendKeyCode(KeyEvent.KEYCODE_ENTER);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                m_lstStations.setItemChecked(position, true);
+//                String s = view.toString();
+//                Toast.makeText(KDSApplication.getContext(), s, Toast.LENGTH_LONG).show();
+            }
 
-                }
-                return false;
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
+//        m_lstStations.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
+//                     keyCode == KeyEvent.KEYCODE_DPAD_UP)
+//                {
+//                    if (event.getAction() == KeyEvent.ACTION_UP)
+//                        KDSUtil.sendKeyCode(KeyEvent.KEYCODE_ENTER);
+//
+//                }
+//                return false;
+//            }
+//        });
+
     }
 
     public void refresh()
@@ -158,6 +183,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
 
 
     }
@@ -201,6 +227,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
                 ((MyAdapter) m_lstStations.getAdapter()).getListData().add(station1);
             }
         }
+        KDSStationIP.sortStations ( ((MyAdapter) m_lstStations.getAdapter()).getListData() );
         ((MyAdapter) m_lstStations.getAdapter()).notifyDataSetChanged();
 
         String str = this.getDialog().getContext().getString(R.string.active_stations_list);
@@ -213,11 +240,13 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
      */
     private ArrayList<String> getSelectedStations()
     {
-        ArrayList<String> ar = new ArrayList<>();
 
+        ArrayList<String> ar = new ArrayList<>();
+        if (!m_lstStations.isFocused())
+            return ar;
         int ncount = m_lstStations.getCount();
         for (int i=0; i< ncount; i++) {
-            if (m_lstStations.isFocused() || m_lstStations.isItemChecked(i))
+            if ( m_lstStations.isItemChecked(i))
             {
                 String s = ((MyAdapter) m_lstStations.getAdapter()).getListData().get(i).toString();
                 ar.add(s);
@@ -240,6 +269,11 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
 
             }
         }
+//        View v =  m_lstStations.getSelectedView();//.getFocusedChild();//.findFocus();
+//        if (v != null)
+//        {
+//            Toast.makeText(KDSApplication.getContext(), "focused", Toast.LENGTH_LONG).show();
+//        }
         return null;
     }
 
@@ -271,6 +305,9 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
             }
         });
         refresh();
+//        this.getView().requestFocus();
+//        m_lstStations.requestFocus();
+
     }
 
     private class MyAdapter extends BaseAdapter {
@@ -330,6 +367,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
 
             ((TextView) convertView.findViewById(R.id.txtIP)).setText(r.getIP());
             ((TextView) convertView.findViewById(R.id.txtPort)).setText(r.getPort());
+
             return convertView;
         }
 

@@ -2,6 +2,12 @@ package com.bematechus.kdslib;
 /**
  *  >>>>>>> SAME AS KDS APP FILE <<<<<<<
  */
+
+import java.lang.reflect.Array;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Created by Administrator on 2015/10/8 0008.
  */
@@ -166,5 +172,18 @@ public class KDSStationIP {
         station.setIP(conn.getIP());
         station.setID(conn.getID());
         return station;
+    }
+
+    static public void sortStations(List<KDSStationIP> ar)
+    {
+        Collections.sort(ar, new Comparator<KDSStationIP>() {
+            @Override
+            public int compare(KDSStationIP o1, KDSStationIP o2) {
+
+                return (o1.getID().compareTo(o2.getID()));
+
+            }
+        });
+
     }
 }

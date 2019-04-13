@@ -402,6 +402,13 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             boolean m_bDisableChangedEvent = false;
 
         }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
         private KDSRouterSettings.KDSDataSource getDataSourceType(SharedPreferences prefs)
         {
             String key = ("general_data_source");
@@ -708,6 +715,13 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
             pref.registerOnSharedPreferenceChangeListener(this);
 
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
         {
