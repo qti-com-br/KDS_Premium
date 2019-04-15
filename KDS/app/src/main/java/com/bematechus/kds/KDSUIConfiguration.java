@@ -1503,7 +1503,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("queue_status3_sort"));
             bindPreferenceSummaryToValue(findPreference("queue_status4_sort"));
 
-            bindPreferenceSummaryToValue(findPreference("queue_auto_bump_timeout"));
+            //bindPreferenceSummaryToValue(findPreference("queue_auto_bump_timeout"));
 
             boolean bEnabled = isEnabled();
 

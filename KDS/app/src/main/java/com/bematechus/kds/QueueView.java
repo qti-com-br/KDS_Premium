@@ -1621,8 +1621,13 @@ public class QueueView  extends View {
             m_status4Sort = getStatusSort( m_pickupCombinedToStatus);
         }
 
-        String s = settings.getString(KDSSettings.ID.Queue_auto_bump_timeout);
-        m_nAutoBumpTimeoutMs = KDSUtil.convertStringToInt(s, 0) *60000;
+        //String s = settings.getString(KDSSettings.ID.Queue_auto_bump_timeout);
+        //m_nAutoBumpTimeoutMs = KDSUtil.convertStringToInt(s, 0) *60000;
+        n = settings.getInt(KDSSettings.ID.Auto_bump_minutes);
+        m_nAutoBumpTimeoutMs = n * 60000;
+        if (!settings.getBoolean(KDSSettings.ID.Auto_bump_enabled))
+            m_nAutoBumpTimeoutMs = -1;
+
 
     }
 
