@@ -259,8 +259,8 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
     public KDSStationIP getSelectedStation()
     {
 
-        if (!m_lstStations.isFocused())
-            return null;
+//        if (!m_lstStations.isFocused())
+//            return null;
         int ncount = m_lstStations.getCount();
         for (int i=0; i< ncount; i++) {
             if ( m_lstStations.isItemChecked(i))
