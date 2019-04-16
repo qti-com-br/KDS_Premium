@@ -666,6 +666,17 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     }
 
+    /**
+     * Database connection:
+     * Host: kds-dev.cz2l6cajeudq.us-west-2.rds.amazonaws.com
+     * User: Bematech
+     * Pass: %Bematech11714%
+     * Database: KDSDevPremium
+     * @param command
+     * @param tblName
+     * @param data
+     * @return
+     */
     static public ActivationRequest createSyncRequest(COMMAND command, String tblName, JSONArray data)
     {
 
@@ -858,6 +869,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("customer_guid", "''");
             json.put("smart_order_start_time", "0");
             json.put("preparation_time", "0");
+            json.put("user_info", "''");
 
         }
         catch (Exception e)
