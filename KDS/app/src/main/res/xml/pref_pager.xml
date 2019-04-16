@@ -6,7 +6,7 @@
     <CheckBoxPreference
         android:key="pager_enabled"
         android:title="@string/pref_pager_enabled"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
     <!--<CheckBoxPreference-->
         <!--android:key="pager_id_from_userinfo"-->
         <!--android:title="@string/pref_pager_id_from_userinfo"-->

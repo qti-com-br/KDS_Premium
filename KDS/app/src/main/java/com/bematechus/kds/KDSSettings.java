@@ -549,13 +549,16 @@ public class KDSSettings extends SettingsBase {
        //2.0.47
        Item_group_category,
        Enable_smbv2, //2.0.51
-       SMS_enabled, //SMS feature , KPP1-15
-       Queue_auto_bump_timeout,
+
+        SMS_enabled, //SMS feature , KPP1-15
+        Queue_auto_bump_timeout, //unused
 
        //Transfer
        Transfer_default_station, //KPP1-42
        Transfer_auto_to_default,
 
+     //
+     Deliver_new_order_to_slave_expo,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1030,10 +1033,14 @@ public class KDSSettings extends SettingsBase {
 
         m_mapPrefID.put(ID.Queue_panel_ratio_percent, "string_queue_panel_ratio");
         m_mapPrefID.put(ID.Queue_mode,"string_queue_mode");
-        m_mapPrefID.put(ID.Queue_simple_show_received_col,"bool_queue_simple_show_received_col");
-        m_mapPrefID.put(ID.Queue_simple_show_preparation_col,"bool_queue_simple_show_preparation_col");
-        m_mapPrefID.put(ID.Queue_simple_show_ready_col,"bool_queue_simple_show_ready_col");
-        m_mapPrefID.put(ID.Queue_simple_show_pickup_col,"bool_queue_simple_show_pickup_col");
+        //m_mapPrefID.put(ID.Queue_simple_show_received_col,"bool_queue_simple_show_received_col");
+        init_option(ID.Queue_simple_show_received_col,"bool_queue_simple_show_received_col", true);
+        //m_mapPrefID.put(ID.Queue_simple_show_preparation_col,"bool_queue_simple_show_preparation_col");
+        init_option(ID.Queue_simple_show_preparation_col,"bool_queue_simple_show_preparation_col", true);
+        //m_mapPrefID.put(ID.Queue_simple_show_ready_col,"bool_queue_simple_show_ready_col");
+        init_option(ID.Queue_simple_show_ready_col,"bool_queue_simple_show_ready_col", true);
+        //m_mapPrefID.put(ID.Queue_simple_show_pickup_col,"bool_queue_simple_show_pickup_col");
+        init_option(ID.Queue_simple_show_pickup_col,"bool_queue_simple_show_pickup_col", true);
         m_mapPrefID.put(ID.Queue_auto_switch_duration, "string_queue_auto_switch_duration");
         m_mapPrefID.put(ID.Queue_separator_color, "int_queue_simple_separator_color");
 
@@ -1274,11 +1281,12 @@ public class KDSSettings extends SettingsBase {
         //SMS
         init_option(ID.SMS_enabled,"bool_kds_general_sms_enable",false);//
 
-        init_option(ID.Queue_auto_bump_timeout,"string_queue_auto_bump_timeout","0");//
+        //init_option(ID.Queue_auto_bump_timeout,"string_queue_auto_bump_timeout","0");//
         //transfer options
         init_option(ID.Transfer_default_station,"string_transfer_default_station","1");//KPP1-42
         init_option(ID.Transfer_auto_to_default,"bool_transfer_auto_to_default",false);//KPP1-42
 
+       init_option(ID.Deliver_new_order_to_slave_expo,"bool_kds_general_deliver_new_order_to_slave_expo",false);//
 
 
 
@@ -1576,10 +1584,10 @@ public class KDSSettings extends SettingsBase {
         set(ID.Sound_expo_order_complete,getResString(R.string.pref_kds_sound_expo_order_complete) );
 
         set(ID.Queue_mode,"0"); //panles mode
-        set(ID.Queue_simple_show_received_col,true);
-        set(ID.Queue_simple_show_preparation_col,true);
-        set(ID.Queue_simple_show_ready_col,true);
-        set(ID.Queue_simple_show_pickup_col,true);
+        //set(ID.Queue_simple_show_received_col,true);
+        //set(ID.Queue_simple_show_preparation_col,true);
+        //set(ID.Queue_simple_show_ready_col,true);
+        //set(ID.Queue_simple_show_pickup_col,true);
         set(ID.Queue_separator_color,getResColor( R.color.queue_separator_color));
 
         //set(ID.Tracker_enabled,false);
@@ -1607,7 +1615,7 @@ public class KDSSettings extends SettingsBase {
 
         set(ID.Tracker_enable_auto_bump,true);
 
-        set(ID.Pager_enabled,true);
+        set(ID.Pager_enabled,false);
         set(ID.Pager_use_userinfo,false);
         set(ID.Pager_delay,"0");
 

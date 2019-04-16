@@ -15,6 +15,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 
 
 /**
@@ -181,12 +182,21 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
 
         if (!this.isConnected()) return;
 
-        ByteBuffer buf = m_writeBuffer.popup();
-        if (buf != null) {
+        ArrayList<ByteBuffer> bufs = m_writeBuffer.popup1KB();
+        if (bufs.size()<=0) return;
+        for (int i=0; i< bufs.size(); i++)
+        {
 
-            write_to_socket(buf);
+            write_to_socket(bufs.get(i));
 
         }
+        bufs.clear();
+//        ByteBuffer buf = m_writeBuffer.popup();
+//        if (buf != null) {
+//
+//            write_to_socket(buf);
+//
+//        }
     }
     public boolean interface_isUDP(){return false;}
     public boolean interface_isTCPListen(){return false;}

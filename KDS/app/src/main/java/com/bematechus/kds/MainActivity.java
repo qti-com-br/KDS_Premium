@@ -1909,7 +1909,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (!order.getQueueReady()) {
                 order.setQueueReady(true);
                 getKDS().getCurrentDB().orderSetQueueReady(order.getGUID(), true);
-                KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Ready, order, null );
+                KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Ready, order, null, "" );
                 //guest_paging it, add it at 20130313
                 /**
                  * One “bug” to fix: The queue display mode has option to enable double bump from expo which works well.
@@ -1952,7 +1952,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (isDoubleBumpForQueue()) {
                 if (order.getQueueReady()) {
 
-                    KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Pickup, order, null);
+                    KDSStationFunc.sync_with_queue(getKDS(), KDSXMLParserCommand.KDSCommand.Queue_Pickup, order, null, "");
                     return order;
                 }
             }
@@ -2248,27 +2248,29 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
 
         //limit its size
-
+        //TimeDog td = new TimeDog();
 
         ArrayList<String> ar =  getKDS().getUsers().getUserA().getOrders().findTimeoutOrders(nminutes, MAX_AUTO_BUMP_COUNT, false);
         //Log.i(TAG, "Auto bumping=" + KDSUtil.convertIntToString(ar.size()));
-
+        //td.debug_print_Duration("findTimeoutOrders");
         //
         boolean bReturn = false;
         if (ar.size() >0)
         {
             synchronized (getKDS().getUsers().getUserA().getOrders().m_locker) {
+                //td.debug_print_Duration("synchronized");
                 for (int i = 0; i < ar.size(); i++) {
                     //TimeDog td = new TimeDog();
 
                     bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
                     //td.debug_print_Duration("bump order time:");
                 }
+                //td.debug_print_Duration("bumpOrderOperation");
             }
 
             getKDS().refreshView(); //use message
             bReturn = true;
-            ar.clear();
+
         }
         if (getKDS().isMultpleUsersMode())
         {
@@ -2284,11 +2286,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().refreshView();
                 //bumpOrderInThread(KDSUser.USER.USER_A, ar);
                 bReturn = true;
-                ar.clear();
+
             }
 
         }
-
+        if (ar.size() >0) {
+            //TimeDog td = new TimeDog();
+            getKDS().getCurrentDB().clearExpiredBumpedOrders(getKDS().getSettings().getBumpReservedCount());
+            //td.debug_print_Duration("checkAutoBumping->clearExpiredBumpedOrders");
+        }
+        ar.clear();
         checkAutoBumpParkOrders();
 
         return bReturn;
@@ -3131,7 +3138,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else {
             KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Single, this, this.getString(R.string.transfer_select_station_title));
-            dlg.setSelf(true);
+            dlg.setSelf(false); //hide self now. //Also on transfer the station you are on shows up. You should not be able to transfer a station to its own station.
             dlg.setShowMultipleUsers(true);
             dlg.setDefaultStationID(stationID);
             //dlg.setTag(v);
@@ -3317,7 +3324,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().getCurrentDB().prep_add_order_items(order);
 
 
-        getKDS().doOrderFilter(order, false, true);
+        getKDS().doOrderFilter(order, "",false,true, true);
         //t.debug_print_Duration("opAddNewOrder2");
         getKDS().refreshView(KDSUser.USER.USER_A, KDS.RefreshViewParam.None);
         getKDS().refreshView(KDSUser.USER.USER_B, KDS.RefreshViewParam.None);
@@ -3977,7 +3984,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 // TimeDog t = new TimeDog();
                 this.getUserUI(userID).getLayout().showOrders(orders);
                 // t.debug_print_Duration("onRefreshView1");
-                if (nParam == KDS.RefreshViewParam.Focus_First) {
+                if (nParam == KDS.RefreshViewParam.Focus_First || getFocusedOrderGUID(userID).isEmpty()) {
                     String orderGuid = getFirstOrderGuidToFocus(userID);// orders.getFirstOrderGuid();
                     this.getUserUI(userID).getLayout().focusOrder(orderGuid);
                 }
@@ -5391,7 +5398,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         refreshView(userID);
 
-        KDSStationFunc.sync_with_stations(getKDS(), KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed, order, ScheduleProcessOrder.get_prepare_item(order));
+        KDSStationFunc.sync_with_stations(getKDS(), KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed, order, ScheduleProcessOrder.get_prepare_item(order), "");
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -6123,13 +6130,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         try {
                             if (m_threadChecking != Thread.currentThread())
                                 return;
+                            //TimeDog td = new TimeDog();
                             checkAutoBumping();
+                            //td.debug_print_Duration("checkAutoBumping");
                             //move it to thread
                             checkAutoBackup();
+                            //td.debug_print_Duration("checkAutoBackup");
                             //move it to thread
                             checkLogFilesDeleting();
+                            //td.debug_print_Duration("checkLogFilesDeleting");
                             //remove statistic data
                             getKDS().checkRemovingStatisticExpiredData();
+                            //td.debug_print_Duration("checkRemovingStatisticExpiredData");
                             try {
                                 Thread.sleep(1000);
                             } catch (Exception e) {

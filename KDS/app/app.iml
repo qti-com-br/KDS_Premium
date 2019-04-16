@@ -165,10 +165,10 @@
     <orderEntry type="library" name="Gradle: com.android.support:support-v4:23.3.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-vector-drawable:23.3.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:F.\Android\src2\KDS_Premium\KDSLib\kdslib\libs\bcprov-jdk15on-1.58.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: com.android.support:support-annotations:28.0.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:animated-vector-drawable:23.3.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-appindexing:8.1.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:F.\Android\src2\KDS_Premium\KDSLib\kdslib\libs\slf4j-api-1.7.25.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.android.support:support-annotations:23.3.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:F.\Android\src2\KDS_Premium\KDS\app\libs\java_websocket.jar:unspecified@jar" level="project" />
     <orderEntry type="module" module-name="kdslib" />
   </component>

@@ -169,13 +169,14 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (m_orders == null) return;
         String focusedGuid = getEnv().getStateValues().getFocusedOrderGUID();
         if (focusedGuid.isEmpty()) return;
-        for (int i=0; i< m_orders.getCount(); i++)
-        {
-            String fromGuid =  m_orders.get(i).getGUID();
-            if (checkOrdersCanShowFocus(m_orders, fromGuid, focusedGuid))
-            {
-                getEnv().getStateValues().setFirstShowingOrderGUID(fromGuid);
-                return;
+        synchronized (m_orders.m_locker) {
+            if (m_orders.getOrderByGUID(focusedGuid) == null) return;
+            for (int i = 0; i < m_orders.getCount(); i++) {
+                String fromGuid = m_orders.get(i).getGUID();
+                if (checkOrdersCanShowFocus(m_orders, fromGuid, focusedGuid)) {
+                    getEnv().getStateValues().setFirstShowingOrderGUID(fromGuid);
+                    return;
+                }
             }
         }
     }

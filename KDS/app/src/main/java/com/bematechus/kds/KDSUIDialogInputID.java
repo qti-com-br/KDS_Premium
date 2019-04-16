@@ -13,6 +13,9 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSStationIP;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Administrator on 2016/2/1 0001.
@@ -211,7 +214,17 @@ public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationA
             return;
 
         m_lstIPs.add(stationReceived.getID() + " : " + stationReceived.getIP());
+        sortStations();
         ((ArrayAdapter) m_lstStations.getAdapter()).notifyDataSetChanged();
 
+    }
+    private void sortStations()
+    {
+        Collections.sort(m_lstIPs, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
     }
 }

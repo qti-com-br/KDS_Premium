@@ -325,6 +325,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             super.onActivityCreated(savedInstanceState);
             showScrollbar();
         }
+
         public void showScrollbar()
         {
             try {
@@ -401,7 +402,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
 
         }
-
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
 
         private KDSSettings.KDSDataSource getDataSourceType(SharedPreferences prefs)
         {
@@ -705,6 +712,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             findPreference("icon_folder").setEnabled(b);
 
         }
+            @Override
+            public void onDestroy()
+            {
+                super.onDestroy();
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+                pref.unregisterOnSharedPreferenceChangeListener(this);
+            }
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
             {
 
@@ -783,6 +797,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             KDSSettings.KDSUserMode userMode = getScreenMode(pref);
             enableSplitScreenOptions(userMode == KDSSettings.KDSUserMode.Multiple);
 
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
         {
@@ -888,7 +909,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             updateGUI(getShowingMethod(pref));
 
         }
-
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
         private KDSSettings.VoidShowingMethod getShowingMethod( SharedPreferences pref )
         {
             String s = pref.getString("void_showing_method", "0");
@@ -1042,7 +1069,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             // bindPreferenceSummaryToValue(findPreference("item_consolidate"));
 
         }
-
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
 //        @Override
 //        public void onActivityCreated(Bundle savedInstanceState) {
 //            super.onActivityCreated(savedInstanceState);
@@ -1118,6 +1151,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             setupGuiByPortType(portType);
 
         }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
         private void setupGuiByPortType( KDSPrinter.PrinterPortType portType)
         {
             PreferenceGroup portconfig = ((PreferenceGroup) findPreference("portconfig"));
@@ -1186,6 +1226,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             pref.registerOnSharedPreferenceChangeListener(this);
 
         }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
         {
 
@@ -1225,6 +1272,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
             pref.registerOnSharedPreferenceChangeListener(this);
 
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
         {
@@ -1473,7 +1527,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("queue_status3_sort"));
             bindPreferenceSummaryToValue(findPreference("queue_status4_sort"));
 
-            bindPreferenceSummaryToValue(findPreference("queue_auto_bump_timeout"));
+            //bindPreferenceSummaryToValue(findPreference("queue_auto_bump_timeout"));
 
             boolean bEnabled = isEnabled();
 
@@ -1483,6 +1537,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 setupModeGui(mode);
             }
 
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
         }
         private boolean isEnabled()
         {
@@ -1627,9 +1688,9 @@ public class KDSUIConfiguration extends PreferenceActivity {
          */
         private  void showDoubleBumpDisabledAlert()
         {
-            String strOK = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-            String strCancel = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
-
+            String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+            String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+            if (this.getActivity() == null) return;
             AlertDialog d = new AlertDialog.Builder(this.getActivity())
                     .setTitle(this.getString(R.string.confirm))
                     .setMessage(this.getString(R.string.alert_disable_double_bump_queue))
@@ -1697,6 +1758,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
 
         }
+           @Override
+           public void onDestroy()
+           {
+               super.onDestroy();
+               SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+               pref.unregisterOnSharedPreferenceChangeListener(this);
+           }
         private boolean isEnabled()
         {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
@@ -1802,11 +1870,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             enableColsSettings(getColsCount());
 
         }
-
-
-
-
-
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
         private int getColsCount()
         {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
@@ -1936,6 +2006,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
             boolean b= pref.getBoolean("icon_folder_enabled", false);
             findPreference("icon_folder").setEnabled(b);
 
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
         {

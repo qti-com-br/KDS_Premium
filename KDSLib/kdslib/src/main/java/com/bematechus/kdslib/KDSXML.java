@@ -15,9 +15,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -315,6 +317,7 @@ public class KDSXML {
                 t.transform(new DOMSource(m_doc), new StreamResult(bos));
                 String xmlStr = bos.toString();
                 bos.close();
+
                 return xmlStr;
             }
             catch (Exception e)
@@ -552,6 +555,37 @@ public class KDSXML {
             return false;
         }
 
-       
+    public String get_xml_string2() {
+        String result = null;
+
+        if (m_doc != null) {
+            StringWriter strWtr = new StringWriter();
+            StreamResult strResult = new StreamResult(strWtr);
+            TransformerFactory tfac = TransformerFactory.newInstance();
+            try {
+                javax.xml.transform.Transformer t = tfac.newTransformer();
+                t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+//                t.setOutputProperty(OutputKeys.INDENT, "yes");
+//                t.setOutputProperty(OutputKeys.METHOD, "xml"); // xml, html,
+//                // text
+//                t.setOutputProperty(
+//                        "{http://xml.apache.org/xslt}indent-amount", "4");
+                t.transform(new DOMSource(m_doc.getDocumentElement()),
+                        strResult);
+            } catch (Exception e) {
+                System.err.println("XML.toString(Document): " + e);
+            }
+            result = strResult.getWriter().toString();
+            try {
+                strWtr.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+
+
 
 }

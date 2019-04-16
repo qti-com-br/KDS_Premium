@@ -497,6 +497,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 r.setPort(stationReceived.getPort());
                 r.setMac(stationReceived.getMac());
                 ((MyAdapter) m_lstStations.getAdapter()).getListData().add(r);
+                KDSStationsRelation.sortStationsRelation(((MyAdapter) m_lstStations.getAdapter()).getListData());
                 ((MyAdapter) m_lstStations.getAdapter()).notifyDataSetChanged();
             }
             else

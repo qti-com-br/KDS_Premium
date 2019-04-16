@@ -75,7 +75,8 @@ public class KDSRouterStationsConnection extends KDSStationsConnection {
     {
         KDSStationConnection conn = KDSStationConnection.fromIPStation(station);
 
-        conn.addBufferedData(strXml);
+        //conn.addBufferedData(strXml);////use kdsstationsconnection-->m_buffersForWaitingConnection to save offline data
+        this.getNoConnectionBuffer().add(station.getID(), strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
 
         if (connectConnection(conn)) {
             synchronized (m_connectionLocker) {
