@@ -328,6 +328,7 @@ public class QueueOrders {
 
     public QueueOrders.QueueStatus getStatus(KDSDataOrder order)
     {
+        if (order == null) return QueueStatus.Received;
         String guid = order.getGUID();
         if (m_ordersStatus.containsKey(guid))
             return m_ordersStatus.get(guid);

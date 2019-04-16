@@ -32,7 +32,7 @@ public class KDSXMLParser  {
         
     }
     static final private String  NOTIFY_TYPE = ("NotifyType");
-    protected static XMLType checkXmlType(String strText)
+    protected static XMLType checkXmlType_old(String strText)
     {
         if (strText.indexOf(KDSXMLParserOrder.DBXML_ELEMENT_FEEDBACK_ORDER_STATUS) >=0)
             return XMLType.Feedback_OrderStatus;
@@ -40,6 +40,27 @@ public class KDSXMLParser  {
         if (!x.loadString(strText))
             return XMLType.Unknown;
        return checkXmlType(x);
+    }
+    protected static XMLType checkXmlType(String strText)
+    {
+
+        if (strText.indexOf(KDSXMLParserOrder.DBXML_ELEMENT_FEEDBACK_ORDER_STATUS) >=0)
+            return XMLType.Feedback_OrderStatus;
+        if (strText.indexOf("<"+ KDSXMLParserCommand.DBXML_ELEMENT_COMMAND +">") >=0)
+            return XMLType.Command;//check command first. In command, it maybe contain <transaction>
+        if (strText.indexOf("<"+ KDSXMLParserOrder.DBXML_ELEMENT_TRANSACTION +">") >=0) {
+            if (strText.indexOf(NOTIFY_TYPE) >=0) {
+                return XMLType.Notification;
+            }
+            else
+             return XMLType.Order;
+        }
+        return XMLType.Unknown;
+
+//        KDSXML x = new KDSXML();
+//        if (!x.loadString(strText))
+//            return XMLType.Unknown;
+//        return checkXmlType(x);
     }
     
     protected static XMLType checkXmlType(KDSXML x)

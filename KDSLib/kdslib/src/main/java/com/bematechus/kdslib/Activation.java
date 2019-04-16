@@ -1202,6 +1202,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 return;
         }
 
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         m_bDoLicensing = true;
         Intent intent = new Intent(caller, ActivityLogin.class);
@@ -1214,6 +1215,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
     }
 
 

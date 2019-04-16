@@ -24,32 +24,33 @@ public class KDSXMLCommandFactory {
      *      Which item.
      *      It can been null
      */
-    static public String sync_with_others(String strStationID, String ip, String mac, KDSXMLParserCommand.KDSCommand syncCmd, KDSDataOrder order, KDSDataItem item )
+    static public String sync_with_others(String strStationID, String ip, String mac, KDSXMLParserCommand.KDSCommand syncCmd, KDSDataOrder order, KDSDataItem item, String xmlData )
     {
 
         switch(syncCmd)
         {
             case Station_Add_New_Order:
-                return KDSXMLParserCommand.createNewOrderNotification(strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createNewOrderNotification(strStationID, ip, mac, xmlData.isEmpty()?order.createXml():xmlData);
+
 
             case Station_Bump_Order:
 
-                return KDSXMLParserCommand.createOrderBumpNotification(strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createOrderBumpNotification(strStationID, ip, mac,xmlData.isEmpty()?order.createIDXml():xmlData);// order.createXml());
             case Expo_Bump_Order:
-                return KDSXMLParserCommand.createCommandXmlString(syncCmd, strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createCommandXmlString(syncCmd, strStationID, ip, mac, xmlData.isEmpty()?order.createXml():xmlData);//order.createXml());
 
             case Station_Unbump_Order:
 
-                return KDSXMLParserCommand.createOrderUnbumpNotification(strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createOrderUnbumpNotification(strStationID, ip, mac, xmlData.isEmpty()?order.createXml():xmlData);//order.createXml());
             case Expo_Unbump_Order:
-                return KDSXMLParserCommand.createCommandXmlString(syncCmd, strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createCommandXmlString(syncCmd, strStationID, ip, mac, xmlData.isEmpty()?order.createXml():xmlData);//order.createXml());
 
             case Station_Cancel_Order:
-                return KDSXMLParserCommand.createOrderCanceledNotification(strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createOrderCanceledNotification(strStationID, ip, mac, xmlData.isEmpty()?order.createXml():xmlData);//order.createXml());
             case Station_Transfer_Order:
-                return KDSXMLParserCommand.createOrderTransferNotification(strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createOrderTransferNotification(strStationID, ip, mac, xmlData.isEmpty()?order.createXml():xmlData);//order.createXml());
             case Station_Modify_Order:
-                return KDSXMLParserCommand.createOrderModifiedNotification(strStationID, ip, mac, order.createXml());
+                return KDSXMLParserCommand.createOrderModifiedNotification(strStationID, ip, mac, xmlData.isEmpty()?order.createXml():xmlData);//order.createXml());
 
             case Station_Bump_Item:
 

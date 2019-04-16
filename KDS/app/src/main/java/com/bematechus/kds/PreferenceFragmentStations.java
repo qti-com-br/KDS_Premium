@@ -95,7 +95,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 //    }
     public void onReceiveNewRelations(){
 
-        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(this.getActivity().getApplicationContext(), false);
+        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(KDSApplication.getContext(), false);
         if (!((MyAdapter)(m_lstStations.getAdapter() )).isDifferent(ar))
             return;
 
@@ -174,8 +174,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     public void showChangedAlertDialog()
     {
         m_contextApp = this.getActivity().getApplicationContext();
-        String strOK = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-        String strCancel = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+        String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
 
         AlertDialog d = new AlertDialog.Builder(this.getActivity())
                 .setTitle(this.getString(R.string.question))
@@ -405,8 +405,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             return ;
         }
 
-        String strOK = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-        String strCancel = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+        String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
 
         AlertDialog d = new AlertDialog.Builder(this.getActivity())
                 .setTitle(this.getString(R.string.confirm))
@@ -505,6 +505,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 r.setPort(stationReceived.getPort());
                 r.setMac(stationReceived.getMac());
                 ((MyAdapter) m_lstStations.getAdapter()).getListData().add(r);
+                KDSStationsRelation.sortStationsRelation(((MyAdapter) m_lstStations.getAdapter()).getListData());
                 ((MyAdapter) m_lstStations.getAdapter()).notifyDataSetChanged();
             }
             else
@@ -652,7 +653,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         m_chkNoCheckRelation = (CheckBox) view.findViewById(R.id.chkNoRelationsCheck);
 
         List  lst =  new ArrayList<KDSStationsRelation>();
-        MyAdapter adapter = new MyAdapter(this.getActivity().getApplicationContext(), lst);
+        MyAdapter adapter = new MyAdapter(KDSApplication.getContext(), lst);
         m_lstStations.setAdapter(adapter);
         m_lstStations.setEnabled(true);
 
@@ -738,7 +739,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     {
 
         // if (!saveScreenDataToBuffer()) return;
-        KDSStationsRelation.save(this.getActivity().getApplicationContext(), (ArrayList) ((MyAdapter) (m_lstStations.getAdapter())).getListData(), m_chkNoCheckRelation.isChecked());
+        KDSStationsRelation.save(KDSApplication.getContext(), (ArrayList) ((MyAdapter) (m_lstStations.getAdapter())).getListData(), m_chkNoCheckRelation.isChecked());
         List<KDSStationsRelation> ar =((MyAdapter)(m_lstStations.getAdapter() )).getListData();
         ((MyAdapter)(m_lstStations.getAdapter() )).cloneToOriginalArray();
         ((MyAdapter)(m_lstStations.getAdapter() )).notifyDataSetChanged();
@@ -749,7 +750,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         if (this == null) return;
         if (this.getActivity() == null) return;
         if (this.getActivity().getApplicationContext() == null) return;
-        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(this.getActivity().getApplicationContext(), true);
+        ArrayList<KDSStationsRelation> ar =  KDSStationsRelation.loadStationsRelation(KDSApplication.getContext(), true);
         //find no check option. I save it as station.
         KDSStationsRelation noCheckRelation = SettingsBase.removeRelationNoCheckOptionStation(ar);
 

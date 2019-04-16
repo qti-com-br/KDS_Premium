@@ -206,7 +206,7 @@ public class KDSUtil {
     static public String convertDateToString(Date dt)
     {
 
-        SimpleDateFormat sdf= m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf= m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String str=sdf.format(dt);
         return str;
@@ -1699,6 +1699,20 @@ just 16bits value
             port = str.substring(n+1);
         }
         return ip;
+    }
+    /**
+     * simulate the physical keyboard
+     * @param keyCode
+     */
+    static public void sendKeyCode(int keyCode) {
+        try {
+
+            String keyCommand = "input keyevent " + KDSUtil.convertIntToString(keyCode);
+            Runtime.getRuntime().exec(keyCommand);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

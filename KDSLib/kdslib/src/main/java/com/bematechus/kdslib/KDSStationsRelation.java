@@ -3,6 +3,8 @@ package com.bematechus.kdslib;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 /**
  *  >>>>>>> SAME AS KDS APP FILE <<<<<<<
@@ -757,4 +759,17 @@ public class KDSStationsRelation extends KDSStationIP {
 
     }
 
+
+    static public void sortStationsRelation(List<KDSStationsRelation> ar)
+    {
+        Collections.sort(ar, new Comparator<KDSStationIP>() {
+            @Override
+            public int compare(KDSStationIP o1, KDSStationIP o2) {
+
+                return (o1.getID().compareTo(o2.getID()));
+
+            }
+        });
+
+    }
 }

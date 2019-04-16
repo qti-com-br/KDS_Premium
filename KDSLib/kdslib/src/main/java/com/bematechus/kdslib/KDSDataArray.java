@@ -79,7 +79,8 @@ public class KDSDataArray {
     }
     public int getCount()
     {
-        synchronized (m_locker) {
+        synchronized (m_locker)
+        {
             return m_arComponents.size();
         }
     }

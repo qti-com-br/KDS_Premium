@@ -73,14 +73,14 @@
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
 
-    <com.bematechus.kdslib.KDSListPreference
-        android:key="queue_auto_bump_timeout"
-        android:title="Auto bump timeout(minutes)"
-        android:defaultValue="0"
-        android:entries="@array/pref_queue_auto_bump_timeout_titles"
-        android:entryValues="@array/pref_queue_auto_bump_timeout_values"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
+    <!--<com.bematechus.kdslib.KDSListPreference-->
+        <!--android:key="queue_auto_bump_timeout"-->
+        <!--android:title="Auto bump timeout(minutes)"-->
+        <!--android:defaultValue="0"-->
+        <!--android:entries="@array/pref_queue_auto_bump_timeout_titles"-->
+        <!--android:entryValues="@array/pref_queue_auto_bump_timeout_values"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
 
     <CheckBoxPreference
         android:key="bump_double_queue"

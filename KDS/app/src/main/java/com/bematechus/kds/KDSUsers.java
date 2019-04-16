@@ -9,6 +9,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
 
@@ -176,22 +177,33 @@ public class KDSUsers {
      *   return it for printing.
      *   The orders was added.
      */
-    public  ArrayList<KDSDataOrder> orderAdd(KDSDataOrder orderOriginal, boolean bAutoSyncWithOthers, boolean bRefreshView)
+    /**
+     *
+     * @param orderOriginal
+     * @param xmlData
+     * @param bAutoSyncWithOthers
+     *  If deliver order to my slave station
+     * @param bAutoSyncWithExpo
+     *  If deliver order to my expo/tt/queue(Expo type station).
+     * @param bRefreshView
+     * @return
+     */
+    public  ArrayList<KDSDataOrder> users_orderAdd(KDSDataOrder orderOriginal,String xmlData, boolean bAutoSyncWithOthers,boolean bAutoSyncWithExpo, boolean bRefreshView)
     {
         //TimeDog t = new TimeDog();
         ArrayList<KDSDataOrder> usersOrder = filterOrderToUsers(orderOriginal);
         //t.debug_print_Duration("orderAdd1");
-        ArrayList<KDSDataOrder> ordersReturn = new  ArrayList<KDSDataOrder>();
+        ArrayList<KDSDataOrder> ordersReturn = new  ArrayList<>();
         if (usersOrder.size() == 1) {
-            KDSDataOrder order =  getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers, bRefreshView);
+            KDSDataOrder order =  getUserA().user_orderAdd(usersOrder.get(0),xmlData, bAutoSyncWithOthers,bAutoSyncWithExpo, bRefreshView);
             if (order != null)
                 ordersReturn.add(order);
             //t.debug_print_Duration("orderAdd2");
         }
         else if (usersOrder.size() >1)
         {
-            KDSDataOrder orderA = getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers, bRefreshView);
-            KDSDataOrder orderB = getUserB().orderAdd(usersOrder.get(1), bAutoSyncWithOthers, bRefreshView);
+            KDSDataOrder orderA = getUserA().user_orderAdd(usersOrder.get(0),xmlData, bAutoSyncWithOthers, bAutoSyncWithExpo,bRefreshView);
+            KDSDataOrder orderB = getUserB().user_orderAdd(usersOrder.get(1),xmlData, bAutoSyncWithOthers,bAutoSyncWithExpo, bRefreshView);
             if (orderA != null)
                 ordersReturn.add(orderA);
 
@@ -331,7 +343,7 @@ public class KDSUsers {
             }
         }
 
-        KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null);
+        KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null, "");
 
 
     }

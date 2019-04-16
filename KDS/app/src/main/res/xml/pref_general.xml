@@ -181,4 +181,10 @@
         android:title="@string/sms_feature_enabled"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="kds_general_deliver_new_order_to_slave_expo"
+        android:title="@string/deliver_new_order_to_slave_expo"
+        android:summary="@string/router_running_no_deliver_new_order"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

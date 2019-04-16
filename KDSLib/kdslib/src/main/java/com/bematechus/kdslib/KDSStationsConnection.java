@@ -17,7 +17,8 @@ public class KDSStationsConnection {
     ArrayList<KDSStationConnection> m_arStatisticApp = new ArrayList<>() ; //POS connects to this station
 
     protected ArrayList<KDSStationConnection> m_arConnection = new ArrayList<>(); //connections
-    ArrayList<KDSStationConnection> m_arTimeoutConnecting = new ArrayList<>(); //connections can not connected(timeout).
+    //ArrayList<KDSStationConnection> m_arTimeoutConnecting = new ArrayList<>(); //connections can not connected(timeout). mainly purpose is offline data. Now we use m_buffersForWaitingConnection to save offline data
+                                                                                 //so I comment it.
 
     NoConnectionDataBuffers m_buffersForWaitingConnection = new NoConnectionDataBuffers(); //KPP1-coke
 
@@ -137,15 +138,15 @@ public class KDSStationsConnection {
 
             tcp = KDSStationConnection.fromIPStation(station);
             //copy the buffered data
-            KDSStationConnection timeoutConn =findStationByID(m_arTimeoutConnecting, station.getID());
-            if (timeoutConn != null)
-            {
-                if (timeoutConn.getBufferedCount() >0)
-                {
-                    tcp.copyBufferedData(timeoutConn);
-                }
-                m_arTimeoutConnecting.remove(timeoutConn);
-            }
+//            KDSStationConnection timeoutConn =findStationByID(m_arTimeoutConnecting, station.getID());
+//            if (timeoutConn != null)
+//            {
+////                if (timeoutConn.getBufferedCount() >0) //I use kdsstationsconnection-->m_buffersForWaitingConnection to save offline data.
+////                {
+////                    tcp.copyBufferedData(timeoutConn);
+////                }
+//                m_arTimeoutConnecting.remove(timeoutConn);
+//            }
             //connect this station.
             if (connectConnection(tcp)) {
                 //debug_info( " (connectStation(tcp)), add connection");
@@ -333,8 +334,8 @@ public class KDSStationsConnection {
 
                     KDSLog.e(TAG, KDSLog._FUNCLINE_() + "connect timeout, remove it:"+loginfo);
                     conn.getSock().close();
-                    if (conn.getBufferedCount() >0)
-                        m_arTimeoutConnecting.add(conn); //save it, for next use
+//                    if (conn.getBufferedCount() >0)
+//                        m_arTimeoutConnecting.add(conn); //save it, for next use. mainly purpose is offline data.
                     conn.getSock().freeCommandBuffer();
                     m_arConnection.remove(i);
                 }
@@ -342,8 +343,8 @@ public class KDSStationsConnection {
                 {//lost
                     KDSLog.e(TAG, KDSLog._FUNCLINE_() + "station inactive, close it:"+loginfo);
                     conn.getSock().close();
-                    if (conn.getBufferedCount() >0)
-                        m_arTimeoutConnecting.add(conn); //save it, for later
+//                    if (conn.getBufferedCount() >0)
+//                        m_arTimeoutConnecting.add(conn); //save it, for later.mainly purpose is offline data.
                     //debug_info("remove "+m_arConnection.get(i).getIP() + " station lost");
                     conn.getSock().freeCommandBuffer();
                     m_arConnection.remove(i);
@@ -702,15 +703,16 @@ public class KDSStationsConnection {
 
             if (buf != null && buf.getData().size()>0)
             {
-                station.appendBufferedData(buf.getData());
-                buf.getData().clear();
-                int n = station.getBufferedCount();
+                //station.appendBufferedData(buf.getData());
+                //buf.getData().clear();
+                int n = buf.getData().size();//station.getBufferedCount();
                 for (int i=0; i< n; i++) {
-                    KDSStationDataBuffered data = station.popupStationBufferedData();
+                    KDSStationDataBuffered data = buf.popup();//.getData().get(i);// station.popupStationBufferedData();
+                    if (data == null) break;
                     if (!data.getData().isEmpty()) {
                         station.getSock().writeXmlTextCommand(data.getData());
                         kds.showMessage("write buffered to "+ ip);
-                        if (!data.getDescription().isEmpty())
+                        if (!data.getDescription().isEmpty() || data.isTransferOrderOfflineData())
                         {
                             kds.onFinishSendBufferedData(data);//.getDescription(), data.getOrderGuid());
                         }
@@ -972,7 +974,7 @@ public class KDSStationsConnection {
 
     }
 
-    final int MAX_BACKUP_DATA_COUNT = 100; //-1: no limitation
+    public static final int MAX_BACKUP_DATA_COUNT = 100; //-1: no limitation
     public boolean writeDataToStationOrItsBackup(KDSStationIP station, String strXml)
     {
         return writeDataToStationOrItsBackup(station, strXml, MAX_BACKUP_DATA_COUNT);
@@ -1889,6 +1891,10 @@ public class KDSStationsConnection {
 //        return false;
 //    }
 
+    public NoConnectionDataBuffers getNoConnectionBuffer()
+    {
+        return m_buffersForWaitingConnection;
+    }
 
 }
 
