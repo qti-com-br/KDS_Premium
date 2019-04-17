@@ -485,6 +485,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         init_next_prev_view_events(); //2.0.26
 
+        m_activation.setStationID(getKDS().getStationID());
         if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
             boolean bSilent = Activation.hasDoRegister();//2.1.2
             doActivation(bSilent, false, "");
@@ -3428,6 +3429,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (m_bSuspendChangedEvent) return;
         if (Activation.isActivationPrefKey(key))
             return;
+
         KDSSettings settingsBackup = new KDSSettings(this.getApplicationContext());
         settingsBackup.loadSettings(this.getApplicationContext());
         settingsBackup.exportToFolder(this.getApplicationContext(), KDSDBBase.getSDDBFolderWithLastDividChar());
@@ -3548,6 +3550,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             f.updateSettings(getKDS().getSettings());
         init_common_in_create_and_pref_changed();
 
+        if (key.equals("kds_general_id") )
+        {
+            m_activation.setStationID(getKDS().getStationID());
+            m_activation.postNewStationInfo2Web(getKDS().getStationID(), getKDS().getStationFunction().toString());
+        }
 
     }
 
@@ -6097,13 +6104,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
 
             case OK:
-                Toast.makeText(this, "Sync OK:"+stage.name()+ " " + orderGuid, Toast.LENGTH_LONG).show();
+                this.showToastMessage("Sync OK:"+stage.name()+ " " + orderGuid);
+                //Toast.makeText(this, "Sync OK:"+stage.name()+ " " + orderGuid, Toast.LENGTH_SHORT).show();
                 break;
             case Fail_Http_exception:
-                Toast.makeText(this, "Sync failed(Internet error): " +stage.name()+ " "+ orderGuid, Toast.LENGTH_LONG).show();
+                this.showToastMessage("Sync failed(Internet error): " +stage.name()+ " "+ orderGuid);
+                //Toast.makeText(this, "Sync failed(Internet error): " +stage.name()+ " "+ orderGuid, Toast.LENGTH_LONG).show();
                 break;
             case Fail_reponse_error:
-                Toast.makeText(this, "Sync failed(Server error): " + stage.name()+ " " + orderGuid, Toast.LENGTH_LONG).show();
+                this.showToastMessage("Sync failed(Server error): " + stage.name()+ " " + orderGuid);
+                //Toast.makeText(this, "Sync failed(Server error): " + stage.name()+ " " + orderGuid, Toast.LENGTH_LONG).show();
                 break;
         }
     }

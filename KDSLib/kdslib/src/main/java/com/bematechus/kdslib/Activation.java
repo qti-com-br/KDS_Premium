@@ -420,6 +420,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         device.setSerial(getLicenseSerial(json));
         device.setID( getLicenseID(json) );
         device.setUpdateTime(getUpdateTime(json));
+        device.setStationFunc(getStationFunc(json));
         return device;
 
     }
@@ -1375,6 +1376,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         String m_serial = "";
         boolean m_bEnabled = true;
         long m_updateTime = 0;//UTC seconds, 2.1.4, for update sql.
+        String m_stationFunc = "";
 
         /**
          * 2.1.4
@@ -1438,6 +1440,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         {
             return m_id;
         }
+        public void  setStationFunc(String func)
+        {
+            m_stationFunc = func;
+        }
+        public String getStationFunc()
+        {
+            return m_stationFunc;
+        }
     }
 
 
@@ -1482,7 +1492,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
                 if (syncOp != ActivationRequest.SyncDataFromOperation.Unbump_order) { //unbump order just sync order, no items/condiments
 
-                    postItemsRequest(order);
+                    postItemsRequest(m_stationID, order);
                     postCondimentsRequest(order);
                 }
                 if (m_receiver != null)
@@ -1534,9 +1544,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     }
 
-    public void postItemsRequest(KDSDataOrder order)
+    public void postItemsRequest(String stationID, KDSDataOrder order)
     {
-        ActivationRequest r = ActivationRequest.createSyncItemsRequest(  order );
+        ActivationRequest r = ActivationRequest.createSyncItemsRequest(stationID,  order );
         m_http.request(r);
 
     }
@@ -1657,5 +1667,30 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             return true;
         }
         return false;
+    }
+
+    public boolean postNewStationInfo2Web(String stationID, String stationFunc)
+    {
+        StoreDevice devLicense = findMyLicense();
+        if (devLicense == null)
+            return false;
+
+        ActivationRequest r = ActivationRequest.createSyncDeviceInfoRequest(m_storeGuid,stationID, stationFunc,devLicense);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
+    }
+
+    private String getStationFunc(JSONObject json)
+    {
+        try {
+            String s = json.getString("function");
+            return s;
+        }
+        catch ( Exception e)
+        {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

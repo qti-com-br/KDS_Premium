@@ -1518,9 +1518,9 @@ public class KDSStationFunc {
      * @param command
      * @param strOrinalData
      */
-    static public void doSyncCommandOrderTransfer(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    static public void doSyncCommandOrderTransfer(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
     {
-        KDSStationFunc.order_transfered_in(kds, command);
+        KDSStationFunc.order_transfered_in(kds, command, fromStationID);
 
         kds.refreshView();
 
@@ -1553,7 +1553,7 @@ public class KDSStationFunc {
         }
     }
 
-    static public void order_transfered_in(KDS kds,KDSXMLParserCommand command)
+    static public void order_transfered_in(KDS kds,KDSXMLParserCommand command, String fromStationID)
     {
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         if (strXml.isEmpty())
@@ -1562,6 +1562,8 @@ public class KDSStationFunc {
         KDSUser.USER userID = KDSUser.USER.values()[ order.getScreen()];
         if (order == null)
             return;
+
+        order.setItemsTransferedFromStationID(fromStationID);//KPP1-53.
 
         if (kds.getStationsConnections().getRelations().isBackupStation())
         { //I am backup slave station

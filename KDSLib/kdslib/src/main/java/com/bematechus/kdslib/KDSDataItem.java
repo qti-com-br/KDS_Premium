@@ -80,6 +80,8 @@ public class KDSDataItem extends KDSData {
 
 
     protected int m_nCategoryPriority = -1; //2.0.47
+
+    protected String m_strTransferedFromStationID = ""; //KPP1-53, use database r3 to save it.
     /////////////////////
     //public ArrayList<Point> m_tempShowMeNeedBlockLines = new ArrayList<>();//1; //for text wrap, saveing it here is for  efficiency.
     /**
@@ -387,7 +389,7 @@ public class KDSDataItem extends KDSData {
                 //+ "OrderID ,GUID , OrderGUID, Name ,Description ,Qty ,"
                 + "GUID,OrderGUID,Name,Description,Qty,QtyChanged,"
                 + "Category,BG,FG,Grp,Marked,"
-                + "LocalBumped,Ready,Hiden,ToStations,BumpedStations,ItemDelay,PreparationTime,DeleteByRemote,ItemType,BuildCard,TrainingVideo,SumTransEnable,SumTrans,r0,r1,r2) values ("
+                + "LocalBumped,Ready,Hiden,ToStations,BumpedStations,ItemDelay,PreparationTime,DeleteByRemote,ItemType,BuildCard,TrainingVideo,SumTransEnable,SumTrans,r0,r1,r2,r3) values ("
                 //+  getOrderID() + ","
                 + "'" + getGUID() + "',"
                 + "'" + getOrderGUID() + "'," //use order guid as id
@@ -417,6 +419,7 @@ public class KDSDataItem extends KDSData {
                 + ",'" + KDSUtil.convertIntToString(getTimerDelay()) + "'"
                 +",'" + getParentGuid() +"'"
                 +"," + KDSUtil.convertIntToString(getCategoryPriority()) //2.0.47
+                +",'" + getTransferedFromStationID() +"'" //KPP1-53
                 +")";
         return sql;
 
@@ -455,6 +458,7 @@ public class KDSDataItem extends KDSData {
                 + ",r0='" + KDSUtil.convertIntToString( getTimerDelay()) +"'"
                 + ",r1='" + getParentGuid() +"'"
                 + ",r2=" +  KDSUtil.convertIntToString(getCategoryPriority()) //2.0.47
+                + ",r3='" + getTransferedFromStationID() + "'" //2.0.47
                 + ",DBTimeStamp='"+ KDSUtil.convertDateToString(getTimeStamp()) +"'"
                 //+"' where id=" + Common.KDSUtil.ConvertIntToString(getID());
                 +" where guid='" + getGUID() + "'";
@@ -794,6 +798,7 @@ public class KDSDataItem extends KDSData {
 
         //2.0.47
         to.setCategoryPriority(this.getCategoryPriority());
+        to.setTransferedFromStationID(this.getTransferedFromStationID()); //kpp1-53
 
         this.getModifiers().copyTo(to.getModifiers());
 
@@ -1157,5 +1162,14 @@ public class KDSDataItem extends KDSData {
                 (!getBumpedStationsString().isEmpty()) )
             return true;
         return false;
+    }
+
+    public void setTransferedFromStationID(String fromStationID)
+    {
+        m_strTransferedFromStationID = fromStationID;
+    }
+    public String getTransferedFromStationID()
+    {
+        return m_strTransferedFromStationID;
     }
 }

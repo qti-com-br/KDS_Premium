@@ -789,10 +789,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return r;
     }
 
-    static public ActivationRequest createSyncItemsRequest(  KDSDataOrder order)
+    static public ActivationRequest createSyncItemsRequest(String stationID,  KDSDataOrder order)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_items,"items",createItemsJson( order.getItems()) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_items,"items",createItemsJson(stationID,order, order.getItems()) );
         r.setTag(order);
         r.setDbTarget();
         return r;
@@ -850,7 +850,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("guid", "'" + order.getGUID() + "'");
             json.put("store_guid","'" + store_guid + "'" );
             json.put("destination", "'" + order.getDestination()+"'");
-            json.put("external_id", "''");
+            json.put("external_id", "'"+order.getOrderName() +"'"); //KPP1-44,  The External ID should be filled in with the Order ID number
             json.put("guest_table", "'" + order.getToTable()+"'");
             json.put("is_priority", "0");
             json.put("items_count", KDSUtil.convertIntToString( order.getItems().getCount()));
@@ -869,7 +869,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("customer_guid", "''");
             json.put("smart_order_start_time", "0");
             json.put("preparation_time", "0");
-            json.put("user_info", "''");
+            json.put("user_info", "'"+ order.getCustomMsg() +"'"); //KPP1-45, User info needs to be in the user_info column on the orders table
 
         }
         catch (Exception e)
@@ -880,7 +880,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return ar;
     }
 
-    static private JSONObject createItemJson( KDSDataItem item)
+    static private JSONObject createItemJson(String stationID,KDSDataOrder order, KDSDataItem item)
     {
         JSONObject json = getJsonObj( "guid" , "'" + item.getGUID() +"'" );
         try {
@@ -893,15 +893,16 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             //json.put("guid", "'" + item.getGUID() + "'");
             json.put("order_guid","'" + item.getOrderGUID() + "'" );
             json.put("name", "'" + item.getDescription()+"'");
-            json.put("device_id", "0");
-            json.put("external_id", "''");
+            //json.put("device_id", "0");//KPP1-48, The device_id should show the station id the item came from
+            json.put("device_id", "'" + stationID + "'");//KPP1-48, The device_id should show the station id the item came from. Note: in table, it is a integer, I use string. Need to try.
+            json.put("external_id", "'"+ order.getOrderName() + "'"); //KPP1-49,  External ID needs to show the Order ID that item came from
             json.put("is_priority", "0");
             json.put("condiments_count", KDSUtil.convertIntToString( item.getCondiments().getCount()));
-            json.put("pre_modifier", "''");
-            json.put("preparation_time", "0");
+            json.put("pre_modifier", "'" + item.getModifiers().toEachLineString() +"'");//KPP1-50, The field needs to be filled in with the premodifier that is in the XML
+            json.put("preparation_time", KDSUtil.convertFloatToShortString(item.getPreparationTime() )); // KPP1-51, he number should show what the time for preparation is for that item
             json.put("recall_time", Long.toString( updateTime)); //seconds
             json.put("training_video", "''");
-            json.put("transfer_from_device_id",  '0');
+            json.put("transfer_from_device_id",  "'" + item.getTransferedFromStationID() +"'");//KPP1-53
             json.put("transfer_time" ,Long.toString( updateTime)); //seconds
             json.put("untransfer_time" ,Long.toString( updateTime)); //seconds
             json.put("beeped",  '0');
@@ -928,14 +929,14 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return json;
     }
 
-    static private JSONArray createItemsJson( KDSDataItems items)
+    static private JSONArray createItemsJson(String stationID,KDSDataOrder order, KDSDataItems items)
     {
         JSONArray ar = new JSONArray();
         int ncount = items.getCount();
 
         for (int i=0; i< ncount; i++)
         {
-            ar.put(createItemJson(items.getItem(i)));
+            ar.put(createItemJson(stationID,order, items.getItem(i)));
         }
         return ar;
 
@@ -1050,6 +1051,123 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     }
 
+    static public ActivationRequest createSyncDeviceInfoRequest( String store_guid,String stationID, String stationFunc, Activation.StoreDevice dev)
+    {
+
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createSyncDeviceInfoJson(store_guid,stationID, stationFunc, dev) );
+        return r;
+//       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
+//
+//        String auth = TOKEN;
+//        JSONArray arJson = new JSONArray();
+//        arJson.put(getJsonObj("tok", auth) );
+//        JSONObject json = getJsonObj("req", "SYNC");
+//        try {
+//
+//            json.put("entity","devices" );
+//            long lastUpdateTime = -1;
+//            if (dev != null)
+//                lastUpdateTime = dev.getUpdateTime();
+//
+//            json.put("data", createSyncMacJson(store_guid,stationID, licenseGuid, macAddress, lastUpdateTime));
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+////        JSONArray j = createSyncMacJson(store_guid, licenseGuid, macAddress);
+////        strJson += j.toString();
+////        strJson +="}]";
+//
+//        arJson.put(json);
+//        String str = arJson.toString();
+//        //str = strJson;
+////        str = "[{\n" +
+////                "  \"tok\" : \"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"\n" +
+////                "},{\n" +
+////                "    \"entity\": \"devices\",\n" +
+////                "    \"req\": \"SYNC\",\n" +
+////                "    \"data\": [{\n" +
+////                "        \"bump_transfer_device_id\" : \"0\",\n" +
+////                "        \"create_time\" : \"1530217280\",\n" +
+////                "        \"enable\" : \"1\",\n" +
+////                "        \"function\" : \"'EXPEDITOR'\",\n" +
+////                "        \"guid\" : \"'4220e7ee-dcdf-46d9-ae6b-565d228d620'\",\n" +
+////                "        \"id\" : \"2\",\n" +
+////                "        \"is_deleted\" : \"0\",\n" +
+////                "        \"license\" : \"1\",\n" +
+////                "        \"line_display\" : \"0\",\n" +
+////                "        \"login\" : \"0\",\n" +
+////                "        \"name\" : \"'hello22'\",\n" +
+////                "        \"parent_id\" : \"0\",\n" +
+////                "        \"screen_id\" : \"1\",\n" +
+////                "        \"screen_size\" : \"0\",\n" +
+////                "        \"serial\" : \"'1223'\",\n" +
+////                "        \"split_screen_child_device_id\" : \"0\",\n" +
+////                "        \"split_screen_parent_device_id\" : \"0\",\n" +
+////                "        \"store_guid\" : \"'4220e7ee-dcdf-46d9-ae6b-565d228d62d'\",\n" +
+////                "        \"update_device\" : \"''\",\n" +
+////                //"        \"update_time\" : \"1531428990.865947\",\n" +
+////                "        \"update_time\" : \"1530217280\",\n" +
+////                "        \"xml_order\" : \"2\"\n" +
+////                "    }]\n" +
+////                "\n" +
+////                "}]";
+//
+//        ActivationRequest r = new ActivationRequest();
+//        r.setParams( str );
+//        r.setCommand( COMMAND.Sync );
+//        return r;
+
+
+    }
+    static private JSONArray createSyncDeviceInfoJson(String store_guid, String stationID, String stationFunc, Activation.StoreDevice dev)
+    {
+        JSONArray ar = new JSONArray();
+
+        String guid = dev.m_guid;
+        if (guid.isEmpty()) //must been licensed
+           return ar;
+
+        JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
+
+        try {
+
+            Date dt = getUTCTime();// new Date();
+            long updateTime = dt.getTime()/1000;
+            if (updateTime<dev.getUpdateTime())
+                updateTime = dev.getUpdateTime() +1;
+
+            json.put("id", stationID);
+            json.put("store_guid","'" + store_guid + "'" );
+            json.put("serial", "'"+dev.m_serial+"'"); //mac address
+            json.put("update_device" , "''");
+            json.put("function" , "'" + stationFunc + "'");
+            json.put("name" , "'"+stationID +"'"); //2.1.2
+            json.put("update_time" ,Long.toString( updateTime)); //seconds
+            //data unused, but must have them.
+            json.put("bump_transfer_device_id", "0");
+            json.put("enable", "1" );
+            json.put("is_deleted" , "0");
+            json.put("license", "1");
+            json.put("line_display" , "0");
+            json.put("login" , "0");
+            json.put("parent_id" , "0");
+            json.put("screen_id" , "1");
+            json.put("screen_size" , "0");
+            json.put("split_screen_child_device_id" , "0");
+            json.put("split_screen_parent_device_id" , "0");
+            json.put("xml_order" , "2");
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        ar.put(json);
+        return ar;
+    }
 }
 
 //package com.bematechus.kdslib;

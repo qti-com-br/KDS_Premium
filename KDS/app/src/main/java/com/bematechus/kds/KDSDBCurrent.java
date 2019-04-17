@@ -429,10 +429,11 @@ public class KDSDBCurrent extends KDSDBBase {
      *  2.0.8: add r0 for timer delay.
      *  2.0.9: use r1 as parent item guid, this is line items mode.
      *  2.0.47: category priority r2
+     *  KPP1-53 use r3 to save transfered from station id.
      */
     static private String ITEMS_FIELDS = "GUID,Name,Description,Qty,Category,BG,FG,Grp,Marked,DeleteByRemote,LocalBumped,BumpedStations," +
                                             "ToStations,Ready,Hiden,QtyChanged,ItemType,ItemDelay,PreparationTime,BuildCard,TrainingVideo," +
-                                            "SumTransEnable,SumTrans,r0,r1,r2 ";
+                                            "SumTransEnable,SumTrans,r0,r1,r2,r3 ";
 
     private KDSDataItems itemsGet(String orderGUID)// int nOrderID)
     {
@@ -531,6 +532,12 @@ public class KDSDBCurrent extends KDSDBBase {
         if (s ==null || s.isEmpty())
             s = "-1";
         c.setCategoryPriority(KDSUtil.convertStringToInt(s, -1));
+
+        //KPP1-53
+        s = getString(sf,26);
+        if (s ==null || s.isEmpty())
+            s = "";
+        c.setTransferedFromStationID(s);
 
         return c;
     }
@@ -3712,7 +3719,7 @@ update the schedule item ready qty
             +"r0 text(16)," //item timer delay.add increase qty to new line(LineItems mode). And, the timer from qty changed.
             +"r1 text(16)," //parent item guid, this is for lineitem mode. After add new line item of qty change, I use this field to record its parent.
             +"r2 text(16)," //2.0.47, category priority,
-            +"r3 text(16),"
+            +"r3 text(16),"  //KPP1-53, This needs to show the number of the station the order/item was transferred from. IN the case above it would be 1.
             +"r4 text(16) ,"
             +"r5 text(16),"
             +"r6 text(16),"

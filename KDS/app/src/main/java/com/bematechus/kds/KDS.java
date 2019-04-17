@@ -385,8 +385,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void updateStationFunction()
     {
         KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
-
+        SettingsBase.StationFunc old = m_settings.getStationFunc();
         m_settings.setStationFunc(func);
+        if (old != func)
+        { //update the activation backoffice
+            if (m_activationHTTP != null)
+                m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+        }
+
     }
 
 //    public KDSSettings.StationFunc getOriginalStationFunc()
@@ -2202,7 +2208,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
                 break;
             case Station_Transfer_Order://order transfered to me
-                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData);
+                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, fromStationID);
                 setFocusAfterReceiveOrder();
                 getSoundManager().playSound(KDSSettings.ID.Sound_transfer_order);
                 break;
@@ -2340,7 +2346,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             break;
             case Prep_sync_new_order_to_queue:
             {
-                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData);
+                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, "");
             }
             break;
 

@@ -2830,4 +2830,12 @@ get the total qty of all found items
 
         return s;
     }
+
+    public void setItemsTransferedFromStationID(String fromStationID)
+    {
+        for (int i=0; i< getItems().getCount(); i++)
+        {
+            getItems().getItem(i).setTransferedFromStationID(fromStationID);
+        }
+    }
 }
