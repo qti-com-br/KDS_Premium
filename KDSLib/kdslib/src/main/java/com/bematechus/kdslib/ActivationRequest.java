@@ -1168,6 +1168,79 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ar.put(json);
         return ar;
     }
+
+    /**
+     * item_bumps fields
+     * ----------
+     CREATE TABLE `item_bumps` (
+     `guid` varchar(36) NOT NULL,
+     `status` tinyint(4) NOT NULL,
+     `last_status` tinyint(4) DEFAULT NULL,
+     `create_time` int(10) NOT NULL,
+     `update_time` int(10) NOT NULL,
+     `upload_time` int(10) DEFAULT '1',
+     `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+     `update_device` varchar(36) DEFAULT NULL,
+     `create_local_time` int(10) DEFAULT '0',
+     `prepared_local_time` int(10) DEFAULT '0',
+     `done_local_time` int(10) DEFAULT '0',
+     `prepared_device_id` int(11) DEFAULT '0',
+     `done_device_id` int(11) DEFAULT '0',
+     PRIMARY KEY (`guid`)
+     ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+     *
+     * @param store_guid
+     * @param stationID
+     * @param stationFunc
+     * @param dev
+     * @return
+     */
+    static private JSONArray createItemDeletedJson(String store_guid, String stationID, String stationFunc, Activation.StoreDevice dev)
+    {
+        JSONArray ar = new JSONArray();
+
+//        String guid = dev.m_guid;
+//        if (guid.isEmpty()) //must been licensed
+//            return ar;
+//
+//        JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
+//
+//        try {
+//
+//            Date dt = getUTCTime();// new Date();
+//            long updateTime = dt.getTime()/1000;
+//            if (updateTime<dev.getUpdateTime())
+//                updateTime = dev.getUpdateTime() +1;
+//
+//            json.put("id", stationID);
+//            json.put("store_guid","'" + store_guid + "'" );
+//            json.put("serial", "'"+dev.m_serial+"'"); //mac address
+//            json.put("update_device" , "''");
+//            json.put("function" , "'" + stationFunc + "'");
+//            json.put("name" , "'"+stationID +"'"); //2.1.2
+//            json.put("update_time" ,Long.toString( updateTime)); //seconds
+//            //data unused, but must have them.
+//            json.put("bump_transfer_device_id", "0");
+//            json.put("enable", "1" );
+//            json.put("is_deleted" , "0");
+//            json.put("license", "1");
+//            json.put("line_display" , "0");
+//            json.put("login" , "0");
+//            json.put("parent_id" , "0");
+//            json.put("screen_id" , "1");
+//            json.put("screen_size" , "0");
+//            json.put("split_screen_child_device_id" , "0");
+//            json.put("split_screen_parent_device_id" , "0");
+//            json.put("xml_order" , "2");
+//
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//        ar.put(json);
+        return ar;
+    }
 }
 
 //package com.bematechus.kdslib;
