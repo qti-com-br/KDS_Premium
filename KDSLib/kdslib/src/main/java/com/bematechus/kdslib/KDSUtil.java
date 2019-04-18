@@ -1796,4 +1796,34 @@ just 16bits value
         }
     }
 
+
+    static public String getVersionName(Context context) {
+        String appVersion = "";
+        PackageManager manager = context.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+            appVersion = info.versionName; //version name, set it in build.gradle file.
+            //or [App properties(right click)]-->[open module settings]-->app-->flavors-->version name
+        } catch (Exception e) {
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        return appVersion;
+    }
+
+    static public int getVersionCode(Context context) {
+        int appVersionCode = 0;
+        PackageManager manager = context.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+            appVersionCode = info.versionCode; //version name, set it in build.gradle file.
+            //or [App properties(right click)]-->[open module settings]-->app-->flavors-->version name
+        } catch (Exception e) {
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        return appVersionCode;
+    }
 }

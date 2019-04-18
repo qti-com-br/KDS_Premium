@@ -102,7 +102,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     ActivationEvents m_receiver = null;
 
     boolean m_bSilent = false;
-    private ArrayList<StoreDevice> m_devices = new ArrayList<>();
+    static private ArrayList<StoreDevice> m_devices = new ArrayList<>();//share in all instance
 
     Context m_context = null;
 
@@ -187,13 +187,18 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 case Sync_condiments:
                     onSyncCondimentsResponse(http, request);
                     break;
+                case Sync_item_bumps:
+                    onSyncItemBumpsResponse(http, request);
+                    break;
             }
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
         {//activatioinhttp code error/exception
             if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
-                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments)
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps
+                        )
             {
                 onSyncDataHttpException(http, request);
             }
@@ -205,7 +210,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         {//http server return error code
             if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
-                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments)
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps)
             {
                 onSyncDataResponseError(http, request);
             }
@@ -1493,7 +1499,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 if (syncOp != ActivationRequest.SyncDataFromOperation.Unbump_order) { //unbump order just sync order, no items/condiments
 
                     postItemsRequest(m_stationID, order);
-                    postCondimentsRequest(order);
+                    postCondimentsRequest(m_stationID, order);
+                    postItemBumpsRequest(m_stationID, order,false );
                 }
                 if (m_receiver != null)
                     m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getGUID(), SyncDataResult.OK);
@@ -1551,9 +1558,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     }
 
-    public void postCondimentsRequest(KDSDataOrder order)
+    public void postCondimentsRequest(String stationID, KDSDataOrder order)
     {
-        ActivationRequest r = ActivationRequest.createSyncCondimentsRequest(  order );
+        ActivationRequest r = ActivationRequest.createSyncCondimentsRequest(stationID,  order );
         m_http.request(r);
 
     }
@@ -1693,4 +1700,21 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         return "";
     }
+
+    public void postItemBumpsRequest(String stationID, KDSDataOrder order, boolean bExpoStation)
+    {
+        ActivationRequest r = ActivationRequest.createSyncItemBumpsRequest(stationID,  order, bExpoStation );
+        m_http.request(r);
+
+    }
+
+    public void onSyncItemBumpsResponse(ActivationHttp http, ActivationRequest request) {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bumps, order.getGUID(), SyncDataResult.OK);
+
+    }
+
 }

@@ -1013,18 +1013,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
     private String getVersionName() {
-        String appVersion = "";
-        PackageManager manager = this.getPackageManager();
-        try {
-            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
-            appVersion = info.versionName; //version name, set it in build.gradle file.
-            //or [App properties(right click)]-->[open module settings]-->app-->flavors-->version name
-        } catch (Exception e) {
+        return KDSUtil.getVersionName(KDSApplication.getContext());
 
-            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
-            //KDSLog.e(TAG, KDSUtil.error( e));
-        }
-        return appVersion;
+//        String appVersion = "";
+//        PackageManager manager = this.getPackageManager();
+//        try {
+//            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+//            appVersion = info.versionName; //version name, set it in build.gradle file.
+//            //or [App properties(right click)]-->[open module settings]-->app-->flavors-->version name
+//        } catch (Exception e) {
+//
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+//            //KDSLog.e(TAG, KDSUtil.error( e));
+//        }
+//        return appVersion;
     }
 
     private void initSummaryFragment() {
