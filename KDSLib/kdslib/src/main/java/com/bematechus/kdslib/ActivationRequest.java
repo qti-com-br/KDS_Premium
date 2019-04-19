@@ -30,7 +30,12 @@ import java.util.UUID;
  [{"tok":"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"},{"req":"GET_DEVICES","store_guid":"bae3a89e-c521-46eb-8196-c63d2b16baa7"}]
 
  [{"tok":"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"},{"data":[{"bump_transfer_device_id":"0","xml_order":"2","screen_id":"1","screen_size":"0","enable":"1","split_screen_child_device_id":"0","split_screen_parent_device_id":"0","function":"'EXPEDITOR'","id":"1","guid":"'e7b6b9bb-5f82-4511-97c1-6eb21f900e0f'","is_deleted":"0","update_time":"1534305312","store_guid":"'bae3a89e-c521-46eb-8196-c63d2b16baa7'","name":"'1'","login":"0","license":"1","serial":"'000000000039'","line_display":"0","parent_id":"0","update_device":"''"}],"req":"SYNC","entity":"devices"}]
- *
+ * Remote database https://dev.mysql.com/downloads/workbench/5.2.html.
+ * Database connection:
+ * Host: kds-dev.cz2l6cajeudq.us-west-2.rds.amazonaws.com
+ * User: Bematech
+ * Pass: %Bematech11714%
+ * Database: KDSDevPremium
  */
 public class ActivationRequest extends HttpBase.HttpRequestBase {
 
@@ -954,8 +959,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("recall_time", Long.toString( updateTime)); //seconds
             json.put("training_video", "''");
             //json.put("transfer_from_device_id",  "'" + item.getTransferedFromStationID() +"'");//KPP1-53
-            if (!item.getTransferedFromStationID().isEmpty())
-                json.put("transfer_from_device_id",    item.getTransferedFromStationID() );//KPP1-53
+//            if (!item.getTransferedFromStationID().isEmpty()) //comment it. IN KDS, we don't need it.
+//                json.put("transfer_from_device_id",    item.getTransferedFromStationID() );//KPP1-53
             json.put("transfer_time" ,Long.toString( updateTime)); //seconds
             json.put("untransfer_time" ,Long.toString( updateTime)); //seconds
             json.put("beeped",  '0');
@@ -1251,24 +1256,32 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      PRIMARY KEY (`guid`)
      ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
      */
-    static private JSONArray createItemBumpJson(String stationID, KDSDataItem item, boolean bExpoStation)
+    /**
+     *
+     * @param stationID
+     * @param item
+     * @param bExpoStation
+     * @param bBumped
+     *  True: bump this item
+     *  False: unbump it.
+     * @return
+     */
+    static private JSONObject createItemBumpJson(String stationID, KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
-        JSONArray ar = new JSONArray();
 
-        String guid = item.getGUID();
-        if (guid.isEmpty())
-            return ar;
-//
-        JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
+
+        JSONObject json = getJsonObj( "guid" , "'"+item.getGUID()+"'");
 
         try {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
             long localTime = (new Date()).getTime()/1000;
+            String status = "2";//done
+            if (!bBumped) status = "0";//new
+            json.put("status",status );
 
-            json.put("status","2" );
-            json.put("last_status", "2"); //mac address
+            json.put("last_status", status); //mac address
             json.put("create_time" , Long.toString( updateTime));
             json.put("update_time" ,Long.toString( updateTime)); //seconds
             json.put("upload_time" ,Long.toString( updateTime)); //seconds
@@ -1291,8 +1304,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         {
             e.printStackTrace();
         }
-        ar.put(json);
-        return ar;
+
+        return json;
     }
 
     static private JSONArray createDeviceJson(String store_guid,String devGuid, String stationID, String stationFunc,String mac, long updateTime)
@@ -1300,8 +1313,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONArray ar = new JSONArray();
 
         String guid = devGuid;
-        if (guid.isEmpty()) //must been licensed
-            return ar;
+//        if (guid.isEmpty()) //must been licensed. Comment it:  allow add new
+//            return ar;
 
         JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
 
@@ -1328,8 +1341,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("split_screen_parent_device_id" , "0");
             json.put("xml_order" , "2");
             //KPP1-55
-            json.put("app_version" , "'" + KDSUtil.getVersionName(KDSApplication.getContext()) + "'");
-            json.put("app_version_code" , KDSUtil.convertIntToString(KDSUtil.getVersionCode(KDSApplication.getContext())));
+            //json.put("app_version" , "'" + KDSUtil.getVersionName(KDSApplication.getContext()) + "'");
+            //json.put("app_version_code" , KDSUtil.convertIntToString(KDSUtil.getVersionCode(KDSApplication.getContext())));
         }
         catch (Exception e)
         {
@@ -1339,24 +1352,24 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return ar;
     }
 
-    static private JSONArray createItemBumpsJson(String stationID,KDSDataOrder order, KDSDataItems items, boolean bExpoStation)
+    static private JSONArray createItemBumpsJson(String stationID,KDSDataOrder order, KDSDataItems items, boolean bExpoStation, boolean bBumped)
     {
         JSONArray ar = new JSONArray();
         int ncount = items.getCount();
 
         for (int i=0; i< ncount; i++)
         {
-            ar.put(createItemBumpJson(stationID,items.getItem(i), bExpoStation) );
+            ar.put(createItemBumpJson(stationID,items.getItem(i), bExpoStation, bBumped) );
         }
         return ar;
 
 
     }
 
-    static public ActivationRequest createSyncItemBumpsRequest(String stationID,  KDSDataOrder order, boolean bExpoStation)
+    static public ActivationRequest createSyncItemBumpsRequest(String stationID,  KDSDataOrder order, boolean bExpoStation, boolean bBumped)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bumps,"item_bumps",createItemBumpsJson(stationID,order, order.getItems() , bExpoStation));
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bumps,"item_bumps",createItemBumpsJson(stationID,order, order.getItems() , bExpoStation, bBumped));
         r.setTag(order);
         r.setDbTarget();
         return r;

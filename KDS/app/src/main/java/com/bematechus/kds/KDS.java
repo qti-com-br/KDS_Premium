@@ -4766,6 +4766,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
         if (m_activationHTTP == null)
             return false;
+        m_activationHTTP.setStationID(getStationID());
+        m_activationHTTP.setStationFunc(getStationFunction());
+
         m_activationHTTP.postOrderRequest(order, iosState, fromOperation);
         return true;
 

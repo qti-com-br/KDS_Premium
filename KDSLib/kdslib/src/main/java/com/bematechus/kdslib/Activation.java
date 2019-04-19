@@ -97,6 +97,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     private String m_myMacAddress = "";
     private String m_stationID = "1";
+    private SettingsBase.StationFunc m_stationFunc = SettingsBase.StationFunc.Normal;
 
     private int m_nMaxLicenseCount = 0;
     ActivationEvents m_receiver = null;
@@ -132,6 +133,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void setStationID(String stationID)
     {
         m_stationID = stationID;
+    }
+    public void setStationFunc(SettingsBase.StationFunc func)
+    {
+        m_stationFunc = func;
     }
     public void setMacAddress(String mac)
     {
@@ -1500,7 +1505,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
                     postItemsRequest(m_stationID, order);
                     postCondimentsRequest(m_stationID, order);
-                    postItemBumpsRequest(m_stationID, order,false );
+                    postItemBumpsRequest(m_stationID, order,(m_stationFunc == SettingsBase.StationFunc.Expeditor), true );
+                }
+                else
+                {//it unbump order
+                    postItemBumpsRequest(m_stationID, order,(m_stationFunc == SettingsBase.StationFunc.Expeditor), false );
                 }
                 if (m_receiver != null)
                     m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getGUID(), SyncDataResult.OK);
@@ -1701,9 +1710,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         return "";
     }
 
-    public void postItemBumpsRequest(String stationID, KDSDataOrder order, boolean bExpoStation)
+    public void postItemBumpsRequest(String stationID, KDSDataOrder order, boolean bExpoStation, boolean bBumped)
     {
-        ActivationRequest r = ActivationRequest.createSyncItemBumpsRequest(stationID,  order, bExpoStation );
+        ActivationRequest r = ActivationRequest.createSyncItemBumpsRequest(stationID,  order, bExpoStation , bBumped);
         m_http.request(r);
 
     }
