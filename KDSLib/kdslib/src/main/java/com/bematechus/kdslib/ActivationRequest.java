@@ -1313,13 +1313,15 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONArray ar = new JSONArray();
 
         String guid = devGuid;
-//        if (guid.isEmpty()) //must been licensed. Comment it:  allow add new
+        if (guid.isEmpty()) //must been licensed. Comment it:  allow add new
+            guid = createNewGUID();
 //            return ar;
 
         JSONObject json = getJsonObj( "guid" , "'"+guid+"'");
 
         try {
 
+            if (stationID.isEmpty()) stationID = "0";
             json.put("id", stationID);
             json.put("store_guid","'" + store_guid + "'" );
             json.put("serial", "'"+mac+"'"); //mac address
