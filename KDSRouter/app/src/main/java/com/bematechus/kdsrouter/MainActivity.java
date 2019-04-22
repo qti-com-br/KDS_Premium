@@ -1078,6 +1078,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (m_activation.isDoLicensing()) return;
         if (!isKDSValid()) return;
         m_activation.setStationID(getKDSRouter().getStationID());
+        m_activation.setStationFunc(Activation.KDSROUTER);
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         if (ar.size()<=0) return;
         m_activation.setMacAddress(ar.get(0));

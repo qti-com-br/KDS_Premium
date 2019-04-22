@@ -285,12 +285,12 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      *          If it is update sql, I need its value to do update.
      * @return
      */
-    static public ActivationRequest createSyncMacRequest( String store_guid,String stationID, String licenseGuid, String macAddress,Activation.StoreDevice dev)
+    static public ActivationRequest createSyncMacRequest( String store_guid,String stationID,String stationFunc, String licenseGuid, String macAddress,Activation.StoreDevice dev)
     {
         long lastUpdateTime = -1;
         if (dev != null)
             lastUpdateTime = dev.getUpdateTime();
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createSyncMacJson(store_guid,stationID, licenseGuid, macAddress, lastUpdateTime) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createSyncMacJson(store_guid,stationID,stationFunc, licenseGuid, macAddress, lastUpdateTime) );
         return r;
 //       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
 //
@@ -542,13 +542,16 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param macAddress
      * @return
      */
-    static private JSONArray createSyncMacJson(String store_guid, String stationID,String licenseGuid, String macAddress, long lastUpdateTime)
+    static private JSONArray createSyncMacJson(String store_guid, String stationID,String stationFunc, String licenseGuid, String macAddress, long lastUpdateTime)
     {
         Date dt = getUTCTime();// new Date();
         long updateTime = dt.getTime()/1000;
         if (updateTime<lastUpdateTime)
             updateTime = lastUpdateTime +1;
-        return createDeviceJson(store_guid,licenseGuid, stationID, "EXPEDITOR", macAddress, updateTime);
+//        String stationFunc = "EXPEDITOR";
+//        if (KDSApplication.isRouterApp())
+//            stationFunc = "KDSRouter";
+        return createDeviceJson(store_guid,licenseGuid, stationID, stationFunc, macAddress, updateTime);
 
 //        JSONArray ar = new JSONArray();
 //
@@ -1322,12 +1325,20 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         try {
 
             if (stationID.isEmpty()) stationID = "0";
-            json.put("id", stationID);
+
+            int n = KDSUtil.convertStringToInt(stationID, 0);
+            //for router id
+            if (stationFunc.equals(Activation.KDSROUTER))
+                n = 1000;
+            json.put("id", KDSUtil.convertIntToString(n));
             json.put("store_guid","'" + store_guid + "'" );
             json.put("serial", "'"+mac+"'"); //mac address
             json.put("update_device" , "''");
             json.put("function" , "'" + stationFunc + "'");
-            json.put("name" , "'"+stationID +"'"); //2.1.2
+            if (stationFunc.equals(Activation.KDSROUTER))
+                json.put("name" , "'"+Activation.KDSROUTER +"'"); //2.1.2
+            else
+                json.put("name" , "'"+stationID +"'"); //2.1.2
             json.put("update_time" ,Long.toString( updateTime)); //seconds
             //data unused, but must have them.
             json.put("bump_transfer_device_id", "0");

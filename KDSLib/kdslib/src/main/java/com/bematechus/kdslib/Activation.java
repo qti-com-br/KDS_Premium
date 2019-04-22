@@ -47,6 +47,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static public final String PREF_KEY_ACTIVATION_USER_NAME = "activation_user_name";
     static public final String PREF_KEY_ACTIVATION_PWD = "activation_password";
 
+    static final public String KDSROUTER = "KDSRouter";
 
     /**
      *
@@ -96,8 +97,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
 
     private String m_myMacAddress = "";
-    private String m_stationID = "1";
-    private SettingsBase.StationFunc m_stationFunc = SettingsBase.StationFunc.Normal;
+    static private String m_stationID = "1";
+    static private String m_stationFuncName = SettingsBase.StationFunc.Normal.toString();
 
     private int m_nMaxLicenseCount = 0;
     ActivationEvents m_receiver = null;
@@ -107,7 +108,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     Context m_context = null;
 
-    boolean m_bDoLicensing = false;
+    static boolean m_bDoLicensing = false;
 
     int m_nSyncGetDevicesCount = 0; //record the loop count. Prevent dead loop.
     static private String m_storeName = ""; //2.0.50
@@ -136,7 +137,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     }
     public void setStationFunc(SettingsBase.StationFunc func)
     {
-        m_stationFunc = func;
+        m_stationFuncName = func.toString();
+    }
+    public void setStationFunc(String funcName)
+    {
+        m_stationFuncName = funcName;
     }
     public void setMacAddress(String mac)
     {
@@ -549,7 +554,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
-            postSyncMac("",m_stationID, m_myMacAddress, null);
+            postSyncMac("",m_stationID,m_stationFuncName, m_myMacAddress, null);
             return;
         }
 
@@ -713,9 +718,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      *      samples:
      *      [{"tok":"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"},{"data":[{"bump_transfer_device_id":"0","xml_order":"2","screen_id":"1","screen_size":"0","enable":"1","split_screen_child_device_id":"0","split_screen_parent_device_id":"0","function":"'EXPEDITOR'","id":"1","guid":"'c6ad5b2d-4d72-4ab1-a66a-f8d49a927603'","is_deleted":"0","update_time":"1537313373","store_guid":"'7dc418db-25a1-4b0c-aa41-b357acec2033'","name":"'1'","create_time":"1537313373","login":"0","license":"1","serial":"'5.123456789'","line_display":"0","parent_id":"0","update_device":"''"}],"req":"SYNC","entity":"devices"}]
      */
-    public void postSyncMac(String licenseGuid,String stationID, String macAddress, StoreDevice dev)
+    public void postSyncMac(String licenseGuid,String stationID,String stationFunc, String macAddress, StoreDevice dev)
     {
-        ActivationRequest r = ActivationRequest.createSyncMacRequest(m_storeGuid, stationID, licenseGuid, macAddress, dev);
+        ActivationRequest r = ActivationRequest.createSyncMacRequest(m_storeGuid, stationID,stationFunc, licenseGuid, macAddress, dev);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
@@ -928,7 +933,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         RadioButton btnAddNew = (RadioButton) view.findViewById(R.id.rbAddNew);
         if (btnAddNew.isChecked())
         {
-            postSyncMac("", m_stationID, m_myMacAddress, null);
+            postSyncMac("", m_stationID,m_stationFuncName, m_myMacAddress, null);
         }
         else
         {
@@ -1505,11 +1510,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
                     postItemsRequest(m_stationID, order);
                     postCondimentsRequest(m_stationID, order);
-                    postItemBumpsRequest(m_stationID, order,(m_stationFunc == SettingsBase.StationFunc.Expeditor), true );
+                    postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
                 }
                 else
                 {//it unbump order
-                    postItemBumpsRequest(m_stationID, order,(m_stationFunc == SettingsBase.StationFunc.Expeditor), false );
+                    postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ), false );
                 }
                 if (m_receiver != null)
                     m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getGUID(), SyncDataResult.OK);
