@@ -2395,6 +2395,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (order != null) {
             getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
         }
+        //
+        //https://bematech.atlassian.net/browse/KPP1-62
+        KDSDataItem item =  order.getItems().getItemByGUID(itemGuid);
+        getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
@@ -2636,7 +2640,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         unbumpItem(userID, orderGuid, itemGuid);
 
         getKDS().checkSMS(orderGuid, false); //2.1.10
-
+        //https://bematech.atlassian.net/browse/KPP1-62
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }

@@ -4773,4 +4773,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         return true;
 
     }
+
+    public boolean syncItemBumpUnbumpToWebDatabase(KDSDataOrder order,KDSDataItem item, boolean bBumped)
+    {
+        if (order == null) return false;
+        if (m_activationHTTP == null)
+            return false;
+        m_activationHTTP.setStationID(getStationID());
+        m_activationHTTP.setStationFunc(getStationFunction());
+
+        if (item == null) return false;
+
+        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped );
+        return true;
+
+    }
 }

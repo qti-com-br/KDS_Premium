@@ -96,7 +96,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static private String m_storeGuid = "";
 
 
-    private String m_myMacAddress = "";
+    static public String m_myMacAddress = "";
     static private String m_stationID = "1";
     static private String m_stationFuncName = SettingsBase.StationFunc.Normal.toString();
 
@@ -114,6 +114,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static private String m_storeName = ""; //2.0.50
     static private String m_storeKey = "";
 
+    static private String m_timeZone = "";
 
     public boolean isDoLicensing()
     {
@@ -150,6 +151,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             //m_myMacAddress = "19.ABCdef";//test	000ec3310238
 
         //m_myMacAddress = "000ec33102389";
+    }
+
+    /**
+     * use it as device serial number.
+     * @return
+     */
+    static public String getMySerialNumber()
+    {
+        return m_myMacAddress;
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {
@@ -200,6 +210,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 case Sync_item_bumps:
                     onSyncItemBumpsResponse(http, request);
                     break;
+                case Sync_item_bump:
+                    onSyncItemBumpResponse(http, request);
+                    break;
             }
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
@@ -207,7 +220,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_condiments ||
-                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bump
                         )
             {
                 onSyncDataHttpException(http, request);
@@ -221,7 +235,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_condiments ||
-                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps)
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bump )
             {
                 onSyncDataResponseError(http, request);
             }
@@ -413,6 +428,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (ar.length()<=0) return;
             JSONObject json = (JSONObject) ar.get(0);
             int ncount = json.getInt("licenses_quantity");
+            m_timeZone = json.getString("timezone");
+
             m_nMaxLicenseCount = ncount;
 
             //System.out.println(ar.toString());
@@ -1729,6 +1746,34 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (m_receiver != null)
             m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bumps, order.getGUID(), SyncDataResult.OK);
 
+    }
+
+    /**
+     * sync single item bumped/unbumped event to backoffice
+     * @param stationID
+     * @param order
+     * @param item
+     * @param bExpoStation
+     * @param bBumped
+     */
+    public void postItemBumpRequest(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    {
+        ActivationRequest r = ActivationRequest.createSyncItemBumpRequest(stationID,order,  item, bExpoStation , bBumped);
+        m_http.request(r);
+    }
+
+    public void onSyncItemBumpResponse(ActivationHttp http, ActivationRequest request) {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bump, order.getGUID(), SyncDataResult.OK);
+
+    }
+
+    static public String getTimeZone()
+    {
+        return m_timeZone;
     }
 
 }

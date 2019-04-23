@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -102,6 +103,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Sync_items,
         Sync_condiments,
         Sync_item_bumps,
+        Sync_item_bump,
 
     }
 
@@ -902,6 +904,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
+            long localTime = getLocalTime().getTime()/1000;
+
 //            if (updateTime<lastUpdateTime)
 //                updateTime = lastUpdateTime +1;
 
@@ -921,9 +925,9 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( updateTime)); //seconds
             json.put("upload_time" ,Long.toString( updateTime)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "''");
+            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
             json.put("phone", "'" + order.getSMSCustomerPhone()+"'");
-            json.put("create_local_time", Long.toString( updateTime)); //seconds
+            json.put("create_local_time", Long.toString( localTime)); //seconds
             json.put("is_hidden", "0");
             json.put("customer_guid", "''");
             json.put("smart_order_start_time", "0");
@@ -946,6 +950,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
+            long localTime = getLocalTime().getTime()/1000;
 //            if (updateTime<lastUpdateTime)
 //                updateTime = lastUpdateTime +1;
 
@@ -972,10 +977,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( updateTime)); //seconds
             json.put("upload_time" ,Long.toString( updateTime)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "''");
+            json.put("update_device" , "'"+Activation.getMySerialNumber() +"'");
             json.put("printed_status", "0");
-            json.put("item_bump_guid", "''");
-            json.put("create_local_time", Long.toString( updateTime)); //seconds
+            json.put("item_bump_guid", "'" + item.getGUID() +"'" ); //https://bematech.atlassian.net/browse/KPP1-64
+            json.put("create_local_time", Long.toString( localTime)); //seconds
             json.put("is_hidden", "0");
             json.put("ready_since_local_time", "0");
 
@@ -1025,19 +1030,20 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
+            long localTime = getLocalTime().getTime()/1000;
 //            if (updateTime<lastUpdateTime)
 //                updateTime = lastUpdateTime +1;
             //json.put("guid", "'" + item.getGUID() + "'");
             json.put("item_guid","'" + condiment.getItemGUID() + "'" );
-            json.put("external_id", "'"+order.getOrderName() +"'"); //KPP1-57
+            json.put("external_id", "'"+condiment.getCondimentName() +"'"); //KPP1-57//https://bematech.atlassian.net/browse/KPP1-57
             json.put("name", "'" + condiment.getDescription()+"'");
             json.put("pre_modifier", "''");
             json.put("create_time" ,Long.toString( updateTime)); //seconds
             json.put("update_time" ,Long.toString( updateTime)); //seconds
             json.put("upload_time" ,Long.toString( updateTime)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "'"+stationID + "'");//KPP1-58
-            json.put("create_local_time", Long.toString( updateTime)); //seconds
+            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
+            json.put("create_local_time", Long.toString( localTime)); //seconds
             json.put("preparation_time",  Long.toString( updateTime));
         }
         catch (Exception e)
@@ -1279,7 +1285,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             Date dt = getUTCTime();// new Date();
             long updateTime = dt.getTime()/1000;
-            long localTime = (new Date()).getTime()/1000;
+            //long localTime = (new Date()).getTime()/1000;
+            long localTime = getLocalTime().getTime()/1000;
             String status = "2";//done
             if (!bBumped) status = "0";//new
             json.put("status",status );
@@ -1289,7 +1296,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( updateTime)); //seconds
             json.put("upload_time" ,Long.toString( updateTime)); //seconds
             json.put("is_deleted" , "0");
-            json.put("update_device" , "'"+stationID +"'"); //2.1.2
+            json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
 
             //data unused, but must have them.
             json.put("create_local_time", Long.toString( localTime));
@@ -1353,7 +1360,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("split_screen_child_device_id" , "0");
             json.put("split_screen_parent_device_id" , "0");
             json.put("xml_order" , "2");
-            //KPP1-55
+            //KPP1-55//https://bematech.atlassian.net/browse/KPP1-55
             //json.put("app_version" , "'" + KDSUtil.getVersionName(KDSApplication.getContext()) + "'");
             //json.put("app_version_code" , KDSUtil.convertIntToString(KDSUtil.getVersionCode(KDSApplication.getContext())));
         }
@@ -1386,5 +1393,38 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         r.setTag(order);
         r.setDbTarget();
         return r;
+    }
+
+    static public ActivationRequest createSyncItemBumpRequest(String stationID,KDSDataOrder order,  KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    {
+
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bump,"item_bumps",createSingleItemBumpJson(stationID,item , bExpoStation, bBumped));
+        r.setTag(order);
+        r.setDbTarget();
+        return r;
+    }
+
+    static private JSONArray createSingleItemBumpJson(String stationID,KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    {
+        JSONArray ar = new JSONArray();
+
+        ar.put(createItemBumpJson(stationID,item, bExpoStation, bBumped) );
+
+        return ar;
+
+
+    }
+
+    /**
+     * this local time zone is from backoffice setting.
+     * It is the kds local station time zone.
+     * @return
+     */
+    private static Date getLocalTime() {
+
+        TimeZone tz = TimeZone.getTimeZone(Activation.getTimeZone());
+        Calendar cal = Calendar.getInstance(tz) ;
+
+        return cal.getTime();
     }
 }
