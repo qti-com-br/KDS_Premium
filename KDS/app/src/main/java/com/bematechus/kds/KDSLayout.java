@@ -1194,6 +1194,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
             return;
         }
+        if (panel.getFirstBlock() == null) return;
         KDSViewBlockCell firstcell =  panel.getFirstBlock().getCell(0);
         if (firstcell == null) return;
         Object obj = firstcell.getData();

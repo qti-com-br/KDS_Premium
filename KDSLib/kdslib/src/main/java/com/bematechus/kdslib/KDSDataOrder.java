@@ -784,8 +784,7 @@ public class KDSDataOrder extends KDSData {
         }
         c.setOrderMessages(msg);
         
-        for (int i=0; i< nItemsCount; i++)
-        {
+        for (int i=0; i< nItemsCount; i++) {
             KDSDataItem item = new KDSDataItem(c.getGUID());
             item.setAddOnGroup(-1);
 //            if (i ==2)
@@ -799,6 +798,14 @@ public class KDSDataOrder extends KDSData {
             item.setToStationsString(toStations);
             item.setOrderID(-1);
             item.setQty(2);
+            for (int n = 0; n < 1; n++)
+            {
+                KDSDataModifier m = new KDSDataModifier();
+                m.setDescription("Modifier $" + KDSUtil.convertIntToString(n));
+                m.setCondimentName("Modifier $" + KDSUtil.convertIntToString(n));
+                m.setItemGUID(item.getGUID());
+                item.getModifiers().addComponent(m);
+            }
             //item.setToStationsString("");
             KDSDataMessages msgs = new KDSDataMessages();
             for (int n=0; n<1; n++)

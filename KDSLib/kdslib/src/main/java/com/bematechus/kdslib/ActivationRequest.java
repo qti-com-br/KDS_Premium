@@ -954,7 +954,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("name", "'" + item.getDescription()+"'");
             //json.put("device_id", "0");//KPP1-48, The device_id should show the station id the item came from
             json.put("device_id", "'" + stationID + "'");//KPP1-48, The device_id should show the station id the item came from. Note: in table, it is a integer, I use string. Need to try.
-            json.put("external_id", "'"+ order.getOrderName() + "'"); //KPP1-49,  External ID needs to show the Order ID that item came from
+            json.put("external_id", "'"+ item.getItemName()+"'");//order.getOrderName() + "'"); //KPP1-49,  External ID needs to show the item ID that item came from
             json.put("is_priority", "0");
             json.put("condiments_count", KDSUtil.convertIntToString( item.getCondiments().getCount()));
             json.put("pre_modifier", "'" + item.getModifiers().toEachLineString() +"'");//KPP1-50, The field needs to be filled in with the premodifier that is in the XML
