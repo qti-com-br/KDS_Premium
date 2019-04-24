@@ -1049,7 +1049,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 return KDSStationNormal.normal_sync_item_bumped(kds, command);
 
             case Expeditor:
@@ -1077,7 +1077,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 KDSStationNormal.normal_sync_schedule_item_ready_qty_changed(kds, command);
                 break;
             case Expeditor:
@@ -1111,7 +1111,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 return KDSStationNormal.normal_sync_item_unbumped(kds, command);
 
             case Expeditor:
@@ -1139,7 +1139,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 KDSStationNormal.normal_sync_item_modified(kds, command);
                 break;
             case Expeditor:
@@ -1174,7 +1174,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 return KDSStationNormal.normal_sync_order_bumped(kds, command);
 
             case Expeditor:
@@ -1205,7 +1205,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
 
                 break;
             case Expeditor:
@@ -1235,7 +1235,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 KDSStationNormal.orderCookStartedByName(kds.getUsers().getUserA(),strOrderName);
                 break;
             case Expeditor:
@@ -1263,7 +1263,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
             case Expeditor:
             case Queue:
             case TableTracker:
@@ -1289,7 +1289,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
 
                 break;
             case Expeditor:
@@ -1316,7 +1316,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
 
                 break;
             case Expeditor:
@@ -1343,7 +1343,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
 
                 break;
             case Expeditor:
@@ -1370,7 +1370,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
 
                 break;
             case Expeditor:
@@ -1397,7 +1397,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
 
                 break;
             case Expeditor:
@@ -1430,7 +1430,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 KDSStationNormal.normal_sync_order_canceled(kds, command);
                 break;
             case Expeditor:
@@ -1456,7 +1456,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 KDSStationNormal.normal_sync_order_modified(kds, command);
                 break;
             case Expeditor:
@@ -1488,7 +1488,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 KDSStationNormal.normal_sync_order_new(kds, command);
                 kds.refreshView();
                 break;
@@ -1531,7 +1531,7 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Normal:
+            case Prep:
                 KDSStationNormal.normal_sync_order_unbumped(kds,command);
                 break;
             case Expeditor:

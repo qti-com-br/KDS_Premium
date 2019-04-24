@@ -55,7 +55,7 @@ public class KDSSettings extends SettingsBase {
 
     KDSViewFontFace m_kdsBlockFont = null;
 
-    StationFunc m_nStationFunc = StationFunc.Normal; //this comes from stations relation setting.
+    StationFunc m_nStationFunc = StationFunc.Prep; //this comes from stations relation setting.
 
     StationFunc m_nTabCurrentFuncView = StationFunc.MAX_COUNT; //this is tab display, default is unknown. User which view to show order.
     String m_tabDestinationFilter = "";

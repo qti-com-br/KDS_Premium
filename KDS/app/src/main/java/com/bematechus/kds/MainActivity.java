@@ -5797,7 +5797,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             case Orders:
 
-                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Normal);
+                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Prep);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
@@ -5810,7 +5810,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 break;
             case Destination:
 
-                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Normal);
+                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Prep);
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
 
@@ -5855,7 +5855,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case LineItems:
 
                 //getKDS().getSettings().setStationFunc(KDSSettings.StationFunc.Normal);
-                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Normal);
+                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Prep);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(true);
                 getKDS().getSettings().restoreOrdersSortToDefault();
@@ -5867,7 +5867,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 break;
             case Sort_orders:
             {
-                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Normal);
+                getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Prep);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 String strSort = btnData.getStringParam();

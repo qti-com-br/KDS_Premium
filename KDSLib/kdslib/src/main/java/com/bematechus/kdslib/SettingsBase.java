@@ -18,7 +18,7 @@ public class SettingsBase {
     static final private String TAG = "SettingsBase";
     public enum StationFunc
     {
-        Normal,
+        Prep,
         Expeditor,
         Queue,// "Order Queue Display",
         Mirror,

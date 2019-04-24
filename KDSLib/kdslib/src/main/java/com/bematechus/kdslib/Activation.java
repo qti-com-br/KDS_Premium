@@ -98,7 +98,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     static public String m_myMacAddress = "";
     static private String m_stationID = "1";
-    static private String m_stationFuncName = SettingsBase.StationFunc.Normal.toString();
+    static private String m_stationFuncName = SettingsBase.StationFunc.Prep.toString();
 
     private int m_nMaxLicenseCount = 0;
     ActivationEvents m_receiver = null;

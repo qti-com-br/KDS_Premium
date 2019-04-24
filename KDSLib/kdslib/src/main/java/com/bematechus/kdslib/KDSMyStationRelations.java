@@ -314,7 +314,7 @@ public class KDSMyStationRelations {
      */
     public SettingsBase.StationFunc getStationFunction(String stationID, String stationSlaveID)
     {
-        SettingsBase.StationFunc func = SettingsBase.StationFunc.Normal;
+        SettingsBase.StationFunc func = SettingsBase.StationFunc.Prep;
 
         int ncount =  m_arStationsRelations.size();
         for (int i=0; i< ncount; i++)
@@ -331,7 +331,7 @@ public class KDSMyStationRelations {
         switch (func)
         {
 
-            case Normal:
+            case Prep:
 
             case Expeditor:
 
@@ -355,7 +355,7 @@ public class KDSMyStationRelations {
         switch (myStationFunction)
         {
 
-            case Normal:
+            case Prep:
             case Expeditor:
             case Queue:
                 return myStationFunction;
@@ -383,7 +383,7 @@ public class KDSMyStationRelations {
 
         if (!parentStationID.isEmpty())
             return getStationFunction(parentStationID, stationID);
-        return SettingsBase.StationFunc.Normal;
+        return SettingsBase.StationFunc.Prep;
     }
     public KDSStationsRelation getMyRelations()
     {
@@ -444,7 +444,7 @@ public class KDSMyStationRelations {
         for (int i=0; i< arPrimary.size();i++)
         {
             KDSStationsRelation r= KDSStationsRelation.findStation(m_arStationsRelations,  arPrimary.get(i).getID());
-            if (r.getFunction() == SettingsBase.StationFunc.Normal)
+            if (r.getFunction() == SettingsBase.StationFunc.Prep)
                 return r.getID();
         }
         return "";
@@ -464,7 +464,7 @@ public class KDSMyStationRelations {
         {
 
             relation = m_arStationsRelations.get(i);
-            if (relation.getFunction() != SettingsBase.StationFunc.Normal)
+            if (relation.getFunction() != SettingsBase.StationFunc.Prep)
                 continue;
             if (relation.getID().equals(expoStationID))
                 continue;

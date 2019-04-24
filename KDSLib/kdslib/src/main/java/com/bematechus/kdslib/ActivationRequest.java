@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.sql.Time;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -546,8 +548,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      */
     static private JSONArray createSyncMacJson(String store_guid, String stationID,String stationFunc, String licenseGuid, String macAddress, long lastUpdateTime)
     {
-        Date dt = getUTCTime();// new Date();
-        long updateTime = dt.getTime()/1000;
+        //Date dt = getUTCTime();// new Date();
+        long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
         if (updateTime<lastUpdateTime)
             updateTime = lastUpdateTime +1;
 //        String stationFunc = "EXPEDITOR";
@@ -626,8 +628,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * 如果获取失败，返回null
      * @return
      */
-    private static Date getUTCTime() {
-        StringBuffer UTCTimeBuffer = new StringBuffer();
+    private static long getUTCTimeSeconds() {
+        //StringBuffer UTCTimeBuffer = new StringBuffer();
         // 1、取得本地时间：
         Calendar cal = Calendar.getInstance() ;
         // 2、取得时间偏移量：
@@ -635,8 +637,20 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         // 3、取得夏令时差：
         int dstOffset = cal.get(Calendar.DST_OFFSET);
         // 4、从本地时间里扣除这些差量，即可以取得UTC时间：
-        cal.add(Calendar.MILLISECOND, -(zoneOffset + dstOffset));
-        return cal.getTime();
+        //cal.add(Calendar.MILLISECOND, -(zoneOffset + dstOffset));
+
+        return (cal.getTime().getTime() - (zoneOffset + dstOffset))/1000;
+
+
+//        TimeZone tz  = TimeZone.getDefault() ;
+//        TimeZone utc = TimeZone.getTimeZone("UTC") ;
+//        TimeZone.setDefault(utc);
+//
+//        Calendar cal = Calendar.getInstance(utc);
+//        Date dt = cal.getTime();
+//        TimeZone.setDefault(tz);
+//        return dt;
+
 //
 //        int year = cal.get(Calendar.YEAR);
 //        int month = cal.get(Calendar.MONTH)+1;
@@ -902,8 +916,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONObject json = getJsonObj( "guid" , "'"+order.getGUID()+"'");
         try {
 
-            Date dt = getUTCTime();// new Date();
-            long updateTime = dt.getTime()/1000;
+            //Date dt = getUTCTime();// new Date();
+            long updateTime = getUTCTimeSeconds();// dt.getTime()/1000;
             long localTime = getLocalTime().getTime()/1000;
 
 //            if (updateTime<lastUpdateTime)
@@ -948,8 +962,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONObject json = getJsonObj( "guid" , "'" + item.getGUID() +"'" );
         try {
 
-            Date dt = getUTCTime();// new Date();
-            long updateTime = dt.getTime()/1000;
+            //Date dt = getUTCTime();// new Date();
+            long updateTime =getUTCTimeSeconds();// dt.getTime()/1000;
             long localTime = getLocalTime().getTime()/1000;
 //            if (updateTime<lastUpdateTime)
 //                updateTime = lastUpdateTime +1;
@@ -964,13 +978,13 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("condiments_count", KDSUtil.convertIntToString( item.getCondiments().getCount()));
             json.put("pre_modifier", "'" + item.getModifiers().toEachLineString() +"'");//KPP1-50, The field needs to be filled in with the premodifier that is in the XML
             json.put("preparation_time", KDSUtil.convertFloatToShortString(item.getPreparationTime() )); // KPP1-51, he number should show what the time for preparation is for that item
-            json.put("recall_time", Long.toString( updateTime)); //seconds
+            //json.put("recall_time", Long.toString( updateTime)); //seconds //KPP1-70
             json.put("training_video", "''");
             //json.put("transfer_from_device_id",  "'" + item.getTransferedFromStationID() +"'");//KPP1-53
 //            if (!item.getTransferedFromStationID().isEmpty()) //comment it. IN KDS, we don't need it.
 //                json.put("transfer_from_device_id",    item.getTransferedFromStationID() );//KPP1-53
-            json.put("transfer_time" ,Long.toString( updateTime)); //seconds
-            json.put("untransfer_time" ,Long.toString( updateTime)); //seconds
+            //json.put("transfer_time" ,Long.toString( updateTime)); //seconds //KPP1-70
+            //json.put("untransfer_time" ,Long.toString( updateTime)); //seconds //KPP1-70
             json.put("beeped",  '0');
             json.put("build_card", "''");
             json.put("create_time" ,Long.toString( updateTime)); //seconds
@@ -1028,8 +1042,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONObject json = getJsonObj( "guid" ,"'" +  condiment.getGUID() +"'");
         try {
 
-            Date dt = getUTCTime();// new Date();
-            long updateTime = dt.getTime()/1000;
+            //Date dt = getUTCTime();// new Date();
+            long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
             long localTime = getLocalTime().getTime()/1000;
 //            if (updateTime<lastUpdateTime)
 //                updateTime = lastUpdateTime +1;
@@ -1191,8 +1205,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     }
     static private JSONArray createSyncDeviceInfoJson(String store_guid, String stationID, String stationFunc, Activation.StoreDevice dev)
     {
-        Date dt = getUTCTime();// new Date();
-        long updateTime = dt.getTime()/1000;
+        //Date dt = getUTCTime();// new Date();
+        long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
         if (updateTime<dev.getUpdateTime())
             updateTime = dev.getUpdateTime() +1;
 
@@ -1283,8 +1297,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         try {
 
-            Date dt = getUTCTime();// new Date();
-            long updateTime = dt.getTime()/1000;
+            //Date dt = getUTCTime();// new Date();
+            long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
             //long localTime = (new Date()).getTime()/1000;
             long localTime = getLocalTime().getTime()/1000;
             String status = "2";//done

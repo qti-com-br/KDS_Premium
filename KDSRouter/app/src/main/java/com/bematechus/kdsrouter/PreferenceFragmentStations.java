@@ -874,7 +874,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 KDSSettings.SlaveFunc slaveFunc = KDSSettings.SlaveFunc.Unknown;
                 switch (slaveStationFunc)
                 {
-                    case Normal:
+                    case Prep:
                         slaveFunc =  KDSSettings.SlaveFunc.Unknown;
                         break;
                     case Expeditor:
@@ -885,17 +885,17 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                         slaveFunc =  KDSSettings.SlaveFunc.Order_Queue_Display;
                         //2.0.11, allow prep as primary of queue
                         if (primaryRelation.getFunction() != KDSSettings.StationFunc.Expeditor &&
-                                primaryRelation.getFunction() != SettingsBase.StationFunc.Normal)
+                                primaryRelation.getFunction() != SettingsBase.StationFunc.Prep)
                             return;
                         break;
                     case Mirror:
                         slaveFunc =  KDSSettings.SlaveFunc.Mirror;
-                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Normal)
+                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Prep)
                                 return;
                         break;
                     case Backup:
                         slaveFunc =  KDSSettings.SlaveFunc.Backup;
-                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Normal
+                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Prep
                            &&primaryRelation.getFunction() != KDSSettings.StationFunc.Expeditor
                                 &&primaryRelation.getFunction() != KDSSettings.StationFunc.Backup &&
                                 primaryRelation.getFunction() != KDSSettings.StationFunc.Queue_Expo)
@@ -904,12 +904,12 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                         break;
                     case Workload:
                         slaveFunc =  KDSSettings.SlaveFunc.Automatic_work_loan_distribution;
-                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Normal )
+                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Prep )
                             return;
                         break;
                     case Duplicate:
                         slaveFunc =  KDSSettings.SlaveFunc.Duplicate_station;
-                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Normal )
+                        if (primaryRelation.getFunction() != KDSSettings.StationFunc.Prep )
                             return;
                         break;
                 }
@@ -1066,7 +1066,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 switch (stationFunc)
                 {
 
-                    case Normal:
+                    case Prep:
                     case Expeditor:
                     case TableTracker:
                         break;
@@ -1101,7 +1101,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 switch (stationFunc)
                 {
 
-                    case Normal:
+                    case Prep:
                         slaveFunc =  KDSSettings.SlaveFunc.Unknown;
                         break;
                     case Expeditor:
@@ -1208,7 +1208,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 switch (newStationFunc)
                 {
 
-                    case Normal:
+                    case Prep:
 
                         if (relation.getFunction() == KDSSettings.StationFunc.Expeditor ||
                                 relation.getFunction() == KDSSettings.StationFunc.Queue_Expo)
@@ -1217,7 +1217,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                         if (sfunc == KDSSettings.StationFunc.Expeditor ||
                                 sfunc == KDSSettings.StationFunc.Queue_Expo)
                             bRemoveExpo = true;
-                        initSlaveFunctionSpinner(KDSApplication.getContext(), slaveFuncSpinner,  KDSSettings.StationFunc.Normal);
+                        initSlaveFunctionSpinner(KDSApplication.getContext(), slaveFuncSpinner,  KDSSettings.StationFunc.Prep);
 
                         //relation.setFunction(KDSSettings.StationFunc.Normal);
                         if (relation.getFunction() != newStationFunc)
@@ -1336,7 +1336,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
              */
             private void changeStationToGiveFunctionAccordingSlaveFunction(String stationID, KDSSettings.SlaveFunc slaveFunc, boolean bCheckPrimaryLoop)
             {
-                KDSSettings.StationFunc stationFunc = KDSSettings.StationFunc.Normal;
+                KDSSettings.StationFunc stationFunc = KDSSettings.StationFunc.Prep;
                 String primaryStation = getMyPrimaryStation(stationID);
                 if (bCheckPrimaryLoop)
                     if (!primaryStation.isEmpty()) return; //this station work as others station's slave (the backup allow loop), return it.
@@ -1344,7 +1344,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 {
 
                     case Unknown:
-                        stationFunc = KDSSettings.StationFunc.Normal;
+                        stationFunc = KDSSettings.StationFunc.Prep;
                         break;
                     case Backup:
                         stationFunc = KDSSettings.StationFunc.Backup;
@@ -1560,7 +1560,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 {
                     if (MyAdapter.this.getListData().get(i).getID().equals(stationID))
                     {
-                        if (MyAdapter.this.getListData().get(i).getFunction() == KDSSettings.StationFunc.Normal)
+                        if (MyAdapter.this.getListData().get(i).getFunction() == KDSSettings.StationFunc.Prep)
                             return true;
                     }
                 }
@@ -1868,7 +1868,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
             if (isExpoExisted()) {
                 if (m_stationFuncSpinnerListHaveExpo.size()<=0) {
-                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Normal.ordinal()), KDSSettings.StationFunc.Normal));
+                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Prep.ordinal()), KDSSettings.StationFunc.Prep));
                     m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Expeditor.ordinal()), KDSSettings.StationFunc.Expeditor));
                     m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue.ordinal()), KDSSettings.StationFunc.Queue));
                     m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Mirror.ordinal()), KDSSettings.StationFunc.Mirror));
@@ -1885,7 +1885,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             }
             else {
                 if (m_stationFuncSpinnerListNoExpo.size() <=0) {
-                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Normal.ordinal()), KDSSettings.StationFunc.Normal));
+                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Prep.ordinal()), KDSSettings.StationFunc.Prep));
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Expeditor.ordinal()), KDSSettings.StationFunc.Expeditor));
                     //2.0.11, allow queue in prep station
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(KDSSettings.StationFunc.Queue.ordinal()), KDSSettings.StationFunc.Queue));
@@ -1963,7 +1963,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             KDSStationsRelation r = getRelation(stationID);
             if (r == null) return  KDSSettings.StationFunc.Queue; //show nothing
             if (r.getFunction() != KDSSettings.StationFunc.Expeditor &&
-                    r.getFunction() != KDSSettings.StationFunc.Normal &&
+                    r.getFunction() != KDSSettings.StationFunc.Prep &&
                     r.getFunction() != KDSSettings.StationFunc.Queue_Expo &&
                     r.getFunction() != KDSSettings.StationFunc.Queue) //add this line, in old version, it add queue as expo
             {
@@ -1983,7 +1983,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             KDSStationsRelation r = getRelation(stationID);
             if (r == null) return  null; //show nothing
             if (r.getFunction() != KDSSettings.StationFunc.Expeditor &&
-                    r.getFunction() != KDSSettings.StationFunc.Normal &&
+                    r.getFunction() != KDSSettings.StationFunc.Prep &&
                     r.getFunction()!= KDSSettings.StationFunc.TableTracker &&
                     r.getFunction() != KDSSettings.StationFunc.Queue_Expo) {
                 String primary = getMyPrimaryStation(stationID);
@@ -2049,7 +2049,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 switch (stationFunction)
                 {
 
-                    case Normal:
+                    case Prep:
                         if (oldAdapter.getCount() == PREP_SLAVE_OPTIONS) return;
                         break;
                     case Expeditor:
@@ -2078,7 +2078,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
             switch (stationFunction)
             {
-                case Normal:
+                case Prep:
                     if (m_slaveFuncNormalSpinnerList.size()<=0) {
                         m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Unknown.ordinal()), KDSSettings.SlaveFunc.Unknown));
                         m_slaveFuncNormalSpinnerList.add(new SlaveFunction(arFuncStrings.get(KDSSettings.SlaveFunc.Backup.ordinal()), KDSSettings.SlaveFunc.Backup));
@@ -2400,7 +2400,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
             if (bChanged) {
                 spinner.setSelection(0); //no slave
-                relation.setFunction(KDSSettings.StationFunc.Normal);
+                relation.setFunction(KDSSettings.StationFunc.Prep);
                 relation.setSlaveFunc(KDSSettings.SlaveFunc.Unknown);
                 relation.setSlaveStations("");
 
@@ -2639,7 +2639,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     private class StationFunction
     {
         String m_strDescription = "";
-        KDSSettings.StationFunc m_stationFunc = KDSSettings.StationFunc.Normal;
+        KDSSettings.StationFunc m_stationFunc = KDSSettings.StationFunc.Prep;
 
         public StationFunction(String strDescription, KDSSettings.StationFunc func)
         {
@@ -2737,7 +2737,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             switch (func)
             {
 
-                case Normal:
+                case Prep:
                 case Expeditor:
                 case TableTracker:
                     break;
@@ -2764,7 +2764,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                                     if (primaryFunc == KDSSettings.StationFunc.Expeditor ||
                                             primaryFunc == KDSSettings.StationFunc.Queue_Expo)
                                         text = this.getContext().getString(R.string.expo_backup);//"Expo/Backup";
-                                    else if (primaryFunc == KDSSettings.StationFunc.Normal)
+                                    else if (primaryFunc == KDSSettings.StationFunc.Prep)
                                         text = this.getContext().getString(R.string.prep_backup);// "Prep/Backup";
                                 }
                                 text += " -> " + relationPrimary.getID() ;

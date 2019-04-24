@@ -58,7 +58,7 @@ public class KDSStationsRelation extends KDSStationIP {
     }
     public void reset()
     {
-        m_nFunction = SettingsBase.StationFunc.Normal;
+        m_nFunction = SettingsBase.StationFunc.Prep;
         // m_strStationID = "";
         m_strExpStations = "";
         m_strSlaveStations = "";
@@ -82,7 +82,7 @@ public class KDSStationsRelation extends KDSStationIP {
         switch (func)
         {
 
-            case Normal:
+            case Prep:
                 break;
             case Expeditor:
                 setExpStations("");

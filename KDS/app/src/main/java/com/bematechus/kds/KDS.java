@@ -2565,7 +2565,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public boolean isPrepStation()
     {
-        return (getStationFunction() == SettingsBase.StationFunc.Normal);
+        return (getStationFunction() == SettingsBase.StationFunc.Prep);
     }
     public boolean isQueueStation()
     {
