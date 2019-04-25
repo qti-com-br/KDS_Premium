@@ -571,7 +571,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
-            postSyncMac("",m_stationID,m_stationFuncName, m_myMacAddress, null);
+            postSyncNewMac("",m_stationID,m_stationFuncName, m_myMacAddress, null);
             return;
         }
 
@@ -735,16 +735,16 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      *      samples:
      *      [{"tok":"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"},{"data":[{"bump_transfer_device_id":"0","xml_order":"2","screen_id":"1","screen_size":"0","enable":"1","split_screen_child_device_id":"0","split_screen_parent_device_id":"0","function":"'EXPEDITOR'","id":"1","guid":"'c6ad5b2d-4d72-4ab1-a66a-f8d49a927603'","is_deleted":"0","update_time":"1537313373","store_guid":"'7dc418db-25a1-4b0c-aa41-b357acec2033'","name":"'1'","create_time":"1537313373","login":"0","license":"1","serial":"'5.123456789'","line_display":"0","parent_id":"0","update_device":"''"}],"req":"SYNC","entity":"devices"}]
      */
-    public void postSyncMac(String licenseGuid,String stationID,String stationFunc, String macAddress, StoreDevice dev)
+    public void postSyncNewMac(String licenseGuid,String stationID,String stationFunc, String macAddress, StoreDevice dev)
     {
-        ActivationRequest r = ActivationRequest.createSyncMacRequest(m_storeGuid, stationID,stationFunc, licenseGuid, macAddress, dev);
+        ActivationRequest r = ActivationRequest.createSyncNewMacRequest(m_storeGuid, stationID,stationFunc, licenseGuid, macAddress, dev);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
 
-    public void postReplacecMac(String licenseGuid,String macAddress)
+    public void postReplaceMac(String licenseGuid,String macAddress)
     {
-        ActivationRequest r = ActivationRequest.createReplaceMacRequest(m_storeGuid, licenseGuid, macAddress);
+        ActivationRequest r = ActivationRequest.createSyncReplaceMacRequest(m_storeGuid, licenseGuid, macAddress);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
@@ -950,7 +950,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         RadioButton btnAddNew = (RadioButton) view.findViewById(R.id.rbAddNew);
         if (btnAddNew.isChecked())
         {
-            postSyncMac("", m_stationID,m_stationFuncName, m_myMacAddress, null);
+            postSyncNewMac("", m_stationID,m_stationFuncName, m_myMacAddress, null);
         }
         else
         {
@@ -961,7 +961,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.No_selected_license_to_replace,  m_context.getString(R.string.no_selected_license_to_replace));
             }
             else
-                postReplacecMac(dev.getGuid(), m_myMacAddress);
+                postReplaceMac(dev.getGuid(), m_myMacAddress);
 
                 //postSyncMac(dev.getGuid(),m_stationID, m_myMacAddress, dev);
         }
@@ -1523,13 +1523,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 KDSDataOrder order = (KDSDataOrder) obj;
                 ActivationRequest.SyncDataFromOperation syncOp = request.getSyncDataFromOperation();
 
-                if (syncOp != ActivationRequest.SyncDataFromOperation.Unbump_order) { //unbump order just sync order, no items/condiments
+                if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump ||
+                        syncOp == ActivationRequest.SyncDataFromOperation.New) { //unbump order just sync order, no items/condiments
 
                     postItemsRequest(m_stationID, order);
                     postCondimentsRequest(m_stationID, order);
-                    postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
+                    if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump )
+                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
                 }
-                else
+                else if ( syncOp != ActivationRequest.SyncDataFromOperation.Bump)
                 {//it unbump order
                     postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ), false );
                 }

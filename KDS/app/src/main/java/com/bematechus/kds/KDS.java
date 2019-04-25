@@ -4390,8 +4390,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                             KDSDataOrder order = doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
                                             if (order != null)
                                             {
-                                                if (order.getTransType() == KDSDataOrder.TRANSTYPE_ADD)
+                                                if (order.getTransType() == KDSDataOrder.TRANSTYPE_ADD) {
                                                     bAddNew = true;
+                                                    syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+                                                }
                                                 order = null;
                                             }
                                             //td.debug_print_Duration("Order duration:");

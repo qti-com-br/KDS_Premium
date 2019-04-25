@@ -87,8 +87,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     public enum SyncDataFromOperation
     {
         Unknown,
-        Bump_order,
-        Unbump_order,
+        New,
+        Bump,
+        Unbump,
+
 
     }
 
@@ -289,12 +291,12 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      *          If it is update sql, I need its value to do update.
      * @return
      */
-    static public ActivationRequest createSyncMacRequest( String store_guid,String stationID,String stationFunc, String licenseGuid, String macAddress,Activation.StoreDevice dev)
+    static public ActivationRequest createSyncNewMacRequest( String store_guid,String stationID,String stationFunc, String licenseGuid, String macAddress,Activation.StoreDevice dev)
     {
         long lastUpdateTime = -1;
         if (dev != null)
             lastUpdateTime = dev.getUpdateTime();
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createSyncMacJson(store_guid,stationID,stationFunc, licenseGuid, macAddress, lastUpdateTime) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createNewMacJson(store_guid,stationID,stationFunc, licenseGuid, macAddress, lastUpdateTime) );
         return r;
 //       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
 //
@@ -370,7 +372,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param macAddress
      * @return
      */
-    static public ActivationRequest createReplaceMacRequest( String store_guid, String licenseGuid, String macAddress)
+    static public ActivationRequest createSyncReplaceMacRequest( String store_guid, String licenseGuid, String macAddress)
     {
 
         String auth = TOKEN;
@@ -546,7 +548,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param macAddress
      * @return
      */
-    static private JSONArray createSyncMacJson(String store_guid, String stationID,String stationFunc, String licenseGuid, String macAddress, long lastUpdateTime)
+    static private JSONArray createNewMacJson(String store_guid, String stationID,String stationFunc, String licenseGuid, String macAddress, long lastUpdateTime)
     {
         //Date dt = getUTCTime();// new Date();
         long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
@@ -626,20 +628,23 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     /**
      * 得到UTC时间，类型为字符串，格式为"yyyy-MM-dd HH:mm"<br />
      * 如果获取失败，返回null
+     * The UTC
      * @return
      */
     private static long getUTCTimeSeconds() {
-        //StringBuffer UTCTimeBuffer = new StringBuffer();
-        // 1、取得本地时间：
-        Calendar cal = Calendar.getInstance() ;
-        // 2、取得时间偏移量：
-        int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
-        // 3、取得夏令时差：
-        int dstOffset = cal.get(Calendar.DST_OFFSET);
-        // 4、从本地时间里扣除这些差量，即可以取得UTC时间：
-        //cal.add(Calendar.MILLISECOND, -(zoneOffset + dstOffset));
-
-        return (cal.getTime().getTime() - (zoneOffset + dstOffset))/1000;
+//        //StringBuffer UTCTimeBuffer = new StringBuffer();
+//        // 1、取得本地时间：
+//        Calendar cal = Calendar.getInstance() ;
+//        // 2、取得时间偏移量：
+//        int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
+//        // 3、取得夏令时差：
+//        int dstOffset = cal.get(Calendar.DST_OFFSET);
+//        // 4、从本地时间里扣除这些差量，即可以取得UTC时间：
+//        //cal.add(Calendar.MILLISECOND, -(zoneOffset + dstOffset));
+        //long tm = (new Date()).getTime()/1000; //date.getTime() always returns UTC time only. but date.toString() will convert that date to local timezone and will display.
+        long tm = System.currentTimeMillis()/1000;
+        return tm;
+        //return (cal.getTime().getTime() - (zoneOffset + dstOffset))/1000;
 
 
 //        TimeZone tz  = TimeZone.getDefault() ;
@@ -752,7 +757,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param data
      * @return
      */
-    static public ActivationRequest createSyncRequest(COMMAND command, String tblName, JSONArray data)
+    static private ActivationRequest createSyncRequest(COMMAND command, String tblName, JSONArray data)
     {
 
         String auth = TOKEN;
@@ -858,7 +863,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static public ActivationRequest createSyncOrderRequest( String store_guid,KDSDataOrder order, iOSOrderState state)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_orders,"orders",createSyncOrderJson(store_guid, order,  state) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_orders,"orders",createOrderJson(store_guid, order,  state) );
         r.setTag(order);
         r.setDbTarget();
         return r;
@@ -909,7 +914,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @return
      * The order data json.
      */
-    static private JSONArray createSyncOrderJson(String store_guid,  KDSDataOrder order, iOSOrderState state)
+    static private JSONArray createOrderJson(String store_guid,  KDSDataOrder order, iOSOrderState state)
     {
         JSONArray ar = new JSONArray();
 
@@ -917,36 +922,39 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         try {
 
             //Date dt = getUTCTime();// new Date();
-            long updateTime = getUTCTimeSeconds();// dt.getTime()/1000;
-            long localTime = getLocalTime().getTime()/1000;
-
-//            if (updateTime<lastUpdateTime)
-//                updateTime = lastUpdateTime +1;
-
-
+            long utcTime = getUTCTimeSeconds();// dt.getTime()/1000;
+            //long localTime = getLocalTime().getTime()/1000;
+            long localTime = getLocalTimeSeconds();
             json.put("guid", "'" + order.getGUID() + "'");
             json.put("store_guid","'" + store_guid + "'" );
             json.put("destination", "'" + order.getDestination()+"'");
             json.put("external_id", "'"+order.getOrderName() +"'"); //KPP1-44,  The External ID should be filled in with the Order ID number
             json.put("guest_table", "'" + order.getToTable()+"'");
             json.put("is_priority", "0");
-            json.put("items_count", KDSUtil.convertIntToString( order.getItems().getCount()));
+            Object obj = order.getTag();
+            int nItemsCount = order.getItems().getCount();
+            if (obj != null)
+            {
+                nItemsCount = (int)obj;
+            }
+            json.put("items_count", KDSUtil.convertIntToString( nItemsCount ));
             json.put("order_type", "'" + order.getOrderType()+"'");
             json.put("pos_terminal", "'" + order.getFromPOSNumber()+"'");
             json.put("server_name", "'" + order.getWaiterName()+"'");
+            json.put("user_info", "'"+ order.getCustomMsg() +"'"); //KPP1-45, User info needs to be in the user_info column on the orders table
             json.put("done",   KDSUtil.convertIntToString( state.ordinal() ));
-            json.put("create_time" ,Long.toString( updateTime)); //seconds
-            json.put("update_time" ,Long.toString( updateTime)); //seconds
-            json.put("upload_time" ,Long.toString( updateTime)); //seconds
+            json.put("create_time" ,Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
+            json.put("update_time" ,Long.toString( utcTime)); //seconds
+            json.put("upload_time" ,Long.toString( utcTime)); //seconds
             json.put("is_deleted", "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
             json.put("phone", "'" + order.getSMSCustomerPhone()+"'");
-            json.put("create_local_time", Long.toString( localTime)); //seconds
+            json.put("create_local_time", Long.toString( order.getStartTime().getTime()/1000)); //seconds
             json.put("is_hidden", "0");
             json.put("customer_guid", "''");
             json.put("smart_order_start_time", "0");
             json.put("preparation_time", "0");
-            json.put("user_info", "'"+ order.getCustomMsg() +"'"); //KPP1-45, User info needs to be in the user_info column on the orders table
+
 
         }
         catch (Exception e)
@@ -964,7 +972,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             //Date dt = getUTCTime();// new Date();
             long updateTime =getUTCTimeSeconds();// dt.getTime()/1000;
-            long localTime = getLocalTime().getTime()/1000;
+            //long localTime = getLocalTime().getTime()/1000;
+            long localTime = getLocalTimeSeconds();
 //            if (updateTime<lastUpdateTime)
 //                updateTime = lastUpdateTime +1;
 
@@ -1044,7 +1053,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             //Date dt = getUTCTime();// new Date();
             long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
-            long localTime = getLocalTime().getTime()/1000;
+            //long localTime = getLocalTime().getTime()/1000;
+            long localTime = getLocalTimeSeconds();
 //            if (updateTime<lastUpdateTime)
 //                updateTime = lastUpdateTime +1;
             //json.put("guid", "'" + item.getGUID() + "'");
@@ -1135,7 +1145,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static public ActivationRequest createSyncDeviceInfoRequest( String store_guid,String stationID, String stationFunc, Activation.StoreDevice dev)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createSyncDeviceInfoJson(store_guid,stationID, stationFunc, dev) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createDeviceInfoJson(store_guid,stationID, stationFunc, dev) );
         return r;
 //       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
 //
@@ -1203,7 +1213,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
 
     }
-    static private JSONArray createSyncDeviceInfoJson(String store_guid, String stationID, String stationFunc, Activation.StoreDevice dev)
+    static private JSONArray createDeviceInfoJson(String store_guid, String stationID, String stationFunc, Activation.StoreDevice dev)
     {
         //Date dt = getUTCTime();// new Date();
         long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
@@ -1300,7 +1310,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             //Date dt = getUTCTime();// new Date();
             long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
             //long localTime = (new Date()).getTime()/1000;
-            long localTime = getLocalTime().getTime()/1000;
+            //long localTime = getLocalTime().getTime()/1000;
+            long localTime = getLocalTimeSeconds();
             String status = "2";//done
             if (!bBumped) status = "0";//new
             json.put("status",status );
@@ -1434,11 +1445,34 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * It is the kds local station time zone.
      * @return
      */
-    private static Date getLocalTime() {
+    private static long getLocalTimeSeconds() {
 
+//        TimeZone tz = TimeZone.getTimeZone(Activation.getTimeZone());
+//        Calendar cal = Calendar.getInstance(tz) ;
+
+        //return cal.getTime();
+        long utc = getUTCTimeSeconds();
         TimeZone tz = TimeZone.getTimeZone(Activation.getTimeZone());
-        Calendar cal = Calendar.getInstance(tz) ;
 
-        return cal.getTime();
+        Calendar cal = Calendar.getInstance(tz) ;
+        int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
+
+        int dstOffset = cal.get(Calendar.DST_OFFSET);
+
+        return utc + (zoneOffset + dstOffset)/1000;
+    }
+
+    private static long getUTCTimeSeconds(Date dt) {
+
+        return dt.getTime()/1000;
+
+//        Calendar cal = Calendar.getInstance() ;
+//
+//        int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
+//
+//        int dstOffset = cal.get(Calendar.DST_OFFSET);
+//
+//        return (dt.getTime() - (zoneOffset + dstOffset))/1000;
+
     }
 }

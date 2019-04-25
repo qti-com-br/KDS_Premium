@@ -2183,7 +2183,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().checkSMS(order, true, null);
         getKDS().checkBroadcastSMSStationStateChanged(orderGuid, order.getOrderName(),order.isAllItemsFinished(), true);
         //KPP1-41
-        getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump_order);
+        getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
     }
 
     /**
@@ -2734,7 +2734,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             ActivationRequest.iOSOrderState iosstate = ActivationRequest.iOSOrderState.New;
             if (order.getFinishedItemsCount()>0)
                 iosstate = ActivationRequest.iOSOrderState.Preparation;
-            getKDS().syncOrderToWebDatabase(order, iosstate, ActivationRequest.SyncDataFromOperation.Unbump_order);
+            getKDS().syncOrderToWebDatabase(order, iosstate, ActivationRequest.SyncDataFromOperation.Unbump);
         }
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -3343,6 +3343,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         this.getUserUI(KDSUser.USER.USER_A).refreshSum(KDSUser.USER.USER_A, pos);
         this.getUserUI(KDSUser.USER.USER_B).refreshSum(KDSUser.USER.USER_B, pos);
+        getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
         // t.debug_print_Duration("opAddNewOrder4");
         //this.getSummaryFragment().refreshSummary();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
