@@ -167,7 +167,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      }
      }
      */
-    static public ActivationRequest createLoginRequest( String name, String password )
+    static public ActivationRequest requestLogin( String name, String password )
     {
         String auth = TOKEN;
         String userName = name;//USER_NAME;
@@ -199,7 +199,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     }
 
 
-    static public ActivationRequest createGetSettingsRequest( String store_guid)
+    static public ActivationRequest requestGetSettings( String store_guid)
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
@@ -225,7 +225,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     }
 
-    static public ActivationRequest createGetDevicesRequest( String store_guid)
+    static public ActivationRequest requestGetDevices( String store_guid)
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
@@ -291,12 +291,12 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      *          If it is update sql, I need its value to do update.
      * @return
      */
-    static public ActivationRequest createSyncNewMacRequest( String store_guid,String stationID,String stationFunc, String licenseGuid, String macAddress,Activation.StoreDevice dev)
+    static public ActivationRequest requestNewMac( String store_guid,String stationID,String stationFunc, String licenseGuid, String macAddress,Activation.StoreDevice dev)
     {
         long lastUpdateTime = -1;
         if (dev != null)
             lastUpdateTime = dev.getUpdateTime();
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createNewMacJson(store_guid,stationID,stationFunc, licenseGuid, macAddress, lastUpdateTime) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",jsonNewMac(store_guid,stationID,stationFunc, licenseGuid, macAddress, lastUpdateTime) );
         return r;
 //       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
 //
@@ -372,7 +372,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param macAddress
      * @return
      */
-    static public ActivationRequest createSyncReplaceMacRequest( String store_guid, String licenseGuid, String macAddress)
+    static public ActivationRequest requestReplaceMac( String store_guid, String licenseGuid, String macAddress)
     {
 
         String auth = TOKEN;
@@ -548,7 +548,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param macAddress
      * @return
      */
-    static private JSONArray createNewMacJson(String store_guid, String stationID,String stationFunc, String licenseGuid, String macAddress, long lastUpdateTime)
+    static private JSONArray jsonNewMac(String store_guid, String stationID,String stationFunc, String licenseGuid, String macAddress, long lastUpdateTime)
     {
         //Date dt = getUTCTime();// new Date();
         long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
@@ -557,7 +557,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 //        String stationFunc = "EXPEDITOR";
 //        if (KDSApplication.isRouterApp())
 //            stationFunc = "KDSRouter";
-        return createDeviceJson(store_guid,licenseGuid, stationID, stationFunc, macAddress, updateTime);
+        return jsonDevice(store_guid,licenseGuid, stationID, stationFunc, macAddress, updateTime);
 
 //        JSONArray ar = new JSONArray();
 //
@@ -712,7 +712,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param orderSmsState
      * @return
      */
-    static public ActivationRequest createSMSRequest( String store_guid,String storeName,String customerPhone, String orderGuid,int orderSmsState )
+    static public ActivationRequest requestSMS( String store_guid,String storeName,String customerPhone, String orderGuid,int orderSmsState )
     {
 
         String auth = TOKEN;
@@ -860,25 +860,25 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param order
      * @return
      */
-    static public ActivationRequest createSyncOrderRequest( String store_guid,KDSDataOrder order, iOSOrderState state)
+    static public ActivationRequest requestOrderSync( String store_guid,KDSDataOrder order, iOSOrderState state)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_orders,"orders",createOrderJson(store_guid, order,  state) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_orders,"orders",jsonOrder(store_guid, order,  state) );
         r.setTag(order);
         r.setDbTarget();
         return r;
     }
 
-    static public ActivationRequest createSyncItemsRequest(String stationID,  KDSDataOrder order)
+    static public ActivationRequest requestItemsSync(String stationID,  KDSDataOrder order)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_items,"items",createItemsJson(stationID,order, order.getItems()) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_items,"items",jsonItems(stationID,order, order.getItems()) );
         r.setTag(order);
         r.setDbTarget();
         return r;
     }
 
-    static public ActivationRequest createSyncCondimentsRequest(String stationID,  KDSDataOrder order)
+    static public ActivationRequest requestCondimentsSync(String stationID,  KDSDataOrder order)
     {
         KDSDataCondiments condiments = new KDSDataCondiments();
         for (int i=0; i< order.getItems().getCount(); i++)
@@ -888,7 +888,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         }
 
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_condiments,"condiments",createCondimentsJson(stationID, order,  condiments) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_condiments,"condiments",jsonCondiments(stationID, order,  condiments) );
         r.setTag(order);
         r.setDbTarget();
         return r;
@@ -914,17 +914,15 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @return
      * The order data json.
      */
-    static private JSONArray createOrderJson(String store_guid,  KDSDataOrder order, iOSOrderState state)
+    static private JSONArray jsonOrder(String store_guid,  KDSDataOrder order, iOSOrderState state)
     {
         JSONArray ar = new JSONArray();
 
         JSONObject json = getJsonObj( "guid" , "'"+order.getGUID()+"'");
         try {
 
-            //Date dt = getUTCTime();// new Date();
-            long utcTime = getUTCTimeSeconds();// dt.getTime()/1000;
-            //long localTime = getLocalTime().getTime()/1000;
-            long localTime = getLocalTimeSeconds();
+            long utcNow = getUTCTimeSeconds();// dt.getTime()/1000;
+
             json.put("guid", "'" + order.getGUID() + "'");
             json.put("store_guid","'" + store_guid + "'" );
             json.put("destination", "'" + order.getDestination()+"'");
@@ -944,12 +942,12 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("user_info", "'"+ order.getCustomMsg() +"'"); //KPP1-45, User info needs to be in the user_info column on the orders table
             json.put("done",   KDSUtil.convertIntToString( state.ordinal() ));
             json.put("create_time" ,Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
-            json.put("update_time" ,Long.toString( utcTime)); //seconds
-            json.put("upload_time" ,Long.toString( utcTime)); //seconds
+            json.put("update_time" ,Long.toString( utcNow)); //seconds
+            json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
             json.put("phone", "'" + order.getSMSCustomerPhone()+"'");
-            json.put("create_local_time", Long.toString( order.getStartTime().getTime()/1000)); //seconds
+            json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             json.put("is_hidden", "0");
             json.put("customer_guid", "''");
             json.put("smart_order_start_time", "0");
@@ -965,19 +963,15 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return ar;
     }
 
-    static private JSONObject createItemJson(String stationID,KDSDataOrder order, KDSDataItem item)
+    static private JSONObject jsonItem(String stationID,KDSDataOrder order, KDSDataItem item)
     {
         JSONObject json = getJsonObj( "guid" , "'" + item.getGUID() +"'" );
         try {
 
-            //Date dt = getUTCTime();// new Date();
-            long updateTime =getUTCTimeSeconds();// dt.getTime()/1000;
-            //long localTime = getLocalTime().getTime()/1000;
-            long localTime = getLocalTimeSeconds();
-//            if (updateTime<lastUpdateTime)
-//                updateTime = lastUpdateTime +1;
 
-            //json.put("guid", "'" + item.getGUID() + "'");
+            long utcNow =getUTCTimeSeconds();
+
+            //long localNow = getLocalTimeSeconds();
             json.put("order_guid","'" + item.getOrderGUID() + "'" );
             json.put("name", "'" + item.getDescription()+"'");
             //json.put("device_id", "0");//KPP1-48, The device_id should show the station id the item came from
@@ -996,17 +990,17 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             //json.put("untransfer_time" ,Long.toString( updateTime)); //seconds //KPP1-70
             json.put("beeped",  '0');
             json.put("build_card", "''");
-            json.put("create_time" ,Long.toString( updateTime)); //seconds
-            json.put("update_time" ,Long.toString( updateTime)); //seconds
-            json.put("upload_time" ,Long.toString( updateTime)); //seconds
+            json.put("create_time" ,Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
+            json.put("update_time" ,Long.toString( utcNow)); //seconds
+            json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() +"'");
             json.put("printed_status", "0");
             json.put("item_bump_guid", "'" + item.getGUID() +"'" ); //https://bematech.atlassian.net/browse/KPP1-64
-            json.put("create_local_time", Long.toString( localTime)); //seconds
+            json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             json.put("is_hidden", "0");
             json.put("ready_since_local_time", "0");
-
+            json.put("quantity",  KDSUtil.convertIntToString((int)item.getShowingQty()));//
 
 
 
@@ -1018,14 +1012,14 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return json;
     }
 
-    static private JSONArray createItemsJson(String stationID,KDSDataOrder order, KDSDataItems items)
+    static private JSONArray jsonItems(String stationID,KDSDataOrder order, KDSDataItems items)
     {
         JSONArray ar = new JSONArray();
         int ncount = items.getCount();
 
         for (int i=0; i< ncount; i++)
         {
-            ar.put(createItemJson(stationID,order, items.getItem(i)));
+            ar.put(jsonItem(stationID,order, items.getItem(i)));
         }
         return ar;
 
@@ -1033,42 +1027,38 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     }
 
 
-    static private JSONArray createCondimentsJson(String stationID, KDSDataOrder order, KDSDataCondiments condiments)
+    static private JSONArray jsonCondiments(String stationID, KDSDataOrder order, KDSDataCondiments condiments)
     {
         JSONArray ar = new JSONArray();
 
         for (int i=0; i< condiments.getCount(); i++)
         {
-            ar.put(createCondimentJson(stationID, order, condiments.getCondiment(i)));
+            ar.put(jsonCondiment(stationID, order, condiments.getCondiment(i)));
         }
         return ar;
 
 
     }
 
-    static private JSONObject createCondimentJson(String stationID, KDSDataOrder order,  KDSDataCondiment condiment)
+    static private JSONObject jsonCondiment(String stationID, KDSDataOrder order,  KDSDataCondiment condiment)
     {
         JSONObject json = getJsonObj( "guid" ,"'" +  condiment.getGUID() +"'");
         try {
+            long utcNow = getUTCTimeSeconds();
+            //long localNow = getLocalTimeSeconds();
 
-            //Date dt = getUTCTime();// new Date();
-            long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
-            //long localTime = getLocalTime().getTime()/1000;
-            long localTime = getLocalTimeSeconds();
-//            if (updateTime<lastUpdateTime)
-//                updateTime = lastUpdateTime +1;
-            //json.put("guid", "'" + item.getGUID() + "'");
             json.put("item_guid","'" + condiment.getItemGUID() + "'" );
             json.put("external_id", "'"+condiment.getCondimentName() +"'"); //KPP1-57//https://bematech.atlassian.net/browse/KPP1-57
             json.put("name", "'" + condiment.getDescription()+"'");
             json.put("pre_modifier", "''");
-            json.put("create_time" ,Long.toString( updateTime)); //seconds
-            json.put("update_time" ,Long.toString( updateTime)); //seconds
-            json.put("upload_time" ,Long.toString( updateTime)); //seconds
+            json.put("create_time" ,Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
+            json.put("update_time" ,Long.toString( utcNow)); //seconds
+            json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
-            json.put("create_local_time", Long.toString( localTime)); //seconds
-            json.put("preparation_time",  Long.toString( updateTime));
+            json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
+            json.put("preparation_time",  "0");
+            json.put("quantity",  "1");//just set it to 1.
         }
         catch (Exception e)
         {
@@ -1142,10 +1132,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     }
 
-    static public ActivationRequest createSyncDeviceInfoRequest( String store_guid,String stationID, String stationFunc, Activation.StoreDevice dev)
+    static public ActivationRequest requestDeviceSync( String store_guid,String stationID, String stationFunc, Activation.StoreDevice dev)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",createDeviceInfoJson(store_guid,stationID, stationFunc, dev) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",jsonDevice(store_guid,stationID, stationFunc, dev) );
         return r;
 //       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
 //
@@ -1213,14 +1203,14 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
 
     }
-    static private JSONArray createDeviceInfoJson(String store_guid, String stationID, String stationFunc, Activation.StoreDevice dev)
+    static private JSONArray jsonDevice(String store_guid, String stationID, String stationFunc, Activation.StoreDevice dev)
     {
         //Date dt = getUTCTime();// new Date();
         long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
         if (updateTime<dev.getUpdateTime())
             updateTime = dev.getUpdateTime() +1;
 
-        return createDeviceJson(store_guid,dev.m_guid, stationID, stationFunc, dev.m_serial, updateTime);
+        return jsonDevice(store_guid,dev.m_guid, stationID, stationFunc, dev.m_serial, updateTime);
 
 //        JSONArray ar = new JSONArray();
 //
@@ -1299,34 +1289,45 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      *  False: unbump it.
      * @return
      */
-    static private JSONObject createItemBumpJson(String stationID, KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static private JSONObject jsonItemBump(String stationID, KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
-
-
         JSONObject json = getJsonObj( "guid" , "'"+item.getGUID()+"'");
 
         try {
 
-            //Date dt = getUTCTime();// new Date();
-            long updateTime = getUTCTimeSeconds();//dt.getTime()/1000;
-            //long localTime = (new Date()).getTime()/1000;
-            //long localTime = getLocalTime().getTime()/1000;
-            long localTime = getLocalTimeSeconds();
-            String status = "2";//done
-            if (!bBumped) status = "0";//new
-            json.put("status",status );
+            long utcNow = getUTCTimeSeconds();
+            long localNow = getLocalTimeSeconds();
+            iOSOrderState state = iOSOrderState.New;
+            if (bBumped)
+            {
+                if (bExpoStation)
+                    state = iOSOrderState.Done;
+                else
+                    state = iOSOrderState.Preparation;
+            }
+            else
+            {//unbump or new
+                boolean bItemFinished = item.getLocalBumped();
+                if (bItemFinished) {
+                    if (bExpoStation)
+                        state = iOSOrderState.Done;
+                    else
+                        state = iOSOrderState.Preparation;
+                }
+            }
+            String status = KDSUtil.convertIntToString(state.ordinal());//done
 
+
+            json.put("status",status );
             json.put("last_status", status); //mac address
-            json.put("create_time" , Long.toString( updateTime));
-            json.put("update_time" ,Long.toString( updateTime)); //seconds
-            json.put("upload_time" ,Long.toString( updateTime)); //seconds
+            json.put("create_time" , Long.toString( utcNow));
+            json.put("update_time" ,Long.toString( utcNow)); //seconds
+            json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted" , "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
-
-            //data unused, but must have them.
-            json.put("create_local_time", Long.toString( localTime));
-            json.put("prepared_local_time", Long.toString( localTime) );
-            json.put("done_local_time" , Long.toString( localTime));
+            json.put("create_local_time", Long.toString( localNow));
+            json.put("prepared_local_time", Long.toString( localNow) );
+            json.put("done_local_time" , Long.toString( localNow));
             if (bExpoStation)
                 json.put("done_device_id" , stationID);
             else
@@ -1343,7 +1344,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return json;
     }
 
-    static private JSONArray createDeviceJson(String store_guid,String devGuid, String stationID, String stationFunc,String mac, long updateTime)
+    static private JSONArray jsonDevice(String store_guid,String devGuid, String stationID, String stationFunc,String mac, long updateTime)
     {
         JSONArray ar = new JSONArray();
 
@@ -1397,43 +1398,54 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return ar;
     }
 
-    static private JSONArray createItemBumpsJson(String stationID,KDSDataOrder order, KDSDataItems items, boolean bExpoStation, boolean bBumped)
+    /**
+     * If order bump/unbump, this function will been called.
+     * @param stationID
+     * @param order
+     * @param items
+     * @param bExpoStation
+     * @param bBumped
+     * @return
+     */
+    static private JSONArray jsonItemBumps(String stationID,KDSDataOrder order, KDSDataItems items, boolean bExpoStation, boolean bBumped)
     {
         JSONArray ar = new JSONArray();
         int ncount = items.getCount();
 
         for (int i=0; i< ncount; i++)
         {
-            ar.put(createItemBumpJson(stationID,items.getItem(i), bExpoStation, bBumped) );
+            //if (bBumped)
+                if (items.getItem(i).getLocalBumped()) continue; //it has been upload to server,
+            ar.put(jsonItemBump(stationID,items.getItem(i), bExpoStation, bBumped) );
         }
         return ar;
 
 
     }
 
-    static public ActivationRequest createSyncItemBumpsRequest(String stationID,  KDSDataOrder order, boolean bExpoStation, boolean bBumped)
+    static public ActivationRequest requestItemBumpsSync(String stationID,  KDSDataOrder order, boolean bExpoStation, boolean bBumped)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bumps,"item_bumps",createItemBumpsJson(stationID,order, order.getItems() , bExpoStation, bBumped));
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bumps,"item_bumps",jsonItemBumps(stationID,order, order.getItems() , bExpoStation, bBumped));
         r.setTag(order);
         r.setDbTarget();
         return r;
     }
 
-    static public ActivationRequest createSyncItemBumpRequest(String stationID,KDSDataOrder order,  KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static public ActivationRequest requestItemBumpSync(String stationID,KDSDataOrder order,  KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bump,"item_bumps",createSingleItemBumpJson(stationID,item , bExpoStation, bBumped));
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bump,"item_bumps",jsonSingleItemBump(stationID,item , bExpoStation, bBumped));
         r.setTag(order);
         r.setDbTarget();
         return r;
     }
 
-    static private JSONArray createSingleItemBumpJson(String stationID,KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static private JSONArray jsonSingleItemBump(String stationID,KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
         JSONArray ar = new JSONArray();
 
-        ar.put(createItemBumpJson(stationID,item, bExpoStation, bBumped) );
+        ar.put(jsonItemBump(stationID,item, bExpoStation, bBumped) );
 
         return ar;
 
@@ -1474,5 +1486,51 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 //
 //        return (dt.getTime() - (zoneOffset + dstOffset))/1000;
 
+    }
+    private static long getLocalTimeSeconds(Date dt) {
+
+
+        long utc = getUTCTimeSeconds(dt);
+        TimeZone tz = TimeZone.getTimeZone(Activation.getTimeZone());
+        Calendar cal = Calendar.getInstance(tz) ;
+        int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
+
+        int dstOffset = cal.get(Calendar.DST_OFFSET);
+
+        return utc + (zoneOffset + dstOffset)/1000;
+    }
+
+    /**
+     * sync customer data to backoffic customers table.
+     * @param stationID
+     * @param order
+     * @param customer
+     * @return
+     */
+    static private JSONObject jsonCustomer(String stationID, KDSDataOrder order,  KDSDataCustomer customer)
+    {
+        JSONObject json = getJsonObj( "guid" ,"'" +  customer.getGUID() +"'");
+//        try {
+//            long utcNow = getUTCTimeSeconds();
+//            //long localNow = getLocalTimeSeconds();
+//
+//            json.put("item_guid","'" + condiment.getItemGUID() + "'" );
+//            json.put("external_id", "'"+condiment.getCondimentName() +"'"); //KPP1-57//https://bematech.atlassian.net/browse/KPP1-57
+//            json.put("name", "'" + condiment.getDescription()+"'");
+//            json.put("pre_modifier", "''");
+//            json.put("create_time" ,Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
+//            json.put("update_time" ,Long.toString( utcNow)); //seconds
+//            json.put("upload_time" ,Long.toString( utcNow)); //seconds
+//            json.put("is_deleted", "0");
+//            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
+//            json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
+//            json.put("preparation_time",  "0");
+//            json.put("quantity",  "1");//just set it to 1.
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+        return json;
     }
 }

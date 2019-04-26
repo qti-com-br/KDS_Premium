@@ -705,21 +705,21 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void postLoginRequest(String userName, String pwd)
     {
 
-        ActivationRequest r = ActivationRequest.createLoginRequest(userName, pwd);
+        ActivationRequest r = ActivationRequest.requestLogin(userName, pwd);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.logining));
     }
 
     public void postGetSettingsRequest()
     {
-        ActivationRequest r = ActivationRequest.createGetSettingsRequest(m_storeGuid);
+        ActivationRequest r = ActivationRequest.requestGetSettings(m_storeGuid);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.retrieve_store_settings));
     }
 
     public void postGetDevicesRequest()
     {
-        ActivationRequest r = ActivationRequest.createGetDevicesRequest(m_storeGuid);
+        ActivationRequest r = ActivationRequest.requestGetDevices(m_storeGuid);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.retrieve_licenses_data));
     }
@@ -737,14 +737,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public void postSyncNewMac(String licenseGuid,String stationID,String stationFunc, String macAddress, StoreDevice dev)
     {
-        ActivationRequest r = ActivationRequest.createSyncNewMacRequest(m_storeGuid, stationID,stationFunc, licenseGuid, macAddress, dev);
+        ActivationRequest r = ActivationRequest.requestNewMac(m_storeGuid, stationID,stationFunc, licenseGuid, macAddress, dev);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
 
     public void postReplaceMac(String licenseGuid,String macAddress)
     {
-        ActivationRequest r = ActivationRequest.createSyncReplaceMacRequest(m_storeGuid, licenseGuid, macAddress);
+        ActivationRequest r = ActivationRequest.requestReplaceMac(m_storeGuid, licenseGuid, macAddress);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
@@ -1298,7 +1298,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public void postSMS(String orderGuid, String customerPhone, int nSMSState)
     {
-        ActivationRequest r = ActivationRequest.createSMSRequest(m_storeGuid,m_storeName, customerPhone, orderGuid, nSMSState );
+        ActivationRequest r = ActivationRequest.requestSMS(m_storeGuid,m_storeName, customerPhone, orderGuid, nSMSState );
         m_http.request(r);
 
     }
@@ -1522,19 +1522,35 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             try {
                 KDSDataOrder order = (KDSDataOrder) obj;
                 ActivationRequest.SyncDataFromOperation syncOp = request.getSyncDataFromOperation();
+                switch (syncOp)
+                {
 
-                if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump ||
-                        syncOp == ActivationRequest.SyncDataFromOperation.New) { //unbump order just sync order, no items/condiments
-
-                    postItemsRequest(m_stationID, order);
-                    postCondimentsRequest(m_stationID, order);
-                    if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump )
+                    case Unknown:
+                        break;
+                    case New:
+                        postItemsRequest(m_stationID, order);
+                        postCondimentsRequest(m_stationID, order);
+                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+                        break;
+                    case Bump:
                         postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
+                        break;
+                    case Unbump:
+                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+                        break;
                 }
-                else if ( syncOp != ActivationRequest.SyncDataFromOperation.Bump)
-                {//it unbump order
-                    postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ), false );
-                }
+//                if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump ||
+//                        syncOp == ActivationRequest.SyncDataFromOperation.New) { //unbump order just sync order, no items/condiments
+//
+//                    postItemsRequest(m_stationID, order);
+//                    postCondimentsRequest(m_stationID, order);
+//                    if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump )
+//                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
+//                }
+//                else if ( syncOp == ActivationRequest.SyncDataFromOperation.Bump)
+//                {//it bump order
+//                    postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ), false );
+//                }
                 if (m_receiver != null)
                     m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getGUID(), SyncDataResult.OK);
             }
@@ -1578,7 +1594,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public void postOrderRequest(KDSDataOrder order, ActivationRequest.iOSOrderState state, ActivationRequest.SyncDataFromOperation fromOperation)
     {
-        ActivationRequest r = ActivationRequest.createSyncOrderRequest(m_storeGuid,  order, state);
+        ActivationRequest r = ActivationRequest.requestOrderSync(m_storeGuid,  order, state);
         r.setSyncDataFromOperation(fromOperation);
         m_http.request(r);
 
@@ -1586,14 +1602,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public void postItemsRequest(String stationID, KDSDataOrder order)
     {
-        ActivationRequest r = ActivationRequest.createSyncItemsRequest(stationID,  order );
+        ActivationRequest r = ActivationRequest.requestItemsSync(stationID,  order );
         m_http.request(r);
 
     }
 
     public void postCondimentsRequest(String stationID, KDSDataOrder order)
     {
-        ActivationRequest r = ActivationRequest.createSyncCondimentsRequest(stationID,  order );
+        ActivationRequest r = ActivationRequest.requestCondimentsSync(stationID,  order );
         m_http.request(r);
 
     }
@@ -1715,7 +1731,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (devLicense == null)
             return false;
 
-        ActivationRequest r = ActivationRequest.createSyncDeviceInfoRequest(m_storeGuid,stationID, stationFunc,devLicense);
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,devLicense);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
         return true;
@@ -1736,7 +1752,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public void postItemBumpsRequest(String stationID, KDSDataOrder order, boolean bExpoStation, boolean bBumped)
     {
-        ActivationRequest r = ActivationRequest.createSyncItemBumpsRequest(stationID,  order, bExpoStation , bBumped);
+        ActivationRequest r = ActivationRequest.requestItemBumpsSync(stationID,  order, bExpoStation , bBumped);
         m_http.request(r);
 
     }
@@ -1760,7 +1776,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public void postItemBumpRequest(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
-        ActivationRequest r = ActivationRequest.createSyncItemBumpRequest(stationID,order,  item, bExpoStation , bBumped);
+        ActivationRequest r = ActivationRequest.requestItemBumpSync(stationID,order,  item, bExpoStation , bBumped);
         m_http.request(r);
     }
 
