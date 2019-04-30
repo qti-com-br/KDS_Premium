@@ -213,6 +213,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 case Sync_item_bump:
                     onSyncItemBumpResponse(http, request);
                     break;
+                case Sync_customer:
+                    onSyncCustomerResponse(http, request);
+
             }
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
@@ -1531,6 +1534,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                         postItemsRequest(m_stationID, order);
                         postCondimentsRequest(m_stationID, order);
                         postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+                        postCustomerRequest(m_stationID, order);
                         break;
                     case Bump:
                         postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
@@ -1792,6 +1796,22 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static public String getTimeZone()
     {
         return m_timeZone;
+    }
+
+    public void postCustomerRequest(String stationID, KDSDataOrder order)
+    {
+        ActivationRequest r = ActivationRequest.requestCustomerSync(m_storeGuid, order );
+        m_http.request(r);
+
+    }
+
+    private void onSyncCustomerResponse(ActivationHttp http, ActivationRequest request)
+    {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_customer, order.getGUID(), SyncDataResult.OK);
     }
 
 }

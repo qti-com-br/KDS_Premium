@@ -70,6 +70,7 @@ public class KDSDataOrder extends KDSData {
     protected KDSDataItems m_items = new KDSDataItems();
     protected Object m_objTag = null;
 
+    protected KDSDataCustomer m_customer = new KDSDataCustomer();
 
     protected  boolean m_bQueueReady = false;  //for expo double bumping while Queue enabled
 
@@ -499,6 +500,7 @@ public class KDSDataOrder extends KDSData {
         obj.m_dtQueueStateTime = m_dtQueueStateTime;
 
         this.getOrderMessages().copyTo(obj.getOrderMessages());
+        this.getCustomer().copyTo(obj.getCustomer());
     }
     /***************************************************************************
      * 
@@ -531,7 +533,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -564,6 +566,7 @@ public class KDSDataOrder extends KDSData {
             +",'" + m_smsCustomerPhone + "'" //2.0.50 for sms customer phone number
             + "," +  KDSUtil.convertFloatToString(m_smsLastState)  ////2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
             + ",'" + m_smsOriginalOrderGoToStations +"'" //r4
+            +",'" + m_customer.getName() + "'"
             +  ")";
         return sql;
          
@@ -2844,5 +2847,10 @@ get the total qty of all found items
         {
             getItems().getItem(i).setTransferedFromStationID(fromStationID);
         }
+    }
+
+    public KDSDataCustomer getCustomer()
+    {
+        return m_customer;
     }
 }

@@ -108,6 +108,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Sync_condiments,
         Sync_item_bumps,
         Sync_item_bump,
+        Sync_customer,
 
     }
 
@@ -884,6 +885,9 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         for (int i=0; i< order.getItems().getCount(); i++)
         {
             KDSDataItem item = order.getItems().getItem(i);
+
+
+
             condiments.getComponents().addAll(item.getCondiments().getComponents());
         }
 
@@ -996,7 +1000,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("is_deleted", "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() +"'");
             json.put("printed_status", "0");
-            json.put("item_bump_guid", "'" + item.getGUID() +"'" ); //https://bematech.atlassian.net/browse/KPP1-64
+            json.put("item_bump_guid", "'" + item.getItemBumpGuid() +"'" ); //https://bematech.atlassian.net/browse/KPP1-64
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             json.put("is_hidden", "0");
             json.put("ready_since_local_time", "0");
@@ -1046,6 +1050,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         try {
             long utcNow = getUTCTimeSeconds();
             //long localNow = getLocalTimeSeconds();
+            String itemGuid = condiment.getItemGUID();
+            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
 
             json.put("item_guid","'" + condiment.getItemGUID() + "'" );
             json.put("external_id", "'"+condiment.getCondimentName() +"'"); //KPP1-57//https://bematech.atlassian.net/browse/KPP1-57
@@ -1057,8 +1063,14 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("is_deleted", "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
-            json.put("preparation_time",  "0");
-            json.put("quantity",  "1");//just set it to 1.
+            String prepTime = "0";
+            if (item != null)
+                prepTime = KDSUtil.convertIntToString((int)item.getPreparationTime());
+
+            json.put("preparation_time",  prepTime);
+            //KPP1-71 When the item has multiple quantity, the condiment should ahve multiple quantity on the database. Currently it always shows 1 in the condiments field on the database.
+            //EX: If I have an item with 3 quantity and it has 1 condiment, the quantity for the condiments in the "condiments" table on the back office should be 3.
+            json.put("quantity",  KDSUtil.convertIntToString((int) item.getShowingQty()));//just set it to 1.
         }
         catch (Exception e)
         {
@@ -1291,7 +1303,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      */
     static private JSONObject jsonItemBump(String stationID, KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
-        JSONObject json = getJsonObj( "guid" , "'"+item.getGUID()+"'");
+        JSONObject json = getJsonObj( "guid" , "'"+item.getItemBumpGuid()+"'");
 
         try {
 
@@ -1502,35 +1514,59 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     /**
      * sync customer data to backoffic customers table.
-     * @param stationID
+     *
      * @param order
      * @param customer
      * @return
      */
-    static private JSONObject jsonCustomer(String stationID, KDSDataOrder order,  KDSDataCustomer customer)
+    static private JSONObject jsonCustomer(String storeGuid, KDSDataOrder order,  KDSDataCustomer customer)
     {
         JSONObject json = getJsonObj( "guid" ,"'" +  customer.getGUID() +"'");
-//        try {
-//            long utcNow = getUTCTimeSeconds();
-//            //long localNow = getLocalTimeSeconds();
-//
-//            json.put("item_guid","'" + condiment.getItemGUID() + "'" );
-//            json.put("external_id", "'"+condiment.getCondimentName() +"'"); //KPP1-57//https://bematech.atlassian.net/browse/KPP1-57
-//            json.put("name", "'" + condiment.getDescription()+"'");
-//            json.put("pre_modifier", "''");
-//            json.put("create_time" ,Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
-//            json.put("update_time" ,Long.toString( utcNow)); //seconds
-//            json.put("upload_time" ,Long.toString( utcNow)); //seconds
-//            json.put("is_deleted", "0");
-//            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
-//            json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
-//            json.put("preparation_time",  "0");
-//            json.put("quantity",  "1");//just set it to 1.
-//        }
-//        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
+        try {
+            long utcNow = getUTCTimeSeconds();
+            long localNow = getLocalTimeSeconds();
+            json.put("external_id","'"+ order.getOrderName() +"'");
+            json.put("name", "'"+customer.getName()+"'");
+            json.put("phone","'"+customer.getPhone()+"'");
+            json.put("phone2", "''");
+            json.put("address", "'"+customer.getAddress()+"'");
+            json.put("address2", "'"+customer.getAddress2()+"'");
+            json.put("city", "'"+customer.getCity()+"'");
+            json.put("state","'"+customer.getState()+"'");
+            json.put("zip","'"+customer.getZip()+"'");
+            json.put("country","''");
+            json.put("email", "''");
+            json.put("webmail", "''");
+            json.put("store_guid", "'" + storeGuid +"'");
+            json.put("create_time",Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
+            json.put("update_time", Long.toString( utcNow)); //seconds
+            json.put("upload_time", Long.toString( utcNow)); //seconds
+            json.put("is_deleted", "0");
+            json.put("update_device", "'"+Activation.getMySerialNumber() + "'");//
+            json.put("create_local_time",Long.toString( localNow)); //seconds
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         return json;
+    }
+
+    static public ActivationRequest requestCustomerSync( String store_guid,KDSDataOrder order)
+    {
+
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_customer,"customers",jsonSingleCustomer(store_guid, order,  order.getCustomer()) );
+        r.setTag(order);
+        r.setDbTarget();
+        return r;
+    }
+
+    static public JSONArray jsonSingleCustomer(String storeGuid, KDSDataOrder order, KDSDataCustomer customer)
+    {
+        JSONArray ar = new JSONArray();
+
+        ar.put(jsonCustomer(storeGuid,order, customer) );
+        return ar;
     }
 }

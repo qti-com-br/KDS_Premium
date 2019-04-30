@@ -82,6 +82,7 @@ public class KDSDataItem extends KDSData {
     protected int m_nCategoryPriority = -1; //2.0.47
 
     protected String m_strTransferedFromStationID = ""; //KPP1-53, use database r3 to save it.
+    protected String m_strItemBumpGUID = "";
     /////////////////////
     //public ArrayList<Point> m_tempShowMeNeedBlockLines = new ArrayList<>();//1; //for text wrap, saveing it here is for  efficiency.
     /**
@@ -126,6 +127,7 @@ public class KDSDataItem extends KDSData {
         m_arValidFields = new boolean[VALID_ITEM_XML_FIELD.Count.ordinal()];
         // m_nComponentType = ComponentType.Item;
         resetXmlFieldsValidFlag();
+        m_strItemBumpGUID = KDSUtil.createNewGUID();
     }
     public KDSDataItem(String orderGUID)
     {
@@ -133,6 +135,7 @@ public class KDSDataItem extends KDSData {
         m_arValidFields = new boolean[VALID_ITEM_XML_FIELD.Count.ordinal()];
 
         resetXmlFieldsValidFlag();
+        m_strItemBumpGUID = KDSUtil.createNewGUID();
 
     }
 
@@ -141,6 +144,7 @@ public class KDSDataItem extends KDSData {
         super(myGuid);
         this.setOrderGUID(orderGUID);
         m_arValidFields = new boolean[VALID_ITEM_XML_FIELD.Count.ordinal()];
+        m_strItemBumpGUID = KDSUtil.createNewGUID();
 
     }
 
@@ -389,7 +393,8 @@ public class KDSDataItem extends KDSData {
                 //+ "OrderID ,GUID , OrderGUID, Name ,Description ,Qty ,"
                 + "GUID,OrderGUID,Name,Description,Qty,QtyChanged,"
                 + "Category,BG,FG,Grp,Marked,"
-                + "LocalBumped,Ready,Hiden,ToStations,BumpedStations,ItemDelay,PreparationTime,DeleteByRemote,ItemType,BuildCard,TrainingVideo,SumTransEnable,SumTrans,r0,r1,r2,r3) values ("
+                + "LocalBumped,Ready,Hiden,ToStations,BumpedStations,ItemDelay,PreparationTime,DeleteByRemote,ItemType,"
+                + "BuildCard,TrainingVideo,SumTransEnable,SumTrans,r0,r1,r2,r3,r4) values ("
                 //+  getOrderID() + ","
                 + "'" + getGUID() + "',"
                 + "'" + getOrderGUID() + "'," //use order guid as id
@@ -420,6 +425,7 @@ public class KDSDataItem extends KDSData {
                 +",'" + getParentGuid() +"'"
                 +"," + KDSUtil.convertIntToString(getCategoryPriority()) //2.0.47
                 +",'" + getTransferedFromStationID() +"'" //KPP1-53
+                +",'" + getItemBumpGuid() +"'" //KPP1-64
                 +")";
         return sql;
 
@@ -459,6 +465,7 @@ public class KDSDataItem extends KDSData {
                 + ",r1='" + getParentGuid() +"'"
                 + ",r2=" +  KDSUtil.convertIntToString(getCategoryPriority()) //2.0.47
                 + ",r3='" + getTransferedFromStationID() + "'" //2.0.47
+                + ",r4='" + getItemBumpGuid() + "'" //kpp1-64
                 + ",DBTimeStamp='"+ KDSUtil.convertDateToString(getTimeStamp()) +"'"
                 //+"' where id=" + Common.KDSUtil.ConvertIntToString(getID());
                 +" where guid='" + getGUID() + "'";
@@ -799,6 +806,7 @@ public class KDSDataItem extends KDSData {
         //2.0.47
         to.setCategoryPriority(this.getCategoryPriority());
         to.setTransferedFromStationID(this.getTransferedFromStationID()); //kpp1-53
+        to.setItemBumpGuid(this.getItemBumpGuid()); //KPP1-64
 
         this.getModifiers().copyTo(to.getModifiers());
 
@@ -1171,5 +1179,15 @@ public class KDSDataItem extends KDSData {
     public String getTransferedFromStationID()
     {
         return m_strTransferedFromStationID;
+    }
+
+    public void setItemBumpGuid(String guid)
+    {
+        m_strItemBumpGUID = guid;
+    }
+
+    public String getItemBumpGuid()
+    {
+        return m_strItemBumpGUID;
     }
 }

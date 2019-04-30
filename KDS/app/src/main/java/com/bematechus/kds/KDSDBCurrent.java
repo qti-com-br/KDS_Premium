@@ -249,7 +249,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    final int ORDER_FIELDS_COUNT = 28; //it should equal field in following function.
+    final int ORDER_FIELDS_COUNT = 29; //it should equal field in following function.
 
     /**
      * see function #orderGet() and  #ordersLoadAllJustInfo
@@ -284,7 +284,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r1," + //24
                 "orders.r2," +//25
                 "orders.r3," +//26
-                "orders.r4 "; //27
+                "orders.r4," + //27
+                "orders.r5 "; //28
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -389,10 +390,16 @@ public class KDSDBCurrent extends KDSDBBase {
 
         //2.0.50
         c.setSMSCustomerID( getString(sf, 24) );
+        c.getCustomer().setID(getString(sf, 24));
+
         c.setSMSCustomerPhone( getString(sf, 25) );
+        c.getCustomer().setPhone(getString(sf, 25));
+
         c.setSMSLastSendState( getInt(sf, 26, KDSDataOrder.SMS_STATE_UNKNOWN) );
         //2.1.15
         c.setSmsOriginalToStations(getString(sf, 27));
+        c.getCustomer().setName(getString(sf, 28));
+
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
         if (sf.getColumnCount() > ORDER_FIELDS_COUNT) //save the items count.,for :ordersLoadAllJustInfo function
@@ -430,10 +437,11 @@ public class KDSDBCurrent extends KDSDBBase {
      *  2.0.9: use r1 as parent item guid, this is line items mode.
      *  2.0.47: category priority r2
      *  KPP1-53 use r3 to save transfered from station id.
+     *  KPP1-64, use r4 as item_bump_guid
      */
     static private String ITEMS_FIELDS = "GUID,Name,Description,Qty,Category,BG,FG,Grp,Marked,DeleteByRemote,LocalBumped,BumpedStations," +
                                             "ToStations,Ready,Hiden,QtyChanged,ItemType,ItemDelay,PreparationTime,BuildCard,TrainingVideo," +
-                                            "SumTransEnable,SumTrans,r0,r1,r2,r3 ";
+                                            "SumTransEnable,SumTrans,r0,r1,r2,r3,r4 ";
 
     private KDSDataItems itemsGet(String orderGUID)// int nOrderID)
     {
@@ -538,6 +546,12 @@ public class KDSDBCurrent extends KDSDBBase {
         if (s ==null || s.isEmpty())
             s = "";
         c.setTransferedFromStationID(s);
+
+        //KPP1-64
+        s = getString(sf,27);
+        if (s ==null || s.isEmpty())
+            s = "";
+        c.setItemBumpGuid(s);
 
         return c;
     }
@@ -3638,7 +3652,7 @@ update the schedule item ready qty
             +"r2 text(16)," //2.0.50 for sms customer phone number
             +"r3 text(16)," //2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
             +"r4 text(16)," //2.1.15, for sms, save original order go to which stations.
-            +"r5 text(16),"
+            +"r5 text(16)," //for customer, same the customer name
             +"r6 text(16),"
             +"r7 text(16),"
             +"r8 text(16),"
@@ -3720,7 +3734,9 @@ update the schedule item ready qty
             +"r1 text(16)," //parent item guid, this is for lineitem mode. After add new line item of qty change, I use this field to record its parent.
             +"r2 text(16)," //2.0.47, category priority,
             +"r3 text(16),"  //KPP1-53, This needs to show the number of the station the order/item was transferred from. IN the case above it would be 1.
-            +"r4 text(16) ,"
+            +"r4 text(16) ," //KPP1-64, item_bump_guid, 1. This is almost correct. The guid from item_bumps should be unique. This should be a random guid. This should not be the same guid as the items table guid.
+                                //2. The items guid should be a random guid. The item_bump table guid should be a random guid.
+                                //3. The random guid from the item_bumps table should be inserted into the correct Linked item in the items table column "item_bump_guid"
             +"r5 text(16),"
             +"r6 text(16),"
             +"r7 text(16),"

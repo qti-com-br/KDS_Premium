@@ -138,6 +138,11 @@ public class KDSXMLParserOrder {
      */
     public final static String DBXML_ELEMENT_CUSTOMER = "Customer";
     public final static String DBXML_ELEMENT_PHONE = "Phone";
+    public final static String DBXML_ELEMENT_ADDRESS = "Address";
+    public final static String DBXML_ELEMENT_ADDRESS2 = "Address2";
+    public final static String DBXML_ELEMENT_CITY = "City";
+    public final static String DBXML_ELEMENT_STATE = "State";
+    public final static String DBXML_ELEMENT_ZIP = "Zip";
     /**
      *
      * @param kdsStation
@@ -983,7 +988,16 @@ public class KDSXMLParserOrder {
 
     }
     /********************
-     *
+     *<Customer></Customer> Start and end of the customer information. Everything inside these tags are for customer information
+     * Customer ID
+     * <ID>1</ID> ID number that is unique under the customer group tag
+     * <Name>John</Name> Customers name. (Not yet in use)
+     * <Phone>15555555555</Phone> Phone number used for SMS messaging. Twilio integration.
+     * <Address>123 Smith st</Address> Customers address. (Not yet in use)
+     * <Address2>Suite 100</Address2> Customers building or suite Number. (Note yet in use)
+     * <City>Albany</City> Customers city. (Not yet in use)
+     * <State>NY</State> Customers state. (Not yet in use)
+     * <Zip>11451</Zip> Customers Zip code. (Not yet in use)
      * @param xml
      * @param grpName
      * @param order
@@ -995,10 +1009,36 @@ public class KDSXMLParserOrder {
             case DBXML_ELEMENT_ID: {
 
                 order.setSMSCustomerID(strVal);
+                order.getCustomer().setID(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_NAME: {
+                order.getCustomer().setName(strVal);
             }
             break;
             case DBXML_ELEMENT_PHONE: {
                 order.setSMSCustomerPhone(strVal);
+                order.getCustomer().setPhone(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_ADDRESS: {
+                order.getCustomer().setAddress(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_ADDRESS2: {
+                order.getCustomer().setAddress2(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_CITY: {
+                order.getCustomer().setCity(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_STATE: {
+                order.getCustomer().setState(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_ZIP: {
+                order.getCustomer().setZip(strVal);
             }
             break;
 
