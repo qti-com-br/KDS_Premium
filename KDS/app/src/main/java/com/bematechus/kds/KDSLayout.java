@@ -865,9 +865,9 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             int nContentIndex = 0; //as show data at top of item, this data will don't know which item it belong.
             if (bShowMessageAboveItem)
             {
-                ncounter = horizontalPanelShowItemMessages(item, item.getMessages(),panel, nBlockRows, dressedOrder, ncounter, nContentIndex );
+                ncounter = horizontalPanelShowItemMessages(item, item.getPreModifiers(),panel, nBlockRows, dressedOrder, ncounter, nContentIndex );
                 if (ncounter <0) return false;
-                nContentIndex += item.getMessages().getCount();
+                nContentIndex += item.getPreModifiers().getCount();
 
             }
 
@@ -900,9 +900,9 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
             if (!bShowMessageAboveItem) {
 
-                ncounter = horizontalPanelShowItemMessages(item, item.getMessages(),panel, nBlockRows, dressedOrder, ncounter, nContentIndex );
+                ncounter = horizontalPanelShowItemMessages(item, item.getPreModifiers(),panel, nBlockRows, dressedOrder, ncounter, nContentIndex );
                 if (ncounter <0) return false;
-                nContentIndex += item.getMessages().getCount();
+                nContentIndex += item.getPreModifiers().getCount();
 
             }
 
@@ -1001,10 +1001,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
             int nContentIndex = 0;
 
-            int messages = item.getMessages().getCount();
+            int messages = item.getPreModifiers().getCount();
             for (int j = 0; j < messages; j++) {
 
-                KDSDataMessage m = (KDSDataMessage)item.getMessages().get(j);
+                KDSDataMessage m = (KDSDataMessage)item.getPreModifiers().get(j);
                 if ( (nContentIndex == 0) && item.getHidden())
                     m.setFocusTag(item);
                 //if (addPremessage(panel,m ) == null)
@@ -1961,10 +1961,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             //item messages
             //ncounter += item.getMessages().getCount();
             if (!bTextWrap)
-                ncounter += item.getMessages().getCount();//
+                ncounter += item.getPreModifiers().getCount();//
             else {
-                for (int j = 0; j< item.getMessages().getCount(); j++) {
-                    KDSDataMessage msg = item.getMessages().getMessage(j);
+                for (int j = 0; j< item.getPreModifiers().getCount(); j++) {
+                    KDSDataMessage msg = item.getPreModifiers().getMessage(j);
                     ncounter += cal_message_need_lines(msg, m_view.getBlockAverageWidth());
                 }
             }

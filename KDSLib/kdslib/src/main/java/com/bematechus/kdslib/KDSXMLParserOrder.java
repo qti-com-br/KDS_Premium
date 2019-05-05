@@ -703,7 +703,7 @@ public class KDSXMLParserOrder {
                 msg.setForComponentType(KDSDataMessage.FOR_Item);
                 msg.setComponentGUID(item.getGUID());
                 msg.setMessage(strVal);
-                item.getMessages().addComponent(msg);
+                item.getPreModifiers().addComponent(msg);
 
 
             }
@@ -1008,7 +1008,7 @@ public class KDSXMLParserOrder {
         switch (grpName) {
             case DBXML_ELEMENT_ID: {
 
-                order.setSMSCustomerID(strVal);
+                //order.setSMSCustomerID(strVal);
                 order.getCustomer().setID(strVal);
             }
             break;
@@ -1017,7 +1017,7 @@ public class KDSXMLParserOrder {
             }
             break;
             case DBXML_ELEMENT_PHONE: {
-                order.setSMSCustomerPhone(strVal);
+                //order.setSMSCustomerPhone(strVal);
                 order.getCustomer().setPhone(strVal);
             }
             break;

@@ -40,7 +40,7 @@ public class KDSDataItem extends KDSData {
     protected KDSToStations m_hiddenStations = new KDSToStations(); //just for parse xml. If this station is hidden, set "hidden" variable.
 
     protected KDSDataCondiments m_arCondiments = new KDSDataCondiments();
-    protected KDSDataMessages m_arMessages = new KDSDataMessages();
+    protected KDSDataMessages m_arPreModifiers = new KDSDataMessages();
 
     protected KDSDataModifiers m_modifiers = new KDSDataModifiers();
 
@@ -207,13 +207,13 @@ public class KDSDataItem extends KDSData {
     {
         m_arCondiments = condiments;
     }
-    public KDSDataMessages getMessages()
+    public KDSDataMessages getPreModifiers()
     {
-        return m_arMessages;
+        return m_arPreModifiers;
     }
-    public void setMessages(KDSDataMessages msgs)
+    public void setPreModifiers(KDSDataMessages msgs)
     {
-        m_arMessages = msgs;
+        m_arPreModifiers = msgs;
     }
     public int getOrderID()
     {
@@ -554,7 +554,7 @@ public class KDSDataItem extends KDSData {
         //check condiments
         if  (!this.getCondiments().isEquals(item.getCondiments()))
             return false;
-        if (!this.getMessages().isEquals(item.getMessages()))
+        if (!this.getPreModifiers().isEquals(item.getPreModifiers()))
             return false;
         return true;
     }
@@ -589,7 +589,7 @@ public class KDSDataItem extends KDSData {
         }
         if (itemReceived.getXmlFieldValid(VALID_ITEM_XML_FIELD.Messages))
         {
-            itemReceived.getMessages().copyTo(this.getMessages());
+            itemReceived.getPreModifiers().copyTo(this.getPreModifiers());
             bResult = true;
         }
         if (itemReceived.getXmlFieldValid(VALID_ITEM_XML_FIELD.Qty))
@@ -667,7 +667,7 @@ public class KDSDataItem extends KDSData {
         pxml.newGroup("QtyChanged", KDSUtil.convertFloatToString(this.getChangedQty()), false);
         pxml.newGroup("ScheduleReadyQty", KDSUtil.convertFloatToString(this.getScheduleProcessReadyQty()), false);
         //output pre-modifiers properties
-        KDSDataMessages messages = this.getMessages();
+        KDSDataMessages messages = this.getPreModifiers();
         KDSDataOrder.outputKDSMessages(pxml, messages, KDSXMLParserOrder.DBXML_ELEMENT_PREMOIDIFIER);
 
         if (this.getBG() != this.getFG()) { //the color is valid
@@ -810,7 +810,7 @@ public class KDSDataItem extends KDSData {
 
         this.getModifiers().copyTo(to.getModifiers());
 
-        this.getMessages().copyTo(to.getMessages());
+        this.getPreModifiers().copyTo(to.getPreModifiers());
         this.getCondiments().copyTo(to.getCondiments());
     }
     public void setHidden(boolean bHidden)
@@ -996,10 +996,10 @@ public class KDSDataItem extends KDSData {
         {
             m_arCondiments.get(i).setDimColor(bDim);
         }
-        ncount = m_arMessages.getCount();
+        ncount = m_arPreModifiers.getCount();
         for (int i=0; i< ncount ; i++)
         {
-            m_arMessages.get(i).setDimColor(bDim);
+            m_arPreModifiers.get(i).setDimColor(bDim);
         }
 
         ncount = m_modifiers.getCount();
@@ -1116,8 +1116,8 @@ public class KDSDataItem extends KDSData {
         for (int i=0; i< m_arCondiments.getCount(); i++)
             m_arCondiments.getCondiment(i).setItemGUID(this.getGUID());
 
-        for (int i=0; i< m_arMessages.getCount(); i++)
-            m_arMessages.getMessage(i).setComponentGUID(this.getGUID());
+        for (int i=0; i< m_arPreModifiers.getCount(); i++)
+            m_arPreModifiers.getMessage(i).setComponentGUID(this.getGUID());
     }
 
     /**

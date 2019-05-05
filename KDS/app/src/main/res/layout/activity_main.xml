@@ -177,16 +177,18 @@
         android:background="@color/kds_title_bg"
         android:id="@+id/layoutTitle">
 
-    <TextView
-        android:layout_width="40dp"
-        android:layout_height="30dp"
-        android:id="@+id/imgLCI"
-        android:layout_centerVertical="true"
-        android:gravity="center|center_vertical"
-        android:textColor="@color/kds_title_fg"
-        android:textStyle="bold"
-        android:clickable="false"
-        android:enabled="true" />
+        <TextView
+            android:id="@+id/imgLCI"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="3dp"
+            android:clickable="false"
+            android:enabled="true"
+            android:gravity="center|center_vertical"
+            android:textColor="@color/kds_title_fg"
+            android:textStyle="bold" />
 
 
     <TextView

@@ -1293,15 +1293,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     /**
      * 2.0.50
-     * @param orderGuid
+
      *  Local orderGuid value
-     * @param customerPhone
+     *
      * @param nSMSState
      *  See SMS_STATE_UNKNOWN ... in KDSDataOrder
      */
-    public void postSMS(String orderGuid, String customerPhone, int nSMSState)
+    public void postSMS(KDSDataOrder order,  int nSMSState)
     {
-        ActivationRequest r = ActivationRequest.requestSMS(m_storeGuid,m_storeName, customerPhone, orderGuid, nSMSState );
+        ActivationRequest r = ActivationRequest.requestSMS(m_storeGuid,m_storeName, order, nSMSState );
         m_http.request(r);
 
     }

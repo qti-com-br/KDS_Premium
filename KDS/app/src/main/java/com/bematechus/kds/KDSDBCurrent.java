@@ -389,10 +389,10 @@ public class KDSDBCurrent extends KDSDBBase {
         c.setQueueStateTime(dtQueueStateChangeTime);
 
         //2.0.50
-        c.setSMSCustomerID( getString(sf, 24) );
+        //c.setSMSCustomerID( getString(sf, 24) );
         c.getCustomer().setID(getString(sf, 24));
 
-        c.setSMSCustomerPhone( getString(sf, 25) );
+        //c.setSMSCustomerPhone( getString(sf, 25) );
         c.getCustomer().setPhone(getString(sf, 25));
 
         c.setSMSLastSendState( getInt(sf, 26, KDSDataOrder.SMS_STATE_UNKNOWN) );
@@ -564,7 +564,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
         KDSDataItem c = itemGetInfo(sf);
         //get messages
-        c.setMessages(messagesItemGet(c.getGUID()));
+        c.setPreModifiers(messagesItemGet(c.getGUID()));
         c.setCondiments(condimentsGet(c.getGUID()));
         c.setModifiers(modifiersGet(c.getGUID()));
 
@@ -712,7 +712,7 @@ public class KDSDBCurrent extends KDSDBBase {
             modifiersAdd(item.getModifiers());
 
             //add messages
-            KDSDataMessages messages = item.getMessages();
+            KDSDataMessages messages = item.getPreModifiers();
             messagesAdd(messages);
             //this.finishTransaction(bTransactionByMe);
             return true;
@@ -810,7 +810,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
                 modifiersAdd(item.getModifiers());
                 //add messages
-                KDSDataMessages messages = item.getMessages();
+                KDSDataMessages messages = item.getPreModifiers();
                 messagesAdd(messages);//, stmt);
 
             }

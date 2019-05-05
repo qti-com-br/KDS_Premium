@@ -103,8 +103,8 @@ public class KDSDataOrder extends KDSData {
     public static final int SMS_STATE_PREPARED = 1;
     public static final int SMS_STATE_DONE = 2;
 
-    String m_smsCustomerID = "";
-    String m_smsCustomerPhone = "";
+//    String m_smsCustomerID = "";
+//    String m_smsCustomerPhone = "";
     int m_smsLastState = SMS_STATE_UNKNOWN; //this state has been send to server.
 
     //for SMS. If no expo existed, use it to record which has bumped/(items bumped).
@@ -491,8 +491,8 @@ public class KDSDataOrder extends KDSData {
         obj.m_nSmartTimerDelayShowing = m_nSmartTimerDelayShowing;//for smart hidden.
 
         //2.0.50
-        obj.m_smsCustomerID = m_smsCustomerID;
-        obj.m_smsCustomerPhone = m_smsCustomerPhone;
+        //obj.m_smsCustomerID = m_smsCustomerID;
+        //obj.m_smsCustomerPhone = m_smsCustomerPhone;
         obj.m_smsLastState = m_smsLastState;
         //2.1.15
         obj.m_smsOriginalOrderGoToStations = m_smsOriginalOrderGoToStations;
@@ -562,8 +562,8 @@ public class KDSDataOrder extends KDSData {
             + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"//2.0.8, for auto bump time
             + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"//2.0.34, for queue state time
             + ",0" //2.0.34, use it for queue status sort.
-            + ",'" + getSMSCustomerID() +"'" //2.0.50, for sms customer id
-            +",'" + m_smsCustomerPhone + "'" //2.0.50 for sms customer phone number
+            + ",'" + m_customer.getID() +"'" //2.0.50, for sms customer id
+            +",'" + m_customer.getPhone() + "'" //2.0.50 for sms customer phone number
             + "," +  KDSUtil.convertFloatToString(m_smsLastState)  ////2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
             + ",'" + m_smsOriginalOrderGoToStations +"'" //r4
             +",'" + m_customer.getName() + "'"
@@ -820,7 +820,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item #"+ KDSUtil.convertIntToString(i) +" Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -975,7 +975,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<1; j++)
@@ -1058,7 +1058,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -1143,7 +1143,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -1239,7 +1239,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -1444,8 +1444,9 @@ public class KDSDataOrder extends KDSData {
 
             //2.0.50 SMS feature
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER, true);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getSMSCustomerID(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER,this.getSMSCustomerPhone(), false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getCustomer().getID(), false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PHONE,this.getCustomer().getPhone(), false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_NAME,this.getCustomer().getName(), false);
             //
 
             //2.5.4.19 add received time and restore time
@@ -2447,41 +2448,41 @@ get the total qty of all found items
 
 
 
-    /**
-     * 2.0.50
-     * @return
-     */
-    public String getSMSCustomerID()
-    {
-        return m_smsCustomerID;
-    }
+//    /**
+//     * 2.0.50
+//     * @return
+//     */
+//    public String getSMSCustomerID()
+//    {
+//        return m_smsCustomerID;
+//    }
 
-    /**
-     * 2.0.50
-     * @param customerID
-     */
-    public void setSMSCustomerID(String customerID)
-    {
-        m_smsCustomerID = customerID;
-    }
+//    /**
+//     * 2.0.50
+//     * @param customerID
+//     */
+//    public void setSMSCustomerID(String customerID)
+//    {
+//        m_smsCustomerID = customerID;
+//    }
 
-    /**
-     * 2.0.50 SMS feature
-     * @return
-     */
-    public String getSMSCustomerPhone()
-    {
-        return m_smsCustomerPhone;
-    }
+//    /**
+//     * 2.0.50 SMS feature
+//     * @return
+//     */
+//    public String getSMSCustomerPhone()
+//    {
+//        return m_smsCustomerPhone;
+//    }
 
-    /**
-     * 2.0.50 SMS feature
-     * @param phone
-     */
-    public void setSMSCustomerPhone(String phone)
-    {
-        m_smsCustomerPhone = phone;
-    }
+//    /**
+//     * 2.0.50 SMS feature
+//     * @param phone
+//     */
+//    public void setSMSCustomerPhone(String phone)
+//    {
+//        m_smsCustomerPhone = phone;
+//    }
 
     /**
      * 2.0.50 SMS feature

@@ -16,8 +16,8 @@ import java.util.Vector;
 public class KDSDataCondiments extends KDSDataArray {
 
 
-    static public String STRINGS_SEPARATOR = ",   ";
-    static public String STRINGS_EACH_LINE_SEPARATOR = "\n";
+//    static public String STRINGS_SEPARATOR = ",   ";
+//    static public String STRINGS_EACH_LINE_SEPARATOR = "\n";
     public String toString()
     {
         String s = "";

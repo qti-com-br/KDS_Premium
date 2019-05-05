@@ -2,4 +2,5 @@
 <resources>
     <item type="id" name="tag_edit"></item>
     <item type="id" name="tag_textwatch"></item>
+    <integer name="pwd_length">4</integer>
 </resources>

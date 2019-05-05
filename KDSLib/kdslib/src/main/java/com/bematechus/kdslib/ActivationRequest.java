@@ -705,15 +705,23 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
 
     /**
-     *
+     *let json: [String: Any] = [
+     * "req" : "SMS_ORDER",
+     * "store_guid": AppDelegate.store?.guid_ ?? "",
+     * "store_name": AppDelegate.store?.name_ ?? "",
+     * "order_id": order.external_id_ ?? "",
+     * "customer_name": order.customer_?.name_?.fromAES() ?? "",
+     * "order_guid": order.guid_ ?? "",
+     * "order_status": orderStatus,
+     * "order_phone": orderPhone
+     * ]
      * @param store_guid
      * @param storeName
-     * @param customerPhone
-     * @param orderGuid
+
      * @param orderSmsState
      * @return
      */
-    static public ActivationRequest requestSMS( String store_guid,String storeName,String customerPhone, String orderGuid,int orderSmsState )
+    static public ActivationRequest requestSMS( String store_guid,String storeName,KDSDataOrder order,int orderSmsState )
     {
 
         String auth = TOKEN;
@@ -724,9 +732,11 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         try {
             json.put("store_guid", store_guid);
             json.put("store_name", storeName);
-            json.put("order_guid", orderGuid);
+            json.put("order_id", order.getOrderName());
+            json.put("customer_name", order.getCustomer().getName());
+            json.put("order_guid", order.getGUID());
             json.put("order_status",KDSUtil.convertIntToString(orderSmsState));
-            json.put("order_phone", customerPhone);
+            json.put("order_phone", order.getCustomer().getPhone());
 
         }
         catch (Exception e)
@@ -950,7 +960,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
-            json.put("phone", "'" + order.getSMSCustomerPhone()+"'");
+            json.put("phone", "'" + order.getCustomer().getPhone()+"'");
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             json.put("is_hidden", "0");
             json.put("customer_guid", "''");
@@ -983,7 +993,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("external_id", "'"+ item.getItemName()+"'");//order.getOrderName() + "'"); //KPP1-49,  External ID needs to show the item ID that item came from
             json.put("is_priority", "0");
             json.put("condiments_count", KDSUtil.convertIntToString( item.getCondiments().getCount()));
-            json.put("pre_modifier", "'" + item.getModifiers().toEachLineString() +"'");//KPP1-50, The field needs to be filled in with the premodifier that is in the XML
+            //please notice: the pre_modifier is the messages!!!!! It is not the modifiers!!!!!!
+            json.put("pre_modifier", "'" + item.getPreModifiers().toEachLineString() +"'");//KPP1-50, The field needs to be filled in with the premodifier that is in the XML
             json.put("preparation_time", KDSUtil.convertFloatToShortString(item.getPreparationTime() )); // KPP1-51, he number should show what the time for preparation is for that item
             //json.put("recall_time", Long.toString( updateTime)); //seconds //KPP1-70
             json.put("training_video", "''");

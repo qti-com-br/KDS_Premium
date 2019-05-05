@@ -46,4 +46,23 @@ public class KDSDataMessages extends KDSDataArray{
             return (KDSDataMessage) get(nIndex);
         }
     }
+
+    public String toEachLineString()
+    {
+        String s = "";
+        synchronized (m_locker) {
+            Vector ar = this.getComponents();
+            for (int i = 0; i < ar.size(); i++) {
+
+                KDSDataMessage original = (KDSDataMessage) ar.get(i);
+                if (!s.isEmpty())
+                {
+                    s += STRINGS_EACH_LINE_SEPARATOR;
+                }
+
+                s += original.getMessage();
+            }
+        }
+        return s;
+    }
 }

@@ -940,7 +940,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String strID = this.getSettings().getString(KDSSettings.ID.KDS_ID);
         String s = "#" + strID;
 
-
+        if (!Activation.getStoreName().isEmpty())
+            s = Activation.getStoreName() + "-" + s;
         //m_imgLogo.setText(s);
         getTextView(R.id.imgLCI).setText(s);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");

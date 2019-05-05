@@ -355,6 +355,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
         String id = pre.getString("general_station_id", "");
+        if (!Activation.getStoreName().isEmpty())
+            id = Activation.getStoreName() + "-" + id;
         m_txtRouterID.setText(id);
 
     }

@@ -14,6 +14,8 @@ import java.util.Vector;
  * @author David.Wong
  */
 public class KDSDataArray {
+    static public String STRINGS_SEPARATOR = ",   ";
+    static public String STRINGS_EACH_LINE_SEPARATOR = "\n";
     protected Vector m_arComponents = new Vector();
 
     protected Object m_locker = new Object();
