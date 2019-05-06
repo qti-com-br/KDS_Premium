@@ -1875,6 +1875,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         COMMAND_XML,
         Order,
         Reset_Focus_after_new_order, //20190403, as the reset focus will calculate all items, it is slow. I move it out of doxml thread.
+        Toast_msg,
     }
 
     Handler m_refreshHandler = new Handler(){
@@ -1927,6 +1928,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 {
                     m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.Reset_Focus_after_new_order.ordinal());
                     setFocusAfterReceiveOrder();
+                }
+                break;
+                case Toast_msg:
+                {
+                    String s = (String) msg.obj;
+                    KDSToast.showMessage(KDSApplication.getContext(), s); //for test
                 }
                 break;
 
@@ -2883,6 +2890,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     schedule_process_update_to_be_prepare_qty(bRefreshView);
 
                     setFocusAfterReceiveOrder();
+                }
+                //do it before reset all items for save memory.
+                //sync with backoffice
+                for (int i = 0; i < ordersAdded.size(); i++) {
+                    syncOrderToWebDatabase(ordersAdded.get(i), ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
                 }
                 //t.debug_print_Duration("TRANSTYPE_ADD5");
                 resetOrdersForSaveMemoryAfterGetNewOrder(ordersAdded);
@@ -4101,7 +4113,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             if (m_activationHTTP != null) {
                 int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
                 m_activationHTTP.postSMS( order, nSMSState);
-                KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
+
+                showToastMessage("SMS:" + KDSUtil.convertIntToString(nSMSState));
+                //KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
             }
         }
     }
@@ -4392,7 +4406,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                             {
                                                 if (order.getTransType() == KDSDataOrder.TRANSTYPE_ADD) {
                                                     bAddNew = true;
-                                                    syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+                                                    //syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
                                                 }
                                                 order = null;
                                             }
@@ -4789,5 +4803,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped );
         return true;
 
+    }
+
+    public void showToastMessage(String msg)
+    {
+        Message m = new Message();
+        m.what = MESSAGE_TO_MAIN.Toast_msg.ordinal();
+        m.obj = msg;
+        m_refreshHandler.sendMessage(m);
     }
 }

@@ -127,6 +127,8 @@
         android:paddingLeft="1dp"
         android:gravity="center"
         android:textAlignment="center"
+        android:inputType="number"
+        android:digits="1234567890,"
         android:singleLine="true" />
     <View
         android:layout_width="@dimen/relations_headers_separator"

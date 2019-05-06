@@ -110,7 +110,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     static boolean m_bDoLicensing = false;
 
-    int m_nSyncGetDevicesCount = 0; //record the loop count. Prevent dead loop.
+    int m_nSyncGetDevicesTries = 0; //record the loop count. Prevent dead loop.
     static private String m_storeName = ""; //2.0.50
     static private String m_storeKey = "";
 
@@ -345,8 +345,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         try
         {
-            m_nSyncGetDevicesCount ++;
-            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+            m_nSyncGetDevicesTries ++;
+            if (m_nSyncGetDevicesTries > MAX_TRY_COUNT)
             {
                 fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, m_context.getString(R.string.cannot_sync_license_data));
                 return;
@@ -381,8 +381,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         try
         {
-            m_nSyncGetDevicesCount ++;
-            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+            m_nSyncGetDevicesTries ++;
+            if (m_nSyncGetDevicesTries > MAX_TRY_COUNT)
             {
                 fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, m_context.getString(R.string.cannot_replace_license_data));
                 return;
@@ -570,7 +570,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         //register me now
         if (m_devices.size()<=0)
         {//add new
-            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT) {
+            if (m_nSyncGetDevicesTries > MAX_TRY_COUNT) {
                 fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
@@ -578,12 +578,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             return;
         }
 
-        if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+        if (m_nSyncGetDevicesTries > MAX_TRY_COUNT)
         {
             fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
             return;
         }
-        if (m_nSyncGetDevicesCount>0)
+        if (m_nSyncGetDevicesTries>0)
             fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,"Sync data error, try again!");
 
         showRegisterOptionDlg();
@@ -1211,7 +1211,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     {
         if (m_bDoLicensing) return;
         m_bDoLicensing = true;
-        m_nSyncGetDevicesCount = 0;
+        m_nSyncGetDevicesTries = 0;
 
         m_bSilent = bSilent;
         String userName = loadUserName();
@@ -1523,40 +1523,37 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (obj == null) return;
 
             try {
-                KDSDataOrder order = (KDSDataOrder) obj;
-                ActivationRequest.SyncDataFromOperation syncOp = request.getSyncDataFromOperation();
-                switch (syncOp)
+                ArrayList ar = request.getNextStepData();
+                if (ar.size() >0)
                 {
-
-                    case Unknown:
-                        break;
-                    case New:
-                        postItemsRequest(m_stationID, order);
-                        postCondimentsRequest(m_stationID, order);
-                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
-                        postCustomerRequest(m_stationID, order);
-                        break;
-                    case Bump:
-                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
-                        break;
-                    case Unbump:
-                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
-                        break;
+                    for (int i=0; i< ar.size(); i++)
+                    {
+                        m_http.request((ActivationRequest)ar.get(i));
+                    }
                 }
-//                if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump ||
-//                        syncOp == ActivationRequest.SyncDataFromOperation.New) { //unbump order just sync order, no items/condiments
+                KDSDataOrder order = (KDSDataOrder) obj;
+//                ActivationRequest.SyncDataFromOperation syncOp = request.getSyncDataFromOperation();
+//                switch (syncOp)
+//                {
 //
-//                    postItemsRequest(m_stationID, order);
-//                    postCondimentsRequest(m_stationID, order);
-//                    if (syncOp == ActivationRequest.SyncDataFromOperation.Unbump )
+//                    case Unknown:
+//                        break;
+//                    case New:
+//                        postItemsRequest(m_stationID, order);
+//                        postCondimentsRequest(m_stationID, order);
+//                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+//                        postCustomerRequest(m_stationID, order);
+//                        break;
+//                    case Bump:
 //                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
+//                        break;
+//                    case Unbump:
+//                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+//                        break;
 //                }
-//                else if ( syncOp == ActivationRequest.SyncDataFromOperation.Bump)
-//                {//it bump order
-//                    postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ), false );
-//                }
+
                 if (m_receiver != null)
-                    m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getGUID(), SyncDataResult.OK);
+                    m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getOrderName(), SyncDataResult.OK);
             }
             catch (Exception e)
             {
@@ -1578,7 +1575,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (obj == null) return;
         KDSDataOrder order = (KDSDataOrder)obj;
         if (m_receiver != null)
-            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_items, order.getGUID(), SyncDataResult.OK);
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_items, order.getOrderName(), SyncDataResult.OK);
 
     }
 
@@ -1587,7 +1584,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (obj == null) return;
         KDSDataOrder order = (KDSDataOrder)obj;
         if (m_receiver != null)
-            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_condiments, order.getGUID(), SyncDataResult.OK);
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_condiments, order.getOrderName(), SyncDataResult.OK);
 
     }
 
@@ -1600,6 +1597,33 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     {
         ActivationRequest r = ActivationRequest.requestOrderSync(m_storeGuid,  order, state);
         r.setSyncDataFromOperation(fromOperation);
+        ActivationRequest.SyncDataFromOperation syncOp = fromOperation;
+        switch (syncOp)
+        {
+
+            case Unknown:
+                break;
+            case New:
+                r.getNextStepData().add( ActivationRequest.requestItemsSync(m_stationID,  order ) );
+                //postItemsRequest(m_stationID, order);
+                //postCondimentsRequest(m_stationID, order);
+                r.getNextStepData().add( ActivationRequest.requestCondimentsSync(m_stationID,  order ) );
+                //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false ));
+                //postCustomerRequest(m_stationID, order);
+                r.getNextStepData().add(ActivationRequest.requestCustomerSync(m_storeGuid, order));
+
+                break;
+            case Bump:
+                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true ));
+                //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
+                break;
+            case Unbump:
+                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false ));
+                //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+                break;
+        }
+
         m_http.request(r);
 
     }
@@ -1630,7 +1654,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             Object obj = request.getTag();
             if (obj == null) return;
             KDSDataOrder order = (KDSDataOrder) obj;
-            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getGUID(), SyncDataResult.Fail_Http_exception);
+            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getOrderName(), SyncDataResult.Fail_Http_exception);
 
         }
 
@@ -1643,7 +1667,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             Object obj = request.getTag();
             if (obj == null) return;
             KDSDataOrder order = (KDSDataOrder) obj;
-            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getGUID(), SyncDataResult.Fail_reponse_error);
+            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getOrderName(), SyncDataResult.Fail_reponse_error);
         }
 
 
@@ -1766,7 +1790,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (obj == null) return;
         KDSDataOrder order = (KDSDataOrder)obj;
         if (m_receiver != null)
-            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bumps, order.getGUID(), SyncDataResult.OK);
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bumps, order.getOrderName(), SyncDataResult.OK);
 
     }
 
@@ -1789,7 +1813,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (obj == null) return;
         KDSDataOrder order = (KDSDataOrder)obj;
         if (m_receiver != null)
-            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bump, order.getGUID(), SyncDataResult.OK);
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bump, order.getOrderName(), SyncDataResult.OK);
 
     }
 
@@ -1811,7 +1835,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (obj == null) return;
         KDSDataOrder order = (KDSDataOrder)obj;
         if (m_receiver != null)
-            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_customer, order.getGUID(), SyncDataResult.OK);
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_customer, order.getOrderName(), SyncDataResult.OK);
     }
 
 }

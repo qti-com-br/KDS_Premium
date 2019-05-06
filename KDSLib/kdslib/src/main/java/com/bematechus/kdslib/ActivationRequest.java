@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.sql.Time;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -129,7 +130,15 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     }
 
     COMMAND m_command = COMMAND.Unknown;
+
+    ArrayList<Object> m_arDataForNextSteps = new ArrayList<>();
+
     /**********************************************************************************************/
+
+    public ArrayList<Object> getNextStepData()
+    {
+        return m_arDataForNextSteps;
+    }
 
     public void setCommand(COMMAND cmd)
     {
