@@ -249,7 +249,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    final int ORDER_FIELDS_COUNT = 29; //it should equal field in following function.
+    final int ORDER_FIELDS_COUNT = 30; //it should equal field in following function.
 
     /**
      * see function #orderGet() and  #ordersLoadAllJustInfo
@@ -285,7 +285,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r2," +//25
                 "orders.r3," +//26
                 "orders.r4," + //27
-                "orders.r5 "; //28
+                "orders.r5," + //28
+                "orders.r6 "; //29
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -399,6 +400,8 @@ public class KDSDBCurrent extends KDSDBBase {
         //2.1.15
         c.setSmsOriginalToStations(getString(sf, 27));
         c.getCustomer().setName(getString(sf, 28));
+        //kpp1-75
+        c.setKDSGuid(getString(sf, 29));
 
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
@@ -3653,7 +3656,7 @@ update the schedule item ready qty
             +"r3 text(16)," //2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
             +"r4 text(16)," //2.1.15, for sms, save original order go to which stations.
             +"r5 text(16)," //for customer, same the customer name
-            +"r6 text(16),"
+            +"r6 text(16)," //kdsguid, identify same order in whole KDS.
             +"r7 text(16),"
             +"r8 text(16),"
             +"r9 text(16),"

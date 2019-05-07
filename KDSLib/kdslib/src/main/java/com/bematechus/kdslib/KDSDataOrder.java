@@ -128,7 +128,12 @@ public class KDSDataOrder extends KDSData {
     /***************************************************************************/
     // for modiy, delete ...
     protected int m_nTransactionType = TRANSTYPE_ADD; //see above definition, don't save it to database
-    
+
+    //kpp1-75
+    protected String m_kdsGUID = ""; //for backoffice. KPP1-75. Use it to identify same order in all stations.
+
+
+
     public enum VALID_ORDER_XML_FIELD
     {
         Name,
@@ -501,6 +506,8 @@ public class KDSDataOrder extends KDSData {
 
         this.getOrderMessages().copyTo(obj.getOrderMessages());
         this.getCustomer().copyTo(obj.getCustomer());
+
+        obj.m_kdsGUID = m_kdsGUID;
     }
     /***************************************************************************
      * 
@@ -533,7 +540,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -566,7 +573,8 @@ public class KDSDataOrder extends KDSData {
             +",'" + m_customer.getPhone() + "'" //2.0.50 for sms customer phone number
             + "," +  KDSUtil.convertFloatToString(m_smsLastState)  ////2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
             + ",'" + m_smsOriginalOrderGoToStations +"'" //r4
-            +",'" + m_customer.getName() + "'"
+            +",'" + m_customer.getName() + "'" //r5
+            +",'" + getKDSGuid() + "'" //r6
             +  ")";
         return sql;
          
@@ -2853,5 +2861,14 @@ get the total qty of all found items
     public KDSDataCustomer getCustomer()
     {
         return m_customer;
+    }
+
+    public void setKDSGuid(String guid)
+    {
+        m_kdsGUID = guid;
+    }
+    public String getKDSGuid()
+    {
+        return m_kdsGUID;
     }
 }

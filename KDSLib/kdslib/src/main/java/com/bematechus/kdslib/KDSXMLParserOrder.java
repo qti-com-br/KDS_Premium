@@ -103,6 +103,8 @@ public class KDSXMLParserOrder {
     //2.0.47
     public final static String DBXML_ELEMENT_CATEGORY_PRIORITY = "SortPriority";
 
+    public final static String DBXML_ELEMENT_KDSGUID = "KDSGUID";
+
     /************************************************************************/
     /* 
     <CatDelay> 
@@ -315,6 +317,11 @@ public class KDSXMLParserOrder {
             case DBXML_ELEMENT_CUSTOMER:
             {
                 doCustomerGroup(xml, order);
+            }
+            break;
+            case DBXML_ELEMENT_KDSGUID:
+            { //kpp1-75
+                order.setKDSGuid(strVal);
             }
             break;
         }

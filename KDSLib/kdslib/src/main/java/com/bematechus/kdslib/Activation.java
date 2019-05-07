@@ -88,7 +88,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage);
         public void onSMSSendSuccess(String orderGuid, int smsState);
         public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
-
+        public void onDoActivationExplicit();
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -448,8 +448,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     private StoreDevice parseJsonDevice(JSONObject json)
     {
 
-        if (isDeletedDevice(json))
-            return null;
+
         StoreDevice device = new StoreDevice();
         device.setEnabled(isLicenseEnabled(json));
         device.setGuid(getGuid(json));
@@ -457,6 +456,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         device.setID( getLicenseID(json) );
         device.setUpdateTime(getUpdateTime(json));
         device.setStationFunc(getStationFunc(json));
+        device.setDeleted(isDeletedDevice(json));
+
         return device;
 
     }
@@ -530,6 +531,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     {
         for (int i=0; i< m_devices.size(); i++)
         {
+            if (m_devices.get(i).isDeleted()) continue;
             String serial = m_devices.get(i).getSerial();
             serial = serial.toUpperCase();
             if (serial.equals(m_myMacAddress.toUpperCase()))
@@ -538,11 +540,24 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         return null;
     }
+
+    private StoreDevice findDeletedLicense()
+    {
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (!m_devices.get(i).isDeleted()) continue;
+            String serial = m_devices.get(i).getSerial();
+            serial = serial.toUpperCase();
+            if (serial.equals(m_myMacAddress.toUpperCase()))
+                return m_devices.get(i);
+
+        }
+        return null;
+    }
+
     private int MAX_TRY_COUNT = 3;
     private void checkMyActivation()
     {
-
-
         //I have been registered
         StoreDevice device = findMyLicense();
 
@@ -567,8 +582,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             return;
         }
 
+        if (findDeletedLicense() != null)
+        {//I have been deleted
+            if (!ActivityLogin.isShowing())
+            {
+                if (m_receiver != null) {
+                    m_bDoLicensing = false;
+                    m_receiver.onDoActivationExplicit();
+                    return;
+                }
+            }
+        }
         //register me now
-        if (m_devices.size()<=0)
+        if (getDevicesCount()<=0)
         {//add new
             if (m_nSyncGetDevicesTries > MAX_TRY_COUNT) {
                 fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
@@ -834,12 +860,27 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         int ncount = 0;
         for (int i=0; i< m_devices.size(); i++)
         {
+            if (m_devices.get(i).isDeleted()) continue;
             if (m_devices.get(i).getEnabled())
                 ncount ++;
 
         }
         return ncount;
     }
+
+    private int getDevicesCount()
+    {
+        int ncount = 0;
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+
+            ncount ++;
+
+        }
+        return ncount;
+    }
+
 
 //    private void showDisabledDevicesInList(View view)
 //    {
@@ -1413,6 +1454,17 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         boolean m_bEnabled = true;
         long m_updateTime = 0;//UTC seconds, 2.1.4, for update sql.
         String m_stationFunc = "";
+        boolean m_bDeleted = false;
+
+        public void setDeleted(boolean bDeleted)
+        {
+            m_bDeleted = bDeleted;
+        }
+
+        public boolean isDeleted()
+        {
+            return m_bDeleted;
+        }
 
         /**
          * 2.1.4

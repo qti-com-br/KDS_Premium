@@ -1171,6 +1171,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             {
                 startTeamViewer();
             }
+            else if (id == R.id.action_logout)
+            {
+                onDoActivationExplicit();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -6128,6 +6132,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
+    /**
+     *
+     */
+    public void onDoActivationExplicit()
+    {
+       doActivation(false, true, "");
+    }
 
     Thread m_threadChecking = null;
 

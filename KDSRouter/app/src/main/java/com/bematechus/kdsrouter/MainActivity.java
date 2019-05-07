@@ -1040,6 +1040,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
 
     }
+    public void onDoActivationExplicit()
+    {
+        doActivation(false, true, "");
+    }
     private void checkActivationResult(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType)
     {
         if (m_activation.isActivationFailedEnoughToLock() || errType == ActivationRequest.ErrorType.License_disabled)

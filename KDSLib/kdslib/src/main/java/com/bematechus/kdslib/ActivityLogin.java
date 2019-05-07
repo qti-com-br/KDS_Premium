@@ -41,13 +41,26 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     Activation m_activation = new Activation(this);
 
+    static ActivityLogin m_instance = null;
 
+    static public boolean isShowing()
+    {
+        return (m_instance != null);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        m_instance = null;
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        m_instance = this;
         Intent intent = this.getIntent();
         String s =  intent.getStringExtra("id");
         m_activation.setStationID(s);
@@ -336,6 +349,10 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     }
     public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, Activation.SyncDataResult result)
+    {
+
+    }
+    public void onDoActivationExplicit()
     {
 
     }
