@@ -740,7 +740,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         try {
             json.put("store_guid", store_guid);
-            json.put("store_name", storeName);
+            json.put("store_name", "'" + storeName + "'");
             json.put("order_id", order.getOrderName());
             json.put("customer_name", order.getCustomer().getName());
             json.put("order_guid", order.getGUID());
@@ -946,6 +946,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             long utcNow = getUTCTimeSeconds();// dt.getTime()/1000;
 
+            json.put("kdsguid","'" + order.getKDSGuid() + "'" );
             json.put("guid", "'" + order.getGUID() + "'");
             json.put("store_guid","'" + store_guid + "'" );
             json.put("destination", "'" + order.getDestination()+"'");

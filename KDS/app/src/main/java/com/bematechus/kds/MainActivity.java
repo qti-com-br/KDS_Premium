@@ -6140,6 +6140,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
        doActivation(false, true, "");
     }
 
+    public void onForceClearDataBeforeLogin()
+    {
+
+    }
     Thread m_threadChecking = null;
 
     /**

@@ -23,7 +23,7 @@ import com.bematechus.kdslib.ActivationRequest;
 /**
  * A login screen that offers login via email/password.
  */
-public class ActivityLogin extends Activity implements  Activation.ActivationEvents{
+public class ActivityLogin extends Activity implements  Activation.ActivationEvents, DialogBaseNoBumpbarSupport.KDSDialogBaseListener {
 
 
     /**
@@ -91,7 +91,14 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                String oldUserName = Activation.loadUserName();
+                String newUserName = mUserNameView.getText().toString();
+                if (!oldUserName.equals(newUserName))
+                {
+                    showClearDataWarning();
+                }
+                else
+                    attemptLogin();
             }
         });
 
@@ -357,46 +364,26 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     }
 
-//    /**
-//     * Represents an asynchronous login/registration task used to authenticate
-//     * the user.
-//     */
-//    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-//
-//        private final String mEmail;
-//        private final String mPassword;
-//
-//        UserLoginTask(String email, String password) {
-//            mEmail = email;
-//            mPassword = password;
-//        }
-//
-//        @Override
-//        protected Boolean doInBackground(Void... params) {
-//
-//
-//
-//            return true;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(final Boolean success) {
-//            mAuthTask = null;
-//            showProgress(false);
-//
-//            if (success) {
-//                finish();
-//            } else {
-//                mPasswordView.setError(getString(R.string.error_incorrect_password));
-//                mPasswordView.requestFocus();
-//            }
-//        }
-//
-//        @Override
-//        protected void onCancelled() {
-//            mAuthTask = null;
-//            showProgress(false);
-//        }
-//    }
+    public void onForceClearDataBeforeLogin()
+    {
+
+    }
+
+    private void showClearDataWarning()
+    {
+        DialogBaseNoBumpbarSupport dlg = new DialogBaseNoBumpbarSupport();
+        dlg.createOkCancelDialog(this, null, getString(R.string.confirm), getString(R.string.login_other_store), false, this);
+        dlg.show();
+    }
+
+    public void onKDSDialogCancel(DialogBaseNoBumpbarSupport dialog)
+    {
+
+    }
+    public void onKDSDialogOK(DialogBaseNoBumpbarSupport dialog, Object obj)
+    {
+        m_activation.fireClearDataEvent();
+        attemptLogin();
+    }
 }
 

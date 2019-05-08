@@ -116,5 +116,7 @@
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <string name="my_serial_number">Serial number:</string>
+    <string name="confirm">Confirm</string>
+    <string name="login_other_store">This login does not belong to the current store. The local store data will be deleted. Are you sure you want to continue?</string>
 
 </resources>

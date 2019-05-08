@@ -127,7 +127,7 @@
         android:enabled="true"
         android:paddingLeft="1dp"
         android:gravity="center"
-        android:inputType="number"
+        android:inputType="text"
         android:digits="1234567890,"
         android:textAlignment="center" />
     <View

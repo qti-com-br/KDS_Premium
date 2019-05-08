@@ -89,6 +89,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public void onSMSSendSuccess(String orderGuid, int smsState);
         public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
         public void onDoActivationExplicit();
+        public void onForceClearDataBeforeLogin();
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -1890,4 +1891,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_customer, order.getOrderName(), SyncDataResult.OK);
     }
 
+    public void fireClearDataEvent()
+    {
+        if (m_receiver != null)
+            m_receiver.onForceClearDataBeforeLogin();
+    }
 }
