@@ -3,6 +3,7 @@ package com.bematechus.kdsrouter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -161,12 +162,25 @@ public class KDSUIDlgInputSMBFolder   {
                                 m_txtPath.setText(smb.getFolder());
 
                                 m_smbPath = smb;
-                                int nError = KDSSmbFile2.checkFolderWritable(m_smbPath.toString());
-                                if (nError != 0)
-                                {
-                                    showPermissionErrorDialog(nError);
+                                AsyncTask t = new AsyncTask() {
+                                    @Override
+                                    protected Object doInBackground(Object[] params) {
+                                        int nerror = KDSSmbFile2.checkFolderWritable(m_smbPath.toString());
+                                        if (nerror != 0)
+                                        {
+                                            showPermissionErrorDialog(nerror);
 
-                                }
+                                        }
+                                        return null;
+                                    }
+                                };
+                                t.execute();
+//                                int nError = KDSSmbFile2.checkFolderWritable(m_smbPath.toString());
+//                                if (nError != 0)
+//                                {
+//                                    showPermissionErrorDialog(nError);
+//
+//                                }
                             }
                         });
         // Toggle new folder button enabling
@@ -196,12 +210,26 @@ public class KDSUIDlgInputSMBFolder   {
                                 m_txtPath.setText(smb.getFolder());
 
                                 m_smbPath = smb;
-                                int nError = KDSSmbFile1.checkFolderWritable(m_smbPath.toString());
-                                if (nError != 0)
-                                {
-                                    showPermissionErrorDialog(nError);
+                                AsyncTask t = new AsyncTask() {
+                                    @Override
+                                    protected Object doInBackground(Object[] params) {
+                                        int nError =KDSSmbFile1.checkFolderWritable(m_smbPath.toString());
+                                        if (nError !=0 )
+                                        {
+                                            showPermissionErrorDialog(nError);
 
-                                }
+                                        }
+                                        return null;
+                                    }
+                                };
+                                t.execute();
+
+//                                int nError = KDSSmbFile1.checkFolderWritable(m_smbPath.toString());
+//                                if (nError != 0)
+//                                {
+//                                    showPermissionErrorDialog(nError);
+//
+//                                }
                             }
                         });
         // Toggle new folder button enabling

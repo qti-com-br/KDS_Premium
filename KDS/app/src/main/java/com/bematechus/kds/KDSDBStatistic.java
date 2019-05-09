@@ -1432,6 +1432,23 @@ public class KDSDBStatistic extends KDSDBBase {
     }
 
 
+    public void clear() {
+
+        boolean bStartedByMe = this.startTransaction();
+        String sql = "delete from orders";
+        this.executeDML(sql);
+        sql = "delete from items";
+        this.executeDML(sql);
+        sql = "delete from condiments";
+        this.executeDML(sql);
+        sql = "delete from messages";
+        this.executeDML(sql);
+
+        this.finishTransaction(bStartedByMe);
+
+
+    }
+
 
     /**********************************************************************
      * statistic database

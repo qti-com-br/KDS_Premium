@@ -2743,4 +2743,16 @@ public class KDSSettings extends SettingsBase {
         return false;
     }
 
+   public void setToDefault()
+   {
+     init_pref_map();
+     setDefaultValues(KDSApplication.getContext());
+
+     SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+     SharedPreferences.Editor editor = pre.edit();
+     editor.clear();
+     editor.commit();
+
+
+   }
 }

@@ -117,6 +117,18 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     static private String m_timeZone = "";
 
+    //for clear database when logout
+    static public ActivationEvents m_globalEventsReceiver = null;
+
+    static public void setGlobalEventsReceiver(ActivationEvents rec)
+    {
+        m_globalEventsReceiver = rec;
+    }
+    static public ActivationEvents getGlobalEventsReceiver()
+    {
+        return m_globalEventsReceiver;
+    }
+
     public boolean isDoLicensing()
     {
         return m_bDoLicensing;
@@ -1893,7 +1905,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public void fireClearDataEvent()
     {
-        if (m_receiver != null)
-            m_receiver.onForceClearDataBeforeLogin();
+        if (m_globalEventsReceiver != null)
+            m_globalEventsReceiver.onForceClearDataBeforeLogin();
     }
 }

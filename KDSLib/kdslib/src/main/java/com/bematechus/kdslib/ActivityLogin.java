@@ -93,12 +93,16 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
             public void onClick(View view) {
                 String oldUserName = Activation.loadUserName();
                 String newUserName = mUserNameView.getText().toString();
-                if (!oldUserName.equals(newUserName))
-                {
-                    showClearDataWarning();
+                if (Activation.getGlobalEventsReceiver() != null) {
+                    if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
+                        showClearDataWarning();
+                    } else
+                        attemptLogin();
                 }
                 else
+                {
                     attemptLogin();
+                }
             }
         });
 
@@ -384,6 +388,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
     {
         m_activation.fireClearDataEvent();
         attemptLogin();
+
+
     }
 }
 

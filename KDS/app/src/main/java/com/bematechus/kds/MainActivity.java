@@ -407,6 +407,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        String s = wrongOrder.getOrderName();
 ///
         m_activation.setEventsReceiver(this);
+        Activation.setGlobalEventsReceiver(this); //for clear db after logout
 
         if (!isMacMatch2()) {
             //make sure this app runs in Bematech devices.
@@ -6142,7 +6143,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onForceClearDataBeforeLogin()
     {
-
+        MainActivity.this.getKDS().clearAll();
+        getKDS().clearStatisticData();
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        //pre.registerOnSharedPreferenceChangeListener(this);
+        setToDefaultSettings();
+        onSharedPreferenceChanged(pre, "");
+        //pre.unregisterOnSharedPreferenceChangeListener(this);
     }
     Thread m_threadChecking = null;
 
@@ -6195,12 +6202,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
-//    Handler m_autoBumpScheduleOrder = new Handler()
-//    {
-//        public void handleMessage(Message msg) {
-//
-//        }
-//    };
-
+    public void setToDefaultSettings()
+    {
+        this.getSettings().setToDefault();
+    }
 }
 

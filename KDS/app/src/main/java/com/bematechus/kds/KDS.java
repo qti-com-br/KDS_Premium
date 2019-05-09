@@ -3552,6 +3552,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         this.refreshView();
     }
 
+    public void clearStatisticData()
+    {
+        this.getStatisticDB().clear();
+    }
     public KDSSettings getSettings()
     {
         return m_settings; //this settings is saved in layout
