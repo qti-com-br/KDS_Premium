@@ -2651,6 +2651,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRANSACTION);
         xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDER);
 
+        //set kdsguid
+        String kdsguid = xml.getSubGrouValue(KDSXMLParserOrder.DBXML_ELEMENT_KDSGUID, "");
+        if (kdsguid.isEmpty())
+            xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_KDSGUID, order.getKDSGuid(), false);
+
+        //
         if (xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_ITEM)) {
             do {
                 //xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID);

@@ -619,6 +619,8 @@ public class KDSUIDialogBase {
                     evID =  KDSSettings.ID.Bumpbar_OK;
 
                 if (evID == KDSSettings.ID.Bumpbar_OK) {
+                    if (!checkDataValidation())
+                        return true;
                     onOkClicked();
                     dialog.dismiss();
                     if (KDSUIDialogBase.this.listener != null)
@@ -659,5 +661,15 @@ public class KDSUIDialogBase {
         }, m_nAutoCloseTimeoutMs);
     }
 
+    /**
+     *
+     * @return
+     *  true: ok
+     *  false: failed.
+     */
+    protected boolean checkDataValidation()
+    {
+        return true;
+    }
 
 }

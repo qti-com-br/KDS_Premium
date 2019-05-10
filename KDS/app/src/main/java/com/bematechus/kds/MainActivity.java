@@ -6149,6 +6149,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
         onSharedPreferenceChanged(pre, "");
+        inputStationID();
         //pre.unregisterOnSharedPreferenceChangeListener(this);
     }
     Thread m_threadChecking = null;

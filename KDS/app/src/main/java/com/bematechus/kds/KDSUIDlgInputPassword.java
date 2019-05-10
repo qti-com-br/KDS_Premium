@@ -150,6 +150,19 @@ public class KDSUIDlgInputPassword  extends KDSUIDialogBase  {
         checkConfirm();
     }
 
+    /**
+     *
+     * @return
+     *  true: ok
+     *  false: failed.
+     */
+    protected boolean checkDataValidation()
+    {
+        String strConfirm =  m_txtConfirm.getText().toString();
+        String strPwd =m_txtText.getText().toString();
+        boolean b = strConfirm.equals(strPwd);
+        return b;
+    }
 
 
 }

@@ -465,4 +465,15 @@ public class KDSUIDialogBase {
             }
         }, m_nAutoCloseTimeoutMs);
     }
+
+    /**
+     *
+     * @return
+     *  true: ok
+     *  false: failed.
+     */
+    protected boolean checkDataValidation()
+    {
+        return true;
+    }
 }

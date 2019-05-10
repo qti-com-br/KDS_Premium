@@ -130,7 +130,7 @@ public class KDSDataOrder extends KDSData {
     protected int m_nTransactionType = TRANSTYPE_ADD; //see above definition, don't save it to database
 
     //kpp1-75
-    protected String m_kdsGUID = ""; //for backoffice. KPP1-75. Use it to identify same order in all stations.
+    protected String m_kdsGUID = KDSUtil.createNewGUID();; //for backoffice. KPP1-75. Use it to identify same order in all stations.
 
 
 
@@ -170,6 +170,8 @@ public class KDSDataOrder extends KDSData {
         m_arValidFields = new boolean[VALID_ORDER_XML_FIELD.Count.ordinal()];
        
         resetXmlFieldsValidFlag();
+
+
     }
     public KDSDataOrder(String guid)
     {
@@ -1406,6 +1408,8 @@ public class KDSDataOrder extends KDSData {
             pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_QUEUE_READY, getQueueReady()?"1":"0");
 
             //pxml->xmj_getFrstGroup(_T("Order"));
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_KDSGUID,this.getKDSGuid(), false);
+            //
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
             String s;
