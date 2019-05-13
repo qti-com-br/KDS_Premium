@@ -1,9 +1,13 @@
 package com.bematechus.kdslib;
 
 import android.graphics.Canvas;
+import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -53,51 +57,55 @@ public class CanvasDC {
     static public  int drawText(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align)
     {
 
-        Paint paint = new Paint();
-        paint.setColor(ff.getFG());
-        paint.setTypeface(ff.getTypeFace());
-        paint.setTextSize(ff.getFontSize());
-        paint.setAntiAlias(true);
+        return drawText(g, ff, rect, text, align, false);
 
-        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
-
-        int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
-        g.save();
-        g.clipRect(rect);
-        //
-        fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
-        //
-        paint.setColor(ff.getFG());
-        //
-        if (align == Paint.Align.CENTER)
-        { //horizontal center
-            paint.setTextAlign(Paint.Align.CENTER);
-            g.drawText(text, rect.centerX(), baseline, paint);
-        }
-        else if (align == Paint.Align.LEFT)
-        {
-            paint.setTextAlign(Paint.Align.LEFT);
-            g.drawText(text, rect.left, baseline, paint);
-        }
-        else if (align == Paint.Align.RIGHT)
-        {
-            paint.setTextAlign(Paint.Align.RIGHT);
-            g.drawText(text, rect.right, baseline, paint);
-        }
-
-        g.restore();
-        return getTextPixelsWidth(paint, text);
+//        Paint paint = new Paint();
+//        paint.setColor(ff.getFG());
+//        paint.setTypeface(ff.getTypeFace());
+//        paint.setTextSize(ff.getFontSize());
+//        paint.setAntiAlias(true);
+//
+//        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+//
+//        int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+//        g.save();
+//        g.clipRect(rect);
+//        //
+//        fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
+//        //
+//        paint.setColor(ff.getFG());
+//        //
+//        if (align == Paint.Align.CENTER)
+//        { //horizontal center
+//            paint.setTextAlign(Paint.Align.CENTER);
+//            g.drawText(text, rect.centerX(), baseline, paint);
+//        }
+//        else if (align == Paint.Align.LEFT)
+//        {
+//            paint.setTextAlign(Paint.Align.LEFT);
+//            g.drawText(text, rect.left, baseline, paint);
+//        }
+//        else if (align == Paint.Align.RIGHT)
+//        {
+//            paint.setTextAlign(Paint.Align.RIGHT);
+//            g.drawText(text, rect.right, baseline, paint);
+//        }
+//
+//        g.restore();
+//        return getTextPixelsWidth(paint, text);
     }
 
-    static public  int drawText_without_clear_bg(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align)
+    static public  int drawText_without_clear_bg(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
     {
 
-        Paint paint = new Paint();
+        TextPaint paint = new TextPaint();
+
         paint.setColor(ff.getFG());
         paint.setTypeface(ff.getTypeFace());
         paint.setTextSize(ff.getFontSize());
         paint.setAntiAlias(true);
-
+        if (bBold)
+            paint.setFakeBoldText(bBold);
         Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
 
         int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
@@ -107,6 +115,7 @@ public class CanvasDC {
         //fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
         //
         paint.setColor(ff.getFG());
+
         //
         if (align == Paint.Align.CENTER)
         { //horizontal center
@@ -177,6 +186,8 @@ public class CanvasDC {
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
+        paint.setDither(true);
+        //paint.setFilterBitmap(true);
         paint.setColor(color);
         int x = rect.left + rect.width()/2;
         int y = rect.top + rect.height()/2;
@@ -299,34 +310,35 @@ public class CanvasDC {
     }
     static public  void drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align )
     {
-        g.save();
-        TextPaint textPaint = new TextPaint();
-        textPaint.setTextSize(ft.getFontSize());
-        textPaint.setTypeface(ft.getTypeFace());
-        textPaint.setColor( ft.getFG());
-        textPaint.setAntiAlias(true);
-
-        g.clipRect(rt);
-        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
-        if (align == Paint.Align.RIGHT)
-            al = Layout.Alignment.ALIGN_OPPOSITE;
-        else if (align == Paint.Align.LEFT)
-            al = Layout.Alignment.ALIGN_NORMAL;
-        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
-        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
-//        int n = sl.getLineCount();
-//        for (int i=0; i< n; i++)
-//        {
-//            int nstart = sl.getLineStart(i);
-//            int nend = sl.getLineEnd(i);
-////            Log.d("a", "b");
-//        }
-
-        int x = rt.left;
-        int y = rt.top + (rt.height() - sl.getHeight())/2;
-        g.translate(x,y);
-        sl.draw(g);
-        g.restore();
+        drawWrapString(g, ft, rt, string, align, false);
+//        g.save();
+//        TextPaint textPaint = new TextPaint();
+//        textPaint.setTextSize(ft.getFontSize());
+//        textPaint.setTypeface(ft.getTypeFace());
+//        textPaint.setColor( ft.getFG());
+//        textPaint.setAntiAlias(true);
+//
+//        g.clipRect(rt);
+//        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
+//        if (align == Paint.Align.RIGHT)
+//            al = Layout.Alignment.ALIGN_OPPOSITE;
+//        else if (align == Paint.Align.LEFT)
+//            al = Layout.Alignment.ALIGN_NORMAL;
+//        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
+//        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+////        int n = sl.getLineCount();
+////        for (int i=0; i< n; i++)
+////        {
+////            int nstart = sl.getLineStart(i);
+////            int nend = sl.getLineEnd(i);
+//////            Log.d("a", "b");
+////        }
+//
+//        int x = rt.left;
+//        int y = rt.top + (rt.height() - sl.getHeight())/2;
+//        g.translate(x,y);
+//        sl.draw(g);
+//        g.restore();
     }
 
     static public ArrayList<Point> getWrapStringRows(KDSViewFontFace ft, Rect rt, String string, Paint.Align align )
@@ -388,6 +400,218 @@ public class CanvasDC {
 
 
 
+    }
+
+//    static public final int ROUND_CORNER_DX = 10;
+//    static public final int ROUND_CORNER_DY = 10;
+    static int SHADOW_COLOR = 0xFFDDDDDD;
+    static public void drawRoundRect(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow)
+    {
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setColor(color);
+
+        RectF rt = new RectF(rc);
+        if (bRoundCorner) {
+            if (bShadow)
+            {
+//                MaskFilter filter = p.getMaskFilter();
+//                p.setMaskFilter(new BlurMaskFilter(20, BlurMaskFilter.Blur.SOLID));
+
+
+//                Shader shader = p.getShader();
+//                LinearGradient backGradient = new LinearGradient(rt.left+5, rt.top+5, rt.right+5, rt.bottom+5, new int[]{Color.GRAY, Color.WHITE}, null, Shader.TileMode.CLAMP);
+//                p.setShader(backGradient);
+                RectF rtShadow = new RectF(rt);
+                rtShadow.left += 5;
+                rtShadow.right += 5;
+                rtShadow.top += 5;
+                rtShadow.bottom += 5;
+                p.setColor(SHADOW_COLOR);//Color.LTGRAY);
+                g.drawRoundRect(rtShadow, ROUND_CORNER_DX, ROUND_CORNER_DY, p);
+                p.setColor(color);
+                //p.setShader(shader);
+                //p.setMaskFilter(filter);
+
+            }
+//            //else
+            g.drawRoundRect(rt, ROUND_CORNER_DX, ROUND_CORNER_DY, p);
+        }
+        else
+            g.drawRect(rt, p);
+
+
+//        Resources res = KDSApplication.getContext().getResources();
+//        Drawable myImage = res.getDrawable(R.drawable.ios_panel_shadow_border );
+//        myImage.setBounds(rc);
+//        myImage.draw(g);
+
+    }
+    static public final int ROUND_CORNER_DX = 10;
+    static public final int ROUND_CORNER_DY = 10;
+
+    static public void drawLeftUpArc(Canvas canvas, Rect rect, int nColor) {
+
+        Path path = new Path();
+        path.moveTo(rect.left, rect.top + ROUND_CORNER_DY);
+        path.lineTo(rect.left, rect.top);
+        path.lineTo(rect.left + ROUND_CORNER_DX, rect.top);
+        //arcTo的第二个参数是以多少度为开始点，第三个参数-90度表示逆时针画弧，正数表示顺时针
+        path.arcTo(new RectF(rect.left,rect.top,rect.left + ROUND_CORNER_DX*2,rect.top + ROUND_CORNER_DY*2),-90,-90);
+        path.close();
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
+
+//        canvas.save();
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        //p.setDither(true);
+//        //p.setStyle(Paint.Style.STROKE);
+//        p.setStrokeWidth(4);
+//        canvas.clipPath(path);
+//        canvas.drawRoundRect( new RectF(rect), ROUND_CORNER_DX,ROUND_CORNER_DY, p);
+//        canvas.restore();
+    }
+
+    static public void drawLeftDownArc(Canvas canvas, Rect rect, int nColor) {
+        Path path = new Path();
+        path.moveTo(rect.left, rect.bottom - ROUND_CORNER_DY);
+        path.lineTo(rect.left, rect.bottom);
+        path.lineTo(rect.left+ROUND_CORNER_DX, rect.bottom);
+        path.arcTo(new RectF(rect.left,rect.bottom -ROUND_CORNER_DY*2,rect.left+ROUND_CORNER_DX*2,rect.bottom),90,90);
+        path.close();
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
+    }
+
+    static public void drawRightDownArc(Canvas canvas, Rect rect, int nColor) {
+        Path path = new Path();
+        path.moveTo( rect.right -ROUND_CORNER_DX, rect.bottom);
+        path.lineTo(rect.right, rect.bottom);
+        path.lineTo(rect.right, rect.bottom-ROUND_CORNER_DY);
+        path.arcTo(new RectF(rect.right-ROUND_CORNER_DX*2,rect.bottom-ROUND_CORNER_DY*2,rect.right,rect.bottom), 0, 90);
+        path.close();
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
+    }
+
+    static public void drawRightUpArc(Canvas canvas, Rect rect, int nColor) {
+        Path path = new Path();
+        path.moveTo(rect.right, rect.top + ROUND_CORNER_DY);
+        path.lineTo(rect.right, rect.top);
+        path.lineTo(rect.right-ROUND_CORNER_DX, rect.top);
+        path.arcTo(new RectF(rect.right-ROUND_CORNER_DX*2,rect.top,rect.right,rect.top+ROUND_CORNER_DY*2),-90,90);
+        path.close();
+        drawPath(canvas, path, nColor);
+//        Paint p = new Paint();
+//        p.setColor(nColor);
+//        p.setAntiAlias(true);
+//        p.setDither(true);
+//        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+//        canvas.drawPath(path, p);
+    }
+
+    static private void drawPath(Canvas canvas, Path path, int nColor)
+    {
+        Paint p = new Paint();
+        p.setColor(nColor);
+        p.setAntiAlias(true);
+        p.setDither(true);
+        //p.setFilterBitmap(true);
+        //p.setStyle(Paint.Style.FILL_AND_STROKE);//.STROKE);
+        //p.setStrokeWidth(4);
+        //p.setPathEffect(new CornerPathEffect(ROUND_CORNER_DX));
+        //canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+        canvas.drawPath(path, p);
+    }
+
+    static public  void drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align, boolean bBold )
+    {
+        g.save();
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(ft.getFontSize());
+        textPaint.setTypeface(ft.getTypeFace());
+        textPaint.setColor( ft.getFG());
+        textPaint.setAntiAlias(true);
+        textPaint.setFakeBoldText(bBold);
+
+        g.clipRect(rt);
+        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
+        if (align == Paint.Align.RIGHT)
+            al = Layout.Alignment.ALIGN_OPPOSITE;
+        else if (align == Paint.Align.LEFT)
+            al = Layout.Alignment.ALIGN_NORMAL;
+        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
+        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+//        int n = sl.getLineCount();
+//        for (int i=0; i< n; i++)
+//        {
+//            int nstart = sl.getLineStart(i);
+//            int nend = sl.getLineEnd(i);
+////            Log.d("a", "b");
+//        }
+
+        int x = rt.left;
+        int y = rt.top + (rt.height() - sl.getHeight())/2;
+        g.translate(x,y);
+        sl.draw(g);
+        g.restore();
+    }
+
+    static public  int drawText(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
+    {
+
+        TextPaint paint = new TextPaint();
+        paint.setColor(ff.getFG());
+        paint.setTypeface(ff.getTypeFace());
+        paint.setTextSize(ff.getFontSize());
+        paint.setAntiAlias(true);
+        paint.setFakeBoldText(bBold);
+
+        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+
+        int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+        g.save();
+        g.clipRect(rect);
+        //
+        fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
+        //
+        paint.setColor(ff.getFG());
+        //
+        if (align == Paint.Align.CENTER)
+        { //horizontal center
+            paint.setTextAlign(Paint.Align.CENTER);
+            g.drawText(text, rect.centerX(), baseline, paint);
+        }
+        else if (align == Paint.Align.LEFT)
+        {
+            paint.setTextAlign(Paint.Align.LEFT);
+            g.drawText(text, rect.left, baseline, paint);
+        }
+        else if (align == Paint.Align.RIGHT)
+        {
+            paint.setTextAlign(Paint.Align.RIGHT);
+            g.drawText(text, rect.right, baseline, paint);
+        }
+
+        g.restore();
+        return getTextPixelsWidth(paint, text);
     }
 
 

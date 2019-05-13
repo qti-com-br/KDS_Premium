@@ -15,23 +15,23 @@
         android:focusable="false"
         android:textColor="#000000"
         android:button="@null"
-        android:layout_marginLeft="10dp" />
+         />
 
     <CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@android:id/text1"
+        android:id="@+id/txtMode"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/listPreferredItemHeightSmall"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:gravity="center_vertical"
         android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:checked="false"
+        android:enabled="true"
 
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:textColor="#000000"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:enabled="true"
-        android:checked="false" />
+        android:gravity="center_vertical"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textColor="#000000" />
 
 </LinearLayout>
 

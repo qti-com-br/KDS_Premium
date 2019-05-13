@@ -64,10 +64,10 @@ public class KDSViewBlockCell {
      *          the col number in block, it for expend title background color
      * @return
      */
-    public boolean onDraw(Canvas g,Rect rcAbsolute,  KDSViewSettings env, int nColInBlock, KDSViewBlock block)
+    public boolean onDraw(Canvas g,Rect rcAbsolute,  KDSViewSettings env, int nColInBlock, KDSViewBlock block, boolean bRoundCorner)
     {
 
-            return drawCell(g,rcAbsolute,  env, nColInBlock, block);
+            return drawCell(g,rcAbsolute,  env, nColInBlock, block, bRoundCorner);
         
     }
     
@@ -79,17 +79,20 @@ public class KDSViewBlockCell {
      * @param env
      * @return
      */
-    protected boolean drawCell(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block)
+    protected boolean drawCell(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block, boolean bRoundCorner)
     {
-        this.drawBackground(g, rcAbsolute, env, this.getFont().getBG());
+        this.drawBackground(g, rcAbsolute, env, this.getFont().getBG(), bRoundCorner);
 
         return true;
     }
-    private void drawBackground(Canvas g,Rect rcAbsolute,KDSViewSettings env, int bg)
+    private void drawBackground(Canvas g,Rect rcAbsolute,KDSViewSettings env, int bg, boolean bRoundCorner)
     {
 
         Rect rt = rcAbsolute;//this.getBounds();
-        CanvasDC.fillRect(g, bg, rt);
+        if (bRoundCorner)
+            CanvasDC.drawRoundRect(g, rt, bg,true, false );
+        else
+            CanvasDC.fillRect(g, bg, rt);
 
         
     }

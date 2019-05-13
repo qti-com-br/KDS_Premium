@@ -719,7 +719,7 @@ public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferen
         public List<TabDisplay.TabButtonData> m_listData; //KDSStationsRelation class array
 
         public MyAdapter(Context context, List<TabDisplay.TabButtonData> data) {
-            super(context, R.layout.listitem_tab_display_mode,android.R.id.text1, data);
+            super(context, R.layout.listitem_tab_display_mode,R.id.txtMode, data);
 
             m_listData = data;
         }
@@ -762,7 +762,7 @@ public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferen
             v.setTag(r);
 
 
-            ((TextView) v.findViewById(android.R.id.text1)).setText(r.toString());
+            ((TextView) v.findViewById(R.id.txtMode)).setText(r.toString());
             CheckBox chk =  ((CheckBox) v.findViewById(R.id.chkChecked));
             chk.setChecked(r.getEnabled());
             chk.setTag(r);
@@ -773,9 +773,9 @@ public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferen
             drawable.setBounds(0,0,16,16);
             chk.setCompoundDrawables(drawable,null,null,null);
 
-            ((CheckedTextView) v.findViewById(android.R.id.text1)).setChecked((r == m_selected));
-            ((CheckedTextView) v.findViewById(android.R.id.text1)).setTag(r);
-            ((CheckedTextView) v.findViewById(android.R.id.text1)).setOnClickListener(new View.OnClickListener() {
+            ((CheckedTextView) v.findViewById(R.id.txtMode)).setChecked((r == m_selected));
+            ((CheckedTextView) v.findViewById(R.id.txtMode)).setTag(r);
+            ((CheckedTextView) v.findViewById(R.id.txtMode)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 

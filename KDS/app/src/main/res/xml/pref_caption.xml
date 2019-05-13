@@ -7,7 +7,7 @@
 
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="caption_normal"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/caption_bg,@color/caption_fg,12"
+        android:defaultValue="default_font,@color/caption_bg,@color/caption_fg,normal_size"
         android:title="@string/pref_order_caption_normal_font"
         app:supportsColor="true"/>
 

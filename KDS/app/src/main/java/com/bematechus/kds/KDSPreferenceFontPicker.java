@@ -68,7 +68,9 @@ public class KDSPreferenceFontPicker extends Preference {
         if (KDSUIFontPickerDialog.g_instance != null)
             return;
 
-        new KDSUIFontPickerDialog(getContext(), m_valueFF, m_bSupportColorSelection/*supportsAlpha*/, new KDSUIFontPickerDialog.OnFontPickerDlgListener() {
+        KDSViewFontFace currentFont = new KDSViewFontFace();
+        currentFont.copyFrom(m_valueFF);
+        new KDSUIFontPickerDialog(getContext(), currentFont, m_bSupportColorSelection/*supportsAlpha*/, new KDSUIFontPickerDialog.OnFontPickerDlgListener() {
             @Override public void onOk(KDSUIFontPickerDialog dialog, KDSViewFontFace ff) {
                 if (!callChangeListener(ff)) return; // They don't want the value to be set
                 m_valueFF.copyFrom( ff);

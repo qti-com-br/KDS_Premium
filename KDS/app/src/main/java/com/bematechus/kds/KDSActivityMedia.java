@@ -324,28 +324,35 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
 
         m_btnPlayPause = (Button) this.findViewById(R.id.btnPlayPause);
         m_btnPlayPause.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnPlayPause, R.drawable.playpause);
 
         m_btnStop = (Button) this.findViewById(R.id.btnStop);
         m_btnStop.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnStop, R.drawable.stop);
 
         m_btnPrev = (Button) this.findViewById(R.id.btnPrev);
         m_btnPrev.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnPrev, R.drawable.prev);
 
         m_btnNext = (Button) this.findViewById(R.id.btnNext);
         m_btnNext.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnNext, R.drawable.next);
 
         m_btnBackward = (Button) this.findViewById(R.id.btnBackward);
-        ;
         m_btnBackward.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnBackward, R.drawable.previous_page);
+
         m_btnForward = (Button) this.findViewById(R.id.btnForward);
-        ;
         m_btnForward.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnForward, R.drawable.next_page);
 
         m_btnVolIncrease = (Button) this.findViewById(R.id.btnVolIncrease);
         m_btnVolIncrease.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnVolIncrease, R.drawable.volume_increase);
 
         m_btnVolDecrease = (Button) this.findViewById(R.id.btnVolDecrease);
         m_btnVolDecrease.getBackground().setAlpha(btnAlpha);
+        setButtonImageSize(R.id.btnVolDecrease, R.drawable.volume_decrease);
 
         m_pbVol = (ProgressBar) this.findViewById(R.id.pbVol);
         m_pbProgress = (ProgressBar) this.findViewById(R.id.pbProgress);
@@ -965,7 +972,7 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
             case Playing:
                 Drawable drawable = this.getResources().getDrawable(R.drawable.pause );
 
-                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                drawable.setBounds(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);//drawable.getMinimumWidth(), drawable.getMinimumHeight());
                 m_btnPlayPause.setCompoundDrawables( null, drawable, null, null);
                 if (isPlayingVideo())
                     m_videoStartPlayingTimeDog.reset();
@@ -974,7 +981,7 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
             case Pause:
                 Drawable drawable2 = this.getResources().getDrawable(R.drawable.playpause );
 
-                drawable2.setBounds(0, 0, drawable2.getMinimumWidth(), drawable2.getMinimumHeight());
+                drawable2.setBounds(0, 0,IMAGE_WIDTH, IMAGE_HEIGHT);// drawable2.getMinimumWidth(), drawable2.getMinimumHeight());
                 m_btnPlayPause.setCompoundDrawables( null, drawable2, null, null);
 
                 //m_btnPlayPause.setImageBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.playpause));
@@ -1105,6 +1112,17 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
         }
     }
 
+    static final int IMAGE_WIDTH = 32;
+    static final int IMAGE_HEIGHT = 32;
+
+    private void setButtonImageSize(int btnID, int imgID)
+    {
+        Button btn =(Button)findViewById(btnID);
+        Drawable drawable=getResources().getDrawable(imgID);
+        drawable.setBounds(0,0,IMAGE_WIDTH,IMAGE_HEIGHT);
+        btn.setCompoundDrawables(null,drawable,null,null);
+
+    }
 
 
 }

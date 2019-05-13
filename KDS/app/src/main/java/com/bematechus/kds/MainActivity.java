@@ -3330,8 +3330,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String strOrderName = "Order #" + KDSUtil.convertIntToString(m_nTestCount);
 
         int nItems = m_randomItems.nextInt(5);
-
         nItems = Math.abs(m_randomItems.nextInt() % 5) +1;
+//        if (m_nTestCount%2 ==1)
+//            nItems =15;// Math.abs(m_randomItems.nextInt() % 5) +1;
+//        else
+//            nItems = 1;
         KDSDataOrder order = KDSDataOrder.createTestOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
         //KDSDataOrder order = KDSDataOrder.createTestSmartOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
        // KDSDataOrder order = KDSDataOrder.createTestPrepOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
@@ -3349,7 +3352,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         this.getUserUI(KDSUser.USER.USER_A).refreshSum(KDSUser.USER.USER_A, pos);
         this.getUserUI(KDSUser.USER.USER_B).refreshSum(KDSUser.USER.USER_B, pos);
-        getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+        //getKDS().syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
         // t.debug_print_Duration("opAddNewOrder4");
         //this.getSummaryFragment().refreshSummary();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -4975,7 +4978,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         CSVStrings files = item.getBuildCard();
         if (files.getCount() <=0) {
             showToastMessage(this.getString(R.string.no_build_card));// "No build card files for selected item");
-            return;
+            if (!KDSConst._DEBUG)
+                return;
         }
 
         Intent intent = new Intent(MainActivity.this, KDSActivityMedia.class);
@@ -4992,6 +4996,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void  doMoreFunc_Training_Video(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+
         KDSDataItem item = getSelectItem(userID);
         if (item == null) return;
         CSVStrings files = item.getTrainingVideo();
@@ -5003,7 +5008,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         Intent intent = new Intent(MainActivity.this, KDSActivityMedia.class);
 
-        intent.putExtra("files", files.toCSV());
+        intent.putExtra("files",files.toCSV());
         startActivityForResult(intent, KDSConst.SHOW_MEDIA_PLAYER);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }

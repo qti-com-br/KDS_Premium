@@ -1736,8 +1736,6 @@ just 16bits value
     }
 
 
-
-
     public static List listAvailableStorage(Context context) {
         ArrayList storagges = new ArrayList();
         StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
@@ -1795,6 +1793,66 @@ just 16bits value
             return "mounted".equals(state);
         }
     }
+
+
+
+//    public static List listAvailableStorage(Context context) {
+//        ArrayList storagges = new ArrayList();
+//        StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+//        try {
+//            Class<?>[] paramClasses = {};
+//            Method getVolumeList = StorageManager.class.getMethod("getVolumeList", paramClasses);
+//            getVolumeList.setAccessible(true);
+//            Object[] params = {};
+//            Object[] invokes = (Object[]) getVolumeList.invoke(storageManager, params);
+//            if (invokes != null) {
+//                StorageInfo info = null;
+//                for (int i = 0; i < invokes.length; i++) {
+//                    Object obj = invokes[i];
+//                    Method getPath = obj.getClass().getMethod("getPath", new Class[0]);
+//                    String path = (String) getPath.invoke(obj, new Object[0]);
+//                    info = new StorageInfo(path);
+//                    File file = new File(info.path);
+//                    if ((file.exists()) && (file.isDirectory()) && (file.canWrite())) {
+//                        Method isRemovable = obj.getClass().getMethod("isRemovable", new Class[0]);
+//                        String state = null;
+//                        try {
+//                            Method getVolumeState = StorageManager.class.getMethod("getVolumeState", String.class);
+//                            state = (String) getVolumeState.invoke(storageManager, info.path);
+//                            info.state = state;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        if (info.isMounted()) {
+//                            info.isRemoveable = ((Boolean) isRemovable.invoke(obj, new Object[0])).booleanValue();
+//                            storagges.add(info);
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        storagges.trimToSize();
+//
+//        return storagges;
+//    }
+
+
+//    static public class StorageInfo {
+//        public String path;
+//        public String state;
+//        public boolean isRemoveable;
+//
+//        public StorageInfo(String path) {
+//            this.path = path;
+//        }
+//
+//        public boolean isMounted() {
+//            return "mounted".equals(state);
+//        }
+//    }
 
 
     static public String getVersionName(Context context) {

@@ -122,7 +122,7 @@ public class MainActivityFragment extends Fragment {
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_down))
             addButton(KDSTouchPadButton.TouchPadID.Down, R.string.touchpad_down,R.drawable.down_arrow,R.drawable.down_arrow_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_bump))
-            addButton(KDSTouchPadButton.TouchPadID.Bump, R.string.touchpad_bump,R.drawable.bump2_32px,R.drawable.bump2_32px);
+            addButton(KDSTouchPadButton.TouchPadID.Bump, R.string.touchpad_bump,R.drawable.bump,R.drawable.bump_us);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_unbump_last))
             addButton(KDSTouchPadButton.TouchPadID.UnbumpLast, R.string.touchpad_unbump_last, R.drawable.unbump_last, R.drawable.unbump_last_us );
@@ -140,9 +140,9 @@ public class MainActivityFragment extends Fragment {
 
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_park))
-            addButton(KDSTouchPadButton.TouchPadID.Park, R.string.touchpad_park, R.drawable.park_32px, R.drawable.park_32px );
+            addButton(KDSTouchPadButton.TouchPadID.Park, R.string.touchpad_park, R.drawable.park, R.drawable.park_us );
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_unpark))
-            addButton(KDSTouchPadButton.TouchPadID.Unpark, R.string.touchpad_unpark, R.drawable.unpark_32px, R.drawable.unpark_32px);
+            addButton(KDSTouchPadButton.TouchPadID.Unpark, R.string.touchpad_unpark, R.drawable.unpark, R.drawable.unpark_us);
         //addButton(KDSTouchPadButton.TouchPadID.ActiveStations, R.string.touchpad_active, KDSSettings.ID.Bumpbar_More,kbdtype );
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_print))
             addButton(KDSTouchPadButton.TouchPadID.Print, R.string.touchpad_print, R.drawable.ticket_print, R.drawable.ticket_print_us);
@@ -189,8 +189,8 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        m_layoutA = new KDSLayout((KDSView)v.findViewById(R.id.viewOrdersA));
-        m_layoutB = new KDSLayout((KDSView)v.findViewById(R.id.viewOrdersB));
+        m_layoutA = new KDSLayout((KDSIOSView)v.findViewById(R.id.viewOrdersA));
+        m_layoutB = new KDSLayout((KDSIOSView)v.findViewById(R.id.viewOrdersB));
 
         m_linearA = v.findViewById(R.id.linearA);
         m_linearB = v.findViewById(R.id.linearB);

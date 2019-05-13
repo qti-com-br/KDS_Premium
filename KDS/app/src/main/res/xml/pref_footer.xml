@@ -38,7 +38,7 @@
 
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="footer_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/footer_bg,@color/footer_fg,12"
+        android:defaultValue="default_font,@color/footer_bg,@color/footer_fg,normal_size"
         android:title="@string/pref_kds_footer_font"
         android:dependency="footer_enable"
         app:supportsColor="true"/>

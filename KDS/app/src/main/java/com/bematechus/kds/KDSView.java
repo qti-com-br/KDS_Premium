@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -22,8 +24,10 @@ import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.KDSViewFontFace;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -52,6 +56,7 @@ public class KDSView extends View {
     {
         Normal,
         LineItems,
+
     }
 
 
@@ -100,7 +105,7 @@ public class KDSView extends View {
         getSettings().set(KDSSettings.ID.Panels_Layout_Format, format);
     }
 
-    private KDSSettings getSettings()
+    protected KDSSettings getSettings()
     {
         return getEnv().getSettings();
     }
@@ -108,6 +113,11 @@ public class KDSView extends View {
     public  Vector<KDSViewPanel> getPanels()
     {
         return m_arPanels;
+    }
+
+    public int getPanelsCount()
+    {
+        return m_arPanels.size();
     }
     public KDSView(Context context)
     {
@@ -506,7 +516,7 @@ public class KDSView extends View {
 
     }
 
-    private  boolean m_bForceFullDrawing = false;
+    protected   boolean m_bForceFullDrawing = false;
     public void refresh()
     {
 
@@ -515,7 +525,7 @@ public class KDSView extends View {
         this.invalidate();
     }
 
-    private boolean m_bDrawing = false;
+    protected boolean m_bDrawing = false;
 
 
     @Override
@@ -526,6 +536,7 @@ public class KDSView extends View {
 
         if (m_bDrawing) return;
         m_bDrawing = true;
+        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
         synchronized (m_panelsLocker) {
             try {
 
@@ -557,6 +568,7 @@ public class KDSView extends View {
                 } else {
                     Canvas g = get_double_buffer();
                     m_lineItemsViewer.onDraw(g);
+                    redrawAllPanelNumberInReverseSequence(g);
                     commit_double_buffer(canvas);
                 }
             } catch (Exception err) {
@@ -575,7 +587,7 @@ public class KDSView extends View {
 
     Bitmap m_bitmapBuffer = null;
     Canvas m_bufferCanvas = null;
-    private Canvas get_double_buffer()
+    protected Canvas get_double_buffer()
     {
         if (m_bufferCanvas == null)
             m_bufferCanvas = new Canvas();
@@ -597,11 +609,11 @@ public class KDSView extends View {
         }
         return m_bufferCanvas;
     }
-    private void commit_double_buffer(Canvas canvas)
+    protected void commit_double_buffer(Canvas canvas)
     {
         canvas.drawBitmap(m_bitmapBuffer, 0, 0, null);
     }
-    private void drawMe_DoubleBuffer(Canvas canvas)
+    protected void drawMe_DoubleBuffer(Canvas canvas)
     {
 
         Canvas g = get_double_buffer();
@@ -630,7 +642,7 @@ public class KDSView extends View {
             CanvasDC.fillRect(g, hightlightBg, rtHightLight);
             //g.drawRect(rtHightLight, );
         }
-
+        redrawAllPanelNumberInReverseSequence(g);
         commit_double_buffer(canvas);
 
     }
@@ -648,7 +660,7 @@ public class KDSView extends View {
 
         return nHeight/nRowH;
     }
-    private boolean touchXY(int x, int y)
+    protected boolean touchXY(int x, int y)
     {
         if (getOrdersViewMode() == OrdersViewMode.Normal) {
             firePanelClicked(null, null, null);
@@ -693,7 +705,7 @@ public class KDSView extends View {
         return false;
     }
 
-    private void firePanelClicked(KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell)
+    protected void firePanelClicked(KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell)
     {
         if (this.getEventReceiver() != null)
             this.getEventReceiver().onViewPanelClicked(this, panel, block, cell);
@@ -779,7 +791,7 @@ public class KDSView extends View {
 
     }
 
-    public KDSViewPanel getLastPanel()
+    public KDSViewPanelBase getLastPanel()
     {
         if (m_arPanels.size() <=0)
             return null;
@@ -856,8 +868,56 @@ public class KDSView extends View {
         Rect rtLast = getLastPanelLastBlockBounds();
         Point pt = getNextPanelStartPoint(rtLast);
         return (pt == null);
+	}
+    static public int getOrderCaptionBackgroundColor(KDSDataOrder order, KDSViewSettings env, KDSViewFontFace font)
+    {
+        //get the background color according to the time.
+        int nBG = env.getSettings().getOrderTimeColorAccordingWaitingTime(order.getStartToCookTime(), font.getBG());
+        //exp alert
+        if (env.getSettings().isExpeditorStation())
+        { //the exp aler color
+            if (order.isItemsAllBumpedInExp())
+            {
+                nBG = env.getSettings().getExpAlertTitleBgColor(true, font.getBG());
+            }
+        }
 
+        if (order.isDimColor())
+            nBG = KDSConst.DIM_BG;
+        return nBG;
     }
+
+    /**
+     * check if this order is visible in view
+     * @param orderGuid
+     * @return
+     */
+    protected boolean isOrderVisible(String orderGuid)
+    {
+        int ncount = this.getPanels().size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSViewPanel panel = this.getPanels().get(i);
+            if (panel == null)
+                continue;
+            KDSViewBlock block = panel.getFirstBlock();
+            if (block == null)
+                continue;
+            String guid = ((KDSLayoutOrder)block.getCells().get(0).getData()).getGUID();
+            if (guid.equals(orderGuid))
+                return true;
+        }
+        return false;
+    }
+
+    private void redrawAllPanelNumberInReverseSequence(Canvas g)
+    {
+        int ncount = panelsGetCount();
+        for (int i = ncount-1; i >=0; i--) {
+            m_arPanels.get(i).drawPanelNumber(g, i);
+        }
+    }
+
 
 
 }
