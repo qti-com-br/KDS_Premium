@@ -2875,4 +2875,21 @@ get the total qty of all found items
     {
         return m_kdsGUID;
     }
+
+    static public String getSMSStateString(int nState)
+    {
+        switch (nState)
+        {
+            case SMS_STATE_NEW:
+                return "New";
+            case SMS_STATE_PREPARED:
+                return "Prepared";
+            case SMS_STATE_DONE:
+                return "Done";
+            case SMS_STATE_UNKNOWN:
+                return "Unknown";
+            default:
+                return "Unknown";
+        }
+    }
 }

@@ -97,21 +97,24 @@ public class KDSIOSView extends KDSView {
 
     private boolean useSupperFunction()
     {
-//        if (KDSConst._DEBUG)
+        return true;
+//
+////        if (KDSConst._DEBUG)
+////            return false;
+////        else {
+//
+//            if ( getOrdersViewMode() == OrdersViewMode.LineItems) {
+//                return true;
+//            }
+//
+//            KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
+//            //comment it, remove ios like UI
+////            if (layoutFormat != KDSSettings.LayoutFormat.iOS_Like)
+////            {
+////                return true;
+////            }
 //            return false;
-//        else {
-
-            if ( getOrdersViewMode() == OrdersViewMode.LineItems) {
-                return true;
-            }
-
-            KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
-            if (layoutFormat != KDSSettings.LayoutFormat.iOS_Like)
-            {
-                return true;
-            }
-            return false;
-//        }
+////        }
     }
 
     public int panelsGetCount()

@@ -4118,7 +4118,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
                 m_activationHTTP.postSMS( order, nSMSState);
 
-                showToastMessage("SMS:" + KDSUtil.convertIntToString(nSMSState));
+                showToastMessage("SMS:" + KDSDataOrder.getSMSStateString(nSMSState));
                 //KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
             }
         }

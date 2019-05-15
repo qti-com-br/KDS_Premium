@@ -297,7 +297,7 @@
     <string-array name="pref_kds_panels_mode_titles">
         <item>Horizontal expand</item>
         <item>Vertical expand</item>
-        <item>IOS like</item>
+        <!--<item>IOS like</item>-->
     </string-array>
 
     <string name="pref_kds_panels_title_rows">Panel rows</string>

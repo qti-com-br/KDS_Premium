@@ -605,7 +605,7 @@ public class KDSSettings extends SettingsBase {
     public enum LayoutFormat{
         Horizontal,
         Vertical,
-        iOS_Like,
+        //iOS_Like,
     };
 
     public enum TitlePosition

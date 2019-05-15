@@ -50,11 +50,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
 
     private KDSLayoutEvents m_eventsReceiver = null;
-    private KDSIOSView m_view = null;
+    private KDSView m_view = null;
     private KDSDataOrders m_orders;
 
 
-    public KDSLayout(KDSIOSView view) {
+    public KDSLayout(KDSView view) {
         m_view = view;
         m_view.setEventsReceiver(this);
         m_view.getLineItemsViewer().setEventReceiver(this);//2.0.27
@@ -2305,10 +2305,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //m_view.clear();
         synchronized (m_view.m_panelsLocker) {
             m_view.clearPanels();
-            if (layoutFormat == KDSSettings.LayoutFormat.iOS_Like)
-            {
-                m_view.ios_clear();
-            }
+//            if (layoutFormat == KDSSettings.LayoutFormat.iOS_Like)
+//            {
+//                m_view.ios_clear();
+//            }
 
         }
 
@@ -2341,11 +2341,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     nStartOrderIndex = 0;
 
 
-                if (layoutFormat == KDSSettings.LayoutFormat.iOS_Like)
-                {//move to new function.
-                    showOrdersIOSLikeUI(orders, nStartOrderIndex);
-                    return true;
-                }
+//                if (layoutFormat == KDSSettings.LayoutFormat.iOS_Like)
+//                {//move to new function.
+//                    showOrdersIOSLikeUI(orders, nStartOrderIndex);
+//                    return true;
+//                }
 
                 int ncount = orders.getCount();
                 for (int i = nStartOrderIndex; i < ncount; i++) {
@@ -2409,6 +2409,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     }
 
+    /*
     public boolean showOrdersIOSLikeUI(KDSDataOrders orders, int nStartIndex)
     {
 
@@ -2432,4 +2433,5 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //t.debug_print_Duration("showOrders4");
         return true;
     }
+    */
 }

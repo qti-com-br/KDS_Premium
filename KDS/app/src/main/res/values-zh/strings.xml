@@ -290,7 +290,7 @@
     <string-array name="pref_kds_panels_mode_titles">
         <item>横向扩展</item>
         <item>纵向扩展</item>
-        <item>苹果模式</item>
+        <!--<item>苹果模式</item>-->
     </string-array>
 
     <string name="pref_kds_panels_title_rows">显示区行数</string>
