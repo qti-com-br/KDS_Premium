@@ -50,11 +50,14 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
 
     private KDSLayoutEvents m_eventsReceiver = null;
-    private KDSView m_view = null;
+    private KDSIOSView m_view = null;
     private KDSDataOrders m_orders;
 
-
-    public KDSLayout(KDSView view) {
+    /**
+     * IOS ui was removed. I just keep ios view. it is for restoreing this feature.
+     * @param view
+     */
+    public KDSLayout(KDSIOSView view) {
         m_view = view;
         m_view.setEventsReceiver(this);
         m_view.getLineItemsViewer().setEventReceiver(this);//2.0.27
