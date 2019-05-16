@@ -1012,7 +1012,8 @@ public class KDSSettings extends SettingsBase {
         m_mapPrefID.put(ID.Queue_flash_ready_order,"bool_queue_flash_ready_order");
         m_mapPrefID.put(ID.Queue_more_orders_message,"string_queue_more_orders_message");
 
-        m_mapPrefID.put(ID.Queue_double_bump_expo_order,"bool_bump_double_queue");
+        init_option(ID.Queue_double_bump_expo_order,"bool_bump_double_queue", false);
+        //m_mapPrefID.put(ID.Queue_double_bump_expo_order,"bool_bump_double_queue");
 
         m_mapPrefID.put(ID.Queue_order_pickup_font,"fontface_queue_order_pickup_font");
         m_mapPrefID.put(ID.Queue_view_bg,"int_queue_view_bg");
@@ -1522,7 +1523,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.Queue_flash_ready_order,true);
         set(ID.Queue_more_orders_message,getResString(R.string.more_orders));
 
-        set(ID.Queue_double_bump_expo_order,true);
+        //set(ID.Queue_double_bump_expo_order,true);
 
         set(ID.Queue_order_pickup_font, new KDSViewFontFace( getResColor(R.color.queue_order_status_pickup_bg),getResColor( R.color.queue_order_status_pickup_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
 

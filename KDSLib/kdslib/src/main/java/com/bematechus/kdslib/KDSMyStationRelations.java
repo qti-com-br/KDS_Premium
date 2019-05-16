@@ -18,6 +18,7 @@ public class KDSMyStationRelations {
     private Object m_locker = new Object();
     ArrayList<KDSStationIP> m_arExpStations = new ArrayList<KDSStationIP>(); //my expeditor stations
     ArrayList<KDSStationIP> m_arSlaveStations = new ArrayList<KDSStationIP>(); //my slave stations
+    ArrayList<KDSStationIP> m_arQueueExpStations = new ArrayList<KDSStationIP>(); //my queue-expo stations
 
     ArrayList<KDSStationIP> m_arPrimaryOfSlaveBackupStations = new ArrayList<KDSStationIP>(); //who use me as backup station.
     ArrayList<KDSStationIP> m_arPrimaryOfSlaveWorkLoadStations = new ArrayList<KDSStationIP>(); //who use me as work load station.
@@ -45,6 +46,7 @@ public class KDSMyStationRelations {
             //find all stations relations
             m_arExpStations = KDSStationsRelation.findExpOfStation(m_arStationsRelations, stationID);
             m_arSlaveStations = KDSStationsRelation.findSlaveOfStation(m_arStationsRelations, stationID);
+            m_arQueueExpStations = KDSStationsRelation.findQueueExpOfStation(m_arStationsRelations, stationID);
             m_arPrimaryOfSlaveBackupStations =  KDSStationsRelation.findPrimaryWhoUseMeAsBackup(m_arStationsRelations, stationID);
 
             m_arPrimaryOfSlaveWorkLoadStations =  KDSStationsRelation.findPrimaryWhoUseMeAsWorkLoad(m_arStationsRelations, stationID);
@@ -480,5 +482,11 @@ public class KDSMyStationRelations {
 
         }
         return arReturn;
+    }
+
+    public ArrayList<KDSStationIP> getQueueExpoStations()
+    {
+        return m_arQueueExpStations;
+
     }
 }

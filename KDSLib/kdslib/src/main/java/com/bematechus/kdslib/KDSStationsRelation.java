@@ -772,4 +772,29 @@ public class KDSStationsRelation extends KDSStationIP {
         });
 
     }
+
+    /**
+     * find give station queue-expeditors
+     * @param arRelations
+     * @param stationID
+     * @return
+     */
+    static ArrayList<KDSStationIP> findQueueExpOfStation(ArrayList<KDSStationsRelation> arRelations, String stationID)
+    {
+        // ArrayList<KDSTCPStation> ar = new ArrayList<KDSTCPStation>();
+        KDSStationsRelation relation = findStation(arRelations, stationID);
+        if (relation == null)
+            return new ArrayList<KDSStationIP>();
+        ArrayList<KDSStationIP> arReturn = parseStationsString(relation.getExpStations());
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+        for (int i=0; i< arReturn.size(); i++)
+        {
+            KDSStationsRelation r = findStation(arRelations, arReturn.get(i).getID());
+            if (r.getFunction() == SettingsBase.StationFunc.Queue_Expo)
+                ar.add(arReturn.get(i));
+        }
+        //get station ip and port settings.
+        return setIpFromSettenRelations(arRelations, ar);
+
+    }
 }
