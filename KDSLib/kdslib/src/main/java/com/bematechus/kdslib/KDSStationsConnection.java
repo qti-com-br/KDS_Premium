@@ -1179,6 +1179,15 @@ public class KDSStationsConnection {
             if (station.getID().equals(myStationID)) continue;
             writeDataToStationOrItsBackup(station, strXml);
         }
+
+        ncount =m_stationsRelations.getQueueExpoStations().size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationIP station =  m_stationsRelations.getQueueExpoStations().get(i);
+            if (station.getID().equals(myStationID)) continue;
+            writeDataToStationOrItsBackup(station, strXml);
+        }
+
         return true;
     }
 
@@ -1344,7 +1353,11 @@ public class KDSStationsConnection {
     public boolean isMyQueueDisplayStationsExisted()
     {
         int ncount =m_stationsRelations.getQueueStations().size();
+        if  (ncount >0)
+            return true;
+        ncount = m_stationsRelations.getQueueExpoStations().size();
         return (ncount >0);
+
     }
 
     /**

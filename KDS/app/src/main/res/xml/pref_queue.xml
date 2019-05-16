@@ -82,11 +82,11 @@
         <!--android:negativeButtonText="@null"-->
         <!--android:positiveButtonText="@null" />-->
 
-    <CheckBoxPreference
-        android:key="bump_double_queue"
-        android:title="@string/pref_kds_bumping_double_queue_enabled"
-        android:summary="@string/pref_kds_bumping_double_queue_enabled_sum"
-        android:defaultValue="true" />
+    <!--<CheckBoxPreference-->
+        <!--android:key="bump_double_queue"-->
+        <!--android:title="@string/pref_kds_bumping_double_queue_enabled"-->
+        <!--android:summary="@string/pref_kds_bumping_double_queue_enabled_sum"-->
+        <!--android:defaultValue="true" />-->
 
     <CheckBoxPreference
         android:key="queue_show_order_id"

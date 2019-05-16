@@ -2117,10 +2117,11 @@ public class KDSStationFunc {
      */
     static public void sync_with_queue(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item , String xmlData)
     {
-        if (kds.getStationsConnections().getRelations().getQueueStations().size() <=0)
-            return;//for speed
-        String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
-        kds.getStationsConnections().writeToQueue(kds.getStationID(), strXml);
+        if (kds.getStationsConnections().getRelations().getQueueStations().size() >0 ||
+                kds.getStationsConnections().getRelations().getQueueExpoStations().size() >0) {
+            String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+            kds.getStationsConnections().writeToQueue(kds.getStationID(), strXml);
+        }
 
     }
 

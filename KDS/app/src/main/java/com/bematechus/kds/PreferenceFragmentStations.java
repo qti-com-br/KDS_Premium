@@ -970,7 +970,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
                 MyAdapter.this.notifyDataSetChanged();
             }
-
+            Spinner m_spinnerBeforeCallInputPrimaryID = null;//for redraw this spinner
             private void inputPrimaryStationID(Spinner stationFuncSpinner, int position, KDSStationsRelation relation)
             {
                 m_relationBeforeShowSlaveDialog = relation;
@@ -982,7 +982,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
                 String strCancel = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
                 m_viewBeforeShowSlaveDialog = LayoutInflater.from(KDSApplication.getContext()).inflate(R.layout.kdsui_dlg_input_slave, null);
-
+                m_spinnerBeforeCallInputPrimaryID = stationFuncSpinner;
                 AlertDialog d = new AlertDialog.Builder(PreferenceFragmentStations.this.getActivity())
                         .setTitle(PreferenceFragmentStations.this.getString(R.string.input))
                         .setMessage(strComfirm)
@@ -990,6 +990,10 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         onInputPrimaryIDDlgOK();
+                                        if (m_spinnerBeforeCallInputPrimaryID != null) {
+                                            ((ArrayAdapter) m_spinnerBeforeCallInputPrimaryID.getAdapter()).notifyDataSetChanged();
+                                            m_spinnerBeforeCallInputPrimaryID = null;
+                                        }
                                     }
                                 }
                         )
@@ -2735,6 +2739,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
 
             TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
+
             KDSSettings.StationFunc func = mStringArray.get(position).getFunction();
 
             int relationPosition = -1;

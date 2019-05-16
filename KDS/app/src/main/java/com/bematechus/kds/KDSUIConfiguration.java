@@ -1028,14 +1028,15 @@ public class KDSUIConfiguration extends PreferenceActivity {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class BumpingPreferenceFragment extends KDSPreferenceFragment {
+    public static class BumpingPreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener  {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             suspendOnSharedPreferencesChangedEvent(true);
             addPreferencesFromResource(R.xml.pref_bumping);
             suspendOnSharedPreferencesChangedEvent(false);
-
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.registerOnSharedPreferenceChangeListener(this);
 
              bindPreferenceSummaryToValue(findPreference("bumping_days"));
             bindPreferenceSummaryToValue(findPreference("bumping_by_panelnumber"));
@@ -1045,6 +1046,69 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("bumping_auto_park_minutes"));
 
         }
+
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
+        {
+
+            if (key.equals("bump_double_queue") )
+            {
+                Boolean b = prefs.getBoolean(key, true);
+                KDSGlobalVariables.getKDS().getBroadcaster().broadcastQueueExpoDoubleBumpValue(b);
+                if (!b)
+                {
+                    showDoubleBumpDisabledAlert(); //2.0.12
+                }
+            }
+        }
+        /**
+         *  In Queue option, when people disable the “double bump”,
+         *  show a warning “If you disable this option in Queue station, a Bumpbar is required to bump the order off Queue display”.
+         */
+        private  void showDoubleBumpDisabledAlert()
+        {
+            String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+            String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+            if (this.getActivity() == null) return;
+            AlertDialog d = new AlertDialog.Builder(this.getActivity())
+                    .setTitle(this.getString(R.string.confirm))
+                    .setMessage(this.getString(R.string.alert_disable_double_bump_queue))
+                    .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // PreferenceFragmentStations.this.broadcastUpdate();
+                                }
+                            }
+                    )
+//                    .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                        }
+//                    })
+                    .create();
+            d.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
+
+                    if (evID == KDSSettings.ID.Bumpbar_OK)
+                    {
+                        dialog.dismiss();
+                        // PreferenceFragmentStations.this.broadcastUpdate();
+                        return true;
+                    }
+                    else if (evID == KDSSettings.ID.Bumpbar_Cancel)
+                    {
+                        dialog.cancel();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            d.setCancelable(false);
+            d.setCanceledOnTouchOutside(false);
+            d.show();
+        }
+
     }
 
     /**
@@ -1601,7 +1665,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             ar.add("queue_cols");
             ar.add("queue_cell_height");
             ar.add("queue_auto_switch_duration");
-            ar.add("bump_double_queue");
+            //ar.add("bump_double_queue");
             ar.add("queue_show_order_id");
             ar.add("queue_order_id_font");
             ar.add("queue_show_customer_name");
