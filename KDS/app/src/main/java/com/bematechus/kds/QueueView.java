@@ -2261,7 +2261,9 @@ public class QueueView  extends View {
     public void checkAutoBump()
     {
         checkAutoBump(QueueOrders.QueueStatus.Ready,QueueOrders.QueueStatus.Pickup , false);
-        checkAutoBump(QueueOrders.QueueStatus.Received,QueueOrders.QueueStatus.Preparation , true);
+        //remove it, We need to try to get this to work. Because this will cause many issues. Can you take a look at this.
+        //We need to see if we can find a solution for this.
+        //checkAutoBump(QueueOrders.QueueStatus.Received,QueueOrders.QueueStatus.Preparation , true);
     }
 
     Thread m_threadShowOrders = null;
