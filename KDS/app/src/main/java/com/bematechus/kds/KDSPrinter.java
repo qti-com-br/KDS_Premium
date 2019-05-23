@@ -1508,7 +1508,7 @@ print order data to  buffer, socket will send this buffer to serial port
                 break;
         }
         return false;
-        
+
     }
     public boolean isOpened()
     {
