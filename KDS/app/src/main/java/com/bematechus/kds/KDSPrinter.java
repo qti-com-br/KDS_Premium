@@ -1486,8 +1486,7 @@ print order data to  buffer, socket will send this buffer to serial port
     public boolean isPrinterValid()
     {
 
-        return true;
-        /*
+
         KDSSettings settings = m_kds.getSettings();
         PortInfo portInfo = this.getPortInfo(settings);
         switch (portInfo.getType())
@@ -1509,7 +1508,7 @@ print order data to  buffer, socket will send this buffer to serial port
                 break;
         }
         return false;
-        */
+        
     }
     public boolean isOpened()
     {
