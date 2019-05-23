@@ -12,6 +12,7 @@ import com.bematechus.bemaLibrary.PrinterInfo;
 import com.bematechus.bemaLibrary.PrinterStatus;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 
 /**
  *
@@ -107,7 +109,9 @@ public class KDSPrinter {
     private PrinterType m_nPrinterType = PrinterType.LR2000;
     PrinterPortType m_nPortType = PrinterPortType.USB;
 
-    private ArrayList<String> m_printerData = new ArrayList<String>();//the data will been printed
+    //private ArrayList<String> m_printerData = new ArrayList<String>();//the data will been printed
+    Vector<String> m_printerData = new Vector<>();//the data will been printed
+
     private int m_nCopies = 1; //print how many copies
 
     private BemaPrinter m_bemaPrinter = null;// new BemaPrinter();
@@ -1115,7 +1119,10 @@ print order data to  buffer, socket will send this buffer to serial port
     {
         if (order == null) return;
         if (!isEnabled()) return;
+        int len = m_printerData.size();
+        int msz = MAX_PRINT_LINES;
 
+        if (len >= msz) return;
 
         if (m_bGroupCategory)
         {
@@ -1178,7 +1185,8 @@ print order data to  buffer, socket will send this buffer to serial port
 
 
         }
-        synchronized (m_locker) {
+        //synchronized (m_locker)
+        {
             s = "";
             s += (CHAR_Start_Order);
 
@@ -1191,7 +1199,7 @@ print order data to  buffer, socket will send this buffer to serial port
             m_printerData.add(s);
         }
         arPrint.clear();
-        arrangeBuffer();
+        //arrangeBuffer();
 
     }
 
@@ -1206,6 +1214,7 @@ print order data to  buffer, socket will send this buffer to serial port
 
             if (len <= msz) return;
             int n = len - msz;
+
             for (int i = 0; i < n; i++) {
                 m_printerData.remove(msz);
             }
@@ -1408,7 +1417,8 @@ print order data to  buffer, socket will send this buffer to serial port
         }
 
         //2.0.13
-        writeToPrinter();
+        //remove it from onping function, use its own thread.
+        //writeToPrinter();
 
     }
 
@@ -1476,7 +1486,8 @@ print order data to  buffer, socket will send this buffer to serial port
     public boolean isPrinterValid()
     {
 
-
+        return true;
+        /*
         KDSSettings settings = m_kds.getSettings();
         PortInfo portInfo = this.getPortInfo(settings);
         switch (portInfo.getType())
@@ -1498,6 +1509,7 @@ print order data to  buffer, socket will send this buffer to serial port
                 break;
         }
         return false;
+        */
     }
     public boolean isOpened()
     {
@@ -1530,11 +1542,12 @@ print order data to  buffer, socket will send this buffer to serial port
         {
             this.open(false);
         }
-        if (isOpened())
-        {
-            showMsg("Write data to printer");
-            writeToPrinter();
-        }
+        startPrintingThread();
+//        if (isOpened())
+//        {
+//            showMsg("Write data to printer");
+//            writeToPrinter();
+//        }
     }
 
     byte[] LR2000_START_BOLD = new byte[]{0x1b, 0x45, 1};
@@ -1555,20 +1568,21 @@ print order data to  buffer, socket will send this buffer to serial port
     {
         if (!isPrinterValid())
             return;
-        synchronized (m_locker) {
-            int ncount = m_printerData.size();
-            //2.0.13
-            int nWriteCount = ncount > MAX_WRITE_COUNT?MAX_WRITE_COUNT:ncount;
 
+        int ncount = m_printerData.size();
+        //if (BuildVer.isDebug())
+        //System.out.println("printer buffer lines=" + ncount);
+        if (ncount <=0) return;
+        //2.0.13
+        int nWriteCount = ncount > MAX_WRITE_COUNT?MAX_WRITE_COUNT:ncount;
+        synchronized (m_locker) {
             for (int i = 0; i < nWriteCount; i++) {
                 String s = m_printerData.get(0); //2.0.13
                 writeString(s);
                 //debug
                 //Log.e(TAG, s);
-
                 m_printerData.remove(0); //2.0.13
             }
-            //m_printerData.clear();
         }
     }
     private void writeString(String s)
@@ -1608,5 +1622,47 @@ print order data to  buffer, socket will send this buffer to serial port
 
         if (!willPrint.isEmpty())
             m_bemaPrinter.printText(willPrint);
+    }
+
+    Thread m_threadPrinting = null;
+
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startPrintingThread()
+    {
+        if (m_threadPrinting == null ||
+                !m_threadPrinting.isAlive())
+        {
+            m_threadPrinting = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (getKDS().isThreadRunning())
+                    {
+                        try {
+                            if (m_threadPrinting != Thread.currentThread())
+                                return;
+                            if (m_printerData.size() > 0)
+                                onPing();
+                            writeToPrinter();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadPrinting.setName("Printing");
+            m_threadPrinting.start();
+        }
     }
 }

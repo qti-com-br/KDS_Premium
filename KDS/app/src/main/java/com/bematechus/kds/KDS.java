@@ -3138,7 +3138,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
             m_stationsConnection.connectAllStations();
 
-            m_printer.onPing();
+            //m_printer.onPing();
 
             try {
                 Thread.sleep(KDSConst.PING_THREAD_SLEEP);
