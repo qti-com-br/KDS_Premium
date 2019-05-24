@@ -46,6 +46,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         public  void onViewPanelDoubleClicked(KDSLayout layout);
         public  void onViewPanelClicked(KDSLayout layout);
         public void onViewDrawingFinished(KDSLayout layout);
+        public void onRedrawLayout(KDSLayout layout);
     }
 
 
@@ -2400,7 +2401,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     Handler m_refreshHandler = new Handler()
     {
         public void handleMessage(Message msg) {
+
             KDSLayout.this.getView().refresh();
+            if (KDSLayout.this.m_eventsReceiver != null)
+                KDSLayout.this.m_eventsReceiver.onRedrawLayout(KDSLayout.this);
+
         }
     };
 

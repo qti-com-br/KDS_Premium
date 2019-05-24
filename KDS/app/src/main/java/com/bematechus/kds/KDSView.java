@@ -556,6 +556,7 @@ public class KDSView extends View {
                                 if (i >= panelsGetCount()) break;
                                 m_arPanels.get(i).onJustDrawCaptionAndFooter(g, i);
                             }
+                            redrawAllPanelNumberInReverseSequence(g);
                         } catch (Exception e) {
                             KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
                         }

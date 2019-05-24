@@ -127,7 +127,9 @@ public class KDSViewPanel extends KDSViewPanelBase {
 
         drawRoundCornerForPanel(canvas);
 
-        drawPanelNumber(canvas, nIndex);
+        //panel number will been draw in "KDSView-->redrawAllPanelNumberInReverseSequence function
+        //keep panel number on toppest layer
+        //drawPanelNumber(canvas, nIndex);
 
     }
 

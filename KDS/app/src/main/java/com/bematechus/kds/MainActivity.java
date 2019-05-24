@@ -4080,7 +4080,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             @Override
             protected Object doInBackground(Object[] params) {
                 getKDS().loadAllActiveOrders();
-
                 //   refreshView();
                 return null;
             }
@@ -4106,7 +4105,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             @Override
             protected Object doInBackground(Object[] params) {
                 getKDS().loadAllActiveOrders();
-
                 //   refreshView();
                 return null;
             }
@@ -4903,6 +4901,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //m_bWatingRefreshViewAsDblClick = true;
     }
 
+    public void onRedrawLayout(KDSLayout layout)
+    {
+        getKDS().refreshView();
+    }
     /**
      *
      * @param layout
