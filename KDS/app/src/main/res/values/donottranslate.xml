@@ -215,6 +215,7 @@ Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\
 &lt;cr&gt;\n
 &lt;i&gt;Qty &lt;t5&gt;Items&lt;/i&gt;&lt;cr&gt;\n
 &lt;Qty&gt;&lt;t5&gt;&lt;void&gt;&lt;items&gt;&lt;cr&gt;\n
+&lt;t7&gt;&lt;modifiers&gt;&lt;cr&gt;\n
 &lt;t7&gt;&lt;condiments&gt;&lt;cr&gt;\n
 ----------------------------------------&lt;cr&gt;\n
 &lt;orderstatus&gt;&lt;r&gt;&lt;ordertime&gt;&lt;cr&gt;\n
