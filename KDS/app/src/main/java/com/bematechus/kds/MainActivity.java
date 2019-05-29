@@ -282,6 +282,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //auto refresh screen, as the indian station hide orders!!!!
         auto_refresh_screen();
         //testException();
+
     }
 
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");

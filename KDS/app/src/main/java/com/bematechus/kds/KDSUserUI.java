@@ -691,10 +691,11 @@ public class KDSUserUI {
     {
         if (m_txtAvgPrepTime != null) {
             if (bHide)
-                m_txtAvgPrepTime.setVisibility(View.GONE);
+                m_txtAvgPrepTime.setVisibility(View.INVISIBLE);
             else
                 m_txtAvgPrepTime.setVisibility(View.VISIBLE);
         }
+
     }
 
 }

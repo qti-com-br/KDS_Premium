@@ -171,36 +171,36 @@
         <!--android:id="@+id/gridView"-->
         <!--android:numColumns="3" />-->
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/layoutTitle"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:background="@color/kds_title_bg"
-        android:id="@+id/layoutTitle">
+        android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="40dp"
-        android:layout_height="30dp"
-        android:id="@+id/imgLCI"
-        android:layout_centerVertical="true"
-        android:gravity="center|center_vertical"
-        android:textColor="@color/kds_title_fg"
-        android:textStyle="bold"
-        android:clickable="false"
-        android:enabled="true" />
+        <TextView
+            android:id="@+id/imgLCI"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:clickable="false"
+            android:enabled="true"
+            android:gravity="center|center_vertical"
+            android:textColor="@color/kds_title_fg"
+            android:textStyle="bold" />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtPrev"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/imgLCI"
-        android:layout_toEndOf="@+id/imgLCI"
-        android:gravity="center_vertical|right"
-        android:textColor="@color/kds_title_fg"
-        android:layout_marginLeft="@dimen/title_views_margin" />
-    <!--<TextView-->
+        <TextView
+            android:id="@+id/txtPrev"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/title_views_margin"
+            android:layout_toEndOf="@+id/imgLCI"
+            android:layout_toRightOf="@+id/imgLCI"
+            android:gravity="center_vertical|right"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/kds_title_fg" />
+        <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="fill_parent"-->
         <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
@@ -212,7 +212,7 @@
         <!--android:textColor="@color/kds_title_fg"-->
         <!--android:visibility="gone"-->
         <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
-    <!--<TextView-->
+        <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="fill_parent"-->
         <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
@@ -226,50 +226,50 @@
         <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
 
         <TextView
+            android:id="@+id/txtAvgTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/txtAvgTime"
-            android:textColor="@color/kds_title_fg"
+            android:layout_marginLeft="@dimen/title_views_margin"
             android:gravity="center_vertical|right"
-            android:layout_marginLeft="@dimen/title_views_margin" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/kds_title_fg" />
 
         <TextView
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/main_title"
-        android:id="@+id/txtTitle"
-        android:gravity="center|center_horizontal"
-        android:textStyle="bold"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/txtParkedA"
-        android:layout_toLeftOf="@+id/txtParked"
-        android:layout_toStartOf="@+id/txtParked"
-        android:textColor="@color/kds_title_fg"
-        android:maxLines="1"
-        android:layout_weight="1"
-            android:layout_marginLeft="@dimen/title_views_margin" />
+            android:id="@+id/txtTitle"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/title_views_margin"
+            android:layout_toStartOf="@+id/txtParked"
+            android:layout_toLeftOf="@+id/txtParked"
+            android:layout_toRightOf="@+id/txtParkedA"
+            android:layout_weight="1"
+            android:gravity="center|center_horizontal"
+            android:maxLines="1"
+            android:text="@string/main_title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/kds_title_fg"
+            android:textStyle="bold" />
 
         <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:id="@+id/txtAvgTimeB"-->
-            <!--android:textColor="@color/kds_title_fg"-->
-            <!--android:gravity="center_vertical|right"-->
-            <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:id="@+id/txtAvgTimeB"-->
+        <!--android:textColor="@color/kds_title_fg"-->
+        <!--android:gravity="center_vertical|right"-->
+        <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
 
         <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtParked"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/txtNextB"
-        android:textColor="@color/kds_title_fg"
-            android:layout_marginLeft="@dimen/title_views_margin" />
+            android:id="@+id/txtParked"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/title_views_margin"
+            android:layout_toLeftOf="@+id/txtNextB"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/kds_title_fg" />
 
         <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
@@ -281,81 +281,82 @@
         <!--android:layout_toLeftOf="@+id/txtNext"-->
         <!--android:textColor="@color/kds_title_fg"-->
         <!--android:visibility="gone"-->
-            <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
+        <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
 
         <!--&lt;!&ndash;android:drawableLeft="@drawable/nextcount"&ndash;&gt;-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtNext"
-        android:gravity="center_vertical|center_horizontal|left"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/linearTime"
-        android:textColor="@color/kds_title_fg"
-        android:layout_marginLeft="@dimen/title_views_margin" />
-
-
-
-
-    <!--&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_alignParentEnd="true"&ndash;&gt;-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="80dp"
-        android:layout_height="match_parent"
-
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imgState"
-        android:id="@+id/linearTime"
-        android:weightSum="2"
-        android:layout_marginLeft="@dimen/title_views_margin">
         <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/txtTime"
-            android:gravity="center|center_vertical"
+            android:id="@+id/txtNext"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/title_views_margin"
+            android:layout_toLeftOf="@+id/linearTime"
+            android:gravity="center_vertical|center_horizontal|left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/kds_title_fg" />
 
-            android:textColor="@color/kds_title_fg"
-            android:text="12:30"
-            android:layout_weight="1"
-            android:textSize="12dp" />
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/txtDate"
-            android:gravity="center|center_vertical"
 
-            android:textColor="@color/kds_title_fg"
-            android:text="2016/3/7"
-            android:layout_weight="1"
-            android:textSize="12dp" />
-    </LinearLayout>
-    <!--&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_alignParentEnd="true"&ndash;&gt;-->
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:id="@+id/imgState"
-        android:src="@drawable/online"
-        android:clickable="false"
-        android:layout_toLeftOf="@+id/imgMenu"
-        android:layout_marginLeft="@dimen/title_views_margin" />
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:id="@+id/imgMenu"
-        android:src="@drawable/ic_menu"
-        android:clickable="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="onBtnLogoClicked"
-        android:focusable="false" />
+        <!--&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_alignParentEnd="true"&ndash;&gt;-->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/linearTime"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/title_views_margin"
+            android:layout_toLeftOf="@+id/imgState"
+            android:orientation="vertical"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/txtTime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|center_vertical"
+
+                android:text="12:30"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/kds_title_fg"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|center_vertical"
+
+                android:text="2016/3/7"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/kds_title_fg"
+                android:textSize="12dp" />
+        </LinearLayout>
+        <!--&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_alignParentEnd="true"&ndash;&gt;-->
+        <ImageView
+            android:id="@+id/imgState"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="@dimen/title_views_margin"
+            android:layout_toLeftOf="@+id/imgMenu"
+            android:clickable="false"
+            android:src="@drawable/online" />
+
+        <ImageView
+            android:id="@+id/imgMenu"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:focusable="false"
+            android:onClick="onBtnLogoClicked"
+            android:src="@drawable/ic_menu" />
     </LinearLayout>
 
     <LinearLayout
