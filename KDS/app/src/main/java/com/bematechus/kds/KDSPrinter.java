@@ -13,6 +13,7 @@ import com.bematechus.bemaLibrary.PrinterStatus;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
 import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
@@ -1485,7 +1486,6 @@ print order data to  buffer, socket will send this buffer to serial port
     }
     public boolean isPrinterValid()
     {
-
 
         KDSSettings settings = m_kds.getSettings();
         PortInfo portInfo = this.getPortInfo(settings);

@@ -2263,7 +2263,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                         }
                         catch ( Exception e)
                         {
-                            e.printStackTrace();
+                            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e);
+                            //e.printStackTrace();
                         }
                         m_nRedrawRequestCounter = 0;
                     }
@@ -2281,10 +2282,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //m_orders = orders;
 
         //m_view.clear();
-        synchronized (m_view.m_panelsLocker) {
+        //synchronized (m_view.m_panelsLocker) {
             m_view.clearPanels();
 
-        }
+        //}
 
         if (orders == null || orders.getCount() <= 0) {
             //this.getView().refresh();
@@ -2317,9 +2318,16 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 for (int i = nStartOrderIndex; i < ncount; i++) {
                     // t.debug_print_Duration("showOrders1");
                     KDSDataOrder order = orders.get(i);
+                    if (order == null) continue;
                     // t.debug_print_Duration("showOrders2");
-                    if (!showOrder(order, nBlockRows))
-                        break;
+                    try {
+                        if (!showOrder(order, nBlockRows))
+                            break;
+                    }
+                    catch (Exception e)
+                    {
+                        KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+                    }
                     //t.debug_print_Duration("showOrders3");
                 }
 

@@ -554,6 +554,8 @@ public class KDSSettings extends SettingsBase {
         //
         Deliver_new_order_to_slave_expo,
 
+       Auto_refresh_screen_freq,
+
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1278,6 +1280,8 @@ public class KDSSettings extends SettingsBase {
         //init_option(ID.Queue_auto_bump_timeout,"string_queue_auto_bump_timeout","0");//
 
        init_option(ID.Deliver_new_order_to_slave_expo,"bool_kds_general_deliver_new_order_to_slave_expo",false);//
+
+      init_option(ID.Auto_refresh_screen_freq,"string_kds_general_auto_refresh_screen","0");//
 
     }
 

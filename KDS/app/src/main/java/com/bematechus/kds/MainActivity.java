@@ -279,6 +279,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         checkAutoActivation();
         startCheckingThread();
+        //auto refresh screen, as the indian station hide orders!!!!
+        auto_refresh_screen();
         //testException();
     }
 
@@ -6087,5 +6089,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        }
 //    };
 
+    TimeDog m_tdAutoRefreshScreen = new TimeDog();
+    private void auto_refresh_screen()
+    {
+        int nSeconds = this.getSettings().getInt(KDSSettings.ID.Auto_refresh_screen_freq);
+        if (nSeconds <=0) return;
+
+        if (m_tdAutoRefreshScreen.is_timeout(nSeconds * 1000))
+        {
+            m_tdAutoRefreshScreen.reset();
+            getKDS().doRefreshView();
+        }
+
+    }
 }
 
