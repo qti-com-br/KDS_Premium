@@ -91,6 +91,6 @@ public class KDSConst {
     public static final boolean ENABLE_FEATURE_ACTIVATION = true;//for multiple version.
     public static final boolean ENABLE_FEATURE_ORDER_ACKNOWLEDGEMENT = true;//
 
-    public static final boolean _DEBUG = false;
+    public static final boolean _DEBUG = true;
 
 }

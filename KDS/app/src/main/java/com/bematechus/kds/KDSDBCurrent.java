@@ -3482,10 +3482,11 @@ update the schedule item ready qty
     {
 
         if (getDB() == null) return false;
-
-        String sql = "delete from orders where guid in ("+sqlOrderGuid +")";// KDSDataOrder.sqlDelete("orders", guid);
-        if (!this.executeDML(sql))
-            return false;
+        String sql = "";
+        //move them to bottom.
+//        String sql = "delete from orders where guid in ("+sqlOrderGuid +")";// KDSDataOrder.sqlDelete("orders", guid);
+//        if (!this.executeDML(sql))
+//            return false;
 
         //remove order messages.
         //sql = "delete from messages where ObjType=0 and ObjGUID='" + guid + "'";
@@ -3521,6 +3522,10 @@ update the schedule item ready qty
         if (!this.executeDML(sql))
             return false;
 
+        // MUST delete orders at last.
+        sql = "delete from orders where guid in ("+sqlOrderGuid +")";// KDSDataOrder.sqlDelete("orders", guid);
+        if (!this.executeDML(sql))
+            return false;
         return true;
     }
 
