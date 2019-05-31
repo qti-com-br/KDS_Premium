@@ -1589,6 +1589,7 @@ public class KDSStationsConnection {
                 KDSStationIP backupStation =  getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
                 if (backupStation == null) {
                     //still write to primary station
+                    Log.i(TAG, "Write to station: " + station);
                     connectStationWithData(station, strXml,nMaxBufferCount);//KPP1-Coke
                     return false;
                 }
@@ -1600,6 +1601,10 @@ public class KDSStationsConnection {
                 if (backupConnection == null)
                 {
                     connectStationWithData(backupStation, strXml,nMaxBufferCount);
+                    //check if slave is queue station, if it is queue/expo, backup offline orders.20190531
+                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+
                 }
                 else if (!backupConnection.getSock().isConnected())
                 {
@@ -1609,6 +1614,9 @@ public class KDSStationsConnection {
                 }
                 else if (backupConnection.getSock().isConnected()) {
                     backupConnection.getSock().writeXmlTextCommand(strXml);
+                    //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
+                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
                 }
 
             }
@@ -1680,6 +1688,7 @@ public class KDSStationsConnection {
             }
             else
             {//just buffer data
+                Log.i(TAG, "backup data :" + station);
                 m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
             }
 

@@ -551,15 +551,23 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     public void sockevent_onWroteDataDone(KDSSocketInterface sock,String remoteIP,  int nLength)
     {
-        if (sock instanceof KDSSocketTCPSideClient)
-        {
-            KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
-            int nport = getSettings().getInt(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort);
-
-            KDSStationActived station =  m_stationsConnection.findActivedStationByIPAndPort(remoteIP, KDSUtil.convertIntToString(nport));
-            if (station != null)
-                station.updatePulseTime();
-        }
+        //20190531, comment it.
+        //The SocketChannel-->write is not correct, its return value is not final data length.
+        // I doubt socket save data to buffer. So,don't use "write" to identify station alive.
+//        if (sock instanceof KDSSocketTCPSideClient)
+//        {
+//            KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
+//            int nport = getSettings().getInt(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort);
+//
+//            KDSStationActived station =  m_stationsConnection.findActivedStationByIPAndPort(remoteIP, KDSUtil.convertIntToString(nport));
+//            if (station != null) {
+////                if (station.getID().equals("1"))
+////                { //DEBUG
+////                    Log.i(TAG, "Update plus !!!!!");
+////                }
+//                station.updatePulseTime();
+//            }
+//        }
 
         KDSLog.d(TAG, "Wrote data finished "+ remoteIP + " len="+ KDSUtil.convertIntToString(nLength));
 
@@ -1138,9 +1146,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         m_stationsConnection.onIPConnected(this, ip);
 
 
-        KDSStationIP station = KDSStationIP.fromConnection(conn);// m_stationsConnection.findConnectionClientSideByIP(ip);
-        if (station == null) return;
-        restoreOfflineOrderXml(station);
+        //Don't use this restoring, the KDSStationsConnection-->m_buffersForWaitingConnection do this.
+//        KDSStationIP station = KDSStationIP.fromConnection(conn);// m_stationsConnection.findConnectionClientSideByIP(ip);
+//        if (station == null) return;
+//        restoreOfflineOrderXml(station);
         //}
     }
 
@@ -2294,7 +2303,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         assignColorToOrder(order, xmlData); //2.1.15.4
 
         String xmlOrder = rebuildOrderXml(order, xmlData);
-        checkLostStationsAndSaveToOffline(order, xmlOrder);
+        //don't use this for restoring, KDSStationsConnection-->m_buffersForWaitingConnection do this work.
+        //checkLostStationsAndSaveToOffline(order, xmlOrder);
 
         if (getSettings().getBoolean(KDSRouterSettings.ID.Order_ack))
         {

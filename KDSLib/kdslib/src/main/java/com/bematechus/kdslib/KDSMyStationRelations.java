@@ -489,4 +489,20 @@ public class KDSMyStationRelations {
         return m_arQueueExpStations;
 
     }
+
+    /**
+     * check if given station is queue or expo station.
+     *
+     * @param stationID
+     * @return
+     */
+    public boolean isQueueExpoStation(String stationID)
+    {
+        KDSStationsRelation station =  KDSStationsRelation.findStation(m_arStationsRelations, stationID);
+        if (station == null)
+            return false;
+        return (station.getFunction() == SettingsBase.StationFunc.Queue ||
+                station.getFunction() == SettingsBase.StationFunc.Queue_Expo ||
+                station.getFunction() == SettingsBase.StationFunc.Expeditor);
+    }
 }
