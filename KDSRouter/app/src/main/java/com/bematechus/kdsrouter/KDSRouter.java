@@ -1483,6 +1483,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     }
     public void sockevent_onTCPReceiveXml(KDSSocketInterface sock, String xmlData)
     {
+        //do ack for xml
+        xmlData = m_stationsConnection.responseAck(this.getStationID(), this.getLocalIpAddress(), this.getLocalMacAddress(),sock, xmlData);
+
         KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
 
         switch (ntype)
@@ -1950,6 +1953,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 break;
             case ROUTER_UPDATE_CHANGES_FLAG:
                 commandUpdateDBChangesGuid(command, xmlData);
+                break;
+            case ACK_XML:
+                commandAckXml(fromStationID, command, xmlData);
+                break;
             default:
                 return;
         }
@@ -3599,6 +3606,21 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             return m_smbDataSource.removeTimeoutNotificationFiles(KDSConst.SMB_FOLDER_NOTIFICATION, nMinutes);
         }
         return 0;
+
+    }
+
+    /**
+     * return ack from remote station
+     * Format:
+     *  the parameter just is the ackguid value.
+     * @param fromStationID
+     * @param command
+     * @param xmlData
+     */
+    public void commandAckXml(String fromStationID, KDSXMLParserCommand command,String xmlData)
+    {
+        String ackguid = command.getParam();
+        m_stationsConnection.onReceiveAckXml(fromStationID, ackguid);
 
     }
 }

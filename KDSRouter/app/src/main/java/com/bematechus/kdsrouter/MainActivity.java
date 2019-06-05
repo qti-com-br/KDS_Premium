@@ -347,6 +347,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
     KDSRouter getKDSRouter()
     {
+        if (m_service == null) return null;
         return m_service.getKDSRouter();
     }
 
@@ -1051,8 +1052,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_threadCheckingNotification = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (getKDSRouter().isThreadRunning())
+                    //while (getKDSRouter().isThreadRunning())
+                    while (true)
                     {
+                        if (getKDSRouter() == null) {
+                            try {
+                                Thread.sleep(10000);
+                            } catch (Exception e) { }
+                            continue;
+
+                        }
+                        if (!getKDSRouter().isThreadRunning())
+                            break;
                         try {
                             if (!m_notificationDog.is_timeout(NOTIFICATION_INTERVAL)) //30 minutes
                             {

@@ -99,6 +99,8 @@ public class KDSXMLParserCommand {
         //sos
         SOS_Request_Report,
         SOS_Return_Report,
+        //order ack
+        ACK_XML,
     }
     private static final String COMMAND = "KDSCommand";
     private static final String CODE = "Code";
@@ -585,4 +587,22 @@ public class KDSXMLParserCommand {
 
         return createCommandXmlString(KDSCommand.SOS_Return_Report.ordinal(),strStationID, ipAddress, macAddress,param);
     }
+
+    /**
+     * for ack xml data
+     * @param strStationID
+     * @param ipAddress
+     * @param macAddress
+     * @param ackGuid
+     * @return
+     */
+    static  public String createXmlAck(String strStationID, String ipAddress, String macAddress, String ackGuid)
+    {
+
+        return createCommandXmlString(KDSCommand.ACK_XML.ordinal(),
+                strStationID, ipAddress, macAddress, ackGuid);
+
+
+    }
+
 }

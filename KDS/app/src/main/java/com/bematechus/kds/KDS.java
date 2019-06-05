@@ -1659,6 +1659,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
 
         if (!isEnabled()) return;
+        //do ack for xml, KPP1-93
+        xmlData = m_stationsConnection.responseAck(this.getStationID(), this.getLocalIpAddress(), this.getLocalMacAddress(),sock, xmlData);
+
         KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
 //        if (BuildVer.isDebug())
 //            Log.i(TAG, "XML Type=" + ntype.toString());
@@ -2290,6 +2293,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case SOS_Request_Report:
             {
                 doSosReport(sock, command);
+            }
+            break;
+            case ACK_XML:
+            {
+                commandAckXml(fromStationID, command, xmlData);
             }
             break;
 
@@ -4534,5 +4542,20 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         m.what = MESSAGE_TO_MAIN.Toast_msg.ordinal();
         m.obj = msg;
         m_refreshHandler.sendMessage(m);
+    }
+
+    /**
+     * return ack from remote station
+     * Format:
+     *  the parameter just is the ackguid value.
+     * @param fromStationID
+     * @param command
+     * @param xmlData
+     */
+    public void commandAckXml(String fromStationID, KDSXMLParserCommand command,String xmlData)
+    {
+        String ackguid = command.getParam();
+        m_stationsConnection.onReceiveAckXml(fromStationID, ackguid);
+
     }
 }
