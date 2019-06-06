@@ -21,15 +21,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDS.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDS.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSMyStationRelations.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSMyStationRelations.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSXMLParserCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSXMLParserCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/MainActivity.java" afterDir="false" />
     </list>
     <ignored path="KDSRouter.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -109,7 +107,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gradle" value="176" />
-          <entry key="java" value="17647" />
+          <entry key="java" value="17752" />
           <entry key="properties" value="7" />
           <entry key="xml" value="179" />
         </counts>
@@ -117,7 +115,7 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Groovy" value="176" />
-          <entry key="JAVA" value="17647" />
+          <entry key="JAVA" value="17752" />
           <entry key="Properties" value="7" />
           <entry key="XML" value="179" />
         </counts>
@@ -151,20 +149,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="1931" selection-start-line="1931" selection-end-line="1931" />
+            <state relative-caret-position="156">
+              <caret line="2036" column="46" lean-forward="true" selection-start-line="2036" selection-start-column="46" selection-end-line="2036" selection-end-column="46" />
               <folding>
-                <element signature="e#65824#65825#0" expanded="true" />
-                <element signature="e#65876#65877#0" expanded="true" />
+                <element signature="e#67269#67270#0" expanded="true" />
+                <element signature="e#67321#67322#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSocketTCPCommandBuffer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="197">
@@ -208,7 +206,7 @@
         <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="555">
-              <caret line="79" column="30" selection-start-line="79" selection-start-column="30" selection-end-line="79" selection-end-column="30" />
+              <caret line="88" column="53" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="53" />
               <folding>
                 <element signature="e#419#420#0" expanded="true" />
                 <element signature="e#454#455#0" expanded="true" />
@@ -224,8 +222,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="343">
-              <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
+            <state relative-caret-position="409">
+              <caret line="77" column="51" selection-start-line="77" selection-start-column="51" selection-end-line="77" selection-end-column="51" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#306#307#0" expanded="true" />
@@ -268,7 +266,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>onStationConnected</find>
       <find>clear_db</find>
       <find>onIPConnected</find>
       <find>checkLostStationsAndSaveToOffline</find>
@@ -298,6 +295,7 @@
       <find>CLEAR_DB</find>
       <find>m_buffersForWaitingConnection</find>
       <find>UDP_CLEAR_DB</find>
+      <find>getAllStationsNeedToConnect</find>
     </findStrings>
     <dirStrings>
       <dir>F:\Android\src2\KDS_Premium\KDSRouter\app</dir>
@@ -2900,9 +2898,9 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/MainActivity.java" />
-        <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java" />
+        <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" />
       </list>
     </option>
   </component>
@@ -3329,10 +3327,10 @@
     <editor active="true" />
     <layout>
       <window_info id="Project" order="0" sideWeight="0.6925373" weight="0.22441365" />
-      <window_info id="Structure" order="1" sideWeight="0.68221575" visible="true" weight="0.21108742" />
+      <window_info id="Structure" order="1" sideWeight="0.681338" visible="true" weight="0.21108742" />
       <window_info id="Captures" order="2" side_tool="true" weight="0.25" />
       <window_info id="Palette&#9;" order="3" />
-      <window_info id="Build Variants" order="4" sideWeight="0.31778425" side_tool="true" visible="true" weight="0.21108742" />
+      <window_info id="Build Variants" order="4" sideWeight="0.31866196" side_tool="true" visible="true" weight="0.21108742" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Image Layers" order="7" />
@@ -3351,7 +3349,7 @@
       <window_info anchor="bottom" id="Terminal" order="12" weight="0.32993197" />
       <window_info anchor="bottom" id="Build" order="13" sideWeight="0.6505376" weight="0.155902" />
       <window_info anchor="bottom" id="Android Profiler" order="14" sideWeight="0.8123656" weight="0.56349206" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="15" sideWeight="0.49946237" visible="true" weight="0.23608018" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="15" sideWeight="0.49946237" visible="true" weight="0.3674833" />
       <window_info anchor="bottom" id="Dependency Viewer" order="16" weight="0.32993197" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -3706,7 +3704,7 @@
     <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="555">
-          <caret line="79" column="30" selection-start-line="79" selection-start-column="30" selection-end-line="79" selection-end-column="30" />
+          <caret line="88" column="53" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="53" />
           <folding>
             <element signature="e#419#420#0" expanded="true" />
             <element signature="e#454#455#0" expanded="true" />
@@ -3750,10 +3748,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSocketTCPCommandBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="96" column="29" selection-start-line="96" selection-start-column="17" selection-end-line="96" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="343">
-          <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
+        <state relative-caret-position="409">
+          <caret line="77" column="51" selection-start-line="77" selection-start-column="51" selection-end-line="77" selection-end-column="51" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#306#307#0" expanded="true" />
@@ -3770,19 +3775,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="1931" selection-start-line="1931" selection-end-line="1931" />
+        <state relative-caret-position="156">
+          <caret line="2036" column="46" lean-forward="true" selection-start-line="2036" selection-start-column="46" selection-end-line="2036" selection-end-column="46" />
           <folding>
-            <element signature="e#65824#65825#0" expanded="true" />
-            <element signature="e#65876#65877#0" expanded="true" />
+            <element signature="e#67269#67270#0" expanded="true" />
+            <element signature="e#67321#67322#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSocketTCPCommandBuffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="96" column="29" selection-start-line="96" selection-start-column="17" selection-end-line="96" selection-end-column="29" />
         </state>
       </provider>
     </entry>

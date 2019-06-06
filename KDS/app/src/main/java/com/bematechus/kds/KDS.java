@@ -4431,10 +4431,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case Expo_Bump_Item:
             case Expo_Unbump_Item:
             case Expo_Unbump_Order: //end for queue
+            case ACK_XML:
                 return false;
-            default:
+            default: {
                 doCommandXml(sock, xmlData);
-                return false;
+                return true;
+            }
 
         }
 

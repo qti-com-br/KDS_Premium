@@ -1,5 +1,7 @@
 package com.bematechus.kdslib;
 
+import android.util.Log;
+
 import java.util.Date;
 
 /**
@@ -7,6 +9,8 @@ import java.util.Date;
  * Rev:
  */
 public class AckData {
+    private final String TAG = "AckData";
+
     static public final String ACKGUID = "<ACKGUID>";
     static public final String ACKGUID_END = "</ACKGUID>";
 
@@ -20,6 +24,7 @@ public class AckData {
     {
         m_strXML = strXml;
         m_strAckGUID = KDSUtil.createNewGUID();
+        m_dtSend.setTime(System.currentTimeMillis());
 
     }
     public String getGuid()
@@ -29,8 +34,12 @@ public class AckData {
 
     public boolean isTimeout()
     {
-        TimeDog td = new TimeDog(m_dtSend);
-        return (td.is_timeout(ACK_TIMEOUT));
+        long l = System.currentTimeMillis() - m_dtSend.getTime();
+        Log.i(TAG, "timeout=" + l);
+        return (l > ACK_TIMEOUT);
+
+//        TimeDog td = new TimeDog(m_dtSend);
+//        return (td.is_timeout(ACK_TIMEOUT));
 
     }
 
@@ -77,7 +86,7 @@ public class AckData {
     }
     public void resetTimer()
     {
-        m_dtSend = new Date();
+        m_dtSend.setTime(System.currentTimeMillis());
     }
 
 }

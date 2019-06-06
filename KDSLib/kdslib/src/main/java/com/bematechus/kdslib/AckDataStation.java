@@ -58,7 +58,14 @@ public class AckDataStation {
         return false;
     }
 
-    public int findTimeoutData(ArrayList<AckData> arReturn)
+    /**
+     *
+     * @param arReturn
+     * @param nMaxReturnCount
+     *  -1: no limit
+     * @return
+     */
+    public int findTimeoutData(ArrayList<AckData> arReturn, int nMaxReturnCount)
     {
         synchronized (m_locker)
         {
@@ -66,6 +73,10 @@ public class AckDataStation {
             {
                 if (m_arData.get(i).isTimeout()) {
                     arReturn.add(m_arData.get(i));
+                    if (nMaxReturnCount >0) {
+                        if (arReturn.size() >= nMaxReturnCount)
+                            return arReturn.size();
+                    }
 
                 }
             }

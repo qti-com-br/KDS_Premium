@@ -72,4 +72,17 @@ public class AckManager {
     {
         return m_arStationsAck;
     }
+
+    public boolean isWaitingAck()
+    {
+        if (m_arStationsAck.size() <=0)
+            return false;
+        int ncount = 0;
+        for (int i=0; i< m_arStationsAck.size(); i++)
+        {
+            if (m_arStationsAck.get(i).getData().size() >0)
+                return true;
+        }
+        return false;
+    }
 }

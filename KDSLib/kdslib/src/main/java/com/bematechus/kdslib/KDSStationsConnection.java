@@ -702,6 +702,28 @@ public class KDSStationsConnection {
             return;
         if (station.getSock().isConnected())
         {
+            //send all no ack data to station
+            if (m_ackManager.isWaitingAck())
+            {//send all again
+                AckDataStation ackStation = m_ackManager.getStation(station.getID());
+                if (ackStation != null)
+                {
+                    synchronized (ackStation.m_locker)
+                    {
+                        try {
+                            int ncount = ackStation.getData().size();
+                            for (int i = 0; i < ncount; i++) {
+                                station.getSock().writeXmlTextCommand(ackStation.getData().get(i).getWithAckXmlData());
+                                ackStation.getData().get(i).resetTimer();
+                            }
+                        }catch (Exception e)
+                        {
+                            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+                        }
+                    }
+                }
+            }
+            //send all offline data to station
             NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(station.getID());
 
             if (buf != null && buf.getData().size()>0)
@@ -1961,7 +1983,7 @@ public class KDSStationsConnection {
         if (conn!= null)
         {
 
-            ((KDSStationConnection) conn).getSock().writeXmlTextCommand(KDSXMLParserCommand.createXmlAck(myStationID, myIPAddress, myMac, ackguid));
+            conn.getSock().writeXmlTextCommand(KDSXMLParserCommand.createXmlAck(myStationID, myIPAddress, myMac, ackguid));
         }
 
         return xmlData;
@@ -2001,7 +2023,7 @@ public class KDSStationsConnection {
                     {
                         if (m_threadCheckingAck != Thread.currentThread())
                             return;
-                        if (m_ackManager.getWaitingAckCount() <=0)
+                        if (!m_ackManager.isWaitingAck() )
                         {
                             try {
                                 Thread.sleep(1000);
@@ -2030,6 +2052,7 @@ public class KDSStationsConnection {
         }
     }
 
+    final int BATCH_ACK_COUNT = 3;
     private void checkTimeoutAck()
     {
         ArrayList<AckData> arTimeout = new ArrayList<>();
@@ -2037,11 +2060,12 @@ public class KDSStationsConnection {
         {
             AckDataStation station = m_ackManager.getStations().get(i);
             arTimeout.clear();
-            station.findTimeoutData(arTimeout);
+            station.findTimeoutData(arTimeout, BATCH_ACK_COUNT);
             if (arTimeout.size() >0)
             {
                 resendXmlData(station, arTimeout);
             }
+            arTimeout.clear();
 
         }
     }
