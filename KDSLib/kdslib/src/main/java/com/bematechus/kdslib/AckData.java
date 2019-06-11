@@ -14,7 +14,7 @@ public class AckData {
     static public final String ACKGUID = "<ACKGUID>";
     static public final String ACKGUID_END = "</ACKGUID>";
 
-    static final int ACK_TIMEOUT = 20000;// 20 seconds
+
     //String m_strStationID = "";
     String m_strAckGUID = "";
     String m_strXML = "";
@@ -27,16 +27,26 @@ public class AckData {
         m_dtSend.setTime(System.currentTimeMillis());
 
     }
+    public AckData(String guid, String data, Date dtSend)
+    {
+        m_strXML = data;
+        m_strAckGUID = guid;
+        m_dtSend.setTime(dtSend.getTime());
+    }
     public String getGuid()
     {
         return m_strAckGUID;
     }
 
+    public void setGuid(String guid)
+    {
+        m_strAckGUID = guid;
+    }
     public boolean isTimeout()
     {
         long l = System.currentTimeMillis() - m_dtSend.getTime();
         Log.i(TAG, "timeout=" + l);
-        return (l > ACK_TIMEOUT);
+        return (l > AckManager.ACK_TIMEOUT);
 
 //        TimeDog td = new TimeDog(m_dtSend);
 //        return (td.is_timeout(ACK_TIMEOUT));
@@ -87,6 +97,11 @@ public class AckData {
     public void resetTimer()
     {
         m_dtSend.setTime(System.currentTimeMillis());
+    }
+
+    public Date getSendDate()
+    {
+        return m_dtSend;
     }
 
 }

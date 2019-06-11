@@ -456,7 +456,10 @@ public class KDSStationsConnection {
     {
         // m_socksManager.stopThread();
         synchronized (m_connectionLocker) {
-            ArrayList<KDSStationIP> ar =m_stationsRelations.getAllStationsNeedToConnect();
+            //add offline stations in offlie database
+            ArrayList<String> arOffline = m_buffersForWaitingConnection.getStationsOfflineAndAck();
+            ArrayList<KDSStationIP> ar =m_stationsRelations.getAllStationsNeedToConnect(arOffline);
+
             connectStations(ar);
         }
     }
@@ -705,7 +708,8 @@ public class KDSStationsConnection {
             //send all no ack data to station
             if (m_ackManager.isWaitingAck())
             {//send all again
-                AckDataStation ackStation = m_ackManager.getStation(station.getID());
+                //AckDataStation ackStation = m_ackManager.getStation(station.getID());
+                AckDataStation ackStation = m_ackManager.getTimeoutAck(station.getID(), -1);
                 if (ackStation != null)
                 {
                     synchronized (ackStation.m_locker)
@@ -748,6 +752,7 @@ public class KDSStationsConnection {
 
                 }
             }
+            m_buffersForWaitingConnection.remove(station.getID());
         }
 
         startCheckingAckThread();
@@ -1955,9 +1960,11 @@ public class KDSStationsConnection {
     public void onReceiveAckXml(String stationID, String ackGuid)
     {
         Log.i(TAG, "onReceiveAckXml:" + stationID +","+ackGuid);
-        AckDataStation station =  m_ackManager.getStation(stationID);
-        station.remove(ackGuid);
-        Log.i(TAG, "onReceiveAckXml:count=" + station.getData().size());
+        m_ackManager.removeAck(stationID, ackGuid);
+
+//        AckDataStation station =  m_ackManager.getStation(stationID);
+//        station.remove(ackGuid);
+        //Log.i(TAG, "onReceiveAckXml:count=" + station.getData().size());
     }
 
     /**
@@ -2053,22 +2060,43 @@ public class KDSStationsConnection {
     }
 
     final int BATCH_ACK_COUNT = 3;
+//    private void checkTimeoutAck()
+//    {
+//        ArrayList<AckData> arTimeout = new ArrayList<>();
+//        for (int i=0; i< m_ackManager.getStationsCount(); i++)
+//        {
+//            AckDataStation station = m_ackManager.getStations().get(i);
+//            arTimeout.clear();
+//            station.findTimeoutData(arTimeout, BATCH_ACK_COUNT);
+//            if (arTimeout.size() >0)
+//            {
+//                resendXmlData(station, arTimeout);
+//            }
+//            arTimeout.clear();
+//
+//        }
+//    }
+
     private void checkTimeoutAck()
     {
-        ArrayList<AckData> arTimeout = new ArrayList<>();
-        for (int i=0; i< m_ackManager.getStationsCount(); i++)
+        //ArrayList<AckData> arTimeout = new ArrayList<>();
+        ArrayList<String> arStations = m_ackManager.getAckStations();
+
+        for (int i=0; i< arStations.size(); i++)
         {
-            AckDataStation station = m_ackManager.getStations().get(i);
-            arTimeout.clear();
-            station.findTimeoutData(arTimeout, BATCH_ACK_COUNT);
-            if (arTimeout.size() >0)
+            String stationID = arStations.get(i);
+
+            AckDataStation station = m_ackManager.getTimeoutAck(stationID, BATCH_ACK_COUNT);
+
+            if (station.getData().size() >0)
             {
-                resendXmlData(station, arTimeout);
+                resendXmlData(station);
             }
-            arTimeout.clear();
+
 
         }
     }
+
     private void resendXmlData(AckDataStation station, ArrayList<AckData> arTimeout)
     {
         String stationID = station.getStationID();
@@ -2083,6 +2111,25 @@ public class KDSStationsConnection {
 
         }
     }
+
+    private void resendXmlData(AckDataStation station)
+    {
+
+        String stationID = station.getStationID();
+        KDSStationConnection conn = findConnectionByID(stationID);
+        if (conn == null)
+            return;
+        if (!conn.isConnected())
+            return;
+        for (int i=0; i< station.getData().size(); i++) {
+            conn.getSock().writeXmlTextCommand(station.getData().get(i).getWithAckXmlData());
+            m_ackManager.resetAckTime(station.getData().get(i).getGuid());
+        }
+
+        station.getData().clear();
+
+    }
+
 }
 
 

@@ -8,7 +8,7 @@ import java.util.Vector;
  * Rev:
  */
 public class AckDataStation {
-    final int MAX_ACK_COUNT = 200;
+
     String m_strStationID = "";
     Vector<AckData> m_arData = new Vector<>();
     Object m_locker = new Object();
@@ -33,7 +33,7 @@ public class AckDataStation {
     public AckData add(String strXml)
     {
         synchronized (m_locker) {
-            if (m_arData.size() > MAX_ACK_COUNT)
+            if (m_arData.size() > AckManager.MAX_ACK_COUNT)
                 return null;
         }
         AckData data = new AckData(strXml);

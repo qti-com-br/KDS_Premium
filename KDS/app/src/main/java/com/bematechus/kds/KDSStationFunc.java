@@ -930,36 +930,46 @@ public class KDSStationFunc {
         //transferOrder.setAllItemsToScreen(toStationID, toScreen);
 
         String strXml = KDSXMLCommandFactory.createOrderTransferXml(kdsuser.getKDS().getStationID(), kdsuser.getKDS().getLocalIpAddress(), "", orderWithTransferingItem);
-        if (station == null) {
-            KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
-            if (activeStation == null)
-                return TransferingStatus.Error_Station;
-            KDSStationConnection connecting = kdsuser.getKDS().getStationsConnections().connectToStation(activeStation);
-            if (connecting.getSock().isConnected()) {
-                if (!connecting.getSock().writeXmlTextCommand(strXml))
-                    return TransferingStatus.Failed;
+        KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
+        if (activeStation == null)
+            return TransferingStatus.Error_Station;
+        kdsuser.getKDS().getStationsConnections().writeDataToStationOrItsSlave(activeStation, strXml);
 
-            }
-            else
-            {
-                //add the message after send
-
-                //KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
-                KDSStationDataBuffered data = kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(toStationID, strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
-                if (data != null) {
-                    data.setOrderGuid(orderWithTransferingItem.getGUID());
-                    data.setItemGuid(itemGuid);
-                    data.setDescription(orderWithTransferingItem.getItems().getItem(0).getDescription());
-                }
-
-            }
-
-            return TransferingStatus.Connecting;
-        }
-        if (station.getSock() == null)
-            return TransferingStatus.Failed;
-        if (!station.getSock().isConnected())
-            return TransferingStatus.Connecting;
+//        if (station == null) {
+//            KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
+//            if (activeStation == null)
+//                return TransferingStatus.Error_Station;
+//            KDSStationConnection connecting = kdsuser.getKDS().getStationsConnections().connectToStation(activeStation);
+//            if (connecting.getSock().isConnected()) {
+//                if (!connecting.getSock().writeXmlTextCommand(strXml))
+//                    return TransferingStatus.Failed;
+//
+//            }
+//            else
+//            {
+//                //add the message after send
+//
+//                kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(toStationID,
+//                                                                                    strXml,
+//                                                                                    orderWithTransferingItem.getGUID(),
+//                                                                                    itemGuid,orderWithTransferingItem.getItems().getItem(0).getDescription(),
+//                                                                                    KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+//                //KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
+////                KDSStationDataBuffered data = kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(toStationID, strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+////                if (data != null) {
+////                    data.setOrderGuid(orderWithTransferingItem.getGUID());
+////                    data.setItemGuid(itemGuid);
+////                    data.setDescription(orderWithTransferingItem.getItems().getItem(0).getDescription());
+////                }
+//
+//            }
+//
+//            return TransferingStatus.Connecting;
+//        }
+//        if (station.getSock() == null)
+//            return TransferingStatus.Failed;
+//        if (!station.getSock().isConnected())
+//            return TransferingStatus.Connecting;
 
         if (!station.getSock().writeXmlTextCommand(strXml))
             return TransferingStatus.Failed;
@@ -985,7 +995,7 @@ public class KDSStationFunc {
         if (toStationID.isEmpty())
             return TransferingStatus.Error_Station;
         //KDSTCPStation station = this.findIPConnectionByID(toStationID);
-        KDSStationConnection station = kdsuser.getKDS().getStationsConnections().findConnectionByID(toStationID);
+        //KDSStationConnection station = kdsuser.getKDS().getStationsConnections().findConnectionByID(toStationID);
 
         String strDone = "The order [" + order.getOrderName();
         strDone += "] was send to "+toStationID;
@@ -996,35 +1006,41 @@ public class KDSStationFunc {
         //transferOrder.setAllItemsToScreen(toStationID, toScreen);
 
         String strXml = KDSXMLCommandFactory.createOrderTransferXml(kdsuser.getKDS().getStationID(), kdsuser.getKDS().getLocalIpAddress(), "", transferOrder);
-        if (station == null) {
-            KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
-            if (activeStation == null)
-                return TransferingStatus.Error_Station;
-            KDSStationConnection connecting = kdsuser.getKDS().getStationsConnections().connectToStation(activeStation);
-            if (connecting.getSock().isConnected()) {
-                if (!connecting.getSock().writeXmlTextCommand(strXml))
-                    return TransferingStatus.Failed;
+        KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
+        if (activeStation == null)
+            return TransferingStatus.Error_Station;
+        kdsuser.getKDS().getStationsConnections().writeDataToStationOrItsSlave(activeStation, strXml);
+//        if (station == null) {
+//            KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
+//            if (activeStation == null)
+//                return TransferingStatus.Error_Station;
 
-            }
-            else
-            {
-                //add the message after send
-                KDSStationDataBuffered data = kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(activeStation.getID(), strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
-                //KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
-                if (data != null)
-                    data.setOrderGuid(orderGuid);
-
-            }
-
-            return TransferingStatus.Connecting;
-        }
-        if (station.getSock() == null)
-            return TransferingStatus.Failed;
-        if (!station.getSock().isConnected())
-            return TransferingStatus.Connecting;
-
-        if (!station.getSock().writeXmlTextCommand(strXml))
-            return TransferingStatus.Failed;
+//            KDSStationConnection connecting = kdsuser.getKDS().getStationsConnections().connectToStation(activeStation);
+//            if (connecting.getSock().isConnected()) {
+//                if (!connecting.getSock().writeXmlTextCommand(strXml))
+//                    return TransferingStatus.Failed;
+//
+//            }
+//            else
+//            {
+//                //add the message after send
+//                kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(activeStation.getID(), strXml,orderGuid, "", "", KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+////                KDSStationDataBuffered data = kdsuser.getKDS().getStationsConnections().getNoConnectionBuffer().add(activeStation.getID(), strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+////                //KDSStationDataBuffered data = connecting.addBufferedData(strXml, strDone);
+////                if (data != null)
+////                    data.setOrderGuid(orderGuid);
+//
+//            }
+//
+//            return TransferingStatus.Connecting;
+//        }
+//        if (station.getSock() == null)
+//            return TransferingStatus.Failed;
+//        if (!station.getSock().isConnected())
+//            return TransferingStatus.Connecting;
+//
+//        if (!station.getSock().writeXmlTextCommand(strXml))
+//            return TransferingStatus.Failed;
 
 
         kdsuser.getOrders().removeComponent(order);
