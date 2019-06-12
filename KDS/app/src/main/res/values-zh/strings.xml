@@ -422,6 +422,7 @@
         <item>手动</item>
         <item>当删除时</item>
         <item>当接收到时</item>
+        <item>当传送时</item>
     </string-array>
 
     <!--baudrate-->
@@ -1108,6 +1109,8 @@
     <string name="transfer_default_station_offline">Transfer default station # is offline</string>
     <string name="deliver_new_order_to_slave_expo">Deliver new order to my slave and expo</string>
     <string name="logout">Logout</string>
+    <string name="transfer_by_double_click">Enable double-tap to transfer order</string>
+    <string name="transfer_by_double_disable_bump">When this feature is enabled, double-tap bump will be disabled.</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

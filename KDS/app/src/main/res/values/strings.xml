@@ -431,6 +431,7 @@
         <item>Manual print</item>
         <item>Auto print after bump</item>
         <item>Auto print after receive</item>
+        <item>Print after transfer</item>
     </string-array>
 
     <!--baudrate-->
@@ -1121,6 +1122,8 @@
     <string name="deliver_new_order_to_slave_expo">Deliver new order to my slave and expo</string>
     <string name="router_running_no_deliver_new_order">If there is router app running or you have send order to slave/expo, disable it.</string>
     <string name="logout">Logout</string>
+    <string name="transfer_by_double_click">Enable double-tap to transfer order</string>
+    <string name="transfer_by_double_disable_bump">When this feature is enabled, double-tap bump will be disabled.</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

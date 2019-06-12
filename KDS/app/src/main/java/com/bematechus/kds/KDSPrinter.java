@@ -98,6 +98,7 @@ public class KDSPrinter {
         Manual,
         WhileBump,
         WhileReceive,
+        WhileTransfer,
     }
 
     public enum SerialBaudrate

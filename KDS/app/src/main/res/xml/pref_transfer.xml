@@ -17,4 +17,10 @@
         android:title="@string/transfer_to_default_automaticlly"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="transfer_by_double_click"
+        android:title="@string/transfer_by_double_click"
+        android:summary="@string/transfer_by_double_disable_bump"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

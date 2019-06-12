@@ -20,7 +20,19 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="" />
+    <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSLayout.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSLayoutCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSLayoutCell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSPrinter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSPrinter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSSettings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/res/values-zh/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/res/values-zh/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/res/values/donottranslate.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/res/values/donottranslate.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/res/xml/pref_transfer.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/res/xml/pref_transfer.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <ignored path="KDSRouter.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -53,7 +65,7 @@
     <session id="1336443130">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="114" />
+          <entry key="project.closed" value="115" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="13" />
           <entry key="project.open.time.10" value="18" />
@@ -68,8 +80,8 @@
           <entry key="project.open.time.5" value="3" />
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="8" />
-          <entry key="project.open.time.9" value="14" />
-          <entry key="project.opened" value="116" />
+          <entry key="project.open.time.9" value="15" />
+          <entry key="project.opened" value="117" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -130,12 +142,12 @@
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/kdsui_listitem_stations_setting.xml">
-          <provider editor-type-id="android-designer2" />
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="2882">
-              <caret line="131" column="31" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
+              <caret line="133" column="31" selection-start-line="133" selection-start-column="31" selection-end-line="133" selection-end-column="31" />
             </state>
           </provider>
+          <provider editor-type-id="android-designer2" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -150,8 +162,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49038">
-              <caret line="2330" selection-start-line="2330" selection-end-line="2330" />
+            <state relative-caret-position="51370">
+              <caret line="2347" selection-start-line="2347" selection-end-line="2347" />
             </state>
           </provider>
         </entry>
@@ -169,7 +181,7 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/SettingsActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="15180">
-              <caret line="745" column="23" selection-start-line="745" selection-start-column="23" selection-end-line="745" selection-end-column="23" />
+              <caret line="754" column="23" selection-start-line="754" selection-start-column="23" selection-end-line="754" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -195,7 +207,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsRelation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
+            <state relative-caret-position="282">
               <caret line="781" column="35" selection-start-line="781" selection-start-column="35" selection-end-line="781" selection-end-column="35" />
             </state>
           </provider>
@@ -2859,8 +2871,8 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="4" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="5" />
     <option name="width" value="1916" />
     <option name="height" value="1040" />
   </component>
@@ -3211,14 +3223,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="4" y="0" width="1916" height="1040" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" order="0" sideWeight="0.7053206" weight="0.22441365" />
-      <window_info id="Structure" order="1" sideWeight="0.69477236" visible="true" weight="0.26023707" />
+      <window_info id="Structure" order="1" sideWeight="0.69205296" visible="true" weight="0.26012793" />
       <window_info id="Captures" order="2" side_tool="true" weight="0.25" />
       <window_info id="Palette&#9;" order="3" />
-      <window_info active="true" id="Build Variants" order="4" sideWeight="0.30522767" side_tool="true" visible="true" weight="0.26023707" />
+      <window_info active="true" id="Build Variants" order="4" sideWeight="0.307947" side_tool="true" visible="true" weight="0.26012793" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Image Layers" order="7" />
@@ -3235,7 +3247,7 @@
       <window_info anchor="bottom" id="Version Control" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.3276644" />
       <window_info anchor="bottom" id="Terminal" order="12" weight="0.32993197" />
-      <window_info anchor="bottom" id="Build" order="13" sideWeight="0.6505376" visible="true" weight="0.3276644" />
+      <window_info anchor="bottom" id="Build" order="13" sideWeight="0.6505376" visible="true" weight="0.32739422" />
       <window_info anchor="bottom" id="Android Profiler" order="14" show_stripe_button="false" sideWeight="0.8123656" weight="0.56349206" />
       <window_info anchor="bottom" id="Logcat" order="15" sideWeight="0.49946237" weight="0.62736374" />
       <window_info anchor="bottom" id="Dependency Viewer" order="16" weight="0.32993197" />
@@ -3297,7 +3309,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java</url>
-          <line>2837</line>
+          <line>2860</line>
           <properties />
           <option name="timeStamp" value="155" />
         </line-breakpoint>
@@ -3565,7 +3577,7 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/kdsui_listitem_stations_setting.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2882">
-          <caret line="131" column="31" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
+          <caret line="133" column="31" selection-start-line="133" selection-start-column="31" selection-end-line="133" selection-end-column="31" />
         </state>
       </provider>
       <provider editor-type-id="android-designer2" />
@@ -3579,8 +3591,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49038">
-          <caret line="2330" selection-start-line="2330" selection-end-line="2330" />
+        <state relative-caret-position="51370">
+          <caret line="2347" selection-start-line="2347" selection-end-line="2347" />
         </state>
       </provider>
     </entry>
@@ -3594,7 +3606,7 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/SettingsActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15180">
-          <caret line="745" column="23" selection-start-line="745" selection-start-column="23" selection-end-line="745" selection-end-column="23" />
+          <caret line="754" column="23" selection-start-line="754" selection-start-column="23" selection-end-line="754" selection-end-column="23" />
         </state>
       </provider>
     </entry>
@@ -3621,7 +3633,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsRelation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
+        <state relative-caret-position="282">
           <caret line="781" column="35" selection-start-line="781" selection-start-column="35" selection-end-line="781" selection-end-column="35" />
         </state>
       </provider>

@@ -1990,7 +1990,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
         KDSPrinter.HowToPrintOrder howtoprint = KDSPrinter.HowToPrintOrder.values()[(getKDS().getSettings().getInt(KDSSettings.ID.Printer_howtoprint))];
-        if (howtoprint == KDSPrinter.HowToPrintOrder.WhileBump) {
+        if (howtoprint == KDSPrinter.HowToPrintOrder.WhileBump ||
+             howtoprint == KDSPrinter.HowToPrintOrder.WhileTransfer) {
             getKDS().getPrinter().printOrder(order);
         }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -3048,8 +3049,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDataOrder order = user.getOrders().getOrderByGUID(guid);
         //transfer
         getKDS().operationTransferSelectedOrder(user.getUserID(), toStation,toScreen, guid);
-
-
+        //print it. if set it print order when transfer, print it.
+        KDSPrinter.HowToPrintOrder howtoprint = KDSPrinter.HowToPrintOrder.values()[(getKDS().getSettings().getInt(KDSSettings.ID.Printer_howtoprint))];
+        if ( howtoprint == KDSPrinter.HowToPrintOrder.WhileTransfer) {
+            printOrder(order);
+        }
         this.getSummaryFragment().refreshSummary();
         notifyPOSOrderBumpByTransfer(order);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -4346,10 +4350,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         }
         else {
-            int nBumpByKdbMode = this.getSettings().getInt(KDSSettings.ID.Bumping_PanelNum_Mode);
-            if (nBumpByKdbMode != KDSSettings.BumpingByPanelNum.Double_Click.ordinal())
-                return;
-            doDoublePressPanelNumberBump(KDSUser.USER.USER_A, ev);
+            if (getSettings().getBoolean(KDSSettings.ID.Transfer_by_double_click))
+            {
+                doDoublePressPanelNumberTransfer(KDSUser.USER.USER_A, ev);
+            }
+            else {
+                int nBumpByKdbMode = this.getSettings().getInt(KDSSettings.ID.Bumping_PanelNum_Mode);
+                if (nBumpByKdbMode != KDSSettings.BumpingByPanelNum.Double_Click.ordinal())
+                    return;
+                doDoublePressPanelNumberBump(KDSUser.USER.USER_A, ev);
+            }
         }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -4895,7 +4905,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //if (m_bWatingRefreshViewAsDblClick ) return;
 
         KDSUser.USER user = getUserFromLayout(layout);// KDSUser.USER.USER_A;
-        opBump(user);
+
+        if (getSettings().getBoolean(KDSSettings.ID.Transfer_by_double_click))
+            opTransfer(user);//do transfer
+        else
+            opBump(user);
         if (layout.getView() != null)
             layout.getView().setNeedDrawOnce();
         //m_bWatingRefreshViewAsDblClick = true;
@@ -6213,6 +6227,40 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void setToDefaultSettings()
     {
         this.getSettings().setToDefault();
+    }
+
+    public void doDoublePressPanelNumberTransfer(KDSUser.USER user, KeyEvent ev) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        int nKeyCode = ev.getKeyCode();
+        if (nKeyCode == KeyEvent.KEYCODE_0 ||
+                nKeyCode == KeyEvent.KEYCODE_1 ||
+                nKeyCode == KeyEvent.KEYCODE_2 ||
+                nKeyCode == KeyEvent.KEYCODE_3 ||
+                nKeyCode == KeyEvent.KEYCODE_4 ||
+                nKeyCode == KeyEvent.KEYCODE_5 ||
+                nKeyCode == KeyEvent.KEYCODE_6 ||
+                nKeyCode == KeyEvent.KEYCODE_7 ||
+                nKeyCode == KeyEvent.KEYCODE_8 ||
+                nKeyCode == KeyEvent.KEYCODE_9) {
+            if (!isUserLayoutReady(user)) return;
+            int nPanel = nKeyCode - KeyEvent.KEYCODE_0;
+            String orderGuid = getUserUI(user).getLayout().getPanelOrderGuid(nPanel);
+            if (orderGuid.isEmpty()) return;
+            setSelectedOrderGuid(user, orderGuid);
+            opTransfer(user);
+
+//            if (getSelectedOrderGuid(user).equals(orderGuid)) {
+//                onBumpOrder(user);
+//            } else {
+//                KDSDataOrder bumpedOrder = bumpOrder(user, orderGuid, true);
+//                if (bumpedOrder == null) return;
+//                this.getSummaryFragment().refreshSummary();
+//                refreshView();
+//                printOrder(bumpedOrder);
+//            }
+
+        }
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 }
 

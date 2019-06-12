@@ -782,6 +782,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 KDSLayoutCell cell = addPremessage(panel, msg);
                 if (cell == null) return -1;
                 cell.m_nTextWrapRowIndex = r;
+                cell.setAttachedObject(item);
                 ncounter++;
                 ncounter = checkReachHorizontalFirstOrLastRow(panel, nBlockRows, dressedOrder, ncounter);
             }
@@ -831,6 +832,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     cell = addCondiment(panel, c);
                 if (cell == null) return -1;
                 cell.m_nTextWrapRowIndex = r;
+                cell.setAttachedObject(item);//for show items in condiments
                 ncounter ++;
                 ncounter = checkReachHorizontalFirstOrLastRow(panel, nBlockRows, dressedOrder, ncounter);
             }
@@ -985,6 +987,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 KDSLayoutCell cell = addPremessage(panel, msg);
                 if (cell == null) return false;
                 cell.m_nTextWrapRowIndex = r;
+
             }
         }
         int nLastGroupID = -1;
@@ -1011,6 +1014,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     KDSLayoutCell cell = addItem(panel, item);
                     if (cell == null) return false;
                     cell.m_nTextWrapRowIndex = r;
+
                 }
                 if (item.isQtyChanged())
                 {
@@ -1036,6 +1040,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     KDSLayoutCell cell = addPremessage(panel, m);
                     if (cell == null) return false;
                     cell.m_nTextWrapRowIndex = r;
+                    cell.setAttachedObject(item);//for show items in condiments
                 }
                 nContentIndex ++;
             }
@@ -1058,7 +1063,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     KDSLayoutCell cell = addModifier(panel, c);
                     if (cell == null) return false;
                     cell.m_nTextWrapRowIndex = r;
-
+                    cell.setAttachedObject(item);//for show items in condiments
                 }
                 nContentIndex ++;
 
@@ -1083,6 +1088,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     KDSLayoutCell cell = addCondiment(panel, c);
                     if (cell == null) return false;
                     cell.m_nTextWrapRowIndex = r;
+                    cell.setAttachedObject(item);//for show items in condiments
 
                 }
                 nContentIndex ++;

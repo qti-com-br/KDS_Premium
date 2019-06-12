@@ -559,6 +559,8 @@ public class KDSSettings extends SettingsBase {
 
      //
      Deliver_new_order_to_slave_expo,
+     //Josie need this feature
+     Transfer_by_double_click,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1289,6 +1291,8 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Transfer_auto_to_default,"bool_transfer_auto_to_default",false);//KPP1-42
 
        init_option(ID.Deliver_new_order_to_slave_expo,"bool_kds_general_deliver_new_order_to_slave_expo",false);//
+
+       init_option(ID.Transfer_by_double_click,"bool_transfer_by_double_click",false);//
 
 
 

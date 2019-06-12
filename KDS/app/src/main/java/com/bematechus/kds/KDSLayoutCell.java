@@ -1555,9 +1555,24 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         String s =getSpaces(nStarting);
         return s;
     }
+
+    /**
+     * Draw condiments
+     * Use m_attachedObj to link item.
+     *
+     * @param g
+     * @param rcAbsolute
+     * @param env
+     * @param block
+     * @param nColInBlock
+     * @return
+     */
     protected boolean drawDataCondiment(Canvas g,Rect rcAbsolute,KDSViewSettings env,KDSViewBlock block, int nColInBlock)
     {
         if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
+
+
+
         KDSDataCondiment c =(KDSDataCondiment) this.getData();
 
         int bg = c.getBG();
@@ -1579,6 +1594,20 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             bg = KDSConst.DIM_BG;
             fg = KDSConst.DIM_FG;
         }
+        //change expo color
+        if (m_attachedObj != null) {
+            if (m_attachedObj instanceof  KDSDataItem) {
+                KDSDataItem item = (KDSDataItem)m_attachedObj;
+                if (!item.getBumpedStationsString().isEmpty()) {
+                    KDSBGFG color =getStateColor(item, env, bg, fg);
+                    bg = color.getBG();
+                    fg = color.getFG();
+                }
+            }
+        }
+
+
+
         //draw background
         CanvasDC.fillRect(g, bg, rcAbsolute);
 
@@ -1645,6 +1674,19 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         if (c.isDimColor())
             bg = KDSConst.DIM_BG;
+
+        //change expo color
+        if (m_attachedObj != null) {
+            if (m_attachedObj instanceof  KDSDataItem) {
+                KDSDataItem item = (KDSDataItem)m_attachedObj;
+                if (!item.getBumpedStationsString().isEmpty()) {
+                    KDSBGFG color =getStateColor(item, env, bg, 0);
+                    bg = color.getBG();
+                    //fg = color.getFG();
+                }
+            }
+        }
+
 
         CanvasDC.fillRect(g, bg, rcAbsolute);
 
@@ -1808,4 +1850,13 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     }
 
 
+    Object m_attachedObj = null;
+    public void setAttachedObject(Object obj)
+    {
+        m_attachedObj = obj;
+    }
+    public Object getAttachedObj()
+    {
+        return m_attachedObj;
+    }
 }
