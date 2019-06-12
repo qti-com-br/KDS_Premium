@@ -2768,4 +2768,9 @@ get the total qty of all found items
 
         return s;
     }
+
+    public String makeQueueDurationString() {
+        Date begin = getQueueStateTime();
+        return makeDurationString(begin);
+    }
 }
