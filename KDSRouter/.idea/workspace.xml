@@ -20,18 +20,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSDBOffline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDS/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSStationFunc.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDSStationFunc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSMyStationRelations.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSMyStationRelations.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/NoConnectionDataBuffers.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/NoConnectionDataBuffers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="" />
     <ignored path="KDSRouter.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -64,7 +53,7 @@
     <session id="1336443130">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="116" />
+          <entry key="project.closed" value="117" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="14" />
           <entry key="project.open.time.10" value="18" />
@@ -3256,20 +3245,19 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" order="0" sideWeight="0.68992245" weight="0.22441365" />
-      <window_info id="Structure" order="1" sideWeight="0.6782007" visible="true" weight="0.21108742" />
+      <window_info id="Structure" order="1" sideWeight="0.6781737" visible="true" weight="0.21108742" />
       <window_info id="Captures" order="2" side_tool="true" weight="0.25" />
       <window_info id="Palette&#9;" order="3" />
-      <window_info id="Build Variants" order="4" sideWeight="0.3217993" side_tool="true" visible="true" weight="0.21108742" />
+      <window_info id="Build Variants" order="4" sideWeight="0.32182628" side_tool="true" visible="true" weight="0.21108742" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Image Layers" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.42743763" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32993197" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.57096773" visible="true" weight="0.35634744" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.57096773" weight="0.35634744" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.14512472" />
