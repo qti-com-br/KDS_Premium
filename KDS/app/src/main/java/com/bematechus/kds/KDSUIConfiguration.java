@@ -385,6 +385,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
 //            bindPreferenceSummaryToValue(findPreference("kds_general_users_orientation"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_title"));
             bindPreferenceSummaryToValue(findPreference("statistic_db_keep")); //2.0.25
+            bindPreferenceSummaryToValue(findPreference("kds_general_auto_refresh_screen")); //2.0.25
             //            bindPreferenceSummaryToValue(findPreference("kds_general_users_ratio"));
 //
 //            bindPreferenceSummaryToValue(findPreference("kds_general_subtitle_a_title"));

@@ -553,6 +553,8 @@ public class KDSSettings extends SettingsBase {
         SMS_enabled, //SMS feature , KPP1-15
         Queue_auto_bump_timeout, //unused
 
+       Auto_refresh_screen_freq,
+
        //Transfer
        Transfer_default_station, //KPP1-42
        Transfer_auto_to_default,
@@ -1291,6 +1293,8 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Transfer_auto_to_default,"bool_transfer_auto_to_default",false);//KPP1-42
 
        init_option(ID.Deliver_new_order_to_slave_expo,"bool_kds_general_deliver_new_order_to_slave_expo",false);//
+
+      init_option(ID.Auto_refresh_screen_freq,"string_kds_general_auto_refresh_screen","0");//
 
        init_option(ID.Transfer_by_double_click,"bool_transfer_by_double_click",false);//
 

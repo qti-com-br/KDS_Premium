@@ -618,30 +618,36 @@ public class KDSView extends View {
     {
 
         Canvas g = get_double_buffer();
-        if (g == null) return;
+        try {
 
 
-        if (getSettings() == null) return;
-        int bg =  getSettings().getInt(KDSSettings.ID.Panels_View_BG );
-        g.drawColor(bg);
+            if (g == null) return;
 
-        int ncount = panelsGetCount();
-        for (int i=0; i< ncount; i++)
-        {
-            if (i >= panelsGetCount())
-                break;
-            m_arPanels.get(i).onDraw(g, i);
+
+            if (getSettings() == null) return;
+            int bg = getSettings().getInt(KDSSettings.ID.Panels_View_BG);
+            g.drawColor(bg);
+
+            int ncount = panelsGetCount();
+            for (int i = 0; i < ncount; i++) {
+                if (i >= panelsGetCount())
+                    break;
+                m_arPanels.get(i).onDraw(g, i);
+            }
+
+            if (m_bHighLight) {//this view is hightlight in multiple users mode
+                // KDSViewFontFace ff =  getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Focused_FontFace);
+                //int hightlightBg = ff.getBG();
+                int hightlightBg = getSettings().getInt(KDSSettings.ID.Focused_BG);
+
+                Rect rtHightLight = new Rect(0, g.getHeight() - 3, g.getWidth(), g.getHeight());
+                CanvasDC.fillRect(g, hightlightBg, rtHightLight);
+                //g.drawRect(rtHightLight, );
+            }
         }
-
-        if (m_bHighLight)
-        {//this view is hightlight in multiple users mode
-           // KDSViewFontFace ff =  getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Focused_FontFace);
-            //int hightlightBg = ff.getBG();
-            int hightlightBg =getSettings().getInt(KDSSettings.ID.Focused_BG);
-
-            Rect rtHightLight = new Rect(0, g.getHeight()-3, g.getWidth(), g.getHeight());
-            CanvasDC.fillRect(g, hightlightBg, rtHightLight);
-            //g.drawRect(rtHightLight, );
+        catch ( Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
         }
         redrawAllPanelNumberInReverseSequence(g);
         commit_double_buffer(canvas);

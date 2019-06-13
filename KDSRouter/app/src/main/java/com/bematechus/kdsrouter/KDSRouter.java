@@ -555,15 +555,23 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     public void sockevent_onWroteDataDone(KDSSocketInterface sock,String remoteIP,  int nLength)
     {
-        if (sock instanceof KDSSocketTCPSideClient)
-        {
-            KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
-            int nport = getSettings().getInt(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort);
-
-            KDSStationActived station =  m_stationsConnection.findActivedStationByIPAndPort(remoteIP, KDSUtil.convertIntToString(nport));
-            if (station != null)
-                station.updatePulseTime();
-        }
+        //20190531, comment it.
+        //The SocketChannel-->write is not correct, its return value is not final data length.
+        // I doubt socket save data to buffer. So,don't use "write" to identify station alive.
+//        if (sock instanceof KDSSocketTCPSideClient)
+//        {
+//            KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
+//            int nport = getSettings().getInt(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort);
+//
+//            KDSStationActived station =  m_stationsConnection.findActivedStationByIPAndPort(remoteIP, KDSUtil.convertIntToString(nport));
+//            if (station != null) {
+////                if (station.getID().equals("1"))
+////                { //DEBUG
+////                    Log.i(TAG, "Update plus !!!!!");
+////                }
+//                station.updatePulseTime();
+//            }
+//        }
 
         KDSLog.d(TAG, "Wrote data finished "+ remoteIP + " len="+ KDSUtil.convertIntToString(nLength));
 
@@ -1172,9 +1180,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         m_stationsConnection.onIPConnected(this, ip);
 
 
-        KDSStationIP station = KDSStationIP.fromConnection(conn);// m_stationsConnection.findConnectionClientSideByIP(ip);
-        if (station == null) return;
-        restoreOfflineOrderXml(station);
+        //Don't use this restoring, the KDSStationsConnection-->m_buffersForWaitingConnection do this.
+//        KDSStationIP station = KDSStationIP.fromConnection(conn);// m_stationsConnection.findConnectionClientSideByIP(ip);
+//        if (station == null) return;
+//        restoreOfflineOrderXml(station);
         //}
     }
 
@@ -1508,6 +1517,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     }
     public void sockevent_onTCPReceiveXml(KDSSocketInterface sock, String xmlData)
     {
+        //do ack for xml
+        xmlData = m_stationsConnection.responseAck(this.getStationID(), this.getLocalIpAddress(), this.getLocalMacAddress(),sock, xmlData);
+
         KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
 
         switch (ntype)
@@ -1975,6 +1987,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 break;
             case ROUTER_UPDATE_CHANGES_FLAG:
                 commandUpdateDBChangesGuid(command, xmlData);
+                break;
+            case ACK_XML:
+                commandAckXml(fromStationID, command, xmlData);
+                break;
             default:
                 return;
         }
@@ -2328,7 +2344,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         assignColorToOrder(order, xmlData); //2.1.15.4
 
         String xmlOrder = rebuildOrderXml(order, xmlData);
-        checkLostStationsAndSaveToOffline(order, xmlOrder);
+        //don't use this for restoring, KDSStationsConnection-->m_buffersForWaitingConnection do this work.
+        //checkLostStationsAndSaveToOffline(order, xmlOrder);
 
         if (getSettings().getBoolean(KDSRouterSettings.ID.Order_ack))
         {
@@ -3644,6 +3661,21 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             return m_smbDataSource.removeTimeoutNotificationFiles(KDSConst.SMB_FOLDER_NOTIFICATION, nMinutes);
         }
         return 0;
+
+    }
+
+    /**
+     * return ack from remote station
+     * Format:
+     *  the parameter just is the ackguid value.
+     * @param fromStationID
+     * @param command
+     * @param xmlData
+     */
+    public void commandAckXml(String fromStationID, KDSXMLParserCommand command,String xmlData)
+    {
+        String ackguid = command.getParam();
+        m_stationsConnection.onReceiveAckXml(fromStationID, ackguid);
 
     }
 }

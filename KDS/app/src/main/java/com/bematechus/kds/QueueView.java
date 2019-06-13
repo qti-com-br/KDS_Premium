@@ -16,6 +16,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -42,7 +43,7 @@ import java.util.HashMap;
 public class QueueView  extends View {
 
     final String TAG = "QueueView";
-
+    final int DEFAULT_SWITCH_PAGE_TIMEOUT_MS = 5000;
     private int ITEM_AVERAGE_HEIGHT = 80;
     final int BORDER_GAP = 4;
     private float ORDERID_AREA_PERCENT = (float) 0.40;// (float) 0.25;
@@ -86,9 +87,11 @@ public class QueueView  extends View {
 
     KDSSettings.QueueMode m_nViewMode = KDSSettings.QueueMode.Simple;//.Panels;
 
-    int m_nPageCounter = 0;
+    ArrayList<Integer> m_arPageCounter = new ArrayList<>();
+
+    //int m_nPageCounter = 0;
     TimeDog m_tdPage = new TimeDog();
-    int PAGE_TIMEOUT = 5000;
+    int PAGE_TIMEOUT = DEFAULT_SWITCH_PAGE_TIMEOUT_MS;
 
     Object m_locker = new Object();
 
@@ -201,6 +204,10 @@ public class QueueView  extends View {
 
     private void init()
     {
+        for (int i=0; i< QueueOrders.QueueStatus.values().length; i++)
+        {
+            m_arPageCounter.add(0);
+        }
 
         resetAllPaint();
 
@@ -775,7 +782,7 @@ public class QueueView  extends View {
         status.add(QueueOrders.QueueStatus.Received);
       //  status.add(QueueOrders.QueueStatus.Preparation);
         int nPagesCount = getPageCount(status, nRows, NOT_READY_COLS);
-        int nPageIndex = getCurrentPageIndex(nPagesCount);
+        int nPageIndex = getCurrentPageIndex(nPagesCount, QueueOrders.QueueStatus.Received.ordinal());
         int nItemsStartIndex = nPageIndex * nTotalPanels;
         int nCurrentItemIndex = -1;
 
@@ -836,7 +843,7 @@ public class QueueView  extends View {
         status.add(QueueOrders.QueueStatus.Ready);
         status.add(QueueOrders.QueueStatus.Preparation);
         int nPagesCount = getPageCount(status, nRows, nMaxCols);
-        int nPageIndex = getCurrentPageIndex(nPagesCount);
+        int nPageIndex = getCurrentPageIndex(nPagesCount, QueueOrders.QueueStatus.Preparation.ordinal());
         int nItemsStartIndex = nPageIndex * nTotalPanels;
 
         int nCurrentItemIndex = -1;
@@ -1282,7 +1289,8 @@ public class QueueView  extends View {
             rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftStatusCustomMessage, order.getQueueMessage(), false,bReverseReadyColorForFlash);
         //if (m_bShowOrderTimer)
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_order_timer))
-            rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeDurationString(), false,bReverseReadyColorForFlash);
+            rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeQueueDurationString(), false,bReverseReadyColorForFlash);
+            //rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeDurationString(), false,bReverseReadyColorForFlash);
         //if (m_bShowOrderID)
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_order_ID)) {
             int n = getSettings().getInt(KDSSettings.ID.Queue_order_id_length);
@@ -1583,7 +1591,7 @@ public class QueueView  extends View {
 
         PAGE_TIMEOUT = settings.getInt(KDSSettings.ID.Queue_auto_switch_duration) * 1000;
         if (PAGE_TIMEOUT<=0)
-            PAGE_TIMEOUT = 5000;
+            PAGE_TIMEOUT = DEFAULT_SWITCH_PAGE_TIMEOUT_MS;
 
 
         //2.0.35
@@ -1668,8 +1676,11 @@ public class QueueView  extends View {
             if (isQueueExpo()) {//if multiple pages, move to focused order guest_paging.
                 if (!orderGuid.isEmpty()) {
                     int nPage = checkFocusedOrderInWhichPage();
-                    if (nPage >= 0)
-                        m_nPageCounter = nPage;
+                    if (nPage >= 0) {
+                        for  (int i=0;i< m_arPageCounter.size(); i++)
+                            m_arPageCounter.set(i, nPage);
+                        //m_nPageCounter = nPage;
+                    }
                 }
             }
         }
@@ -2016,15 +2027,25 @@ public class QueueView  extends View {
         int n = ncount/nTotalPanels;
         if ( (ncount%nTotalPanels) >0)
             n ++;
+        //Log.i(TAG, "pages count=" + n);
         return n;
     }
 
-    private int getCurrentPageIndex(int nPagesCount)
+    private int getCurrentPageIndex(int nPagesCount, int nStatus)
     {
         if (nPagesCount <= 0)
             return 0;
-        int n =  (m_nPageCounter % nPagesCount);
+        int counter = m_arPageCounter.get(nStatus);
+        int n = (counter% nPagesCount);
+        if (n == 0)
+            m_arPageCounter.set(nStatus, 0); //reset it.
         return n;
+
+//        int n =  (m_nPageCounter % nPagesCount);
+//        Log.i(TAG, "pages counter =" + m_nPageCounter);
+//        Log.i(TAG, "index pages count =" + nPagesCount);
+//        Log.i(TAG, "-------pages index=" + n);
+//        return n;
     }
 
     /**
@@ -2046,7 +2067,7 @@ public class QueueView  extends View {
             int nTotalPanels = nRows * getCols();
             //for page
             int nPagesCount = getPageCount(status, nRows, getCols());
-            int nPageIndex = getCurrentPageIndex(nPagesCount);
+            int nPageIndex = getCurrentPageIndex(nPagesCount, status.get(0).ordinal());
             int nItemsStartIndex = nPageIndex * nTotalPanels;
 
             int nItemCurrentIndex = -1;
@@ -2183,11 +2204,17 @@ public class QueueView  extends View {
                 return;
         }
         if (m_tdPage.is_timeout(PAGE_TIMEOUT)) {
-            m_nPageCounter++;
+            for (int i=0;i< m_arPageCounter.size(); i++)
+            {
+                m_arPageCounter.set(i, m_arPageCounter.get(i)+1);
+                if (m_arPageCounter.get(i) > Integer.MAX_VALUE-1000)
+                    m_arPageCounter.set(i, 0);
+            }
+            //m_nPageCounter++;
             m_tdPage.reset();
         }
-        if (m_nPageCounter >Integer.MAX_VALUE-1000)
-            m_nPageCounter = 0;
+//        if (m_nPageCounter >Integer.MAX_VALUE-1000)
+//            m_nPageCounter = 0;
     }
 
     String m_strInputOrderID = "";
@@ -2437,5 +2464,6 @@ public class QueueView  extends View {
         }
 
     }
+
 
 }

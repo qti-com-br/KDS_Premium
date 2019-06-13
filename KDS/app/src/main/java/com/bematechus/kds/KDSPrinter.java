@@ -13,6 +13,7 @@ import com.bematechus.bemaLibrary.PrinterStatus;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
 import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
@@ -1458,7 +1459,13 @@ print order data to  buffer, socket will send this buffer to serial port
 
         m_nCopies = settings.getInt(KDSSettings.ID.Printer_copies);
         m_nPortType = PrinterPortType.values()[ settings.getInt(KDSSettings.ID.Printer_Port)];
-        m_howtoPrint = HowToPrintOrder.values()[settings.getInt(KDSSettings.ID.Printer_howtoprint)];
+        try {
+            m_howtoPrint = HowToPrintOrder.values()[settings.getInt(KDSSettings.ID.Printer_howtoprint)];
+        }
+        catch (Exception e)
+        {
+
+        }
 
         m_bGroupCategory = settings.getBoolean(KDSSettings.ID.Item_group_category);//2.0.48
 
@@ -1574,7 +1581,6 @@ print order data to  buffer, socket will send this buffer to serial port
     }
     public boolean isPrinterValid()
     {
-
 
         KDSSettings settings = m_kds.getSettings();
         PortInfo portInfo = this.getPortInfo(settings);

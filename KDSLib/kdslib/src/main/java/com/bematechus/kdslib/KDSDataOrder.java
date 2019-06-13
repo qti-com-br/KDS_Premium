@@ -806,7 +806,7 @@ public class KDSDataOrder extends KDSData {
             //item.setFG(Color.BLACK);
             item.setCategory("Category #2");
             //item.setDescription("item #" + KDSUtil.convertIntToString(i));
-            item.setDescription("item #" + KDSUtil.convertIntToString(i));
+            item.setDescription("item " + KDSUtil.convertIntToString(i));
             item.setItemName("itemname" + KDSUtil.convertIntToString(i));
             item.setToStationsString(toStations);
             item.setOrderID(-1);
@@ -2852,6 +2852,11 @@ get the total qty of all found items
         String s = xml.get_xml_string();
 
         return s;
+    }
+
+    public String makeQueueDurationString() {
+        Date begin = getQueueStateTime();
+        return makeDurationString(begin);
     }
 
     public void setItemsTransferedFromStationID(String fromStationID)

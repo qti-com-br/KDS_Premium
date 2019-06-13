@@ -272,7 +272,12 @@ public class KDSMyStationRelations {
 
         ar.addAll(m_arPrimaryOfSlaveWorkLoadStations);
         ar.addAll(m_arPrimaryOfSlaveDuplicatedStations);
+        //add this two, 20190606
 
+        ar.addAll(m_arQueueExpStations);
+        ar.addAll(m_arSlaveStations);
+        //keep unique stations
+        removeDuplicatedStations(ar);
         return ar;
 
     }
@@ -487,6 +492,71 @@ public class KDSMyStationRelations {
     public ArrayList<KDSStationIP> getQueueExpoStations()
     {
         return m_arQueueExpStations;
+
+    }
+
+    /**
+     * check if given station is queue or expo station.
+     *
+     * @param stationID
+     * @return
+     */
+    public boolean isQueueExpoStation(String stationID)
+    {
+        KDSStationsRelation station =  KDSStationsRelation.findStation(m_arStationsRelations, stationID);
+        if (station == null)
+            return false;
+        return (station.getFunction() == SettingsBase.StationFunc.Queue ||
+                station.getFunction() == SettingsBase.StationFunc.Queue_Expo ||
+                station.getFunction() == SettingsBase.StationFunc.Expeditor);
+    }
+
+    public void removeDuplicatedStations(ArrayList<KDSStationIP> ar)
+    {
+        ArrayList<KDSStationIP> arUnique = new ArrayList<>();
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (!existedInStationsArrary(arUnique, ar.get(i)))
+            {
+                arUnique.add(ar.get(i));
+            }
+        }
+        ar.clear();
+        ar.addAll(arUnique);
+
+    }
+    private boolean existedInStationsArrary(ArrayList<KDSStationIP> ar, KDSStationIP station)
+    {
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (ar.get(i).getID().equals(station.getID()))
+                return true;
+        }
+        return false;
+    }
+
+    public ArrayList<KDSStationIP> getAllStationsNeedToConnect(ArrayList<String> offlineStations)
+    {
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+        ar.addAll(m_arExpStations);
+        ar.addAll(m_arPrimaryOfSlaveMirrorStations);
+        ar.addAll(m_arPrimaryOfSlaveBackupStations);
+
+        ar.addAll(m_arPrimaryOfSlaveWorkLoadStations);
+        ar.addAll(m_arPrimaryOfSlaveDuplicatedStations);
+        //add this two, 20190606
+
+        ar.addAll(m_arQueueExpStations);
+        ar.addAll(m_arSlaveStations);
+        for (int i=0; i< offlineStations.size(); i++)
+        {
+            KDSStationsRelation r = KDSStationsRelation.findStation(m_arStationsRelations,offlineStations.get(i));
+            ar.add(r);
+        }
+
+        //keep unique stations
+        removeDuplicatedStations(ar);
+        return ar;
 
     }
 }

@@ -1108,6 +1108,7 @@
     <string name="pref_kds_transfer_title">Transfer</string>
     <string name="transfer_default_station_offline">Transfer default station # is offline</string>
     <string name="deliver_new_order_to_slave_expo">Deliver new order to my slave and expo</string>
+    <string name="auto_refresh_screen">Auto refresh screen in every X seconds.(Zero disable this option)</string>
     <string name="logout">Logout</string>
     <string name="transfer_by_double_click">Enable double-tap to transfer order</string>
     <string name="transfer_by_double_disable_bump">When this feature is enabled, double-tap bump will be disabled.</string>

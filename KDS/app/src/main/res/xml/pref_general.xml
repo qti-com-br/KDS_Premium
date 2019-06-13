@@ -186,5 +186,14 @@
         android:title="@string/deliver_new_order_to_slave_expo"
         android:summary="@string/router_running_no_deliver_new_order"
         android:defaultValue="false" />
-
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_auto_refresh_screen"
+        android:title="@string/auto_refresh_screen"
+        android:defaultValue="0"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
 </PreferenceScreen>

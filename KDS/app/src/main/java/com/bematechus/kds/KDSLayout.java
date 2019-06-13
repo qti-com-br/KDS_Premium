@@ -246,14 +246,25 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     }
 
-    public boolean showOrder(KDSDataOrder order, int nBlockRows) {
+    /**
+     *
+     * @param order
+     * @param nBlockRows
+     * @return
+     *  1: OK
+     *  0: Failed, order error
+     *  -1: no space.
+     *  -2: block rows error.
+     *  -3: settings error.
+     */
+    public int showOrder(KDSDataOrder order, int nBlockRows) {
 
         //TimeDog t = new TimeDog();
 
         KDSLayoutOrder dressedOrder = createLayoutOrder(order);
         //t.debug_print_Duration("showOrder1");
         if (dressedOrder == null)
-            return true; //"The "showing paid order" items showing method maybe return null
+            return 0; //"The "showing paid order" items showing method maybe return null
 
         KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
 
@@ -267,7 +278,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //nNeedRowsWithTitleWithoutFooter += (nTitleRows -1);
         int nTitleRows = getEnv().getSettings().getInt(KDSSettings.ID.Order_Title_Rows);
         int nBlockDataRows = nBlockRows - nTitleRows - getEnv().getSettings().getInt(KDSSettings.ID.Order_Footer_Rows);//.getFooterRows();
-        if (nBlockDataRows <=0) return false;
+        if (nBlockDataRows <=0) return -2;
         KDSViewPanel panel = null;
 
         if (layoutFormat == KDSSettings.LayoutFormat.Horizontal) {
@@ -276,29 +287,33 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             if ((n % nBlockDataRows) > 0)
                 nBlocks++;
             panel = m_view.panelAdd();
-            if (panel == null) return false;
+            if (panel == null) return -1; //no space for it.
             if (!(panel instanceof KDSViewPanelHorizontal))
-                return false;
+                return -3;
+
+            if (nBlocks ==0) nBlocks = 1; //Empty order bug, show empty order!!!!! 20190530
             KDSViewPanelHorizontal hpanel = (KDSViewPanelHorizontal) panel;
             hpanel.setCols(nBlocks);
             // return true;
-            return showOrderInHorizontalPanel(hpanel, nBlockRows, dressedOrder);
+            boolean b = showOrderInHorizontalPanel(hpanel, nBlockRows, dressedOrder);
+            return b?1:0;
 
         } else if (layoutFormat == KDSSettings.LayoutFormat.Vertical) {
             int nRows = nNeedRowsWithoutTitleFooter;
             nRows += nTitleRows;//this.getEnv().getTitleRows();
             nRows += this.getEnv().getSettings().getInt(KDSSettings.ID.Order_Footer_Rows);
             panel = m_view.panelAdd();
-            if (panel == null) return false;
+            if (panel == null) return -1;
             if (!(panel instanceof KDSViewPanelVertical))
-                return false;
+                return -3;
             KDSViewPanelVertical vpanel = (KDSViewPanelVertical) panel;
             vpanel.setRows(nRows);
-            return showOrderInVerticalPanel(vpanel, dressedOrder);
+            boolean b = showOrderInVerticalPanel(vpanel, dressedOrder);
+            return b?1:0;
         }
 
         //t.debug_print_Duration("showOrder2");
-        return true;
+        return 1;
 
     }
 
@@ -2295,7 +2310,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                         }
                         catch ( Exception e)
                         {
-                            e.printStackTrace();
+                            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e);
+                            //e.printStackTrace();
                         }
                         m_nRedrawRequestCounter = 0;
                     }
@@ -2313,14 +2329,14 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //m_orders = orders;
         KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
         //m_view.clear();
-        synchronized (m_view.m_panelsLocker) {
+        //synchronized (m_view.m_panelsLocker) {
             m_view.clearPanels();
 //            if (layoutFormat == KDSSettings.LayoutFormat.iOS_Like)
 //            {
 //                m_view.ios_clear();
 //            }
 
-        }
+        //}
 
         if (orders == null || orders.getCount() <= 0) {
             //this.getView().refresh();
@@ -2361,9 +2377,23 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 for (int i = nStartOrderIndex; i < ncount; i++) {
                     // t.debug_print_Duration("showOrders1");
                     KDSDataOrder order = orders.get(i);
+                    if (order == null) continue;
                     // t.debug_print_Duration("showOrders2");
-                    if (!showOrder(order, nBlockRows))
-                        break;
+                    try {
+                        int nreturn = showOrder(order, nBlockRows);
+                        //if return 0(order showing error), still go to next order.
+                        //return 1: ok.
+                        if (nreturn == -1 ||//no space. All screen filled by orders
+                            nreturn == -2 ||//rows error, the panel size is too small.
+                            nreturn == -3)  //settings error, this should not happen
+                        {
+                            break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+                    }
                     //t.debug_print_Duration("showOrders3");
                 }
 

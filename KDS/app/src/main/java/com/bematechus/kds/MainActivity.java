@@ -282,7 +282,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         checkAutoActivation();
         startCheckingThread();
+        //auto refresh screen, as the indian station hide orders!!!!
+        auto_refresh_screen();
         //testException();
+
     }
 
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -1443,6 +1446,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isUserLayoutReady(userID)) return;
 
         getUserUI(userID).getLayout().focusNext();
+        getUserUI(userID).refreshPrevNext();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -1463,6 +1467,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         MainActivityFragment f = getMainFragment();
         if (f != null)
             f.focusPrev(userID);
+        getUserUI(userID).refreshPrevNext();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -6228,6 +6233,60 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         this.getSettings().setToDefault();
     }
+
+    TimeDog m_tdAutoRefreshScreen = new TimeDog();
+    private void auto_refresh_screen()
+    {
+        int nSeconds = this.getSettings().getInt(KDSSettings.ID.Auto_refresh_screen_freq);
+        if (nSeconds <=0) return;
+
+        if (m_tdAutoRefreshScreen.is_timeout(nSeconds * 1000))
+        {
+            m_tdAutoRefreshScreen.reset();
+            getKDS().doRefreshView();
+        }
+
+    }
+
+    /**
+     *  try to add an empty order to orders, just for testing!!!!
+     *  The Indian bug!!!!
+     * @param userID
+     */
+    private void testEmptyNewOrder(KDSUser.USER userID) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (!isKDSValid()) return ;
+        //TimeDog t = new TimeDog();
+        m_nTestCount++;
+        String strOrderName = "Order #" + KDSUtil.convertIntToString(m_nTestCount);
+
+        int nItems = m_randomItems.nextInt(5);
+
+        nItems = Math.abs(m_randomItems.nextInt() % 5) +1;
+        KDSDataOrder order = KDSDataOrder.createTestOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
+        order.getItems().clear();
+
+        //KDSDataOrder order = KDSDataOrder.createTestSmartOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
+        // KDSDataOrder order = KDSDataOrder.createTestPrepOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
+        //preparation, 20180104
+        getKDS().getCurrentDB().prep_add_order_items(order);
+
+        getKDS().getUsers().getUserA().getOrders().addComponent(order);
+
+        //t.debug_print_Duration("opAddNewOrder2");
+        getKDS().refreshView(KDSUser.USER.USER_A, KDS.RefreshViewParam.None);
+        getKDS().refreshView(KDSUser.USER.USER_B, KDS.RefreshViewParam.None);
+        //t.debug_print_Duration("opAddNewOrder3");
+        int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+        KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+
+        this.getUserUI(KDSUser.USER.USER_A).refreshSum(KDSUser.USER.USER_A, pos);
+        this.getUserUI(KDSUser.USER.USER_B).refreshSum(KDSUser.USER.USER_B, pos);
+        // t.debug_print_Duration("opAddNewOrder4");
+        //this.getSummaryFragment().refreshSummary();
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
 
     public void doDoublePressPanelNumberTransfer(KDSUser.USER user, KeyEvent ev) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");

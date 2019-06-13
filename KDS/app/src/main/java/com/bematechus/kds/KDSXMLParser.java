@@ -46,9 +46,9 @@ public class KDSXMLParser  {
 
         if (strText.indexOf(KDSXMLParserOrder.DBXML_ELEMENT_FEEDBACK_ORDER_STATUS) >=0)
             return XMLType.Feedback_OrderStatus;
-        if (strText.indexOf("<"+ KDSXMLParserCommand.DBXML_ELEMENT_COMMAND +">") >=0)
+        if (strText.indexOf("</"+ KDSXMLParserCommand.DBXML_ELEMENT_COMMAND +">") >=0) //check the tag end symbol.
             return XMLType.Command;//check command first. In command, it maybe contain <transaction>
-        if (strText.indexOf("<"+ KDSXMLParserOrder.DBXML_ELEMENT_TRANSACTION +">") >=0) {
+        if (strText.indexOf("</"+ KDSXMLParserOrder.DBXML_ELEMENT_TRANSACTION +">") >=0) { //check the tag end symbol, as <Transaction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
             if (strText.indexOf(NOTIFY_TYPE) >=0) {
                 return XMLType.Notification;
             }
