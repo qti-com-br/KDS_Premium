@@ -1434,6 +1434,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isUserLayoutReady(userID)) return;
 
         getUserUI(userID).getLayout().focusNext();
+        getUserUI(userID).refreshPrevNext();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -1454,6 +1455,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         MainActivityFragment f = getMainFragment();
         if (f != null)
             f.focusPrev(userID);
+        getUserUI(userID).refreshPrevNext();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
