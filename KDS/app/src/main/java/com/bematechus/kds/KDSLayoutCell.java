@@ -1628,6 +1628,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
                 rcAbsolute = drawItemState(g,item, rcAbsolute, env, color,block.getCalculatedAverageRowHeight(), this.getFont());
                 bg = color.getBG();
+
                 //s = buildItemStateString(item, s, env);
 
 
@@ -1639,7 +1640,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         if (c.isDimColor()) this.getFont().setFG(KDSConst.DIM_FG);
 
         this.getFont().setBG(bg);
-
+        this.getFont().setFG(fg); //use this text color
 
         if (env.getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
             rcAbsolute.left += getCondimentPrefixPixelsWidth(getFont(), env);

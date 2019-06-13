@@ -538,20 +538,32 @@ public class TabDisplay {
             v.setTag(r);
 
             TextView t = ((TextView) v.findViewById(android.R.id.text1));
-
+            t.setPadding(25, 0, 25, 0);
             //t.setText(r.toString());
             t.setText(r.getShowingText());
-            t.setTextColor(m_bgfg.getFG());
+
+            //t.setBackground(null);
+
             if (r == m_selected)
             {
-                GradientDrawable d= (GradientDrawable) ContextCompat.getDrawable(getContext(), R.drawable.tab_button_selected);
-                d.setColors(new int[] {m_bgfg.getBG(),m_bgfg.getFG()});
-                t.setBackground(d);
+                t.setBackgroundColor(m_bgfg.getFG());
+                t.setTextColor(m_bgfg.getBG());
+
+                //t.setBackgroundColor(Color.RED);
+//                GradientDrawable d= (GradientDrawable) ContextCompat.getDrawable(getContext(), R.drawable.tab_button_selected);
+//                d.setColors(new int[] {m_bgfg.getBG(),m_bgfg.getFG()});
+//                t.setBackground(d);
+                //t.invalidate();
             }
             else
             {
-                t.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.tab_button_normal));
+                t.setTextColor(m_bgfg.getFG());
+                t.setBackgroundColor(m_bgfg.getBG());
+//                t.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.tab_button_normal));
+                //t.invalidate();
             }
+            //t.setText(r.getShowingText());
+            //t.setTextColor(m_bgfg.getFG());
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
