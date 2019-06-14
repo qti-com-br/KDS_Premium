@@ -2865,11 +2865,20 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                     else
                     {//check its backup station
                         ArrayList<String>  backups = m_stationsConnection.getActivedBackupStations(stationID);
+
                         if (backups.size() >0)
                         {
-                            String toBackups = KDSStationsRelation.makeStationsString(backups);
-                            item.setToStationsString(toBackups);
-                            item.setStationChangedToBackup(true);
+                            boolean changeStation = true;
+                            for (int j=0; j< backups.size(); j++)
+                            {
+                                if (m_stationsConnection.getRelations().isQueueExpoStation(backups.get(j)))
+                                    changeStation = false;
+                            }
+                            if (changeStation) {
+                                String toBackups = KDSStationsRelation.makeStationsString(backups);
+                                item.setToStationsString(toBackups);
+                                item.setStationChangedToBackup(true);
+                            }
                         }
                     }
                 }

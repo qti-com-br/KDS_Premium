@@ -1622,6 +1622,10 @@ public class KDSStationsConnection {
             {//this station is not active, check its backup station.
                 String stationID = station.getID();
                 KDSStationIP backupStation =  getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
+                //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
+                if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+                    m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+
                 if (backupStation == null) {
                     //still write to primary station
                     Log.i(TAG, "Write to station: " + station);
@@ -1637,8 +1641,8 @@ public class KDSStationsConnection {
                 {
                     connectStationWithData(backupStation, strXml,nMaxBufferCount);
                     //check if slave is queue station, if it is queue/expo, backup offline orders.20190531
-                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
-                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+//                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+//                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
 
                 }
                 else if (!backupConnection.getSock().isConnected())
@@ -1652,8 +1656,8 @@ public class KDSStationsConnection {
                     backupConnection.getSock().writeXmlTextCommand(withAckXml);
                     //backupConnection.getSock().writeXmlTextCommand(strXml);
                     //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
-                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
-                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+//                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+//                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
                 }
 
             }

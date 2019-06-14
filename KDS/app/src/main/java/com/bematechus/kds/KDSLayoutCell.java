@@ -906,9 +906,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //        return true;
 //    }
 
-    protected KDSBGFG getStateColor(KDSDataItem item,KDSViewSettings env)
+    protected KDSBGFG getStateColor(KDSDataItem item,KDSViewSettings env, int defaultBG, int defaultFG)
     {
-        int nbg = this.getFont().getBG();
+        int nbg = defaultBG;//this.getFont().getBG();
         //if the bg is same as panel color, transparent it.
 //        int panelBG = env.getSettings().getInt(KDSSettings.ID.Panels_BG);
 //
@@ -916,7 +916,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //            nbg = Color.TRANSPARENT;
 
         String guid = item.getGUID();
-        KDSBGFG color = new KDSBGFG(this.getFont().getBG(), this.getFont().getFG());
+        KDSBGFG color = new KDSBGFG(defaultBG, defaultFG);//this.getFont().getBG(), this.getFont().getFG());
         color.setBG(nbg);
 
         if (item.getChangedQty() !=0)
@@ -1377,7 +1377,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         KDSDataItem item =(KDSDataItem) this.getData();
 
-        KDSBGFG color = getStateColor(item, env);
+        KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
 
         CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
 
@@ -1501,6 +1501,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         String s =getSpaces(nStarting);
         return s;
     }
+
+    /**
+     * Draw condiments
+     * Use m_attachedObj to link item.
+     * @param g
+     * @param rcAbsolute
+     * @param env
+     * @param block
+     * @param nColInBlock
+     * @return
+     */
     protected boolean drawDataCondiment(Canvas g,Rect rcAbsolute,KDSViewSettings env,KDSViewBlock block, int nColInBlock)
     {
         if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
@@ -1525,6 +1536,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             bg = DIM_BG;
             fg = DIM_FG;
         }
+        //change expo color
+        if (m_attachedObj != null) {
+            if (m_attachedObj instanceof  KDSDataItem) {
+                KDSDataItem item = (KDSDataItem)m_attachedObj;
+                if (!item.getBumpedStationsString().isEmpty()) {
+                    KDSBGFG color =getStateColor(item, env, bg, fg);
+                    bg = color.getBG();
+                    fg = color.getFG();
+                }
+            }
+        }
         //draw background
         CanvasDC.fillRect(g, bg, rcAbsolute);
 
@@ -1541,7 +1563,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             Object obj = c.getFocusTag();
             if (obj instanceof KDSDataItem) {
                 KDSDataItem item = (KDSDataItem) obj;
-                KDSBGFG color = getStateColor(item, env);
+                KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
                 CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
                 rcAbsolute = drawItemState(g,item, rcAbsolute, env, color,block.getCalculatedAverageRowHeight());
                 bg = color.getBG();
@@ -1556,7 +1578,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         if (c.isDimColor()) this.getFont().setFG(DIM_FG);
 
         this.getFont().setBG(bg);
-
+        this.getFont().setFG(fg);
 
         if (env.getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
             rcAbsolute.left += getCondimentPrefixPixelsWidth(getFont(), env);
@@ -1592,6 +1614,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         if (c.isDimColor())
             bg = DIM_BG;
 
+        //change expo color
+        if (m_attachedObj != null) {
+            if (m_attachedObj instanceof  KDSDataItem) {
+                KDSDataItem item = (KDSDataItem)m_attachedObj;
+                if (!item.getBumpedStationsString().isEmpty()) {
+                    KDSBGFG color =getStateColor(item, env, bg, 0);
+                    bg = color.getBG();
+                    //fg = color.getFG();
+                }
+            }
+        }
         CanvasDC.fillRect(g, bg, rcAbsolute);
 
         String strDescription = c.getMessage();
@@ -1602,7 +1635,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             Object obj = c.getFocusTag();
             if (obj instanceof KDSDataItem) {
                 KDSDataItem item = (KDSDataItem) obj;
-                KDSBGFG color = getStateColor(item, env);
+                KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
                 CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
                 rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight());
                 bg = color.getBG();
@@ -1672,7 +1705,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     {
         KDSDataVoidItemQtyChanged item =(KDSDataVoidItemQtyChanged) this.getData();
 
-        KDSBGFG color = getStateColor(item, env);
+        KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
 
         CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
 
@@ -1727,5 +1760,14 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return true;
     }
 
+    Object m_attachedObj = null;
+    public void setAttachedObject(Object obj)
+    {
+        m_attachedObj = obj;
+    }
+    public Object getAttachedObj()
+    {
+        return m_attachedObj;
+    }
 
 }
