@@ -1182,12 +1182,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             s = s.replace("<Relations>", "");
             s = s.replace("</Relations>", "");
             if (s.isEmpty()) return;
+            SettingsBase.StationFunc oldFunc = getSettings().getStationFunc();
+
             KDSSettings.saveStationsRelation(m_context, s);
             //update the station ID.
             this.updateSettings(m_context);
 
             for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
                 m_arKdsEventsReceiver.get(i).onReceiveNewRelations();
+            if (getSettings().getStationFunc() != oldFunc)
+            {
+                onMyFunctionChanged(oldFunc, getSettings().getStationFunc());
+
+            }
 
         }
         else if (xmlCommand.indexOf("<RelationsRet>") >= 0)
@@ -3249,12 +3256,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
         if (strConfig.isEmpty())
             return;
+        SettingsBase.StationFunc oldFunc = m_settings.getStationFunc();
+        Log.i(TAG, "old func=" + oldFunc);
         m_settings.parseXmlText(m_context, strConfig, true, true);
         m_settings.save(m_context);
 
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
             m_arKdsEventsReceiver.get(i).onRetrieveNewConfigFromOtherStation();
         this.m_stationsConnection.refreshRelations(m_context, this.getStationID());
+        //don't save old data.
+        SettingsBase.StationFunc newFunc = m_settings.getStationFunc();
+        Log.i(TAG, "new func=" + newFunc);
+        if (oldFunc != newFunc)
+            onMyFunctionChanged(oldFunc, newFunc);
     }
 
     public void loadSettingsXmlAll(String strConfig)
@@ -4559,5 +4573,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         String ackguid = command.getParam();
         m_stationsConnection.onReceiveAckXml(fromStationID, ackguid);
 
+    }
+
+    public void onMyFunctionChanged(SettingsBase.StationFunc oldFunc, SettingsBase.StationFunc newFunc)
+    {
+        this.clearAll();
     }
 }

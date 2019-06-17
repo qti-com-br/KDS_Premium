@@ -1623,8 +1623,10 @@ public class KDSStationsConnection {
                 String stationID = station.getID();
                 KDSStationIP backupStation =  getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
                 //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
-                if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
-                    m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+                if (backupStation != null) {
+                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+                }
 
                 if (backupStation == null) {
                     //still write to primary station

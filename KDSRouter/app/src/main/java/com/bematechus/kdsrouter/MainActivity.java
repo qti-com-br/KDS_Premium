@@ -234,7 +234,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.i(TAG, ">>>>>>Enter mainactivity oncreate");
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (!isMacMatch2()) {
             showErrorMac();

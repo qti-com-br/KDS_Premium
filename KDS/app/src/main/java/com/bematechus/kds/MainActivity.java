@@ -2956,6 +2956,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_uiUserA.updateSettings(getSettings());
         if (getKDS().isMultpleUsersMode())
             m_uiUserB.updateSettings(getSettings());
+        refreshPrevNext(KDSUser.USER.USER_A);
+        refreshPrevNext(KDSUser.USER.USER_B);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -3426,9 +3428,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         }
         if (key.equals("StationsRelation")) {
+            SettingsBase.StationFunc oldFunc = getSettings().getStationFunc();
             getKDS().checkStationsSettingChanged(this.getApplicationContext());
             updateTitle();
             onStationFunctionChanged(getKDS().getStationFunction());
+            SettingsBase.StationFunc newFunc = getSettings().getStationFunc();
+            if (oldFunc != newFunc) {
+                getKDS().onMyFunctionChanged(oldFunc, newFunc);
+            }
         }
         else if (key.equals("kds_general_language"))
         {
@@ -3632,7 +3639,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                 setupGuiByMode(getGuiMode());
                 onStationFunctionChanged(funcNew);
-
+                getKDS().onMyFunctionChanged(funcOld, funcNew);
             }
 
         }
@@ -3681,7 +3688,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 setupGuiByMode(getGuiMode());
 
                 onStationFunctionChanged(funcNew);
-
+                getKDS().onMyFunctionChanged(funcOld, funcNew);
 
             }
 
@@ -3961,6 +3968,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onRetrieveNewConfigFromOtherStation() {
+        refreshView();
     }
 
     public void onRefreshSummary(KDSUser.USER userID) {
