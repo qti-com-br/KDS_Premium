@@ -1009,10 +1009,10 @@ public class KDSStationsConnection {
 
     }
 
-    public static final int MAX_BACKUP_DATA_COUNT = 100; //-1: no limitation
+
     public boolean writeDataToStationOrItsBackup(KDSStationIP station, String strXml)
     {
-        return writeDataToStationOrItsBackup(station, strXml, MAX_BACKUP_DATA_COUNT);
+        return writeDataToStationOrItsBackup(station, strXml,NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
 //
 //        KDSStationConnection connection = getConnection(station);
 //        if (connection == null)
