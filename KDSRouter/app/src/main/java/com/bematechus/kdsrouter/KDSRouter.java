@@ -1,17 +1,12 @@
 package com.bematechus.kdsrouter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
@@ -26,7 +21,6 @@ import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
-import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSocketEventReceiver;
 import com.bematechus.kdslib.KDSSocketInterface;
 import com.bematechus.kdslib.KDSSocketManager;
@@ -51,17 +45,12 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
-
+import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -1320,7 +1309,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             if (conn.getSock().isConnected())
                 conn.getSock().writeXmlTextCommand(strXml);
             else {
-                m_stationsConnection.getNoConnectionBuffer().add(stationID, strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                m_stationsConnection.getNoConnectionBuffer().add(stationID, strXml, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 //conn.addBufferedData(strXml); //kdsstationsconnection-->m_buffersForWaitingConnection to save offline data
             }
         }
@@ -3165,7 +3154,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             }
             else {
                 //conn.addBufferedData(s); ////use kdsstationsconnection-->m_buffersForWaitingConnection to save offline data
-                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.wait_for_connection));//"Waiting for new connection...");
             }
@@ -3185,7 +3174,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                     txtInfo.setText(txtInfo.getContext().getString(R.string.wait_for_config_data));//"Waiting for config data...");
             }
             else {
-                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 //willConn.addBufferedData(s);//use kdsstationsconnection-->m_buffersForWaitingConnection to save offline data
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_connecting));// "Waiting for connecting...");
