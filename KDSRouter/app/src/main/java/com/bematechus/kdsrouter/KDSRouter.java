@@ -1,17 +1,12 @@
 package com.bematechus.kdsrouter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
@@ -26,7 +21,6 @@ import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
-import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSocketEventReceiver;
 import com.bematechus.kdslib.KDSSocketInterface;
 import com.bematechus.kdslib.KDSSocketManager;
@@ -51,18 +45,13 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
-
+import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

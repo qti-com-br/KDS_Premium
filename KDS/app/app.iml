@@ -108,7 +108,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/reports" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 28 Platform" jdkType="Android SDK" />
@@ -125,6 +124,7 @@
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-appindexing:8.1.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-annotations:23.3.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:F.\Android\src2\KDS_Premium\KDS\app\libs\java_websocket.jar:unspecified@jar" level="project" />
+    <orderEntry type="module" module-name="kdslib" />
     <orderEntry type="module" module-name="kdslib" />
     <orderEntry type="module" module-name="kdslib" />
     <orderEntry type="module" module-name="kdslib" />
