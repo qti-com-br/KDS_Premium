@@ -52,6 +52,7 @@ import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
 
+import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
@@ -1320,7 +1321,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             if (conn.getSock().isConnected())
                 conn.getSock().writeXmlTextCommand(strXml);
             else {
-                m_stationsConnection.getNoConnectionBuffer().add(stationID, strXml, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                m_stationsConnection.getNoConnectionBuffer().add(stationID, strXml, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 //conn.addBufferedData(strXml); //kdsstationsconnection-->m_buffersForWaitingConnection to save offline data
             }
         }
@@ -3165,7 +3166,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             }
             else {
                 //conn.addBufferedData(s); ////use kdsstationsconnection-->m_buffersForWaitingConnection to save offline data
-                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.wait_for_connection));//"Waiting for new connection...");
             }
@@ -3185,7 +3186,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                     txtInfo.setText(txtInfo.getContext().getString(R.string.wait_for_config_data));//"Waiting for config data...");
             }
             else {
-                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                this.m_stationsConnection.getNoConnectionBuffer().add(stationID, s, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 //willConn.addBufferedData(s);//use kdsstationsconnection-->m_buffersForWaitingConnection to save offline data
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_connecting));// "Waiting for connecting...");

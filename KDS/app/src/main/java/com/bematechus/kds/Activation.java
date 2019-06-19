@@ -72,6 +72,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 //    static int MAX_LOST_COUNT = 120;
 
     static final int HOUR_MS = 3600000;
+    static final int INACTIVE_TIMEOUT = 300000; //5 minutes
     static int MAX_LOST_COUNT = 120;
 //
     static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour

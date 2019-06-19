@@ -2844,7 +2844,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     setFocusAfterReceiveOrder();
                 }
                 //t.debug_print_Duration("TRANSTYPE_ADD5");
-                resetOrdersForSaveMemoryAfterGetNewOrder(ordersAdded);
+                //20190619
+                // in coke branch, it have ghost orders existed. I comment this function.
+                //It will prevent the empty order existed.
+                //resetOrdersForSaveMemoryAfterGetNewOrder(ordersAdded);
                 //t.debug_print_Duration("TRANSTYPE_ADD6");
 
             }

@@ -6007,14 +6007,21 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     TimeDog m_activationDog = new TimeDog();
 
-
+    /**
+     * If it is inactive, check activation in every 5 minutes.
+     * Otherwise, 1 hour.
+     */
     private void checkAutoActivation()
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+        int nTimeout = Activation.HOUR_MS;
+        if (!m_activation.isActivationPassed())
+            nTimeout = Activation.INACTIVE_TIMEOUT; //5 minutes
+        if (m_activationDog.is_timeout(nTimeout))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
+
             doActivation(true, false, "");
             m_activationDog.reset();
         }

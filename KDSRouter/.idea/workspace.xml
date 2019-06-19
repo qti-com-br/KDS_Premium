@@ -21,11 +21,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../KDS/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/app.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/Activation.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/Activation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDS.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/KDS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/NoConnectionDataBuffers.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/NoConnectionDataBuffers.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouterStationsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouterStationsConnection.java" afterDir="false" />
     </list>
     <ignored path="KDSRouter.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -59,7 +60,7 @@
     <session id="1336443130">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="121" />
+          <entry key="project.closed" value="122" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="14" />
           <entry key="project.open.time.10" value="18" />
@@ -85,7 +86,7 @@
           <entry key="class" value="18" />
           <entry key="gradle" value="42" />
           <entry key="iml" value="2" />
-          <entry key="java" value="489" />
+          <entry key="java" value="490" />
           <entry key="pro" value="16" />
           <entry key="properties" value="23" />
           <entry key="txt" value="2" />
@@ -97,7 +98,7 @@
           <entry key="CLASS" value="18" />
           <entry key="Groovy" value="42" />
           <entry key="IDEA_MODULE" value="2" />
-          <entry key="JAVA" value="489" />
+          <entry key="JAVA" value="490" />
           <entry key="PLAIN_TEXT" value="2" />
           <entry key="ProGuard File" value="16" />
           <entry key="Properties" value="23" />
@@ -107,7 +108,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gradle" value="176" />
-          <entry key="java" value="22486" />
+          <entry key="java" value="22490" />
           <entry key="properties" value="7" />
           <entry key="xml" value="179" />
         </counts>
@@ -115,7 +116,7 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Groovy" value="176" />
-          <entry key="JAVA" value="22486" />
+          <entry key="JAVA" value="22490" />
           <entry key="Properties" value="7" />
           <entry key="XML" value="179" />
         </counts>
@@ -128,15 +129,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="35266">
-              <caret line="1628" column="17" selection-start-line="1628" selection-start-column="17" selection-end-line="1628" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="3718">
@@ -145,11 +137,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="302">
-              <caret line="2912" column="9" lean-forward="true" selection-start-line="2912" selection-start-column="9" selection-end-line="2912" selection-end-column="9" />
+            <state relative-caret-position="346">
+              <caret line="3198" column="96" selection-start-line="3198" selection-start-column="96" selection-end-line="3198" selection-end-column="96" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouterStationsConnection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="968">
+              <caret line="79" column="89" selection-start-line="79" selection-start-column="89" selection-end-line="79" selection-end-column="89" />
             </state>
           </provider>
         </entry>
@@ -2836,7 +2837,6 @@
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSocketTCPCommandBuffer.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSmbFile1.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSmbFile2.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouterStationsConnection.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/SettingsActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSUIIPSearchDialog.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSUIAboutDlg.java" />
@@ -2858,11 +2858,12 @@
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/AckDataStation.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/NoConnectionDataBuffers.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSDBOffline.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/MainActivity.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSStationsConnection.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSmbFile.java" />
         <option value="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSSMBDataSource.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouterStationsConnection.java" />
       </list>
     </option>
   </component>
@@ -3203,12 +3204,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" order="0" sideWeight="0.68406594" weight="0.22441365" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.66071427" visible="true" weight="0.17430703" />
+      <window_info id="Structure" order="1" sideWeight="0.6593592" visible="true" weight="0.17430703" />
       <window_info id="Captures" order="2" side_tool="true" weight="0.25" />
       <window_info id="Palette&#9;" order="3" />
-      <window_info id="Build Variants" order="4" sideWeight="0.3392857" side_tool="true" visible="true" weight="0.17430703" />
+      <window_info id="Build Variants" order="4" sideWeight="0.3406408" side_tool="true" visible="true" weight="0.17430703" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Image Layers" order="7" />
@@ -3225,7 +3227,7 @@
       <window_info anchor="bottom" id="Version Control" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.3276644" />
       <window_info anchor="bottom" id="Terminal" order="12" weight="0.32993197" />
-      <window_info anchor="bottom" id="Build" order="13" sideWeight="0.6505376" visible="true" weight="0.18930958" />
+      <window_info active="true" anchor="bottom" id="Build" order="13" sideWeight="0.6505376" visible="true" weight="0.33964366" />
       <window_info anchor="bottom" id="Android Profiler" order="14" show_stripe_button="false" sideWeight="0.8123656" weight="0.56349206" />
       <window_info anchor="bottom" id="Logcat" order="15" sideWeight="0.49946237" weight="0.6046771" />
       <window_info anchor="bottom" id="Dependency Viewer" order="16" weight="0.32993197" />
@@ -3288,13 +3290,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouterSettings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/kdsui_dlg_input_password.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
@@ -3646,8 +3641,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="2912" column="9" lean-forward="true" selection-start-line="2912" selection-start-column="9" selection-end-line="2912" selection-end-column="9" />
+        <state relative-caret-position="346">
+          <caret line="3198" column="96" selection-start-line="3198" selection-start-column="96" selection-end-line="3198" selection-end-column="96" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouterStationsConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="968">
+          <caret line="79" column="89" selection-start-line="79" selection-start-column="89" selection-end-line="79" selection-end-column="89" />
         </state>
       </provider>
     </entry>
