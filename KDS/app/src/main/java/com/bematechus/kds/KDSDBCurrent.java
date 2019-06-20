@@ -663,7 +663,7 @@ public class KDSDBCurrent extends KDSDBBase {
             executeDML(sql);
             KDSDataMessages messages = order.getOrderMessages();
             messagesAdd(messages);
-            finishTransaction(bTransactionByMe);
+
 
             return true;
         } catch (Exception e) {
@@ -713,12 +713,14 @@ public class KDSDBCurrent extends KDSDBBase {
         if (getDB() == null) return false;
 
         try {
-            bTransactionByMe = this.startTransaction();
+
             if (!orderAddInfo(order)) {
                 //this.finishTransaction(bTransactionByMe);
                 //getDB().endTransaction();
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + " Can not save order to database");
                 return false;
             }
+            bTransactionByMe = this.startTransaction();
             KDSDataItems items = order.getItems();
             itemsAdd(items);
             //this.finishTransaction(bTransactionByMe);
@@ -728,7 +730,8 @@ public class KDSDBCurrent extends KDSDBBase {
             //KDSLog.e(TAG, KDSUtil.error( e));
             return false;
         } finally {
-            this.finishTransaction(bTransactionByMe);
+            if (bTransactionByMe)
+                this.finishTransaction(bTransactionByMe);
             updateDbTimeStamp();
 
         }

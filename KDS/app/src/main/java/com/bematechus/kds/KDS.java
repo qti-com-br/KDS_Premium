@@ -3031,7 +3031,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void doRefreshView()
     {
 
-        KDSLog.d(TAG, KDSUtil.getCurrentTimeForLog()+ " refreshView");
+        //KDSLog.d(TAG, KDSUtil.getCurrentTimeForLog()+ " refreshView");
         m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_ALL.ordinal());
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++) {
             m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_A, m_users.getUserA().getOrders(), RefreshViewParam.None);
