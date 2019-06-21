@@ -238,7 +238,7 @@ public class KDSStationFunc {
         //1. check if this order is existed in array.
         //
         if (order.getItems().getCount() <=0)
-            return orderReturn; //no item for me
+            return null;//orderReturn; //no item for me.
         order.setScreen(kdsuser.getUserID().ordinal());
 
         if (order.getItems().existedKDSStationChangedToBackupItem())

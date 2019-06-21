@@ -1009,10 +1009,10 @@ public class KDSStationsConnection {
 
     }
 
-    public static final int MAX_BACKUP_DATA_COUNT = 100; //-1: no limitation
+
     public boolean writeDataToStationOrItsBackup(KDSStationIP station, String strXml)
     {
-        return writeDataToStationOrItsBackup(station, strXml, MAX_BACKUP_DATA_COUNT);
+        return writeDataToStationOrItsBackup(station, strXml,NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
 //
 //        KDSStationConnection connection = getConnection(station);
 //        if (connection == null)
@@ -1640,6 +1640,12 @@ public class KDSStationsConnection {
             {//this station is not active, check its backup station.
                 String stationID = station.getID();
                 KDSStationIP backupStation =  getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
+                //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
+                if (backupStation != null) {
+                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+                }
+
                 if (backupStation == null) {
                     //still write to primary station
                     Log.i(TAG, "Write to station: " + station);
@@ -1655,8 +1661,8 @@ public class KDSStationsConnection {
                 {
                     connectStationWithData(backupStation, strXml,nMaxBufferCount);
                     //check if slave is queue station, if it is queue/expo, backup offline orders.20190531
-                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
-                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+//                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+//                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
 
                 }
                 else if (!backupConnection.getSock().isConnected())
@@ -1670,8 +1676,8 @@ public class KDSStationsConnection {
                     backupConnection.getSock().writeXmlTextCommand(withAckXml);
                     //backupConnection.getSock().writeXmlTextCommand(strXml);
                     //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
-                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
-                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+//                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+//                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
                 }
 
             }

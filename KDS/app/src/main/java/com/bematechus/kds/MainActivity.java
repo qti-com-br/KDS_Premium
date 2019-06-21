@@ -1446,7 +1446,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isUserLayoutReady(userID)) return;
 
         getUserUI(userID).getLayout().focusNext();
-        getUserUI(userID).refreshPrevNext();
+        //getUserUI(userID).refreshPrevNext(); //roll back code.
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -1467,7 +1467,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         MainActivityFragment f = getMainFragment();
         if (f != null)
             f.focusPrev(userID);
-        getUserUI(userID).refreshPrevNext();
+        //getUserUI(userID).refreshPrevNext(); //roll back code.
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -2990,6 +2990,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_uiUserA.updateSettings(getSettings());
         if (getKDS().isMultpleUsersMode())
             m_uiUserB.updateSettings(getSettings());
+        refreshPrevNext(KDSUser.USER.USER_A);
+        refreshPrevNext(KDSUser.USER.USER_B);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -3489,9 +3491,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         }
         if (key.equals("StationsRelation")) {
+            SettingsBase.StationFunc oldFunc = getSettings().getStationFunc();
             getKDS().checkStationsSettingChanged(this.getApplicationContext());
             updateTitle();
             onStationFunctionChanged(getKDS().getStationFunction());
+            SettingsBase.StationFunc newFunc = getSettings().getStationFunc();
+            if (oldFunc != newFunc) {
+                getKDS().onMyFunctionChanged(oldFunc, newFunc);
+            }
         }
         else if (key.equals("kds_general_language"))
         {
@@ -3700,7 +3707,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                 setupGuiByMode(getGuiMode());
                 onStationFunctionChanged(funcNew);
-
+                getKDS().onMyFunctionChanged(funcOld, funcNew);
             }
 
         }
@@ -3749,7 +3756,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 setupGuiByMode(getGuiMode());
 
                 onStationFunctionChanged(funcNew);
-
+                getKDS().onMyFunctionChanged(funcOld, funcNew);
 
             }
 
@@ -4029,6 +4036,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onRetrieveNewConfigFromOtherStation() {
+        refreshView();
     }
 
     public void onRefreshSummary(KDSUser.USER userID) {
@@ -6100,14 +6108,21 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     TimeDog m_activationDog = new TimeDog();
 
-
+    /**
+     * If it is inactive, check activation in every 5 minutes.
+     * Otherwise, 1 hour.
+     */
     private void checkAutoActivation()
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+        int nTimeout = Activation.HOUR_MS;
+        if (!m_activation.isActivationPassed())
+            nTimeout = Activation.INACTIVE_TIMEOUT; //5 minutes
+        if (m_activationDog.is_timeout(nTimeout))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
+
             doActivation(true, false, "");
             m_activationDog.reset();
         }

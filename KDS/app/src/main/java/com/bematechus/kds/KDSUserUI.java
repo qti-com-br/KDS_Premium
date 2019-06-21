@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.SettingsBase;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -407,6 +408,10 @@ public class KDSUserUI {
     }
     public String getPrevCountString()
     {
+        if (getKDS().getStationFunction() == SettingsBase.StationFunc.Queue ||
+                getKDS().getStationFunction() == SettingsBase.StationFunc.Queue_Expo )
+            return "";
+
         if (m_layout == null) return "";
         int nprev = m_layout.getPrevCount();
         if (nprev<0)
@@ -420,6 +425,9 @@ public class KDSUserUI {
 
     public String getNextCountString()
     {
+        if (getKDS().getStationFunction() == SettingsBase.StationFunc.Queue ||
+                getKDS().getStationFunction() == SettingsBase.StationFunc.Queue_Expo )
+            return "";
         if (m_layout == null) return "";
 
         int nnext =m_layout.getNextCount();

@@ -1523,7 +1523,10 @@ print order data to  buffer, socket will send this buffer to serial port
         if (m_bemaPrinter == null) return;
         PrinterStatus ps = m_bemaPrinter.getStatus();
         m_bSerialPrinterValid =  ps.isOnline();
-
+        if (!m_bSerialPrinterValid)
+        {
+            this.reset();
+        }
     }
     /**
      * check if the usb printer existed.
@@ -1758,5 +1761,19 @@ print order data to  buffer, socket will send this buffer to serial port
             m_threadPrinting.setName("Printing");
             m_threadPrinting.start();
         }
+    }
+
+    public void reset()
+    {
+        this.close();
+        try
+        {
+            Thread.sleep(200);
+        }
+        catch (Exception e)
+        {
+
+        }
+        this.open(true);
     }
 }

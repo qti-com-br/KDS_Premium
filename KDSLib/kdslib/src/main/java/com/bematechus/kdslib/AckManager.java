@@ -15,7 +15,7 @@ public class AckManager {
     final String TAG = "AckManager";
     //Vector<AckDataStation> m_arStationsAck = new Vector<>();
     public static final int ACK_TIMEOUT = 20000;// 20 seconds
-    public static final int MAX_ACK_COUNT = 200;
+    public static final int MAX_ACK_COUNT = 1000;
 
     KDSDBOffline m_ackDB = KDSDBOffline.open(KDSApplication.getContext());
 

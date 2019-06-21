@@ -78,15 +78,16 @@ public class KDSSMBDataSource implements Runnable {
     public void stop()
     {
         if (m_thread != null) {
-            m_bThreadRunning = false;
-            try {
-                m_thread.join(1000);
-            } catch (Exception e) {
-                KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
-            }
+            this.setRemoteFolder("");
+//            m_bThreadRunning = false;
+//            try {
+//                m_thread.join(1000);
+//            } catch (Exception e) {
+//                KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+//            }
         }
 
-        m_thread = null;
+       // m_thread = null;
 
         //for uploading thread
         if (m_uploadRunnable != null)
@@ -195,7 +196,7 @@ public class KDSSMBDataSource implements Runnable {
             if (m_thread != Thread.currentThread())
                 return;
             if (m_strRemoteFolder.isEmpty()) {
-                sleep(500);
+                sleep(1000);
                 continue;
             }
             try

@@ -10,6 +10,8 @@ import java.util.Vector;
  * Rev:
  */
 public class NoConnectionDataBuffers {
+
+    public static final int MAX_BACKUP_DATA_COUNT = 1000; //-1: no limitation
     //Vector<NoConnectionDataBuffer> m_arBufferForWaitingConnection = new Vector<>(); //KPP1-Coke
     KDSDBOffline m_offlineDB = KDSDBOffline.open(KDSApplication.getContext());
 

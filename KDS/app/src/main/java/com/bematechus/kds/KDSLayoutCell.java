@@ -1850,6 +1850,15 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return true;
     }
 
+    Object m_attachedObj = null;
+    public void setAttachedObject(Object obj)
+    {
+        m_attachedObj = obj;
+    }
+    public Object getAttachedObj()
+    {
+        return m_attachedObj;
+    }
 
     Object m_attachedObj = null;
     public void setAttachedObject(Object obj)

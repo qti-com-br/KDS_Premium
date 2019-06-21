@@ -243,7 +243,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.i(TAG, ">>>>>>Enter mainactivity oncreate");
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         m_activation.setEventsReceiver(this);
@@ -921,22 +921,28 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
     public void  showOtherRouterEnabledError()
     {
-        String strError = KDSApplication.getContext().getString(R.string.error_other_router_enabled);
+        try {
+            String strError = KDSApplication.getContext().getString(R.string.error_other_router_enabled);
 
-        String strOK = this.getString(R.string.ok);
-        AlertDialog d = new AlertDialog.Builder(this)
-                .setTitle(KDSApplication.getContext().getString(R.string.error))
-                .setMessage(strError)
-                .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+            String strOK = this.getString(R.string.ok);
+            AlertDialog d = new AlertDialog.Builder(this)
+                    .setTitle(KDSApplication.getContext().getString(R.string.error))
+                    .setMessage(strError)
+                    .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
+                                }
                             }
-                        }
-                )
+                    )
 
-                .create();
-        d.show();
+                    .create();
+            d.show();
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+        }
     }
 
     public void onAskOrderState(Object objSource, String orderName)
