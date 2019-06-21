@@ -4619,7 +4619,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             if (conn.getSock().isConnected())
                 conn.getSock().writeXmlTextCommand(data);
             else
-                m_stationsConnection.getNoConnectionBuffer().add(stationID, data, KDSStationsConnection.MAX_BACKUP_DATA_COUNT);
+                m_stationsConnection.getNoConnectionBuffer().add(stationID, data, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 //conn.addBufferedData(data);
         }
         else

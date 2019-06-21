@@ -22,6 +22,7 @@ import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
+import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSSocketEventReceiver;
 import com.bematechus.kdslib.KDSSocketInterface;
