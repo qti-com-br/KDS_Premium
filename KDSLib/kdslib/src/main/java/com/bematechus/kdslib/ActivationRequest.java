@@ -1322,7 +1322,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      *  False: unbump it.
      * @return
      */
-    static private JSONObject jsonItemBump(String stationID, KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static private JSONObject jsonItemBump(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
         JSONObject json = getJsonObj( "guid" , "'"+item.getItemBumpGuid()+"'");
 
@@ -1350,6 +1350,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             }
             String status = KDSUtil.convertIntToString(state.ordinal());//done
 
+            long create_local_time = getLocalTimeSeconds(order.getStartTime());
 
             json.put("status",status );
             json.put("last_status", status); //mac address
@@ -1358,7 +1359,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted" , "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
-            json.put("create_local_time", Long.toString( localNow));
+            json.put("create_local_time", Long.toString(create_local_time));// localNow));
             json.put("prepared_local_time", Long.toString( localNow) );
             json.put("done_local_time" , Long.toString( localNow));
             if (bExpoStation)
@@ -1449,7 +1450,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         {
             //if (bBumped)
                 if (items.getItem(i).getLocalBumped()) continue; //it has been upload to server,
-            ar.put(jsonItemBump(stationID,items.getItem(i), bExpoStation, bBumped) );
+            ar.put(jsonItemBump(stationID,order,items.getItem(i), bExpoStation, bBumped) );
         }
         return ar;
 
@@ -1468,17 +1469,17 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static public ActivationRequest requestItemBumpSync(String stationID,KDSDataOrder order,  KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bump,"item_bumps",jsonSingleItemBump(stationID,item , bExpoStation, bBumped));
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bump,"item_bumps",jsonSingleItemBump(stationID,order, item , bExpoStation, bBumped));
         r.setTag(order);
         r.setDbTarget();
         return r;
     }
 
-    static private JSONArray jsonSingleItemBump(String stationID,KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static private JSONArray jsonSingleItemBump(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped)
     {
         JSONArray ar = new JSONArray();
 
-        ar.put(jsonItemBump(stationID,item, bExpoStation, bBumped) );
+        ar.put(jsonItemBump(stationID,order,item, bExpoStation, bBumped) );
 
         return ar;
 
