@@ -147,7 +147,8 @@ public class MainActivityFragment extends Fragment {
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_print))
             addButton(KDSTouchPadButton.TouchPadID.Print, R.string.touchpad_print, R.drawable.ticket_print, R.drawable.ticket_print_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_more))
-            addButton(KDSTouchPadButton.TouchPadID.More, R.string.touchpad_more,R.drawable.more_32px,R.drawable.more_32px);
+            addButton(KDSTouchPadButton.TouchPadID.More, R.string.touchpad_more,R.drawable.more,R.drawable.more_us);
+            //addButton(KDSTouchPadButton.TouchPadID.More, R.string.touchpad_more,R.drawable.more_32px,R.drawable.more_32px);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_BuildCard))
             addButton(KDSTouchPadButton.TouchPadID.BuildCard, R.string.touchpad_buildcard,R.drawable.buildcard,R.drawable.buildcard_us);

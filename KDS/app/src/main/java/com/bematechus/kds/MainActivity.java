@@ -5005,6 +5005,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDataItem item = getSelectItem(userID);
         if (item == null) return;
         CSVStrings files = item.getBuildCard();
+
         if (files.getCount() <=0) {
             showToastMessage(this.getString(R.string.no_build_card));// "No build card files for selected item");
             if (!KDSConst._DEBUG)
