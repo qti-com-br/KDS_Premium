@@ -764,7 +764,7 @@ public class KDSDataOrder extends KDSData {
      * @return
      *  3 + nItemsCount * 6;
      */
-    public static KDSDataOrder createTestOrder(String orderName, int nItemsCount, String toStations)
+    public static KDSDataOrder createTestOrder(String orderName, int nItemsCount, String toStations, int toScreen)
     {
 
         KDSDataOrder c = new KDSDataOrder();
@@ -776,7 +776,7 @@ public class KDSDataOrder extends KDSData {
         c.setOrderType("RUSH");
         c.setPCKDSNumber("1");
         c.setPreparationStartTime(new Date());
-        c.setScreen(0);
+        c.setScreen(toScreen);
         c.setWaiterName("David Wong");
         c.setSortIdx(-1);
         c.setStartTime(new Date());
@@ -2897,5 +2897,17 @@ get the total qty of all found items
             default:
                 return "Unknown";
         }
+    }
+
+    public boolean isAllItemsBumpedInLocal()
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
     }
 }

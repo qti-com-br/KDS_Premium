@@ -2765,4 +2765,15 @@ public class KDSSettings extends SettingsBase {
 
 
    }
+
+   static public boolean isMultipleMode()
+   {
+     SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+     String s = pre.getString("kds_general_users", "0");
+
+     return  (!s.equals("0"));
+
+
+
+   }
 }

@@ -262,12 +262,13 @@ public class TabDisplay {
                 TabDisplay.TabButtonData data = ar.get(i);
                 data.setDescription(TabDisplay.getTabFuncDescription(data.getFunc()));
             }
-            if (ar.size() == (KDSSettings.TabFunction.MAX_COUNT.ordinal()-1)) //we add a new "sort order" view
-            {
-                ar.add(new TabButtonData( KDSSettings.TabFunction.Sort_orders,false));
-                TabDisplay.TabButtonData data = ar.get(ar.size()-1);
-                data.setDescription(TabDisplay.getTabFuncDescription(data.getFunc()));
-            }
+            //I forget why I do this, it seems this is a bug. Just remove it.
+//            if (ar.size() == (KDSSettings.TabFunction.MAX_COUNT.ordinal()-1)) //we add a new "sort order" view
+//            {
+//                ar.add(new TabButtonData( KDSSettings.TabFunction.Sort_orders,false));
+//                TabDisplay.TabButtonData data = ar.get(ar.size()-1);
+//                data.setDescription(TabDisplay.getTabFuncDescription(data.getFunc()));
+//            }
         }
     }
 

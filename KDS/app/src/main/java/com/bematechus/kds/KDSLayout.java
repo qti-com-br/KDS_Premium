@@ -1681,7 +1681,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         KDSDataOrders orders = new KDSDataOrders();
         for (int i=0; i< 10; i++)
         {
-            KDSDataOrder order = KDSDataOrder.createTestOrder("Order"+Integer.toString(i), i+2, "1"); // rows = (i+2) * 6  +3 +titlerows;
+            KDSDataOrder order = KDSDataOrder.createTestOrder("Order"+Integer.toString(i), i+2, "1",0); // rows = (i+2) * 6  +3 +titlerows;
             orders.addComponent(order);
         }
         this.showOrders(orders);

@@ -187,6 +187,8 @@ public class KDSUsers {
      *  If deliver order to my expo/tt/queue(Expo type station).
      * @param bRefreshView
      * @return
+     * First is user A
+     * Second is user B.
      */
     public  ArrayList<KDSDataOrder> users_orderAdd(KDSDataOrder orderOriginal,String xmlData, boolean bAutoSyncWithOthers,boolean bAutoSyncWithExpo, boolean bRefreshView)
     {
