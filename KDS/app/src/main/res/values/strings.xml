@@ -1114,6 +1114,7 @@
     <string name="deliver_new_order_to_slave_expo">Deliver new order to my slave and expo</string>
     <string name="router_running_no_deliver_new_order">If there is router app running or you have send order to slave/expo, disable it.</string>
     <string name="auto_refresh_screen">Auto refresh screen in every X seconds.(Zero disable this option)</string>
+    <string name="suspend_bump_while_queue_recover">My queue station is recovering data, bumping will suspend</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

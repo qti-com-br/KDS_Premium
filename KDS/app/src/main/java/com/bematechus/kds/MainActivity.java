@@ -2046,6 +2046,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onBumpOrder(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return;
+        }
+
         String guid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (guid.isEmpty()) return;
         bumpOrderOperation(userID, guid, true);
@@ -2241,6 +2248,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return false;
         }
 
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            //getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return false;
+        }
+
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
 
         //limit its size
@@ -2361,6 +2374,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onBumpItem(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return;
+        }
+
         String orderGuid = getSelectedOrderGuid(userID);//
         if (orderGuid.isEmpty()) return;
 
@@ -6164,6 +6184,24 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
+    /**
+     * suspend the bumping when queue station is restoring data.
+     * if my queue is online, and there are offline data, suspend bumping.
+     * @return
+     */
+    public boolean suspendBumpWhenQueueRecovering()
+    {
+        if (getKDS().getStationsConnections().isMyQueueDisplayStationsExisted())
+        {
+            if (getKDS().getStationsConnections().isMyQueueOnline())
+            {
+                KDSStationIP station = getKDS().getStationsConnections().getMyQueueStation();
+                return (getKDS().getStationsConnections().isThereOfflineData(station.getID()));
+
+            }
+        }
+        return false;
+    }
 
 }
 

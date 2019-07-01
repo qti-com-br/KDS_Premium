@@ -2242,6 +2242,43 @@ public class KDSStationsConnection {
         }
     }
 
+    public  KDSStationIP getMyQueueStation()
+    {
+        KDSStationIP station = null;
+        int ncount =m_stationsRelations.getQueueStations().size();
+        if  (ncount <= 0) {
+            ncount = m_stationsRelations.getQueueExpoStations().size();
+            if (ncount <=0)
+                return null;
+            else
+                station =  m_stationsRelations.getQueueExpoStations().get(0);
+        }
+        else {
+            station = m_stationsRelations.getQueueStations().get(0);
+        }
+        return station;
+    }
+
+    public boolean isMyQueueOnline()
+    {
+        KDSStationIP station = getMyQueueStation();
+        if (station == null) return false;
+
+        if (this.getConnection(station) == null)
+            return false;
+        boolean bOnline =  (this.getConnection(station).isConnected());
+        return bOnline;
+
+
+    }
+    public boolean isThereOfflineData(String stationID)
+    {
+        NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(stationID);
+        if (buf == null) return false;
+        return (buf.getSize() >0);
+
+    }
+
 }
 
 
