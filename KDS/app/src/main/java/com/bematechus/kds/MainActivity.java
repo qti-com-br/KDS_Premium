@@ -2270,7 +2270,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 //td.debug_print_Duration("synchronized");
                 for (int i = 0; i < ar.size(); i++) {
                     //TimeDog td = new TimeDog();
-
+                    //prevent queue stuck
+                    if (suspendBumpWhenQueueRecovering()) {
+                        //getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+                        return false;
+                    }
                     bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
                     //td.debug_print_Duration("bump order time:");
                 }

@@ -705,7 +705,7 @@ public class KDSStationsConnection {
             return;
         if (station.getSock().isConnected())
         {
-            //send all no ack data to station
+            //send all no ack data to station,
             if (m_ackManager.isWaitingAck())
             {//send all again
                 //AckDataStation ackStation = m_ackManager.getStation(station.getID());
@@ -2186,7 +2186,7 @@ public class KDSStationsConnection {
                 if (m_station == null || m_kds == null)
                     return;
                 try {
-//                    //send all no ack data to station
+//                    //send all no ack data to station,
 //                    if (m_ackManager.isWaitingAck()) {//send all again
 //                        //AckDataStation ackStation = m_ackManager.getStation(station.getID());
 //                        AckDataStation ackStation = m_ackManager.getTimeoutAck(m_station.getID(), -1);
