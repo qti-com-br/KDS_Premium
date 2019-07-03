@@ -559,4 +559,18 @@ public class KDSMyStationRelations {
         return ar;
 
     }
+
+    /**
+     * return all stations that relate to me.
+     * For check them offline.
+     * @return
+     */
+    public ArrayList<KDSStationIP> getAllAttachedStations()
+    {
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+        ar.addAll(getSlaveStations());
+        ar.addAll(getExpStations());
+        return ar;
+    }
+
 }

@@ -282,6 +282,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //auto refresh screen, as the indian station hide orders!!!!
         auto_refresh_screen();
         //testException();
+        checkMyAttachedStationsOffline();
 
     }
 
@@ -6207,5 +6208,32 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return false;
     }
 
+    long m_nFlashTitleCounter = 0;
+    public void checkMyAttachedStationsOffline()
+    {
+        ArrayList<KDSStationIP> ar = getKDS().getStationsConnections().getRelations().getAllAttachedStations();
+        if (ar.size() > 0) {
+            boolean anyOffline = false;
+            for (int i = 0; i < ar.size(); i++) {
+                KDSStationActived station = getKDS().getStationsConnections().findActivedStationByID(ar.get(i).getID());
+                if (station == null) {
+                    anyOffline = true;
+                    break;
+                }
+            }
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            if (anyOffline) {
+                m_nFlashTitleCounter++;
+                if ((m_nFlashTitleCounter % 2) == 1) {
+                    bg = ff.getFG();
+                    fg = ff.getBG();
+                }
+            }
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+        }
+    }
 }
 

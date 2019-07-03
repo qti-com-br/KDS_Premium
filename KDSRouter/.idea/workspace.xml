@@ -20,7 +20,10 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="" />
+    <list default="true" id="a3c828cd-84bc-47bf-88a7-db8e639624a7" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDS/app/src/main/java/com/bematechus/kds/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSMyStationRelations.java" beforeDir="false" afterPath="$PROJECT_DIR$/../KDSLib/kdslib/src/main/java/com/bematechus/kdslib/KDSMyStationRelations.java" afterDir="false" />
+    </list>
     <ignored path="KDSRouter.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -53,7 +56,7 @@
     <session id="1336443130">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="127" />
+          <entry key="project.closed" value="128" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="14" />
           <entry key="project.open.time.10" value="18" />
@@ -69,18 +72,19 @@
           <entry key="project.open.time.3" value="10" />
           <entry key="project.open.time.4" value="4" />
           <entry key="project.open.time.5" value="3" />
+          <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="2" />
           <entry key="project.open.time.8" value="8" />
           <entry key="project.open.time.9" value="14" />
-          <entry key="project.opened" value="129" />
+          <entry key="project.opened" value="130" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="class" value="32" />
+          <entry key="class" value="36" />
           <entry key="gradle" value="42" />
           <entry key="iml" value="2" />
-          <entry key="java" value="503" />
+          <entry key="java" value="507" />
           <entry key="pro" value="16" />
           <entry key="properties" value="23" />
           <entry key="txt" value="2" />
@@ -89,10 +93,10 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CLASS" value="32" />
+          <entry key="CLASS" value="36" />
           <entry key="Groovy" value="42" />
           <entry key="IDEA_MODULE" value="2" />
-          <entry key="JAVA" value="503" />
+          <entry key="JAVA" value="507" />
           <entry key="PLAIN_TEXT" value="2" />
           <entry key="ProGuard File" value="16" />
           <entry key="Properties" value="23" />
@@ -1547,10 +1551,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
-      <pane id="Scope" />
       <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1873,13 +1877,12 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" order="0" sideWeight="0.6592262" visible="true" weight="0.22441365" />
+      <window_info id="Project" order="0" sideWeight="0.6577381" visible="true" weight="0.22441365" />
       <window_info id="Structure" order="1" sideWeight="0.6593592" weight="0.17590618" />
       <window_info id="Captures" order="2" side_tool="true" weight="0.25" />
       <window_info id="Palette&#9;" order="3" />
-      <window_info id="Build Variants" order="4" sideWeight="0.34077382" side_tool="true" visible="true" weight="0.22441365" />
+      <window_info id="Build Variants" order="4" sideWeight="0.3422619" side_tool="true" visible="true" weight="0.22441365" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Image Layers" order="7" />
@@ -1897,7 +1900,7 @@
       <window_info anchor="bottom" id="Messages" order="11" weight="0.3276644" />
       <window_info anchor="bottom" id="Terminal" order="12" weight="0.32993197" />
       <window_info anchor="bottom" id="Build" order="13" sideWeight="0.6505376" visible="true" weight="0.2516704" />
-      <window_info anchor="bottom" id="Android Profiler" order="14" show_stripe_button="false" sideWeight="0.8123656" weight="0.56349206" />
+      <window_info anchor="bottom" id="Android Profiler" order="14" sideWeight="0.8123656" weight="0.56349206" />
       <window_info anchor="bottom" id="Logcat" order="15" sideWeight="0.49946237" weight="0.6046771" />
       <window_info anchor="bottom" id="Dependency Viewer" order="16" weight="0.32993197" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -1960,12 +1963,12 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/kdsui_dlg_input_password.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="45" column="51" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSUIDlgInputPassword.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1999,12 +2002,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/kdsui_listitem_stations_setting.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2882">
           <caret line="131" column="31" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSUIDialogBase.java">
       <provider selected="true" editor-type-id="text-editor">
