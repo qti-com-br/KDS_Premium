@@ -705,7 +705,7 @@ public class KDSStationsConnection {
             return;
         if (station.getSock().isConnected())
         {
-            //send all no ack data to station
+            //send all no ack data to station,
             if (m_ackManager.isWaitingAck())
             {//send all again
                 //AckDataStation ackStation = m_ackManager.getStation(station.getID());
@@ -727,32 +727,34 @@ public class KDSStationsConnection {
                     }
                 }
             }
-            //send all offline data to station
-            NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(station.getID());
+            startRestoreDataThread(kds, station, ip);
 
-            if (buf != null && buf.getData().size()>0)
-            {
-                //station.appendBufferedData(buf.getData());
-                //buf.getData().clear();
-                int n = buf.getData().size();//station.getBufferedCount();
-                for (int i=0; i< n; i++) {
-                    KDSStationDataBuffered data = buf.popup();//.getData().get(i);// station.popupStationBufferedData();
-                    if (data == null) break;
-                    if (!data.getData().isEmpty()) {
-                        String strXml = data.getData();
-                        String withAckXml = m_ackManager.add(station.getID(), strXml);
-                        station.getSock().writeXmlTextCommand(withAckXml);
-                        //station.getSock().writeXmlTextCommand(data.getData());
-                        kds.showMessage("write buffered to "+ ip);
-                        if (!data.getDescription().isEmpty() || data.isTransferOrderOfflineData())
-                        {
-                            kds.onFinishSendBufferedData(data);//.getDescription(), data.getOrderGuid());
-                        }
-                    }
-
-                }
-            }
-            m_buffersForWaitingConnection.remove(station.getID());
+//            //send all offline data to station
+//            NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(station.getID());
+//
+//            if (buf != null && buf.getData().size()>0)
+//            {
+//                //station.appendBufferedData(buf.getData());
+//                //buf.getData().clear();
+//                int n = buf.getData().size();//station.getBufferedCount();
+//                for (int i=0; i< n; i++) {
+//                    KDSStationDataBuffered data = buf.popup();//.getData().get(i);// station.popupStationBufferedData();
+//                    if (data == null) break;
+//                    if (!data.getData().isEmpty()) {
+//                        String strXml = data.getData();
+//                        String withAckXml = m_ackManager.add(station.getID(), strXml);
+//                        station.getSock().writeXmlTextCommand(withAckXml);
+//                        //station.getSock().writeXmlTextCommand(data.getData());
+//                        kds.showMessage("write buffered to "+ ip);
+//                        if (!data.getDescription().isEmpty() || data.isTransferOrderOfflineData())
+//                        {
+//                            kds.onFinishSendBufferedData(data);//.getDescription(), data.getOrderGuid());
+//                        }
+//                    }
+//
+//                }
+//            }
+//            m_buffersForWaitingConnection.remove(station.getID());
         }
 
         startCheckingAckThread();
@@ -2151,6 +2153,147 @@ public class KDSStationsConnection {
         }
 
         station.getData().clear();
+
+    }
+
+
+    ArrayList<RestoreData> m_arRestoring = new ArrayList<>();
+    /**
+     * If there are many data waiting the connection, it will lock others operation.
+     * So, I move them to a new thread.
+     */
+    public void startRestoreDataThread(KDSBase kds, KDSStationConnection station, String ip)
+    {
+        synchronized (m_arRestoring) {
+            for (int i = 0; i < m_arRestoring.size(); i++) {
+                if (m_arRestoring.get(i).getStationID().equals(station.getID()))
+                    return;
+            }
+        }
+        RestoreData d = new RestoreData(kds, station, ip);
+        synchronized (m_arRestoring) {
+            m_arRestoring.add(d);
+        }
+        Thread t = new Thread(d);
+        t.setName("RstData#" + station.getID());
+        t.start();
+
+    }
+
+    class RestoreData implements Runnable
+    {
+        KDSStationConnection m_station = null;
+        KDSBase m_kds = null;
+        String m_ip = "";
+        public String getStationID()
+        {
+            if (m_station == null) return "";
+            return m_station.getID();
+        }
+        public RestoreData(KDSBase kds, KDSStationConnection station, String ip)
+        {
+            m_ip = ip;
+            m_kds = kds;
+            m_station = station;
+        }
+
+        @Override
+        public void run() {
+
+
+                if (m_station == null || m_kds == null)
+                    return;
+                try {
+//                    //send all no ack data to station,
+//                    if (m_ackManager.isWaitingAck()) {//send all again
+//                        //AckDataStation ackStation = m_ackManager.getStation(station.getID());
+//                        AckDataStation ackStation = m_ackManager.getTimeoutAck(m_station.getID(), -1);
+//                        if (ackStation != null) {
+//                            synchronized (ackStation.m_locker) {
+//                                try {
+//                                    int ncount = ackStation.getData().size();
+//                                    for (int i = 0; i < ncount; i++) {
+//                                        m_station.getSock().writeXmlTextCommand(ackStation.getData().get(i).getWithAckXmlData());
+//                                        ackStation.getData().get(i).resetTimer();
+//                                    }
+//                                } catch (Exception e) {
+//                                    KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+//                                }
+//                            }
+//                        }
+//                    }
+                    //send all offline data to station
+                    NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(m_station.getID());
+
+                    if (buf != null && buf.getData().size() > 0) {
+                        //station.appendBufferedData(buf.getData());
+                        //buf.getData().clear();
+                        int n = buf.getData().size();//station.getBufferedCount();
+                        for (int i = 0; i < n; i++) {
+                            KDSStationDataBuffered data = buf.popup();//.getData().get(i);// station.popupStationBufferedData();
+                            if (data == null) break;
+                            if (!data.getData().isEmpty()) {
+                                String strXml = data.getData();
+                                String withAckXml = m_ackManager.add(m_station.getID(), strXml);
+                                m_station.getSock().writeXmlTextCommand(withAckXml);
+                                //station.getSock().writeXmlTextCommand(data.getData());
+                                m_kds.showMessage("write buffered to " + m_ip);
+                                if (!data.getDescription().isEmpty() || data.isTransferOrderOfflineData()) {
+                                    m_kds.onFinishSendBufferedData(data);//.getDescription(), data.getOrderGuid());
+                                }
+                            }
+
+                        }
+                    }
+                    m_buffersForWaitingConnection.remove(m_station.getID());
+                }
+                catch (Exception e)
+                {
+                    KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+                }
+                finally {
+                    synchronized (m_arRestoring) {
+                        m_arRestoring.remove(this);
+                    }
+                }
+
+        }
+    }
+
+    public  KDSStationIP getMyQueueStation()
+    {
+        KDSStationIP station = null;
+        int ncount =m_stationsRelations.getQueueStations().size();
+        if  (ncount <= 0) {
+            ncount = m_stationsRelations.getQueueExpoStations().size();
+            if (ncount <=0)
+                return null;
+            else
+                station =  m_stationsRelations.getQueueExpoStations().get(0);
+        }
+        else {
+            station = m_stationsRelations.getQueueStations().get(0);
+        }
+        return station;
+    }
+
+    public boolean isMyQueueOnline()
+    {
+        KDSStationIP station = getMyQueueStation();
+        if (station == null) return false;
+
+        if (this.getConnection(station) == null)
+            return false;
+        boolean bOnline =  (this.getConnection(station).isConnected());
+        return bOnline;
+
+
+    }
+    public boolean isThereOfflineData(String stationID)
+    {
+        NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(stationID);
+        if (buf == null) return false;
+        return (buf.getSize() >0);
 
     }
 

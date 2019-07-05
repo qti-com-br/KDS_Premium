@@ -71,16 +71,18 @@
           <entry key="project.open.time.10" value="18" />
           <entry key="project.open.time.11" value="13" />
           <entry key="project.open.time.12" value="7" />
-          <entry key="project.open.time.13" value="12" />
+          <entry key="project.open.time.13" value="13" />
           <entry key="project.open.time.14" value="4" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.17" value="1" />
           <entry key="project.open.time.19" value="1" />
           <entry key="project.open.time.2" value="14" />
+          <entry key="project.open.time.23" value="1" />
           <entry key="project.open.time.3" value="10" />
           <entry key="project.open.time.4" value="4" />
           <entry key="project.open.time.5" value="3" />
-          <entry key="project.open.time.7" value="1" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.open.time.7" value="2" />
           <entry key="project.open.time.8" value="8" />
           <entry key="project.open.time.9" value="15" />
           <entry key="project.opened" value="117" />
@@ -88,10 +90,10 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="class" value="20" />
+          <entry key="class" value="36" />
           <entry key="gradle" value="42" />
           <entry key="iml" value="2" />
-          <entry key="java" value="490" />
+          <entry key="java" value="507" />
           <entry key="pro" value="16" />
           <entry key="properties" value="23" />
           <entry key="txt" value="2" />
@@ -100,10 +102,10 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CLASS" value="20" />
+          <entry key="CLASS" value="36" />
           <entry key="Groovy" value="42" />
           <entry key="IDEA_MODULE" value="2" />
-          <entry key="JAVA" value="490" />
+          <entry key="JAVA" value="507" />
           <entry key="PLAIN_TEXT" value="2" />
           <entry key="ProGuard File" value="16" />
           <entry key="Properties" value="23" />
@@ -136,8 +138,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3718">
-              <caret line="236" column="26" selection-start-line="236" selection-start-column="26" selection-end-line="236" selection-end-column="26" />
+            <state relative-caret-position="3520">
+              <caret line="227" column="18" selection-start-line="227" selection-start-column="18" selection-end-line="227" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -1984,12 +1986,12 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/kdsui_dlg_input_password.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="45" column="51" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSUIDlgInputPassword.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -2023,12 +2025,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/kdsui_listitem_stations_setting.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2882">
           <caret line="131" column="31" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSUIDialogBase.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -2275,15 +2277,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3718">
-          <caret line="236" column="26" selection-start-line="236" selection-start-column="26" selection-end-line="236" selection-end-column="26" />
+        <state relative-caret-position="3520">
+          <caret line="227" column="18" selection-start-line="227" selection-start-column="18" selection-end-line="227" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/bematechus/kdsrouter/KDSRouter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68288">
-          <caret line="3198" column="19" selection-start-line="3198" selection-start-column="19" selection-end-line="3198" selection-end-column="19" />
+        <state relative-caret-position="67386">
+          <caret line="3157" column="19" selection-start-line="3157" selection-start-column="19" selection-end-line="3157" selection-end-column="19" />
         </state>
       </provider>
     </entry>

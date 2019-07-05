@@ -285,6 +285,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //auto refresh screen, as the indian station hide orders!!!!
         auto_refresh_screen();
         //testException();
+        checkMyAttachedStationsOffline();
 
     }
 
@@ -2063,6 +2064,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onBumpOrder(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return;
+        }
+
         String guid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (guid.isEmpty()) return;
         bumpOrderOperation(userID, guid, true);
@@ -2260,6 +2268,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return false;
         }
 
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            //getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return false;
+        }
+
         int nminutes = this.getSettings().getInt(KDSSettings.ID.Auto_bump_minutes);
 
         //limit its size
@@ -2276,7 +2290,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 //td.debug_print_Duration("synchronized");
                 for (int i = 0; i < ar.size(); i++) {
                     //TimeDog td = new TimeDog();
-
+                    //prevent queue stuck
+                    if (suspendBumpWhenQueueRecovering()) {
+                        //getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+                        return false;
+                    }
                     bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
                     //td.debug_print_Duration("bump order time:");
                 }
@@ -2380,6 +2398,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onBumpItem(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return;
+        }
+
         String orderGuid = getSelectedOrderGuid(userID);//
         if (orderGuid.isEmpty()) return;
 
@@ -6314,7 +6339,52 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
+    /**
+     * suspend the bumping when queue station is restoring data.
+     * if my queue is online, and there are offline data, suspend bumping.
+     * @return
+     */
+    public boolean suspendBumpWhenQueueRecovering()
+    {
+        if (getKDS().getStationsConnections().isMyQueueDisplayStationsExisted())
+        {
+            if (getKDS().getStationsConnections().isMyQueueOnline())
+            {
+                KDSStationIP station = getKDS().getStationsConnections().getMyQueueStation();
+                return (getKDS().getStationsConnections().isThereOfflineData(station.getID()));
 
+            }
+        }
+        return false;
+    }
+
+    long m_nFlashTitleCounter = 0;
+    public void checkMyAttachedStationsOffline()
+    {
+        ArrayList<KDSStationIP> ar = getKDS().getStationsConnections().getRelations().getAllAttachedStations();
+        if (ar.size() > 0) {
+            boolean anyOffline = false;
+            for (int i = 0; i < ar.size(); i++) {
+                KDSStationActived station = getKDS().getStationsConnections().findActivedStationByID(ar.get(i).getID());
+                if (station == null) {
+                    anyOffline = true;
+                    break;
+                }
+            }
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            if (anyOffline) {
+                m_nFlashTitleCounter++;
+                if ((m_nFlashTitleCounter % 2) == 1) {
+                    bg = ff.getFG();
+                    fg = ff.getBG();
+                }
+            }
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+        }
+    }
     public void doDoublePressPanelNumberTransfer(KDSUser.USER user, KeyEvent ev) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         int nKeyCode = ev.getKeyCode();
