@@ -4054,7 +4054,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     String orderGuid = getFirstOrderGuidToFocus(userID);// orders.getFirstOrderGuid();
                     this.getUserUI(userID).getLayout().focusOrder(orderGuid);
                 }
-                this.getUserUI(userID).refreshPrevNext();
+                refreshPrevNext(userID); //it also shows the park count, so use this function
+                //this.getUserUI(userID).refreshPrevNext();
                 // t.debug_print_Duration("onRefreshView2");
             }
         }

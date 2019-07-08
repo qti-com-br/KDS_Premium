@@ -32,6 +32,10 @@
         android:defaultValue="-5636045,0"
         android:dependency="hightlight_dest"
         android:title="@string/pref_kds_dest_bgfg" />
+    <CheckBoxPreference
+        android:key="bumpbar_panelnum_focus"
+        android:title="@string/pref_kds_panelnum_focus_enabled"
+        android:defaultValue="false" />
 
 
 

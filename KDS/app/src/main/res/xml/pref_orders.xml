@@ -313,10 +313,10 @@
     android:title="@string/pref_kds_panels_show_number"
     android:defaultValue="true" />
 
-    <CheckBoxPreference
-        android:key="bumpbar_panelnum_focus"
-        android:title="@string/pref_kds_panelnum_focus_enabled"
-        android:defaultValue="false" />
+    <!--<CheckBoxPreference-->
+        <!--android:key="bumpbar_panelnum_focus"-->
+        <!--android:title="@string/pref_kds_panelnum_focus_enabled"-->
+        <!--android:defaultValue="false" />-->
 
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="panelnum_base"
