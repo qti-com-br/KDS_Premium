@@ -13,7 +13,7 @@
         android:key="lineitems_modifier_condiment_each_line"
         android:title="@string/each_condiment_go_to_next_line"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="viewer_bg"
         android:defaultValue="0xff0e0e0e"
         android:dependency="lineitems_enabled"

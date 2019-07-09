@@ -117,7 +117,7 @@
             <!--android:negativeButtonText="@string/cancel"-->
             <!--android:maxLines="1" />-->
 
-        <!--<com.bematechus.kds.KDSPreferenceBGFGPicker-->
+        <!--<com.bematechus.kdslib.KDSPreferenceBGFGPicker-->
             <!--android:key="screenb_panelnum_bgfg"-->
             <!--android:defaultValue="-16769076,-1"-->
             <!--android:dependency="screenb_panels_show_number"-->

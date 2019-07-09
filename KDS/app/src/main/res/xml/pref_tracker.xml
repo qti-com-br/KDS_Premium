@@ -14,7 +14,7 @@
         android:negativeButtonText="@string/cancel"
         />
 
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="tracker_view_bg"
         android:defaultValue="@color/tracker_view_bg"
         android:title="@string/pref_queue_bg" />

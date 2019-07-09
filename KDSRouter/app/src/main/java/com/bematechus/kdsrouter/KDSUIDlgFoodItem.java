@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSDataSumName;
 import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSSMBPath;
+import com.bematechus.kdslib.KDSUIColorPickerDialog;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;

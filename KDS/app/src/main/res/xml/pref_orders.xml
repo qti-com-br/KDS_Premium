@@ -7,11 +7,11 @@
         <!--android:defaultValue="/system/fonts/DroidSans.ttf,-3090381,-16777216,14"-->
         <!--android:title="@string/pref_kds_screen_title_font"-->
         <!--app:supportsColor="true"/>-->
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="focus_bg"
         android:defaultValue="@color/focus_bg"
         android:title="@string/pref_order_focus_color" />
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="block_border_bg"
         android:defaultValue="@color/border_bg"
         android:title="@string/pref_order_border_color" />
@@ -25,7 +25,7 @@
         <!--android:defaultValue="true" />-->
 
 
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="viewer_bg"
         android:defaultValue="@color/view_bg"
         android:title="@string/pref_kds_panels_viewer_bg" />
@@ -260,7 +260,7 @@
     </PreferenceScreen>
 
     <PreferenceCategory android:title="@string/pref_kds_panels_font">
-        <com.bematechus.kds.KDSPreferenceColorPicker
+        <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="panel_bg"
             android:defaultValue="0xffffffff"
             android:title="@string/pref_kds_panels_bg" />
@@ -331,7 +331,7 @@
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
 
-    <com.bematechus.kds.KDSPreferenceBGFGPicker
+    <com.bematechus.kdslib.KDSPreferenceBGFGPicker
         android:key="panelnum_bgfg"
         android:defaultValue="-16769076,-1"
         android:dependency="panels_show_number"

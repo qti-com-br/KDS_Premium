@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
+import com.bematechus.kdslib.KDSUIBGFGPickerDialog;
 
 import org.w3c.dom.Text;
 

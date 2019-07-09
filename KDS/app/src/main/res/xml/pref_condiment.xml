@@ -18,11 +18,11 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
-    <!--<com.bematechus.kds.KDSPreferenceColorPicker-->
+    <!--<com.bematechus.kdslib.KDSPreferenceColorPicker-->
         <!--android:key="condiment_bg"-->
         <!--android:defaultValue="0xff99cc00"-->
         <!--android:title="Item background color" />-->
-    <!--<com.bematechus.kds.KDSPreferenceColorPicker-->
+    <!--<com.bematechus.kdslib.KDSPreferenceColorPicker-->
         <!--android:key="condiment_fg"-->
         <!--android:defaultValue="0xff99cc00"-->
         <!--android:title="Item text color" />-->

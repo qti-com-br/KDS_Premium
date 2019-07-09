@@ -33,7 +33,7 @@
         <!--android:positiveButtonText="@null" />-->
 
 
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="queue_view_bg"
         android:defaultValue="@color/queue_view_bg"
         android:title="@string/pref_queue_bg" />
@@ -257,7 +257,7 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/queue_mode_simple">
-        <com.bematechus.kds.KDSPreferenceColorPicker
+        <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="queue_simple_separator_color"
             android:defaultValue="@color/queue_separator_color"
             android:title="@string/pref_queue_id_mode_line_bg" />

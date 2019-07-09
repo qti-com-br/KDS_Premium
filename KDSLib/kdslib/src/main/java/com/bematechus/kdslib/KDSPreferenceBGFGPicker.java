@@ -1,16 +1,13 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
-
-import com.bematechus.kdslib.KDSBGFG;
 
 /**
  * Created by Administrator on 2016/3/14 0014.

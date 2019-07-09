@@ -233,7 +233,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
 
 
-        if (order.getCookState() == KDSDataOrder.CookState.Started) {
+        if (order.getCookState() == KDSDataOrder.CookState.Started
+                && this.getCellSubType() == CellSubType.Unknown ) {//just first caption line show started icon
 
             Drawable drawable = env.getSettings().getOrderCookStartedImage();
             drawable.setBounds(rcAbsolute.left+KDSConst.IMAGE_GAP, rcAbsolute.top+KDSConst.IMAGE_GAP, rcAbsolute.left + rcAbsolute.height()-KDSConst.IMAGE_GAP, rcAbsolute.bottom-KDSConst.IMAGE_GAP);//, rcAbsolute.height());
