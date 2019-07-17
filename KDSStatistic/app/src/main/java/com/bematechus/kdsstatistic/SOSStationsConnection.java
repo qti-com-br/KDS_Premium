@@ -7,6 +7,7 @@ import com.bematechus.kdslib.KDSStationActived;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsConnection;
+import com.bematechus.kdslib.NoConnectionDataBuffers;
 
 import java.util.ArrayList;
 
@@ -74,8 +75,8 @@ public class SOSStationsConnection extends KDSStationsConnection {
     public  KDSStationConnection connectWithData(KDSStationIP station, String strXml)
     {
         KDSStationConnection conn = KDSStationConnection.fromIPStation(station);
-
-        conn.addBufferedData(strXml);
+        m_buffersForWaitingConnection.add(station.getID(), strXml, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
+        //conn.addBufferedData(strXml);
 
         if (connectConnection(conn)) {
             synchronized (m_connectionLocker) {

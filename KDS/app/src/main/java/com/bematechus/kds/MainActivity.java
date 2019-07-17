@@ -1691,6 +1691,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (!order.isItemsAllBumpedInExp()) {
                 strBump = getString(R.string.confirm_bump_expo_outstanding);
             }
+            //It should show a confirmation dialog even if it is finished.
+            //But, I can not remember why I use following code. Just keep it.
             else {
                 afterConfirmBumpOrder(userID, orderGuid);//2.0.51
                 return;
@@ -1850,8 +1852,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             String itemGuid = getSelectedItemGuid(userID);
 
             if (itemGuid.isEmpty()) {//bump order
-                if (getKDS().getSettings().getBoolean(KDSSettings.ID.Bumping_confirm))
+                if (getKDS().getSettings().getBoolean(KDSSettings.ID.Bumping_confirm)) {
                     confirmBumpFocusedOrder(userID, orderGuid);
+                }
                 else if (getKDS().getSettings().getBoolean(KDSSettings.ID.Confirm_bump_unpaid) && isOrderUnpaid(userID, orderGuid))
                 {
                     confirmBumpFocusedOrderUnpaid(userID, orderGuid);

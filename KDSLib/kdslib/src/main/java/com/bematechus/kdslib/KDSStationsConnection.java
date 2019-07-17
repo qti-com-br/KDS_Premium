@@ -21,7 +21,7 @@ public class KDSStationsConnection {
     //ArrayList<KDSStationConnection> m_arTimeoutConnecting = new ArrayList<>(); //connections can not connected(timeout). mainly purpose is offline data. Now we use m_buffersForWaitingConnection to save offline data
                                                                                  //so I comment it.
 
-    NoConnectionDataBuffers m_buffersForWaitingConnection = new NoConnectionDataBuffers(); //KPP1-coke
+    protected NoConnectionDataBuffers m_buffersForWaitingConnection = new NoConnectionDataBuffers(); //KPP1-coke
 
     AckManager m_ackManager = new AckManager();//for ack of each xml file.
 

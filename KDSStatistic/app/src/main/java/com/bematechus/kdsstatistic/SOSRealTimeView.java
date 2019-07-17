@@ -296,7 +296,7 @@ public class SOSRealTimeView extends View {
         int nSize = CanvasDC.getBestMaxFontSize_increase(rt,ff,  text);
         ff.setFontSize(nSize);
 
-        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER);
+        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER, false);
 
         //target 0:0 text.
         String strTarget =getContext().getString(R.string.within) +" " + secondsToMinsString(m_properties.getTargetSeconds());
@@ -308,7 +308,7 @@ public class SOSRealTimeView extends View {
         nSize = CanvasDC.getBestMaxFontSize_increase(rt,ff,  strTarget);
         ff.setFontSize(nSize);
 
-        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, strTarget, Paint.Align.CENTER);
+        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, strTarget, Paint.Align.CENTER, false);
 
 
         //draw "within" text
@@ -366,7 +366,7 @@ public class SOSRealTimeView extends View {
         ff.setFontSize( MIN_FONT_SIZE);
         int nSize = CanvasDC.getBestMaxFontSize_increase(rt,ff,  text);
         ff.setFontSize(nSize);
-        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER);
+        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER, false);
 
 
         //draw mins
@@ -382,7 +382,7 @@ public class SOSRealTimeView extends View {
         r.top = r.bottom - r.height()/3;
         text = getContext().getString(R.string.mins);
         ff.setFontSize(nSize/3);
-        CanvasDC.drawText_without_clear_bg(canvas, ff, r, text, Paint.Align.LEFT);
+        CanvasDC.drawText_without_clear_bg(canvas, ff, r, text, Paint.Align.LEFT, false);
 
         //draw "Current AVG time"
         r = new Rect(rect);
@@ -391,7 +391,7 @@ public class SOSRealTimeView extends View {
         r.bottom = r.top + r.height()/4;
         text = getContext().getString(R.string.current_avg_time);
         ff.setFontSize(nSize/4);
-        CanvasDC.drawText_without_clear_bg(canvas, ff, r, text, Paint.Align.CENTER);
+        CanvasDC.drawText_without_clear_bg(canvas, ff, r, text, Paint.Align.CENTER, false);
     }
 
 
@@ -406,7 +406,7 @@ public class SOSRealTimeView extends View {
         ff.setFontSize(MIN_FONT_SIZE);
         int nSize = CanvasDC.getBestMaxFontSize_increase(rt,ff,  text);
         ff.setFontSize(nSize);
-        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER);
+        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER, false);
 
         rt = new Rect(rect);
         rt.top = rt.top + rt.height()/4;
@@ -414,7 +414,7 @@ public class SOSRealTimeView extends View {
         text = KDSUtil.convertIntToString(m_nOverTargetCount);
         nSize = CanvasDC.getBestMaxFontSize_increase(rt,ff,  text);
         ff.setFontSize(nSize);
-        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER);
+        CanvasDC.drawText_without_clear_bg(canvas, ff, rt, text, Paint.Align.CENTER, false);
 
     }
 
