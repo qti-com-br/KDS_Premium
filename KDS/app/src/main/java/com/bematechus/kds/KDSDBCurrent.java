@@ -2129,41 +2129,41 @@ public class KDSDBCurrent extends KDSDBBase {
     //all same items name is in recordset
     /************************************************************************/
     /*
+
     nStation: which station,
     nUser: which user
     itemName: the item name for summary
     pRS: the item table.
         The fields:
-            guid, orderguid, qty, category
+            guid, qty,  qtychanged
     pItemsSum: return data save to this parameter
 
     */
-
     /************************************************************************/
     int createItemsSummaryWidthCondiments(String stationID, int nUser, String itemName, Cursor pRs, ArrayList<KDSSummaryItem> pItemsSum) {
 
-        ArrayList<String> orderGUIDs = new ArrayList<>();
+        //ArrayList<String> orderGUIDs = new ArrayList<>();
         ArrayList<String> itemGUIDs = new ArrayList<>();
-        ArrayList<String> itemCategories = new ArrayList<>();
+        //ArrayList<String> itemCategories = new ArrayList<>();
 
         ArrayList<Float> itemQty = new ArrayList<>();
         ArrayList<Float> itemQtyChanged = new ArrayList<>();
-
+        //load all data to buffer
         while (pRs.moveToNext()) {
             String s = getString(pRs,0);
             itemGUIDs.add(s);
-            s = getString(pRs,1);
-            orderGUIDs.add(s);
+            //s = getString(pRs,1);
+            //orderGUIDs.add(s);
 
             float qty = 0;
 
-            qty = getFloat(pRs,2);
+            qty = getFloat(pRs,1);
             itemQty.add(qty);
 
-            s = getString(pRs,3);
-            itemCategories.add(s);
+            //s = getString(pRs,2);
+            //itemCategories.add(s);
 
-            qty = getFloat(pRs,4);
+            qty = getFloat(pRs,2);
             itemQtyChanged.add(qty);
 
 
@@ -2174,25 +2174,26 @@ public class KDSDBCurrent extends KDSDBBase {
 
         int curindex = 0;
         int checkindex = 1;
-        String orderGUID = "", itemGUID = "";
+        //String orderGUID = "";
+        String itemGUID = "";
 
 
-        String curItemGUID = "", curCategory = "";
+        String curItemGUID = "";//, curCategory = "";
 
 
         while (true) {
-            if (curindex >= orderGUIDs.size()) break;
+            if (curindex >= itemGUIDs.size()) break;
             //curOrderGUID = orderIDs.get(curindex);
             curItemGUID = itemGUIDs.get(curindex);
-            curCategory = itemCategories.get(curindex);
+            //curCategory = itemCategories.get(curindex);
 
             float curqty = itemQty.get(curindex) + itemQtyChanged.get(curindex);
             curcondiments.clear();
-            curcondiments = getItemCondimentStrings(curItemGUID);
+            curcondiments = getItemCondimentStrings(curItemGUID); //load this item's condiments
             KDSSummaryItem sumItem = new KDSSummaryItem();
             sumItem.setDescription(itemName);
             sumItem.setQty(curqty);
-            sumItem.setCategory(curCategory);
+            //sumItem.setCategory(curCategory);
             sumItem.setCondiments(curcondiments);
 
             pItemsSum.add(sumItem);
@@ -2203,8 +2204,8 @@ public class KDSDBCurrent extends KDSDBBase {
             //if same, add qty, and remove it.
             // it is not same, reserve it for next check.
             while (true) {
-                if (checkindex >= orderGUIDs.size()) break;
-                orderGUID = orderGUIDs.get(checkindex);
+                if (checkindex >= itemGUIDs.size()) break;
+                //orderGUID = orderGUIDs.get(checkindex);
                 itemGUID = itemGUIDs.get(checkindex);
                 checkcondiments.clear();
                 checkcondiments = getItemCondimentStrings(itemGUID);
@@ -2212,6 +2213,7 @@ public class KDSDBCurrent extends KDSDBBase {
                     checkindex++;
                     continue;
                 }
+                //compare each condiments, it has sure the condiments count is same.
                 boolean bsame = true;
                 for (int i = 0; i < checkcondiments.size(); i++) {
                     if (!sumItem.getCondiments().get(i).equals(checkcondiments.get(i))) {
@@ -2222,11 +2224,11 @@ public class KDSDBCurrent extends KDSDBBase {
                 }
                 if (bsame) {
                     sumItem.setQty(sumItem.getQty() + itemQty.get(checkindex)+itemQtyChanged.get(checkindex));
-                    orderGUIDs.remove(checkindex);
+                    //orderGUIDs.remove(checkindex);
                     itemGUIDs.remove(checkindex);
                     itemQty.remove(checkindex);
                     itemQtyChanged.remove(checkindex);
-                    itemCategories.remove(checkindex);
+                    //itemCategories.remove(checkindex);
                 } else
                     checkindex++;
 
@@ -2250,11 +2252,7 @@ public class KDSDBCurrent extends KDSDBBase {
         sql = String.format("select description from condiments where itemguid='%s' order by description", itemGUID);
 
         Cursor c = getDB().rawQuery(sql, null);
-
-
         String s = "";
-        int count = 0;
-
 
         while (c.moveToNext()) {
             s = getString(c,0);
@@ -2286,21 +2284,26 @@ return:
 //	sql.Format( "select * from items where station=%d and user= %d and name='%s' ", nStation, nUser, itemName);
         //2008-07-17 add marked filter
         //2.0.28, fix bug
-        sql = String.format("select items.guid,items.orderguid,items.qty,items.category,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
-        sql += " and (";
-        String s = "";
-        int count = arValidOrderGUID.size();
-        if (count <= 0) return null;
-        String str = "";
-        int i = 0;
-        for (i = 0; i < count; i++) {
-            str = arValidOrderGUID.get(i);
-            if (i != count - 1)
-                s = String.format("orderguid='%s' or ", str);
-            else
-                s = String.format("orderguid='%s')", str);
-            sql += s;
-        }
+        sql = String.format("select items.guid,items.qty,items.qtychanged " +
+                "from items,orders " +
+                "where items.description='%s' and items.marked=0 and orders.guid=items.orderguid and items.LocalBumped=0 " +
+                "and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) )", itemDescription, nUser);
+
+//        sql = String.format("select items.guid,items.orderguid,items.qty,items.category,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
+//        sql += " and (";
+//        String s = "";
+//        int count = arValidOrderGUID.size();
+//        if (count <= 0) return null;
+//        String str = "";
+//        int i = 0;
+//        for (i = 0; i < count; i++) {
+//            str = arValidOrderGUID.get(i);
+//            if (i != count - 1)
+//                s = String.format("orderguid='%s' or ", str);
+//            else
+//                s = String.format("orderguid='%s')", str);
+//            sql += s;
+//        }
         Cursor c = getDB().rawQuery(sql, null);
         return c;
 
@@ -2314,34 +2317,36 @@ return:
      */
     private ArrayList<String> getAllUniqueItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID) {
 
-        ArrayList<String> arItems = new ArrayList<String>();
+        ArrayList<String> arItems = new ArrayList<>();
 
         if (getDB() == null) return arItems;
 
         String sql = "";
-        //3.1.0.18 add hide
-        sql = String.format("select description from items where hiden=0 ", stationID, nUser);//3.1.0.18
-        sql += "and (";
-        String s = "";
-        int count = arValidOrderGUID.size();
-        if (count <= 0) return arItems;
-        String str = "";
-        int i = 0;
-        for (i = 0; i < count; i++) {
-            str = arValidOrderGUID.get(i);
-            if (i != count - 1)
-                s = String.format("orderguid='%s' or ", str);
-            else
-                s = String.format("orderguid='%s')", str);
-            sql += s;
-        }
-        sql += " group by description";
+        sql = String.format("select items.description from items,orders where items.hiden=0 and items.LocalBumped=0 and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) ) group by items.description",
+                            nUser);
+//        //3.1.0.18 add hide
+//        sql = String.format("select description from items where hiden=0 ", stationID, nUser);//3.1.0.18
+//        sql += "and (";
+//        String s = "";
+//        int count = arValidOrderGUID.size();
+//        if (count <= 0) return arItems;
+//        String str = "";
+//        int i = 0;
+//        for (i = 0; i < count; i++) {
+//            str = arValidOrderGUID.get(i);
+//            if (i != count - 1)
+//                s = String.format("orderguid='%s' or ", str);
+//            else
+//                s = String.format("orderguid='%s')", str);
+//            sql += s;
+//        }
+//        sql += " group by description";
 
         Cursor c = getDB().rawQuery(sql, null);
 
 
         while (c.moveToNext()) {
-            s = getString(c,0);
+            String s = getString(c,0);
             arItems.add(s);
 
         }
