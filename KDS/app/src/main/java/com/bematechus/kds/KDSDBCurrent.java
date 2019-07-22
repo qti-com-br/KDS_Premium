@@ -1938,25 +1938,65 @@ public class KDSDBCurrent extends KDSDBBase {
     private ArrayList<KDSSummaryItem> summaryItemsWithCondiments(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bAscend) {
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
         ArrayList<String> arUniqueItems = new ArrayList<>();
+        //TimeDog td = new TimeDog();
 
         arUniqueItems = getAllUniqueItems(stationID, nUser, arValidOrderGUID);
         if (arUniqueItems.size() <= 0) return arSums;
         String itemDescription = "";
+//        td.debug_print_Duration(" sum with condiments ------------------------------------- ");
+//        td.debug_print_Duration("sum with condiments 10=");
+//        td.reset();
+        //make sql orderguid string
+        String sql = " and (";
+        String s = "";
+        int count = arValidOrderGUID.size();
+        if (count <= 0) sql = "";
+        String str = "";
+
+        for (int i = 0; i < count; i++) {
+            str = arValidOrderGUID.get(i);
+            if (i != count - 1)
+                s = String.format("orderguid='%s' or ", str);
+            else
+                s = String.format("orderguid='%s')", str);
+            sql += s;
+        }
+
 
         for (int i = 0; i < arUniqueItems.size(); i++) {
             itemDescription = arUniqueItems.get(i);
             if (itemDescription.isEmpty()) continue;
-            Cursor c = getSameItems(stationID, nUser, arValidOrderGUID, itemDescription);
+            if (sql.isEmpty()) continue;
+            Cursor c = getSameItems(stationID, nUser, arValidOrderGUID, itemDescription, sql);
+//            td.debug_print_Duration("sum with condiments 101=");
+//            td.reset();
             if (c == null) continue;
-
-
-            createItemsSummaryWidthCondiments(stationID, nUser, itemDescription, c, arSums);
-
+            ArrayList<String> sameItemsGuid = new ArrayList<>();
+            ArrayList<Float> sameItemsQty = new ArrayList<>();
+            ArrayList<Float> sameItemsQtyChg = new ArrayList<>();
+            while (c.moveToNext())
+            {
+                sameItemsGuid.add(c.getString(0));
+                sameItemsQty.add(getFloat(c,1));
+                sameItemsQtyChg.add(getFloat(c,2));
+            }
             c.close();
+            createItemsSummaryWidthCondiments(stationID, nUser, itemDescription, sameItemsGuid,sameItemsQty,sameItemsQtyChg, arSums);
+
+//            td.debug_print_Duration("sum with condiments 102=");
+//            td.reset();
 
         }
+
+//        td.debug_print_Duration("sum with condiments 11=");
+//        td.reset();
+
         summaryItemsSortByQty(arSums,!bAscend);
+        //td.debug_print_Duration("sum with condiments 12=");
+        //td.reset();
         summaryRebuildNamesAndQty(arSums);
+        //td.debug_print_Duration("sum with condiments 13=");
+        //td.reset();
         return arSums;
 
 
@@ -2140,35 +2180,37 @@ public class KDSDBCurrent extends KDSDBBase {
 
     */
     /************************************************************************/
-    int createItemsSummaryWidthCondiments(String stationID, int nUser, String itemName, Cursor pRs, ArrayList<KDSSummaryItem> pItemsSum) {
+    int createItemsSummaryWidthCondiments(String stationID, int nUser, String itemName, ArrayList<String> sameItemsGuid,ArrayList<Float> itemQty,ArrayList<Float> itemQtyChanged, ArrayList<KDSSummaryItem> pItemsSum) {
 
+        //TimeDog td = new TimeDog();
         //ArrayList<String> orderGUIDs = new ArrayList<>();
-        ArrayList<String> itemGUIDs = new ArrayList<>();
+        //ArrayList<String> itemGUIDs = new ArrayList<>();
         //ArrayList<String> itemCategories = new ArrayList<>();
 
-        ArrayList<Float> itemQty = new ArrayList<>();
-        ArrayList<Float> itemQtyChanged = new ArrayList<>();
+        //ArrayList<Float> itemQty = new ArrayList<>();
+        //ArrayList<Float> itemQtyChanged = new ArrayList<>();
         //load all data to buffer
-        while (pRs.moveToNext()) {
-            String s = getString(pRs,0);
-            itemGUIDs.add(s);
-            //s = getString(pRs,1);
-            //orderGUIDs.add(s);
-
-            float qty = 0;
-
-            qty = getFloat(pRs,1);
-            itemQty.add(qty);
-
-            //s = getString(pRs,2);
-            //itemCategories.add(s);
-
-            qty = getFloat(pRs,2);
-            itemQtyChanged.add(qty);
-
-
-        }
-
+        //while (pRs.moveToNext()) {
+//        for (int i=0; i< sameItemsGuid.size(); i++)
+//            String s = getString(pRs,0);
+//            itemGUIDs.add(s);
+//            //s = getString(pRs,1);
+//            //orderGUIDs.add(s);
+//
+//            float qty = 0;
+//
+//            qty = getFloat(pRs,1);
+//            itemQty.add(qty);
+//
+//            //s = getString(pRs,2);
+//            //itemCategories.add(s);
+//
+//            qty = getFloat(pRs,2);
+//            itemQtyChanged.add(qty);
+//
+//
+//        }
+        //td.debug_print_Duration("sum with condiments 1=");
         ArrayList<String> curcondiments = new ArrayList<>();
         ArrayList<String> checkcondiments = new ArrayList<>();
 
@@ -2180,11 +2222,25 @@ public class KDSDBCurrent extends KDSDBBase {
 
         String curItemGUID = "";//, curCategory = "";
 
+        //td.reset();
 
         while (true) {
-            if (curindex >= itemGUIDs.size()) break;
+            //curindex = -1;
+            //if (curindex >= sameItemsGuid.size()-1 ) break;
+            boolean bAllDone = true;
+            for (int i=curindex; i< sameItemsGuid.size(); i++)
+            {
+                if (!sameItemsGuid.get(i).isEmpty()) {
+                    curindex = i;
+                    bAllDone = false;
+                    break;
+                }
+            }
+            if (bAllDone) break;
+
+           // if (curindex >= sameItemsGuid.size() || curindex<0) break;
             //curOrderGUID = orderIDs.get(curindex);
-            curItemGUID = itemGUIDs.get(curindex);
+            curItemGUID = sameItemsGuid.get(curindex);
             //curCategory = itemCategories.get(curindex);
 
             float curqty = itemQty.get(curindex) + itemQtyChanged.get(curindex);
@@ -2199,16 +2255,21 @@ public class KDSDBCurrent extends KDSDBBase {
             pItemsSum.add(sumItem);
 
             checkindex = curindex + 1;
+            sameItemsGuid.set(curindex, "");
 
             //check all others, find same item with condiments
             //if same, add qty, and remove it.
             // it is not same, reserve it for next check.
             while (true) {
-                if (checkindex >= itemGUIDs.size()) break;
+                if (checkindex >= sameItemsGuid.size()) break;
                 //orderGUID = orderGUIDs.get(checkindex);
-                itemGUID = itemGUIDs.get(checkindex);
+                itemGUID = sameItemsGuid.get(checkindex);
+                if (itemGUID.isEmpty()) {
+                    checkindex ++;
+                    continue;
+                }
                 checkcondiments.clear();
-                checkcondiments = getItemCondimentStrings(itemGUID);
+                checkcondiments = getItemCondimentStrings(itemGUID, checkcondiments);
                 if (checkcondiments.size() != sumItem.getCondiments().size()) {
                     checkindex++;
                     continue;
@@ -2222,21 +2283,35 @@ public class KDSDBCurrent extends KDSDBBase {
                     }
 
                 }
+//                if (condimentGetCount(itemGUID) != sumItem.getCondiments().size())
+//                {
+//                    checkindex++;
+//                    continue;
+//                }
+//                boolean bsame = true;
+//                if (!isSameCondiments(itemGUID,curItemGUID, sumItem.getCondiments().size() ))
+//                    bsame = false;
+
                 if (bsame) {
                     sumItem.setQty(sumItem.getQty() + itemQty.get(checkindex)+itemQtyChanged.get(checkindex));
                     //orderGUIDs.remove(checkindex);
-                    itemGUIDs.remove(checkindex);
-                    itemQty.remove(checkindex);
-                    itemQtyChanged.remove(checkindex);
+//                    sameItemsGuid.remove(checkindex);
+//                    itemQty.remove(checkindex);
+//                    itemQtyChanged.remove(checkindex);
+                    sameItemsGuid.set(checkindex, "");
+                    //itemQty.remove(checkindex);
+                    //itemQtyChanged.remove(checkindex);
                     //itemCategories.remove(checkindex);
+                    checkindex ++;
                 } else
                     checkindex++;
 
             }
 
-            curindex++;
+           // curindex++;
 
         }
+        //td.debug_print_Duration("sum with condiments 2=");
         return pItemsSum.size();
     }
 
@@ -2247,6 +2322,27 @@ public class KDSDBCurrent extends KDSDBBase {
     private ArrayList<String> getItemCondimentStrings(String itemGUID) {
 
         ArrayList<String> arCondiments = new ArrayList<String>();
+        return getItemCondimentStrings(itemGUID, arCondiments);
+
+//        if (getDB() == null) return arCondiments;
+//        String sql = "";
+//        sql = String.format("select description from condiments where itemguid='%s' order by description", itemGUID);
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//        String s = "";
+//
+//        while (c.moveToNext()) {
+//            s = getString(c,0);
+//            arCondiments.add(s);
+//        }
+//        c.close();
+//        return arCondiments;
+
+    }
+
+    private ArrayList<String> getItemCondimentStrings(String itemGUID, ArrayList<String> arCondiments) {
+
+        //ArrayList<String> arCondiments = new ArrayList<String>();
         if (getDB() == null) return arCondiments;
         String sql = "";
         sql = String.format("select description from condiments where itemguid='%s' order by description", itemGUID);
@@ -2276,7 +2372,7 @@ return:
                                                                      */
 
     /************************************************************************/
-    Cursor getSameItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID, String itemDescription) {
+    Cursor getSameItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID, String itemDescription, String sqlOrdersGuid) {
 
 
         itemDescription = replaceSingleQuotation(itemDescription);
@@ -2284,12 +2380,15 @@ return:
 //	sql.Format( "select * from items where station=%d and user= %d and name='%s' ", nStation, nUser, itemName);
         //2008-07-17 add marked filter
         //2.0.28, fix bug
-        sql = String.format("select items.guid,items.qty,items.qtychanged " +
-                "from items,orders " +
-                "where items.description='%s' and items.marked=0 and orders.guid=items.orderguid and items.LocalBumped=0 " +
-                "and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) )", itemDescription, nUser);
+//        sql = String.format("select items.guid,items.qty,items.qtychanged " +
+//                "from items,orders " +
+//                "where items.description='%s' and items.marked=0 and orders.guid=items.orderguid and items.LocalBumped=0 " +
+//                "and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) )", itemDescription, nUser);
 
-//        sql = String.format("select items.guid,items.orderguid,items.qty,items.category,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
+        //sql = String.format("select items.guid,items.orderguid,items.qty,items.category,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
+        //sql = String.format("select items.guid,items.qty,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
+        sql = String.format("select guid,qty,qtychanged from items where LocalBumped=0 and marked=0 and description='%s' ",  itemDescription);
+        sql += sqlOrdersGuid;
 //        sql += " and (";
 //        String s = "";
 //        int count = arValidOrderGUID.size();
@@ -2322,8 +2421,10 @@ return:
         if (getDB() == null) return arItems;
 
         String sql = "";
-        sql = String.format("select items.description from items,orders where items.hiden=0 and items.LocalBumped=0 and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) ) group by items.description",
-                            nUser);
+//        sql = String.format("select items.description from items,orders where items.hiden=0 and items.LocalBumped=0 and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) ) group by items.description",
+//                            nUser);
+        sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0 group by items.description");
+
 //        //3.1.0.18 add hide
 //        sql = String.format("select description from items where hiden=0 ", stationID, nUser);//3.1.0.18
 //        sql += "and (";
@@ -2346,9 +2447,9 @@ return:
 
 
         while (c.moveToNext()) {
-            String s = getString(c,0);
-            arItems.add(s);
-
+//            String s = getString(c,0);
+//            arItems.add(s);
+            arItems.add( getString(c,0));
         }
         c.close();
 
@@ -3632,6 +3733,39 @@ update the schedule item ready qty
         return guid;
 
     }
+
+    /**
+     *
+     * @param itemCompare
+     *  guid will compare
+     * @param itemBase
+     *  guid compare to this one.
+     * @return
+     */
+    private boolean isSameCondiments(String itemCompare, String itemBase, int nCondimentsCount) {
+
+
+        if (getDB() == null) return false;
+        String sql = "";
+        sql = String.format("select count(*) from condiments where itemguid='%s' and description in (select description from condiments where itemguid='%s')",
+                            itemCompare, itemBase );
+
+        int nCount = this.executeOneValue(sql);
+        return (nCondimentsCount == nCount);
+
+    }
+
+    private int condimentsCount(String itemGuid)
+    {
+        if (getDB() == null) return 0;
+        String sql = "";
+        sql = String.format("select count(*) from condiments where itemguid='%s'",
+                            itemGuid);
+
+        int nCount = this.executeOneValue(sql);
+        return nCount;
+    }
+
     /***************************************************************************
      * SQL definitions
      *
