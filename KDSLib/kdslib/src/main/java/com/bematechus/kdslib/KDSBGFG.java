@@ -23,6 +23,7 @@ public class KDSBGFG {
 
         return (0xff000000|m_bg);
 
+
     }
     public void setBG(int nBG)
     {

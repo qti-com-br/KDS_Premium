@@ -279,10 +279,11 @@ public class KDSStationExpeditor extends KDSStationNormal {
             String itemName = order.getItems().getItem(i).getItemName();
             KDSDataItem expItem =  orderExisted.getItems().getItemByName(itemName);
             if (expItem == null) continue;
+            if (!order.getItems().getItem(i).getLocalBumped()) { //20190723 if this item has been bumped in prep station, don't reset its bumped_stations.
+                expItem.removeRemoteBumpedStation(fromStationID);
 
-            expItem.removeRemoteBumpedStation(fromStationID);
-
-            db.itemSetRemoteBumpedStations(expItem);
+                db.itemSetRemoteBumpedStations(expItem);
+            }
 
         }
         db.finishTransaction(bStartedByMe); //2.0.15

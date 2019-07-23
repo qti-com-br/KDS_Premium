@@ -883,9 +883,10 @@ public class KDSView extends View {
         //exp alert
         if (env.getSettings().isExpeditorStation())
         { //the exp aler color
-            if (order.isItemsAllBumpedInExp())
-            {
-                nBG = env.getSettings().getExpAlertTitleBgColor(true, font.getBG());
+            if (env.getSettings().getBoolean(KDSSettings.ID.Exp_Alert_Enabled)) { //20190723, there is bug here, I add this "if" condition.
+                if (order.isItemsAllBumpedInExp()) {
+                    nBG = env.getSettings().getExpAlertTitleBgColor(true, font.getBG());
+                }
             }
         }
 
