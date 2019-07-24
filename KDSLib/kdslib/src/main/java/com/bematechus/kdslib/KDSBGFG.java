@@ -64,4 +64,9 @@ public class KDSBGFG {
 
         return c;
     }
+
+    public int getOriginalBG()
+    {
+        return m_bg;
+    }
 }

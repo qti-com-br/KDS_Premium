@@ -409,6 +409,9 @@ public class KDSViewBlock {
     }
 
     private Rect getCellRelativeRect(int nRow, int nCol) {
+        if (nRow >= m_arRowsHeight.size() ||
+            nCol >= m_arColsWidth.size())
+            return new Rect();
         int ninset = this.getInsetBeforeCell();// getEnv().getBlockInsets();
 
         int y = getRowY(m_arRowsHeight, nRow);

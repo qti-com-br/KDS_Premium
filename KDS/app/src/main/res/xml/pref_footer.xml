@@ -4,7 +4,7 @@
     <CheckBoxPreference
         android:key="footer_enable"
         android:title="@string/pref_kds_footer_enabled"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
     <!-- caption left -->
     <com.bematechus.kdslib.KDSListPreference
         android:key="footer_left"

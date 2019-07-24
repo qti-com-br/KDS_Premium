@@ -1407,8 +1407,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         KDSDataItem item =(KDSDataItem) this.getData();
 
         KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
+        int nbg = color.getBG();//getOriginalBG();
+//        if ( nbg == this.getFont().getBG())
+//            nbg = Color.TRANSPARENT;
+//        else
+//            nbg = color.getBG();
+        int panelBG = env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+        if ( nbg == panelBG)
+            nbg = Color.TRANSPARENT;
 
-        CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
+        CanvasDC.fillRect(g, nbg, rcAbsolute);
+        //CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
 
         rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight(), this.getFont());
         //reset font bg.
@@ -1416,7 +1425,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         int noldfg = this.getFont().getFG();
 
         this.getFont().setFG(color.getFG());
-        this.getFont().setBG(color.getBG());
+        //this.getFont().setBG(color.getBG());
+        this.getFont().setBG(nbg);
 
         Paint.Align align = Paint.Align.LEFT;
         if (item.getAlign() == Paint.Align.RIGHT)
