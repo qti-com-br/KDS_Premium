@@ -588,11 +588,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSSettings.KDSDataSource source =KDSSettings.KDSDataSource.values ()[getKDS().getSettings().getInt(KDSSettings.ID.KDS_Data_Source)];
         if (source == KDSSettings.KDSDataSource.Folder) {
             String remoteFolder = getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
-            if (!KDSSmbFile.isValidPath(remoteFolder)) {
+            if (!KDSSmbFile.smb_isValidPath(remoteFolder)) {
                 //m_handlerMessage.sendPermissionError();
                 return;
             }
-            if (KDSSmbFile.checkFolderWritable(remoteFolder)!=0) {
+            if (KDSSmbFile.smb_checkFolderWritable(remoteFolder)!=0) {
                 m_handlerMessage.sendPermissionError();
 
             }

@@ -299,7 +299,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (source == KDSRouterSettings.KDSDataSource.Folder) {
             String remoteFolder = getKDSRouter().getSettings().getString(KDSRouterSettings.ID.KDSRouter_Data_Folder);
             if (remoteFolder.isEmpty()) return;
-            int nError = KDSSmbFile.checkFolderWritable(remoteFolder);
+            int nError = KDSSmbFile.smb_checkFolderWritable(remoteFolder);
             if (nError != 0) {
                 Message msg = new Message();
                 msg.obj = nError;

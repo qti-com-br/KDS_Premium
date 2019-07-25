@@ -44,6 +44,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSUtil;
 
@@ -456,6 +457,11 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 doLanguageChanged(prefs, key);
                 return;
             }
+            else if (key.equals("general_enable_smbv2"))
+            {
+                boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
+                KDSSmbFile2.smb_setEnableSmbV2(bEnableSmbV2);
+            }
 //            else if (key.equals("kds_general_enable_password"))
 //            {
 //                //String keyid = ("kds_general_enable_password");
@@ -622,12 +628,14 @@ public class KDSUIConfiguration extends PreferenceActivity {
             if (srcType ==  KDSSettings.KDSDataSource.TCPIP) {
                 findPreference("kds_general_tcpport").setEnabled(true);
                 findPreference("kds_general_remote_folder").setEnabled(false);
+                findPreference("general_enable_smbv2").setEnabled(false);
 
             }
             else if (srcType ==  KDSSettings.KDSDataSource.Folder)
             {
                 findPreference("kds_general_tcpport").setEnabled(false);
                 findPreference("kds_general_remote_folder").setEnabled(true);
+                findPreference("general_enable_smbv2").setEnabled(true);
             }
 
         }

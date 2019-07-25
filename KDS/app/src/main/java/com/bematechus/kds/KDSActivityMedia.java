@@ -529,7 +529,7 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
         try {
             createTempFolder();
             // KDSSmbFile.readFromSmb()
-            String filename = KDSSmbFile.readFromSmbToLocal(url, getTempFolder());
+            String filename = KDSSmbFile.smb_readFromSmbToLocal(url, getTempFolder());
             if (!filename.isEmpty())
                 m_handler.sendSmbDownloadedMessage(filename);
             return filename;

@@ -548,6 +548,7 @@ public class KDSSettings extends SettingsBase {
 
        //2.0.47
        Item_group_category,
+       Enable_smbv2, //2.0.51
 
         SMS_enabled, //SMS feature , KPP1-15
         Queue_auto_bump_timeout, //unused
@@ -1273,6 +1274,8 @@ public class KDSSettings extends SettingsBase {
 
 
         init_option(ID.Item_group_category,"bool_item_group_category",false);//
+
+        init_option(ID.Enable_smbv2,"bool_general_enable_smbv2",false);//2.0.51
 
         //SMS
         init_option(ID.SMS_enabled,"bool_kds_general_sms_enable",false);//

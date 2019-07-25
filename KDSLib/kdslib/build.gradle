@@ -35,4 +35,7 @@ dependencies {
     api files('libs/java_websocket.jar')
     //def acraVersion = '5.3.0'
     //implementation "ch.acra:acra-mail:$acraVersion"
+    implementation files('libs/jcifsng-2.1.1.jar')
+    implementation files('libs/slf4j-api-1.7.25.jar')
+    implementation files('libs/bcprov-jdk15on-1.58.jar')
 }

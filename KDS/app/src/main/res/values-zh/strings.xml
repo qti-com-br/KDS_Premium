@@ -1095,11 +1095,13 @@
     <string name="no_selected_license_to_replace">No selected license to replace</string>
     <string name="item_group_by_category">Group items by its category</string>
     <string name="inactive">"(Inactive)"</string>
+    <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <string name="sms_feature_enabled">SMS feature enabled</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
     <string name="deliver_new_order_to_slave_expo">Deliver new order to my slave and expo</string>
+    <string name="router_running_no_deliver_new_order">If there is router app running or you have send order to slave/expo, disable it.</string>
     <string name="auto_refresh_screen">Auto refresh screen in every X seconds.(Zero disable this option)</string>
     <string name="suspend_bump_while_queue_recover">My queue station is recovering data, bumping will suspend</string>
 

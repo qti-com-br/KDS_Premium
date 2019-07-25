@@ -44,6 +44,7 @@ import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSEditTextPreference;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUtil;
@@ -173,7 +174,11 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
         else if (key.equals("general_remote_folder"))
         {
         }
-
+        else if (key.equals("general_enable_smbv2"))
+        {
+            boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
+            KDSSmbFile.smb_setEnableSmbV2(bEnableSmbV2);
+        }
 
     }
 
@@ -642,12 +647,13 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             if (srcType ==  KDSRouterSettings.KDSDataSource.TCPIP) {
                 findPreference("general_pos_ipport").setEnabled(true);
                 findPreference("general_remote_folder").setEnabled(false);
-
+                findPreference("general_enable_smbv2").setEnabled(false);
             }
             else if (srcType ==  KDSRouterSettings.KDSDataSource.Folder)
             {
                 findPreference("general_pos_ipport").setEnabled(false);
                 findPreference("general_remote_folder").setEnabled(true);
+                findPreference("general_enable_smbv2").setEnabled(true);
             }
 
         }

@@ -1528,8 +1528,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         //if the bg is same as panel color, transparent it.
         int panelBG = env.getSettings().getInt(KDSSettings.ID.Panels_BG);
         //if (bg == env.getSettings().getKDSViewFontFace(KDSSettings.ID.Panels_Default_FontFace).getBG() )
-        if (bg == panelBG )
-            bg = Color.TRANSPARENT;
+//        if (bg == panelBG )
+//            bg = Color.TRANSPARENT;
 
         if (c.isDimColor())
         {
@@ -1547,6 +1547,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 }
             }
         }
+        if (bg == panelBG )
+            bg = Color.TRANSPARENT;
         //draw background
         CanvasDC.fillRect(g, bg, rcAbsolute);
 
@@ -1608,8 +1610,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         //if the bg is same as panel color, transparent it.
         int panelBg = env.getSettings().getInt(KDSSettings.ID.Panels_BG);
         // if (bg == env.getSettings().getKDSViewFontFace(KDSSettings.ID.Panels_Default_FontFace).getBG() )
-        if (bg == panelBg )
-            bg = Color.TRANSPARENT;
+
 
         if (c.isDimColor())
             bg = DIM_BG;
@@ -1625,6 +1626,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 }
             }
         }
+        if (bg == panelBg )
+            bg = Color.TRANSPARENT;
         CanvasDC.fillRect(g, bg, rcAbsolute);
 
         String strDescription = c.getMessage();
