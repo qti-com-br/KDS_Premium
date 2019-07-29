@@ -4538,6 +4538,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case Expo_Unbump_Item:
             case Expo_Unbump_Order: //end for queue
             case ACK_XML:
+            case Prep_sync_to_queue://20190729, this can cause queue station freeze, so I move it to thread.
                 return false;
             default: {
                 doCommandXml(sock, xmlData);

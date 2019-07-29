@@ -3676,13 +3676,24 @@ update the schedule item ready qty
     public void queueSetOrderItemsBumped(ArrayList<String> arChangedOrders)
     {
 
+        boolean bFromMe =  this.startTransaction();
+        try {
 
-        for (int i=0; i< arChangedOrders.size(); i++)
-        {
-            String s = arChangedOrders.get(i);
-            if (s.isEmpty()) continue;
-            queueSetSingleOrderItemsBumped(s);
+
+            for (int i = 0; i < arChangedOrders.size(); i++) {
+                String s = arChangedOrders.get(i);
+                if (s.isEmpty()) continue;
+                queueSetSingleOrderItemsBumped(s);
+            }
         }
+        catch (Exception e)
+        {
+
+        }
+        finally {
+            this.finishTransaction(bFromMe);
+        }
+
 
 
 
