@@ -335,6 +335,7 @@ public class KDSStationConnection {
     static public KDSStationConnection fromIPStation(KDSStationIP station)
     {
         KDSStationConnection s = new KDSStationConnection();
+        if (station == null) return s;
         s.setID(station.getID());
         s.setIP(station.getIP());
         s.setPort(station.getPort());

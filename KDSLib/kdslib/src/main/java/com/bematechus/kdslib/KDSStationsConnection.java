@@ -87,7 +87,8 @@ public class KDSStationsConnection {
         int ncount = stations.size();
         for (int i=0; i< ncount; i++)
         {
-            connectToStation(stations.get(i));
+            if (stations.get(i) != null) //I find here can get null station. just filter it.
+                connectToStation(stations.get(i));
         }
     }
 
@@ -460,7 +461,7 @@ public class KDSStationsConnection {
             ArrayList<String> arOffline = m_buffersForWaitingConnection.getStationsOfflineAndAck();
             ArrayList<KDSStationIP> ar =m_stationsRelations.getAllStationsNeedToConnect(arOffline);
 
-            connectStations(ar);
+            connectStations(ar); //please notice the ar can contains null station!!!
         }
     }
 

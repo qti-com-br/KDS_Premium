@@ -384,13 +384,14 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
 
             try {
                 buffer = null;
+                rmifile.close();
                 rmifile = null;
                 bis.close();
             } catch (IOException e) {
                 KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
 
             }
-            rmifile.close();
+
 
         } catch (Exception e) {
 
