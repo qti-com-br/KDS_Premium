@@ -30,7 +30,7 @@ public class AckManager {
      */
     public String add(String stationID, String strXml)
     {
-        Log.i(TAG, "Waiting ACK:" + stationID );
+        //Log.i(TAG, "Waiting ACK:" + stationID );
 //
 //        AckDataStation station = getStation(stationID);
 //        if (station == null)
@@ -41,8 +41,15 @@ public class AckManager {
 //        AckData data = station.add(strXml);
 //        if (data == null)
 //            return strXml;
-        if (m_ackDB.ackCount(stationID) > MAX_ACK_COUNT)
+        int ncount =m_ackDB.ackCount(stationID);
+        //Log.i(TAG, "Waiting ACK: station=" + stationID +",count=" + ncount );
+//        if (KDSConst._DEBUG)
+//            return strXml;
+
+        if (ncount > MAX_ACK_COUNT) {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "ACK size > MAX_ACK_COUNT");
             return strXml;
+        }
         AckData data = new AckData(strXml);
         m_ackDB.ackAdd(stationID, data); //save to database
         return data.getWithAckXmlData();

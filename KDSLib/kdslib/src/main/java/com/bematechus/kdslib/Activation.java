@@ -1437,7 +1437,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     static public String getStoreGuid()
     {
-        return m_storeGuid;
+        if (KDSConst._DEBUG)
+            return "123456789";
+        else
+            return m_storeGuid;
 
     }
 

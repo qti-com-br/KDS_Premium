@@ -1703,6 +1703,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     /**
      * it is in socket thread call this function,
      * so, if update the gui, please change data to main thread first.
+     * Rev:
+     *  Use the handle to call this function. So it is in main thread now.
+     *
      * @param sock
      * @param xmlData
      */
@@ -4312,8 +4315,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         String storeGuid = "";
         if (ar.size() >6) {
             storeGuid = ar.get(6);
-            if (storeGuid.isEmpty()) //don't need empty store.
-                return;
+            if (!KDSConst._DEBUG) {
+                if (storeGuid.isEmpty()) //don't need empty store.
+                    return;
+            }
         }
 
         //check the store guid, different store can run in same ethernet.
@@ -4537,9 +4542,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case Expo_Bump_Item:
             case Expo_Unbump_Item:
             case Expo_Unbump_Order: //end for queue
-            case ACK_XML:
+            //case ACK_XML:
             case Prep_sync_to_queue://20190729, this can cause queue station freeze, so I move it to thread.
                 return false;
+            case ACK_XML:
+            {
+                doAck(xmlData);//do it as quick as possible.
+                return true;
+            }
             default: {
                 doCommandXml(sock, xmlData);
                 return true;
@@ -4864,5 +4874,97 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void onMyFunctionChanged(SettingsBase.StationFunc oldFunc, SettingsBase.StationFunc newFunc)
     {
         this.clearAll();
+    }
+
+    Thread m_threadACK = null;
+    Vector<String> m_arReceivedAck = new Vector<>();
+    Object m_ackLocker = new Object();
+
+    final int MAX_DO_ACK_COUNT = 10;
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    private void startACKThread()
+    {
+        if (m_threadACK == null ||
+                !m_threadACK.isAlive())
+        {
+            m_threadACK = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (isThreadRunning())
+                    {
+                        try {
+                            if (m_threadACK != Thread.currentThread())
+                                return;
+                           doACKInThread();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadACK.setName("RecACK");
+            m_threadACK.start();
+        }
+    }
+
+    private void doACKInThread()
+    {
+        int ncount = 0;
+        synchronized (m_ackLocker)
+        {
+            ncount = m_arReceivedAck.size();
+        }
+        if (ncount <=0) return;
+
+        if (ncount >MAX_DO_ACK_COUNT)
+            ncount = MAX_DO_ACK_COUNT;
+
+        Vector<String> ack = new Vector<>();
+
+        for (int i=0; i< ncount; i++)
+        {
+            ack.add(m_arReceivedAck.get(i));
+
+        }
+        synchronized (m_ackLocker)
+        {
+            m_arReceivedAck.removeAll(ack);
+        }
+
+        for (int i=0; i< ncount ; i++)
+        {
+            String xmlData = ack.get(i);
+            KDSXMLParserCommand command = (KDSXMLParserCommand)KDSXMLParser.parseXml(this.getStationID(), xmlData);
+            if (command == null) continue;//different version cause command messed.
+            KDSXMLParserCommand.KDSCommand code = command.getCode();
+            String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
+
+            if (fromStationID.equals(this.getStationID()))
+                continue; //don't do loop
+
+            commandAckXml(fromStationID, command, xmlData);
+        }
+
+    }
+
+    private void doAck(String ackXml)
+    {
+        synchronized (m_ackLocker)
+        {
+            m_arReceivedAck.add(ackXml);
+        }
+        startACKThread();
     }
 }

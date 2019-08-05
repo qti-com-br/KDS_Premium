@@ -1672,7 +1672,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         }
         if (m_orders == null)
             return 0;
-        int n = m_orders.getIndex(guid);
+        //int n = m_orders.getIndex(guid);
+        int n = m_orders.getIndexNoSyncCheck(guid); //for speed, use this one
         return n;
     }
 

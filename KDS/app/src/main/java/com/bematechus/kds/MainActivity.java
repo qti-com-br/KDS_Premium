@@ -4225,6 +4225,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void refreshPrevNext(KDSUser.USER userID) {
         //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+
         this.getUserUI(userID).refreshPrevNext();
         refreshParkedCount(userID);
         //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");

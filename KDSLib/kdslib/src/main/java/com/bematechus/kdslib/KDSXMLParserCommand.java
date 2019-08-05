@@ -669,4 +669,14 @@ public class KDSXMLParserCommand {
 
     }
 
+    static  public String createQuickXmlAck(String strStationID, String ipAddress, String macAddress, String ackGuid)
+    {
+
+        String s = String.format("<KDSCommand><Code>52</Code><Param Station=\"%s\" IP=\"%s\" MAC=\"%s\">%s</Param></KDSCommand>",
+                strStationID, ipAddress, macAddress, ackGuid);
+        return s;
+
+
+
+    }
 }

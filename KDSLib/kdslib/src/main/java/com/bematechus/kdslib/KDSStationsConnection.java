@@ -1986,7 +1986,7 @@ public class KDSStationsConnection {
 
     public void onReceiveAckXml(String stationID, String ackGuid)
     {
-        Log.i(TAG, "onReceiveAckXml:" + stationID +","+ackGuid);
+        //Log.i(TAG, "onReceiveAckXml:" + stationID +","+ackGuid);
         m_ackManager.removeAck(stationID, ackGuid);
 
 //        AckDataStation station =  m_ackManager.getStation(stationID);
@@ -2017,7 +2017,8 @@ public class KDSStationsConnection {
         if (conn!= null)
         {
 
-            conn.getSock().writeXmlTextCommand(KDSXMLParserCommand.createXmlAck(myStationID, myIPAddress, myMac, ackguid));
+            //conn.getSock().writeXmlTextCommand(KDSXMLParserCommand.createXmlAck(myStationID, myIPAddress, myMac, ackguid));
+            conn.getSock().writeXmlTextCommand(KDSXMLParserCommand.createQuickXmlAck(myStationID, myIPAddress, myMac, ackguid));
         }
 
         return xmlData;

@@ -968,4 +968,23 @@ public class KDSDataOrders extends KDSDataArray {
         return orderName;
 
     }
+
+    public int getIndexNoSyncCheck(String orderGUID)
+    {
+
+
+        try {
+            Vector ar = this.getComponents();
+            for (int i = 0; i < ar.size(); i++) {
+                KDSDataOrder c = (KDSDataOrder) ar.get(i);
+                if (c.getGUID().equals(orderGUID))
+                    return i;
+
+            }
+            return -1;
+        } catch (Exception e) {
+            return -1;
+        }
+
+    }
 }

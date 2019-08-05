@@ -9,6 +9,8 @@ import java.util.Vector;
  */
 public class AckDataStation {
 
+    final static String TAG = "AckDataStation";
+
     String m_strStationID = "";
     Vector<AckData> m_arData = new Vector<>();
     Object m_locker = new Object();
@@ -33,8 +35,10 @@ public class AckDataStation {
     public AckData add(String strXml)
     {
         synchronized (m_locker) {
-            if (m_arData.size() > AckManager.MAX_ACK_COUNT)
+            if (m_arData.size() > AckManager.MAX_ACK_COUNT) {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "ACK size > MAX_ACK_COUNT");
                 return null;
+            }
         }
         AckData data = new AckData(strXml);
         //String guid = data.getGuid();

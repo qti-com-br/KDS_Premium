@@ -2454,6 +2454,11 @@ public class QueueView  extends View {
                 synchronized (m_locker) {
                     m_queueOrders.getOrders().getComponents().removeAll(ar);//clear once
                 }
+                //if (ar.size() >0) {
+                    //TimeDog td = new TimeDog();
+                //KDSGlobalVariables.getKDS().getCurrentDB().clearExpiredBumpedOrders(KDSGlobalVariables.getKDS().getSettings().getBumpReservedCount());
+                    //td.debug_print_Duration("checkAutoBumping->clearExpiredBumpedOrders");
+                //}
                 refresh();
                 ar.clear();
             }
