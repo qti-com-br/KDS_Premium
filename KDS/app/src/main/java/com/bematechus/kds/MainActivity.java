@@ -2411,6 +2411,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String orderGuid = getSelectedOrderGuid(userID);//
         if (orderGuid.isEmpty()) return;
 
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
+
         String itemGuid = getSelectedItemGuid(userID);
         if (itemGuid.isEmpty()) return;
 
@@ -2431,14 +2433,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         refreshView(userID);
 
         getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
-        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
         if (order != null) {
             getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
         }
         //
         //https://bematech.atlassian.net/browse/KPP1-62
-        KDSDataItem item =  order.getItems().getItemByGUID(itemGuid);
-        getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
+        if (order != null) { //if I continue bump order, show crash, KPP1-129
+            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
+            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
+        }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
