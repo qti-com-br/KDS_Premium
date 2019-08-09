@@ -19,7 +19,7 @@
         android:key="fire_bgfg"
         android:defaultValue="-4521814,0"
         android:dependency="hightlight_fire"
-        android:title="@string/pref_kds_rush_bgfg" />
+        android:title="@string/pref_kds_fire_bgfg" />
 
 
 

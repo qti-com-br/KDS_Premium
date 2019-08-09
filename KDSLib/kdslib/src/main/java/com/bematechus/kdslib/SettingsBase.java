@@ -263,6 +263,7 @@ public class SettingsBase {
         }
         else if (s.equals("string"))
         {
+
             String strdef = "";
 
             if (objDef instanceof  String)
