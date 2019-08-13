@@ -43,7 +43,7 @@ public class KDSSmbFile extends Handler {
     }
 
 
-    static private boolean m_bEnableSmbV2 = true;
+    static private boolean m_bEnableSmbV2 = false; //default is false
     static public void smb_setEnableSmbV2(boolean bEnabled)
     {
         m_bEnableSmbV2 = bEnabled;

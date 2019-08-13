@@ -329,6 +329,7 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
         m_btnStop = (Button) this.findViewById(R.id.btnStop);
         m_btnStop.getBackground().setAlpha(btnAlpha);
         setButtonImageSize(R.id.btnStop, R.drawable.media_stop);
+        //setButtonImage(R.id.btnStop, R.drawable.media_stop);
 
         m_btnPrev = (Button) this.findViewById(R.id.btnPrev);
         m_btnPrev.getBackground().setAlpha(btnAlpha);
@@ -1117,12 +1118,30 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
 
     private void setButtonImageSize(int btnID, int imgID)
     {
+        setButtonImageSize(btnID, imgID, IMAGE_WIDTH, IMAGE_HEIGHT);
+
+//        Button btn =(Button)findViewById(btnID);
+//        Drawable drawable=getResources().getDrawable(imgID);
+//        drawable.setBounds(0,0,IMAGE_WIDTH,IMAGE_HEIGHT);
+//        btn.setCompoundDrawables(null,drawable,null,null);
+
+    }
+
+    private void setButtonImageSize(int btnID, int imgID, int w, int h)
+    {
         Button btn =(Button)findViewById(btnID);
         Drawable drawable=getResources().getDrawable(imgID);
-        drawable.setBounds(0,0,IMAGE_WIDTH,IMAGE_HEIGHT);
+        drawable.setBounds(0,0,w,h);
         btn.setCompoundDrawables(null,drawable,null,null);
 
     }
 
+    private void setButtonImage(int btnID, int imgID)
+    {
+        Button btn =(Button)findViewById(btnID);
+        Drawable drawable=getResources().getDrawable(imgID);
 
+        btn.setCompoundDrawables(null,drawable,null,null);
+
+    }
 }
