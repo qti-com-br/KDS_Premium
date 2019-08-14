@@ -551,7 +551,8 @@ public class KDSMyStationRelations {
         for (int i=0; i< offlineStations.size(); i++)
         {
             KDSStationsRelation r = KDSStationsRelation.findStation(m_arStationsRelations,offlineStations.get(i));
-            ar.add(r);
+            if (r != null )
+                ar.add(r);
         }
 
         //keep unique stations
