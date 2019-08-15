@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUIBGFGPickerDialog;
 
 import org.w3c.dom.Text;
@@ -57,12 +58,14 @@ public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+
         super.onCreateView(inflater, container, savedInstanceState);
-        View view =  inflater.inflate(R.layout.preui_tab_display, container, false);
+        View view = inflater.inflate(R.layout.preui_tab_display, container, false);
         view.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
         init_variables(view);
 
         return view;
+
     }
 
     private void onTabItemClicked()
@@ -797,7 +800,7 @@ public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferen
                 }
             });
 
-            ((CheckBox) v.findViewById(R.id.chkChecked)).setOnClickListener(new View.OnClickListener() {
+           ((CheckBox) v.findViewById(R.id.chkChecked)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Object obj = v.getTag();

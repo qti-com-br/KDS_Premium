@@ -332,7 +332,7 @@ public class QueueView  extends View {
 
     private void fireQueueItemClicked(KDSDataOrder order)
     {
-        focusOrder(order.getGUID());
+        //focusOrder(order.getGUID()); /don't need focus in queue
     }
 
     private void init_gesture()
@@ -1669,22 +1669,23 @@ public class QueueView  extends View {
 
     public void focusOrder(String orderGuid)
     {
-        if (orderGuid.equals(KDSConst.RESET_ORDERS_LAYOUT))
-            return;
-        synchronized (m_locker) {
-            m_queueOrders.setFocusedOrderGuid(orderGuid);
-            if (isQueueExpo()) {//if multiple pages, move to focused order guest_paging.
-                if (!orderGuid.isEmpty()) {
-                    int nPage = checkFocusedOrderInWhichPage();
-                    if (nPage >= 0) {
-                        for  (int i=0;i< m_arPageCounter.size(); i++)
-                            m_arPageCounter.set(i, nPage);
-                        //m_nPageCounter = nPage;
-                    }
-                }
-            }
-        }
-        this.refresh();
+        //remove focus
+//        if (orderGuid.equals(KDSConst.RESET_ORDERS_LAYOUT))
+//            return;
+//        synchronized (m_locker) {
+//            m_queueOrders.setFocusedOrderGuid(orderGuid);
+//            if (isQueueExpo()) {//if multiple pages, move to focused order guest_paging.
+//                if (!orderGuid.isEmpty()) {
+//                    int nPage = checkFocusedOrderInWhichPage();
+//                    if (nPage >= 0) {
+//                        for  (int i=0;i< m_arPageCounter.size(); i++)
+//                            m_arPageCounter.set(i, nPage);
+//                        //m_nPageCounter = nPage;
+//                    }
+//                }
+//            }
+//        }
+//        this.refresh();
     }
 
     private int checkFocusedOrderInWhichPage()
@@ -1925,37 +1926,38 @@ public class QueueView  extends View {
     public void focusNext()
     {
 
-        synchronized (m_locker) {
-            String s = m_queueOrders.getNextOrderGUID(m_queueOrders.getFocusedOrderGUID());
-
-            focusOrder(s);
-        }
+//        synchronized (m_locker) {
+//            String s = m_queueOrders.getNextOrderGUID(m_queueOrders.getFocusedOrderGUID());
+//
+//            focusOrder(s);
+//        }
     }
     public void focusPrev()
     {
-        synchronized (m_locker) {
-
-            String s = m_queueOrders.getPrevOrderGUID(m_queueOrders.getFocusedOrderGUID());
-            focusOrder(s);
-        }
+//        synchronized (m_locker) {
+//
+//            String s = m_queueOrders.getPrevOrderGUID(m_queueOrders.getFocusedOrderGUID());
+//            focusOrder(s);
+//        }
     }
 
     public void focusFirst()
     {
-        synchronized (m_locker) {
-            String s = "";
-            if (m_queueOrders.getOrders() == null) return;
-            if (m_queueOrders.getOrders().getCount() > 0)
-                s = m_queueOrders.getOrders().get(0).getGUID();
-            focusOrder(s);
-        }
+//        synchronized (m_locker) {
+//            String s = "";
+//            if (m_queueOrders.getOrders() == null) return;
+//            if (m_queueOrders.getOrders().getCount() > 0)
+//                s = m_queueOrders.getOrders().get(0).getGUID();
+//            focusOrder(s);
+//        }
     }
 
     public String getFocusedGuid()
     {
-        synchronized (m_locker) {
-            return m_queueOrders.getFocusedOrderGUID();
-        }
+        return "";
+//        synchronized (m_locker) {
+//            return m_queueOrders.getFocusedOrderGUID();
+//        }
     }
 
     public String getFirstOrderGuid()
@@ -2227,56 +2229,56 @@ public class QueueView  extends View {
      */
     public void onKeyPressed(int keyCode, KeyEvent event, KDSSettings.ID eventID)
     {
-        if (!isQueueExpo()) return;
-        if (eventID != KDSSettings.ID.NULL ) {
-            m_strInputOrderID = "";
-            refresh();
-            return;
-        }
-        if (keyCode >= KeyEvent.KEYCODE_0 &&
-                keyCode <= KeyEvent.KEYCODE_9)
-        {
-            int n = keyCode - KeyEvent.KEYCODE_0;
-            m_strInputOrderID += KDSUtil.convertIntToString(n);
-            refreshFocusAfterInputing();
-            return;
-        }
-        else
-        {
-            m_strInputOrderID = "";
-            refresh();
-        }
+//        if (!isQueueExpo()) return;
+//        if (eventID != KDSSettings.ID.NULL ) {
+//            m_strInputOrderID = "";
+//            refresh();
+//            return;
+//        }
+//        if (keyCode >= KeyEvent.KEYCODE_0 &&
+//                keyCode <= KeyEvent.KEYCODE_9)
+//        {
+//            int n = keyCode - KeyEvent.KEYCODE_0;
+//            m_strInputOrderID += KDSUtil.convertIntToString(n);
+//            refreshFocusAfterInputing();
+//            return;
+//        }
+//        else
+//        {
+//            m_strInputOrderID = "";
+//            refresh();
+//        }
 
     }
 
     private void refreshFocusAfterInputing()
     {
-        String orderName = m_strInputOrderID;
-        String partialFitGuid = "";
-        int nMaxNameLength = 0;
-        synchronized (m_locker) {
-            for (int i = 0; i < m_queueOrders.getOrders().getCount(); i++) {
-                String dbOrderName = m_queueOrders.getOrders().get(i).getOrderName();
-                if (dbOrderName.length() > nMaxNameLength)
-                    nMaxNameLength = dbOrderName.length();
-                if (dbOrderName.equals(orderName)) {
-                    partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
-                    //this.focusOrder(m_queueOrders.getOrders().get(i).getGUID());
-                    //return;
-                    break;
-                } else if (dbOrderName.indexOf(orderName) == 0) {
-                    if (partialFitGuid.isEmpty())
-                        partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
-                }
-            }
-
-        }
-        this.focusOrder(partialFitGuid);
-        if (m_strInputOrderID.length() >= nMaxNameLength)
-            m_strInputOrderID = "";
-        if (partialFitGuid.isEmpty())
-            m_strInputOrderID = "";
-        refresh();
+//        String orderName = m_strInputOrderID;
+//        String partialFitGuid = "";
+//        int nMaxNameLength = 0;
+//        synchronized (m_locker) {
+//            for (int i = 0; i < m_queueOrders.getOrders().getCount(); i++) {
+//                String dbOrderName = m_queueOrders.getOrders().get(i).getOrderName();
+//                if (dbOrderName.length() > nMaxNameLength)
+//                    nMaxNameLength = dbOrderName.length();
+//                if (dbOrderName.equals(orderName)) {
+//                    partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
+//                    //this.focusOrder(m_queueOrders.getOrders().get(i).getGUID());
+//                    //return;
+//                    break;
+//                } else if (dbOrderName.indexOf(orderName) == 0) {
+//                    if (partialFitGuid.isEmpty())
+//                        partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
+//                }
+//            }
+//
+//        }
+//        this.focusOrder(partialFitGuid);
+//        if (m_strInputOrderID.length() >= nMaxNameLength)
+//            m_strInputOrderID = "";
+//        if (partialFitGuid.isEmpty())
+//            m_strInputOrderID = "";
+//        refresh();
 
     }
 
@@ -2353,13 +2355,14 @@ public class QueueView  extends View {
 
             if (m_bMoveReadyFront)
                 moveReadyFront(orders);
-
-            if (m_queueOrders.getFocusedOrderGUID().isEmpty()) {
-                if (orders.getCount() > 0) {
-                    if (!isQueueExpo())
-                        m_queueOrders.setFocusedOrderGuid(orders.getFirstOrderGuid());
-                }
-            }
+            //remove focus
+            m_queueOrders.setFocusedOrderGuid("");
+//            if (m_queueOrders.getFocusedOrderGUID().isEmpty()) {
+//                if (orders.getCount() > 0) {
+//                    if (!isQueueExpo())
+//                        m_queueOrders.setFocusedOrderGuid(orders.getFirstOrderGuid());
+//                }
+//            }
         }
         //refresh();
     }
