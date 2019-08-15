@@ -719,12 +719,12 @@ public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferen
 
 
         TabDisplay.TabButtonData m_selected = null;
-
+        private LayoutInflater mInflater;
         public List<TabDisplay.TabButtonData> m_listData; //KDSStationsRelation class array
 
         public MyAdapter(Context context, List<TabDisplay.TabButtonData> data) {
             super(context, R.layout.listitem_tab_display_mode,R.id.txtMode, data);
-
+            this.mInflater = LayoutInflater.from(context);
             m_listData = data;
         }
 
@@ -759,8 +759,14 @@ public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferen
         }
         public View getView(int position, View convertView, ViewGroup parent) {
             //ViewHolder holder = null;
-            View v = super.getView(position, convertView, parent);
+            //View v = super.getView(position, convertView, parent);
+            View v = convertView;
+            if ( v == null) {
 
+                v = mInflater.inflate(R.layout.listitem_tab_display_mode, null);
+
+
+            }
             TabDisplay.TabButtonData r =  m_listData.get(position);
 
             v.setTag(r);

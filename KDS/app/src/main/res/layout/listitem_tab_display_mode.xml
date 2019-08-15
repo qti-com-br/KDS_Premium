@@ -4,8 +4,8 @@
     android:descendantFocusability="blocksDescendants"
 
     android:layout_height="match_parent"
-    android:id="@+id/layoutItem"
-    android:theme="@style/AppTheme.AppBarOverlay">
+    android:id="@+id/layoutItem">
+    <!--android:theme="@style/AppTheme.AppBarOverlay"> //It will cause settings activity crash in android 7.0+ -->
 
 
     <CheckBox
