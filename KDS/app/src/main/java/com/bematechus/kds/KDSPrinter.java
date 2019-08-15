@@ -18,6 +18,7 @@ import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataItems;
+import com.bematechus.kdslib.KDSDataModifier;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSocketTCPSideBase;
@@ -52,6 +53,11 @@ public class KDSPrinter {
     static final private char CMD_END_BOLD = 0x02;//"</B>";
     static final private char CMD_PAPER_CUT = 0x03;//"<PC>";
 
+    static final private String TAG_CR = "<CR>";
+    static final private String TAG_ITEMS = "<ITEMS>";
+    static final private String TAG_CONDIMENTS = "<CONDIMENTS>";
+    static final private String TAG_MODIFIERS = "<MODIFIERS>";
+
     public enum PrinterPortType{
         USB,
         Socket,
@@ -63,6 +69,7 @@ public class KDSPrinter {
         TAGS_LINE_NORMAL ,
         TAGS_LINE_ITEM ,
         TAGS_LINE_CONDIMENT  ,
+        TAGS_LINE_MODIFIER,
     }
 
     public enum TextAlign
@@ -389,10 +396,12 @@ return given CR in which index of tag array
             s = s.trim();
             s = s.toUpperCase();
 
-            if (s.equals("<ITEMS>"))
+            if (s.equals(TAG_ITEMS))
                 return  CRTagsLineType.TAGS_LINE_ITEM;
-            if (s.equals("<CONDIMENTS>"))
+            if (s.equals(TAG_CONDIMENTS))
                 return CRTagsLineType.TAGS_LINE_CONDIMENT;
+            if (s.equals(TAG_MODIFIERS))
+                return CRTagsLineType.TAGS_LINE_MODIFIER;
 
         }
 
@@ -584,7 +593,7 @@ return whole line tags
      * @param pCondiment
      * @return
      */
-    private String makeTagString( String tag, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment)
+    private String makeTagString( String tag, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment, KDSDataModifier pModifier)
     {
         String t = tag;
         t = t.trim();
@@ -765,7 +774,11 @@ return whole line tags
             return getStartTimeString(pOrder.getStartTime());
 
         }
-
+        if (t.equals(TAG_MODIFIERS))
+        {
+            if (pModifier == null) return ("");
+            return pModifier.getDescription();
+        }
         return tag;
 
     }
@@ -813,7 +826,7 @@ return whole line tags
         }
 
     }
-    private  String makeTagsString(ArrayList<String> arTags, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment)
+    private  String makeTagsString(ArrayList<String> arTags, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment, KDSDataModifier pModifier)
     {
         //one line
         String str="", s="";
@@ -829,7 +842,7 @@ return whole line tags
         for (int i=0; i< arTags.size(); i++)
         {
             tag = arTags.get(i);
-            s = makeTagString(tag, pOrder, pItem, pCondiment);
+            s = makeTagString(tag, pOrder, pItem, pCondiment, pModifier);
             addNewTagStringToLine(arLineAlign, s);
         }
         return makePrintString(arLineAlign.get(0), arLineAlign.get(1), arLineAlign.get(2));
@@ -1068,9 +1081,29 @@ return the ascii string len, it is unicode len
 
     }
 
+    private int getModifierTagsLineNumber()
+    {
+        int count = 0;
+        String s;
 
+        for (int i=0; i< m_arLinesTags.size(); i++)
+        {
+            s = m_arLinesTags.get(i);
+            s = s.trim();
+            s = s.toUpperCase();
 
-    private void makeItemsStrings(ArrayList<String> parPrint, ArrayList<String> parItemTags, ArrayList<String> parCondimentTags, KDSDataOrder pOrder)
+            if (s.equals(TAG_CR))
+                count++;
+            if (s.equals(TAG_MODIFIERS))
+                return count;
+            //break;
+        }
+
+        return -1;
+
+    }
+
+    private void makeItemsStrings(ArrayList<String> parPrint, ArrayList<String> parItemTags, ArrayList<String> parCondimentTags, KDSDataOrder pOrder,ArrayList<String> parModifierTags, int nCondimentLineIndex,int nModifierLineIndex)
     {
 
 
@@ -1090,19 +1123,48 @@ return the ascii string len, it is unicode len
 
             }
             else {
-                s = makeTagsString(parItemTags, pOrder, pItem, null);
+                s = makeTagsString(parItemTags, pOrder, pItem, null, null);
             }
             addPrintLines(parPrint, s);
 
-            condimentcount = pItem.getCondiments().getCount();
-            for (int j=0; j<condimentcount; j++)
-            {
-                KDSDataCondiment pCondiment = pItem.getCondiments().getCondiment(j);
-                s = makeTagsString(parCondimentTags,pOrder,null, pCondiment); // pItem, pCondiment); //2.5.4.31
-                //parPrint->Add(s);
-                addPrintLines(parPrint, s);
+            //check if print condiment first
+            if (nCondimentLineIndex >=0) {
+                if (nCondimentLineIndex < nModifierLineIndex) {
+                    condimentcount = pItem.getCondiments().getCount();
+                    for (int j = 0; j < condimentcount; j++) {
+                        KDSDataCondiment pCondiment = pItem.getCondiments().getCondiment(j);
+                        s = makeTagsString(parCondimentTags, pOrder, null, pCondiment, null); // pItem, pCondiment); //2.5.4.31
+                        //parPrint->Add(s);
+                        addPrintLines(parPrint, s);
 
+                    }
+                }
             }
+            //print modifiers
+            int modifiersCount = pItem.getModifiers().getCount();
+            if (nModifierLineIndex >= 0) {
+                for (int j = 0; j < modifiersCount; j++) {
+                    KDSDataModifier pModifier = pItem.getModifiers().getModifier(j);
+                    s = makeTagsString(parModifierTags, pOrder, null, null, pModifier); // pItem, pCondiment); //2.5.4.31
+                    //parPrint->Add(s);
+                    addPrintLines(parPrint, s);
+
+                }
+            }
+            //check if print condiment after modifiers
+            if (nCondimentLineIndex >=0) {
+                if (nCondimentLineIndex >= nModifierLineIndex) {
+                    condimentcount = pItem.getCondiments().getCount();
+                    for (int j = 0; j < condimentcount; j++) {
+                        KDSDataCondiment pCondiment = pItem.getCondiments().getCondiment(j);
+                        s = makeTagsString(parCondimentTags, pOrder, null, pCondiment, null); // pItem, pCondiment); //2.5.4.31
+                        //parPrint->Add(s);
+                        addPrintLines(parPrint, s);
+
+                    }
+                }
+            }
+
         }
 
     }
@@ -1142,7 +1204,7 @@ print order data to  buffer, socket will send this buffer to serial port
 
         ArrayList<String> arItemTags = new ArrayList<String>();
         ArrayList<String> arCondimentTags = new ArrayList<String>();
-
+        ArrayList<String> arModifierTags = new ArrayList<>();
 
         //return how many physical printing lines
         int lines = getLines();
@@ -1158,19 +1220,24 @@ print order data to  buffer, socket will send this buffer to serial port
             switch (getCRLineType(arLineTags))
             {
                 case TAGS_LINE_NORMAL: {
-                    s = makeTagsString(arLineTags, order,null, null);
+                    s = makeTagsString(arLineTags, order,null, null, null);
                     addPrintLines(arPrint, s);
                     //arPrint.Add(s);
                 }
                 break;
                 case TAGS_LINE_ITEM: {
                     arItemTags.addAll(arLineTags);
-                    int nindex = getCondimentTagsLineNumber();
-                    if (nindex >=0)
+                    int nCondimentLineIndex  = getCondimentTagsLineNumber();
+                    if (nCondimentLineIndex  >=0)
                     {
-                        arCondimentTags = getCRLineTags(nindex);
+                        arCondimentTags = getCRLineTags(nCondimentLineIndex );
                     }
-                    makeItemsStrings(arPrint, arItemTags, arCondimentTags, order);
+                    int nModifierLineIndex = getModifierTagsLineNumber();
+                    if (nModifierLineIndex >=0)
+                    {
+                        arModifierTags = getCRLineTags(nModifierLineIndex);
+                    }
+                    makeItemsStrings(arPrint, arItemTags, arCondimentTags, order, arModifierTags, nCondimentLineIndex, nModifierLineIndex);
                 }
                 break;
                 case TAGS_LINE_CONDIMENT:
