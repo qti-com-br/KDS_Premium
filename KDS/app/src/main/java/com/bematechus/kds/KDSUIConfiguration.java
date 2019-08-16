@@ -1416,7 +1416,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             super.onCreate(savedInstanceState);
             suspendOnSharedPreferencesChangedEvent(true);
             addPreferencesFromResource(R.xml.pref_tracker);
-            suspendOnSharedPreferencesChangedEvent(true);
+            suspendOnSharedPreferencesChangedEvent(false); //KPP1-138, change from true to false.
 
             bindPreferenceSummaryToValue(findPreference("tracker_title"));
             bindPreferenceSummaryToValue(findPreference("tracker_cols"));

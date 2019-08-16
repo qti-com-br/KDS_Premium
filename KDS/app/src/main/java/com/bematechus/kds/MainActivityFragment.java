@@ -392,19 +392,22 @@ public class MainActivityFragment extends Fragment {
     {
         View v = parent.getChildAt(position);
         if (v == null) return;
-        ImageView img = (ImageView) v.findViewById(R.id.imgTouch);
-        if (img == null) return;
-        TextView t = (TextView) v.findViewById(R.id.txtText);
-        if (t == null) return;
+        setButtonStateImageColor(v, btn, map);
 
-        if (btn.m_bIsDown) {
-            img.setImageResource((int) map.get("icondown"));
-            t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
-        }
-        else {
-            img.setImageResource((int) map.get("icon"));
-            t.setTextColor( getResources().getColor( R.color.touch_button_fg));
-        }
+//
+//        ImageView img = (ImageView) v.findViewById(R.id.imgTouch);
+//        if (img == null) return;
+//        TextView t = (TextView) v.findViewById(R.id.txtText);
+//        if (t == null) return;
+//
+//        if (btn.m_bIsDown) {
+//            img.setImageResource((int) map.get("icondown"));
+//            t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
+//        }
+//        else {
+//            img.setImageResource((int) map.get("icon"));
+//            t.setTextColor( getResources().getColor( R.color.touch_button_fg));
+//        }
     }
 
     public void enableUserB(boolean bEnable)
@@ -679,6 +682,31 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
+    /**
+     *
+      * @param v
+     *  Parent view
+     * @param btn
+     */
+    private void setButtonStateImageColor(View v, KDSTouchPadButton btn ,Map<String, Object> map)
+    {
+        if (v == null) return;
+        ImageView img = (ImageView) v.findViewById(R.id.imgTouch);
+        if (img == null) return;
+        TextView t = (TextView) v.findViewById(R.id.txtText);
+        if (t == null) return;
+
+        if (btn.m_bIsDown) {
+            img.setImageResource((int) map.get("icondown"));
+            t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
+        }
+        else {
+            img.setImageResource((int) map.get("icon"));
+            KDSViewFontFace ff = KDSGlobalVariables.getKDS().getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface);
+            //t.setTextColor( getResources().getColor( R.color.touch_button_fg));
+            t.setTextColor( ff.getFG() );
+        }
+    }
 
     public class TouchAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
@@ -726,15 +754,17 @@ public class MainActivityFragment extends Fragment {
             Map<String, Object> map =( Map<String, Object>) this.getItem(position);
             KDSTouchPadButton btn = (KDSTouchPadButton) map.get("btn");
             t.setText( btn.getText());
-            ImageView img = (ImageView) convertView.findViewById(R.id.imgTouch);
-            if (btn.m_bIsDown) {
-                img.setImageResource((int) map.get("icondown"));
-                t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
-            }
-            else {
-                img.setImageResource((int) map.get("icon"));
-                t.setTextColor( getResources().getColor( R.color.touch_button_fg));
-            }
+            setButtonStateImageColor(convertView, btn, map);
+//            ImageView img = (ImageView) convertView.findViewById(R.id.imgTouch);
+//            if (btn.m_bIsDown) {
+//                img.setImageResource((int) map.get("icondown"));
+//                t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
+//            }
+//            else {
+//                img.setImageResource((int) map.get("icon"));
+//                //t.setTextColor( getResources().getColor( R.color.touch_button_fg));
+//                t.setTextColor( ff.getFG() );
+//            }
 
             return convertView;
         }
