@@ -42,7 +42,8 @@
         android:textCursorDrawable="@null"
         android:paddingLeft="2dp"
         android:textAlignment="center"
-        android:gravity="center" />
+        android:gravity="center"
+        android:singleLine="true"/>
 
     <!--<View-->
         <!--android:layout_width="0.5px"-->
@@ -129,7 +130,8 @@
         android:gravity="center"
         android:inputType="text"
         android:digits="1234567890,"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:singleLine="true" />
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="fill_parent"

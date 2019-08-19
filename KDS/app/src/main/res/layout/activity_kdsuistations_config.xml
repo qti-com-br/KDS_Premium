@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,7 +12,7 @@
         android:layout_height="wrap_content"
         android:weightSum="13">
         <View
-            android:layout_width="64dp"
+            android:layout_width="68dp"
             android:layout_height="fill_parent"
             android:background="@color/relations_headers_bg"
             android:visibility="visible" />
@@ -150,29 +151,31 @@
             <!--android:id="@+id/txtNew"-->
             <!--android:textColor="#0000ff" />-->
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:showDividers="middle"
-        android:divider="#FFFF00"
         android:layout_height="wrap_content"
         android:layout_weight="0.1"
-        android:background="@drawable/listview_border"
+        android:background="@drawable/relationship_border"
+        android:divider="#FFFF00"
+        android:orientation="vertical"
         android:paddingBottom="2dp"
+        android:showDividers="middle"
         android:weightSum="1">
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/lstStations"
-        android:layout_gravity="center_horizontal"
-        android:choiceMode="singleChoice"
-        android:drawSelectorOnTop="true"
-        android:footerDividersEnabled="true"
-        android:headerDividersEnabled="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:dividerHeight="2dp"
-        android:layout_weight="1" />
+
+        <ListView
+            android:id="@+id/lstStations"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:choiceMode="singleChoice"
+            android:dividerHeight="2dp"
+            android:drawSelectorOnTop="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="true" />
 
     </LinearLayout>
 

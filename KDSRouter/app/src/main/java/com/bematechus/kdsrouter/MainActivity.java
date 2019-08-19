@@ -377,7 +377,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SHOW_SCHEDULE)
         {
-            getKDSRouter().scheduleRefresh();
+            if  (getKDSRouter() != null)
+                getKDSRouter().scheduleRefresh();
         }
         else if (requestCode == SHOW_SETTINGS)
         {

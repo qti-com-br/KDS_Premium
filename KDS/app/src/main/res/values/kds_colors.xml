@@ -4,7 +4,7 @@
     <color name="view_bg">#f2f2f2</color>
     <color name="panel_bg">#ffffffff</color>
     <color name="panel_fg">#ff000000</color>
-    <color name="border_bg">#e6e6e6</color>
+    <color name="border_bg">#E6E6E6</color>
     <color name="panelnum_bg">#414141</color>
     <color name="panelnum_fg">#fff1f1e8</color>
     <color name="caption_bg">#bbbbbb</color>
@@ -69,7 +69,7 @@
     <color name="queue_order_status_preparation_bg">#304ffe</color>
     <color name="queue_order_status_preparation_fg">#ffffff</color>
 
-    <color name="queue_order_status_ready_bg">#cddc39</color>
+    <color name="queue_order_status_ready_bg">#CDDC39</color>
     <color name="queue_order_status_ready_fg">#000000</color>
 
     <color name="queue_order_status_pickup_bg">#64dd17</color>

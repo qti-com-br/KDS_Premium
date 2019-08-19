@@ -73,7 +73,7 @@
         android:dependency="general_router_enabled"
         android:negativeButtonText="cancel"
         />
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="false"
         android:key="general_enable_smbv2"
         android:title="@string/use_smb_v2_open_folder" />
