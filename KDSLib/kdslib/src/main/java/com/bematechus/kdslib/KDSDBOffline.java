@@ -257,6 +257,18 @@ public class KDSDBOffline extends KDSDBBase {
 
 
     }
+
+    public void clearAck()
+    {
+        String sql = "delete from ackdata";
+        this.executeDML(sql);
+
+    }
+    public void clearOffline()
+    {
+        String sql = "delete from offlinedata";
+        this.executeDML(sql);
+    }
     /*****************************************************************************************/
     public static final String Table_Offline = "Create table offlinedata ("
             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"

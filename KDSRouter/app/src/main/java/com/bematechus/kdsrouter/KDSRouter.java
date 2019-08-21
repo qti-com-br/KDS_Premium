@@ -783,6 +783,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
                 }
                 break;
+                case KDSSocketTCPCommandBuffer.UDP_CLEAR_DB:
+                {
+                    this.clearAll();
+                }
+                break;
                 default: {
                     m_udpBuffer.remove(1);
                     break;
@@ -1982,6 +1987,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             case ACK_XML:
                 commandAckXml(fromStationID, command, xmlData);
                 break;
+
             default:
                 return;
         }
@@ -3677,5 +3683,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         String ackguid = command.getParam();
         m_stationsConnection.onReceiveAckXml(fromStationID, ackguid);
 
+    }
+
+    /**
+     * clear router buffered ACK and offline data.
+     */
+    public void clearAll()
+    {
+        m_stationsConnection.clear();
     }
 }

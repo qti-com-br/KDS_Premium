@@ -75,4 +75,10 @@ public class NoConnectionDataBuffers {
     {
         return m_offlineDB.offlineAckGetStations();
     }
+
+    public void clear()
+    {
+        m_offlineDB.clearOffline();
+
+    }
 }

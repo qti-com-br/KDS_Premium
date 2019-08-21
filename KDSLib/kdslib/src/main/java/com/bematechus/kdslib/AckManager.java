@@ -130,4 +130,9 @@ public class AckManager {
     {
         return m_ackDB.ackResetTime(ackGuid);
     }
+
+    public void clear()
+    {
+        m_ackDB.clearAck();
+    }
 }

@@ -2299,6 +2299,18 @@ public class KDSStationsConnection {
 
     }
 
+    /**
+     * clear all buffered offline data
+     * KPP1-144
+     * @return
+     */
+    public boolean clear()
+    {
+        m_ackManager.clear();
+        m_buffersForWaitingConnection.clear();
+        return true;
+    }
+
 }
 
 

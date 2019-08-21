@@ -62,6 +62,8 @@ public class Broadcaster {
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildClearDBCommand();
         getUDP().broadcastData(buf);
 
+        //to router, KPP1-145
+        getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
     }
 
     public void broadcastItemBumpUnbump(KDSDataOrder order, boolean bBumped)
