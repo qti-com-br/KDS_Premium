@@ -444,7 +444,21 @@ public class KDSDataOrders extends KDSDataArray {
                                 KDSDataOrder c2 = (KDSDataOrder) o2;
                                 String name1 = c1.getOrderName();//.makeDurationString();
                                 String name2 = c2.getOrderName();
-                                return name1.compareTo(name2);
+                                if (KDSUtil.isValidLongValString(name1) && KDSUtil.isValidLongValString(name2))
+                                {
+                                    long order1 = KDSUtil.convertStringToLong(name1, -1);
+                                    long order2 = KDSUtil.convertStringToLong(name2, -1);
+                                    int nresult = 0;//name1.compareTo( name2 ) ;
+                                    if (order1 > order2)
+                                        nresult = 1;
+                                    else if (order1 < order2)
+                                        nresult = -1;
+                                    return nresult;
+
+                                }
+                                else {
+                                    return name1.compareTo(name2);
+                                }
                             }
                         }
                 );
@@ -458,8 +472,23 @@ public class KDSDataOrders extends KDSDataArray {
                                 KDSDataOrder c2 = (KDSDataOrder) o2;
                                 String name1 = c1.getOrderName();//.makeDurationString();
                                 String name2 = c2.getOrderName();
-                                int nresult = name1.compareTo(name2);
-                                return (-1) * nresult;
+                                if (KDSUtil.isValidLongValString(name1) && KDSUtil.isValidLongValString(name2))
+                                {
+                                    long order1 = KDSUtil.convertStringToLong(name1, -1);
+                                    long order2 = KDSUtil.convertStringToLong(name2, -1);
+                                    int nresult = 0;//name1.compareTo( name2 ) ;
+                                    if (order1 > order2)
+                                        nresult = -1;
+                                    else if (order1 < order2)
+                                        nresult = 1;
+                                    return nresult;
+
+                                }
+                                else {
+
+                                    int nresult = name1.compareTo(name2);
+                                    return (-1) * nresult;
+                                }
                             }
                         }
                 );

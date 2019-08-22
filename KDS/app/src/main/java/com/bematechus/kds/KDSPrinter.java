@@ -776,7 +776,11 @@ return whole line tags
             return getStartTimeString(pOrder.getStartTime());
 
         }
-
+        if (t.equals(TAG_MODIFIERS))
+        {
+            if (pModifier == null) return ("");
+            return pModifier.getDescription();
+        }
         if (t.equals(TAG_MODIFIERS))
         {
             if (pModifier == null) return ("");
@@ -1223,7 +1227,7 @@ print order data to  buffer, socket will send this buffer to serial port
         ArrayList<String> arItemTags = new ArrayList<>();
         ArrayList<String> arCondimentTags = new ArrayList<>();
         ArrayList<String> arModifierTags = new ArrayList<>();
-
+        ArrayList<String> arModifierTags = new ArrayList<>();
 
         //return how many physical printing lines
         int lines = getLines();

@@ -1110,6 +1110,7 @@
     <string name="item_group_by_category">Group items by its category</string>
     <string name="inactive">(Inactive)</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
+    <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <!--<string name="my_serial_number">My serial number:</string>-->

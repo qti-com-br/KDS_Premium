@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by Administrator on 2015/11/20 0020.
  * The UI control that build the user operations.
  */
-public class KDSUserUI {
+public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
 
     KDSLayout m_layout = null;
 
@@ -76,6 +76,7 @@ public class KDSUserUI {
     }
     public void setLayout(KDSLayout layout) {
         m_layout = layout;
+        m_layout.setFinishedDrawingEventsReceiver(this);
     }
     public KDSLayout getLayout() {
         return m_layout;
@@ -705,5 +706,8 @@ public class KDSUserUI {
         }
 
     }
-
+    public  void onViewFinishedDrawing(KDSLayout layout)
+    {
+        this.refreshPrevNext();
+    }
 }

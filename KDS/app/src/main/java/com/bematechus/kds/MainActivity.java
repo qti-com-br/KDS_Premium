@@ -325,6 +325,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String msg = this.getString(R.string.network_restore);// "Network restored";
         showInfo(msg);
         showToastMessage(msg);
+        doActivation(true, false, "");
+        m_activationDog.reset();
+
         KDSLog.i(TAG, "Network restored");
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -6030,6 +6033,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isUserLayoutReady(userID)) return;
 
         getUserUI(userID).getLayout().focusNextPage();
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 

@@ -181,7 +181,6 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             KDSSmbFile.smb_setEnableSmbV2(bEnableSmbV2);
         }
 
-
     }
 
     static final private int HEADERS_WIDTH = 200;
