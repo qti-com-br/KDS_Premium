@@ -41,6 +41,10 @@ import java.util.ArrayList;
 public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer.LineItemViewerEvents{
 
     final String TAG = "KDSLayout";
+    public interface KDSLayoutDrawingDoneEvent
+    {
+        public  void onViewFinishedDrawing(KDSLayout layout);
+    }
     public interface KDSLayoutEvents
     {
         public  void onViewPanelDoubleClicked(KDSLayout layout);
@@ -48,6 +52,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     }
 
+    private KDSLayoutDrawingDoneEvent m_eventsFinishedDrawing = null;
 
     private KDSLayoutEvents m_eventsReceiver = null;
     private KDSView m_view = null;
@@ -168,9 +173,19 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     {
         if (m_orders == null) return;
         String focusedGuid = getEnv().getStateValues().getFocusedOrderGUID();
+        String currentFirstGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
+
         if (focusedGuid.isEmpty()) return;
         synchronized (m_orders.m_locker) {
             if (m_orders.getOrderByGUID(focusedGuid) == null) return;
+            if (!currentFirstGuid.isEmpty())
+            {
+                if (m_orders.getOrderIndexByGUID(currentFirstGuid) >=0) {
+                    if (checkOrdersCanShowFocus(m_orders, currentFirstGuid, focusedGuid)) {
+                        return;
+                    }
+                }
+            }
             for (int i = 0; i < m_orders.getCount(); i++) {
                 String fromGuid = m_orders.get(i).getGUID();
                 if (checkOrdersCanShowFocus(m_orders, fromGuid, focusedGuid)) {
@@ -2398,6 +2413,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     {
         public void handleMessage(Message msg) {
             KDSLayout.this.getView().refresh();
+            if (KDSLayout.this.m_eventsFinishedDrawing!=null)
+                m_eventsFinishedDrawing.onViewFinishedDrawing(KDSLayout.this);
         }
     };
 
@@ -2407,5 +2424,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         return this.getView().isFull();
 
 
+    }
+
+    public void setFinishedDrawingEventsReceiver(KDSLayoutDrawingDoneEvent rec)
+    {
+        m_eventsFinishedDrawing = rec;
     }
 }

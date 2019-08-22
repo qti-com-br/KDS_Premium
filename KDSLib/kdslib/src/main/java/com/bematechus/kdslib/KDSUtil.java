@@ -1655,4 +1655,29 @@ just 16bits value
 
     }
 
+    static public boolean isDigitalString(String str)
+    {
+        if (str.isEmpty())
+            return false;
+        for (int i=0; i< str.length(); i++)
+        {
+            if (!Character.isDigit(str.charAt(i)))
+                return false;
+        }
+        return true;
+    }
+
+    static public boolean isValidLongValString(String str)
+    {
+        if (!isDigitalString(str))
+            return false;
+        long l = Long.MAX_VALUE;
+        String s = convertIntToString(l);
+        int len = s.length();
+        if (str.length() > len)
+            return false;
+        return true;
+
+    }
+
 }
