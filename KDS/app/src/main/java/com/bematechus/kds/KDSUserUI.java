@@ -709,5 +709,6 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
     public  void onViewFinishedDrawing(KDSLayout layout)
     {
         this.refreshPrevNext();
+
     }
 }

@@ -50,7 +50,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         public  void onViewPanelDoubleClicked(KDSLayout layout);
         public  void onViewPanelClicked(KDSLayout layout);
         public void onViewDrawingFinished(KDSLayout layout);
-        public void onRedrawLayout(KDSLayout layout);
+       // public void onRedrawLayout(KDSLayout layout);
     }
 
     private KDSLayoutDrawingDoneEvent m_eventsFinishedDrawing = null;

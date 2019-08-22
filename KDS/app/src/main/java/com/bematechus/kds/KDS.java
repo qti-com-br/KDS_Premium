@@ -3587,7 +3587,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public void clearStatisticData()
     {
-        this.getStatisticDB().clear();
+        if (KDSConst.ENABLE_FEATURE_STATISTIC)
+            this.getStatisticDB().clear();
     }
     public KDSSettings getSettings()
     {
@@ -4020,6 +4021,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public void remove_statistic_old_data()
     {
+        if (!KDSConst.ENABLE_FEATURE_STATISTIC)
+            return;
         int nDays = getSettings().getInt(KDSSettings.ID.Statistic_keep_days);
         if (nDays <0)
             nDays = 0;

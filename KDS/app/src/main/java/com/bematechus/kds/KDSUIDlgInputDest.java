@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
@@ -155,15 +156,15 @@ public class KDSUIDlgInputDest  extends KDSUIDialogBase {
     {
         String s = m_txtText.getText().toString();
         ArrayList<String> arCurrent = KDSGlobalVariables.getKDS().getCurrentDB().getUniqueDestinations(s);
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            ArrayList<String> arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueDestinations(s);
+            for (int i = 0; i < arStatistic.size(); i++) {
+                if (KDSUtil.isExistedInArray(arCurrent, arStatistic.get(i)))
+                    continue;
+                else
+                    arCurrent.add(arStatistic.get(i));
 
-        ArrayList<String> arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueDestinations(s);
-        for (int i=0; i< arStatistic.size(); i++)
-        {
-            if (KDSUtil.isExistedInArray(arCurrent, arStatistic.get(i)))
-                continue;
-            else
-                arCurrent.add(arStatistic.get(i));
-
+            }
         }
         m_arData.clear();
         m_arData.addAll(arCurrent);

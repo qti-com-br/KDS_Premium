@@ -791,7 +791,8 @@ public class KDSStationFunc {
             kdsuser.getCurrentDB().schedule_order_finished(order.getGUID());
         }
         else {
-            kdsuser.getStatisticDB().orderAdd(order);
+            if (KDSConst.ENABLE_FEATURE_STATISTIC)
+                kdsuser.getStatisticDB().orderAdd(order);
         }
         if (bRefreshView)
             kdsuser.refreshView();
@@ -864,7 +865,8 @@ public class KDSStationFunc {
             kdsuser.getCurrentDB().schedule_order_finished(order.getGUID());
         }
         else {
-            kdsuser.getStatisticDB().orderAdd(order);
+            if (KDSConst.ENABLE_FEATURE_STATISTIC)
+                kdsuser.getStatisticDB().orderAdd(order);
         }
 
         kdsuser.refreshView();
@@ -888,7 +890,8 @@ public class KDSStationFunc {
 
         kdsuser.getOrders().addComponent(order);
         //update the statistic database
-        kdsuser.getStatisticDB().orderDelete(orderGuid);
+        if (KDSConst.ENABLE_FEATURE_STATISTIC)
+            kdsuser.getStatisticDB().orderDelete(orderGuid);
         //kdsuser.refreshView();
         if (kdsuser.getKDS().isExpeditorStation() ||
                 kdsuser.getKDS().isQueueExpo())
@@ -2057,6 +2060,8 @@ public class KDSStationFunc {
     final static String DEL_ORDER = "#@$DEL$@#";
     static public boolean doStatisticAppAskData3(KDSSocketInterface sock, KDS kds, KDSXMLParserCommand command, String strOrinalData, String strAfterTimeStamp, String existedInStatistic)
     {
+        if (!KDSConst.ENABLE_FEATURE_STATISTIC)
+            return true;
         ArrayList<String> arSql;// = kds.getStatisticDB().outputOrdersSqlStrings(strAfterTimeStamp);
 
         ArrayList<String> localOrderGuids = kds.getStatisticDB().orderGetOrdersByTimeStamp(strAfterTimeStamp);

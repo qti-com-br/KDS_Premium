@@ -102,4 +102,7 @@ public class KDSConst {
     static public final int DIM_FG = Color.DKGRAY;
     static public final int IMAGE_GAP =1;
 
+    //statistic is useless in 2.3 version.
+    //it just is for average preparing time.
+    public static final boolean ENABLE_FEATURE_STATISTIC = true;
 }

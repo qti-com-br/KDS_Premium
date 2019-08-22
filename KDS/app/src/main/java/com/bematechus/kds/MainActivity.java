@@ -1350,14 +1350,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             getKDS().reopenSupportDB(this.getApplicationContext());
         }
 
-
-        srcFile = srcFolder + KDSDBStatistic.DB_NAME;
-        if (KDSUtil.fileExisted(srcFile)) {
-            getKDS().getStatisticDB().close();
-            KDSUtil.copyFile(srcFile, dbStatisticPath);
-            getKDS().reopenStatisticDB(this.getApplicationContext());
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            srcFile = srcFolder + KDSDBStatistic.DB_NAME;
+            if (KDSUtil.fileExisted(srcFile)) {
+                getKDS().getStatisticDB().close();
+                KDSUtil.copyFile(srcFile, dbStatisticPath);
+                getKDS().reopenStatisticDB(this.getApplicationContext());
+            }
         }
-
         return import_kds_setting(srcFolder, true);
     }
 
@@ -1407,12 +1407,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         srcFile = srcFolder + KDSDBSupport.DB_NAME;
         KDSUtil.copyFile(srcFile, dbSupportPath);
        KDSGlobalVariables.getKDS().reopenSupportDB(KDSApplication.getContext());
-
-       KDSGlobalVariables.getKDS().getStatisticDB().close();
-        srcFile = srcFolder + KDSDBStatistic.DB_NAME;
-        KDSUtil.copyFile(srcFile, dbStatisticPath);
-       KDSGlobalVariables.getKDS().reopenStatisticDB(KDSApplication.getContext());
-
+       if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+           KDSGlobalVariables.getKDS().getStatisticDB().close();
+           srcFile = srcFolder + KDSDBStatistic.DB_NAME;
+           KDSUtil.copyFile(srcFile, dbStatisticPath);
+           KDSGlobalVariables.getKDS().reopenStatisticDB(KDSApplication.getContext());
+       }
 
         //String settings = getKDS().getSettings().outputXmlText(this.getApplicationContext());
 
@@ -4965,10 +4965,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //m_bWatingRefreshViewAsDblClick = true;
     }
 
-    public void onRedrawLayout(KDSLayout layout)
-    {
-        getKDS().refreshView();
-    }
+//    public void onRedrawLayout(KDSLayout layout)
+//    {
+//        getKDS().refreshView();
+//    }
     /**
      *
      * @param layout
