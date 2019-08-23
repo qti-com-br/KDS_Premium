@@ -587,39 +587,55 @@ public class KDSDataOrder extends KDSData {
     {
         if (tblName.isEmpty())
             tblName = "orders";
-        String sql = "insert into "
-                + tblName
-                + " ("
-                + "GUID,Name,Waiter,Start,ToTbl,"
-                + "Station,Screen,POS,OrderType,Dest,"
-                + "CustMsg,QueueMsg,Parked,IconIdx,EvtFired,PrepStart,"
-                + "Status,SortIdx,OrderDelay,fromprimary)"
-                + " values ("
-                + "'" + getGUID() + "'"
-                + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
-                + ",'" + fixSqliteSingleQuotationIssue( getWaiterName()) + "'"
-                + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"
-                + ",'" + fixSqliteSingleQuotationIssue(  getToTable()) +"'"
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            String sql = "insert into "
+                    + tblName
+                    + " ("
+                    + "GUID,Name,Waiter,Start,ToTbl,"
+                    + "Station,Screen,POS,OrderType,Dest,"
+                    + "CustMsg,QueueMsg,Parked,IconIdx,EvtFired,PrepStart,"
+                    + "Status,SortIdx,OrderDelay,fromprimary)"
+                    + " values ("
+                    + "'" + getGUID() + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getOrderName()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getWaiterName()) + "'"
+                    + ",'" + KDSUtil.convertDateToString(getStartTime()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getToTable()) + "'"
 
-                + ",'" + fixSqliteSingleQuotationIssue(  getPCKDSNumber() )+ "'"
-                + ","+ KDSUtil.convertIntToString(getScreen())
-                + ",'" +fixSqliteSingleQuotationIssue(  getFromPOSNumber() )+"'"
-                + ",'" + fixSqliteSingleQuotationIssue(  getOrderType()) + "'"
-                + ",'" +fixSqliteSingleQuotationIssue(  getDestination()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getPCKDSNumber()) + "'"
+                    + "," + KDSUtil.convertIntToString(getScreen())
+                    + ",'" + fixSqliteSingleQuotationIssue(getFromPOSNumber()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getOrderType()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getDestination()) + "'"
 
-                + ",'" +fixSqliteSingleQuotationIssue(  getCustomMsg()) + "'"
-                + ",'" +fixSqliteSingleQuotationIssue(  getQueueMessage()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getCustomMsg()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getQueueMessage()) + "'"
 
-                + "," + KDSUtil.convertIntToString(getParked())
-                + "," +  KDSUtil.convertIntToString(getIconIdx())
-                + "," +  KDSUtil.convertIntToString(getOrderEvtFired())
-                + ",'" + KDSUtil.convertDateToString(getPreparationStartTime()) +"'"
-                + "," + KDSUtil.convertIntToString(getStatus())
-                + "," + KDSUtil.convertIntToString(getSortIdx())
-                + "," + KDSUtil.convertFloatToString(getOrderDelay())
-                + ",0 )";
-        return sql;
+                    + "," + KDSUtil.convertIntToString(getParked())
+                    + "," + KDSUtil.convertIntToString(getIconIdx())
+                    + "," + KDSUtil.convertIntToString(getOrderEvtFired())
+                    + ",'" + KDSUtil.convertDateToString(getPreparationStartTime()) + "'"
+                    + "," + KDSUtil.convertIntToString(getStatus())
+                    + "," + KDSUtil.convertIntToString(getSortIdx())
+                    + "," + KDSUtil.convertFloatToString(getOrderDelay())
+                    + ",0 )";
+            return sql;
+        }
+        else
+        {
+            Date dt = new Date();
+            String strDt = KDSUtil.convertDateToString(dt);
 
+            String sql = "insert into "
+                    + tblName
+                    + " ( GUID,Screen,Start,finishedtime)"
+                    + " values ("
+                    + "'" + getGUID() + "'"
+                    + "," + KDSUtil.convertIntToString(getScreen())
+                    + ",'" + KDSUtil.convertDateToString(getStartTime()) + "'"
+                    + ",'" + strDt +"' )";
+            return sql;
+        }
 
     }
 

@@ -791,8 +791,7 @@ public class KDSStationFunc {
             kdsuser.getCurrentDB().schedule_order_finished(order.getGUID());
         }
         else {
-            if (KDSConst.ENABLE_FEATURE_STATISTIC)
-                kdsuser.getStatisticDB().orderAdd(order);
+             kdsuser.getStatisticDB().orderAdd(order);
         }
         if (bRefreshView)
             kdsuser.refreshView();
@@ -865,8 +864,8 @@ public class KDSStationFunc {
             kdsuser.getCurrentDB().schedule_order_finished(order.getGUID());
         }
         else {
-            if (KDSConst.ENABLE_FEATURE_STATISTIC)
-                kdsuser.getStatisticDB().orderAdd(order);
+
+            kdsuser.getStatisticDB().orderAdd(order);
         }
 
         kdsuser.refreshView();
@@ -890,8 +889,7 @@ public class KDSStationFunc {
 
         kdsuser.getOrders().addComponent(order);
         //update the statistic database
-        if (KDSConst.ENABLE_FEATURE_STATISTIC)
-            kdsuser.getStatisticDB().orderDelete(orderGuid);
+        kdsuser.getStatisticDB().orderDelete(orderGuid);
         //kdsuser.refreshView();
         if (kdsuser.getKDS().isExpeditorStation() ||
                 kdsuser.getKDS().isQueueExpo())

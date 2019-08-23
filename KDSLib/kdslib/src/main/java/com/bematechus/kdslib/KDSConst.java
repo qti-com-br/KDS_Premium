@@ -104,5 +104,5 @@ public class KDSConst {
 
     //statistic is useless in 2.3 version.
     //it just is for average preparing time.
-    public static final boolean ENABLE_FEATURE_STATISTIC = true;
+    public static final boolean ENABLE_FEATURE_STATISTIC = false;
 }

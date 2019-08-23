@@ -785,6 +785,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
                 break;
                 case KDSSocketTCPCommandBuffer.UDP_CLEAR_DB:
                 {
+                    int ncommand_end = m_udpBuffer.command_end();
+                    m_udpBuffer.remove(ncommand_end);
                     this.clearAll();
                 }
                 break;
