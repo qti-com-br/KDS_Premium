@@ -506,6 +506,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             //In cell phone,if I just open data , no wifi, app crash.
             if (ar.size() >1)
                 m_strLocalMAC = ar.get(1);
+            else
+                m_strLocalMAC = "";
         }
     }
 

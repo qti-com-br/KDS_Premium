@@ -380,7 +380,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         else
         {
             m_strLocalIP = ar.get(0);
-            m_strLocalMAC = ar.get(1);
+            //In cell phone,if I just open data , no wifi, app crash.
+            if (ar.size() >1)
+                m_strLocalMAC = ar.get(1);
+            else
+                m_strLocalMAC = "";
         }
     }
 
