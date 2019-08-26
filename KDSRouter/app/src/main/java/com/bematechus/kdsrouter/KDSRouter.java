@@ -2358,14 +2358,20 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
         }
         else {
-
-            ArrayList<KDSToStation>  ar = KDSDataOrder.getOrderTargetStations(order);
-            ar.addAll(getAllAcceptAnyItemsStations());
-            ArrayList<String> arToStations = RouterAck.getSendToStations(ar);
-            //send order xml data to necessary stations, for 24 stations lost certain prep issue
-            //if (!KDSConst._DEBUG) //heap size issue in this function
-            writeToAllStations(xmlOrder, arToStations);
-            //writeToAllStations(xmlOrder);
+            if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||  //KPP1-152
+                    order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
+                    order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER) {
+                writeToAllStations(xmlOrder);
+            }
+            else {
+                ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
+                ar.addAll(getAllAcceptAnyItemsStations());
+                ArrayList<String> arToStations = RouterAck.getSendToStations(ar);
+                //send order xml data to necessary stations, for 24 stations lost certain prep issue
+                //if (!KDSConst._DEBUG) //heap size issue in this function
+                writeToAllStations(xmlOrder, arToStations);
+                //writeToAllStations(xmlOrder);
+            }
         }
 
 
