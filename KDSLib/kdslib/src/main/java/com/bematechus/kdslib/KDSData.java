@@ -124,4 +124,14 @@ public class KDSData {
          s = s.replaceAll("'", "''");
          return s;
     }
+
+    public boolean isAssignedColor(int bg, int fg)
+    {
+        if ( (fg == bg) &&
+                (fg == -1) )
+            return false;
+        if (fg != 0 || bg != 0)
+            return true;
+        return false;
+    }
 }

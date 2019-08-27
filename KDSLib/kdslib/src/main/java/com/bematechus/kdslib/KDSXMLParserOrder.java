@@ -503,6 +503,7 @@ public class KDSXMLParserOrder {
                 {
                     int nBG = (int)KDSUtil.convertStringToLong(strVal, 0);
                     int c = KDSUtil.convertWebColor2RGB(nBG);
+
                     item.setBG( c );// c.getRGB());
                     item.setXmlFieldValid(KDSDataItem.VALID_ITEM_XML_FIELD.BG);
                 }
@@ -516,6 +517,7 @@ public class KDSXMLParserOrder {
                 {
                     int nFG = (int)KDSUtil.convertStringToLong(strVal, 0);
                     int c = KDSUtil.convertWebColor2RGB(nFG);
+
                     item.setFG( c);// c.getRGB());
                     item.setXmlFieldValid(KDSDataItem.VALID_ITEM_XML_FIELD.FG);
                 }

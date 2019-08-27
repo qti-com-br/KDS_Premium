@@ -2608,7 +2608,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             //Just let expo receive item through the <kdsstation> tag
             //if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor)
             //    continue;
-            String stationID = stationRelation.getID();
+            //String stationID = stationRelation.getID();
 
             KDSStationIP station = stationRelation.getStationIP();
             //in relations settings, the station port is 3001 for communication of each other.

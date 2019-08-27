@@ -307,9 +307,13 @@ public class KDSDataItem extends KDSData {
     }
     public boolean isAssignedColor()
     {
-        if (m_nFG != 0 || m_nBG != 0)
-            return true;
-        return false;
+        return isAssignedColor(m_nBG, m_nFG);
+//        if ( (m_nFG == m_nBG) &&
+//                (m_nFG == -1) )
+//            return false;
+//        if (m_nFG != 0 || m_nBG != 0)
+//            return true;
+//        return false;
     }
     public int getAddOnGroup()
     {

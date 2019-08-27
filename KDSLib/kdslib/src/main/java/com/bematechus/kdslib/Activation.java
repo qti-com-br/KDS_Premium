@@ -1581,8 +1581,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
         if (isResponseError(request.m_result))
         {
+            Object obj = request.getTag();
+            if (obj == null) return;
+            KDSDataOrder order = (KDSDataOrder) obj;
             //fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
-            KDSUtil.showMsg(KDSApplication.getContext(),"Order sending failed: " + getErrorMessage(request.m_result) );
+            //KDSUtil.showMsg(KDSApplication.getContext(),"Order sending failed: " + getErrorMessage(request.m_result) );
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getOrderName(), SyncDataResult.Fail_reponse_error);
             KDSLog.i(TAG, KDSLog._FUNCLINE_() + "Order sending failed");
             return;
         }

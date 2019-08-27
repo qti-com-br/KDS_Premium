@@ -2658,6 +2658,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         if (!this.isExpeditorStation() && !this.isQueueExpo())
             return order;
+        //KKPP1-152
+        if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||
+                order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
+                order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER)
+            return order;
 
         ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(getStationID());
         KDSStationIP myStation = new KDSStationIP();
