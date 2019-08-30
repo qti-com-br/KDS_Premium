@@ -3223,6 +3223,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         for (int i = 0; i < TEST_COUNT; i++)
             opAddNewOrder(userID);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
+        //test
+        //getKDS().getStatisticDB().outputOrdersTableDataSql(getKDS().getStatisticDB(), "orders", "");
     }
 
 

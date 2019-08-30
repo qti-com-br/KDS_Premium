@@ -790,6 +790,7 @@ public class KDSStationsRelation extends KDSStationIP {
         for (int i=0; i< arReturn.size(); i++)
         {
             KDSStationsRelation r = findStation(arRelations, arReturn.get(i).getID());
+            if (r == null) continue; //KPP1-159
             if (r.getFunction() == SettingsBase.StationFunc.Queue_Expo)
                 ar.add(arReturn.get(i));
         }

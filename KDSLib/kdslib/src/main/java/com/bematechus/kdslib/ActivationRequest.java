@@ -376,6 +376,12 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     }
 
     /**
+     * Parameters:
+     *
+     * <String> req: DEVICE_REPLACE (API method)
+     * <String> store_guid: The Store GUID
+     * <String> device_guid: The KDS Station GUID will be replaced (API will keep this GUID)
+     * <String> device_serial: The new KDS Station Serial Number
      * New command
      * @param store_guid
      * @param licenseGuid
