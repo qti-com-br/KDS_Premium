@@ -27,6 +27,7 @@ public class KDSUIDialogBase {
         public void onKDSDialogOK(KDSUIDialogBase dialog, Object obj);
 
     }
+    static KDSUIDialogBase m_singleInstance = null;
 
     protected AlertDialog dialog = null;
 
@@ -672,4 +673,18 @@ public class KDSUIDialogBase {
         return true;
     }
 
+    static public KDSUIDialogBase singleInstance()
+    {
+
+        if (m_singleInstance != null) {
+            if (m_singleInstance.getDialog() != null) {
+                if (m_singleInstance.getDialog().isShowing())
+                    m_singleInstance.getDialog().cancel();
+            }
+            m_singleInstance = null;
+        }
+
+        m_singleInstance = new KDSUIDialogBase();
+        return m_singleInstance;
+    }
 }

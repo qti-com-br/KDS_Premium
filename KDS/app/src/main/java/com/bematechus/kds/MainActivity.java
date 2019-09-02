@@ -6374,32 +6374,53 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return false;
     }
 
-    long m_nFlashTitleCounter = 0;
+    //long m_nFlashTitleCounter = 0;
     public void checkMyAttachedStationsOffline()
     {
         ArrayList<KDSStationIP> ar = getKDS().getStationsConnections().getRelations().getAllAttachedStations();
         if (ar.size() > 0) {
             boolean anyOffline = false;
+            ArrayList<String> arOffline = new ArrayList<>();//use it to show offline stations.
             for (int i = 0; i < ar.size(); i++) {
                 KDSStationActived station = getKDS().getStationsConnections().findActivedStationByID(ar.get(i).getID());
                 if (station == null) {
                     anyOffline = true;
-                    break;
+                    arOffline.add(ar.get(i).getID());
+                    //break;
                 }
             }
             KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
             int bg = ff.getBG();
             int fg = ff.getFG();
             if (anyOffline) {
-                m_nFlashTitleCounter++;
-                if ((m_nFlashTitleCounter % 2) == 1) {
+                //m_nFlashTitleCounter++;
+                //if ((m_nFlashTitleCounter % 2) == 1) {
+                if (KDSGlobalVariables.getBlinkingStep()) {
                     bg = ff.getFG();
                     fg = ff.getBG();
                 }
             }
+            String text = "";
+            for (int i=0; i< arOffline.size(); i++)
+            {
+                text += "#" + arOffline.get(i);
+                if (i < arOffline.size()-1)
+                    text += ",";
+
+            }
+            if (arOffline.size()>0) {
+                text += " " + getString(R.string.offline_warning);
+                getTextView(R.id.txtTitle).setText(text);
+
+            }
+            else
+            {
+                updateTitle();
+            }
             getTextView(R.id.txtTitle).setTextColor(fg);
             getTextView(R.id.txtTitle).setBackgroundColor(bg);
         }
+
     }
     public void doDoublePressPanelNumberTransfer(KDSUser.USER user, KeyEvent ev) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");

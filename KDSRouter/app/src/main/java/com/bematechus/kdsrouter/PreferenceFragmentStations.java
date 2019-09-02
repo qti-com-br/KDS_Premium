@@ -95,7 +95,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         reloadRelations();
         if (this.isVisible())
         {
-            KDSUIDialogBase d = new KDSUIDialogBase();
+            KDSUIDialogBase d = KDSUIDialogBase.singleInstance();// new KDSUIDialogBase(); //KPP1-164
             d.createInformationDialog(this.getActivity(),this.getString(R.string.str_message), this.getString(R.string.receive_new_relations), false );
             d.show();
         }
