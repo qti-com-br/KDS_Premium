@@ -87,6 +87,7 @@ public class KDSUIDialogBase {
         }
     }
 
+
     static public String makeButtonText(Context context, int nResID, KDSSettings.ID funcKey )
     {
         String s = context.getString(nResID);

@@ -546,10 +546,28 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         for (int i=0; i< m_devices.size(); i++)
         {
             if (m_devices.get(i).isDeleted()) continue;
-            String serial = m_devices.get(i).getSerial();
+            StoreDevice dev =m_devices.get(i);
+            String serial = dev.getSerial();
             serial = serial.toUpperCase();
-            if (serial.equals(m_myMacAddress.toUpperCase()))
-                return m_devices.get(i);
+            if (serial.equals(m_myMacAddress.toUpperCase())) {
+                //the router and kds can run in same device, and they have to register individually.
+                if (KDSApplication.isRouterApp())
+                {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        return dev;
+                    else
+                        continue;
+                }
+                else
+                {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        continue;
+                    else
+                        return dev;
+                }
+
+
+            }
 
         }
         return null;
@@ -560,11 +578,24 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         for (int i=0; i< m_devices.size(); i++)
         {
             if (!m_devices.get(i).isDeleted()) continue;
-            String serial = m_devices.get(i).getSerial();
+            StoreDevice dev =m_devices.get(i);
+            String serial = dev.getSerial();
             serial = serial.toUpperCase();
-            if (serial.equals(m_myMacAddress.toUpperCase()))
-                return m_devices.get(i);
-
+            if (serial.equals(m_myMacAddress.toUpperCase())) {
+                //the router and kds can run in same device, and they have to register individually.
+                if (KDSApplication.isRouterApp()) {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        return dev;
+                    else
+                        continue;
+                } else {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        continue;
+                    else
+                        return dev;
+                }
+               // return m_devices.get(i);
+            }
         }
         return null;
     }
