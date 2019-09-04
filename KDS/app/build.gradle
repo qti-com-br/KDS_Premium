@@ -62,7 +62,7 @@ android {
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
             versionCode 2
-            versionName '2.3.0.0'
+            versionName '2.3.0.31'
             dimension "default"
         }
         prod {
