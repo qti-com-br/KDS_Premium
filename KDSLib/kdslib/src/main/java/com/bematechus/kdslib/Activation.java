@@ -401,6 +401,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, m_context.getString(R.string.cannot_replace_license_data));
                 return;
             }
+            //kp1-173
+            //after replacing, its old station_id and function were not changed to mine if this station has set them.
+            if (request.getNextStepData().size()>0) {
+                if (!m_stationID.isEmpty())
+                    postNewStationInfo2Web((String)request.getNextStepData().get(0), m_stationID, m_stationFuncName); //kpp1-173
+            }
             postGetDevicesRequest();
 
         }
@@ -819,6 +825,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void postReplaceMac(String licenseGuid,String macAddress)
     {
         ActivationRequest r = ActivationRequest.requestReplaceMac(m_storeGuid, licenseGuid, macAddress);
+        r.getNextStepData().add(licenseGuid); //kpp1-173, use it to upload latest station id
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
@@ -878,10 +885,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             v.setVisibility(View.GONE);
         else {
             v.setVisibility(View.VISIBLE);
-            if (getEnabledDevicesCount() >= m_nMaxLicenseCount)
-                showDevicesInList(view, false);
-            else
-                showDevicesInList(view, false);
+            showDevicesInList(view, true); //KPP1-173
+//            if (getEnabledDevicesCount() >= m_nMaxLicenseCount)
+//                showDevicesInList(view, false);
+//            else
+//                showDevicesInList(view, false);
 
         }
 
@@ -957,8 +965,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             }
             else
             {
-                if (!m_devices.get(i).getEnabled())
-                    ar.add(m_devices.get(i));
+                if (!m_devices.get(i).getEnabled()) {
+                    if (!m_devices.get(i).getGuid().isEmpty())
+                        ar.add(m_devices.get(i));
+                }
             }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(m_context, R.layout.activation_list_item,(List) ar);//m_devices);
@@ -1948,5 +1958,24 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     {
         if (m_globalEventsReceiver != null)
             m_globalEventsReceiver.onForceClearDataBeforeLogin();
+    }
+
+    /**
+     * for kpp1-173
+     *
+     * @param licenseGuid
+     * @param stationID
+     * @param stationFunc
+     * @return
+     */
+    public boolean postNewStationInfo2Web(String licenseGuid, String stationID, String stationFunc)
+    {
+        StoreDevice dev = new StoreDevice();
+        dev.setGuid(licenseGuid);
+        dev.m_serial = m_myMacAddress;
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,dev);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
     }
 }
