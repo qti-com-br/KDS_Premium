@@ -1870,7 +1870,7 @@ just 16bits value
         return appVersion;
     }
 
-    static public int getVersionCode(Context context) {
+    static public String getVersionCodeString(Context context) {
         int appVersionCode = 0;
         PackageManager manager = context.getPackageManager();
         try {
@@ -1882,7 +1882,8 @@ just 16bits value
             KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
-        return appVersionCode;
+
+        return KDSUtil.convertIntToString(appVersionCode);
     }
     static public boolean isDigitalString(String str)
     {

@@ -127,8 +127,9 @@ public class KDSData {
 
     public boolean isAssignedColor(int bg, int fg)
     {
-        if ( (fg == bg) &&
-                (fg == -1) )
+//        if ( (fg == bg) &&
+//                (fg == -1) )
+        if (bg == fg) //KPP1-154. When BG and FG are the same value they are not readable, just use default.
             return false;
         if (fg != 0 || bg != 0)
             return true;

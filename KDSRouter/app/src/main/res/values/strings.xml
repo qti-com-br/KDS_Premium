@@ -371,4 +371,5 @@
         <item>Detail</item>
     </string-array>
     <string name="title_activity_activity_login">Sign in</string>
+    <string name="logout">Logout</string>
 </resources>

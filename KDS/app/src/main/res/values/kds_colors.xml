@@ -101,5 +101,5 @@
 
     <color name="touch_button_bg">#ffffff</color>
     <color name="touch_button_fg">#21abae</color>
-
+    <color name="lineitems_viewer_bg">#0e0e0e</color>
 </resources>

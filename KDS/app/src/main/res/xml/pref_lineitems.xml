@@ -14,8 +14,8 @@
         android:title="@string/each_condiment_go_to_next_line"
         android:defaultValue="false" />
     <com.bematechus.kdslib.KDSPreferenceColorPicker
-        android:key="viewer_bg"
-        android:defaultValue="0xff0e0e0e"
+        android:key="lineitems_viewer_bg"
+        android:defaultValue="@color/lineitems_viewer_bg"
         android:dependency="lineitems_enabled"
         android:title="@string/pref_kds_panels_viewer_bg" />
 

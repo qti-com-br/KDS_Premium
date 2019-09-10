@@ -929,7 +929,7 @@ public class LineItemViewer {
     protected void drawBackground(Canvas g)
     {
 
-        int nColor = getSettings().getInt(KDSSettings.ID.Panels_View_BG);
+        int nColor = getSettings().getInt(KDSSettings.ID.LineItems_view_bg);
 
         g.drawColor(nColor);
     }

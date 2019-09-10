@@ -1171,7 +1171,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 opShowActiveStations(KDSUser.USER.USER_A);
             } else if (id == R.id.action_about) {
                 if (!isKDSValid()) return false;
-                KDSUIAboutDlg.showAbout(this, getKDS().getUsers().getUserA(), getVersionName());
+                KDSUIAboutDlg.showAbout(this, getKDS().getUsers().getUserA(), getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
             } else if (id == R.id.action_restore) {
                 startKDSUtility();
             }
@@ -1181,7 +1181,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
             else if (id == R.id.action_logout)
             {
+                Activation.resetUserNamePwd();
                 onDoActivationExplicit();
+
             }
         }
         return super.onOptionsItemSelected(item);
@@ -2202,7 +2204,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getKDS().getPagerManager().addPagerID(order.getPagerID());
             }
             //print it
-            printOrder(order);
+            KDSPrinter.HowToPrintOrder howtoprint = KDSPrinter.HowToPrintOrder.values()[(getKDS().getSettings().getInt(KDSSettings.ID.Printer_howtoprint))];
+            if (howtoprint == KDSPrinter.HowToPrintOrder.WhileBump )
+                printOrder(order);
         }
         //SMS feature
         //if (getKDS().isExpeditorStation())

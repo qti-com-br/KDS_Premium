@@ -449,11 +449,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else if (id == R.id.action_about)
         {
-            KDSUIAboutDlg.showAbout(this, getVersionName());
+            KDSUIAboutDlg.showAbout(this, getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
         }
         else if (id == R.id.action_clear_log)
         {
             clearLog();
+        }
+        else if (id == R.id.action_logout) //add this new. KPP1-185
+        {
+            Activation.resetUserNamePwd();
+            onDoActivationExplicit();
         }
         return super.onOptionsItemSelected(item);
     }

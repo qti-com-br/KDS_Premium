@@ -1978,4 +1978,22 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
         return true;
     }
+
+    static public void resetUserNamePwd()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(PREF_KEY_ACTIVATION_USER_NAME, "");
+        editor.putString(PREF_KEY_ACTIVATION_PWD, "");
+        editor.putString("store_guid", "");
+        editor.putString("store_name", "");
+
+        editor.apply();
+        editor.commit();
+        m_storeGuid = "";
+        m_storeName = "";
+
+
+
+    }
 }
