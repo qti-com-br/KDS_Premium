@@ -87,7 +87,8 @@ public class KDSStationsConnection {
         int ncount = stations.size();
         for (int i=0; i< ncount; i++)
         {
-            connectToStation(stations.get(i));
+            if (stations.get(i) != null)
+                connectToStation(stations.get(i));
         }
     }
 
@@ -134,6 +135,9 @@ public class KDSStationsConnection {
     }
     public KDSStationConnection connectToStation(KDSStationIP station)
     {
+
+        if (station == null)
+            return null;
 
         KDSStationConnection tcp = getConnection(station);
         if (tcp == null)
