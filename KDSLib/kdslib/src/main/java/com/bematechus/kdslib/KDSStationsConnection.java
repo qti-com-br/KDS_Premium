@@ -136,6 +136,9 @@ public class KDSStationsConnection {
     public KDSStationConnection connectToStation(KDSStationIP station)
     {
 
+        if (station == null)
+            return null;
+
         KDSStationConnection tcp = getConnection(station);
         if (tcp == null)
         {
