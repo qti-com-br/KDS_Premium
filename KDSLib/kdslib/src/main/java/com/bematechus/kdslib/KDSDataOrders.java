@@ -1016,4 +1016,48 @@ public class KDSDataOrders extends KDSDataArray {
         }
 
     }
+
+    public String getNextOrderGUIDNoLoop(String orderGUID)
+    {
+        synchronized (m_locker) {
+            Vector ar = this.getComponents();
+            if (ar.size() <= 0) return "";
+            int nIndex = getOrderIndexByGUID(orderGUID);
+            nIndex++;
+
+            if (nIndex >= ar.size())
+                return "";
+            KDSDataOrder c = (KDSDataOrder) ar.get(nIndex);
+            return c.getGUID();
+        }
+
+    }
+
+    /**
+     * for "show paid order" items showing method.
+     * @param orderGUID
+     * @return
+     */
+    public String getNextPaidOrderGUIDNoLoop(String orderGUID)
+    {
+        synchronized (m_locker) {
+            Vector ar = this.getComponents();
+            if (ar.size() <= 0) return "";
+            int nIndex = getOrderIndexByGUID(orderGUID);
+            for (int i = 0; i < ar.size(); i++) {
+                nIndex++;
+
+                if (nIndex >= ar.size())
+                    return "";
+                KDSDataOrder c = (KDSDataOrder) ar.get(nIndex);
+                if (c.isPaid()) {
+                    String str = c.getGUID();
+                    if (!str.equals(orderGUID))
+                        return str;
+                }
+            }
+            return "";
+        }
+
+    }
 }

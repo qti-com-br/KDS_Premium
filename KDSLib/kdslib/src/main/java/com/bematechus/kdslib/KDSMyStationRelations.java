@@ -574,4 +574,19 @@ public class KDSMyStationRelations {
         return ar;
     }
 
+    /**
+     * check if given station existed in relationship table.
+     * for KPP1-171
+     * @param stationID
+     * @return
+     */
+    public boolean isExistedInRelationshipTable(String stationID)
+    {
+        for (int i=0; i<m_arStationsRelations.size(); i++)
+        {
+            if (m_arStationsRelations.get(i).getID().equals(stationID))
+                return true;
+        }
+        return false;
+    }
 }

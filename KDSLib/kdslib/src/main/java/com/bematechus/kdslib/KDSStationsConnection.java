@@ -1691,7 +1691,9 @@ public class KDSStationsConnection {
         }
         else if (connection.getSock().isConnected())
         {
-            if (m_stationsRelations.isEnabled(station.getID() ) ) {
+            if (m_stationsRelations.isEnabled(station.getID() ) ||
+                    (!m_stationsRelations.isExistedInRelationshipTable(station.getID())) //kpp1-171,active, but it is not in relation table.
+            ) {
                 String withAckXml = m_ackManager.add(station.getID(), strXml);
                 connection.getSock().writeXmlTextCommand(withAckXml);
                 //connection.getSock().writeXmlTextCommand(strXml);

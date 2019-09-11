@@ -350,13 +350,18 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //nNeedRowsWithTitleWithoutFooter += (nTitleRows -1);
         int nTitleRows = getEnv().getSettings().getInt(KDSSettings.ID.Order_Title_Rows);
         int nBlockDataRows = nBlockRows - nTitleRows - getEnv().getSettings().getInt(KDSSettings.ID.Order_Footer_Rows);//.getFooterRows();
+
         KDSViewPanel panel = null;
         KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
         if (layoutFormat== KDSSettings.LayoutFormat.Horizontal) {
             int n = nNeedRowsWithoutTitleFooter;
-            int nBlocks = n / nBlockDataRows;
-            if ((n % nBlockDataRows) > 0)
-                nBlocks++;
+
+            int nBlocks = 1;
+            if (nBlockDataRows>0) { //kpp1-115
+                nBlocks = n / nBlockDataRows;
+                if ((n % nBlockDataRows) > 0)
+                    nBlocks++;
+            }
             return nBlocks;
 
 

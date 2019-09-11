@@ -2633,6 +2633,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     public void writeToAllStations(String xmlData, ArrayList<String> toStations)
     {
         int ncount = m_stationsConnection.getRelations().getRelationsSettings().size();
+
         for (int i=0; i< ncount; i++)
         {
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
@@ -2657,7 +2658,25 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
             //if (!KDSConst._DEBUG) //heap size issue is here
             m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData,MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
         }
-
+        //check active stations again. As stations is alive, but it is not existed in relationship table.
+        //kpp1-171
+        //check stations that is not existed in relationship table.
+        try {
+            ArrayList<KDSStationIP> arActived = m_stationsConnection.getAllActiveStations();
+            for (int i = 0; i < arActived.size(); i++) {
+                KDSStationIP station = arActived.get(i);
+                if (m_stationsConnection.getRelations().isExistedInRelationshipTable(station.getID()))
+                    continue;
+                if (toStations.size() > 0)
+                    if (!RouterAck.isExistedInArray(toStations, station.getID())) continue; //
+                //this is new station, just send data to it.
+                m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData, MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
+            }
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+        }
     }
 
     /**

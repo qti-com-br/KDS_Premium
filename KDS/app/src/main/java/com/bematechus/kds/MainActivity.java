@@ -2053,9 +2053,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
             String nextGuid = "";
             if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid) {
-                nextGuid = getKDS().getUsers().getUser(userID).getOrders().getNextPaidOrderGUID(guid);
-            } else
-                nextGuid = getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(guid);
+                nextGuid = getKDS().getUsers().getUser(userID).getOrders().getNextPaidOrderGUIDNoLoop(guid);
+                if (nextGuid.isEmpty())//KPP1-186
+                    nextGuid = getKDS().getUsers().getUser(userID).getOrders().getPrevPaidOrderGUID(guid);
+            } else {
+                nextGuid = getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUIDNoLoop(guid);
+                if (nextGuid.isEmpty()) //KPP1-186
+                    nextGuid = getKDS().getUsers().getUser(userID).getOrders().getPreviousOrderGUID(guid);
+            }
 
             if (nextGuid.isEmpty()) {
                 nextGuid = getFirstOrderGuidToFocus(userID);

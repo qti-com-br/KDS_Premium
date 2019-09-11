@@ -1910,4 +1910,33 @@ just 16bits value
 
     }
 
+    /**
+     *
+     * @param filePath
+     * @return
+     *  The folder full name, without last /
+     */
+    static public String fileGetFolderFromPath(String filePath)
+    {
+        String s = filePath;
+        int n = s.lastIndexOf("/");
+        if (n <=0) return s;
+        s = s.substring(0, n);
+        return s;
+    }
+
+    /**
+     *
+     * @param filePath
+     * @return
+     *  the file anme only
+     */
+    static public String fileGetFileNameFromPath(String filePath)
+    {
+        String s = filePath;
+        int n = s.lastIndexOf("/");
+        if (n <=0) return s;
+        s = s.substring(n +1 );
+        return s;
+    }
 }

@@ -13,6 +13,9 @@ import com.bematechus.kdslib.KDSUtil;
  */
 public class KDSPreferenceDb2CSV extends Preference implements KDSUIDialogBase.KDSDialogBaseListener {
 
+    static final String DEFAULT_FOLDER = "/sdcard/kdsdata";
+    static final String DEFAULT_NAME = "items.csv";
+
     private boolean m_bSave = false;//open or save
     public KDSPreferenceDb2CSV(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,8 +55,11 @@ public class KDSPreferenceDb2CSV extends Preference implements KDSUIDialogBase.K
         OpenFileDialog.Mode m = OpenFileDialog.Mode.Save_2_File;
         if (!m_bSave)
             m = OpenFileDialog.Mode.Choose_File;
+        KDSUtil.createFolder(DEFAULT_FOLDER);
 
         OpenFileDialog d = new  OpenFileDialog(this.getContext(),"", this,m);
+        //if (m_bSave)
+            d.setDefaultFolderFileName(DEFAULT_FOLDER, DEFAULT_NAME);
         d.show();
 
 
@@ -61,7 +67,9 @@ public class KDSPreferenceDb2CSV extends Preference implements KDSUIDialogBase.K
 
     private void exportToCSV(String fileName)
     {
+
         String s = KDSGlobalVariables.getKDSRouter().getRouterDB().export2CSV();
+        KDSUtil.createFolder(KDSUtil.fileGetFolderFromPath(fileName));
         KDSUtil.fileWrite(fileName, s);
         KDSToast.showMessage(this.getContext(), this.getContext().getString(R.string.export_db_done) +" "+ fileName );
     }

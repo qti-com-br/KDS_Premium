@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -97,6 +98,7 @@ public class OpenFileDialog extends KDSUIDialogBase  implements AdapterView.OnIt
         m_mapImages.put("file", R.drawable.file);   //wav文件图标
         m_mapImages.put(OpenFileDialog.STRING_EMPTY, R.drawable.file);
         m_lstFiles.setOnItemClickListener(this);
+
         m_path = m_lastPath;
         refreshFileList();
     }
@@ -285,7 +287,8 @@ public class OpenFileDialog extends KDSUIDialogBase  implements AdapterView.OnIt
 
     public void show() {
         dialog.show();
-        enableOKButton(false);
+        if (m_strSelectedFile.isEmpty())
+            enableOKButton(false);
         if (m_nMode == Mode.Save_2_File) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -356,5 +359,32 @@ public class OpenFileDialog extends KDSUIDialogBase  implements AdapterView.OnIt
     {
         m_strSelectedFile += "/" + m_txtFileName.getText().toString();
     }
+
+    public void setDefaultFolderFileName(String folder, String fileName)
+    {
+        if (m_nMode == Mode.Choose_File)
+            m_strSelectedFile = folder + "/" + fileName;
+        else
+            m_strSelectedFile = folder;
+        m_lastPath = folder;
+        m_path = folder;
+       showDefault(folder + "/" + fileName);
+        refreshFileList();
+    }
+
+    private void showDefault(String filePath)
+    {
+        if (!filePath.isEmpty())
+        {
+            if (m_nMode == Mode.Choose_File)
+                m_txtSelected.setText(filePath);
+            else
+                m_txtSelected.setText(KDSUtil.fileGetFolderFromPath(filePath));
+            m_txtFileName.setText(KDSUtil.fileGetFileNameFromPath(filePath));
+            m_lastPath = KDSUtil.fileGetFolderFromPath(filePath);
+
+        }
+    }
+
 }
 
