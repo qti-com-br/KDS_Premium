@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.preference.Preference;
 import android.util.AttributeSet;
 
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSToast;
 import com.bematechus.kdslib.KDSUtil;
 
@@ -59,7 +60,12 @@ public class KDSPreferenceDb2CSV extends Preference implements KDSUIDialogBase.K
 
         OpenFileDialog d = new  OpenFileDialog(this.getContext(),"", this,m);
         //if (m_bSave)
-            d.setDefaultFolderFileName(DEFAULT_FOLDER, DEFAULT_NAME);
+        d.setDefaultFolderFileName(DEFAULT_FOLDER, DEFAULT_NAME);
+        if (m_bSave)
+            d.setTitle(KDSApplication.getContext().getString(R.string.export));
+        else
+            d.setTitle(KDSApplication.getContext().getString(R.string.str_import));
+
         d.show();
 
 

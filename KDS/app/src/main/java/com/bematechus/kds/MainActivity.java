@@ -1172,9 +1172,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             } else if (id == R.id.action_about) {
                 if (!isKDSValid()) return false;
                 KDSUIAboutDlg.showAbout(this, getKDS().getUsers().getUserA(), getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
-            } else if (id == R.id.action_restore) {
-                startKDSUtility();
             }
+//            else if (id == R.id.action_restore) { //kpp1-1083
+//                startKDSUtility();
+//            }
             else if (id == R.id.action_remote_support)
             {
                 startTeamViewer();
