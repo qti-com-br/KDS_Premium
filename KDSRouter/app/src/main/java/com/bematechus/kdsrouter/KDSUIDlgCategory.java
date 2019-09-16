@@ -90,6 +90,7 @@ public class KDSUIDlgCategory  extends  KDSUIDialogBase  implements KDSUIColorPi
 
     public KDSUIDlgCategory(final Context context, KDSDialogBaseListener listener, KDSRouterDataCategory category) {
         this.int_dialog(context, listener, R.layout.dlg_category, "");
+        this.setCancelByClickOutside(false);
         m_category = category;
         if (m_category == null) {
             this.setTitle(context.getString(R.string.new_category));

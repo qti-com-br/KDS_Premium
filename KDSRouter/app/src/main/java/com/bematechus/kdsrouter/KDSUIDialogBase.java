@@ -265,6 +265,15 @@ public class KDSUIDialogBase {
                             KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
                     }
                 })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    // if back button is used, call back our listener.
+                    @Override
+                    public void onCancel(DialogInterface paramDialogInterface) {
+                        if (KDSUIDialogBase.this.listener != null) {
+                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+                        }
+                    }
+                })
                 .create();
         if (noCancel) {
             dialog.setCanceledOnTouchOutside(false);
@@ -302,7 +311,9 @@ public class KDSUIDialogBase {
                     // if back button is used, call back our listener.
                     @Override
                     public void onCancel(DialogInterface paramDialogInterface) {
-
+//                        if (KDSUIDialogBase.this.listener != null) {
+//                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+//                        }
                     }
                 })
                 .create();
@@ -337,7 +348,9 @@ public class KDSUIDialogBase {
                     // if back button is used, call back our listener.
                     @Override
                     public void onCancel(DialogInterface paramDialogInterface) {
-
+//                        if (KDSUIDialogBase.this.listener != null) {
+//                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+//                        }
                     }
                 })
                 .create();
@@ -491,5 +504,13 @@ public class KDSUIDialogBase {
 
         m_singleInstance = new KDSUIDialogBase();
         return m_singleInstance;
+    }
+
+    public void setCancelByClickOutside(boolean bEnable)
+    {
+
+        dialog.setCanceledOnTouchOutside(bEnable);
+        dialog.setCancelable(bEnable);
+
     }
 }

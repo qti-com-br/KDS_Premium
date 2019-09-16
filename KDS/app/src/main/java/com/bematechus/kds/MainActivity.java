@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 //import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 //import android.graphics.drawable.GradientDrawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
@@ -45,7 +43,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.CSVStrings;
@@ -55,7 +52,6 @@ import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataFromPrimaryIndicator;
 import com.bematechus.kdslib.KDSDataItem;
-import com.bematechus.kdslib.KDSDataItems;
 import com.bematechus.kdslib.KDSDataMoreIndicator;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
@@ -65,7 +61,6 @@ import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
-import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationActived;
 import com.bematechus.kdslib.KDSStationConnection;
@@ -101,7 +96,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         TTView.TTView_Event,
         KDSDBBase.DBEvents,
         TabDisplay.TabDisplayEvents,
-        Activation.ActivationEvents
+        Activation.ActivationEvents,
+        SysTimeChangedReceiver.sysTimeChangedEvent
 
 {
     public enum GUI_MODE
@@ -118,7 +114,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     //private GoogleApiClient client;
 
-
+    SysTimeChangedReceiver m_sysTimeChangedReceiver = new SysTimeChangedReceiver(this);
 
     KDSRefreshHandler m_refreshHandler = new KDSRefreshHandler(this);
 
@@ -6418,7 +6414,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     text += ",";
 
             }
-            if (arOffline.size()>0) {
+            if (arOffline.size()>0 ) {
                 text += " " + getString(R.string.offline_warning);
                 getTextView(R.id.txtTitle).setText(text);
 
@@ -6464,6 +6460,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+    public void onSysTimeChanged()
+    {
+
     }
 }
 

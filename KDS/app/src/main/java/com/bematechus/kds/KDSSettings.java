@@ -2189,15 +2189,20 @@ public class KDSSettings extends SettingsBase {
         Context c = appContext;//app.getApplicationContext();
 //
         SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor editor = pre.edit();
 
         for (Map.Entry<ID, String> entry : m_mapPrefID.entrySet()) {
 
             ID id = entry.getKey();
             String tag = entry.getValue();
             Object objVal = this.get(id);
-            setPrefValue(pre, tag, objVal);
+
+            setPrefValue(editor, tag, objVal);
+
 
         }
+        editor.commit();
+        editor.apply();
 
     }
 

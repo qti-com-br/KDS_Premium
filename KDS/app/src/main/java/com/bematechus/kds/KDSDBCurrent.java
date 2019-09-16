@@ -3777,6 +3777,18 @@ update the schedule item ready qty
         return nCount;
     }
 
+    /**
+     * Set all USER_B to USER_A, as the split screen settings changed.
+     * KPP1-195
+     * @return
+     */
+    public boolean setAllActiveOrdersToUserA()
+    {
+        String sql = "";
+        sql = String.format("update orders set screen=0 where screen=1 and bumped=0" );
+        return this.executeDML(sql);
+    }
+
     /***************************************************************************
      * SQL definitions
      *

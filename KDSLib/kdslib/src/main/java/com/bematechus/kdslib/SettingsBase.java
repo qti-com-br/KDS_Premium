@@ -327,51 +327,55 @@ public class SettingsBase {
      */
     public void setPrefValue(SharedPreferences pref, String strTag, Object objVal)
     {
-        if (strTag.isEmpty())
-            return ;
-        if (objVal == null)
-        {
-            KDSLog.d(TAG, KDSLog._FUNCLINE_() + " Error, val=null: tag=" + strTag );
-            return;
-        }
-        String s = strTag;
-        int n = s.indexOf("_", 0);
-        s = s.substring(0, n);
-        String tag = strTag.substring(n + 1);
         SharedPreferences.Editor editor = pref.edit();
-        if (s.equals("int"))
-        {
-            editor.putInt(tag, (int) objVal);
-        }
-        else if (s.equals("string"))
-        {
-            if (objVal instanceof String)
-                editor.putString(tag, (String) objVal);
-            else
-                editor.putString(tag, objVal.toString());
-        }
-        else if (s.equals("bool"))
-        {
-            if (objVal instanceof String)
-            {
-                int nVal = KDSUtil.convertStringToInt((String)objVal, 0);
-                editor.putBoolean(tag, ( nVal == 1));
-            }
-            else
-                editor.putBoolean(tag, (boolean)objVal);
-
-        }
-        else if (s.equals("fontface"))
-        {
-
-            String str = ((KDSViewFontFace)objVal).toString();
-            editor.putString(tag, (String) str);
-
-        }
-
+        setPrefValue(editor, strTag, objVal);
         editor.commit();
         editor.apply();
-
+//        if (strTag.isEmpty())
+//            return ;
+//        if (objVal == null)
+//        {
+//            KDSLog.d(TAG, KDSLog._FUNCLINE_() + " Error, val=null: tag=" + strTag );
+//            return;
+//        }
+//        String s = strTag;
+//        int n = s.indexOf("_", 0);
+//        s = s.substring(0, n);
+//        String tag = strTag.substring(n + 1);
+//        SharedPreferences.Editor editor = pref.edit();
+//        if (s.equals("int"))
+//        {
+//            editor.putInt(tag, (int) objVal);
+//        }
+//        else if (s.equals("string"))
+//        {
+//            if (objVal instanceof String)
+//                editor.putString(tag, (String) objVal);
+//            else
+//                editor.putString(tag, objVal.toString());
+//        }
+//        else if (s.equals("bool"))
+//        {
+//            if (objVal instanceof String)
+//            {
+//                int nVal = KDSUtil.convertStringToInt((String)objVal, 0);
+//                editor.putBoolean(tag, ( nVal == 1));
+//            }
+//            else
+//                editor.putBoolean(tag, (boolean)objVal);
+//
+//        }
+//        else if (s.equals("fontface"))
+//        {
+//
+//            String str = ((KDSViewFontFace)objVal).toString();
+//            editor.putString(tag, (String) str);
+//
+//        }
+//
+//        editor.commit();
+//        editor.apply();
+//
 
     }
 
@@ -539,5 +543,53 @@ public class SettingsBase {
 
 
     }
+    public boolean setPrefValue(SharedPreferences.Editor editor, String strTag, Object objVal)
+    {
+        if (strTag.isEmpty())
+            return false;
+        if (objVal == null)
+        {
+            KDSLog.d(TAG, KDSLog._FUNCLINE_() + " Error, val=null: tag=" + strTag );
+            return false;
+        }
+        String s = strTag;
+        int n = s.indexOf("_", 0);
+        s = s.substring(0, n);
+        String tag = strTag.substring(n + 1);
 
+        if (s.equals("int"))
+        {
+            editor.putInt(tag, (int) objVal);
+        }
+        else if (s.equals("string"))
+        {
+            if (objVal instanceof String)
+                editor.putString(tag, (String) objVal);
+            else
+                editor.putString(tag, objVal.toString());
+        }
+        else if (s.equals("bool"))
+        {
+            if (objVal instanceof String)
+            {
+                int nVal = KDSUtil.convertStringToInt((String)objVal, 0);
+                editor.putBoolean(tag, ( nVal == 1));
+            }
+            else
+                editor.putBoolean(tag, (boolean)objVal);
+
+        }
+        else if (s.equals("fontface"))
+        {
+
+            String str = ((KDSViewFontFace)objVal).toString();
+            editor.putString(tag, (String) str);
+
+        }
+        return true;
+//        editor.commit();
+//        editor.apply();
+
+
+    }
 }

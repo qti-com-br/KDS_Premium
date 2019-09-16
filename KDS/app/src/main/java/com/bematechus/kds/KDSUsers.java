@@ -41,6 +41,7 @@ public class KDSUsers {
         KDSUser user = new KDSUser(KDSUser.USER.USER_A);
         user.setKDS(m_kds);
         m_users.add(user);
+        m_kds.getCurrentDB().setAllActiveOrdersToUserA();//KPP1-195
     }
     public void setTwoUserMode()
     {

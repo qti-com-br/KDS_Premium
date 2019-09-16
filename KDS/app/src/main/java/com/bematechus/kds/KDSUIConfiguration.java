@@ -167,10 +167,14 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
         this.getListView().setScrollBarFadeDuration(0);
         this.getListView().setScrollbarFadingEnabled(false);
-
-        boolean bHide = (KDSGlobalVariables.getKDS().getSettings().getBoolean(KDSSettings.ID.Hide_navigation_bar));
-        hideNavigationBar(bHide);
-
+        try {
+            boolean bHide = (KDSGlobalVariables.getKDS().getSettings().getBoolean(KDSSettings.ID.Hide_navigation_bar));
+            hideNavigationBar(bHide);
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+        }
 
     }
 

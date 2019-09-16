@@ -52,6 +52,11 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".SysTimeChangedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+        </receiver>
         <!-- android:configChanges="keyboard|keyboardHidden|orientation|screenSize" -->
         <activity
             android:name=".MainActivity"

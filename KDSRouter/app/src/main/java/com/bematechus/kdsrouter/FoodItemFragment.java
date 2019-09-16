@@ -175,6 +175,7 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
         if (m_singleObj != null) return;
         KDSUIDlgFoodItem dlg = new KDSUIDlgFoodItem(FoodItemFragment.this.getActivity(),FoodItemFragment.this, null);
         m_singleObj = dlg;
+
         dlg.show();
     }
 
