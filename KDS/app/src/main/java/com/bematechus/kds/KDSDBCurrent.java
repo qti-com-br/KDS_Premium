@@ -2873,7 +2873,7 @@ return:
         //2.0.37
         int nBumped = this.executeOneValue(sql);
         //int nMax = Math.round(nMaxCount * 1.5f);
-        int nMax = Math.round(nMaxCount * 2);
+        int nMax = Math.round(nMaxCount ); //KPP1-207, just bump according to setting value.
         if (nBumped<nMax ) return 0;
         int nNeedBumped = nBumped - nMaxCount;
         //TimeDog td = new TimeDog();

@@ -46,6 +46,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static public final String PREF_KEY_ACTIVATION_FAILED_REASON = "activation_fail_reason";
     static public final String PREF_KEY_ACTIVATION_USER_NAME = "activation_user_name";
     static public final String PREF_KEY_ACTIVATION_PWD = "activation_password";
+    static public final String PREF_KEY_STORE_GUID = "store_guid";
+    static public final String PREF_KEY_STORE_NAME = "store_name";
 
     static final public String KDSROUTER = "KDSRouter";
 
@@ -318,10 +320,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (jsonArray.length()<=0) return;
             JSONObject json = (JSONObject) jsonArray.get(0);
 
-            String store_guid = json.getString("store_guid");
+            String store_guid = json.getString(PREF_KEY_STORE_GUID);
             m_storeGuid = store_guid;
 
-            m_storeName =  json.getString("store_name");//2.0.50
+            m_storeName =  json.getString(PREF_KEY_STORE_NAME);//2.0.50
             m_storeKey =  json.getString("store_key");//2.0.50
 
             //System.out.println(m_storeGuid);
@@ -1168,8 +1170,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(PREF_KEY_ACTIVATION_USER_NAME, userName);
         editor.putString(PREF_KEY_ACTIVATION_PWD, pwd);
-        editor.putString("store_guid", m_storeGuid);
-        editor.putString("store_name", m_storeName);
+        editor.putString(PREF_KEY_STORE_GUID, m_storeGuid);
+        editor.putString(PREF_KEY_STORE_NAME, m_storeName);
 
         editor.apply();
         editor.commit();
@@ -1488,7 +1490,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static public String loadStoreGuid()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("store_guid", "");
+        String s = pref.getString(PREF_KEY_STORE_GUID, "");
         m_storeGuid = s;
         return s;
     }
@@ -1500,7 +1502,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static public String loadStoreName()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("store_name", "");
+        String s = pref.getString(PREF_KEY_STORE_NAME, "");
         m_storeName = s;
         return s;
     }
@@ -1985,8 +1987,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(PREF_KEY_ACTIVATION_USER_NAME, "");
         editor.putString(PREF_KEY_ACTIVATION_PWD, "");
-        editor.putString("store_guid", "");
-        editor.putString("store_name", "");
+        //editor.putString(PREF_KEY_STORE_GUID, ""); //keep it for comparing changes
+        editor.putString(PREF_KEY_STORE_NAME, "");
 
         editor.apply();
         editor.commit();
@@ -1995,5 +1997,22 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
 
 
+    }
+    static boolean m_bStoreChanged = false;
+    static public void checkStoreChanged()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString(PREF_KEY_STORE_GUID, "");
+        String oldStoreGuid =  s;
+        m_bStoreChanged = (!oldStoreGuid.equals(m_storeGuid));
+
+    }
+    static public boolean isStoreChanged()
+    {
+        return m_bStoreChanged;
+    }
+    static public void restStoreChangedFlag()
+    {
+        m_bStoreChanged = false;
     }
 }

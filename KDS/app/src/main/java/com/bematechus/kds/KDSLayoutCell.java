@@ -164,8 +164,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         CellSubType subtype =  this.getCellSubType();
         KDSDataOrder order = (KDSDataOrder)this.getData();
 
-
-        this.getFont().copyFrom( env.getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace));
+        if (this.getCellSubType() == CellSubType.OrderFooter_Last || this.getCellSubType() == CellSubType.OrderFooter)
+            this.getFont().copyFrom( env.getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Footer_FontFace));
+        else
+            this.getFont().copyFrom( env.getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace));
 
         int nBG = KDSView.getOrderCaptionBackgroundColor(order,env, this.getFont());
 //        //get the background color according to the time.
@@ -376,10 +378,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
 
                 if (hours <=0)
-                    return String.format("%02d:%02d", min, sec);
+                    return String.format("%02d:%02d", min, Math.abs(sec));
 
                 else
-                    return String.format("%d:%02d:%02d",hours, min, sec);
+                    return String.format("%d:%02d:%02d",hours, Math.abs(min), Math.abs(sec));
 
             }
 

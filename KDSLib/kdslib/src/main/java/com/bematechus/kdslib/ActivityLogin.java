@@ -323,6 +323,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         this.setResult(1);
         String email = mUserNameView.getText().toString();
         String password = mPasswordView.getText().toString();
+        m_activation.checkStoreChanged();
         m_activation.saveUserNamePwd(email, password);
 
         this.finish();

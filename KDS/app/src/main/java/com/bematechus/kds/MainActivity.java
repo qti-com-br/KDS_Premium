@@ -234,6 +234,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public void onTime() {
 
+        //record last time.KPP1-192
+        m_dtLastUpdateTime.setTime(System.currentTimeMillis());
 
         KDSGlobalVariables.toggleBlinkingStep();
         if (!m_bEnableRefreshTimer) return;
@@ -2759,6 +2761,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             {
                 if (!isKDSValid()) return ;
                 m_activation.setDoLicensing( false );
+                if (m_activation.isStoreChanged())
+                {
+                    m_activation.restStoreChangedFlag();
+                    doClearDB();
+
+                }
             }
             default:
                 break;
@@ -6285,6 +6293,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                             //remove statistic data
                             getKDS().checkRemovingStatisticExpiredData();
                             //td.debug_print_Duration("checkRemovingStatisticExpiredData");
+                            //KPP1-192
+                            checkSystemTimeChanged();
                             try {
                                 Thread.sleep(1000);
                             } catch (Exception e) {
@@ -6466,5 +6476,27 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
 
     }
+
+    public void resetTimerAfterSystemTimeChanged()
+    {
+        m_doubleClickIntervalTimeout.reset();
+        m_timer.stop();
+        m_timer = new KDSTimer();
+        m_timer.start(this, this, 1000);
+        m_dtLastUpdateTime.setTime(System.currentTimeMillis());
+    }
+
+    Date m_dtLastUpdateTime = new Date();
+    final int SYS_TIME_CHANGED= 2000;//2 seconds
+    private void checkSystemTimeChanged()
+    {
+        long l = System.currentTimeMillis();
+        l = l - m_dtLastUpdateTime.getTime();
+        if (l <0) //changed backward
+        {
+            resetTimerAfterSystemTimeChanged();
+        }
+    }
+
 }
 
