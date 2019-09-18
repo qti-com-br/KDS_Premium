@@ -1116,6 +1116,7 @@
     <string name="transfer_by_double_disable_bump">When this feature is enabled, double-tap bump will be disabled.</string>
     <string name="suspend_bump_while_queue_recover">My queue station is recovering data, bumping will suspend</string>
     <string name="offline_warning">offline,please check!</string>
+    <string name="for_lineitems_display">For Line items display only.</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

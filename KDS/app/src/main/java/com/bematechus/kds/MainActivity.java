@@ -295,8 +295,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         Date dt = new Date();
         String s = m_formatDate.format(dt);
+        m_txtDate.setTextColor(this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface).getFG());
         m_txtDate.setText(s);
         s = m_formatTime.format(dt);
+        m_txtTime.setTextColor(this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface).getFG());
         m_txtTime.setText(s);
 
     }
