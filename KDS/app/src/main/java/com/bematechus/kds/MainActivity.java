@@ -3505,6 +3505,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *
      * @param prefs
      * @param key
+     *  If it == "", just refresh all.
      */
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (!isKDSValid()) return ;

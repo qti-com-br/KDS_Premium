@@ -3319,6 +3319,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     public void doConfigRequireXmlCommand(KDSSocketInterface sock, KDSXMLParserCommand command,String xmlOriginalData)
     {
+
         String s = m_settings.outputXmlText(this.m_context);
         s = KDSXMLParserCommand.createBroadConfiguration(s);
         if (sock instanceof KDSSocketTCPSideBase)
@@ -3332,9 +3333,16 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public void doConfigReceivedXmlCommand( KDSXMLParserCommand command,String xmlOriginalData)
     {
+        //Log.i(TAG, "--->get new settings <----");
+        if (KDSGlobalVariables.getMainActivity() != null)
+            KDSGlobalVariables.getMainActivity().suspendChangedEvent(true);
         String strConfig = command.getParam(KDSConst.KDS_Str_Param, "");
         loadSettingsXml(strConfig);
-
+        //kpp1-212
+        if (KDSGlobalVariables.getMainActivity() != null) {
+            KDSGlobalVariables.getMainActivity().suspendChangedEvent(false);
+            KDSGlobalVariables.getMainActivity().onSharedPreferenceChanged(null, "");
+        }
 
     }
 

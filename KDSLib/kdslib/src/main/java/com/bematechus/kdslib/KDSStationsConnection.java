@@ -2123,6 +2123,8 @@ public class KDSStationsConnection {
 
             if (station.getData().size() >0)
             {
+               // Log.i(TAG, "--->Resend data <---");
+               // Log.i(TAG, station.getStationID());
                 resendXmlData(station);
             }
 
