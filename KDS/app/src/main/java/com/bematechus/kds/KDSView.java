@@ -697,17 +697,23 @@ public class KDSView extends View {
     }
     private boolean doubleClickXY(int x, int y)
     {
-
-        int ncount = m_arPanels.size();
-        for (int i =0; i< ncount; i++)
-        {
-            KDSViewPanel panel = m_arPanels.get(i);
-            if (!panel.pointInMe(x, y))
-                continue;
-            KDSViewBlock block = panel.getClickedBlock(x, y);
-            KDSViewBlockCell cell = block.getClickedCell(x, y);
-            firePanelDoubleClicked(panel, block, cell);
+        if (getOrdersViewMode() == OrdersViewMode.Normal) {
+            int ncount = m_arPanels.size();
+            for (int i = 0; i < ncount; i++) {
+                KDSViewPanel panel = m_arPanels.get(i);
+                if (!panel.pointInMe(x, y))
+                    continue;
+                KDSViewBlock block = panel.getClickedBlock(x, y);
+                KDSViewBlockCell cell = block.getClickedCell(x, y);
+                firePanelDoubleClicked(panel, block, cell);
+                return false;
+            }
             return false;
+        }
+        else if (getOrdersViewMode() == OrdersViewMode.LineItems)
+        {
+            m_lineItemsViewer.onDoubleClickXY(x, y);
+            return true;
         }
         return false;
     }
