@@ -798,8 +798,11 @@ public class KDSStationFunc {
         //td.debug_print_Duration("func-1");
         //TimeDog td = new TimeDog();
         if (kdsuser.getKDS().isExpeditorStation()||
-                kdsuser.getKDS().isQueueExpo())
+                kdsuser.getKDS().isQueueExpo()) {
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Bump_Order, order, null, "");
+            //kpp1-202
+            sync_with_stations_use_me_as_expo(kdsuser.getKDS(),KDSXMLParserCommand.KDSCommand.Expo_Bump_Order, order, null, "" );
+        }
         else
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Bump_Order, order, null, "");
         //td.debug_print_Duration("orderBump-->sync_with_stations");
@@ -1223,7 +1226,7 @@ public class KDSStationFunc {
         {
 
             case Prep:
-
+                KDSStationNormal.normal_sync_order_bumped(kds, command);//kpp1-202.
                 break;
             case Expeditor:
             case Queue:
@@ -2234,6 +2237,30 @@ public class KDSStationFunc {
         else if (kds.getStationsConnections().isMirrorOfOthers())
         {
 
+        }
+
+
+
+    }
+
+    /**
+     * when expo bump order, it will inform this operation to its prep stations
+     * kpp1-202
+     * @param kds
+     * @param syncMode
+     * @param order
+     * @param item
+     * @param xmlData
+     */
+    static public void sync_with_stations_use_me_as_expo(KDS kds,KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item, String xmlData)
+    {
+        if (!kds.isExpeditorStation()) return;
+        String strXml = "";
+
+        ArrayList<KDSStationIP> arPrepStations = kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID());
+        if (arPrepStations.size()>0) {
+            strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);//);
+            kds.getStationsConnections().writeToStations(kds.getStationID(), arPrepStations, strXml);
         }
 
 

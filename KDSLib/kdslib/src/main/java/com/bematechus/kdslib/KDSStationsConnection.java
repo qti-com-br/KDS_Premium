@@ -2317,7 +2317,17 @@ public class KDSStationsConnection {
         m_buffersForWaitingConnection.clear();
         return true;
     }
-
+    public boolean writeToStations(String myStationID,ArrayList<KDSStationIP> arStations, String strXml)
+    {
+        int ncount = arStations.size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationIP station =  arStations.get(i);
+            if (station.getID().equals(myStationID)) continue;
+            writeDataToStationOrItsBackup(station, strXml);
+        }
+        return true;
+    }
 }
 
 
