@@ -1693,7 +1693,7 @@ print order data to  buffer, socket will send this buffer to serial port
         for (int i=0; i< s.length(); i++)
         {
             ch = s.charAt(i);
-            if (ch == CMD_END_BOLD)
+            if (ch == CMD_START_BOLD) //fix a bug. Old code is cmd_end_bold. see kpp1-146
             {
                 if (!willPrint.isEmpty())
                     m_bemaPrinter.printText(willPrint);
