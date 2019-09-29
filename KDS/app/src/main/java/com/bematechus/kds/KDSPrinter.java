@@ -52,12 +52,49 @@ public class KDSPrinter {
     static final private char CMD_START_BOLD = 0x01;//"<B>";
     static final private char CMD_END_BOLD = 0x02;//"</B>";
     static final private char CMD_PAPER_CUT = 0x03;//"<PC>";
+    //reverse printing
+    static final private char CMD_START_REVERSE = 0x04;//"<black>";
+    static final private char CMD_END_REVERSE = 0x05;//"</black>";
+    //change font size
+    static final private char CMD_START_DBLW = 0x06;//"<dblw>";
+    static final private char CMD_END_DBLW = 0x07;//"</dblw>";
+    static final private char CMD_START_DBLH = 0x08;//"<dblh>";
+    static final private char CMD_END_DBLH = 0x09;//"</dblh>";
+    static final private char CMD_START_DBLWH = 0x10;//"<dblwh>";
+    static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
 
     static final private String TAG_CR = "<CR>";
     static final private String TAG_ITEMS = "<ITEMS>";
     static final private String TAG_CONDIMENTS = "<CONDIMENTS>";
     static final private String TAG_MODIFIERS = "<MODIFIERS>";
 
+    //reverse printing
+    static final private String TAG_START_REVERSE = "<BLACK>";
+    static final private String TAG_END_REVERSE = "</BLACK>";
+    //change font size
+    static final private String TAG_START_DBLW = "<DBLW>";
+    static final private String TAG_END_DBLW = "</DBLW>";
+    static final private String TAG_START_DBLH = "<DBLH>";
+    static final private String TAG_END_DBLH = "</DBLH>";
+    static final private String TAG_START_DBLWH = "<DBLWH>";
+    static final private String TAG_END_DBLWH = "</DBLWH>";
+
+
+    final byte ESC = 0x1b;
+    final byte GS = 0x1d;
+
+    byte[] LR2000_START_BOLD = new byte[]{ESC, 0x45, 1};
+    byte[] LR2000_END_BOLD = new byte[]{ESC, 0x45, 0};
+    byte[] LR2000_PAPER_CUT = new byte[]{ESC, 0x6d};
+    byte[] LR2000_START_REVERSE = new byte[]{GS, 0x42, 1};
+    byte[] LR2000_END_REVERSE = new byte[]{GS, 0x42, 0};
+    //
+    byte[] LR2000_START_DBLW = new byte[]{GS, 0x21, 0x10};
+
+    byte[] LR2000_START_DBLH = new byte[]{GS, 0x21, 0x01};
+
+    byte[] LR2000_START_DBLWH = new byte[]{GS, 0x21, 0x11};
+    byte[] LR2000_END_DBLWH = new byte[]{GS, 0x21, 0};
 
     public enum PrinterPortType{
         USB,
@@ -509,13 +546,55 @@ return whole line tags
     private  String  getCmdSet(String tag)
     {
         char ch = 0;
-        if (tag.equals(TAG_START_BOLD) )
-            ch = CMD_START_BOLD;
-        if (tag.equals(TAG_END_BOLD) )
-            ch = CMD_END_BOLD;
-        if (tag.equals(TAG_PAPER_CUT)) {
-            ch = CMD_PAPER_CUT;
+        switch (tag)
+        {
+            case TAG_START_BOLD:
+                ch = CMD_START_BOLD;
+                break;
+            case TAG_END_BOLD:
+                ch = CMD_END_BOLD;
+                break;
+            case TAG_PAPER_CUT:
+                ch = CMD_PAPER_CUT;
+                break;
+            case TAG_START_DBLW:
+                ch = CMD_START_DBLW;
+                break;
+            case TAG_END_DBLW:
+                ch = CMD_END_DBLW;
+                break;
+            case TAG_START_DBLH:
+                ch = CMD_START_DBLH;
+                break;
+            case TAG_END_DBLH:
+                ch = CMD_END_DBLH;
+                break;
+            case TAG_START_DBLWH:
+                ch = CMD_START_DBLWH;
+                break;
+            case TAG_END_DBLWH:
+                ch = CMD_END_DBLWH;
+                break;
+            case TAG_START_REVERSE:
+                ch = CMD_START_REVERSE;
+                break;
+            case TAG_END_REVERSE:
+                ch = CMD_END_REVERSE;
+                break;
+            default:
+                break;
         }
+//        if (tag.equals(TAG_START_BOLD) )
+//            ch = CMD_START_BOLD;
+//        if (tag.equals(TAG_END_BOLD) )
+//            ch = CMD_END_BOLD;
+//        if (tag.equals(TAG_PAPER_CUT)) {
+//            ch = CMD_PAPER_CUT;
+//        }
+//        if (tag.equals(TAG_START_DBLW)) {
+//            ch = CMD_START_DBLW;
+//        }
+//
         if (ch !=0)
         {
             String s = "";
@@ -628,10 +707,15 @@ return whole line tags
             s = makeTabString(t);
             return s;
         }
-        if (t.equals("<B>") || t.equals("</B>") ||
-                t.equals("<RED>") || t.equals("</RED>") ||
-                t.equals("<I>") || t.equals("</I>") ||
-                t.equals("<PC>"))
+//        if (t.equals(TAG_START_BOLD) || t.equals(TAG_END_BOLD) ||
+//                t.equals("<RED>") || t.equals("</RED>") ||
+//                t.equals("<I>") || t.equals("</I>") ||
+//                t.equals(TAG_PAPER_CUT) ||
+//                t.equals(TAG_START_REVERSE) || t.equals(TAG_END_REVERSE) ||
+//                t.equals(TAG_START_DBLW) || t.equals(TAG_END_DBLW) ||
+//                t.equals(TAG_START_DBLH) || t.equals(TAG_END_DBLH) ||
+//                t.equals(TAG_START_DBLWH) || t.equals(TAG_END_DBLWH) )
+        if (isPrinterCommandTag(t))
         {
             s += getCmdSet(t);
             return s;
@@ -981,19 +1065,27 @@ return the ascii string len, it is unicode len
     {
 //	char buffer[20];
 
-        String cmdRed = getCmdSet(("<RED>"));
-        String cmdERed = getCmdSet(("</RED>"));
-        String cmdBold = getCmdSet(("<B>"));
-        String cmdEBold = getCmdSet(("</B>"));
+//        String cmdRed = getCmdSet(("<RED>"));
+//        String cmdERed = getCmdSet(("</RED>"));
+        String cmdBold = getCmdSet(TAG_START_BOLD);
+        String cmdEBold = getCmdSet(TAG_END_BOLD);
+        String cmdBlack = getCmdSet(TAG_START_REVERSE);
+        String cmdEBlack = getCmdSet(TAG_END_REVERSE);
+        String cmdDblH = getCmdSet(TAG_START_DBLH);
+        String cmdEDblH = getCmdSet(TAG_END_DBLH);
+        String cmdDblW = getCmdSet(TAG_START_DBLW);
+        String cmdEDblW = getCmdSet(TAG_END_DBLW);
+        String cmdDblWH = getCmdSet(TAG_START_DBLWH);
+        String cmdEDblWH = getCmdSet(TAG_END_DBLWH);
 
-        boolean bBold=false, bRed= false;
+        boolean bBold=false;//, bRed= false;
 
         int index;
-        if (!cmdRed.isEmpty() )
-        {
-            index = s.indexOf(cmdRed);
-            if (index >=0) bRed = true;
-        }
+//        if (!cmdRed.isEmpty() )
+//        {
+//            index = s.indexOf(cmdRed);
+//            if (index >=0) bRed = true;
+//        }
         if (!cmdBold.isEmpty() )
         {
 
@@ -1002,7 +1094,8 @@ return the ascii string len, it is unicode len
         }
 
 
-        if (!bBold && !bRed)
+        //if (!bBold && !bRed)
+        if (!bBold)
         {
             arBuffer.add(s);
             return;
@@ -1011,7 +1104,6 @@ return the ascii string len, it is unicode len
 
         if (m_bSimulateBold && bBold)
         {
-
             replaceTagStringToLine(arBuffer, cmdBold, cmdEBold, s, false);
         }
         {
@@ -1527,6 +1619,9 @@ print order data to  buffer, socket will send this buffer to serial port
         if (m_bemaPrinter == null) return;
         PrinterStatus ps = m_bemaPrinter.getStatus();
         m_bSerialPrinterValid =  ps.isOnline();
+//        //DEBUG
+//        m_bSerialPrinterValid = true;
+        ///////////////////////////////////////
         if (!m_bSerialPrinterValid)
         {
             this.reset();
@@ -1651,9 +1746,6 @@ print order data to  buffer, socket will send this buffer to serial port
 //        }
     }
 
-    byte[] LR2000_START_BOLD = new byte[]{0x1b, 0x45, 1};
-    byte[] LR2000_END_BOLD = new byte[]{0x1b, 0x45, 0};
-    byte[] LR2000_PAPER_CUT = new byte[]{0x1b, 0x6d};
 
 
     /**
@@ -1693,32 +1785,98 @@ print order data to  buffer, socket will send this buffer to serial port
         for (int i=0; i< s.length(); i++)
         {
             ch = s.charAt(i);
-            if (ch == CMD_START_BOLD) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+            if (isPrinterCommandChar(ch))
             {
                 if (!willPrint.isEmpty())
                     m_bemaPrinter.printText(willPrint);
                 willPrint = "";
-                m_bemaPrinter.write(LR2000_START_BOLD);
-
-            }
-            else if (ch == CMD_END_BOLD)
-            {
-                if (!willPrint.isEmpty())
-                    m_bemaPrinter.printText(willPrint);
-                willPrint = "";
-                m_bemaPrinter.write(LR2000_END_BOLD);
-            }
-            else if (ch == CMD_PAPER_CUT)
-            {
-                if (!willPrint.isEmpty())
-                    m_bemaPrinter.printText(willPrint);
-                willPrint = "";
-                m_bemaPrinter.write(LR2000_PAPER_CUT);
+                writePrinterCommandByCommandChar(ch);
             }
             else
             {
                 willPrint += ch;
             }
+//            switch (ch) {
+//                case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_BOLD);
+//
+//                }
+//                break;
+//                case CMD_END_BOLD:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_END_BOLD);
+//                }
+//                case CMD_PAPER_CUT:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_PAPER_CUT);
+//                }
+//                break;
+//                case CMD_START_DBLW:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_DBLW);
+//                }
+//                break;
+//                case CMD_START_DBLH:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_DBLH);
+//                }
+//                break;
+//                case CMD_START_DBLWH:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_DBLWH);
+//                }
+//                break;
+//                case CMD_END_DBLW:
+//                case CMD_END_DBLH:
+//                case CMD_END_DBLWH:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_END_DBLWH);
+//                }
+//                break;
+//                case CMD_START_REVERSE:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_REVERSE);
+//                }
+//                break;
+//                case CMD_END_REVERSE:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_END_REVERSE);
+//                }
+//                break;
+//                default:
+//                {
+//                    willPrint += ch;
+//                }
+//                break;
+//            }
         }
 
         if (!willPrint.isEmpty())
@@ -1779,5 +1937,106 @@ print order data to  buffer, socket will send this buffer to serial port
 
         }
         this.open(true);
+    }
+
+    private boolean isPrinterCommandChar( char ch)
+    {
+        switch (ch) {
+            case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+            case CMD_END_BOLD:
+            case CMD_PAPER_CUT:
+            case CMD_START_DBLW:
+            case CMD_START_DBLH:
+            case CMD_START_DBLWH:
+            case CMD_END_DBLW:
+            case CMD_END_DBLH:
+            case CMD_END_DBLWH:
+            case CMD_START_REVERSE:
+            case CMD_END_REVERSE:
+                return true;
+
+        }
+        return false;
+    }
+
+    private void writePrinterCommandByCommandChar(char ch)
+    {
+        switch (ch) {
+            case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+            {
+                m_bemaPrinter.write(LR2000_START_BOLD);
+            }
+            break;
+            case CMD_END_BOLD:
+            {
+                m_bemaPrinter.write(LR2000_END_BOLD);
+            }
+            break;
+            case CMD_PAPER_CUT:
+            {
+                m_bemaPrinter.write(LR2000_PAPER_CUT);
+            }
+            break;
+            case CMD_START_DBLW:
+            {
+                m_bemaPrinter.write(LR2000_START_DBLW);
+            }
+            break;
+            case CMD_START_DBLH:
+            {
+                m_bemaPrinter.write(LR2000_START_DBLH);
+            }
+            break;
+            case CMD_START_DBLWH:
+            {
+                m_bemaPrinter.write(LR2000_START_DBLWH);
+            }
+            break;
+            case CMD_END_DBLW:
+            case CMD_END_DBLH:
+            case CMD_END_DBLWH:
+            {
+                m_bemaPrinter.write(LR2000_END_DBLWH);
+            }
+            break;
+            case CMD_START_REVERSE:
+            {
+                m_bemaPrinter.write(LR2000_START_REVERSE);
+            }
+            break;
+            case CMD_END_REVERSE:
+            {
+                m_bemaPrinter.write(LR2000_END_REVERSE);
+            }
+            break;
+            default:
+            {
+            }
+            break;
+        }
+    }
+
+    private boolean isPrinterCommandTag(String tag) {
+        switch (tag) {
+
+            case TAG_START_BOLD:
+            case TAG_END_BOLD:
+            case "<RED>":
+            case "</RED>":
+            case "<I>":
+            case "</I>":
+            case TAG_PAPER_CUT:
+            case TAG_START_REVERSE:
+            case TAG_END_REVERSE:
+            case TAG_START_DBLW:
+            case TAG_END_DBLW:
+            case TAG_START_DBLH:
+            case TAG_END_DBLH:
+            case TAG_START_DBLWH:
+            case TAG_END_DBLWH:
+                return true;
+            default:
+                return false;
+        }
     }
 }
