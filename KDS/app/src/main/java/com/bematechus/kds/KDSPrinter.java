@@ -954,23 +954,44 @@ return whole line tags
 /************************************************************************/
 /*
 return the ascii string len, it is unicode len
+
                                                                      */
     /************************************************************************/
+    /**
+     *
+     * @param s
+     * @return
+     */
     private  int getStringPrintLen(String s)
     {
         int count=0;
         char ch;
         int nunicode = 0;
+        boolean bDoubleWidthEnabled = false; //support double width printing
+
         for (int i=0; i< s.length(); i++)
         {
             ch = s.charAt(i);
-            if (isUnicode(ch))
+            if (isUnicode(ch)) {
                 nunicode++;
+                if (bDoubleWidthEnabled)
+                    nunicode ++;
+            }
             else
             {
                 if (isPrintable(ch))
                 {
                     count ++;
+                    if (bDoubleWidthEnabled )
+                        count ++;
+                }
+                else if (isDoubleWidthStartCommand(ch))
+                {
+                    bDoubleWidthEnabled = true;
+                }
+                else if (isDoubleWidthEndCommand(ch))
+                {
+                    bDoubleWidthEnabled = false;
                 }
             }
         }
@@ -2038,5 +2059,16 @@ print order data to  buffer, socket will send this buffer to serial port
             default:
                 return false;
         }
+    }
+    private boolean isDoubleWidthStartCommand(char ch)
+    {
+        if (ch == CMD_START_DBLW ||
+            ch == CMD_START_DBLWH)
+            return true;
+        return false;
+    }
+    private boolean isDoubleWidthEndCommand(char ch)
+    {
+        return (ch  == CMD_END_DBLWH);
     }
 }
