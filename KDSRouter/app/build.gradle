@@ -54,7 +54,7 @@ android {
     }
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "KDS-Router-${variant.baseName}-${defaultConfig.versionName}.apk"
+            outputFileName = "KDS-Router-${variant.baseName}-${defaultConfig.versionName}(${variant.versionCode}).apk"
         }
 //        variant.outputs.each { output ->
 //            def outputFile = output.outputFile
