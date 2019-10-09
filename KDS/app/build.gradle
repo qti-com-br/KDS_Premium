@@ -35,7 +35,7 @@ android {
     }
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "KDS-${variant.baseName}-${variant.versionName}.apk"
+            outputFileName = "KDS-${variant.baseName}-${variant.versionName}(${variant.versionCode}).apk"
         }
 
 //        variant.outputs.each { output ->

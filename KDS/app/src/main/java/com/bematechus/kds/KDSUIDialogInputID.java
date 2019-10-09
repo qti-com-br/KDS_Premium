@@ -26,6 +26,9 @@ public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationA
     String m_stationID = "";
     ListView m_lstStations = null;
     ArrayList<String> m_lstIPs = new ArrayList<String>();
+
+   // public static KDSUIDialogInputID m_instance = null;
+
     /**
      * it will been overrided by child
      * @return
@@ -227,4 +230,5 @@ public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationA
             }
         });
     }
+
 }

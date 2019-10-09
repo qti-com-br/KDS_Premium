@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
+import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
@@ -627,13 +628,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    KDSUIDialogInputID m_inputStationIDDlg = null;
 
     private void inputStationID() {
         if (!isKDSValid()) return;
-        KDSUIDialogInputID d = new KDSUIDialogInputID(this, getString(R.string.input_id_title), getString(R.string.input_station_id), "", this);
-        getKDS().setStationAnnounceEventsReceiver(d);
+        if (m_inputStationIDDlg != null) return;
+        m_inputStationIDDlg = new KDSUIDialogInputID(this, getString(R.string.input_id_title), getString(R.string.input_station_id), "", this);
+        getKDS().setStationAnnounceEventsReceiver(m_inputStationIDDlg);
 
-        d.show();
+        m_inputStationIDDlg.show();
     }
 
     private void afterInputStationID(String strStationID) {
@@ -1183,7 +1186,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             else if (id == R.id.action_logout)
             {
                 Activation.resetUserNamePwd();
+                resetStationID();
                 onDoActivationExplicit();
+                //m_activation.cancelActivation();
 
             }
         }
@@ -2769,6 +2774,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     doClearDB();
 
                 }
+                if (getKDS().getStationID().isEmpty())
+                    inputStationID();
             }
             default:
                 break;
@@ -2917,6 +2924,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
         } else if (dlg instanceof KDSUIDialogInputID) {//input the ID
+            m_inputStationIDDlg = null;
             getKDS().setStationAnnounceEventsReceiver(null);
             String s = (String) dlg.getResult();
             afterInputStationID(s);
@@ -6155,6 +6163,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         updateTitle();
+
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
@@ -6186,6 +6195,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
+        if (ActivityLogin.isShowing()) return;
         int nTimeout = Activation.HOUR_MS;
         if (!m_activation.isActivationPassed())
             nTimeout = Activation.INACTIVE_TIMEOUT; //5 minutes
@@ -6216,6 +6226,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (ar.size()<=0) return;
         m_activation.setMacAddress(ar.get(0));
       //  m_activation.setMacAddress("BEMA0000011");//test
+        Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
 
@@ -6501,5 +6512,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
+    private void resetStationID()
+    {
+        KDSSettings.resetStationID();
+        this.getSettings().set(KDSSettings.ID.KDS_ID, "");
+    }
 }
 

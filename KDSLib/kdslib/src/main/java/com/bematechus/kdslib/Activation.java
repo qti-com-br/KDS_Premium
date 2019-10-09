@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -189,6 +190,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     }
     public void onHttpResponse(HttpBase httpBase, HttpBase.HttpRequestBase r)
     {
+
         ActivationRequest request = (ActivationRequest)r;
         ActivationHttp http = (ActivationHttp) httpBase;
 
@@ -978,11 +980,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         adapter.notifyDataSetChanged();
     }
 
+    AlertDialog m_dlgRegisterOptions = null;
     /**
      * choose how to register this station
      */
     private void showRegisterOptionDlg()
     {
+        Log.i(TAG, "reg: showRegisterOptionDlg");
+        if (m_storeName.isEmpty() || m_storeGuid.isEmpty()) return;
+
         Context context = m_context;// KDSApplication.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.dlg_register_option, null);
         RadioButton btnAddNew = (RadioButton) view.findViewById(R.id.rbAddNew);
@@ -1005,7 +1011,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         });
 
 
-        AlertDialog d = new AlertDialog.Builder(context)
+        m_dlgRegisterOptions = new AlertDialog.Builder(context)
                 .setPositiveButton(context.getString(R.string.str_ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1017,7 +1023,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                         //RadioButton txtReplace = (RadioButton) dlg.findViewById(R.id.rbReplace);
 
                         afterSelectedRegisterOption((View)txtAddNew.getTag());
-
+                        m_dlgRegisterOptions = null;
                     }
                 })
                 .setTitle( context.getString(R.string.activation))
@@ -1025,13 +1031,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         afterCancelRegisterOptionDlg();
+                        m_dlgRegisterOptions = null;
                     }
                 })
                 .create();
-        d.setView(view);
-        d.show();
-        d.setCancelable(false);
-        d.setCanceledOnTouchOutside(false);
+        m_dlgRegisterOptions.setView(view);
+        m_dlgRegisterOptions.show();
+        m_dlgRegisterOptions.setCancelable(false);
+        m_dlgRegisterOptions.setCanceledOnTouchOutside(false);
         //init gui
         if (getEnabledDevicesCount() >= m_nMaxLicenseCount) {
             btnAddNew.setEnabled(false);
@@ -1307,13 +1314,17 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public void startActivation(boolean bSilent,boolean bForceShowNamePwdDlg, Activity caller, String showErrorMessage)
     {
+
         if (m_bDoLicensing) return;
         m_bDoLicensing = true;
         m_nSyncGetDevicesTries = 0;
+        Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false"));
 
         m_bSilent = bSilent;
         String userName = loadUserName();
         String password = loadPassword();
+        Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
+
 //        userName = USER_NAME;
 //        password = PASSWORD;
         if (userName.isEmpty() || password.isEmpty()) {
@@ -2015,4 +2026,5 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     {
         m_bStoreChanged = false;
     }
+
 }
