@@ -6226,7 +6226,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (ar.size()<=0) return;
         m_activation.setMacAddress(ar.get(0));
       //  m_activation.setMacAddress("BEMA0000011");//test
-        Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
+        //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
 

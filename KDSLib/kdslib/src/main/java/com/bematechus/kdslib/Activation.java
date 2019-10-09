@@ -986,7 +986,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     private void showRegisterOptionDlg()
     {
-        Log.i(TAG, "reg: showRegisterOptionDlg");
+        //Log.i(TAG, "reg: showRegisterOptionDlg");
         if (m_storeName.isEmpty() || m_storeGuid.isEmpty()) return;
 
         Context context = m_context;// KDSApplication.getContext();
@@ -1318,12 +1318,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (m_bDoLicensing) return;
         m_bDoLicensing = true;
         m_nSyncGetDevicesTries = 0;
-        Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false"));
+        //Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false"));
 
         m_bSilent = bSilent;
         String userName = loadUserName();
         String password = loadPassword();
-        Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
+        //Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
 
 //        userName = USER_NAME;
 //        password = PASSWORD;
