@@ -1476,6 +1476,7 @@ public class KDSDataOrder extends KDSData {
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getCustomer().getID(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PHONE,this.getCustomer().getPhone(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_NAME,this.getCustomer().getName(), false);
+            pxml.back_to_parent();//kpp1-212
             //
 
             //2.5.4.19 add received time and restore time
