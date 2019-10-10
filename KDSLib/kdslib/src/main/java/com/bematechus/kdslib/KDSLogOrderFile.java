@@ -1,4 +1,4 @@
-package com.bematechus.kdsrouter;
+package com.bematechus.kdslib;
 
 import android.content.pm.PackageInfo;
 import android.os.Environment;

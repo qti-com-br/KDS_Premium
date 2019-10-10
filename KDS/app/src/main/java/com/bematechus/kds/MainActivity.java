@@ -3526,7 +3526,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         settingsBackup.loadSettings(this.getApplicationContext());
         settingsBackup.exportToFolder(this.getApplicationContext(), KDSDBBase.getSDDBFolderWithLastDividChar());
 
-
+        String presentStationID = getKDS().getStationID();
 
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
 
@@ -3540,6 +3540,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 onTabClicked(btnData);
             }
         }
+
+
 
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -3651,6 +3653,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             m_activation.setStationID(getKDS().getStationID());
             m_activation.postNewStationInfo2Web(getKDS().getStationID(), getKDS().getStationFunction().toString());
+
+            //station id changed. Change the relation table at here.
+            changeRelationTableWithNewStationID(presentStationID, getKDS().getStationID());
+
+
         }
 
     }
@@ -6516,6 +6523,25 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSSettings.resetStationID();
         this.getSettings().set(KDSSettings.ID.KDS_ID, "");
+    }
+
+    /**
+     * KPP1-219
+     * Description
+     *
+     * 1. Setup Station 1 as Prep and Station 2 as Expo
+     * 2. Set Station 2 as the Expo for Station 1 in Settings>Station Relationship
+     * 3. On Station 2 (Expo), go to General Settings
+     * 4. Change 'Station number' to 3
+     *
+     * AR: Prep station detects expo as offline
+     * ER: Update the prep station with new expo ID
+     * @param oldStationID
+     * @param newStationID
+     */
+    private void changeRelationTableWithNewStationID(String oldStationID, String newStationID)
+    {
+
     }
 }
 
