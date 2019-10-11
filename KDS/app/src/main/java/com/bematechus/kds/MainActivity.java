@@ -57,6 +57,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSLogOrderFile;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSMBPath;
@@ -5667,6 +5668,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         int nDays = this.getSettings().getInt(KDSSettings.ID.Log_days);
         KDSLog.removeLogFiles(nDays);
+        KDSLogOrderFile.removeLogFiles(nDays);
 
     }
 

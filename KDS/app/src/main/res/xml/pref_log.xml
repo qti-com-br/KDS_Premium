@@ -24,4 +24,9 @@
         android:key="kds_general_information_enable"
         android:title="@string/pref_kds_information_enabled"
         android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="log_orders"
+        android:title="@string/log_orders"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

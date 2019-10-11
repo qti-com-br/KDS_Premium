@@ -23,6 +23,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSLogOrderFile;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSmbFile;
@@ -323,7 +324,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
 
         KDSLog.setLogLevel(settings.getInt(KDSSettings.ID.Log_mode));
-
+        KDSLogOrderFile.setEnabled(m_settings.getBoolean(KDSSettings.ID.Log_orders));
         String stationOldID = m_strKDSStationID;
         m_strKDSStationID = settings.getString(KDSSettings.ID.KDS_ID);
         if (!m_strKDSStationID.equals(stationOldID))
@@ -1985,6 +1986,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     //private void doOrderXml(KDSSocketInterface sock, String xmlData)
     public KDSDataOrder doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder, boolean bRefreshView)
     {
+        KDSLogOrderFile.i(TAG, xmlData);//kpp1-223
 
         Object obj = KDSXMLParser.parseXml(getStationID(), xmlData);
         if (obj == null) return null;
@@ -4455,6 +4457,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                                     DoOrdersXmlThreadBuffer data = m_xmlDataBuffer.get(i);
                                     switch (data.m_xmlType) {
                                         case Order:
+
                                             //TimeDog td = new TimeDog();
                                             //td.debug_print_Duration("-------------------------");
                                             KDSDataOrder order = doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
