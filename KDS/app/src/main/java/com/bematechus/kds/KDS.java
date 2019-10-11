@@ -4991,4 +4991,25 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
         startACKThread();
     }
+
+    /**
+     * Use this function to broadcast new relationships.
+     * It called by preferencedfragmentstations.java nad mainactivity.java.
+     *
+     */
+    static public void broadcastStationsRelations()
+    {
+        String s = KDSSettings.loadStationsRelationString(KDSApplication.getContext(), true);
+        Object[] arParams = new Object[]{s};
+
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                String strData =(String) params[0];
+                KDSGlobalVariables.getKDS().getBroadcaster().broadcastRelations(strData);
+                return null;
+            }
+
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arParams);
+    }
 }

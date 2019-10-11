@@ -67,6 +67,7 @@ import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationActived;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
@@ -6543,7 +6544,26 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     private void changeRelationTableWithNewStationID(String oldStationID, String newStationID)
     {
+        if (oldStationID.equals(newStationID)) return;
 
+        ArrayList<KDSStationsRelation> ar = getKDS().getStationsConnections().getRelations().getRelationsSettings();
+        boolean bChanged = false;
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (ar.get(i).getID().equals(oldStationID)) {
+                ar.get(i).setID(newStationID);
+                bChanged = true;
+            }
+        }
+        if (bChanged)
+        {
+            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), newStationID);
+
+            KDS.broadcastStationsRelations();
+
+
+        }
     }
 }
 
