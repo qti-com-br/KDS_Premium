@@ -49,6 +49,7 @@ import com.bematechus.kdslib.KDSToStation;
 import com.bematechus.kdslib.KDSToStations;
 import com.bematechus.kdslib.KDSToast;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
@@ -1986,7 +1987,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     //private void doOrderXml(KDSSocketInterface sock, String xmlData)
     public KDSDataOrder doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder, boolean bRefreshView)
     {
-        KDSLogOrderFile.i(TAG, xmlData);//kpp1-223
+
+        KDSLogOrderFile.i(TAG, KDSLogOrderFile.formatOrderLog(xmlData));//kpp1-223
 
         Object obj = KDSXMLParser.parseXml(getStationID(), xmlData);
         if (obj == null) return null;
@@ -3683,7 +3685,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 //    }
     public boolean writeXmlToPOSNotification( String strXml,String toFileName)
     {
-        return writeXmlToPOSData(strXml, KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
+        return writeXmlToPOSData(KDSXML.formatXml(strXml), KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
+        //return writeXmlToPOSData(strXml, KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
 
 //        try {
 //            KDSSettings.KDSDataSource source = KDSSettings.KDSDataSource.values()[getSettings().getInt(KDSSettings.ID.KDS_Data_Source)];

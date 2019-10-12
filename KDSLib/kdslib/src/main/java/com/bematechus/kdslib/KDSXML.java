@@ -313,8 +313,12 @@ public class KDSXML {
                 Transformer t = tf.newTransformer();
 
                 t.setOutputProperty("encoding","utf-8");//解决中文问题，试过用GBK不行
+//                t.setOutputProperty(OutputKeys.METHOD, "xml");
+//                t.setOutputProperty(OutputKeys.INDENT, "yes");
+//                t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
                 ByteArrayOutputStream bos   =   new ByteArrayOutputStream();
                 t.transform(new DOMSource(m_doc), new StreamResult(bos));
+
                 String xmlStr = bos.toString();
                 bos.close();
 
@@ -555,6 +559,11 @@ public class KDSXML {
             return false;
         }
 
+    /**
+     *
+     * @return
+     *  return string with format
+     */
     public String get_xml_string2() {
         String result = null;
 
@@ -565,11 +574,9 @@ public class KDSXML {
             try {
                 javax.xml.transform.Transformer t = tfac.newTransformer();
                 t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-//                t.setOutputProperty(OutputKeys.INDENT, "yes");
-//                t.setOutputProperty(OutputKeys.METHOD, "xml"); // xml, html,
-//                // text
-//                t.setOutputProperty(
-//                        "{http://xml.apache.org/xslt}indent-amount", "4");
+                t.setOutputProperty(OutputKeys.METHOD, "xml");
+                t.setOutputProperty(OutputKeys.INDENT, "yes");
+                t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
                 t.transform(new DOMSource(m_doc.getDocumentElement()),
                         strResult);
             } catch (Exception e) {
@@ -585,7 +592,13 @@ public class KDSXML {
 
         return result;
     }
+    static public String formatXml(String xmlData)
+    {
 
+        KDSXML xml = new KDSXML();
+        xml.loadString(xmlData);
+        return xml.get_xml_string2();
+    }
 
 
 }

@@ -1749,7 +1749,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     }
     private boolean writeXmlToPOSNotification( String strXml,String toFileName)
     {
-        return writeXmlToPOSData(strXml,KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
+        return writeXmlToPOSData(KDSXML.formatXml(strXml),KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
+        //return writeXmlToPOSData(strXml,KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
 
 //        try {
 //
@@ -1881,7 +1882,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     //private void doOrderXml(KDSSocketInterface sock, String xmlData)
     public void doOrderXml(Object objSource,String originalFileName, String xmlData)
     {
-        KDSLogOrderFile.i(TAG, xmlData);
+        KDSLogOrderFile.i(TAG,KDSLogOrderFile.formatOrderLog(xmlData));
 
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(m_strStationID, xmlData);
 

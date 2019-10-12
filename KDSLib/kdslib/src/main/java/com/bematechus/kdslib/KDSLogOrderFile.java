@@ -523,4 +523,12 @@ public class KDSLogOrderFile {
 
 
     }
+    static public String formatOrderLog(String xmlData)
+    {
+        if (m_logLevel == LogLevel.None)
+            return xmlData;
+        return KDSXML.formatXml(xmlData);
+
+
+    }
 }
