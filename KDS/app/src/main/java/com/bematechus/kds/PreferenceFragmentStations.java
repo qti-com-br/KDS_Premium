@@ -360,18 +360,20 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     {
 
         this.save();
-        String s = KDSSettings.loadStationsRelationString(this.getActivity().getApplicationContext(), true);
-        Object[] ar = new Object[]{s};
+        KDS.broadcastStationsRelations();
 
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                String strData =(String) params[0];
-                KDSGlobalVariables.getKDS().getBroadcaster().broadcastRelations(strData);
-                return null;
-            }
-
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ar);
+//        String s = KDSSettings.loadStationsRelationString(this.getActivity().getApplicationContext(), true);
+//        Object[] ar = new Object[]{s};
+//
+//        AsyncTask task = new AsyncTask() {
+//            @Override
+//            protected Object doInBackground(Object[] params) {
+//                String strData =(String) params[0];
+//                KDSGlobalVariables.getKDS().getBroadcaster().broadcastRelations(strData);
+//                return null;
+//            }
+//
+//        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ar);
     }
 
     public void broadcastUpdateAfterPause()

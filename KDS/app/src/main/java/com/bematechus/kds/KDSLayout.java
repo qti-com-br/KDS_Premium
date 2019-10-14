@@ -2503,4 +2503,16 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         return true;
     }
     */
+
+    /**
+     * Line items display events
+     * @param orderGuid
+     * @param itemGuid
+     */
+    public void onLineItemViewerDoubleClicked(String orderGuid, String itemGuid)
+    {
+        if (m_eventsReceiver != null)
+            m_eventsReceiver.onViewPanelDoubleClicked(this);
+
+    }
 }

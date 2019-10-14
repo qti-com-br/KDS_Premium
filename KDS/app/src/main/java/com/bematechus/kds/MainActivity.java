@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
+import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
@@ -66,6 +67,7 @@ import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationActived;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
@@ -628,13 +630,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    KDSUIDialogInputID m_inputStationIDDlg = null;
 
     private void inputStationID() {
         if (!isKDSValid()) return;
-        KDSUIDialogInputID d = new KDSUIDialogInputID(this, getString(R.string.input_id_title), getString(R.string.input_station_id), "", this);
-        getKDS().setStationAnnounceEventsReceiver(d);
+        if (m_inputStationIDDlg != null) return;
+        m_inputStationIDDlg = new KDSUIDialogInputID(this, getString(R.string.input_id_title), getString(R.string.input_station_id), "", this);
+        getKDS().setStationAnnounceEventsReceiver(m_inputStationIDDlg);
 
-        d.show();
+        m_inputStationIDDlg.show();
     }
 
     private void afterInputStationID(String strStationID) {
@@ -1184,7 +1188,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             else if (id == R.id.action_logout)
             {
                 Activation.resetUserNamePwd();
+                resetStationID();
                 onDoActivationExplicit();
+                //m_activation.cancelActivation();
 
             }
         }
@@ -2770,6 +2776,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     doClearDB();
 
                 }
+                if (getKDS().getStationID().isEmpty())
+                    inputStationID();
             }
             default:
                 break;
@@ -2918,6 +2926,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
         } else if (dlg instanceof KDSUIDialogInputID) {//input the ID
+            m_inputStationIDDlg = null;
             getKDS().setStationAnnounceEventsReceiver(null);
             String s = (String) dlg.getResult();
             afterInputStationID(s);
@@ -3519,7 +3528,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         settingsBackup.loadSettings(this.getApplicationContext());
         settingsBackup.exportToFolder(this.getApplicationContext(), KDSDBBase.getSDDBFolderWithLastDividChar());
 
-
+        String presentStationID = getKDS().getStationID();
 
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
 
@@ -3533,6 +3542,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 onTabClicked(btnData);
             }
         }
+
+
 
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -3644,6 +3655,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             m_activation.setStationID(getKDS().getStationID());
             m_activation.postNewStationInfo2Web(getKDS().getStationID(), getKDS().getStationFunction().toString());
+
+            //station id changed. Change the relation table at here.
+            changeRelationTableWithNewStationID(presentStationID, getKDS().getStationID());
+
+
         }
 
     }
@@ -6157,6 +6173,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         updateTitle();
+
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
@@ -6188,6 +6205,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
+        if (ActivityLogin.isShowing()) return;
         int nTimeout = Activation.HOUR_MS;
         if (!m_activation.isActivationPassed())
             nTimeout = Activation.INACTIVE_TIMEOUT; //5 minutes
@@ -6218,6 +6236,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (ar.size()<=0) return;
         m_activation.setMacAddress(ar.get(0));
       //  m_activation.setMacAddress("BEMA0000011");//test
+        //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
 
@@ -6503,5 +6522,48 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
+    private void resetStationID()
+    {
+        KDSSettings.resetStationID();
+        this.getSettings().set(KDSSettings.ID.KDS_ID, "");
+    }
+
+    /**
+     * KPP1-219
+     * Description
+     *
+     * 1. Setup Station 1 as Prep and Station 2 as Expo
+     * 2. Set Station 2 as the Expo for Station 1 in Settings>Station Relationship
+     * 3. On Station 2 (Expo), go to General Settings
+     * 4. Change 'Station number' to 3
+     *
+     * AR: Prep station detects expo as offline
+     * ER: Update the prep station with new expo ID
+     * @param oldStationID
+     * @param newStationID
+     */
+    private void changeRelationTableWithNewStationID(String oldStationID, String newStationID)
+    {
+        if (oldStationID.equals(newStationID)) return;
+
+        ArrayList<KDSStationsRelation> ar = getKDS().getStationsConnections().getRelations().getRelationsSettings();
+        boolean bChanged = false;
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (ar.get(i).getID().equals(oldStationID)) {
+                ar.get(i).setID(newStationID);
+                bChanged = true;
+            }
+        }
+        if (bChanged)
+        {
+            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), newStationID);
+
+            KDS.broadcastStationsRelations();
+
+
+        }
+    }
 }
 

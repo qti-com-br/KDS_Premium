@@ -563,6 +563,7 @@ public class KDSXMLParserOrder {
             case  DBXML_ELEMENT_QTY:
             {
                 float n = KDSUtil.convertStringToFloat(strVal, 0);
+                if (n <0) n=0; //kpp1-194
                 item.setQty(n);
                 item.setXmlFieldValid(KDSDataItem.VALID_ITEM_XML_FIELD.Qty);
             }

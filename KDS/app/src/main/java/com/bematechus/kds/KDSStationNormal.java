@@ -88,7 +88,7 @@ public class KDSStationNormal extends KDSStationFunc {
 
     /**
      * In normal station, get information that given order was bumped by others station.
-     * we should set expeditor satation.
+     * we should set expeditor station.
      * Mark all items to "bumped" in exp
      * @param db
      *  Save to which db, this is for support and current

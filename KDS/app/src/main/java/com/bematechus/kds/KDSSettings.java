@@ -2786,4 +2786,12 @@ public class KDSSettings extends SettingsBase {
 
 
    }
+   static public void resetStationID()
+   {
+     SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+     SharedPreferences.Editor editor = pre.edit();
+     editor.putString("kds_general_id", "");
+     editor.apply();
+     editor.commit();
+   }
 }

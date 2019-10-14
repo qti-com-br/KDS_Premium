@@ -42,6 +42,7 @@ public class LineItemViewer {
     {
         public void onLineItemViewerPrevPageClicked();
         public void onLineItemViewerNextPageClicked();
+        public void onLineItemViewerDoubleClicked(String orderGuid, String itemGuid);
     }
     LineItemViewerEvents m_eventsReveiver = null;
 
@@ -2181,4 +2182,47 @@ public class LineItemViewer {
         }
 
     }
+
+    /**
+     * KPP1-196
+     * Add double-tap bumping for Line item display
+     * @param x
+     * @param y
+     */
+    public void onDoubleClickXY(int x, int y)
+    {
+        if (m_bShowBottomGrid)
+        {
+
+        }
+        else
+        {
+            if (!m_gridTop.getRect().contains(x, y))
+                return;
+
+            int nRow = m_gridTop.getTouchedRow(x, y);
+            if (nRow <0) {
+                if (nRow == -1) //caption
+                    onTouchTitle(x, y);
+                return;
+            }
+            if (m_gridTop.isTitleRow(nRow)) {
+
+                return;
+            }
+
+            if (!m_gridTop.isEmptyRow(nRow)) {
+
+
+                setFocusToRow(m_gridTop, nRow);
+                LineItemGridRow r = m_gridTop.getRow(nRow);
+                if (m_eventsReveiver != null)
+                    m_eventsReveiver.onLineItemViewerDoubleClicked(r.getOrderGuid(), r.getItemGuid());
+                //m_gridTop.setFocusedRowIndex(nRow);
+            }
+
+            this.refresh();
+        }
+    }
+
 }
