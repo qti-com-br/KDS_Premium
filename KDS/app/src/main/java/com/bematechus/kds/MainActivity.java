@@ -660,6 +660,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!getKDS().getSettings().getString(KDSSettings.ID.KDS_ID).isEmpty())
             return;
+
+        if (!m_activation.isActivationPassed())
+            return;
+
         if (!getKDS().isDbEmpty())
         {
             KDSUIDialogBase d = new KDSUIDialogBase();

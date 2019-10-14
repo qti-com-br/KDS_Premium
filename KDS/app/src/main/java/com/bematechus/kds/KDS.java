@@ -3600,7 +3600,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         this.getStationsConnections().clear();//clear buffered data
         m_xmlDataBuffer.clear(); //For speed.
         m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.Order.ordinal());
-        //this.getStatisticDB().clear();
+        this.getStatisticDB().clear(); //clear this data too, as we don't need it any more.
         this.refreshView();
     }
 
