@@ -975,8 +975,8 @@ public class KDSStationFunc {
 //        if (!station.getSock().isConnected())
 //            return TransferingStatus.Connecting;
 
-        if (!station.getSock().writeXmlTextCommand(strXml))
-            return TransferingStatus.Failed;
+//        if (!station.getSock().writeXmlTextCommand(strXml))
+//            return TransferingStatus.Failed;
 
 
 
