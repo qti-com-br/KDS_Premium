@@ -286,7 +286,7 @@ public class KDSStationsRelation extends KDSStationIP {
      *      1,2,3,4
      * @return
      */
-    static ArrayList<KDSStationIP> parseStationsString(String strStations)
+    public static ArrayList<KDSStationIP> parseStationsString(String strStations)
     {
         ArrayList<String> ar = KDSUtil.spliteString(strStations, ",");
         int ncount = ar.size();
@@ -796,6 +796,39 @@ public class KDSStationsRelation extends KDSStationIP {
         }
         //get station ip and port settings.
         return setIpFromSettenRelations(arRelations, ar);
+
+    }
+
+    /**
+     *
+     * @param strStations
+     *  stations:
+     *         format: 1, 3, 5,12
+     * @param oldStationID
+     * @param newStationID
+     * @return
+     */
+    public static String replaceStation(String strStations, String oldStationID, String newStationID)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(strStations, ",");
+        boolean bchanged = false;
+        for (int i=0; i< ar.size(); i++)
+        {
+            String s = ar.get(i);
+            s = s.trim();
+            if (s.equals(oldStationID))
+            {
+                bchanged = true;
+                ar.set(i, newStationID);
+            }
+
+        }
+        if (bchanged)
+        {
+            return makeStationsString(ar);
+        }
+        else
+            return strStations;
 
     }
 }

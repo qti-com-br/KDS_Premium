@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:textColor="@android:color/black"
+
     android:layout_height="match_parent"
 
     android:weightSum="13">
+    <!--android:textColor="@android:color/black"-->
     <!--android:descendantFocusability="blocksDescendants"-->
     <ImageView
         android:layout_width="32dp"
@@ -38,7 +39,7 @@
         android:id="@+id/txtStationID"
         android:editable="true"
         android:enabled="true"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/primary_text_light"
         android:textCursorDrawable="@null"
         android:paddingLeft="2dp"
         android:textAlignment="center"
@@ -103,7 +104,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3.1"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/primary_text_light"
         android:entries="@array/station_function"
         style="@android:style/TextAppearance"
         android:paddingLeft="1dp"
@@ -121,7 +122,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="2,6,5"
         android:layout_weight="1"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/primary_text_light"
         android:id="@+id/txtExpStations"
         android:editable="true"
         android:textCursorDrawable="@null"
@@ -143,7 +144,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4.2"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/primary_text_light"
         android:entries="@array/slave_function"
         style="@android:style/TextAppearance"
         android:paddingLeft="1dp"
@@ -191,7 +192,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="4,5"
         android:layout_weight="1.7"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/primary_text_light"
         android:id="@+id/txtSlaveStations"
         android:editable="false"
         android:paddingLeft="1dp"
@@ -211,7 +212,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/primary_text_light"
         android:entries="@array/station_status"
         style="@android:style/TextAppearance"
         android:paddingLeft="1dp"

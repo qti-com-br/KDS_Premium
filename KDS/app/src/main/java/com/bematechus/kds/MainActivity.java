@@ -6554,18 +6554,38 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         boolean bChanged = false;
         for (int i=0; i< ar.size(); i++)
         {
-            if (ar.get(i).getID().equals(oldStationID)) {
-                ar.get(i).setID(newStationID);
+            KDSStationsRelation r = ar.get(i);
+            if (r.getID().equals(oldStationID)) {
+                r.setID(newStationID);
                 bChanged = true;
+            }
+
+            String expo = KDSStationsRelation.replaceStation(r.getExpStations(), oldStationID, newStationID);
+            if (!r.getExpStations().equals(expo)) {
+                bChanged = true;
+                r.setExpStations(expo);
+            }
+            String slaves = KDSStationsRelation.replaceStation(r.getSlaveStations(), oldStationID, newStationID);
+            if (!r.getSlaveStations().equals(slaves)) {
+                r.setSlaveStations(slaves);
+                bChanged = true;
+
             }
         }
         if (bChanged)
         {
             KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
             getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), newStationID);
-
             KDS.broadcastStationsRelations();
+            try {
+                Thread.sleep(200);
+            }
+            catch (Exception e)
+            {
 
+            }
+            //try again, make sure new settings were send to everyone.
+            KDS.broadcastStationsRelations();
 
         }
     }
