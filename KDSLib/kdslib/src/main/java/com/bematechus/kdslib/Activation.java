@@ -481,6 +481,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         device.setUpdateTime(getUpdateTime(json));
         device.setStationFunc(getStationFunc(json));
         device.setDeleted(isDeletedDevice(json));
+        device.setStationName(getStationName(json));
 
         return device;
 
@@ -1526,6 +1527,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         long m_updateTime = 0;//UTC seconds, 2.1.4, for update sql.
         String m_stationFunc = "";
         boolean m_bDeleted = false;
+        String m_stationName = "";
+
 
         public void setDeleted(boolean bDeleted)
         {
@@ -1606,6 +1609,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public String getStationFunc()
         {
             return m_stationFunc;
+        }
+
+        public void setStationName(String name)
+        {
+            m_stationName = name;
+        }
+        public String getStationName()
+        {
+            return m_stationName;
         }
     }
 
@@ -2027,4 +2039,28 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         m_bStoreChanged = false;
     }
 
+    private String getStationName(JSONObject json)
+    {
+        try {
+            String s = json.getString("name");
+            return s;
+        }
+        catch ( Exception e)
+        {
+
+        }
+        return "";
+    }
+
+    public boolean postNewStationName2Web(String stationID, String stationName)
+    {
+        StoreDevice dev = findMyLicense();
+        if (dev == null)
+            return false;
+        dev.setStationName(stationName);
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, dev.getStationFunc(),dev);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
+    }
 }

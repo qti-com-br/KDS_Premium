@@ -3662,8 +3662,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             //station id changed. Change the relation table at here.
             changeRelationTableWithNewStationID(presentStationID, getKDS().getStationID());
-
-
+        }
+        if (key.equals("kds_general_title"))
+        { //kpp1-233
+            String name = prefs.getString(key, "");
+            m_activation.postNewStationName2Web(getKDS().getStationID(), name);
         }
 
     }

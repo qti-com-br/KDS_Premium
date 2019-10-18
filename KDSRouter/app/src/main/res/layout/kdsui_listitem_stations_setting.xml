@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:theme="@style/AppTheme"
 
     android:weightSum="13">
     <!--android:textColor="@android:color/black"-->
     <!--android:descendantFocusability="blocksDescendants"-->
     <ImageView
+        android:id="@+id/imgEdit"
         android:layout_width="32dp"
         android:layout_height="match_parent"
-        android:id="@+id/imgEdit"
-        android:scaleType="center"
         android:layout_gravity="center"
         android:clickable="true"
-        android:focusable="true" />
+        android:focusable="true"
+        android:scaleType="center" />
 
     <ImageView
         android:id="@+id/imgNetwork"
@@ -25,114 +26,75 @@
         android:clickable="true"
         android:focusable="true"
         android:scaleType="centerInside" />
+
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="fill_parent"
         android:background="#B8B8B8"
         android:visibility="visible" />
+
     <EditText
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="1"
-        android:layout_weight="1"
         android:id="@+id/txtStationID"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
         android:editable="true"
         android:enabled="true"
-        android:textColor="@android:color/primary_text_light"
-        android:textCursorDrawable="@null"
-        android:paddingLeft="2dp"
-        android:textAlignment="center"
         android:gravity="center"
-        android:singleLine="true" />
+        android:paddingLeft="2dp"
+        android:singleLine="true"
+        android:text="1"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/primary_text_light"
+        android:textCursorDrawable="@null" />
 
-    <!--<View-->
-    <!--android:layout_width="0.5px"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:background="#B8B8B8"-->
-    <!--android:visibility="visible" />-->
-    <!--<EditText-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-    <!--android:text="IP"-->
-    <!--android:id="@+id/txtIP"-->
-    <!--android:layout_weight="4"-->
-    <!--android:textColor="#000000"-->
-    <!--android:paddingLeft="0.7dp"-->
-    <!--android:editable="false"-->
-    <!--android:enabled="true"-->
-    <!--android:focusable="true" />-->
-    <!--<View-->
-    <!--android:layout_width="0.5px"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:background="#B8B8B8"-->
-    <!--android:visibility="visible" />-->
-    <!--<EditText-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-    <!--android:text="Port"-->
-    <!--android:id="@+id/txtPort"-->
-    <!--android:layout_weight="1"-->
-    <!--android:textColor="#000000"-->
-    <!--android:paddingLeft="1dp"-->
-    <!--android:editable="false"-->
-    <!--android:enabled="true"-->
-    <!--android:focusable="true" />-->
+
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="fill_parent"
         android:background="#B8B8B8"
         android:visibility="visible" />
-    <!--<TextView-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-    <!--android:text="Norm"-->
-    <!--android:layout_weight="1"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:id="@+id/txtStationFunc"-->
-    <!--android:paddingLeft="1dp" />-->
-    <!--<View-->
-    <!--android:layout_width="0.5px"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:background="#B8B8B8"-->
-    <!--android:visibility="visible" />-->
+
     <Spinner
         android:id="@+id/spinnerFunc"
+        style="@style/settings_style"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3.1"
-        android:textColor="@android:color/primary_text_light"
         android:entries="@array/station_function"
-        style="@android:style/TextAppearance"
-        android:paddingLeft="1dp"
         android:focusable="false"
+        android:gravity="center"
+        android:paddingLeft="1dp"
         android:textAlignment="center"
-        android:gravity="center" />
+        android:textColor="@android:color/primary_text_light" />
+
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="fill_parent"
         android:background="#B8B8B8"
         android:visibility="visible" />
+
     <EditText
+        android:id="@+id/txtExpStations"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="2,6,5"
         android:layout_weight="1"
-        android:textColor="@android:color/primary_text_light"
-        android:id="@+id/txtExpStations"
-        android:editable="true"
-        android:textCursorDrawable="@null"
-        android:enabled="true"
-        android:paddingLeft="1dp"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:inputType="text"
+        android:background="@android:color/transparent"
         android:digits="1234567890,"
-        android:singleLine="true" />
+        android:editable="true"
+        android:enabled="true"
+        android:gravity="center"
+        android:inputType="text"
+        android:paddingLeft="1dp"
+        android:singleLine="true"
+        android:text="2,6,5"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/primary_text_light"
+        android:textCursorDrawable="@null" />
+
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="fill_parent"
@@ -141,112 +103,57 @@
 
     <Spinner
         android:id="@+id/spinnerSlaveFunc"
+        style="@style/settings_style"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4.2"
-        android:textColor="@android:color/primary_text_light"
         android:entries="@array/slave_function"
-        style="@android:style/TextAppearance"
-        android:paddingLeft="1dp"
         android:focusable="false"
         android:gravity="center"
-        android:textAlignment="center" />
+        android:paddingLeft="1dp"
+        android:textAlignment="center"
+        android:textColor="@android:color/primary_text_light" />
+
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="fill_parent"
         android:background="#B8B8B8"
         android:visibility="visible" />
-    <!--<EditText-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-    <!--android:text="6"-->
-    <!--android:layout_weight="2"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:id="@+id/txtBackupStations"-->
-    <!--android:editable="true"-->
-    <!--android:paddingLeft="1dp"-->
-    <!--android:textCursorDrawable="@null"-->
-    <!--android:enabled="true"-->
-    <!--android:gravity="center" />-->
-    <!--<EditText-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-    <!--android:text="4,5"-->
-    <!--android:layout_weight="2"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:id="@+id/txtSlaveStations"-->
-    <!--android:editable="true"-->
-    <!--android:paddingLeft="1dp"-->
-    <!--android:textCursorDrawable="@null"-->
-    <!--android:enabled="true"-->
-    <!--android:gravity="center"-->
-    <!--android:focusable="true"-->
-    <!--android:focusableInTouchMode="true"-->
-    <!--android:clickable="true" />-->
+
 
     <TextView
+        android:id="@+id/txtSlaveStations"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="4,5"
         android:layout_weight="1.7"
-        android:textColor="@android:color/primary_text_light"
-        android:id="@+id/txtSlaveStations"
+        android:clickable="true"
         android:editable="false"
-        android:paddingLeft="1dp"
-        android:textCursorDrawable="@null"
         android:enabled="true"
-        android:gravity="center"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:clickable="true" />
+        android:gravity="center"
+        android:paddingLeft="1dp"
+        android:text="4,5"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/primary_text_light"
+        android:textCursorDrawable="@null" />
+
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="fill_parent"
         android:background="#B8B8B8"
         android:visibility="visible" />
+
     <Spinner
         android:id="@+id/spinnerStatus"
+        style="@style/settings_style"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:textColor="@android:color/primary_text_light"
         android:entries="@array/station_status"
-        style="@android:style/TextAppearance"
-        android:paddingLeft="1dp"
         android:gravity="center"
-        android:textAlignment="center" />
-    <!--<View-->
-    <!--android:layout_width="0.5px"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:background="#B8B8B8"-->
-    <!--android:visibility="visible" />-->
-    <!--<LinearLayout-->
-    <!--android:orientation="horizontal"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_weight="1"-->
-    <!--android:weightSum="2"-->
-    <!--android:layout_height="wrap_content">-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:id="@+id/txtDel"-->
-    <!--android:layout_weight="1"-->
-    <!--android:src="@drawable/delete_24px_32"-->
-    <!--android:scaleType="center"-->
-    <!--android:layout_gravity="center" />-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:id="@+id/txtEdit"-->
-    <!--android:layout_weight="1"-->
-    <!--android:src="@drawable/edit_24px_16"-->
-    <!--android:scaleType="center"-->
-    <!--android:layout_gravity="center" />-->
-    <!--</LinearLayout>-->
+        android:paddingLeft="1dp"
+        android:textAlignment="center"
+        android:textColor="@android:color/primary_text_light" />
 
 </LinearLayout>

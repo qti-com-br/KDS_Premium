@@ -35,9 +35,9 @@
     <string name="update_error_download_apk_error">Can not download apk file</string>
     <string name="update_error_apk_error">The apk file is wrong</string>
     <string name="update_error_xml_error">Can not download updating file</string>
-    <string name="do_you_update">There is new version. Do you want to upgrade it now?</string>
+    <string name="do_you_update">There is a new version. Would you like to update?</string>
     <string name="invalid_update_file">Invalid update file</string>
-    <string name="update_new_version">New version: #, recommended rate: $</string>
+    <string name="update_new_version">New version: #</string>
 
     <string name="mins">mins</string>
     <string name="hour_1">1 hr</string>
