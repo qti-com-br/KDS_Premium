@@ -189,7 +189,7 @@
     <string name="update_error_xml_error">Can not download updating file</string>
     <string name="do_you_update">There is new version. Do you want to upgrade it now?</string>
     <string name="invalid_update_file">Invalid update file</string>
-    <string name="update_new_version">New version: #, recommended rate: $</string>
+    <!--<string name="update_new_version">New version: #, recommended rate: $</string>-->
     <string name="input_ready_qty">Input ready qty</string>
 
     <string name="queue_status_received">Order Received</string>

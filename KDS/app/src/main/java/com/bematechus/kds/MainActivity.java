@@ -1965,21 +1965,24 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //if (!getKDS().isQueueStation() &&
         //        !getKDS().isTrackerStation() && !getKDS().isQueueExpo()) {
+
         if (!isFixedSingleScreenView()){
             String firstOrderGuid = getUserUI(userID).getLayout().getEnv().getStateValues().getFirstShowingOrderGUID();
             if (orderGuid.equals( firstOrderGuid) ) {
-                String nextFirstOrder = getNextOrderGuidToFocus(userID, firstOrderGuid);//  getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(firstOrderGuid);
-                if (nextFirstOrder.isEmpty())
-                    nextFirstOrder = getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
-                getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(nextFirstOrder);
+                    String nextFirstOrder = getNextOrderGuidToFocus(userID, firstOrderGuid);//  getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(firstOrderGuid);
+                    if (nextFirstOrder.isEmpty())
+                        nextFirstOrder = getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
+                    getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(nextFirstOrder);
+
             }
         }
         //TimeDog td = new TimeDog();
         KDSStationFunc.orderBump(getKDS().getUsers().getUser(userID), orderGuid,bRefreshView );
+        //if (bPageUpOperation)
+            //getUserUI(userID).getLayout().focusOrder(KDSConst.RESET_ORDERS_LAYOUT);
         //td.debug_print_Duration("Func-orderBump");
         //notification
-        //if (!getKDS().isQueueStation() &&
-        //        !getKDS().isTrackerStation() && !getKDS().isQueueExpo()) {
+
         if (!isFixedSingleScreenView()){
             //
             if (!isDoubleBumpForQueue()) //2.0.21,double bump has been done above., please make sure when double bump is enable for queue display,  the expo first bump sends out notification instead of the 2nd one.
@@ -2177,6 +2180,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         boolean bIsFocusedOrder = orderGuid.equals(guid);
         //get next for focus
         String nextGuid = "";
+        String firstOrderGuid = getUserUI(userID).getLayout().getEnv().getStateValues().getFirstShowingOrderGUID();
         KDSDataOrder order = null;
         //synchronized (getKDS().getUsers().getUser(userID).getOrders().m_locker)
         //{
@@ -2210,6 +2214,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (bIsFocusedOrder) {
                 setSelectedOrderGuid(userID, nextGuid);
                 setSelectedItemGuid(userID, "");
+
+                if (!getUserUI(userID).getPrevCountString().isEmpty() &&
+                        getUserUI(userID).getLayout().getLastShowingOrderGuid().equals(firstOrderGuid) &&
+                        getUserUI(userID).getNextCountString().isEmpty()) {//kpp1-237
+                    String estimateFirstOrderGuid = getUserUI(userID).getLayout().getPrevPageOrderGuid(nextGuid);
+                    getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(estimateFirstOrderGuid);
+                    getUserUI(userID).getLayout().focusOrder(KDSConst.RESET_ORDERS_LAYOUT);
+
+                }
+
             }
             if (bRefresView)
                 getKDS().refreshView();
@@ -3658,10 +3672,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (key.equals("kds_general_id") )
         {
             m_activation.setStationID(getKDS().getStationID());
-            m_activation.postNewStationInfo2Web(getKDS().getStationID(), getKDS().getStationFunction().toString());
+            if (!getKDS().getStationID().isEmpty()) { //kpp1-236. If station id is empty, backoffice will remove station.
 
-            //station id changed. Change the relation table at here.
-            changeRelationTableWithNewStationID(presentStationID, getKDS().getStationID());
+                String name = getKDS().getSettings().getString(KDSSettings.ID.General_customized_title);
+                m_activation.postNewStationInfoToWeb(getKDS().getStationID(), getKDS().getStationFunction().toString(), name);
+
+                //station id changed. Change the relation table at here.
+                changeRelationTableWithNewStationID(presentStationID, getKDS().getStationID());
+            }
         }
         if (key.equals("kds_general_title"))
         { //kpp1-233

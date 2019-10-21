@@ -183,7 +183,7 @@
     <string name="update_error_xml_error">不能下载更新文件</string>
     <string name="do_you_update">发现新版本， 现在要更新吗？</string>
     <string name="invalid_update_file">无效的更新文件</string>
-    <string name="update_new_version">新版本: #, 推荐指数: $</string>
+    <!--<string name="update_new_version">新版本: #, 推荐指数: $</string>-->
     <string name="input_ready_qty">输入准备好的数量</string>
 
     <string name="queue_status_received">收到</string>

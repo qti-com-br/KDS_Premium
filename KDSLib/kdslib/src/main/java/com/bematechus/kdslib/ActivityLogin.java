@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -73,6 +75,16 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mUserNameView = (AutoCompleteTextView) findViewById(R.id.email);
+        mUserNameView.setFilters(new InputFilter[]{
+                new InputFilter() {
+                    @Override
+                    public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                        if (source.equals("'"))
+                            return "";
+                        else return null;
+                    }
+                }
+        });
        // populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);

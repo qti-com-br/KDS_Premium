@@ -2209,35 +2209,37 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     public String focusPrevPageOrder()
     {
         String guid =  this.getEnv().getStateValues().getFirstShowingOrderGUID();
+        guid = getPrevPageOrderGuid(guid);
+
         if (m_orders == null)
             return "";
-        int nindex = m_orders.getIndex(guid);
-        int nPanelsCount = m_view.getMaxPanelsCount();
-        nindex-=nPanelsCount;
-
-        KDSDataOrder order = null;
-        int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
-        KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
-        if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
-            order = m_orders.getPrevPaidOrderFrom(nindex);
-        else
-            order = m_orders.get(nindex);
-        guid = "";
-        if (order != null)
-        {//return to first
-            guid = order.getGUID();
-        }
-        else
-        {
-
-            if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
-                guid  = m_orders.getFirstPaidOrderGuid();//.getPrevPaidOrderFrom(m_orders.getCount() -1);
-            else
-                guid = m_orders.getFirstOrderGuid();//.get(m_orders.getCount() -1);
-//            //order = m_orders.get(m_orders.getCount() -1 );
-//            if (order != null)
-//                guid = order.getGUID();
-        }
+//        int nindex = m_orders.getIndex(guid);
+//        int nPanelsCount = m_view.getMaxPanelsCount();
+//        nindex-=nPanelsCount;
+//
+//        KDSDataOrder order = null;
+//        int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
+//        KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
+//        if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+//            order = m_orders.getPrevPaidOrderFrom(nindex);
+//        else
+//            order = m_orders.get(nindex);
+//        guid = "";
+//        if (order != null)
+//        {//return to first
+//            guid = order.getGUID();
+//        }
+//        else
+//        {
+//
+//            if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+//                guid  = m_orders.getFirstPaidOrderGuid();//.getPrevPaidOrderFrom(m_orders.getCount() -1);
+//            else
+//                guid = m_orders.getFirstOrderGuid();//.get(m_orders.getCount() -1);
+////            //order = m_orders.get(m_orders.getCount() -1 );
+////            if (order != null)
+////                guid = order.getGUID();
+//        }
         focusOrder(guid);
 
 
@@ -2515,4 +2517,43 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             m_eventsReceiver.onViewPanelDoubleClicked(this);
 
     }
+
+    public String getPrevPageOrderGuid(String orderGuid)
+    {
+        String guid =  orderGuid;
+        if (m_orders == null)
+            return "";
+        int nindex = m_orders.getIndex(guid);
+        int nPanelsCount = m_view.getMaxPanelsCount();
+        nindex-=nPanelsCount;
+
+        KDSDataOrder order = null;
+        int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
+        KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
+        if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+            order = m_orders.getPrevPaidOrderFrom(nindex);
+        else
+            order = m_orders.get(nindex);
+        guid = "";
+        if (order != null)
+        {//return to first
+            guid = order.getGUID();
+        }
+        else
+        {
+
+            if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+                guid  = m_orders.getFirstPaidOrderGuid();//.getPrevPaidOrderFrom(m_orders.getCount() -1);
+            else
+                guid = m_orders.getFirstOrderGuid();//.get(m_orders.getCount() -1);
+//            //order = m_orders.get(m_orders.getCount() -1 );
+//            if (order != null)
+//                guid = order.getGUID();
+        }
+
+
+
+        return guid;
+    }
+
 }

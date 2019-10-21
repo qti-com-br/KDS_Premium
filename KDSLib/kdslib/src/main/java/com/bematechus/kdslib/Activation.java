@@ -2063,4 +2063,16 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
         return true;
     }
+
+    public boolean postNewStationInfoToWeb(String stationID, String stationFunc, String stationName)
+    {
+        StoreDevice devLicense = findMyLicense();
+        if (devLicense == null)
+            return false;
+        devLicense.setStationName(stationName);
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,devLicense);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
+    }
 }
