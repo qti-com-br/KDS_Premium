@@ -1518,7 +1518,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         m_storeName = s;
         return s;
     }
-    class StoreDevice
+    static public class StoreDevice
     {
         String m_guid = "";
         String m_id = "";
@@ -2074,5 +2074,45 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
         return true;
+    }
+
+    static public ArrayList<StoreDevice> getDevices()
+    {
+        return m_devices;
+    }
+
+    /**
+     * check if this station id has been regiested in backoffice.
+     *
+     * @param stationNewID
+     * @return
+     *  true: It has been used.
+     *  false: new one.
+     *
+     */
+    static public boolean findDuplicatedDeviceIDAfterSetNewID(String stationNewID)
+    {
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+            StoreDevice dev =m_devices.get(i);
+            if (dev.getID().equals(stationNewID)) {
+                String serial = dev.getSerial();
+                serial = serial.toUpperCase();
+                if (!serial.equals(m_myMacAddress.toUpperCase())) {
+                    //the router and kds can run in same device, and they have to register individually.
+                    if (KDSApplication.isRouterApp()) {
+                        continue;
+                    } else {
+                       return true;
+                    }
+
+
+                }
+            }
+
+        }
+        return false;
+
     }
 }

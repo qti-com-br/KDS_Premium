@@ -171,7 +171,7 @@
     <string name="update_error_download_apk_error">不能下载apk文件</string>
     <string name="update_error_apk_error">Apk文件错误</string>
     <string name="update_error_xml_error">不能下载更新文件</string>
-    <string name="do_you_update">有新版本， 要现在更新吗?</string>
+    <!--<string name="do_you_update">有新版本， 要现在更新吗?</string>-->
     <string name="invalid_update_file">无效的更新文件</string>
     <string name="update_new_version">新版本: #, 推荐指数: $</string>
 

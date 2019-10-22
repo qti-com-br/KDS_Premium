@@ -181,7 +181,7 @@
     <string name="update_error_download_apk_error">不能下载apk文件</string>
     <string name="update_error_apk_error">apk文件格式错误</string>
     <string name="update_error_xml_error">不能下载更新文件</string>
-    <string name="do_you_update">发现新版本， 现在要更新吗？</string>
+    <!--<string name="do_you_update">发现新版本， 现在要更新吗？</string>-->
     <string name="invalid_update_file">无效的更新文件</string>
     <!--<string name="update_new_version">新版本: #, 推荐指数: $</string>-->
     <string name="input_ready_qty">输入准备好的数量</string>
@@ -519,8 +519,8 @@
     <string name="pref_kds_touch_training_enabled">启用【培训】触控按钮</string>
     <string name="pref_kds_touch_page_enabled">启用【呼叫】触控按钮</string>
 
-    <string name="pref_kds_screen_title_font">屏幕标头字体</string>
-    <string name="pref_kds_screen_show_time">在屏幕头显示时间日期</string>
+    <string name="pref_kds_screen_title_font">KDS Station name font</string>
+    <string name="pref_kds_screen_show_time">Show date &amp; time in title in KDS Station</string>
 
     <string name="pref_kds_bump_confirm_enabled">删除时显示确认对话框</string>
 
@@ -843,7 +843,7 @@
         <item>Up and down</item>
     </string-array>
 
-    <string name="pref_kds_general_title">Customized title</string>
+    <string name="pref_kds_general_title">Customize KDS Station name</string>
     <string name="pref_kds_general_users_ratio">Screen ratio</string>
     <string name="pref_kds_general_subtitle_font">Screen subtitle font</string>
     <string name="pref_kds_general_subtitle_b_text">Screen 0 title</string>
@@ -1041,7 +1041,7 @@
     <string name="avg_prep_time">AVG:</string>
     <string name="real_time_period">Real time report period (mins)</string>
     <string name="title">Title</string>
-    <string name="screen_title">Screen title</string>
+    <string name="screen_title">KDS Station</string>
     <string name="show_avg_prep_time">Show average bump off time</string>
     <string-array name="pref_real_period_titles" >
         <item>1</item>

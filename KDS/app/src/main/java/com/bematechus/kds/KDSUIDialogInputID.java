@@ -10,12 +10,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.KDSStationIP;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+
+import static com.bematechus.kdslib.Activation.getDevices;
 
 /**
  * Created by Administrator on 2016/2/1 0001.
@@ -58,7 +62,9 @@ public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationA
                     public void onClick(DialogInterface dialog, int which) {
                         if ( ((String)getResult()).isEmpty())
                             return;
-                        onOkClicked();
+
+                        onOkButtonClicked();
+
                         //saveToSmb();
                         if (KDSUIDialogInputID.this.listener != null) {
                             KDSUIDialogInputID.this.listener.onKDSDialogOK(KDSUIDialogInputID.this, getResult());
@@ -202,6 +208,8 @@ public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationA
             if (strID.equals(id))
                 return true;
         }
+        if (Activation.findDuplicatedDeviceIDAfterSetNewID(id))
+            return true;
         return false;
     }
     public void onReceivedStationAnnounce(KDSStationIP stationReceived)//String stationID, String ip, String port, String mac)

@@ -1546,7 +1546,16 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
 
         long utc = getUTCTimeSeconds(dt);
-        TimeZone tz = TimeZone.getTimeZone(Activation.getTimeZone());
+        //TimeZone tz = TimeZone.getTimeZone(Activation.getTimeZone());
+        //Here, Rob ask me to use Allee code,
+        //func toLocalTime() -> Date {
+        //let timezone = TimeZone.current
+        //let seconds = TimeInterval(timezone.secondsFromGMT(for: self))
+        //return Date(timeInterval: seconds, since: self)
+        //}
+        // *******
+        //But, I think he is wrong, we should use timezone from backoffice!!!!
+        TimeZone tz = TimeZone.getDefault();// getTimeZone(Activation.getTimeZone());
         Calendar cal = Calendar.getInstance(tz) ;
         int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
 
