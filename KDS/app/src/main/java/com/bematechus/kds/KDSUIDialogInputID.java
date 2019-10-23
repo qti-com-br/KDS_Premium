@@ -50,12 +50,13 @@ public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationA
     {
         //String strOK = makeButtonText(context, android.R.string.ok, KDSSettings.ID.Bumpbar_OK);
 
-        String strOK = context.getString( R.string.ok);
-
-        String strFunc = "[Enter]";
-
-        strOK = strOK  + strFunc ;
-
+//        String strOK = context.getString( R.string.ok);
+//
+//        String strFunc = "[Enter]";
+//
+//        strOK = strOK  + strFunc ;
+//
+        String strOK = makeCtrlEnterButtonText(context, context.getString( R.string.ok),KDSSettings.ID.Bumpbar_OK );
         AlertDialog d = new AlertDialog.Builder(context)
                 .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
                     @Override

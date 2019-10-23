@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by David.Wong on 2018/7/10.
@@ -1960,7 +1961,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     static public String getTimeZone()
     {
-        return m_timeZone;
+        return TimeZone.getDefault().getID();
+        //use device timezone, don't use backoffice store timezone
+        //return m_timeZone;
     }
 
     public void postCustomerRequest(String stationID, KDSDataOrder order)

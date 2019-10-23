@@ -1555,7 +1555,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         //}
         // *******
         //But, I think he is wrong, we should use timezone from backoffice!!!!
-        TimeZone tz = TimeZone.getDefault();// getTimeZone(Activation.getTimeZone());
+        TimeZone tz = TimeZone.getTimeZone(Activation.getTimeZone());
         Calendar cal = Calendar.getInstance(tz) ;
         int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
 
