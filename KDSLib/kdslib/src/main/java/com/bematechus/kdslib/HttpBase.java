@@ -145,7 +145,7 @@ public class HttpBase extends Handler implements Runnable {
             urlConn.setInstanceFollowRedirects( false );
             urlConn.setRequestMethod( "POST" );
             urlConn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            urlConn.setRequestProperty( "Content-Length", Integer.toString( request.m_params.length() ));
+            urlConn.setRequestProperty( "Content-Length", Integer.toString( request.m_params.getBytes("UTF-8").length ));
             urlConn.setConnectTimeout(50000);
             urlConn.setReadTimeout(50000);
             urlConn.setUseCaches( false );
@@ -161,7 +161,8 @@ public class HttpBase extends Handler implements Runnable {
 
             //String jsonString =toUtf8( request.m_params);// gson.toJson(dto);
             String jsonString =  request.m_params;// gson.toJson(dto);
-            wr.writeBytes(jsonString);
+            wr.write(jsonString.getBytes("UTF-8"));
+            //wr.writeChars(jsonString);
             wr.flush();
             wr.close();
             // try to get response
