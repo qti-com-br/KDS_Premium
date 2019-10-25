@@ -1935,6 +1935,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("lineitems_col5_text"));
             bindPreferenceSummaryToValue(findPreference("lineitems_col5_size"));
             bindPreferenceSummaryToValue(findPreference("lineitems_col5_content"));
+            bindPreferenceSummaryToValue(findPreference("lineitems_line_height"));
 
             enableColsSettings(getColsCount());
 

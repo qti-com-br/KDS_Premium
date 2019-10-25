@@ -1130,6 +1130,7 @@
     <string name="offline_warning">offline,please check!</string>
     <string name="for_lineitems_display">For line items display only.</string>
     <string name="log_orders">Log received orders xml</string>
+    <string name="lineitems_line_height">Line height</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

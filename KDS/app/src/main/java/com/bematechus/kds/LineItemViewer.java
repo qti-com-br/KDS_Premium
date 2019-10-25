@@ -1331,6 +1331,7 @@ public class LineItemViewer {
             m_Caption.getCells().get(2).setBorderSide(false, true, true, true);
 
         }
+        int TITLE_HEIGHT = 30;
 
         private void rebuildGrid()
         {
@@ -1342,8 +1343,11 @@ public class LineItemViewer {
                 rect.top += CAPTION_HEIGHT;
                 build_caption(rect);
             }
+            rect.top += TITLE_HEIGHT;
+
             int nWidth = rect.width()+1;
-            m_nRows = calculateRows(rect, ITEM_AVERAGE_HEIGHT);
+            m_nRows = calculateRows(rect, ITEM_AVERAGE_HEIGHT) + 1;
+            rect.top -= TITLE_HEIGHT;
             //get the real size
             ArrayList<Integer> arColsSize = new ArrayList<>();
             for (int i=0; i< m_arColSizePercent.size(); i++)
@@ -1515,7 +1519,35 @@ public class LineItemViewer {
         }
         public int getRowHeight(Rect rect, int nRows, int nRow)
         {
+            if (nRow ==0) return TITLE_HEIGHT;
+
+            Rect r = new Rect(rect);// this.getBounds();
+            //calculateRows();
+            //remove title row
+            r.top += TITLE_HEIGHT;
+            nRows --;
+            nRow --;
+            int n =( r.height() % nRows);// getRows());// ITEM_AVERAGE_HEIGHT);
+            if (nRows == 0) return 0;
+            int nAverageH = r.height()/nRows;
+
+            if (n >0)
+            {
+                if (nRow >= nRows - n )
+                    return nAverageH + 1;
+                else
+                    return nAverageH;
+            }
+            else
+                return nAverageH;
+
+        }
+        public int getRowHeight2(Rect rect, int nRows, int nRow)
+        {
+            if (nRow ==0) return TITLE_HEIGHT;
+
             Rect r = rect;// this.getBounds();
+
             //calculateRows();
             int n =( r.height() % nRows);// getRows());// ITEM_AVERAGE_HEIGHT);
             if (nRows == 0) return 0;
@@ -1532,7 +1564,6 @@ public class LineItemViewer {
                 return nAverageH;
 
         }
-
         /**
          * relative to the getBounds
          * @param nRow
@@ -1540,27 +1571,52 @@ public class LineItemViewer {
          */
         private int getRowRelativeY(Rect rect, int nRows, int nRow)
         {
-            Rect r =  rect;// this.getBounds();
+            if (nRow ==0) return 0;
+            Rect r =  new Rect(rect);// this.getBounds();
             //calculateRows();
-            int n = (r.height() % nRows);//getRows());//ITEM_AVERAGE_HEIGHT);
-            int nAverageH = r.height()/ nRows;//getRows();
+            //remove title row
+            r.top += TITLE_HEIGHT;
+            nRows --;
+            nRow --;
+            if (nRows ==0) return 0;
+            int n = ( (r.height()) % (nRows) );//getRows());//ITEM_AVERAGE_HEIGHT);
+            int nAverageH = (r.height())/ (nRows);//getRows();
+            int y = 0;
             if (n >0)
             {
                 if (nRow >= nRows - n )
-                    return nAverageH * (nRows - n) +(nAverageH + 1) *( nRow - (nRows - n));
+                    y = nAverageH * (nRows - n) +(nAverageH + 1) *( nRow - (nRows - n)) ;
                 else
-                    return nAverageH*nRow;
+                    y = nAverageH*nRow  ;
+            }
+            else
+                y = nAverageH * nRow;
+            return y + TITLE_HEIGHT;
+        }
+        private int getRowRelativeY2(Rect rect, int nRows, int nRow)
+        {
+            if (nRow ==0) return 0;
+            Rect r =  rect;// this.getBounds();
+            //calculateRows();
+            int n = ( (r.height()) % (nRows) );//getRows());//ITEM_AVERAGE_HEIGHT);
+            int nAverageH = r.height()/ (nRows);//getRows();
+
+            if (n >0)
+            {
+                if (nRow >= nRows - n )
+                    return nAverageH * (nRows - n) +(nAverageH + 1) *( nRow - (nRows - n)) ;
+                else
+                    return nAverageH*nRow  ;
             }
             else
                 return nAverageH * nRow;
         }
-
         final int MIN_ROW_HEIGHT = 30;
         public void updateSettings(KDSSettings settings)
         {
 
-            ITEM_AVERAGE_HEIGHT = settings.getInt(KDSSettings.ID.Panels_Row_Height);
-
+            //ITEM_AVERAGE_HEIGHT = settings.getInt(KDSSettings.ID.Panels_Row_Height);
+            ITEM_AVERAGE_HEIGHT = settings.getInt(KDSSettings.ID.LineItems_line_height);
             ITEM_AVERAGE_HEIGHT = getBestRowHeight();
             if (ITEM_AVERAGE_HEIGHT<MIN_ROW_HEIGHT)
                 ITEM_AVERAGE_HEIGHT = MIN_ROW_HEIGHT;

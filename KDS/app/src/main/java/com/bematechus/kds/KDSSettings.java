@@ -566,6 +566,7 @@ public class KDSSettings extends SettingsBase {
 
      LineItems_view_bg, //kpp1-183
      Log_orders,
+     LineItems_line_height, //kpp1-229
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1302,6 +1303,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Transfer_by_double_click,"bool_transfer_by_double_click",false);//
         init_option(ID.LineItems_view_bg,"int_lineitems_viewer_bg",getResColor( R.color.lineitems_viewer_bg));
        init_option(ID.Log_orders,"bool_log_orders",false);
+       init_option(ID.LineItems_line_height,"string_lineitems_line_height","30");
 
 
 

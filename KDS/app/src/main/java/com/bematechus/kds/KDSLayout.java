@@ -2262,8 +2262,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             return "";
         }
 
-        int nOrderIndex = m_orders.getIndex(orderGUID);
-        int nItemIndex = m_orders.getOrderByGUID(orderGUID).getItems().getItemIndexByGUID(itemGUID);
+        //int nOrderIndex = m_orders.getIndex(orderGUID);
+        //int nItemIndex = m_orders.getOrderByGUID(orderGUID).getItems().getItemIndexByGUID(itemGUID);
         int nDistance =  m_view.getLineItemsViewer().getMaxDataRows();
 
         KDSDataItem prevItem = getPrevActiveLineItem(orderGUID, itemGUID, nDistance);

@@ -573,4 +573,39 @@ Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\
     </string-array>
 
 
+    <string-array name="pref_kds_lineitems_line_height_titles" translatable="false">
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>45</item>
+        <item>50</item>
+        <item>55</item>
+        <item>60</item>
+        <item>65</item>
+        <item>70</item>
+        <item>75</item>
+        <item>80</item>
+        <item>85</item>
+        <item>90</item>
+        <item>95</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="pref_kds_lineitems_line_height_values" translatable="false">
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>45</item>
+        <item>50</item>
+        <item>55</item>
+        <item>60</item>
+        <item>65</item>
+        <item>70</item>
+        <item>75</item>
+        <item>80</item>
+        <item>85</item>
+        <item>90</item>
+        <item>95</item>
+        <item>100</item>
+    </string-array>
 </resources>
