@@ -558,6 +558,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         for (int i=0; i< m_devices.size(); i++)
         {
             if (m_devices.get(i).isDeleted()) continue;
+            if (!m_devices.get(i).getEnabled()) continue;
             StoreDevice dev =m_devices.get(i);
             String serial = dev.getSerial();
             serial = serial.toUpperCase();
@@ -2117,5 +2118,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         return false;
 
+    }
+
+    static public boolean findStation(String stationID)
+    {
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+            StoreDevice dev =m_devices.get(i);
+            if (dev.getID().equals(stationID)) {
+                return true;
+            }
+
+        }
+        return false;
     }
 }

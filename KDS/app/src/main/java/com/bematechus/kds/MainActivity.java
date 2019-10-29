@@ -6197,8 +6197,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onActivationSuccess()
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
-        updateTitle();
 
+        checkRemovedStationsFromBackofficeAfterRegister();
+        updateTitle();
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
@@ -6485,6 +6486,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             getTextView(R.id.txtTitle).setTextColor(fg);
             getTextView(R.id.txtTitle).setBackgroundColor(bg);
         }
+        else
+        {
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+            //updateTitle();
+        }
 
     }
     public void doDoublePressPanelNumberTransfer(KDSUser.USER user, KeyEvent ev) {
@@ -6597,6 +6607,68 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
             getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), newStationID);
+            KDS.broadcastStationsRelations();
+            try {
+                Thread.sleep(200);
+            }
+            catch (Exception e)
+            {
+
+            }
+            //try again, make sure new settings were send to everyone.
+            KDS.broadcastStationsRelations();
+
+        }
+    }
+
+    /**
+     * KPP1-200
+     * It will change local relationship table according registered stations in backoffice.
+     * If table changed, send it to all others.
+     */
+    private void checkRemovedStationsFromBackofficeAfterRegister()
+    {
+        ArrayList<KDSStationsRelation> ar = getKDS().getStationsConnections().getRelations().getRelationsSettings();
+        boolean bChanged = false;
+        ArrayList<KDSStationsRelation> arWillRemove = new ArrayList<>();
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            KDSStationsRelation r = ar.get(i);
+            if (Activation.findStation(r.getID()))
+                continue; //this station is existed
+            arWillRemove.add(r);
+        }
+        if (arWillRemove.size() > 0)
+        {
+            bChanged = true;
+            for (int i=0; i< arWillRemove.size(); i++) {
+                KDSStationsRelation r = arWillRemove.get(i);
+                ar.remove(r);
+
+                for (int j=0; j< ar.size(); j++)
+                {
+                    KDSStationsRelation q = ar.get(j);
+                    if (q.getID().equals(r.getID())) continue;
+                    String expo = KDSStationsRelation.removeStation(q.getExpStations(), r.getID());
+                    if (!q.getExpStations().equals(expo)) {
+                        bChanged = true;
+                        q.setExpStations(expo);
+                    }
+                    String slaves = KDSStationsRelation.removeStation(q.getSlaveStations(), r.getID());
+                    if (!q.getSlaveStations().equals(slaves)) {
+                        q.setSlaveStations(slaves);
+                        bChanged = true;
+
+                    }
+                }
+
+            }
+        }
+        if (bChanged)
+        {
+            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), getKDS().getStationID());
             KDS.broadcastStationsRelations();
             try {
                 Thread.sleep(200);
