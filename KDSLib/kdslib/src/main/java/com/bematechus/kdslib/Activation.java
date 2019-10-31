@@ -633,7 +633,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
         //no valid
         if (m_nMaxLicenseCount <=0 ||
-                (getEnabledDevicesCount() >= m_nMaxLicenseCount ))//2.1.2
+                (getRegisteredDevicesCount() >= m_nMaxLicenseCount ))//2.1.2
         {
             fireActivationFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.No_valid_license,  m_context.getString(R.string.no_license_available));
             return;
@@ -1042,7 +1042,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         m_dlgRegisterOptions.setCancelable(false);
         m_dlgRegisterOptions.setCanceledOnTouchOutside(false);
         //init gui
-        if (getEnabledDevicesCount() >= m_nMaxLicenseCount) {
+        if (getRegisteredDevicesCount() >= m_nMaxLicenseCount) {
             btnAddNew.setEnabled(false);
             btnAddNew.setChecked(false);
             btnReplace.setChecked(true);
@@ -2117,5 +2117,24 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         return false;
 
+    }
+
+    /**
+     * KPP1-248
+     * The router should not occupy licences
+     * @return
+     */
+    private int getRegisteredDevicesCount()
+    {
+        int ncount = 0;
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+            if (m_devices.get(i).getStationFunc().equals(Activation.KDSROUTER) ) continue;
+            if (m_devices.get(i).getEnabled())
+                ncount ++;
+
+        }
+        return ncount;
     }
 }
