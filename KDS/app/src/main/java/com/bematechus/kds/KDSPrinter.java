@@ -865,11 +865,7 @@ return whole line tags
             if (pModifier == null) return ("");
             return pModifier.getDescription();
         }
-        if (t.equals(TAG_MODIFIERS))
-        {
-            if (pModifier == null) return ("");
-            return pModifier.getDescription();
-        }
+
         return tag;
 
     }
