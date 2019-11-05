@@ -1035,6 +1035,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("is_hidden", "0");
             json.put("ready_since_local_time", "0");
             json.put("quantity",  KDSUtil.convertIntToString((int)item.getShowingQty()));//
+            //new field, 20191105
+            json.put("catagory", "'" + item.getCategory() +"'" );
 
 
 
