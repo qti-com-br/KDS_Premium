@@ -74,7 +74,7 @@
         <!--<item android:state_focused="true" android:color="#fff"/>-->
         <!--<item android:color="#000" />-->
     <!--</selector>-->
-    <style name="spinner_style">
-        <item name="android:background">@drawable/spinner_selector</item>
-    </style>
+    <!--<style name="spinner_style">-->
+        <!--<item name="android:background">@drawable/spinner_selector</item>-->
+    <!--</style>-->
 </resources>
