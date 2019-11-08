@@ -5,7 +5,7 @@
         android:key="item_consolidate"
         android:title="@string/pref_kds_item_enable_consolidate"
         android:defaultValue="true" />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="item_font"
         android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
         android:title="@string/item_font"
