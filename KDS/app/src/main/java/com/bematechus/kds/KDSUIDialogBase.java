@@ -166,7 +166,7 @@ public class KDSUIDialogBase {
         return null;
     }
 
-    public AlertDialog create1ButtonsDialog(Context context)
+    public AlertDialog createCancelButtonsDialog(Context context)
     {
 
         String strCancel = makeButtonText(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);

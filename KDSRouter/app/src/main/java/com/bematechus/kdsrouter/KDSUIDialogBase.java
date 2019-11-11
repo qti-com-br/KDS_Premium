@@ -52,6 +52,37 @@ public class KDSUIDialogBase {
         return m_tag;
     }
 
+    public View getView()
+    {
+        return m_view;
+    }
+    public AlertDialog getDialog()
+    {
+        return dialog;
+    }
+
+    public void setTitle(String strTitle)
+    {
+        if (dialog != null)
+            dialog.setTitle(strTitle);
+    }
+
+    /**
+     * it will been overrided by child
+     */
+    public void onOkClicked()
+    {
+
+    }
+
+    /**
+     * it will been overrided by child
+     * @return
+     */
+    public Object getResult()
+    {
+        return null;
+    }
 
 
     static public String getFuncKeyName(KDSRouterSettings.ID funcKey)
@@ -89,36 +120,13 @@ public class KDSUIDialogBase {
         btnCancel.setText(s);
     }
 
-    public View getView()
+    public void enableOKButton(boolean bEnable)
     {
-        return m_view;
-    }
-    public AlertDialog getDialog()
-    {
-        return dialog;
-    }
+        Button btn =dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (btn == null) return;
+        btn.setEnabled(bEnable);
 
-    public void setTitle(String strTitle)
-    {
-        if (dialog != null)
-            dialog.setTitle(strTitle);
-    }
 
-    /**
-     * it will been overrided by child
-     */
-    public void onOkClicked()
-    {
-
-    }
-
-    /**
-     * it will been overrided by child
-     * @return
-     */
-    public Object getResult()
-    {
-        return null;
     }
 
 
@@ -284,6 +292,8 @@ public class KDSUIDialogBase {
 
     }
 
+
+
     public AlertDialog create2ButtonsDialog(Context context)
     {
         String strOK = makeButtonText(context, R.string.ok, KDSRouterSettings.ID.Bumpbar_OK);
@@ -357,22 +367,13 @@ public class KDSUIDialogBase {
         return d;
     }
 
-    public void setNeutralButtonText(String strText)
-    {
-        Button btn =dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
-        if (btn != null)
-            btn.setText(strText);
-
-    }
-
-    public void enableOKButton(boolean bEnable)
-    {
-        Button btn =dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if (btn == null) return;
-        btn.setEnabled(bEnable);
-
-
-    }
+//    public void setNeutralButtonText(String strText)
+//    {
+//        Button btn =dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+//        if (btn != null)
+//            btn.setText(strText);
+//
+//    }
 
     public void int_dialog(Context context, KDSDialogBaseListener listener, int resDlgID, String neutralButtonText) {
         this.listener = listener;

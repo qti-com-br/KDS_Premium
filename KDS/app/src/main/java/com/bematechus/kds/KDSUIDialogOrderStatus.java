@@ -100,7 +100,7 @@ public class KDSUIDialogOrderStatus extends  KDSUIDialogBase {
         this.listener = listener;
         m_view = LayoutInflater.from(context).inflate(resDlgID, null);
 
-        dialog = create1ButtonsDialog(context);
+        dialog = createCancelButtonsDialog(context);
 
         // kill all padding from the dialog window
         dialog.setView(m_view, 0, 0, 0, 0);

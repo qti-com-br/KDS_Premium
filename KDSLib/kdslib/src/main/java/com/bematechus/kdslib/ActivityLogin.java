@@ -105,6 +105,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
             public void onClick(View view) {
                 String oldUserName = Activation.loadUserName();
                 String newUserName = mUserNameView.getText().toString();
+
+
                 if (Activation.getGlobalEventsReceiver() != null) {
                     if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
                         showClearDataWarning();
@@ -393,11 +395,11 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         dlg.show();
     }
 
-    public void onKDSDialogCancel(DialogBaseNoBumpbarSupport dialog)
+    public void onKDSDialogCancel(KDSDialogCommon dialog)
     {
 
     }
-    public void onKDSDialogOK(DialogBaseNoBumpbarSupport dialog, Object obj)
+    public void onKDSDialogOK(KDSDialogCommon dialog, Object obj)
     {
         m_activation.fireClearDataEvent();
         attemptLogin();
