@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSUtil;
 
 /**
@@ -19,7 +20,7 @@ public class KDSPreferenceKeySelection  extends DialogPreference implements KDSU
 
     private PreferenceActivity parent;
 
-    private  KDSBumpBarKeyFunc m_bumpbarKey = new KDSBumpBarKeyFunc();
+    private KDSBumpBarKeyFunc m_bumpbarKey = new KDSBumpBarKeyFunc();
     //private ImageView preview_img;
 
     String m_strSavePath = "";

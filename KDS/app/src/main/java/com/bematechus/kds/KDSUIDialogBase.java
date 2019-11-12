@@ -8,10 +8,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSKbdRecorder;
-import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.Timer;
@@ -45,6 +44,20 @@ public class KDSUIDialogBase {
     {
         return m_tag;
     }
+    public View getView()
+    {
+        return m_view;
+    }
+    public AlertDialog getDialog()
+    {
+        return dialog;
+    }
+
+    public void setTitle(String strTitle)
+    {
+        if (dialog != null)
+            dialog.setTitle(strTitle);
+    }
 
     public KDSUser getKdsUser()
     {
@@ -54,6 +67,21 @@ public class KDSUIDialogBase {
     {
         m_kdsUser = kdsuser;
 
+    }
+    /**
+     * it will been overrided by child
+     */
+    public void onOkClicked()
+    {
+
+    }
+    /**
+     * it will been overrided by child
+     * @return
+     */
+    public Object getResult()
+    {
+        return null;
     }
 
     protected void init_navigation_bar()
@@ -134,54 +162,13 @@ public class KDSUIDialogBase {
         btnCancel.setText(s);
     }
 
-    public View getView()
+    public void enableOKButton(boolean bEnable)
     {
-        return m_view;
-    }
-    public AlertDialog getDialog()
-    {
-        return dialog;
-    }
+        Button btn =dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (btn == null) return;
+        btn.setEnabled(bEnable);
 
-    public void setTitle(String strTitle)
-    {
-        if (dialog != null)
-            dialog.setTitle(strTitle);
-    }
 
-    /**
-     * it will been overrided by child
-     */
-    public void onOkClicked()
-    {
-
-    }
-
-    /**
-     * it will been overrided by child
-     * @return
-     */
-    public Object getResult()
-    {
-        return null;
-    }
-
-    public AlertDialog createCancelButtonsDialog(Context context)
-    {
-
-        String strCancel = makeButtonText(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
-        AlertDialog d = new AlertDialog.Builder(context)
-
-                .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (KDSUIDialogBase.this.listener != null) {
-                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
-                        }
-                    }
-                })
-                .create();
-        return d;
     }
 
     public AlertDialog createOkButtonsDialog(Context context)
@@ -203,6 +190,26 @@ public class KDSUIDialogBase {
                 .create();
         return d;
     }
+
+    public AlertDialog createCancelButtonsDialog(Context context)
+    {
+
+        String strCancel = makeButtonText(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
+        AlertDialog d = new AlertDialog.Builder(context)
+
+                .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (KDSUIDialogBase.this.listener != null) {
+                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+                        }
+                    }
+                })
+                .create();
+        return d;
+    }
+
+
 
     /**
      * One button, with information.
@@ -240,6 +247,16 @@ public class KDSUIDialogBase {
         return dialog;
     }
 
+    /**
+     *
+     * @param ev
+     * @return
+     * true: handle this key
+     */
+    public boolean onKeyPressed(KeyEvent ev)
+    {
+        return false;
+    }
 
     protected void init_dialog_events(final AlertDialog dlg)
     {
@@ -372,14 +389,42 @@ public class KDSUIDialogBase {
 
     }
 
-    public void enableOKButton(boolean bEnable)
+    public AlertDialog create2ButtonsDialog(Context context)
     {
-        Button btn =dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if (btn == null) return;
-        btn.setEnabled(bEnable);
-
-
+        String strOK = makeButtonText2(context, R.string.ok, KDSSettings.ID.Bumpbar_OK);
+        String strCancel = makeButtonText2(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
+        AlertDialog d = new AlertDialog.Builder(context)
+                .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onOkClicked();
+                        //saveToSmb();
+                        if (KDSUIDialogBase.this.listener != null) {
+                            KDSUIDialogBase.this.listener.onKDSDialogOK(KDSUIDialogBase.this, getResult());
+                        }
+                    }
+                })
+                .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (KDSUIDialogBase.this.listener != null) {
+                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+                        }
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    // if back button is used, call back our listener.
+                    @Override
+                    public void onCancel(DialogInterface paramDialogInterface) {
+                        //   if (KDSUIDlgInputSMBFolder.this.listener != null) {
+                        //       KDSUIDlgInputSMBFolder.this.listener.onSMBCancel(KDSUIDlgInputSMBFolder.this);
+                        //   }
+                    }
+                })
+                .create();
+        return d;
     }
+
 
     public  void create3ButtonsDialog( final Context context,Object objTag, String strTitle, String strInfo, String btnText, KDSDialogBaseListener listener)
     {
@@ -425,41 +470,6 @@ public class KDSUIDialogBase {
     }
 
 
-    public AlertDialog create2ButtonsDialog(Context context)
-    {
-        String strOK = makeButtonText2(context, R.string.ok, KDSSettings.ID.Bumpbar_OK);
-        String strCancel = makeButtonText2(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
-        AlertDialog d = new AlertDialog.Builder(context)
-                .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onOkClicked();
-                        //saveToSmb();
-                        if (KDSUIDialogBase.this.listener != null) {
-                            KDSUIDialogBase.this.listener.onKDSDialogOK(KDSUIDialogBase.this, getResult());
-                        }
-                    }
-                })
-                .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (KDSUIDialogBase.this.listener != null) {
-                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
-                        }
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    // if back button is used, call back our listener.
-                    @Override
-                    public void onCancel(DialogInterface paramDialogInterface) {
-                        //   if (KDSUIDlgInputSMBFolder.this.listener != null) {
-                        //       KDSUIDlgInputSMBFolder.this.listener.onSMBCancel(KDSUIDlgInputSMBFolder.this);
-                        //   }
-                    }
-                })
-                .create();
-        return d;
-    }
 
     public AlertDialog create3ButtonsDialog(Context context, String neutralButtonText)
     {
@@ -498,24 +508,15 @@ public class KDSUIDialogBase {
         return d;
     }
 
-    public void setNeutralButtonText(String strText)
-    {
-        Button btn =dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
-        if (btn != null)
-            btn.setText(strText);
+//    public void setNeutralButtonText(String strText)
+//    {
+//        Button btn =dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+//        if (btn != null)
+//            btn.setText(strText);
+//
+//    }
 
-    }
 
-    /**
-     *
-     * @param ev
-     * @return
-     * true: handle this key
-     */
-    public boolean onKeyPressed(KeyEvent ev)
-    {
-        return false;
-    }
 
 
     public void int_dialog(Context context, KDSDialogBaseListener listener, int resDlgID, String neutralButtonText) {
@@ -549,6 +550,60 @@ public class KDSUIDialogBase {
         init_dialog_events(dialog);
 
 
+    }
+
+    public void show() {
+
+        dialog.show();
+        init_navigation_bar();
+
+    }
+
+
+    private long m_nAutoCloseTimeoutMs = 0;
+    public void setAutoCloseTimeout(long nTimeoutMs)
+    {
+        m_nAutoCloseTimeoutMs = nTimeoutMs;
+        if (m_nAutoCloseTimeoutMs >0)
+            startTimerForAutoClose();
+    }
+
+    private void startTimerForAutoClose()
+    {
+        final Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            public void run() {
+
+                dialog.dismiss();
+                t.cancel();
+            }
+        }, m_nAutoCloseTimeoutMs);
+    }
+
+    /**
+     *
+     * @return
+     *  true: ok
+     *  false: failed.
+     */
+    protected boolean checkDataValidation()
+    {
+        return true;
+    }
+
+    static public KDSUIDialogBase singleInstance()
+    {
+
+        if (m_singleInstance != null) {
+            if (m_singleInstance.getDialog() != null) {
+                if (m_singleInstance.getDialog().isShowing())
+                    m_singleInstance.getDialog().cancel();
+            }
+            m_singleInstance = null;
+        }
+
+        m_singleInstance = new KDSUIDialogBase();
+        return m_singleInstance;
     }
 
 
@@ -598,12 +653,7 @@ public class KDSUIDialogBase {
         return evID;
     }
 
-    public void show() {
 
-        dialog.show();
-        init_navigation_bar();
-
-    }
 
     protected void init_dialog_ctrl_enter_events(final AlertDialog dlg)
     {
@@ -642,50 +692,4 @@ public class KDSUIDialogBase {
         });
     }
 
-
-    private long m_nAutoCloseTimeoutMs = 0;
-    public void setAutoCloseTimeout(long nTimeoutMs)
-    {
-        m_nAutoCloseTimeoutMs = nTimeoutMs;
-        if (m_nAutoCloseTimeoutMs >0)
-            startTimerForAutoClose();
-    }
-
-    private void startTimerForAutoClose()
-    {
-        final Timer t = new Timer();
-        t.schedule(new TimerTask() {
-            public void run() {
-
-                dialog.dismiss();
-                t.cancel();
-            }
-        }, m_nAutoCloseTimeoutMs);
-    }
-
-    /**
-     *
-     * @return
-     *  true: ok
-     *  false: failed.
-     */
-    protected boolean checkDataValidation()
-    {
-        return true;
-    }
-
-    static public KDSUIDialogBase singleInstance()
-    {
-
-        if (m_singleInstance != null) {
-            if (m_singleInstance.getDialog() != null) {
-                if (m_singleInstance.getDialog().isShowing())
-                    m_singleInstance.getDialog().cancel();
-            }
-            m_singleInstance = null;
-        }
-
-        m_singleInstance = new KDSUIDialogBase();
-        return m_singleInstance;
-    }
 }

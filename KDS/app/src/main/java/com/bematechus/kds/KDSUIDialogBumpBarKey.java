@@ -8,10 +8,10 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSKbdRecorder;
 
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

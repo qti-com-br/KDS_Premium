@@ -1,14 +1,8 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.view.KeyEvent;
-import android.widget.ArrayAdapter;
-
-import com.bematechus.kdslib.KDSKbdRecorder;
-import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Used in KDSbumpBarFunctions class
@@ -31,8 +25,8 @@ public class KDSBumpBarKeyFunc {
     boolean m_bCtrl = false;
     boolean m_bAlt = false;
     boolean m_bShift = false;
-    KDSSettings.ID m_funcID = KDSSettings.ID.NULL; //don't save this value in preference.
-
+    //KDSSettings.ID m_funcID = KDSSettings.ID.NULL; //don't save this value in preference.
+    int m_funcID = 0; //don't save this value in preference.
 
     public void setKeyCode(int nKeyCode)
     {
@@ -70,11 +64,19 @@ public class KDSBumpBarKeyFunc {
         return m_bShift;
     }
 
-    public void setFunctionID(KDSSettings.ID func)
-    {
-        m_funcID = func;
-    }
-    public KDSSettings.ID getFunctionID()
+//    public void setFunctionID(KDSSettings.ID func)
+//    {
+//        m_funcID = func;
+//    }
+//    public KDSSettings.ID getFunctionID()
+//    {
+//        return m_funcID;
+//    }
+    public void setFunctionID(int func)
+{
+    m_funcID = func;
+}
+    public int getFunctionID()
     {
         return m_funcID;
     }
@@ -294,7 +296,7 @@ public class KDSBumpBarKeyFunc {
 
     }
 
-    static int[] getKeyValues(KeyboardType kbType)
+    static public int[] getKeyValues(KeyboardType kbType)
     {
             int values[] = null;
             switch (kbType)

@@ -15,7 +15,7 @@ import java.util.TimerTask;
 /**
  * Created by David.Wong on 2019/9/3.
  * common function in KDSUIDialogBase(KDS/KDSRouter).
- *
+ * I plan to use this to replace okd KDSUIDialogBase class.
  * Rev:
  */
 public class KDSDialogCommon {
@@ -33,6 +33,15 @@ public class KDSDialogCommon {
 
     }
 
+    /**
+     * update keyboard keys description when settings changed.
+     */
+    static public KDSBumpBarKeyFunc.KeyboardType m_kbdType = KDSBumpBarKeyFunc.KeyboardType.Standard;
+    static public KDSBumpBarKeyFunc m_funcOK = null;
+    static public KDSBumpBarKeyFunc m_funcCancel = null;
+
+    static public boolean m_bHideNavigationBar = false;
+
     static KDSDialogCommon m_singleInstance = null;
 
     protected AlertDialog dialog = null;
@@ -40,6 +49,20 @@ public class KDSDialogCommon {
     protected KDSDialogBaseListener listener= null;
     protected View m_view = null;
     protected Object m_tag = null;
+    protected Object m_userTag = null;
+
+    /**
+     * Please call this function if dialog needs bumpbar support.
+     * @param kbdType
+     * @param keyOK
+     * @param keyCancel
+     */
+    static public void init_kbd_keys(KDSBumpBarKeyFunc.KeyboardType kbdType, KDSBumpBarKeyFunc keyOK, KDSBumpBarKeyFunc keyCancel)
+    {
+        m_kbdType = kbdType;
+        m_funcOK = keyOK;
+        m_funcCancel = keyCancel;
+    }
 
     public void setTag(Object tag)
     {
@@ -64,7 +87,15 @@ public class KDSDialogCommon {
         if (dialog != null)
             dialog.setTitle(strTitle);
     }
+    public Object getKdsUser()
+    {
+        return m_userTag;
+    }
+    public void setKDSUser(Object kdsuser)
+    {
+        m_userTag = kdsuser;
 
+    }
     /**
      * it will been overrided by child
      */
@@ -96,7 +127,8 @@ public class KDSDialogCommon {
      */
     public String getBumpbarCancelKeyText(Context context)
     {
-        return "";
+        if (m_funcCancel == null) return "";
+        return m_funcCancel.getSummaryString(m_kbdType);
     }
 
     public String makeCancelButtonText(Context context, String text)
@@ -120,7 +152,8 @@ public class KDSDialogCommon {
      */
     public String getBumpbarOKKeyText(Context context)
     {
-        return "";
+        if (m_funcOK == null) return "";
+        return m_funcOK.getSummaryString(m_kbdType);
     }
 
     public String makeOKButtonText(Context context, String text)
@@ -253,8 +286,14 @@ public class KDSDialogCommon {
      */
     public DialogEvent checkDialogKeyboardEvent(KeyEvent event)
     {
+
+        if (m_funcOK.isFitWithMyEvent(event, null))
+            return DialogEvent.OK;
+        if (m_funcCancel.isFitWithMyEvent(event, null))
+            return DialogEvent.Cancel;
         return DialogEvent.Unknown;
     }
+
     protected void init_dialog_events(final AlertDialog dlg)
     {
         dlg.setOnKeyListener(new DialogInterface.OnKeyListener() {
@@ -265,7 +304,7 @@ public class KDSDialogCommon {
                 if (event.getAction() != KeyEvent.ACTION_UP) return false;
                 if (onKeyPressed(event)) return false; //for others to override
                 DialogEvent ev = DialogEvent.Unknown;
-                //KDSSettings.ID evID = KDSSettings.ID.NULL;
+
                 ev = checkDialogKeyboardEvent(event);
 
                 if (ev == DialogEvent.OK)
@@ -409,58 +448,58 @@ public class KDSDialogCommon {
         return d;
     }
 
-//    public  void create3ButtonsDialog( final Context context,Object objTag, String strTitle, String strInfo, String btnText, KDSDialogBaseListener listener)
-//    {
-//
-//        this.listener = listener;
-//        setTag(objTag);
-//
-//        String strOK = makeOKButtonText(context);//makeButtonText2(context, R.string.ok, KDSSettings.ID.Bumpbar_OK);
-//        String strCancel = makeCancelButtonText(context);//makeButtonText2(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
-//        dialog = new AlertDialog.Builder(context)
-//                .setTitle(strTitle)
-//                .setMessage(strInfo)//this.getString(R.string.confirm_import_db))
-//                .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                onOkClicked();
-//                                if (KDSDialogCommon.this.listener != null)
-//                                    KDSDialogCommon.this.listener.onKDSDialogOK(KDSDialogCommon.this, getResult());
-//                            }
+    public  void create3ButtonsDialog( final Context context,Object objTag, String strTitle, String strInfo, String btnText, KDSDialogBaseListener listener)
+    {
+
+        this.listener = listener;
+        setTag(objTag);
+
+        String strOK = makeOKButtonText(context);//makeButtonText2(context, R.string.ok, KDSSettings.ID.Bumpbar_OK);
+        String strCancel = makeCancelButtonText(context);//makeButtonText2(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
+        dialog = new AlertDialog.Builder(context)
+                .setTitle(strTitle)
+                .setMessage(strInfo)//this.getString(R.string.confirm_import_db))
+                .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                onOkClicked();
+                                if (KDSDialogCommon.this.listener != null)
+                                    KDSDialogCommon.this.listener.onKDSDialogOK(KDSDialogCommon.this, getResult());
+                            }
+                        }
+                )
+                .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (KDSDialogCommon.this.listener != null)
+                            KDSDialogCommon.this.listener.onKDSDialogCancel(KDSDialogCommon.this);
+                    }
+                })
+                .setNeutralButton(btnText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    // if back button is used, call back our listener.
+                    @Override
+                    public void onCancel(DialogInterface paramDialogInterface) {
+//                        if (KDSUIDialogBase.this.listener != null) {
+//                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
 //                        }
-//                )
-//                .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        if (KDSDialogCommon.this.listener != null)
-//                            KDSDialogCommon.this.listener.onKDSDialogCancel(KDSDialogCommon.this);
-//                    }
-//                })
-//                .setNeutralButton(btnText, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                })
-//                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-//                    // if back button is used, call back our listener.
-//                    @Override
-//                    public void onCancel(DialogInterface paramDialogInterface) {
-////                        if (KDSUIDialogBase.this.listener != null) {
-////                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
-////                        }
-//                    }
-//                })
-//                .create();
-//        boolean noCancel = true;
-//        if (noCancel) {
-//            dialog.setCanceledOnTouchOutside(false);
-//            dialog.setCancelable(false);
-//        }
-//        init_dialog_events(dialog);
-//
-//
-//    }
+                    }
+                })
+                .create();
+        boolean noCancel = true;
+        if (noCancel) {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+        }
+        init_dialog_events(dialog);
+
+
+    }
 
 
 
@@ -542,28 +581,11 @@ public class KDSDialogCommon {
 
     }
 
-    /**
-     * Button text with the bump key description
-     * @param text
-     * @param keyDescription
-     * @return
-     */
-    static public String makeDialogButtonText( String text, String keyDescription)
-    {
-        String s = text;
-        if (!keyDescription.isEmpty())
-            s = s  +  keyDescription ;
-
-        return s;
-    }
-
-
-
 
     public void show() {
 
         dialog.show();
-        //init_navigation_bar();
+        init_navigation_bar();
 
     }
 
@@ -613,6 +635,131 @@ public class KDSDialogCommon {
 
         m_singleInstance = new KDSDialogCommon();
         return m_singleInstance;
+    }
+
+    protected void hideNavigationBar( boolean bHide)
+    {
+        if (bHide) {
+            View view = this.getDialog().getWindow().getDecorView();
+            if (view != null) {
+                KDSUtil.enableSystemVirtualBar(view, false);
+                view.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        KDSUtil.enableSystemVirtualBar(KDSDialogCommon.this.getView(), false);
+                    }
+                });
+            }
+        }
+        else
+        {
+            View view =  this.getDialog().getWindow().getDecorView();
+            if (view != null) {
+                KDSUtil.enableSystemVirtualBar(view, true);
+                view.setOnSystemUiVisibilityChangeListener(null);
+            }
+        }
+    }
+
+
+    static public void init_navigation_bar_settings(boolean bHide)
+    {
+        m_bHideNavigationBar = bHide;
+    }
+
+    protected void init_navigation_bar()
+    {
+
+        hideNavigationBar(m_bHideNavigationBar);
+    }
+
+    /**
+     * For using Ctrl/Enter for "OK/Cancel" buttons.
+     * In default, we use 0/1 for ok/cancel, this cause user can not input 0,1 in text box.
+     * So, create this Ctrl/Enter button function.
+     * @param context
+     * @param text
+     * @param funcKey
+     * @return
+     */
+    static public String makeCtrlEnterButtonText(Context context, String text, DialogEvent funcKey)
+    {
+        String s = text;//context.getString(nResID);
+
+        String strFunc = "";
+
+        if (funcKey == DialogEvent.OK) {
+            KDSBumpBarKeyFunc func = new KDSBumpBarKeyFunc();
+            func.setKeyCode(KeyEvent.KEYCODE_ENTER);
+            strFunc = func.getSummaryString(m_kbdType );
+            //strFunc = KDSSettings.getOkKeyString(context);
+        }
+        else if (funcKey == DialogEvent.Cancel){
+            KDSBumpBarKeyFunc func = new KDSBumpBarKeyFunc();
+            func.setCtrl(true);
+            strFunc = func.getSummaryString( m_kbdType );
+
+
+        }
+        if (!strFunc.isEmpty())
+            s = s  +  strFunc ;
+        //s = s  + "[" + strFunc +"]";
+        return s;
+    }
+
+    static public String makeCtrlEnterButtonText(Context context,int nResID, DialogEvent funcKey )
+    {
+        String s = context.getString(nResID);
+        return makeCtrlEnterButtonText(context, s, funcKey);
+
+    }
+
+    static public DialogEvent checkCtrlEnterEvent(int keyCode,KeyEvent event )
+    {
+        DialogEvent evID = DialogEvent.Unknown;
+        if (event.getRepeatCount() > 0) return evID;
+        if (event.getAction() != KeyEvent.ACTION_UP) return evID;
+
+        if (keyCode == KeyEvent.KEYCODE_CTRL_LEFT ||
+                keyCode == KeyEvent.KEYCODE_CTRL_RIGHT)
+            evID = DialogEvent.Cancel;
+        else if (keyCode == KeyEvent.KEYCODE_ENTER)
+            evID = DialogEvent.OK;
+        return evID;
+    }
+
+
+
+    protected void init_dialog_ctrl_enter_events(final AlertDialog dlg)
+    {
+        dlg.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                // KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
+                if (event.getRepeatCount() > 0) return false;
+                if (event.getAction() != KeyEvent.ACTION_UP) return false;
+                DialogEvent evID = checkCtrlEnterEvent(event.getKeyCode(), event);
+
+                if (evID == DialogEvent.OK) {
+                    if (!checkDataValidation())
+                        return true;
+                    onOkClicked();
+                    dialog.dismiss();
+                    if (KDSDialogCommon.this.listener != null)
+                        KDSDialogCommon.this.listener.onKDSDialogOK(KDSDialogCommon.this, getResult());
+                    return true;
+                } else if (evID == DialogEvent.Cancel) {
+                    dialog.cancel();
+                    if (KDSDialogCommon.this.listener != null)
+                        KDSDialogCommon.this.listener.onKDSDialogCancel(KDSDialogCommon.this);
+                    return true;
+                }
+                if (event.getAction() == KeyEvent.ACTION_UP) {
+                    KDSKbdRecorder.convertKeyEvent(keyCode, event);
+                }
+                return false;
+            }
+        });
     }
 
 }

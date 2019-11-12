@@ -1,8 +1,8 @@
 package com.bematechus.kds;
 
-import android.graphics.Paint;
 import android.view.KeyEvent;
 
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSKbdRecorder;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class KDSBumpBarFunctions {
 
             String str = settings.getString(ids[i]);
             KDSBumpBarKeyFunc bumpbarKey = KDSBumpBarKeyFunc.parseString(str);
-            bumpbarKey.setFunctionID(ids[i]);
+            bumpbarKey.setFunctionID(ids[i].ordinal());
             m_arKeyFunc.add(bumpbarKey);
         }
 
@@ -116,23 +116,23 @@ public class KDSBumpBarFunctions {
         for (int i=0; i< ncount; i++)
         {
             KDSBumpBarKeyFunc keyFunc = m_arKeyFunc.get(i);
-            if (keyFunc.getFunctionID() ==  KDSSettings.ID.Bumpbar_OK||
-                    keyFunc.getFunctionID() ==KDSSettings.ID.Bumpbar_Cancel)
+            if (KDSSettings.intToID(keyFunc.getFunctionID()) ==  KDSSettings.ID.Bumpbar_OK||
+                    KDSSettings.intToID(keyFunc.getFunctionID()) ==KDSSettings.ID.Bumpbar_Cancel)
                 continue;
             if (!keyFunc.isCombinationKeys()) continue;
             if (keyFunc.isFitWithMyEvent(ev, kbd))
-                return keyFunc.getFunctionID();
+                return KDSSettings.intToID(keyFunc.getFunctionID());
         }
         //check single key second.
         for (int i=0; i< ncount;i++)
         {
             KDSBumpBarKeyFunc keyFunc = m_arKeyFunc.get(i);
-            if (keyFunc.getFunctionID() ==  KDSSettings.ID.Bumpbar_OK||
-                    keyFunc.getFunctionID() ==KDSSettings.ID.Bumpbar_Cancel)
+            if (KDSSettings.intToID(keyFunc.getFunctionID()) ==  KDSSettings.ID.Bumpbar_OK||
+                    KDSSettings.intToID(keyFunc.getFunctionID()) ==KDSSettings.ID.Bumpbar_Cancel)
                 continue;
             if (keyFunc.isCombinationKeys()) continue;
             if (keyFunc.isFitWithMyEvent(ev, kbd))
-                return keyFunc.getFunctionID();
+                return KDSSettings.intToID(keyFunc.getFunctionID());
         }
 
 
@@ -161,25 +161,25 @@ public class KDSBumpBarFunctions {
         for (int i=0; i< ncount; i++)
         {
             KDSBumpBarKeyFunc keyFunc = m_arKeyFunc.get(i);
-            if (keyFunc.getFunctionID() ==  KDSSettings.ID.Bumpbar_OK||
-                    keyFunc.getFunctionID() ==KDSSettings.ID.Bumpbar_Cancel)
+            if (KDSSettings.intToID(keyFunc.getFunctionID()) ==  KDSSettings.ID.Bumpbar_OK||
+                    KDSSettings.intToID(keyFunc.getFunctionID()) ==KDSSettings.ID.Bumpbar_Cancel)
                 continue;
-            if (!isQexpoKey(keyFunc.getFunctionID())) continue;
+            if (!isQexpoKey(KDSSettings.intToID(keyFunc.getFunctionID()))) continue;
             if (!keyFunc.isCombinationKeys()) continue;
             if (keyFunc.isFitWithMyEvent(ev, kbd))
-                return keyFunc.getFunctionID();
+                return KDSSettings.intToID(keyFunc.getFunctionID());
         }
         //check single key second.
         for (int i=0; i< ncount;i++)
         {
             KDSBumpBarKeyFunc keyFunc = m_arKeyFunc.get(i);
-            if (keyFunc.getFunctionID() ==  KDSSettings.ID.Bumpbar_OK||
-                    keyFunc.getFunctionID() ==KDSSettings.ID.Bumpbar_Cancel)
+            if (KDSSettings.intToID(keyFunc.getFunctionID()) ==  KDSSettings.ID.Bumpbar_OK||
+                    KDSSettings.intToID(keyFunc.getFunctionID()) ==KDSSettings.ID.Bumpbar_Cancel)
                 continue;
-            if (!isQexpoKey(keyFunc.getFunctionID())) continue;
+            if (!isQexpoKey(KDSSettings.intToID(keyFunc.getFunctionID()))) continue;
             if (keyFunc.isCombinationKeys()) continue;
             if (keyFunc.isFitWithMyEvent(ev, kbd))
-                return keyFunc.getFunctionID();
+                return KDSSettings.intToID(keyFunc.getFunctionID());
         }
 
 
@@ -197,7 +197,7 @@ public class KDSBumpBarFunctions {
         for (int i=0; i< ncount; i++)
         {
             KDSBumpBarKeyFunc keyFunc = m_arKeyFunc.get(i);
-            if (keyFunc.getFunctionID() == funcID)
+            if (KDSSettings.intToID(keyFunc.getFunctionID()) == funcID)
                 return keyFunc;
 
         }
@@ -219,7 +219,7 @@ public class KDSBumpBarFunctions {
             if (keyFunc == null) continue;
 
             if (keyFunc.isFitWithMyEvent(ev, kbd))
-                return keyFunc.getFunctionID();
+                return KDSSettings.intToID(keyFunc.getFunctionID());
         }
         return KDSSettings.ID.NULL;
     }

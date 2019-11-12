@@ -1,19 +1,17 @@
 package com.bematechus.kds;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
@@ -27,10 +25,7 @@ import com.bematechus.kdslib.TimeDog;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Administrator on 2015/8/24 0024.
@@ -2796,4 +2791,16 @@ public class KDSSettings extends SettingsBase {
      editor.apply();
      editor.commit();
    }
+
+    /**
+    * convert int to settings ID value.
+    * @param n
+    * @return
+    */
+    static public ID intToID(int n)
+    {
+      if (n <0 || n>=ID.values().length) return ID.NULL;
+      return ID.values()[n];
+
+    }
 }
