@@ -132,7 +132,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         m_txtSerialID = (TextView) findViewById(R.id.txtSerialNumber);
 
         s = getString(R.string.my_serial_number);
-        s += macAddress;
+        //s += macAddress;
+        s += Activation.getMySerialNumber();
         m_txtSerialID.setText(s);
 
 
