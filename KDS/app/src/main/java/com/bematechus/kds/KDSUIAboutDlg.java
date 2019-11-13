@@ -64,9 +64,11 @@ public class KDSUIAboutDlg extends KDSUIDialogBase implements UpdateManager.Upda
             else
                 activiationText = "Inactive";
             //add serial number
-            ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-            if (ar.size() >0)
-                activiationText += "," + ar.get(0);
+//            ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
+//            if (ar.size() >0)
+//                activiationText += "," + ar.get(0);
+            activiationText += "," + Activation.getMySerialNumber();
+
             m_txtActivation.setText(activiationText);
 
 

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -177,7 +178,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     static public String getMySerialNumber()
     {
-        return m_myMacAddress;
+        //return m_myMacAddress;
+        String s = Build.SERIAL;
+        s = s.toUpperCase();
+        if (s.isEmpty() || s.equals("UNKNOWN"))
+        {
+            return m_myMacAddress;
+        }
+        else
+            return Build.SERIAL;
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {
@@ -561,7 +570,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             StoreDevice dev =m_devices.get(i);
             String serial = dev.getSerial();
             serial = serial.toUpperCase();
-            if (serial.equals(m_myMacAddress.toUpperCase())) {
+            if (serial.equals(getMySerialNumber().toUpperCase())) {
                 //the router and kds can run in same device, and they have to register individually.
                 if (KDSApplication.isRouterApp())
                 {
@@ -593,7 +602,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             StoreDevice dev =m_devices.get(i);
             String serial = dev.getSerial();
             serial = serial.toUpperCase();
-            if (serial.equals(m_myMacAddress.toUpperCase())) {
+            if (serial.equals(getMySerialNumber().toUpperCase())) {
                 //the router and kds can run in same device, and they have to register individually.
                 if (KDSApplication.isRouterApp()) {
                     if (dev.getStationFunc().equals(Activation.KDSROUTER))
@@ -657,7 +666,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
-            postSyncNewMac("",m_stationID,m_stationFuncName, m_myMacAddress, null);
+            postSyncNewMac("",m_stationID,m_stationFuncName, getMySerialNumber(), null);
             return;
         }
 
@@ -1060,7 +1069,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         RadioButton btnAddNew = (RadioButton) view.findViewById(R.id.rbAddNew);
         if (btnAddNew.isChecked())
         {
-            postSyncNewMac("", m_stationID,m_stationFuncName, m_myMacAddress, null);
+            postSyncNewMac("", m_stationID,m_stationFuncName, getMySerialNumber(), null);
         }
         else
         {
@@ -1071,7 +1080,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.No_selected_license_to_replace,  m_context.getString(R.string.no_selected_license_to_replace));
             }
             else
-                postReplaceMac(dev.getGuid(), m_myMacAddress);
+                postReplaceMac(dev.getGuid(), getMySerialNumber());
 
                 //postSyncMac(dev.getGuid(),m_stationID, m_myMacAddress, dev);
         }
@@ -1392,7 +1401,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
         intent.putExtra("func", KDSConst.SHOW_LOGIN);
         intent.putExtra("id", m_stationID);
-        intent.putExtra("mac", m_myMacAddress);
+        intent.putExtra("mac", getMySerialNumber());
         intent.putExtra("errmsg", showErrorMessage);
 
         caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
@@ -2000,7 +2009,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     {
         StoreDevice dev = new StoreDevice();
         dev.setGuid(licenseGuid);
-        dev.m_serial = m_myMacAddress;
+        dev.m_serial = getMySerialNumber();
         ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,dev);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
@@ -2102,7 +2111,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (dev.getID().equals(stationNewID)) {
                 String serial = dev.getSerial();
                 serial = serial.toUpperCase();
-                if (!serial.equals(m_myMacAddress.toUpperCase())) {
+                if (!serial.equals(getMySerialNumber().toUpperCase())) {
                     //the router and kds can run in same device, and they have to register individually.
                     if (KDSApplication.isRouterApp()) {
                         continue;
@@ -2137,4 +2146,6 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         return ncount;
     }
+
+
 }
