@@ -2217,7 +2217,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 setSelectedItemGuid(userID, "");
 
                 if (!getUserUI(userID).getPrevCountString().isEmpty() &&
-                        getUserUI(userID).getLayout().getLastShowingOrderGuid().equals(firstOrderGuid) &&
+                       // getUserUI(userID).getLayout().getLastShowingOrderGuid().equals(firstOrderGuid) && //comment it as KPP1-237
                         getUserUI(userID).getNextCountString().isEmpty()) {//kpp1-237
                     String estimateFirstOrderGuid = getUserUI(userID).getLayout().getPrevPageOrderGuid(nextGuid);
                     getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(estimateFirstOrderGuid);
