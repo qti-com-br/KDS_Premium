@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSUIBGFGPickerDialog;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Created by Administrator on 2017/11/27.
  */
-public class KDSUIDlgItemMark extends  KDSUIDialogBase implements KDSUIBGFGPickerDialog.OnBGFGPickerDlgListener {
+public class KDSUIDlgItemMark extends KDSUIDialogBase implements KDSUIBGFGPickerDialog.OnBGFGPickerDlgListener {
 
 
     ItemMark m_itemMark = null;

@@ -9,6 +9,7 @@ import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSSocketTCPSideBase;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.UpdateManager;
 

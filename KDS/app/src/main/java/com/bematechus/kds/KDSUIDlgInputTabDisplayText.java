@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 /**
  * Created by Administrator on 2017/12/15.
  */
@@ -46,12 +48,25 @@ public class KDSUIDlgInputTabDisplayText extends KDSUIDialogBase {
 
 
     }
-
-    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey) {
-        return makeCtrlEnterButtonText(context, nResID, funcKey);
-
-
+    public String makeOKButtonText(Context context)
+    {
+        return makeCtrlEnterButtonText(context, DialogEvent.OK);
+//        String s = text;
+//        String bumpbar = getBumpbarOKKeyText(context);
+//        return s + bumpbar;
     }
+    public String makeCancelButtonText(Context context)
+    {
+        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
+//        String s = context.getString( com.bematechus.kdslib.R.string.cancel);
+//        String bumpbar = getBumpbarCancelKeyText(context);
+//        return s + bumpbar;
+    }
+//    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey) {
+//        return makeCtrlEnterButtonText(context, nResID, funcKey);
+//
+//
+//    }
 
     protected void init_dialog_events(final AlertDialog dlg) {
         init_dialog_ctrl_enter_events(dlg);

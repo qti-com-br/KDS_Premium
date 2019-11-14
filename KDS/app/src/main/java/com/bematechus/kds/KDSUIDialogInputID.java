@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,7 @@ import static com.bematechus.kdslib.Activation.getDevices;
 /**
  * Created by Administrator on 2016/2/1 0001.
  */
-public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationAnnounceEvents {
+public class KDSUIDialogInputID extends KDSUIDialogBase implements KDS.StationAnnounceEvents {
     TextView m_txtText = null;
     TextView m_txtDescription = null;
     String m_stationID = "";
@@ -56,7 +57,7 @@ public class KDSUIDialogInputID extends KDSUIDialogBase  implements KDS.StationA
 //
 //        strOK = strOK  + strFunc ;
 //
-        String strOK = makeCtrlEnterButtonText(context, context.getString( R.string.ok),KDSSettings.ID.Bumpbar_OK );
+        String strOK = makeCtrlEnterButtonText(context, context.getString( R.string.ok), DialogEvent.OK);// KDSSettings.ID.Bumpbar_OK );
         AlertDialog d = new AlertDialog.Builder(context)
                 .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
                     @Override

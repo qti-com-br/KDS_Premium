@@ -23,6 +23,7 @@ import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile1;
 import com.bematechus.kdslib.KDSSmbFile2;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/9/19.
  */
-public class OpenSmbFileDialog extends KDSUIDialogBase  implements AdapterView.OnItemClickListener, KDSSmbExplorerHandler.interfaceSmbGotAllFiles{
+public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.OnItemClickListener, KDSSmbExplorerHandler.interfaceSmbGotAllFiles{
 
     public static String TAG = "OpenSmbFileDialog";
 

@@ -69,6 +69,7 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.KDSXMLParserCommand;
@@ -2911,7 +2912,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (dlg instanceof KDSUIIPSearchDialog) {
             KDSUIIPSearchDialog d = (KDSUIIPSearchDialog) dlg;
 
-            onSearchIpDialogOk(d.getKdsUser(), d.getSelectedStation());//obj);
+            onSearchIpDialogOk((KDSUser)(d.getKdsUser()), d.getSelectedStation());//obj);
         } else if (dlg instanceof KDSUIDialogSort) {
             KDSUIDialogSort d = (KDSUIDialogSort) dlg;
 
@@ -2924,7 +2925,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getUserUI(KDSUser.USER.USER_B).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID("");
             }
             //
-            sortOrders(d.getKdsUser().getUserID(), (KDSSettings.OrdersSort) ((KDSUIDialogSort) dlg).getResult());
+            sortOrders(((KDSUser)(d.getKdsUser())).getUserID(), (KDSSettings.OrdersSort) ((KDSUIDialogSort) dlg).getResult());
             //20171221
             threadrefresh_FocusFirst();
             //refreshView();
@@ -5750,7 +5751,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void showSdCardFullDialog()
     {
 
-        String strOK = KDSUIDialogBase.makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strOK = KDSUIDialogBase.makeOKButtonText2(this);// .makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
 
 
         m_sdcardFullDialog = new AlertDialog.Builder(this)
@@ -5795,7 +5796,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void showSdCardLostDialog()
     {
 
-        String strOK = KDSUIDialogBase.makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strOK = KDSUIDialogBase.makeOKButtonText2(this);// .makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
         //String strCancel = KDSUIDialogBase.makeButtonText(this,R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
 
         m_sdcardLostDialog = new AlertDialog.Builder(this)

@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSKbdRecorder;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 import java.util.List;
 

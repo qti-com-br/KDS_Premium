@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSSocketManager;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.UpdateManager;
 
 import java.util.ArrayList;

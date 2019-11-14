@@ -12,12 +12,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2016/4/8 0008.
  */
-public class KDSUIDlgInputPassword  extends KDSUIDialogBase  {
+public class KDSUIDlgInputPassword  extends KDSUIDialogBase {
 
     TextView m_txtText = null;
     String m_strPassword = "";
@@ -128,11 +130,21 @@ public class KDSUIDlgInputPassword  extends KDSUIDialogBase  {
 
 
     }
-    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey )
+    public String makeOKButtonText(Context context)
     {
-        return makeCtrlEnterButtonText(context, nResID, funcKey);
+        return makeCtrlEnterButtonText(context, DialogEvent.OK);
 
     }
+    public String makeCancelButtonText(Context context)
+    {
+        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
+
+    }
+//    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey )
+//    {
+//        return makeCtrlEnterButtonText(context, nResID, funcKey);
+//
+//    }
 
     protected void init_dialog_events(final AlertDialog dlg)
     {

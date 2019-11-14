@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdsrouter.dummy.DummyContent;
 import com.bematechus.kdsrouter.dummy.DummyContent.DummyItem;
 

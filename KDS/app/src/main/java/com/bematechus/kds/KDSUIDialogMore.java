@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.ArrayList;
 
 /**

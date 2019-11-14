@@ -16,6 +16,7 @@ import com.bematechus.kdslib.KDSDataSumName;
 import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSUIColorPickerDialog;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  *
  */
-public class KDSUIDlgFoodItem  extends  KDSUIDialogBase  implements KDSUIColorPickerDialog.OnColorPickerDlgListener, KDSUIDialogBase.KDSDialogBaseListener {
+public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPickerDialog.OnColorPickerDlgListener, KDSUIDialogBase.KDSDialogBaseListener {
 
     static final String TAG = "KDSUIDlgFoodItem";
 

@@ -8,6 +8,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 /**
  * For password configuration
  */

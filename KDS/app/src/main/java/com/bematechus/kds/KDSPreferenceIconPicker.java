@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 /**
  * Created by Administrator on 2017/11/22.
  */

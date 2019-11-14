@@ -46,6 +46,7 @@ import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.lang.reflect.Method;
@@ -1071,8 +1072,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
          */
         private  void showDoubleBumpDisabledAlert()
         {
-            String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-            String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+            String strOK = KDSUIDialogBase.makeOKButtonText2(KDSApplication.getContext());//.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+            //String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
             if (this.getActivity() == null) return;
             AlertDialog d = new AlertDialog.Builder(this.getActivity())
                     .setTitle(this.getString(R.string.confirm))
@@ -1757,8 +1758,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
          */
         private  void showDoubleBumpDisabledAlert()
         {
-            String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-            String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+            String strOK = KDSUIDialogBase.makeOKButtonText2(KDSApplication.getContext());// .makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+            //String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
             if (this.getActivity() == null) return;
             AlertDialog d = new AlertDialog.Builder(this.getActivity())
                     .setTitle(this.getString(R.string.confirm))

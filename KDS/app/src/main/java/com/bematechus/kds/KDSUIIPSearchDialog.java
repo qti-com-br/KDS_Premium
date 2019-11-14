@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;

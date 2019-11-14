@@ -48,6 +48,7 @@ import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.lang.reflect.Method;

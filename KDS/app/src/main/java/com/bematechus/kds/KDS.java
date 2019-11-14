@@ -48,6 +48,7 @@ import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSToStation;
 import com.bematechus.kdslib.KDSToStations;
 import com.bematechus.kdslib.KDSToast;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
@@ -381,6 +382,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         updateUsers(settings);
 
         m_bumpbarFunctions.updateSettings(this.getSettings());
+        //use new dialog class
+        KDSUIDialogBase.init_kbd_keys(m_bumpbarFunctions.getKbdType(),
+                                        m_bumpbarFunctions.getKeySettings(KDSSettings.ID.Bumpbar_OK),
+                                        m_bumpbarFunctions.getKeySettings(KDSSettings.ID.Bumpbar_Cancel));
+        KDSUIDialogBase.init_navigation_bar_settings(settings.getBoolean(KDSSettings.ID.Hide_navigation_bar));
 
         m_printer.updateSettings(settings);
 

@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBumpBarKeyFunc;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 /**

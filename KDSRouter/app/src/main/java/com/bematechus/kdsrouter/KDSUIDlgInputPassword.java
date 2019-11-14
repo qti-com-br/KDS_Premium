@@ -9,6 +9,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 /**
  * Different with KDS file
  */
@@ -16,7 +18,7 @@ import android.widget.TextView;
 /**
  *
  */
-public class KDSUIDlgInputPassword  extends KDSUIDialogBase  {
+public class KDSUIDlgInputPassword  extends KDSUIDialogBase {
 
     TextView m_txtText = null;
     String m_strPassword = "";

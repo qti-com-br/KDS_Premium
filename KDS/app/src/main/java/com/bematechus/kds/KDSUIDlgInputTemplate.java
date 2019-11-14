@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.io.File;
@@ -21,7 +22,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2015/11/30 0030.
  */
-public class KDSUIDlgInputTemplate extends KDSUIDialogBase{
+public class KDSUIDlgInputTemplate extends KDSUIDialogBase {
 
 
     TextView m_txtTemplate = null;

@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 /**
  * Created by Administrator on 2018/4/24.

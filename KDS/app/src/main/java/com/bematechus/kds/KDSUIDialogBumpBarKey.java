@@ -10,6 +10,7 @@ import android.widget.Spinner;
 
 import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSKbdRecorder;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  *
  */
-public class KDSUIDialogBumpBarKey extends  KDSUIDialogBase {
+public class KDSUIDialogBumpBarKey extends KDSUIDialogBase {
 
 
 

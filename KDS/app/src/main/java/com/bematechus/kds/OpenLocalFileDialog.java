@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/9/19.
  */
-public class OpenLocalFileDialog extends KDSUIDialogBase  implements AdapterView.OnItemClickListener {
+public class OpenLocalFileDialog extends KDSUIDialogBase implements AdapterView.OnItemClickListener {
     public static String TAG = "OpenFileDialog";
 
     public enum Mode

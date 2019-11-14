@@ -44,6 +44,7 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 import com.bematechus.kdslib.SettingsBase;
@@ -166,8 +167,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     public void showChangedAlertDialog()
     {
         m_contextApp = this.getActivity().getApplicationContext();
-        String strOK = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-        String strCancel = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+        String strOK = KDSUIDialogBase.makeOKButtonText2(KDSApplication.getContext());// .makeButtonText(this.getActivity().getApplicationContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strCancel = KDSUIDialogBase.makeCancelButtonText2(KDSApplication.getContext());// .makeButtonText(this.getActivity().getApplicationContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
 
         AlertDialog d = new AlertDialog.Builder(this.getActivity())
                 .setTitle(this.getString(R.string.question))
@@ -397,8 +398,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             return ;
         }
 
-        String strOK = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-        String strCancel = KDSUIDialogBase.makeButtonText(this.getActivity().getApplicationContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+        String strOK = KDSUIDialogBase.makeOKButtonText2(KDSApplication.getContext());// .makeButtonText(this.getActivity().getApplicationContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strCancel = KDSUIDialogBase.makeCancelButtonText2(KDSApplication.getContext());// .makeButtonText(this.getActivity().getApplicationContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
 
         AlertDialog d = new AlertDialog.Builder(this.getActivity())
                 .setTitle(this.getString(R.string.confirm))
@@ -968,9 +969,9 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 strComfirm = strComfirm.replace("#", relation.getID());
 
 
-                String strOK = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), R.string.ok, KDSSettings.ID.Bumpbar_OK);
+                String strOK = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), KDSApplication.getContext().getString(R.string.ok), KDSUIDialogBase.DialogEvent.OK);//  KDSSettings.ID.Bumpbar_OK);
 
-                String strCancel = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
+                String strCancel = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), KDSApplication.getContext().getString(R.string.cancel), KDSUIDialogBase.DialogEvent.Cancel);//  KDSSettings.ID.Bumpbar_Cancel);
                 m_viewBeforeShowSlaveDialog = LayoutInflater.from(KDSApplication.getContext()).inflate(R.layout.kdsui_dlg_input_slave, null);
                 m_spinnerBeforeCallInputPrimaryID = stationFuncSpinner;
                 AlertDialog d = new AlertDialog.Builder(PreferenceFragmentStations.this.getActivity())
@@ -1038,15 +1039,16 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                     @Override
                     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                         //KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
-                        KDSSettings.ID evID = KDSUIDialogBase.checkCtrlEnterEvent(keyCode, event);
-                        if (evID == KDSSettings.ID.Bumpbar_OK) {
+                        //KDSSettings.ID evID = KDSUIDialogBase.checkCtrlEnterEvent(keyCode, event);
+                        KDSUIDialogBase.DialogEvent evID = KDSUIDialogBase.checkCtrlEnterEvent(keyCode, event);
+                        if (evID == KDSUIDialogBase.DialogEvent.OK) {
                             m_relationBeforeShowSlaveDialog.setSlaveFunc(KDSSettings.SlaveFunc.values()[m_npositionBeforeShowSlaveDialog]);
                             EditText editText =(EditText) m_viewBeforeShowSlaveDialog.findViewById(R.id.txtText);
                             m_relationBeforeShowSlaveDialog.setSlaveStations(editText.getText().toString());
 
                             dialog.dismiss();
                             return true;
-                        } else if (evID == KDSSettings.ID.Bumpbar_Cancel) {
+                        } else if (evID == KDSUIDialogBase.DialogEvent.Cancel) {
                             dialog.cancel();
                             return true;
                         }
@@ -1401,9 +1403,9 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                 strComfirm = strComfirm.replace("#", relation.getID());
                 strComfirm = strComfirm.replace("$", ((MySlaveSpinnerArrayAdapter)slaveFuncSpinner.getAdapter()).getSlaveFunction(position).toString());
                 //String strOK = KDSUIDialogBase.makeButtonText(view.getContext().getApplicationContext(), android.R.string.ok, KDSSettings.ID.Bumpbar_OK);
-                String strOK = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), R.string.ok, KDSSettings.ID.Bumpbar_OK);
+                String strOK = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(),KDSApplication.getContext().getString( R.string.ok), KDSUIDialogBase.DialogEvent.OK);// KDSSettings.ID.Bumpbar_OK);
                 //String strCancel = KDSUIDialogBase.makeButtonText(view.getContext().getApplicationContext(), android.R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
-                String strCancel = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
+                String strCancel = KDSUIDialogBase.makeCtrlEnterButtonText(KDSApplication.getContext(), KDSApplication.getContext().getString(R.string.cancel), KDSUIDialogBase.DialogEvent.Cancel);//  KDSSettings.ID.Bumpbar_Cancel);
                 m_viewBeforeShowSlaveDialog = LayoutInflater.from(KDSApplication.getContext()).inflate(R.layout.kdsui_dlg_input_slave, null);
 
                 AlertDialog d = new AlertDialog.Builder(PreferenceFragmentStations.this.getActivity())
@@ -1471,15 +1473,16 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
                     @Override
                     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                         //KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
-                        KDSSettings.ID evID = KDSUIDialogBase.checkCtrlEnterEvent(keyCode, event);
-                        if (evID == KDSSettings.ID.Bumpbar_OK) {
+                        //KDSSettings.ID evID = KDSUIDialogBase.checkCtrlEnterEvent(keyCode, event);
+                        KDSUIDialogBase.DialogEvent evID = KDSUIDialogBase.checkCtrlEnterEvent(keyCode, event);
+                        if (evID == KDSUIDialogBase.DialogEvent.OK) {
                             m_relationBeforeShowSlaveDialog.setSlaveFunc(KDSSettings.SlaveFunc.values()[m_npositionBeforeShowSlaveDialog]);
                             EditText editText =(EditText) m_viewBeforeShowSlaveDialog.findViewById(R.id.txtText);
                             m_relationBeforeShowSlaveDialog.setSlaveStations(editText.getText().toString());
 
                             dialog.dismiss();
                             return true;
-                        } else if (evID == KDSSettings.ID.Bumpbar_Cancel) {
+                        } else if (evID == KDSUIDialogBase.DialogEvent.Cancel ) {
                             dialog.cancel();
                             return true;
                         }

@@ -5,13 +5,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
  */
-public class KDSUIDialogConfirm  extends  KDSUIDialogBase {
+public class KDSUIDialogConfirm  extends KDSUIDialogBase {
     TextView m_txtInfo = null;
     Object m_tag = null;
     HashMap<String, Object> m_tags = new HashMap<>();

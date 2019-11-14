@@ -14,7 +14,7 @@ import android.widget.Button;
  *
  * It don't support bumpbar operation
  */
-public class DialogBaseNoBumpbarSupport extends KDSDialogCommon{
+public class DialogBaseNoBumpbarSupport extends KDSUIDialogBase{
 
 //    public interface KDSDialogBaseListener {
 //        public void onKDSDialogCancel(DialogBaseNoBumpbarSupport dialog);

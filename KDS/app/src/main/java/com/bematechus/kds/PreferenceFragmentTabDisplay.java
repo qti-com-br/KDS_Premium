@@ -23,6 +23,7 @@ import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUIBGFGPickerDialog;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 import org.w3c.dom.Text;
 

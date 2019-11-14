@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2015/12/14 0014.
  */
-public class KDSUIDialogOrderStatus extends  KDSUIDialogBase {
+public class KDSUIDialogOrderStatus extends KDSUIDialogBase {
     public enum OrderState {
         Waiting,
         Processing,

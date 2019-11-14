@@ -191,7 +191,7 @@ public class KDSBumpBarFunctions {
     }
 
 
-    private KDSBumpBarKeyFunc getKeySettings(KDSSettings.ID funcID)
+    public KDSBumpBarKeyFunc getKeySettings(KDSSettings.ID funcID)
     {
         int ncount = m_arKeyFunc.size();
         for (int i=0; i< ncount; i++)

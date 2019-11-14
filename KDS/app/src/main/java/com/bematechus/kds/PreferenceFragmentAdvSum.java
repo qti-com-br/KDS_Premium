@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
 

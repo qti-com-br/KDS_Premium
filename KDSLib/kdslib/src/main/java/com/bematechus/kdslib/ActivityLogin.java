@@ -396,11 +396,11 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         dlg.show();
     }
 
-    public void onKDSDialogCancel(KDSDialogCommon dialog)
+    public void onKDSDialogCancel(KDSUIDialogBase dialog)
     {
 
     }
-    public void onKDSDialogOK(KDSDialogCommon dialog, Object obj)
+    public void onKDSDialogOK(KDSUIDialogBase dialog, Object obj)
     {
         m_activation.fireClearDataEvent();
         attemptLogin();
