@@ -459,9 +459,9 @@ public class KDSUIDialogBase {
                     // if back button is used, call back our listener.
                     @Override
                     public void onCancel(DialogInterface paramDialogInterface) {
-                        //   if (KDSUIDlgInputSMBFolder.this.listener != null) {
-                        //       KDSUIDlgInputSMBFolder.this.listener.onSMBCancel(KDSUIDlgInputSMBFolder.this);
-                        //   }
+                        if (KDSUIDialogBase.this.listener != null) {
+                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+                        }
                     }
                 })
                 .create();
