@@ -440,6 +440,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
                     MainActivity.Confirm_Dialog.Restart_me,
                     this.getString(R.string.confirm),
                     info, false, this);
+            d.setCancelByClickOutside(false);
             d.show();
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)

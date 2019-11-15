@@ -79,7 +79,7 @@
     <string name="new_entry">New</string>
     <string name="save">Save</string>
     <string name="show_id">Show Station ID</string>
-    <string name="about">About</string>
+
 
     <string-array name="station_function">
         <item>Prep</item>

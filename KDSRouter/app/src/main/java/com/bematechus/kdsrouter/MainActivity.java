@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -47,6 +48,7 @@ import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIAboutDlg;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
@@ -64,7 +66,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSRouter.KDSRouterEvents,
         KDSTimer.KDSTimerInterface,
         KDSUIDialogBase.KDSDialogBaseListener,
-        Activation.ActivationEvents
+        Activation.ActivationEvents,
+        KDSUIAboutDlg.AboutDlgEvent
         {
 
     final static private String TAG = "MainActivity";
@@ -442,7 +445,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else if (id == R.id.action_about)
         {
-            KDSUIAboutDlg.showAbout(this, getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+            //KDSUIAboutDlg.showAbout(this, getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+            Drawable icon = this.getResources().getDrawable(R.drawable.ic_launcher);
+            String ver = getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")";
+
+            KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_KDS, icon, this);//kpp1-179
         }
         else if (id == R.id.action_clear_log)
         {
@@ -1263,5 +1270,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             return (m_strInfo.equals(info.getInfo()));
         }
+    }
+
+    public void aboutDlgCallActivation()
+    {
+        doActivation(false, true, "");
     }
 }

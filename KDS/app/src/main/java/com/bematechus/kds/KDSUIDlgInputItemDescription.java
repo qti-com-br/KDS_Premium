@@ -58,6 +58,7 @@ public class KDSUIDlgInputItemDescription  extends KDSUIDialogBase {
 
     
     public KDSUIDlgInputItemDescription(final Context context, KDSUIDialogBase.KDSDialogBaseListener listener, Mode mode) {
+        this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_input_item_description, "");
         m_mode = mode;
         
@@ -138,26 +139,26 @@ public class KDSUIDlgInputItemDescription  extends KDSUIDialogBase {
 
     }
 
-    public String makeOKButtonText(Context context)
-    {
-        return makeCtrlEnterButtonText(context, DialogEvent.OK);
-
-    }
-    public String makeCancelButtonText(Context context)
-    {
-        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
-
-    }
+//    public String makeOKButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.OK);
+//
+//    }
+//    public String makeCancelButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
+//
+//    }
 //    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey )
 //    {
 //        return makeButtonText(context, nResID, funcKey);
 //
 //    }
 
-    protected void init_dialog_events(final AlertDialog dlg)
-    {
-        init_dialog_ctrl_enter_events(dlg);
-
-    }
+//    protected void init_dialog_events(final AlertDialog dlg)
+//    {
+//        init_dialog_ctrl_enter_events(dlg);
+//
+//    }
 
 }

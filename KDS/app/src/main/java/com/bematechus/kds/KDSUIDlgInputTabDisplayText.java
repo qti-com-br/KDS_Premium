@@ -39,6 +39,7 @@ public class KDSUIDlgInputTabDisplayText extends KDSUIDialogBase {
 
 
     public KDSUIDlgInputTabDisplayText(final Context context, String strDisplayText, KDSUIDialogBase.KDSDialogBaseListener listener) {
+        this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_input_trackerid, "");
         this.setTitle(context.getString(R.string.tab_display_text));// context.getString(R.string.tracker_id));
 
@@ -48,28 +49,28 @@ public class KDSUIDlgInputTabDisplayText extends KDSUIDialogBase {
 
 
     }
-    public String makeOKButtonText(Context context)
-    {
-        return makeCtrlEnterButtonText(context, DialogEvent.OK);
-//        String s = text;
-//        String bumpbar = getBumpbarOKKeyText(context);
-//        return s + bumpbar;
-    }
-    public String makeCancelButtonText(Context context)
-    {
-        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
-//        String s = context.getString( com.bematechus.kdslib.R.string.cancel);
-//        String bumpbar = getBumpbarCancelKeyText(context);
-//        return s + bumpbar;
-    }
+//    public String makeOKButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.OK);
+////        String s = text;
+////        String bumpbar = getBumpbarOKKeyText(context);
+////        return s + bumpbar;
+//    }
+//    public String makeCancelButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
+////        String s = context.getString( com.bematechus.kdslib.R.string.cancel);
+////        String bumpbar = getBumpbarCancelKeyText(context);
+////        return s + bumpbar;
+//    }
 //    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey) {
 //        return makeCtrlEnterButtonText(context, nResID, funcKey);
 //
 //
 //    }
 
-    protected void init_dialog_events(final AlertDialog dlg) {
-        init_dialog_ctrl_enter_events(dlg);
-
-    }
+//    protected void init_dialog_events(final AlertDialog dlg) {
+//        init_dialog_ctrl_enter_events(dlg);
+//
+//    }
 }

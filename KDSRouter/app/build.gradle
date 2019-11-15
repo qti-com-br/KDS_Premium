@@ -73,7 +73,7 @@ android {
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
             versionCode 2
-            versionName '2.3.0.0'
+            versionName '2.4.0.0'
             dimension "default"
         }
         stage {

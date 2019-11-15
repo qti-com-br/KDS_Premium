@@ -9,6 +9,7 @@ import android.content.Intent;
 //import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
 import android.os.AsyncTask;
@@ -69,7 +70,9 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIAboutDlg;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDialogConfirm;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.KDSXMLParserCommand;
@@ -101,7 +104,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDBBase.DBEvents,
         TabDisplay.TabDisplayEvents,
         Activation.ActivationEvents,
-        SysTimeChangedReceiver.sysTimeChangedEvent
+        SysTimeChangedReceiver.sysTimeChangedEvent,
+        KDSUIAboutDlg.AboutDlgEvent
 
 {
     public enum GUI_MODE
@@ -1181,7 +1185,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 opShowActiveStations(KDSUser.USER.USER_A);
             } else if (id == R.id.action_about) {
                 if (!isKDSValid()) return false;
-                KDSUIAboutDlg.showAbout(this, getKDS().getUsers().getUserA(), getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+                //KDSUIAboutDlg.showAbout(this, getKDS().getUsers().getUserA(), getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+                Drawable icon = this.getResources().getDrawable(R.drawable.ic_launcher);
+                String ver = getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")";
+
+                KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_KDS, icon, this);//kpp1-179
             }
 //            else if (id == R.id.action_restore) { //kpp1-1083
 //                startKDSUtility();
@@ -6682,6 +6690,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             KDS.broadcastStationsRelations();
 
         }
+    }
+
+    public void aboutDlgCallActivation()
+    {
+        doActivation(false, true, "");
     }
 }
 

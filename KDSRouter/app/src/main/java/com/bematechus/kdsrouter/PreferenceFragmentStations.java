@@ -45,6 +45,7 @@ import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDialogConfirm;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 import com.bematechus.kdslib.SettingsBase;
