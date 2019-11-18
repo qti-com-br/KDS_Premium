@@ -24,6 +24,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2015/9/22 0022.
  */
-public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationAnnounceEvents {
+public class KDSUIIPSearchDialog extends KDSUIDialogBase implements StationAnnounceEvents {
     final static String TAG = "KDSUIIPSearchDialog";
     public enum IPSelectionMode{
         Zero,
@@ -332,6 +333,27 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDS.StationA
 
     }
 
+    /**
+     * different with KDS
+     * @param ip
+     * @param port
+     * @return
+     */
+    private boolean findStation(String ip, String port)
+    {
+        int ncount = m_lstStations.getCount();
+        for (int i=0; i< ncount; i++) {
+
+            String strIP = ((MyAdapter) m_lstStations.getAdapter()).getListData().get(i).getIP();
+            String strPort = ((MyAdapter) m_lstStations.getAdapter()).getListData().get(i).getPort();
+            if (strIP.equals(ip) &&
+                    strPort.equals(port))
+                return true;
+
+
+        }
+        return false;
+    }
     public void show() {
         super.show();
         Button btn =dialog.getButton(DialogInterface.BUTTON_NEUTRAL);

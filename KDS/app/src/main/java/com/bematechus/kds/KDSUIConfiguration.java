@@ -47,6 +47,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.lang.reflect.Method;
@@ -496,7 +497,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
 
         public void onKDSDialogCancel(KDSUIDialogBase dialog) {
-            if (dialog instanceof KDSUIDlgInputPassword ) {
+            if (dialog instanceof KDSUIDlgInputPassword) {
 //                m_bDisableChangedEvent = true;
 //
 //                if (KDSGlobalVariables.getKDS().getSettings().getBoolean(KDSSettings.ID.Settings_password_enabled))

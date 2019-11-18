@@ -35,13 +35,14 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
-public class KDSUIRetriveConfig extends Activity implements   KDS.StationAnnounceEvents, KDS.KDSEvents{
+public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvents, KDS.KDSEvents{
 
 
     TextView m_txtInfo = null;

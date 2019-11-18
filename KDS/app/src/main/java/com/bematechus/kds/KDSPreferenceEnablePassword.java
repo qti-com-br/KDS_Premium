@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgInputPassword;
 
 /**
  * Created by Administrator on 2018/4/24.

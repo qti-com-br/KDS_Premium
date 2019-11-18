@@ -1,12 +1,8 @@
 package com.bematechus.kdsrouter;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,7 +12,6 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSMBPath;
@@ -24,8 +19,8 @@ import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile1;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.OpenFileDialog;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

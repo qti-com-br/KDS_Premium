@@ -1,7 +1,6 @@
 package com.bematechus.kdsrouter;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.preference.Preference;
 import android.util.AttributeSet;
 
@@ -9,6 +8,7 @@ import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSToast;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.OpenFileDialog;
 
 /**
  * Created by Administrator on 2018/1/21.

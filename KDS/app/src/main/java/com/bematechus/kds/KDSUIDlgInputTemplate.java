@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.OpenFileDialog;
 
 import java.io.File;
 import java.util.Arrays;
@@ -108,11 +109,12 @@ public class KDSUIDlgInputTemplate extends KDSUIDialogBase {
         //init_dialog_ctrl_enter_events(dlg); //2.0.33
 
     }
-    OpenLocalFileDialog m_openFileDlg = null;
+    //OpenLocalFileDialog m_openFileDlg = null;
+    OpenFileDialog m_openFileDlg = null;
     private void exportTemplate()
     {
         if (m_openFileDlg != null ) return;
-        m_openFileDlg = new OpenLocalFileDialog(this.getView().getContext(),"", new KDSUIDialogBase.KDSDialogBaseListener() {
+        m_openFileDlg = new OpenFileDialog(this.getView().getContext(),"", new KDSUIDialogBase.KDSDialogBaseListener() {
             public void onKDSDialogOK(KDSUIDialogBase dialog, Object obj) {
                 String s = (String)obj;
                 saveTemplateToFile(s);
@@ -124,13 +126,13 @@ public class KDSUIDlgInputTemplate extends KDSUIDialogBase {
                 // nothing to do
                 m_openFileDlg = null;
             }
-        }, OpenLocalFileDialog.Mode.Save_2_File);
+        }, OpenFileDialog.Mode.Save_2_File);
         m_openFileDlg.show();
     }
     private void importTemplate()
     {
         if (m_openFileDlg != null ) return;
-        m_openFileDlg = new OpenLocalFileDialog(this.getView().getContext(),"", new KDSUIDialogBase.KDSDialogBaseListener() {
+        m_openFileDlg = new OpenFileDialog(this.getView().getContext(),"", new KDSUIDialogBase.KDSDialogBaseListener() {
             public void onKDSDialogOK(KDSUIDialogBase dialog, Object obj) {
                 String s = (String)obj;
                 loadFromTemplateFile(s);
@@ -142,7 +144,7 @@ public class KDSUIDlgInputTemplate extends KDSUIDialogBase {
                 // nothing to do
                 m_openFileDlg = null;
             }
-        }, OpenLocalFileDialog.Mode.Choose_File);
+        }, OpenFileDialog.Mode.Choose_File);
         m_openFileDlg.show();
     }
 

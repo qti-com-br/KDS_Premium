@@ -14,6 +14,7 @@ import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +26,7 @@ import static com.bematechus.kdslib.Activation.getDevices;
 /**
  * Created by Administrator on 2016/2/1 0001.
  */
-public class KDSUIDialogInputID extends KDSUIDialogBase implements KDS.StationAnnounceEvents {
+public class KDSUIDialogInputID extends KDSUIDialogBase implements StationAnnounceEvents {
     TextView m_txtText = null;
     TextView m_txtDescription = null;
     String m_stationID = "";

@@ -49,6 +49,7 @@ import com.bematechus.kdslib.KDSUIDialogConfirm;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ import java.util.List;
  * activity is showing a two-pane settings UI.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreferenceFragment implements  KDS.StationAnnounceEvents,KDS.KDSRouterEvents, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface{
+public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreferenceFragment implements StationAnnounceEvents,KDS.KDSRouterEvents, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface{
 
     private static final String TAG = "StationsPref";
     static PreferenceFragmentStations m_stationsRelations = null;

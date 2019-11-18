@@ -32,6 +32,7 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import java.util.Map;
  * Different with KDS file
  */
 
-public class KDSUIRetriveConfig extends Activity implements   KDSRouter.StationAnnounceEvents, KDSRouter.KDSRouterEvents{
+public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvents, KDSRouter.KDSRouterEvents{
 
 
     TextView m_txtInfo = null;

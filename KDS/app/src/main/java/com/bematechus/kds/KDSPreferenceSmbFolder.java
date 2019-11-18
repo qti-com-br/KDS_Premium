@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSSMBPath;
+import com.bematechus.kdslib.KDSUIDlgInputSMBFolder;
 
 
 /**

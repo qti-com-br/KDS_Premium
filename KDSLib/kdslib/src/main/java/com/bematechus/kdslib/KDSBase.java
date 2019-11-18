@@ -13,10 +13,10 @@ public class KDSBase {
 
     static final String TAG = "KDSBase";
 
-    public interface StationAnnounceEvents
-    {
-        void onReceivedStationAnnounce(KDSStationIP stationReceived);//String stationID, String ip, String port, String mac);
-    }
+//    public interface StationAnnounceEvents
+//    {
+//        void onReceivedStationAnnounce(KDSStationIP stationReceived);//String stationID, String ip, String port, String mac);
+//    }
 
     protected StationAnnounceEvents m_stationAnnounceEvents = null;
 

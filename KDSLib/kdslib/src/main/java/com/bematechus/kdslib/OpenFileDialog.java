@@ -1,11 +1,8 @@
-package com.bematechus.kdsrouter;
+package com.bematechus.kdslib;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
-import android.text.Layout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -13,10 +10,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bematechus.kdslib.KDSLog;
-import com.bematechus.kdslib.KDSUIDialogBase;
-import com.bematechus.kdslib.KDSUtil;
 
 import java.io.File;
 import java.util.ArrayList;

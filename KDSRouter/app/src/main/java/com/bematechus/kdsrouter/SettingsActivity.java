@@ -49,6 +49,7 @@ import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.lang.reflect.Method;
@@ -562,7 +563,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 //        }
 
         public void onKDSDialogCancel(KDSUIDialogBase dialog) {
-            if (dialog instanceof KDSUIDlgInputPassword ) {
+            if (dialog instanceof KDSUIDlgInputPassword) {
 //                m_bDisableChangedEvent = true;
 //                ((CheckBoxPreference) findPreference("kds_general_enable_password")).setChecked(false);
 //                setPassword("");

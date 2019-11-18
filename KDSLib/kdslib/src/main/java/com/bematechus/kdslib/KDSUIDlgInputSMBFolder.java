@@ -1,4 +1,4 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,16 +11,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bematechus.kdslib.KDSKbdRecorder;
-import com.bematechus.kdslib.KDSSMBPath;
-import com.bematechus.kdslib.KDSSmbFile;
-import com.bematechus.kdslib.KDSSmbFile1;
-import com.bematechus.kdslib.KDSSmbFile2;
 
 /**
  * Created by Administrator on 2015/10/19 0019.
+ * Notice:
+ *  It support bumpbar at kds and kdsrouter.But it does not show [1] /[0] in button.
+ *   This mention user must use mouse to do operations.
+ *
  */
 public class KDSUIDlgInputSMBFolder   {
     public interface OnKDSUIDlgInputSMBFolderListener {
@@ -304,13 +301,13 @@ public class KDSUIDlgInputSMBFolder   {
         d.show();
     }
 
-    static public KDSSettings.ID checkKdbEvent(KeyEvent event)
+    static public KDSUIDialogBase.DialogEvent checkKdbEvent(KeyEvent event)
     {
         if (event.getKeyCode() == KeyEvent.KEYCODE_0)
-            return KDSSettings.ID.Bumpbar_Cancel;
+            return KDSUIDialogBase.DialogEvent.Cancel;//KDSSettings.ID.Bumpbar_Cancel;
         else if (event.getKeyCode() == KeyEvent.KEYCODE_1)
-            return KDSSettings.ID.Bumpbar_OK;
-        return KDSSettings.ID.NULL;
+            return KDSUIDialogBase.DialogEvent.OK;// KDSSettings.ID.Bumpbar_OK;
+        return KDSUIDialogBase.DialogEvent.Unknown;// KDSSettings.ID.NULL;
     }
     private void init_dialog_events(final AlertDialog dlg)
     {
@@ -320,7 +317,8 @@ public class KDSUIDlgInputSMBFolder   {
                 // KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
                 if (event.getRepeatCount()>0) return false;
                 if (event.getAction() != KeyEvent.ACTION_UP) return false;
-                KDSSettings.ID evID = KDSSettings.ID.NULL;
+                //KDSSettings.ID evID = KDSSettings.ID.NULL;
+                KDSUIDialogBase.DialogEvent evID = KDSUIDialogBase.DialogEvent.Unknown;
                 evID = checkKdbEvent(event);
 
 //                if (KDSGlobalVariables.getKDS()!= null)
@@ -332,14 +330,14 @@ public class KDSUIDlgInputSMBFolder   {
 //                    funcs.updateSettings(settings);
 //                    evID = funcs.getKDSDlgEvent(event, null);
 //                }
-                if (evID == KDSSettings.ID.Bumpbar_OK)
+                if (evID == KDSUIDialogBase.DialogEvent.OK)
                 {
                     dialog.dismiss();
                     if (KDSUIDlgInputSMBFolder.this.listener != null)
                         KDSUIDlgInputSMBFolder.this.listener.onSMBOk(KDSUIDlgInputSMBFolder.this,getSMBPath());
                     return true;
                 }
-                else if (evID == KDSSettings.ID.Bumpbar_Cancel)
+                else if (evID == KDSUIDialogBase.DialogEvent.Cancel)
                 {
                     dialog.cancel();
 

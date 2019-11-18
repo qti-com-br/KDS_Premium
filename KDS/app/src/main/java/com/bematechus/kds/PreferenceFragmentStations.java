@@ -46,6 +46,7 @@ import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDialogConfirm;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +61,7 @@ import java.util.List;
  *  2.0.11, change its name from StationsPreferenceFragment to PreferenceFragmentStations
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreferenceFragment implements  KDS.StationAnnounceEvents,KDS.KDSEvents, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface{
+public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreferenceFragment implements StationAnnounceEvents,KDS.KDSEvents, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface{
 
     private static final String TAG = "StationsPref";
     static PreferenceFragmentStations m_stationsRelations = null;

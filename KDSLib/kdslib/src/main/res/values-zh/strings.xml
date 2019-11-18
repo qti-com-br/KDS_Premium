@@ -120,4 +120,15 @@
     <string name="confirm">Confirm</string>
     <string name="login_other_store">This login does not belong to the current store. The local store data will be deleted. Are you sure you want to continue?</string>
     <string name="about">About</string>
+    <string name="password">Password</string>
+    <string name="pwd_do_not_match">Passwords do not match.</string>
+    <string name="ignore_and_save">Ignore and save</string>
+    <string name="modify_setting">Modify setting</string>
+    <string name="cancel_setting"> Cancel setting</string>
+    <string name="error">Error</string>
+    <string name="no_rights_to_access">No rights to access!</string>
+    <string name="open_file">Open file</string>
+    <string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>

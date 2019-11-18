@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.OpenFileDialog;
 
 /**
  * Created by Administrator on 2017/7/7.
@@ -90,7 +91,7 @@ public class KDSUIDialogImportSettings extends KDSUIDialogBase implements KDSUID
     protected void onBrowseImportFolder()
     {
         //OpenFileDialog dlg = new OpenFileDialog(m_view.getContext(), "*.xml", this);
-        OpenFileDialog dlg = new OpenFileDialog(dialog.getContext(), ".xml;", this, true);
+        OpenFileDialog dlg = new OpenFileDialog(dialog.getContext(), ".xml;", this, OpenFileDialog.Mode.Choose_Folder);
         dlg.show();
 
     }
