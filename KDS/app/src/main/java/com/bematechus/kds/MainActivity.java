@@ -2816,7 +2816,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (orderGuid.isEmpty()) return;
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
 
-        refreshWithNewDbDataAndFocusFirst();
+        //refreshWithNewDbDataAndFocusFirst(); //kpp1-251, use below line code
+        this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder();
+
         notifiyPOSOrderUnbump(userID, orderGuid);
         //KPP1-41
         KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
@@ -2826,7 +2828,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 iosstate = ActivationRequest.iOSOrderState.Preparation;
             getKDS().syncOrderToWebDatabase(order, iosstate, ActivationRequest.SyncDataFromOperation.Unbump);
         }
-
+        refreshPrevNext(userID); //kpp1-251, while bump then unbump last one, "next" count is not correct.
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
