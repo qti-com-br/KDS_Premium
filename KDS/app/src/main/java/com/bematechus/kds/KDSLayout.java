@@ -201,9 +201,35 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     }
                 }
             }
-            for (int i = 0; i < m_orders.getCount(); i++) {
+            //comment following code as KPP1-252
+//            for (int i = 0; i < m_orders.getCount(); i++) {
+//                String fromGuid = m_orders.get(i).getGUID();
+//                if (checkOrdersCanShowFocus(m_orders, fromGuid, focusedGuid)) {
+//                    getEnv().getStateValues().setFirstShowingOrderGUID(fromGuid);
+//                    return;
+//                }
+//            }
+            //KPP1-252, from focused order to first, reverse check. For speed
+            int nFocusedIndex = m_orders.getIndex(focusedGuid);
+            if (nFocusedIndex == 0) {
+                getEnv().getStateValues().setFirstShowingOrderGUID(focusedGuid);
+                return;
+            }
+            for (int i = nFocusedIndex-1; i >=0; i--) {
                 String fromGuid = m_orders.get(i).getGUID();
                 if (checkOrdersCanShowFocus(m_orders, fromGuid, focusedGuid)) {
+                    if (i ==0) {
+                        getEnv().getStateValues().setFirstShowingOrderGUID(fromGuid);
+                        return;
+                    }
+
+                }
+                else //get last can visual first order
+                {
+                    i++;
+                    if (i >= m_orders.getCount())
+                        i=0;
+                    fromGuid = m_orders.get(i).getGUID();
                     getEnv().getStateValues().setFirstShowingOrderGUID(fromGuid);
                     return;
                 }
@@ -1675,7 +1701,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             return 0;
         }
         int n = m_orders.getIndex(guid);
-
+        if  (n <0) return 0;//kpp1-253, if it is not existed, return 0. It has been bumped.
         return m_orders.getCount() - n -1;
 
     }

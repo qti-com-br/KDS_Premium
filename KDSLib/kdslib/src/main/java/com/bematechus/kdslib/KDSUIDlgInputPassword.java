@@ -171,7 +171,7 @@ public class KDSUIDlgInputPassword  extends KDSUIDialogBase {
      */
     protected boolean checkDataValidation()
     {
-        if ( this.getView().findViewById(R.id.linearConfirm).getVisibility() != View.VISIBLE)
+        if ( this.getView().findViewById(R.id.linearConfirm).getVisibility() != View.VISIBLE)//kpp1-250
             return true;
         String strConfirm =  m_txtConfirm.getText().toString();
         String strPwd =m_txtText.getText().toString();
