@@ -16,6 +16,7 @@ import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
+import com.bematechus.kdslib.KDSCallback;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
@@ -56,6 +57,7 @@ import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.StationAnnounceEvents;
 import com.bematechus.kdslib.TimeDog;
 
 import java.nio.ByteBuffer;
@@ -69,7 +71,10 @@ import java.util.Vector;
  * The KDS app main interface.
  *  It charge the network, printer ...
  */
-public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
+public class KDS extends KDSBase implements KDSSocketEventReceiver,
+        Runnable,
+        KDSCallback
+        {
 
     final static String TAG = "KDSMain";
     public enum RefreshViewParam
@@ -5020,5 +5025,22 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             }
 
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arParams);
+    }
+
+    /**
+     * KDSCallback
+     * @param receiver
+     */
+    public void call_setStationAnnounceEventsReceiver(StationAnnounceEvents receiver)
+    {
+        this.setStationAnnounceEventsReceiver(receiver);
+    }
+    public void call_broadcastRequireStationsUDP()
+    {
+        this.getBroadcaster().broadcastRequireStationsUDP();
+    }
+    public String call_getStationID()
+    {
+        return this.getStationID();
     }
 }

@@ -130,4 +130,8 @@
     <string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="str_refresh">Refresh</string>
+    <string name="searching_active_stations">Searching for activate stations …</string>
+    <string name="no_active_stations">No available station is online</string>
+    <string name="active_stations_list">Stations</string>
 </resources>

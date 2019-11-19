@@ -48,7 +48,7 @@
     <string name="sort_preptime_descend">准备时间降序</string>
     <string name="restore">恢复</string>
     <string name="unpark">调出</string>
-    <string name="str_refresh">更新</string>
+    <!--<string name="str_refresh">更新</string>-->
     <string name="str_default">默认</string>
     <string name="order_state_waiting">等待</string>
     <string name="order_state_processing">进行中</string>
@@ -115,9 +115,9 @@
     <string name="error_isnot_unique_id">ID # 已被占用，请输入其它</string>
     <string name="error_id_out_range">请输入ID, 范围（0--99）</string>
     <string name="error_id_is_empty">请输入ID</string>
-    <string name="active_stations_list">终端</string>
-    <string name="no_active_stations">无在线终端</string>
-    <string name="searching_active_stations">搜索在线终端 …</string>
+    <!--<string name="active_stations_list">终端</string>-->
+    <!--<string name="no_active_stations">无在线终端</string>-->
+    <!--<string name="searching_active_stations">搜索在线终端 …</string>-->
     <string name="error_different_relations">终端的关系设置和其它终端不同，请首先编辑关系设置</string>
     <string name="error_match_mac">请在bematech设备上运行</string>
     <string name="back">后退</string>

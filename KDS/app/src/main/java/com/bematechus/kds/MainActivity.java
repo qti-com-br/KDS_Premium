@@ -74,6 +74,7 @@ import com.bematechus.kdslib.KDSUIAboutDlg;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDialogConfirm;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.KDSXMLParserCommand;
@@ -2618,6 +2619,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
         KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Zero, null, "");
+        dlg.setKDSCallback(getKDS());//
         dlg.setKDSUser(getKDS().getUsers().getUser(userID));
         dlg.show();
         dlg.setKDSUser(getKDS().getUsers().getUser(userID));
@@ -3255,6 +3257,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else {
             KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Single, this, this.getString(R.string.transfer_select_station_title));
+            dlg.setKDSCallback(getKDS());//
             dlg.setSelf(false); //hide self now. //Also on transfer the station you are on shows up. You should not be able to transfer a station to its own station.
             dlg.setShowMultipleUsers(true);
             dlg.setDefaultStationID(stationID);

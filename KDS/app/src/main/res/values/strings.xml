@@ -50,7 +50,7 @@
     <string name="restore">Restore</string>
     <string name="unpark">Unpark</string>
     <string name="addon">Add-on</string>
-    <string name="str_refresh">Refresh</string>
+    <!--<string name="str_refresh">Refresh</string>-->
     <string name="str_default">Default</string>
     <string name="order_state_waiting">Waiting</string>
     <string name="order_state_processing">Processing</string>
@@ -118,9 +118,9 @@
     <string name="error_isnot_unique_id">The ID # used by others.Please change it.</string>
     <string name="error_id_out_range">Please input ID value between 0 and 99.</string>
     <string name="error_id_is_empty">Please input ID.</string>
-    <string name="active_stations_list">Stations</string>
-    <string name="no_active_stations">No available station is online</string>
-    <string name="searching_active_stations">Searching for activate stations …</string>
+    <!--<string name="active_stations_list">Stations</string>-->
+    <!--<string name="no_active_stations">No available station is online</string>-->
+    <!--<string name="searching_active_stations">Searching for activate stations …</string>-->
     <string name="error_different_relations">The stations relationship is different with others, please edit stations relationship first.</string>
     <string name="error_match_mac">Please run it in bematech device.</string>
     <string name="back">Back</string>

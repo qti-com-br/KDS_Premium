@@ -44,6 +44,7 @@ import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDialogConfirm;
+import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.StationAnnounceEvents;
@@ -325,6 +326,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     public void onRetrieveRelations(View v)
     {
         KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this.getActivity(), KDSUIIPSearchDialog.IPSelectionMode.Single, this, "");
+        dlg.setKDSCallback(KDSGlobalVariables.getKDS());
         dlg.setTitle(this.getString(R.string.select_retrieve_station));
         dlg.setSelf(false);
         dlg.show();

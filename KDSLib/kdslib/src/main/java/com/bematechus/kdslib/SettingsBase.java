@@ -58,6 +58,11 @@ public class SettingsBase {
         Chinese,
     }
 
+    public enum KDSUserMode
+    {
+        Single,
+        Multiple,
+    }
 
     public static ArrayList<KDSStationsRelation> loadStationsRelation(Context context, boolean bNeedNoCheckOption )
     {

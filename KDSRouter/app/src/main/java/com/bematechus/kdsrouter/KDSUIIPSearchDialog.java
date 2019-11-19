@@ -38,7 +38,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements StationAnnou
     }
 
     ListView m_lstStations = null;
-    ArrayList<String> m_lstIPs = new ArrayList<String>();
+    //ArrayList<String> m_lstIPs = new ArrayList<String>();
     TextView m_txtTitle = null;
 
     int m_nJustListStationWithThisIpPort = 0;

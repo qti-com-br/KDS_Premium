@@ -625,11 +625,11 @@ public class KDSSettings extends SettingsBase {
     }
 
 
-    public enum KDSUserMode
-    {
-        Single,
-        Multiple,
-    }
+//    public enum KDSUserMode
+//    {
+//        Single,
+//        Multiple,
+//    }
 
     public enum SmartOrderShowing //how to show delay item/order.
     {

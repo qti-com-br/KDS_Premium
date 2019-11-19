@@ -1,30 +1,16 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Checkable;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bematechus.kdslib.KDSApplication;
-import com.bematechus.kdslib.KDSLog;
-import com.bematechus.kdslib.KDSStationIP;
-import com.bematechus.kdslib.KDSUIDialogBase;
-import com.bematechus.kdslib.KDSUtil;
-import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +38,13 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements StationAnnou
     Object m_tag = null;
 
     String m_strDefaultStationID = "";
+    KDSCallback m_kdsCallback = null;
     /////////////////////////////////////////
+
+    public void setKDSCallback(KDSCallback kdsCallback)
+    {
+        m_kdsCallback = kdsCallback;
+    }
 
     public void setDefaultStationID(String stationID)
     {
@@ -209,16 +201,29 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements StationAnnou
         ((MyAdapter) m_lstStations.getAdapter()).getListData().clear();
 
         ((MyAdapter) m_lstStations.getAdapter()).notifyDataSetChanged();
-        KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(KDSUIIPSearchDialog.this);
+//        KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(KDSUIIPSearchDialog.this);
+//
+//        AsyncTask task = new AsyncTask() {
+//            @Override
+//            protected Object doInBackground(Object[] params) {
+//                KDSGlobalVariables.getKDS().getBroadcaster().broadcastRequireStationsUDP();
+//                return null;
+//            }
+//        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                KDSGlobalVariables.getKDS().getBroadcaster().broadcastRequireStationsUDP();
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (m_kdsCallback != null)
+        {
+            m_kdsCallback.call_setStationAnnounceEventsReceiver(this);
 
+            AsyncTask task = new AsyncTask() {
+                @Override
+                protected Object doInBackground(Object[] params) {
+                    m_kdsCallback.call_broadcastRequireStationsUDP();
+                    return null;
+                }
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        }
 
 
     }
@@ -227,7 +232,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements StationAnnou
     {
         if (!m_bShowMySelf)
         {
-            String localID =  KDSGlobalVariables.getKDS().getStationID();
+            String localID = m_kdsCallback.call_getStationID();// KDSGlobalVariables.getKDS().getStationID();
             if (localID.equals(stationReceived.getID()))
                 return;
         }
@@ -246,19 +251,19 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements StationAnnou
         station.setIP(stationReceived.getIP());
         station.setPort(stationReceived.getPort());
         station.setUserMode(stationReceived.getUserMode());
-        station.setScreen(KDSUser.USER.USER_A.ordinal());
+        station.setScreen(0);//KDSUser.USER.USER_A.ordinal());
 
         ((MyAdapter) m_lstStations.getAdapter()).getListData().add(station);
         if (m_bShowMultipleUser)
         {
-            if (stationReceived.getUserMode() == KDSSettings.KDSUserMode.Multiple.ordinal())
+            if (stationReceived.getUserMode() == SettingsBase.KDSUserMode.Multiple.ordinal())
             {
                 KDSStationIP station1 = new KDSStationIP();
                 station1.setID(stationReceived.getID());
                 station1.setIP(stationReceived.getIP());
                 station1.setPort(stationReceived.getPort());
                 station1.setUserMode(stationReceived.getUserMode());
-                station1.setScreen(KDSUser.USER.USER_B.ordinal());
+                station1.setScreen(1);//KDSUser.USER.USER_B.ordinal());
                 ((MyAdapter) m_lstStations.getAdapter()).getListData().add(station1);
             }
         }
@@ -443,7 +448,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements StationAnnou
                 ((TextView) convertView.findViewById(R.id.txtID)).setText(r.getID());
             else
             {
-                if (r.getUserMode() == KDSSettings.KDSUserMode.Multiple.ordinal())
+                if (r.getUserMode() == SettingsBase.KDSUserMode.Multiple.ordinal())
                 {
                     ((TextView) convertView.findViewById(R.id.txtID)).setText(r.getID() + "(" +KDSUtil.convertIntToString( r.getScreen()) + ")");
                 }
