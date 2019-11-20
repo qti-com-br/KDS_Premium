@@ -312,7 +312,7 @@ public class KDSUIDialogBase {
      * @param event
      * @return
      */
-    public DialogEvent checkDialogKeyboardEvent(KeyEvent event)
+    static public DialogEvent checkDialogKeyboardEvent(KeyEvent event)
     {
         if (m_funcOK == null ||
             m_funcCancel == null) return DialogEvent.Unknown;

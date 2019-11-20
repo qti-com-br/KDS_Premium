@@ -49,6 +49,7 @@ import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
@@ -4117,9 +4118,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
-    public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
+    public void onRefreshView(int  nUserID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
 
-
+        KDSUser.USER userID = KDSUser.USER.values()[nUserID];
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -6702,5 +6703,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         doActivation(false, true, "");
     }
+
+    public void onRefreshSummary(int userID){}//KDSUser.USER userID);
+
+    public void onShowStationStateMessage(String stationID, int nState){}
+    public void onShowMessage(String message){}
 }
 

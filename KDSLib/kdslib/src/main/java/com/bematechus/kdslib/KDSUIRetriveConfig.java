@@ -1,4 +1,4 @@
-package com.bematechus.kds;
+package com.bematechus.kdslib;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,15 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.SyncStateContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+//import android.support.design.widget.FloatingActionButton;
+//import android.support.design.widget.Snackbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,33 +17,31 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-
-import com.bematechus.kdslib.KDSDataItem;
-import com.bematechus.kdslib.KDSDataOrder;
-import com.bematechus.kdslib.KDSDataOrders;
-import com.bematechus.kdslib.KDSKbdRecorder;
-import com.bematechus.kdslib.KDSStationConnection;
-import com.bematechus.kdslib.KDSStationIP;
-import com.bematechus.kdslib.KDSStationsRelation;
-import com.bematechus.kdslib.KDSXMLParserCommand;
-import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
-public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvents, KDS.KDSEvents{
+public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvents, KDSBase.KDSEvents{
 
 
     TextView m_txtInfo = null;
     ListView m_lstStations = null;
-    ArrayList<Map<String,Object>> m_arData= new ArrayList<Map<String,Object>>();
+    //ArrayList<Map<String,Object>> m_arData= new ArrayList<Map<String,Object>>();
+    static KDSCallback m_kdsCallback = null;
+    static boolean m_bForRouter = false;
 
+    static public void setForRouter(boolean bForRouter)
+    {
+        m_bForRouter = bForRouter;
+    }
+
+    static public void setKDSCallback(KDSCallback callback)
+    {
+        m_kdsCallback = callback;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,9 +49,12 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
 
         m_lstStations = (ListView) this.findViewById(R.id.lstStations);
         m_txtInfo  =(TextView) this.findViewById(R.id.txtInfo);
-        KDS kds =  KDSGlobalVariables.getKDS();
-        if (kds == null) return;
-        kds.setStationAnnounceEventsReceiver(this);
+        //KDS kds =  KDSGlobalVariables.getKDS();
+        //if (kds == null) return;
+        //kds.setStationAnnounceEventsReceiver(this);
+        if (m_kdsCallback == null) return;
+        m_kdsCallback.call_setStationAnnounceEventsReceiver(this);
+
 
         ArrayList<KDSStationsRelation> data = new ArrayList<>();
         MyAdapter adapter = new MyAdapter(this.getApplicationContext(), data);
@@ -94,9 +90,11 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
 
     protected void onDestroy() {
         super.onDestroy();
-        KDS kds = KDSGlobalVariables.getKDS();
-        if (kds != null)
-            kds.removeEventReceiver(this);
+//        KDS kds = KDSGlobalVariables.getKDS();
+//        if (kds != null)
+//            kds.removeEventReceiver(this);
+        if (m_kdsCallback!= null)
+            m_kdsCallback.call_removeEventReceiver(this);
     }
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         KDSKbdRecorder.convertKeyEvent(keyCode,event);
@@ -113,11 +111,13 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
 
     public void getConfig()
     {
-        KDS kds =  KDSGlobalVariables.getKDS();
-        kds.setEventReceiver(this);
+        //KDS kds =  KDSGlobalVariables.getKDS();
+        //kds.setEventReceiver(this);
+        m_kdsCallback.call_setEventReceiver(this);
         String id = getTargetStationID();
         if (!id.isEmpty())
-            kds.retrieveConfigFromStation(this.getTargetStationID(), m_txtInfo);
+            m_kdsCallback.call_retrieveConfigFromStation(this.getTargetStationID(), m_txtInfo);
+                      //kds.retrieveConfigFromStation(this.getTargetStationID(), m_txtInfo);
         // kds.removeEventReceiver(this);
     }
     public void onBtnGetClicked(View v)
@@ -211,10 +211,7 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
     {
 
     }
-    public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam)
-    {
 
-    }
 
 //    public void onItemQtyChanged(KDSDataOrder order, KDSDataItem item)
 //    {
@@ -229,15 +226,15 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
 
         m_txtInfo.setText(this.getString(R.string.retrieve_config_done));
     }
-    public void onShowMessage(KDS.MessageType msgType,String ip)
+    public void onShowMessage(KDSBase.MessageType msgType,String ip)
     {
 
     }
 
-    public void onRefreshSummary(KDSUser.USER userID)
-    {
-
-    }
+//    public void onRefreshSummary(KDSUser.USER userID)
+//    {
+//
+//    }
     private KDSStationsRelation  findStationByMac(String mac)
     {
         List<KDSStationsRelation> ar =  ((MyAdapter)m_lstStations.getAdapter()).getListData();
@@ -254,8 +251,14 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
     {
 
 
-        if (stationReceived.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()))
+        //if (stationReceived.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()))
+        if (stationReceived.getMac().equals(m_kdsCallback.call_getLocalMacAddress()))
             return;
+        if (m_bForRouter) {
+            String filterPort = m_kdsCallback.call_getBackupRouterPort();// KDSGlobalVariables.getKDS().getSettings().getString(KDSRouterSettings.ID.KDSRouter_Backup_IPPort);
+            if (!filterPort.equals(stationReceived.getPort()))
+                return;
+        }
 
         KDSStationsRelation r = findStationByMac(stationReceived.getMac());
 
@@ -351,5 +354,10 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
             return convertView;
         }
     }
+
+    public void onRefreshSummary(int userID){}//KDSUser.USER userID);
+    public void onRefreshView(int userID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
+    public void onShowStationStateMessage(String stationID, int nState){}
+    public void onShowMessage(String message){}
 
 }

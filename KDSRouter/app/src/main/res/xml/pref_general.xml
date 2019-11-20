@@ -196,7 +196,7 @@
         <intent android:action= "android.intent.action.VIEW"
             android:targetPackage="com.bematechus.kdsrouter"
             android:data="remotesettings"
-            android:targetClass= "com.bematechus.kdsrouter.KDSUIRetriveConfig" />
+            android:targetClass= "com.bematechus.kdslib.KDSUIRetriveConfig" />
 
     </Preference>
 

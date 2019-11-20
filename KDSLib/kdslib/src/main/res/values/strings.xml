@@ -134,4 +134,10 @@
     <string name="searching_active_stations">Searching for activate stations …</string>
     <string name="no_active_stations">No available station is online</string>
     <string name="active_stations_list">Stations</string>
+    <string name="select_station">Please choose station first.</string>
+    <string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>
+    <string name="retrieve_config_waiting_data">Waiting for data ...</string>
+    <string name="retrieve_config_done">Done! Please close configuration.</string>
+    <string name="get">Get</string>
+    <string name="information">Information:</string>
 </resources>

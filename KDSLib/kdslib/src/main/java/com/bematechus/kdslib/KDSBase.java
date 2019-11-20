@@ -12,6 +12,35 @@ import java.util.ArrayList;
 public class KDSBase {
 
     static final String TAG = "KDSBase";
+    public enum RefreshViewParam
+    {
+        None,
+        Focus_First,
+    }
+    public enum MessageType
+    {
+        Normal,
+        Toast,
+    }
+    public interface KDSEvents {
+        void onStationConnected(String ip, KDSStationConnection conn);
+        void onStationDisconnected(String ip);
+        void onAcceptIP(String ip);
+        void onRetrieveNewConfigFromOtherStation();
+        void onShowMessage(String message);
+        void onReceiveNewRelations();
+        void onReceiveRelationsDifferent();
+        void onShowStationStateMessage(String stationID, int nState);
+        //KDSRouter doesn't need following functions
+        void onAskOrderState(Object objSource, String orderName);
+        void onRefreshView(int nUserID, KDSDataOrders orders,KDSBase.RefreshViewParam nParam);//KDSUser.USER userID, KDSDataOrders orders, RefreshViewParam nParam); //nParam: 1: move focus to first order.
+        void onShowMessage(KDSBase.MessageType msgType, String message);
+        void onRefreshSummary(int nUserID);//KDSUser.USER userID);
+        void onSetFocusToOrder(String orderGuid); //set focus to this order
+        void onXmlCommandBumpOrder(String orderGuid);
+        void onTTBumpOrder(String orderName);
+
+    }
 
 //    public interface StationAnnounceEvents
 //    {

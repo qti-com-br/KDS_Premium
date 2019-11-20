@@ -12,6 +12,7 @@ import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSBroadcastThread;
+import com.bematechus.kdslib.KDSCallback;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
@@ -50,6 +51,7 @@ import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.StationAnnounceEvents;
 import com.bematechus.kdslib.TimeDog;
 
 import java.nio.ByteBuffer;
@@ -59,22 +61,26 @@ import java.util.List;
 /**
  *
  */
-public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnable, KDSSMBDataSource.BufferStateChecker {
+public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
+        Runnable,
+        KDSSMBDataSource.BufferStateChecker,
+        KDSCallback
+{
 
     private final String TAG = "KDSRouter";
     private final int MAX_OFFLINE_ORDERS_COUNT = 200;
-    public interface KDSRouterEvents
-    {
-        void onStationConnected(String ip, KDSStationConnection conn);
-        void onStationDisconnected(String ip);
-        void onAcceptIP(String ip);
-        void onRetrieveNewConfigFromOtherStation();
-        void onShowMessage(String message);
-        void onAskOrderState(Object objSource, String orderName);
-        void onReceiveNewRelations();
-        void onReceiveRelationsDifferent();
-        void onShowStationStateMessage(String stationID, int nState);
-    }
+//    public interface KDSRouterEvents
+//    {
+//        void onStationConnected(String ip, KDSStationConnection conn);
+//        void onStationDisconnected(String ip);
+//        void onAcceptIP(String ip);
+//        void onRetrieveNewConfigFromOtherStation();
+//        void onShowMessage(String message);
+//        void onAskOrderState(Object objSource, String orderName);
+//        void onReceiveNewRelations();
+//        void onReceiveRelationsDifferent();
+//        void onShowStationStateMessage(String stationID, int nState);
+//    }
 
 //    public interface StationAnnounceEvents
 //    {
@@ -109,7 +115,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     Object m_locker = new Object();
 
-    ArrayList<KDSRouterEvents> m_arKdsEventsReceiver = new ArrayList<>();//null; //KDS events
+    ArrayList<KDSEvents> m_arKdsEventsReceiver = new ArrayList<>();//null; //KDS events
 
 //    StationAnnounceEvents m_stationAnnounceEvents = null;
 
@@ -262,7 +268,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
 
     }
 
-    public void setEventReceiver(KDSRouterEvents receiver)
+    public void setEventReceiver(KDSEvents receiver)
     {
         int ncount = m_arKdsEventsReceiver.size();
         for (int i= 0; i< ncount; i++)
@@ -274,7 +280,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
         m_arKdsEventsReceiver.add(receiver);
 
     }
-    public void removeEventReceiver(KDSRouterEvents receiver)
+    public void removeEventReceiver(KDSEvents receiver)
     {
         int ncount = m_arKdsEventsReceiver.size();
         for (int i=ncount -1; i>=0; i--)
@@ -3723,4 +3729,39 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver, Runnab
     {
         m_stationsConnection.clear();
     }
+
+    /**
+     * KDSCallback interface
+     * @param receiver
+     */
+    public void call_setStationAnnounceEventsReceiver(StationAnnounceEvents receiver) {
+        this.setStationAnnounceEventsReceiver(receiver);
+    }
+    public void call_broadcastRequireStationsUDP() {
+        this.broadcastRequireStationsUDP();
+    }
+    public String call_getStationID() {
+        return this.getStationID();
+    }
+    public void call_removeEventReceiver(KDSBase.KDSEvents receiver)
+    {
+        this.removeEventReceiver(receiver);
+    }
+    public void call_setEventReceiver(KDSBase.KDSEvents receiver)
+    {
+        this.setEventReceiver(receiver);
+    }
+    public int call_retrieveConfigFromStation(String stationID, TextView txtInfo)
+    {
+        return this.retrieveConfigFromStation(stationID, txtInfo);
+    }
+    public String call_getLocalMacAddress()
+    {
+        return this.getLocalMacAddress();
+    }
+    public String call_getBackupRouterPort()
+    {
+        return this.getSettings().getString(KDSRouterSettings.ID.KDSRouter_Backup_IPPort);
+    }
+
 }

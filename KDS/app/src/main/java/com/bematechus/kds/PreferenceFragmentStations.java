@@ -34,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBase;
+import com.bematechus.kdslib.KDSCallback;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSocketManager;
@@ -62,7 +64,13 @@ import java.util.List;
  *  2.0.11, change its name from StationsPreferenceFragment to PreferenceFragmentStations
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreferenceFragment implements StationAnnounceEvents,KDS.KDSEvents, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface{
+public class PreferenceFragmentStations
+        extends KDSUIConfiguration.KDSPreferenceFragment
+        implements StationAnnounceEvents,
+                    KDSBase.KDSEvents,
+                    KDSUIDialogBase.KDSDialogBaseListener,
+                    KDSTimer.KDSTimerInterface
+{
 
     private static final String TAG = "StationsPref";
     static PreferenceFragmentStations m_stationsRelations = null;
@@ -70,15 +78,21 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     ListView m_lstStations = null;
     TextView m_txtError = null;
     CheckBox m_chkNoCheckRelation = null;
+    //please set it before call ths class
+    static KDSCallback m_kdsCallback = null;
+    static public void setKDSCallback(KDSCallback kdsCallback)
+    {
+        m_kdsCallback = kdsCallback;
+    }
 
     public void onStationConnected(String ip, KDSStationConnection conn){}
     public void onStationDisconnected(String ip){}
     public void onAcceptIP(String ip){}
-    public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam){}
+
     public void onRetrieveNewConfigFromOtherStation(){ reloadRelations();}
-    public void onShowMessage(KDS.MessageType msgType,String message){}
+    public void onShowMessage(KDSBase.MessageType msgType,String message){}
     // public void onShowToastMessage(String message){}
-    public void onRefreshSummary(KDSUser.USER userID){}
+    //public void onRefreshSummary(KDSUser.USER userID){}
     public void onAskOrderState(Object objSource, String orderName){}
     public void onSetFocusToOrder(String orderGuid){}
     public void onXmlCommandBumpOrder(String orderGuid){}
@@ -116,8 +130,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        KDSGlobalVariables.getKDS().setEventReceiver(this);
+        m_kdsCallback.call_setEventReceiver(this);
+        //KDSGlobalVariables.getKDS().setEventReceiver(this);
 
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,19 +141,22 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         View view =  inflater.inflate(R.layout.activity_kdsuistations_config, container, false);
         view.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
         init_variables(view);
-        KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(this);
+        m_kdsCallback.call_setStationAnnounceEventsReceiver(this);
+        //KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(this);
         return view;
     }
 
     public void onDestroy() {
         super.onDestroy();
-        KDSGlobalVariables.getKDS().removeEventReceiver(this);
+        m_kdsCallback.call_removeEventReceiver(this);
+        //KDSGlobalVariables.getKDS().removeEventReceiver(this);
     }
     public void onResume()
     {
         super.onResume();
         m_stationsRelations = this;
-        KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(this);
+        m_kdsCallback.call_setStationAnnounceEventsReceiver(this);
+        //KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(this);
         //m_timer.setReceiver(this);
         try {
             m_timer = new KDSTimer();
@@ -199,13 +216,13 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         d.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
-
-                if (evID == KDSSettings.ID.Bumpbar_OK) {
+                //KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
+                KDSUIDialogBase.DialogEvent evID = KDSUIDialogBase.checkDialogKeyboardEvent(event);
+                if (evID == KDSUIDialogBase.DialogEvent.OK){// KDSSettings.ID.Bumpbar_OK) {
                     dialog.dismiss();
                     PreferenceFragmentStations.this.broadcastUpdateAfterPause();
                     return true;
-                } else if (evID == KDSSettings.ID.Bumpbar_Cancel) {
+                } else if (evID == KDSUIDialogBase.DialogEvent.Cancel){// KDSSettings.ID.Bumpbar_Cancel) {
                     dialog.cancel();
                     return true;
                 }
@@ -232,8 +249,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         if (((MyAdapter)m_lstStations.getAdapter()).isChanged()) {
             showChangedAlertDialog();
         }
-
-        KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(null);
+        m_kdsCallback.call_setStationAnnounceEventsReceiver(null);
+        //KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(null);
     }
 
     public void onListItemClicked(View viewRow)
@@ -285,7 +302,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     {
         if (dialog instanceof KDSUIIPSearchDialog)
         {
-            KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(this);
+            //KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(this);
+            m_kdsCallback.call_setStationAnnounceEventsReceiver(this);
             ArrayList<String> ar =(ArrayList<String>) ((KDSUIIPSearchDialog)dialog).getResult();
             if (ar.size() <=0) return;
             this.retrieveRelationFrom(ar.get(0));
@@ -316,7 +334,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-                KDSGlobalVariables.getKDS().getBroadcaster().broadcastShowStationID();
+                //KDSGlobalVariables.getKDS().getBroadcaster().broadcastShowStationID();
+                m_kdsCallback.call_broadcastShowStationID();
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -326,7 +345,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     public void onRetrieveRelations(View v)
     {
         KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this.getActivity(), KDSUIIPSearchDialog.IPSelectionMode.Single, this, "");
-        dlg.setKDSCallback(KDSGlobalVariables.getKDS());
+        //dlg.setKDSCallback(KDSGlobalVariables.getKDS());
+        dlg.setKDSCallback(m_kdsCallback);
         dlg.setTitle(this.getString(R.string.select_retrieve_station));
         dlg.setSelf(false);
         dlg.show();
@@ -350,7 +370,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             @Override
             protected Object doInBackground(Object[] params) {
                 String id =(String) params[0];
-                KDSGlobalVariables.getKDS().udpAskRelations(id);
+                //KDSGlobalVariables.getKDS().udpAskRelations(id);
+                m_kdsCallback.call_udpAskRelations(id);
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ar);
@@ -360,7 +381,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     {
 
         this.save();
-        KDS.broadcastStationsRelations();
+        //KDS.broadcastStationsRelations();
+        m_kdsCallback.call_broadcastStationsRelations();
 
 //        String s = KDSSettings.loadStationsRelationString(this.getActivity().getApplicationContext(), true);
 //        Object[] ar = new Object[]{s};
@@ -388,7 +410,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             @Override
             protected Object doInBackground(Object[] params) {
                 String strData =(String) params[0];
-                KDSGlobalVariables.getKDS().getBroadcaster().broadcastRelations(strData);
+                //KDSGlobalVariables.getKDS().getBroadcaster().broadcastRelations(strData);
+                m_kdsCallback.call_broadcastRelations(strData);
                 return null;
             }
 
@@ -429,15 +452,16 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         d.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
+                //KDSSettings.ID evID = KDSGlobalVariables.getKDS().checkKDSDlgKbdEvent(event, null);
+                KDSUIDialogBase.DialogEvent evID = KDSUIDialogBase.checkDialogKeyboardEvent(event);
 
-                if (evID == KDSSettings.ID.Bumpbar_OK)
+                if (evID == KDSUIDialogBase.DialogEvent.OK)// KDSSettings.ID.Bumpbar_OK)
                 {
                     dialog.dismiss();
                     PreferenceFragmentStations.this.broadcastUpdate();
                     return true;
                 }
-                else if (evID == KDSSettings.ID.Bumpbar_Cancel)
+                else if (evID == KDSUIDialogBase.DialogEvent.Cancel)// KDSSettings.ID.Bumpbar_Cancel)
                 {
                     dialog.cancel();
                     return true;
@@ -608,13 +632,14 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
 
         //if (holder == null) continue;
         boolean bonline = true;
-        if (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()))
+        if (r.getMac().equals(m_kdsCallback.call_getLocalMacAddress()))// KDSGlobalVariables.getKDS().getLocalMacAddress()))
         {
             bonline = KDSSocketManager.isNetworkActived(KDSApplication.getContext());
         }
         else
         {
-            bonline = (KDSGlobalVariables.getKDS().getStationsConnections().findActivedStationByID(r.getID()) != null);
+            //bonline = (KDSGlobalVariables.getKDS().getStationsConnections().findActivedStationByID(r.getID()) != null);
+            bonline = (m_kdsCallback.call_findActivedStationByID(r.getID()) != null);
 
         }
         if (bonline)
@@ -2236,7 +2261,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         {
             String myStationID = r.getID();
 
-            if (KDSGlobalVariables.getKDS().getStationsConnections().findActivedStationCountByID(myStationID)>1)
+            //if (KDSGlobalVariables.getKDS().getStationsConnections().findActivedStationCountByID(myStationID)>1)
+            if (m_kdsCallback.call_findActivedStationCountByID(myStationID)>1)
                 return KDSStationsRelation.EditingState.Error_IP;
 
             String strErr = KDSStationsRelation.checkSlaveConflict(m_listData, myStationID,r.getSlaveStations(), r.getSlaveFunc());
@@ -2524,7 +2550,8 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
             setImageEditingIcon(imgEdit, r);
 
 
-            boolean bUnderLineLocalStation = (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()));
+            //boolean bUnderLineLocalStation = (r.getMac().equals(KDSGlobalVariables.getKDS().getLocalMacAddress()));
+            boolean bUnderLineLocalStation = (r.getMac().equals(m_kdsCallback.call_getLocalMacAddress()));
             //{
 
             TextPaint tp = viewHolder.m_txtStationID.getPaint();
@@ -2814,6 +2841,11 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         }
 
     }
+
+    public void onRefreshSummary(int userID){}//KDSUser.USER userID);
+    public void onRefreshView(int userID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
+    public void onShowStationStateMessage(String stationID, int nState){}
+    public void onShowMessage(String message){}
 
 }
 

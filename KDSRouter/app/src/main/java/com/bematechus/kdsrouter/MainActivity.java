@@ -38,7 +38,9 @@ import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSLogOrderFile;
@@ -51,6 +53,7 @@ import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIAboutDlg;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
@@ -64,7 +67,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener,
-        KDSRouter.KDSRouterEvents,
+        KDSRouter.KDSEvents,
         KDSTimer.KDSTimerInterface,
         KDSUIDialogBase.KDSDialogBaseListener,
         Activation.ActivationEvents,
@@ -111,7 +114,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (m_wakeLock == null) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "KDSRouter:MyWakeLock");
         }
         if (bLock) {
             m_wakeLock.acquire();
@@ -439,7 +442,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (m_service != null)
                     KDSGlobalVariables.setKDSRouter(m_service.getKDSRouter());
                 KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Zero, null, "");
-
+                dlg.setKDSCallback(m_service.getKDSRouter());
                 dlg.show();
             }
 
@@ -1277,4 +1280,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         doActivation(false, true, "");
     }
+
+    // KDSRouter does not used KDSEvents function
+    public void onRefreshSummary(int nUserID){}
+    public void onShowMessage(KDSBase.MessageType msgType, String message){}
+    public void onRefreshView(int nUserID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
+    public void onSetFocusToOrder(String orderGuid){}
+    public void onTTBumpOrder(String orderName){}
+    public void onXmlCommandBumpOrder(String orderGuid){}
 }

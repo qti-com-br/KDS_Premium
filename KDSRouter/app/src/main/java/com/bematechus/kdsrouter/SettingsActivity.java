@@ -50,6 +50,7 @@ import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.lang.reflect.Method;
@@ -407,7 +408,9 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 
             m_timer.setReceiver(this);
             m_timer.start(this.getActivity(), this, 2000);
-            boolean m_bDisableChangedEvent = false;
+            //boolean m_bDisableChangedEvent = false;
+            KDSUIRetriveConfig.setKDSCallback(KDSGlobalVariables.getKDS());
+            KDSUIRetriveConfig.setForRouter(true);
 
         }
         @Override

@@ -2,5 +2,5 @@
 <resources>
 
     <color name="settings_page_bg">#E5E1D2</color>
-
+    <color name="listview_focus_bg">@android:color/holo_blue_light</color>
 </resources>

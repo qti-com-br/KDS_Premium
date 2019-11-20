@@ -67,7 +67,7 @@
         <!-- android:label="@string/title_activity_stations_relation" -->
         <!-- android:theme="@style/AppTheme.NoActionBar" /> -->
         <activity
-            android:name=".KDSUIRetriveConfig"
+            android:name="com.bematechus.kdslib.KDSUIRetriveConfig"
             android:label="@string/title_activity_retrieve_config"
             android:theme="@style/AppTheme.NoActionBar" />
 

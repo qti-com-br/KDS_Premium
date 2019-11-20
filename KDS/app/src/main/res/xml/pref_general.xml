@@ -101,7 +101,7 @@
     <Preference android:title="@string/retrieve_remote_settings">
         <intent android:action= "android.intent.action.VIEW"
             android:targetPackage="com.bematechus.kds"
-            android:targetClass= "com.bematechus.kds.KDSUIRetriveConfig" />
+            android:targetClass= "com.bematechus.kdslib.KDSUIRetriveConfig" />
 
     </Preference>
 

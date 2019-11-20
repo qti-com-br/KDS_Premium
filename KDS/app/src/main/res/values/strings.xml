@@ -12,8 +12,8 @@
     <!--<string name="title_activity_kdsuiretrieve_config">KDSUIRetrieveConfig</string>-->
     <string name="menu_activity_cleardb">Clear database</string>
     <string name="menu_activity_showip">Show my ip</string>
-    <string name="retrieve_config_waiting_data">Waiting for data ...</string>
-    <string name="retrieve_config_done">Done! Please close configuration.</string>
+    <!--<string name="retrieve_config_waiting_data">Waiting for data ...</string>-->
+    <!--<string name="retrieve_config_done">Done! Please close configuration.</string>-->
     <string name="menu_activity_touchpad">Toggle touch pad on/off</string>
     <string name="menu_activity_export">Export settings</string>
     <string name="menu_activity_import">Import settings</string>
@@ -68,7 +68,7 @@
     <string name="confirm_remove_relations_expo">Expeditor station # will be removed from Expo column, are you sure you want to change this?</string>
     <string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>
     <string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>
-    <string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>
+    <!--<string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>-->
     <string name="confirm_clear_db">Do you want to clear database?</string>
     <string name="clear_db">Clear database</string>
     <string name="confirm_export_db">Do you want to export settings to</string>
@@ -111,7 +111,7 @@
     <string name="input">Input</string>
     <string name="input_station_id">This station doesn\'t have a ID yet, you will not be able to use it until you setup its ID!</string>
     <string name="input_id_title">Please enter station ID(0~99)</string>
-    <string name="select_station">Please choose station first.</string>
+    <!--<string name="select_station">Please choose station first.</string>-->
     <string name="select_retrieve_station">Select station</string>
     <string name="confirm_bump_normal">Do you want to bump order # ?</string>
     <string name="confirm_bump_expo_outstanding">Order # contains outstanding items.Do you still want to bump it?</string>
@@ -139,8 +139,8 @@
     <string name="password">Password</string>
     <string name="user_id">User ID:</string>
     <string name="shared_folder">Shared folder:</string>
-    <string name="get">Get</string>
-    <string name="information">Information:</string>
+    <!--<string name="get">Get</string>-->
+    <!--<string name="information">Information:</string>-->
     <string name="transfer_select_order_warn">Please select an order first.</string>
     <string name="transfer_select_station_title">Please select the station you want the order transfer to:</string>
 

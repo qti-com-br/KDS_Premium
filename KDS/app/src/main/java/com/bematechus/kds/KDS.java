@@ -77,37 +77,37 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         {
 
     final static String TAG = "KDSMain";
-    public enum RefreshViewParam
-    {
-        None,
-        Focus_First,
-    }
-    public enum MessageType
-    {
-        Normal,
-        Toast,
-    }
+//    public enum RefreshViewParam
+//    {
+//        None,
+//        Focus_First,
+//    }
+//    public enum MessageType
+//    {
+//        Normal,
+//        Toast,
+//    }
 
 
-    public interface KDSEvents
-    {
-        void onStationConnected(String ip, KDSStationConnection conn);
-        void onStationDisconnected(String ip);
-        void onAcceptIP(String ip);
-        void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, RefreshViewParam nParam); //nParam: 1: move focus to first order.
-        void onRetrieveNewConfigFromOtherStation();
-        void onShowMessage(MessageType msgType, String message);
-        void onRefreshSummary(KDSUser.USER userID);
-        void onAskOrderState(Object objSource, String orderName);
-        void onSetFocusToOrder(String orderGuid); //set focus to this order
-        void onXmlCommandBumpOrder(String orderGuid);
-        void onTTBumpOrder(String orderName);
-        void onReceiveNewRelations();
-        void onReceiveRelationsDifferent();
-//        void onItemQtyChanged(KDSDataOrder order, KDSDataItem item);
-//        void onOrderStatusChanged(KDSDataOrder order, int nOldStatus);
-        //void onShowToastMessage(String message);
-    }
+//    public interface KDSEvents
+//    {
+//        void onStationConnected(String ip, KDSStationConnection conn);
+//        void onStationDisconnected(String ip);
+//        void onAcceptIP(String ip);
+//        void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, RefreshViewParam nParam); //nParam: 1: move focus to first order.
+//        void onRetrieveNewConfigFromOtherStation();
+//        void onShowMessage(MessageType msgType, String message);
+//        void onRefreshSummary(KDSUser.USER userID);
+//        void onAskOrderState(Object objSource, String orderName);
+//        void onSetFocusToOrder(String orderGuid); //set focus to this order
+//        void onXmlCommandBumpOrder(String orderGuid);
+//        void onTTBumpOrder(String orderName);
+//        void onReceiveNewRelations();
+//        void onReceiveRelationsDifferent();
+////        void onItemQtyChanged(KDSDataOrder order, KDSDataItem item);
+////        void onOrderStatusChanged(KDSDataOrder order, int nOldStatus);
+//        //void onShowToastMessage(String message);
+//    }
 
     final int DEFAULT_POS_IP_PORT = 3000;
     final int DEFAULT_STATION_IP_PORT = 3001;
@@ -3131,11 +3131,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //KDSLog.d(TAG, KDSUtil.getCurrentTimeForLog()+ " refreshView");
         m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_ALL.ordinal());
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++) {
-            m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_A, m_users.getUserA().getOrders(), RefreshViewParam.None);
-            m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_A);
+            m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_A.ordinal(), m_users.getUserA().getOrders(), RefreshViewParam.None);
+            m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_A.ordinal());
             if (isValidUser(KDSUser.USER.USER_B)) {
-                m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_B, m_users.getUserB().getOrders(), RefreshViewParam.None);
-                m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_B);
+                m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_B.ordinal(), m_users.getUserB().getOrders(), RefreshViewParam.None);
+                m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_B.ordinal());
             }
         }
 
@@ -3168,8 +3168,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
 
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++) {
-            m_arKdsEventsReceiver.get(i).onRefreshView(userID, orders,nParam);// RefreshViewParam.None);
-            m_arKdsEventsReceiver.get(i).onRefreshSummary(userID);
+            m_arKdsEventsReceiver.get(i).onRefreshView(userID.ordinal(), orders,nParam);// RefreshViewParam.None);
+            m_arKdsEventsReceiver.get(i).onRefreshSummary(userID.ordinal());
         }
 
     }
@@ -5042,5 +5042,54 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     public String call_getStationID()
     {
         return this.getStationID();
+    }
+
+    public void call_removeEventReceiver(KDSBase.KDSEvents receiver)
+    {
+        this.removeEventReceiver(receiver);
+    }
+
+    public void call_setEventReceiver(KDSBase.KDSEvents receiver)
+    {
+        this.setEventReceiver(receiver);
+    }
+
+    public int call_retrieveConfigFromStation(String stationID, TextView txtInfo)
+    {
+        return this.retrieveConfigFromStation(stationID, txtInfo);
+    }
+
+    public String call_getLocalMacAddress()
+    {
+        return this.getLocalMacAddress();
+    }
+    public String call_getBackupRouterPort()
+    {
+        return "";
+    }
+
+    public void call_broadcastShowStationID()
+    {
+        this.getBroadcaster().broadcastShowStationID();
+    }
+    public void call_udpAskRelations(String stationID)
+    {
+        this.udpAskRelations(stationID);
+    }
+    public void call_broadcastRelations(String relationsData)
+    {
+        this.getBroadcaster().broadcastRelations(relationsData);
+    }
+    public KDSStationActived call_findActivedStationByID(String stationID)
+    {
+        return this.getStationsConnections().findActivedStationByID(stationID);
+    }
+    public int call_findActivedStationCountByID(String stationID)
+    {
+        return this.getStationsConnections().findActivedStationCountByID(stationID);
+    }
+    public void call_broadcastStationsRelations()
+    {
+        broadcastStationsRelations();
     }
 }

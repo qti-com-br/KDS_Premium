@@ -48,6 +48,7 @@ import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.lang.reflect.Method;
@@ -99,6 +100,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
         ColorDrawable c = new ColorDrawable(color);
         this.getWindow().setBackgroundDrawable(c);
 
+        PreferenceFragmentStations.setKDSCallback(KDSGlobalVariables.getKDS());
 
 //        getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
 //                R.drawable.lci);
@@ -402,7 +404,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
             setupGuiByDataSourceType(dataType);
 
             m_bDisableChangedEvent = false;
-
+            //
+            KDSUIRetriveConfig.setKDSCallback(KDSGlobalVariables.getKDS());
 //            KDSSettings.KDSUserMode userMode = getScreenMode(pref);
 //            enableSplitScreenOptions(userMode == KDSSettings.KDSUserMode.Multiple);
 

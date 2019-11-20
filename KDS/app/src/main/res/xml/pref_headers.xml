@@ -122,7 +122,7 @@
     <!--<header android:title="Retrieve remote settings">-->
         <!--<intent android:action= "android.intent.action.VIEW"-->
             <!--android:targetPackage="com.bematechus.kds"-->
-            <!--android:targetClass= "com.bematechus.kds.KDSUIRetriveConfig" />-->
+            <!--android:targetClass= "com.bematechus.kdslib.KDSUIRetriveConfig" />-->
 
     <!--</header>-->
 

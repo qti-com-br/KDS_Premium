@@ -37,6 +37,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBase;
+import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationActived;
@@ -46,6 +48,7 @@ import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDialogConfirm;
+import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 import com.bematechus.kdslib.SettingsBase;
@@ -63,7 +66,13 @@ import java.util.List;
  * activity is showing a two-pane settings UI.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreferenceFragment implements StationAnnounceEvents,KDS.KDSRouterEvents, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface{
+public class PreferenceFragmentStations
+        extends KDSUIConfiguration.KDSPreferenceFragment
+        implements StationAnnounceEvents,
+                    KDS.KDSEvents,
+                    KDSUIDialogBase.KDSDialogBaseListener,
+                    KDSTimer.KDSTimerInterface
+{
 
     private static final String TAG = "StationsPref";
     static PreferenceFragmentStations m_stationsRelations = null;
@@ -322,6 +331,7 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
     public void onRetrieveRelations(View v)
     {
         KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this.getActivity(), KDSUIIPSearchDialog.IPSelectionMode.Single, this, "");
+        dlg.setKDSCallback(KDSGlobalVariables.getKDS());
         dlg.setTitle(this.getString(R.string.select_retrieve_station));
         dlg.setSelf(false);
         dlg.show();
@@ -2804,5 +2814,9 @@ public class PreferenceFragmentStations extends KDSUIConfiguration.KDSPreference
         }
 
     }
+
+    public void onRefreshSummary(int nUserID){}
+    public void onShowMessage(KDSBase.MessageType msgType, String message){}
+    public void onRefreshView(int nUserID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
 
 }
