@@ -3764,4 +3764,53 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         return this.getSettings().getString(KDSRouterSettings.ID.KDSRouter_Backup_IPPort);
     }
 
+
+    public void call_broadcastShowStationID()
+    {
+        this.broadcastShowStationID();
+    }
+    public void call_udpAskRelations(String stationID)
+    {
+        this.udpAskRelations(stationID);
+    }
+    public void call_broadcastRelations(String relationsData)
+    {
+        this.broadcastRelations(relationsData);
+    }
+    public KDSStationActived call_findActivedStationByID(String stationID)
+    {
+        return this.getStationsConnections().findActivedStationByID(stationID);
+    }
+    public int call_findActivedStationCountByID(String stationID)
+    {
+        return this.getStationsConnections().findActivedStationCountByID(stationID);
+    }
+    public void call_broadcastStationsRelations()
+    {
+       broadcastStationsRelations();
+    }
+    public String call_loadStationsRelationString(boolean bNeedNoCheckOption)
+    {
+        return KDSSettings.loadStationsRelationString(KDSApplication.getContext(), bNeedNoCheckOption);
+    }
+    /**
+     * Use this function to broadcast new relationships.
+     * It called by preferencedfragmentstations.java nad mainactivity.java.
+     *
+     */
+    static public void broadcastStationsRelations()
+    {
+        String s = KDSSettings.loadStationsRelationString(KDSApplication.getContext(), true);
+        Object[] arParams = new Object[]{s};
+
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                String strData =(String) params[0];
+                KDSGlobalVariables.getKDS().broadcastRelations(strData);
+                return null;
+            }
+
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arParams);
+    }
 }

@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
@@ -37,19 +36,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.PreferenceFragmentStations;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -316,51 +316,51 @@ public class KDSUIConfiguration extends PreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class KDSPreferenceFragment extends PreferenceFragment  {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
-            View v = super.onCreateView(inflater, root, savedInstanceState);
-
-            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
-            v.setPadding(0,0,0,0);
-
-
-            return v;
-        }
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            showScrollbar();
-        }
-
-        public void showScrollbar()
-        {
-            try {
-
-
-                    if (this instanceof PreferenceFragmentStations)
-                        return;
-                    Class<PreferenceFragment> c = PreferenceFragment.class;
-                    Method method = c.getMethod("getListView");
-                    method.setAccessible(true);
-                    Object obj = method.invoke(this);
-                    if (obj != null) {
-                        ListView listView = (ListView) obj;// method.invoke(this);//, null);
-                        listView.setScrollBarFadeDuration(0);
-                        listView.setScrollbarFadingEnabled(false);
-                        //listView.setFastScrollAlwaysVisible(true);
-                        //listView.setNestedScrollingEnabled(false);
-                    }
-//                }
-            }
-            catch (Exception err)
-            {//don't care this bug.
-                //KDSLog.e(TAG,KDSLog._FUNCLINE_() + err.toString());
-                //KDSLog.e(TAG, KDSUtil.error( err));
-            }
-        }
-    }
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//    public static class KDSPreferenceFragment extends PreferenceFragment  {
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
+//            View v = super.onCreateView(inflater, root, savedInstanceState);
+//
+//            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+//            v.setPadding(0,0,0,0);
+//
+//
+//            return v;
+//        }
+//        @Override
+//        public void onActivityCreated(Bundle savedInstanceState) {
+//            super.onActivityCreated(savedInstanceState);
+//            showScrollbar();
+//        }
+//
+//        public void showScrollbar()
+//        {
+//            try {
+//
+//
+//                    if (this instanceof PreferenceFragmentStations)
+//                        return;
+//                    Class<PreferenceFragment> c = PreferenceFragment.class;
+//                    Method method = c.getMethod("getListView");
+//                    method.setAccessible(true);
+//                    Object obj = method.invoke(this);
+//                    if (obj != null) {
+//                        ListView listView = (ListView) obj;// method.invoke(this);//, null);
+//                        listView.setScrollBarFadeDuration(0);
+//                        listView.setScrollbarFadingEnabled(false);
+//                        //listView.setFastScrollAlwaysVisible(true);
+//                        //listView.setNestedScrollingEnabled(false);
+//                    }
+////                }
+//            }
+//            catch (Exception err)
+//            {//don't care this bug.
+//                //KDSLog.e(TAG,KDSLog._FUNCLINE_() + err.toString());
+//                //KDSLog.e(TAG, KDSUtil.error( err));
+//            }
+//        }
+//    }
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.

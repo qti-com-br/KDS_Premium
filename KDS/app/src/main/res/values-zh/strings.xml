@@ -57,13 +57,13 @@
     <string name="order_state_others">其它</string>
     <string name="info_first_message">Bematech KDS 消息</string>
     <string name="message">消息</string>
-    <string name="str_message">消息</string>
-    <string name="receive_new_relations">KDS已收到最新的终端关系设置</string>
-    <string name="confirm_remove_relation_station">你确定要删除终端 #</string>
+    <!--<string name="str_message">消息</string>-->
+    <!--<string name="receive_new_relations">KDS已收到最新的终端关系设置</string>-->
+    <!--<string name="confirm_remove_relation_station">你确定要删除终端 #</string>-->
     <string name="confirm">确认</string>
-    <string name="confirm_broadcast_relations_changes">关系发生了改变，需要保存并更新所有终端吗？</string>
+    <!--<string name="confirm_broadcast_relations_changes">关系发生了改变，需要保存并更新所有终端吗？</string>-->
     <string name="confirm_remove_relations_expo">总台 # 将被删除， 是否继续?</string>
-    <string name="remove_relations_expo">总台 # 从expo 列删除</string>
+    <!--<string name="remove_relations_expo">总台 # 从expo 列删除</string>-->
     <string name="confirm_fix_errors">关系设置有错误， 请改正</string>
     <string name="confirm_retrieve_config">是否要从 # 得到最新设置?</string>
     <string name="confirm_clear_db">是否清除数据库？</string>
@@ -71,45 +71,45 @@
     <string name="confirm_export_db">是否输出设置到</string>
     <string name="confirm_import_db">是否导入新的设置从</string>
     <string name="data_backup_to">数据备份到</string>
-    <string name="update_to_all">保存并更新所有</string>
+    <!--<string name="update_to_all">保存并更新所有</string>-->
     <string name="delete">删除</string>
     <string name="new_entry">新加</string>
     <string name="save">保存</string>
-    <string name="show_id">显示终端号</string>
-    <string name="about">关于</string>
+    <!--<string name="show_id">显示终端号</string>-->
+    <!--<string name="about">关于</string>-->
 
-    <string-array name="station_function">
-        <item>正常</item>
-        <item>总台</item>
-        <item>排队</item>
-        <item>镜像</item>
-        <item>备份</item>
-        <item>工作量</item>
-        <item>副本</item>
-        <item>跟踪</item>
-        <item>排队-总台</item>
-    </string-array>
+    <!--<string-array name="station_function">-->
+        <!--<item>正常</item>-->
+        <!--<item>总台</item>-->
+        <!--<item>排队</item>-->
+        <!--<item>镜像</item>-->
+        <!--<item>备份</item>-->
+        <!--<item>工作量</item>-->
+        <!--<item>副本</item>-->
+        <!--<item>跟踪</item>-->
+        <!--<item>排队-总台</item>-->
+    <!--</string-array>-->
 
-    <string-array name="station_status">
-        <item>启用</item>
-        <item>停止</item>
-    </string-array>
-    <string-array name="slave_function">
-        <item>无副终端</item>
-        <item>备份</item>
-        <item>镜像</item>
-        <item>工作量分配</item>
-        <item>副本</item>
-        <item>排队</item>
-    </string-array>
+    <!--<string-array name="station_status">-->
+        <!--<item>启用</item>-->
+        <!--<item>停止</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="slave_function">-->
+        <!--<item>无副终端</item>-->
+        <!--<item>备份</item>-->
+        <!--<item>镜像</item>-->
+        <!--<item>工作量分配</item>-->
+        <!--<item>副本</item>-->
+        <!--<item>排队</item>-->
+    <!--</string-array>-->
 
     <string name="error">错误</string>
-    <string name="question">询问</string>
-    <string name="input">输入</string>
+    <!--<string name="question">询问</string>-->
+    <!--<string name="input">输入</string>-->
     <string name="input_station_id">在使用前，必须输入终端ID</string>
     <string name="input_id_title">请输入终端ID(0~99)</string>
     <string name="select_station">请选择终端</string>
-    <string name="select_retrieve_station">选择终端</string>
+    <!--<string name="select_retrieve_station">选择终端</string>-->
     <string name="confirm_bump_normal">是否要删除订单 # ?</string>
     <string name="confirm_bump_expo_outstanding">订单 # 包含未完成菜名， 是否仍然要删除?</string>
     <string name="error_isnot_unique_id">ID # 已被占用，请输入其它</string>
@@ -130,11 +130,11 @@
     <string name="unpark_order_help">[0]--[9] 单次按动为选择，双次为回调\n# 为退出.</string>
     <string name="background">背景</string>
     <string name="foreground">前景</string>
-    <string name="str_find">查找</string>
-    <string name="pc_name">电脑 IP</string>
-    <string name="user_id">用户ID</string>
+    <!--<string name="str_find">查找</string>-->
+    <!--<string name="pc_name">电脑 IP</string>-->
+    <!--<string name="user_id">用户ID</string>-->
     <string name="password">密码</string>
-    <string name="shared_folder">共享目录</string>
+    <!--<string name="shared_folder">共享目录</string>-->
     <string name="get">提取</string>
     <string name="information">消息</string>
     <string name="transfer_select_order_warn">请选择一个订单</string>
@@ -144,9 +144,9 @@
     <string name="ip_search_title_ip">IP 地址</string>
     <string name="ip_search_title_port">端口</string>
     <string name="park_count">暂缓</string>
-    <string name="anonymous">匿名</string>
+    <!--<string name="anonymous">匿名</string>-->
     <string name="password_incorrect">密码错误!</string>
-    <string name="error_relations_repeat_backup_mirror">终端 # 设置错误</string>
+    <!--<string name="error_relations_repeat_backup_mirror">终端 # 设置错误</string>-->
     <string name="error_relations_mirror_dead_loop">终端 # 镜像功能死循环</string>
     <string name="error_relations_backup_dead_loop">终端 # 备份功能死循环</string>
     <string name="network_lost">网络丢失</string>
@@ -167,8 +167,8 @@
     <string name="duplicated_of">副本</string>
     <string name="workloan_of">工作量</string>
 
-    <string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>
-    <string name="please_input_primary_station">请输入终端 # 的主终端</string>
+    <!--<string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>-->
+    <!--<string name="please_input_primary_station">请输入终端 # 的主终端</string>-->
 
     <string name="check_new_version">检查新版本</string>
     <string name="current_version">当前版本</string>
@@ -194,14 +194,14 @@
     <string name="queue_mode_panel">分隔模式</string>
     <string name="queue_mode_simple">ID模式</string>
 
-    <string name="expo_backup">总台/备份</string>
-    <string name="prep_backup">正常或备份</string>
-    <string name="error_slave">错误！请改为其它终端</string>
-    <string name="error_slave_myself">错误！不能用自己为副终端， 请改正</string>
-    <string name="error_primary_myself">错误！ 不能用自己为主终端， 请改正</string>
-    <string name="error_not_expo">错误！此终端不是expo</string>
-    <string name="error_not_prep">错误！此终端不是正常终端类型</string>
-    <string name="error_not_expo_prep_backup">错误！只有总台,正常 和 排队 可以</string>
+    <!--<string name="expo_backup">总台/备份</string>-->
+    <!--<string name="prep_backup">正常或备份</string>-->
+    <!--<string name="error_slave">错误！请改为其它终端</string>-->
+    <!--<string name="error_slave_myself">错误！不能用自己为副终端， 请改正</string>-->
+    <!--<string name="error_primary_myself">错误！ 不能用自己为主终端， 请改正</string>-->
+    <!--<string name="error_not_expo">错误！此终端不是expo</string>-->
+    <!--<string name="error_not_prep">错误！此终端不是正常终端类型</string>-->
+    <!--<string name="error_not_expo_prep_backup">错误！只有总台,正常 和 排队 可以</string>-->
 
     <string name="tracker_caption_order_name">订单号</string>
     <string name="tracker_caption_table_name">位置</string>
@@ -221,8 +221,8 @@
     <string name="tracker_id">分配跟踪器号</string>
     <string name="tt_connect_successful">成功连接TT服务器</string>
     <string name="station_id">终端ID</string>
-    <string name="reset">重置</string>
-    <string name="retrieve_from">接收自</string>
+    <!--<string name="reset">重置</string>-->
+    <!--<string name="retrieve_from">接收自</string>-->
     <string name="remove">删除</string>
     <string name="add">添加</string>
     <string name="del">删除</string>
@@ -638,7 +638,7 @@
 
     <string name="pref_queue_auto_pages_switch_duration">自动翻页时间（秒）</string>
 
-    <string name="relation_error_expo_as_slave">副终端不能是总台，请改正</string>
+    <!--<string name="relation_error_expo_as_slave">副终端不能是总台，请改正</string>-->
 
     <string name="pref_tracker_title">桌位跟踪</string>
     <string name="pref_tracker_enabled">启用桌位跟踪</string>
@@ -684,7 +684,7 @@
     <string name="pref_kds_exp_alert_color">改显示块颜色为</string>
     <string name="pref_kds_exp_alert_change_panel">改颜色为</string>
     <string name="pref_kds_sound_unbump_order">恢复订单的声音</string>
-    <string name="confirm_broadcast_relations">是否更新其它终端的设置？</string>
+    <!--<string name="confirm_broadcast_relations">是否更新其它终端的设置？</string>-->
     <string name="retrieve_remote_settings">取得远程设置信息</string>
 
     <string name="new_folder">新目录</string>
@@ -1103,7 +1103,7 @@
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <!--<string name="my_serial_number">My serial number:</string>-->
     <string name="sms_feature_enabled">SMS feature enabled</string>
-    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <!--<string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>-->
     <string name="transfer_default_station">Transfer order to default station</string>
     <string name="transfer_to_default_automaticlly">Transfer order to default station when do transferring</string>
     <string name="pref_kds_transfer_title">Transfer</string>

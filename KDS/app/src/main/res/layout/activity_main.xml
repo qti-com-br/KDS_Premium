@@ -346,8 +346,8 @@
             android:layout_marginLeft="@dimen/title_views_margin"
             android:layout_toLeftOf="@+id/imgMenu"
             android:clickable="false"
-            android:src="@drawable/online" />
-
+             />
+        <!--android:src="@drawable/ic_launcher"-->
         <ImageView
             android:id="@+id/imgMenu"
             android:layout_width="30dp"

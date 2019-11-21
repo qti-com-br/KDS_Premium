@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSUIBGFGPickerDialog;
 import com.bematechus.kdslib.KDSUIDialogBase;
 
@@ -33,7 +34,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/10/10.
  */
-public class PreferenceFragmentTabDisplay extends KDSUIConfiguration.KDSPreferenceFragment implements  KDSUIDialogBase.KDSDialogBaseListener{
+public class PreferenceFragmentTabDisplay extends KDSPreferenceFragment implements  KDSUIDialogBase.KDSDialogBaseListener{
 
     private static final String TAG = "TabDispPref";
 

@@ -317,11 +317,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void checkNetworkState() {
         ImageView imgState = (ImageView) this.findViewById(R.id.imgState);
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
-            imgState.setImageResource(R.drawable.online);
+            imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
-            imgState.setImageResource(R.drawable.offline);
+            imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
 
             if (isKDSValid() && getKDS().isNetworkRunning())
                 onNetworkLost();

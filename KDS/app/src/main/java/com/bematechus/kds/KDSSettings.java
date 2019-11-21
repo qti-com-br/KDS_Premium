@@ -1841,8 +1841,8 @@ public class KDSSettings extends SettingsBase {
         m_itemBumpedImage = appContext.getResources().getDrawable(R.drawable.item_bumped);
         m_itemBumpedInOthersImage = appContext.getResources().getDrawable(R.drawable.others_bumped);
         m_itemMoreImage = appContext.getResources().getDrawable(R.drawable.down18px);
-        m_itemVoidByXmlCommand = appContext.getResources().getDrawable(R.drawable.delete_24px_32);
-        m_itemChangedImage  = appContext.getResources().getDrawable(R.drawable.edit_24px_16);
+        m_itemVoidByXmlCommand = appContext.getResources().getDrawable(com.bematechus.kdslib.R.drawable.delete_24px_32);
+        m_itemChangedImage  = appContext.getResources().getDrawable(com.bematechus.kdslib.R.drawable.edit_24px_16);
         m_orderCookStartedImage = appContext.getResources().getDrawable(R.drawable.chef);
 
         //2.0.14

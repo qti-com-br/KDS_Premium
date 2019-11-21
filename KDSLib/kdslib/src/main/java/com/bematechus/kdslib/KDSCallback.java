@@ -22,6 +22,7 @@ public interface KDSCallback {
     public KDSStationActived call_findActivedStationByID(String stationID);
     public int call_findActivedStationCountByID(String stationID);
     public void call_broadcastStationsRelations();
+    public String call_loadStationsRelationString(boolean bNeedNoCheckOption);
 
 
 }

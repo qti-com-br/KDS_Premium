@@ -55,32 +55,32 @@
 
     <string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>
     <string name="confirm_clear_db">Do you want to clear database?</string>
-    <string name="update_to_all">Save  &amp; Update to all</string>
+    <!--<string name="update_to_all">Save  &amp; Update to all</string>-->
     <string name="delete">Delete</string>
     <string name="new_entry">New</string>
     <string name="save">Save</string>
-    <string name="show_id">Show Station ID</string>
+    <!--<string name="show_id">Show Station ID</string>-->
     <string name="confirm_remove_relation_station">Do you want to remove station #</string>
     <string name="confirm_remove_category">Do you want to remove category: </string>
     <string name="confirm_remove_fooditem">Do you want to remove item: </string>
 
     <string name="about">About</string>
 
-    <string-array name="station_function">
-        <item>Prep</item>
-        <item>Expeditor</item>
-        <item>Queue</item>
-        <item>Mirror</item>
-        <item>Backup</item>
-        <item>Workload</item>
-        <item>Duplicate</item>
-        <item>Tracker</item>
-        <item>Queue-Expo</item>
-    </string-array>
-    <string-array name="station_status">
-        <item>Enabled</item>
-        <item>Disabled</item>
-    </string-array>
+    <!--<string-array name="station_function">-->
+        <!--<item>Prep</item>-->
+        <!--<item>Expeditor</item>-->
+        <!--<item>Queue</item>-->
+        <!--<item>Mirror</item>-->
+        <!--<item>Backup</item>-->
+        <!--<item>Workload</item>-->
+        <!--<item>Duplicate</item>-->
+        <!--<item>Tracker</item>-->
+        <!--<item>Queue-Expo</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="station_status">-->
+        <!--<item>Enabled</item>-->
+        <!--<item>Disabled</item>-->
+    <!--</string-array>-->
 
     <string name="id">ID</string>
     <string name="ip">IP</string>
@@ -123,18 +123,18 @@
     <string name="error_match_mac">Please run it in bematech device.</string>
 
     <string name="find">Find</string>
-    <string name="pc_name">PC IP:</string>
-    <string name="user_id">User ID:</string>
+    <!--<string name="pc_name">PC IP:</string>-->
+    <!--<string name="user_id">User ID:</string>-->
     <string name="password">Password:</string>
-    <string name="shared_folder">Shared folder:</string>
+    <!--<string name="shared_folder">Shared folder:</string>-->
 
     <string name="category">Category description</string>
     <string name="item">Item description</string>
     <string name="router_disabled">Router is currently disable, please enable the router if you want to use it.</string>
     <string name="router_disabled_warning">Router is currently disable, please enable it first.</string>
-    <string name="anonymous">Anonymous</string>
+    <!--<string name="anonymous">Anonymous</string>-->
 
-    <string name="error_relations_repeat_backup_mirror">Stations # works as backup and mirror function.</string>
+    <!--<string name="error_relations_repeat_backup_mirror">Stations # works as backup and mirror function.</string>-->
     <string name="error_relations_mirror_dead_loop">Stations # mirror function dead loop.</string>
     <string name="error_relations_backup_dead_loop">Stations # backup function dead loop.</string>
     <string name="network_lost">Network lost</string>
@@ -152,18 +152,18 @@
 
     <string name="input">Input</string>
 
-    <string-array name="slave_function">
-        <item>No slave</item>
-        <item>Backup</item>
-        <item>Mirror</item>
-        <item>Auto workload distribution</item>
-        <item>Duplicate station</item>
-        <item>Order Queue Display</item>
-    </string-array>
+    <!--<string-array name="slave_function">-->
+        <!--<item>No slave</item>-->
+        <!--<item>Backup</item>-->
+        <!--<item>Mirror</item>-->
+        <!--<item>Auto workload distribution</item>-->
+        <!--<item>Duplicate station</item>-->
+        <!--<item>Order Queue Display</item>-->
+    <!--</string-array>-->
 
-    <string name="slave_func">Slave Function</string>
+    <!--<string name="slave_func">Slave Function</string>-->
     <string name="slave">Slave ID</string>
-    <string name="please_input_slave_station">Please input station #\'s $ station</string>
+    <!--<string name="please_input_slave_station">Please input station #\'s $ station</string>-->
 
     <string name="check_new_version">Check new version</string>
     <string name="current_version">Current version</string>
@@ -237,18 +237,18 @@
     <string name="new_schedule">New schedule</string>
     <string name="dialog_time_picker">Time</string>
 
-    <string name="please_input_primary_station">Please input station #\'s primary station</string>
-    <string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>
-    <string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>
+    <!--<string name="please_input_primary_station">Please input station #\'s primary station</string>-->
+    <!--<string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>-->
+    <!--<string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>-->
 
-    <string name="expo_backup">Expo/Backup</string>
-    <string name="prep_backup">Prep/Backup</string>
-    <string name="error_slave">Error, please change to other station</string>
-    <string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>
-    <string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>
-    <string name="error_not_expo">Error, this station is not expo.</string>
-    <string name="error_not_prep">Error, this station is not prep.</string>
-    <string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>
+    <!--<string name="expo_backup">Expo/Backup</string>-->
+    <!--<string name="prep_backup">Prep/Backup</string>-->
+    <!--<string name="error_slave">Error, please change to other station</string>-->
+    <!--<string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>-->
+    <!--<string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>-->
+    <!--<string name="error_not_expo">Error, this station is not expo.</string>-->
+    <!--<string name="error_not_prep">Error, this station is not prep.</string>-->
+    <!--<string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>-->
 
     <string name="error_other_router_enabled">Error, only one router is allowed per store. There is other router enabled. Please check!</string>
     <string name="primary_router">My Primary router</string>
@@ -268,8 +268,8 @@
 
     <string name="pref_tracker_number_from_userinfo">The table-tracker number is from \"UserInfo\" tag</string>
     <string name="pref_tracker_number_from_userinfo_summary">POS program can use \"UserInfo\" tag to pass table-tracker number to KDS</string>
-    <string name="tracker_only_one_allowed">Just allow one table tracker station</string>
-    <string name="tt_authen_press_button">Press the button in gateway for KDS to connect.</string>
+    <!--<string name="tracker_only_one_allowed">Just allow one table tracker station</string>-->
+    <!--<string name="tt_authen_press_button">Press the button in gateway for KDS to connect.</string>-->
     <string name="tt_connect_error">Can not connect to TT server.</string>
 
 
@@ -330,8 +330,8 @@
     <string name="folder_not_existed">The folder is not existed.</string>
     <string name="categories">Categories</string>
     <string name="items">Items</string>
-    <string name="reset">Reset</string>
-    <string name="retrieve_from">Retrieve from</string>
+    <!--<string name="reset">Reset</string>-->
+    <!--<string name="retrieve_from">Retrieve from</string>-->
 
     <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
 
@@ -363,7 +363,7 @@
     <string name="station_lost">Station # lost</string>
     <string name="enable_order_ack">Enable order acknowledgement</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
-    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <!--<string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>-->
     <string name="keep_notification_minutes">Reserve notification files for X minutes</string>
     <string-array name="pref_kds_log_mode_titles">
         <item>None</item>

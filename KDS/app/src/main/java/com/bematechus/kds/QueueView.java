@@ -481,7 +481,7 @@ public class QueueView  extends View {
     private final int ICON_SIZE = 24;
     private void drawInputingIDIcon(Canvas canvas)
     {
-        Drawable drawable = this.getContext().getResources().getDrawable(R.drawable.edit_24px_16);
+        Drawable drawable = this.getContext().getResources().getDrawable(com.bematechus.kdslib.R.drawable.edit_24px_16);
         Rect rect = this.getBounds();
         int nsize =canvas.getHeight();// thisrcAbsolute.height();
 

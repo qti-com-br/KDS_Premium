@@ -59,60 +59,60 @@
     <string name="order_state_others">Others</string>
     <string name="info_first_message">Bematech KDS messages</string>
     <string name="message">Message</string>
-    <string name="str_message">Message</string>
-    <string name="receive_new_relations">It has received new relations setting.</string>
-    <string name="confirm_remove_relation_station">Do you want to remove station #</string>
+    <!--<string name="str_message">Message</string>-->
+    <!--<string name="receive_new_relations">It has received new relations setting.</string>-->
+    <!--<string name="confirm_remove_relation_station">Do you want to remove station #</string>-->
     <string name="confirm">Confirm</string>
-    <string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>
-    <string name="confirm_broadcast_relations_changes">Changes have been made in stations relationship, do you want to save and update to all stations?</string>
+    <!--<string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>-->
+    <!--<string name="confirm_broadcast_relations_changes">Changes have been made in stations relationship, do you want to save and update to all stations?</string>-->
     <string name="confirm_remove_relations_expo">Expeditor station # will be removed from Expo column, are you sure you want to change this?</string>
-    <string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>
-    <string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>
+    <!--<string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>-->
+    <!--<string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>-->
     <!--<string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>-->
     <string name="confirm_clear_db">Do you want to clear database?</string>
     <string name="clear_db">Clear database</string>
     <string name="confirm_export_db">Do you want to export settings to</string>
     <string name="confirm_import_db">Do you want to import settings from</string>
     <string name="data_backup_to">The data have been backup to</string>
-    <string name="update_to_all">Save &amp; Update to all</string>
+    <!--<string name="update_to_all">Save &amp; Update to all</string>-->
     <string name="delete">Delete</string>
-    <string name="new_entry">New</string>
+    <!--<string name="new_entry">New</string>-->
     <string name="save">Save</string>
-    <string name="show_id">Show Station ID</string>
+    <!--<string name="show_id">Show Station ID</string>-->
 
 
-    <string-array name="station_function">
-        <item>Prep</item>
-        <item>Expeditor</item>
-        <item>Queue</item>
-        <item>Mirror</item>
-        <item>Backup</item>
-        <item>Workload</item>
-        <item>Duplicate</item>
-        <item>Tracker</item>
-        <item>Queue-Expo</item>
-    </string-array>
+    <!--<string-array name="station_function">-->
+        <!--<item>Prep</item>-->
+        <!--<item>Expeditor</item>-->
+        <!--<item>Queue</item>-->
+        <!--<item>Mirror</item>-->
+        <!--<item>Backup</item>-->
+        <!--<item>Workload</item>-->
+        <!--<item>Duplicate</item>-->
+        <!--<item>Tracker</item>-->
+        <!--<item>Queue-Expo</item>-->
+    <!--</string-array>-->
 
-    <string-array name="station_status">
-        <item>Enabled</item>
-        <item>Disabled</item>
-    </string-array>
-    <string-array name="slave_function">
-        <item>No slave</item>
-        <item>Backup</item>
-        <item>Mirror</item>
-        <item>Auto workload distribution</item>
-        <item>Duplicate station</item>
-        <item>Order Queue Display</item>
-    </string-array>
+    <!--<string-array name="station_status">-->
+        <!--<item>Enabled</item>-->
+        <!--<item>Disabled</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="slave_function">-->
+        <!--<item>No slave</item>-->
+        <!--<item>Backup</item>-->
+        <!--<item>Mirror</item>-->
+        <!--<item>Auto workload distribution</item>-->
+        <!--<item>Duplicate station</item>-->
+        <!--<item>Order Queue Display</item>-->
+    <!--</string-array>-->
 
     <string name="error">Error</string>
-    <string name="question">Question</string>
-    <string name="input">Input</string>
+    <!--<string name="question">Question</string>-->
+    <!--<string name="input">Input</string>-->
     <string name="input_station_id">This station doesn\'t have a ID yet, you will not be able to use it until you setup its ID!</string>
     <string name="input_id_title">Please enter station ID(0~99)</string>
     <!--<string name="select_station">Please choose station first.</string>-->
-    <string name="select_retrieve_station">Select station</string>
+    <!--<string name="select_retrieve_station">Select station</string>-->
     <string name="confirm_bump_normal">Do you want to bump order # ?</string>
     <string name="confirm_bump_expo_outstanding">Order # contains outstanding items.Do you still want to bump it?</string>
     <string name="error_isnot_unique_id">The ID # used by others.Please change it.</string>
@@ -134,11 +134,11 @@
     <string name="background">Background</string>
     <string name="foreground">Foreground</string>
     <string name="find">Find</string>
-    <string name="str_find">Find</string>
-    <string name="pc_name">PC IP:</string>
+    <!--<string name="str_find">Find</string>-->
+    <!--<string name="pc_name">PC IP:</string>-->
     <string name="password">Password</string>
-    <string name="user_id">User ID:</string>
-    <string name="shared_folder">Shared folder:</string>
+    <!--<string name="user_id">User ID:</string>-->
+    <!--<string name="shared_folder">Shared folder:</string>-->
     <!--<string name="get">Get</string>-->
     <!--<string name="information">Information:</string>-->
     <string name="transfer_select_order_warn">Please select an order first.</string>
@@ -148,9 +148,9 @@
     <string name="ip_search_title_ip">IP address</string>
     <string name="ip_search_title_port">Port</string>
     <string name="park_count">Park:</string>
-    <string name="anonymous">Anonymous</string>
+    <!--<string name="anonymous">Anonymous</string>-->
     <string name="password_incorrect">Password is incorrect!</string>
-    <string name="error_relations_repeat_backup_mirror">Stations # settings error.</string>
+    <!--<string name="error_relations_repeat_backup_mirror">Stations # settings error.</string>-->
     <string name="error_relations_mirror_dead_loop">Stations # mirror function dead loop.</string>
     <string name="error_relations_backup_dead_loop">Stations # backup function dead loop.</string>
     <string name="network_lost">Network lost</string>
@@ -171,8 +171,8 @@
     <string name="duplicated_of">Duplicate of</string>
     <string name="workloan_of">Workload of</string>
 
-    <string name="please_input_slave_station">Please input station #\'s $ station</string>
-    <string name="please_input_primary_station">Please input station #\'s primary station</string>
+    <!--<string name="please_input_slave_station">Please input station #\'s $ station</string>-->
+    <!--<string name="please_input_primary_station">Please input station #\'s primary station</string>-->
 
     <string name="check_new_version">Check new version</string>
     <string name="current_version">Current version</string>
@@ -200,18 +200,18 @@
     <string name="queue_mode_panel">Panel mode</string>
     <string name="queue_mode_simple">ID mode</string>
 
-    <string name="expo_backup">Expo/Backup</string>
-    <string name="prep_backup">Prep/Backup</string>
-    <string name="error_slave">Error, please change to other station</string>
-    <string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>
-    <string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>
-    <string name="error_not_expo">Error, this station is not expo.</string>
-    <string name="error_not_prep">Error, this station is not prep.</string>
-    <string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>
+    <!--<string name="expo_backup">Expo/Backup</string>-->
+    <!--<string name="prep_backup">Prep/Backup</string>-->
+    <!--<string name="error_slave">Error, please change to other station</string>-->
+    <!--<string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>-->
+    <!--<string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>-->
+    <!--<string name="error_not_expo">Error, this station is not expo.</string>-->
+    <!--<string name="error_not_prep">Error, this station is not prep.</string>-->
+    <!--<string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>-->
 
     <string name="tracker_caption_order_name">Order Name</string>
     <string name="tracker_caption_table_name">Location</string>
-    <string name="tracker_only_one_allowed">Only one table tracker station is allowed</string>
+    <!--<string name="tracker_only_one_allowed">Only one table tracker station is allowed</string>-->
     <string name="confirm_reset_tt_authen">Do you want to reset save authentication value?</string>
     <string name="reset_authen">Reset saved authentication value</string>
 
@@ -227,8 +227,8 @@
     <string name="tracker_id">Assign Tracker ID</string>
     <string name="tt_connect_successful">Connection to gateway successful.</string>
     <string name="station_id">Station ID</string>
-    <string name="reset">Reset</string>
-    <string name="retrieve_from">Retrieve from</string>
+    <!--<string name="reset">Reset</string>-->
+    <!--<string name="retrieve_from">Retrieve from</string>-->
     <string name="str_new">New</string>
     <string name="remove">Remove</string>
     <string name="add">Add</string>
@@ -655,7 +655,7 @@
 
     <string name="pref_queue_auto_pages_switch_duration">Auto switching duration(seconds)</string>
 
-    <string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>
+    <!--<string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>-->
 
     <string name="pref_tracker_title">Table-tracker</string>
     <string name="pref_tracker_enabled">Table tracker enabled</string>
@@ -1115,7 +1115,7 @@
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <!--<string name="my_serial_number">My serial number:</string>-->
     <string name="sms_feature_enabled">SMS feature enabled</string>
-    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <!--<string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>-->
     <string name="transfer_default_station">Transfer order to default station</string>
     <string name="transfer_to_default_automaticlly">Transfer order to default station when do transferring</string>
     <string name="pref_kds_transfer_title">Transfer</string>

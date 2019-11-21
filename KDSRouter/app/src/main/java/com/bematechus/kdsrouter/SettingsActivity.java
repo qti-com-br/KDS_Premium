@@ -44,6 +44,7 @@ import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSEditTextPreference;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationIP;
@@ -52,6 +53,7 @@ import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.PreferenceFragmentStations;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -147,7 +149,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
         pref.registerOnSharedPreferenceChangeListener(this);
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setupActionBar();
-
+        PreferenceFragmentStations.setKDSCallback(KDSGlobalVariables.getKDS());
 
     }
     private boolean isDirty()
@@ -371,7 +373,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends KDSPreferenceFragment  implements SharedPreferences.OnSharedPreferenceChangeListener, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface {
+    public static class GeneralPreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface {
         KDSTimer m_timer = new KDSTimer();
         boolean m_bDisableChangedEvent = false;
 
@@ -762,21 +764,21 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 
         }
     }
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class KDSPreferenceFragment extends PreferenceFragment  {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
-            View v = super.onCreateView(inflater, root, savedInstanceState);
-
-            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
-            v.setPadding(0,0,0,0);
-
-
-            return v;
-        }
-
-
-    }
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//    public static class KDSPreferenceFragment extends PreferenceFragment  {
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
+//            View v = super.onCreateView(inflater, root, savedInstanceState);
+//
+//            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+//            v.setPadding(0,0,0,0);
+//
+//
+//            return v;
+//        }
+//
+//
+//    }
 
 
 }

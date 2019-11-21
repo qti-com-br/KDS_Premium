@@ -53,30 +53,30 @@
 
     <string name="confirm_broadcast_relations">您是否要把新的设置用于所有终端?</string>
     <string name="confirm_clear_db">您是否要清除数据库?</string>
-    <string name="update_to_all">保存和更新所有</string>
+    <!--<string name="update_to_all">保存和更新所有</string>-->
     <string name="delete">删除</string>
     <string name="save">保存</string>
-    <string name="show_id">显示终端ID</string>
+    <!--<string name="show_id">显示终端ID</string>-->
     <string name="confirm_remove_relation_station">是否要删除终端 #</string>
     <string name="confirm_remove_category">是否要删除类别: </string>
     <string name="confirm_remove_fooditem">是否要删除菜名: </string>
 
     <string name="about">关于</string>
 
-    <string-array name="station_function">
-        <item>正常</item>
-        <item>总台</item>
-        <item>排队</item>
-        <item>镜像</item>
-        <item>备份</item>
-        <item>工作量</item>
-        <item>副本</item>
-        <item>跟踪</item>
-    </string-array>
-    <string-array name="station_status">
-        <item>启用</item>
-        <item>停止</item>
-    </string-array>
+    <!--<string-array name="station_function">-->
+        <!--<item>正常</item>-->
+        <!--<item>总台</item>-->
+        <!--<item>排队</item>-->
+        <!--<item>镜像</item>-->
+        <!--<item>备份</item>-->
+        <!--<item>工作量</item>-->
+        <!--<item>副本</item>-->
+        <!--<item>跟踪</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="station_status">-->
+        <!--<item>启用</item>-->
+        <!--<item>停止</item>-->
+    <!--</string-array>-->
 
     <string name="id">ID</string>
     <string name="ip">IP</string>
@@ -118,18 +118,18 @@
     <string name="error_match_mac">请在bematech 设备上运行.</string>
 
     <string name="find">查找</string>
-    <string name="pc_name">PC IP:</string>
-    <string name="user_id">User ID:</string>
+    <!--<string name="pc_name">PC IP:</string>-->
+    <!--<string name="user_id">User ID:</string>-->
     <string name="password">密码</string>
-    <string name="shared_folder">共享目录</string>
+    <!--<string name="shared_folder">共享目录</string>-->
 
     <string name="category">类别</string>
     <string name="item">菜名描述</string>
     <string name="router_disabled">路由未启动, 请启动路由</string>
     <string name="router_disabled_warning">路由未启动, 请启动路由</string>
-    <string name="anonymous">匿名</string>
+    <!--<string name="anonymous">匿名</string>-->
 
-    <string name="error_relations_repeat_backup_mirror">终端 # 工作为备份和镜像模式</string>
+    <!--<string name="error_relations_repeat_backup_mirror">终端 # 工作为备份和镜像模式</string>-->
     <string name="error_relations_mirror_dead_loop">终端 # 镜像死循环.</string>
     <string name="error_relations_backup_dead_loop">终端 # 备份死循环.</string>
     <string name="network_lost">网络丢失</string>
@@ -147,18 +147,18 @@
 
     <string name="input">输入</string>
 
-    <string-array name="slave_function">
-        <item>无副终端</item>
-        <item>备份</item>
-        <item>镜像</item>
-        <item>工作量分配</item>
-        <item>副本</item>
-        <item>排队</item>
-    </string-array>
+    <!--<string-array name="slave_function">-->
+        <!--<item>无副终端</item>-->
+        <!--<item>备份</item>-->
+        <!--<item>镜像</item>-->
+        <!--<item>工作量分配</item>-->
+        <!--<item>副本</item>-->
+        <!--<item>排队</item>-->
+    <!--</string-array>-->
 
-    <string name="slave_func">副终端功能</string>
+    <!--<string name="slave_func">副终端功能</string>-->
     <string name="slave">副终端ID</string>
-    <string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>
+    <!--<string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>-->
 
     <string name="check_new_version">检查新版本</string>
     <string name="current_version">当前版本</string>
@@ -228,18 +228,18 @@
     <string name="new_schedule">新计划</string>
     <string name="dialog_time_picker">时间</string>
 
-    <string name="please_input_primary_station">请输入终端 # 的主终端</string>
-    <string name="relation_error_expo_as_slave">不允许副终端是总台. 请改正.</string>
-    <string name="remove_relations_expo">总台终端 # 从总台列中删除.</string>
+    <!--<string name="please_input_primary_station">请输入终端 # 的主终端</string>-->
+    <!--<string name="relation_error_expo_as_slave">不允许副终端是总台. 请改正.</string>-->
+    <!--<string name="remove_relations_expo">总台终端 # 从总台列中删除.</string>-->
 
-    <string name="expo_backup">总台/备份</string>
-    <string name="prep_backup">正常/备份</string>
-    <string name="error_slave">错误, 请改为其它终端</string>
-    <string name="error_slave_myself">错误, 用自己作为副终端. 请改正</string>
-    <string name="error_primary_myself">错误,用自己作为主终端. 请改正</string>
-    <string name="error_not_expo">错误, 终端不是总台终端.</string>
-    <string name="error_not_prep">错误,终端不是正常终端.</string>
-    <string name="error_not_expo_prep_backup">错误,只允许总台,正常和排序终端.</string>
+    <!--<string name="expo_backup">总台/备份</string>-->
+    <!--<string name="prep_backup">正常/备份</string>-->
+    <!--<string name="error_slave">错误, 请改为其它终端</string>-->
+    <!--<string name="error_slave_myself">错误, 用自己作为副终端. 请改正</string>-->
+    <!--<string name="error_primary_myself">错误,用自己作为主终端. 请改正</string>-->
+    <!--<string name="error_not_expo">错误, 终端不是总台终端.</string>-->
+    <!--<string name="error_not_prep">错误,终端不是正常终端.</string>-->
+    <!--<string name="error_not_expo_prep_backup">错误,只允许总台,正常和排序终端.</string>-->
 
     <string name="error_other_router_enabled">错误,只允许一个路由.有其它路由已启动. 请改正!</string>
     <string name="primary_router">我的主终端</string>
@@ -259,8 +259,8 @@
 
     <string name="pref_tracker_number_from_userinfo">跟踪器号来自 \"UserInfo\" 标签</string>
     <string name="pref_tracker_number_from_userinfo_summary">POS程序用 \"UserInfo\" 标签传递跟踪器号</string>
-    <string name="tracker_only_one_allowed">只允许一个座位跟踪终端</string>
-    <string name="tt_authen_press_button">按跟踪器服务器按钮以便接受KDS连接.</string>
+    <!--<string name="tracker_only_one_allowed">只允许一个座位跟踪终端</string>-->
+    <!--<string name="tt_authen_press_button">按跟踪器服务器按钮以便接受KDS连接.</string>-->
     <string name="tt_connect_error">不能连接到 TT 服务器</string>
 
 
@@ -325,8 +325,8 @@
 
     <string name="categories">类别</string>
     <string name="items">菜名</string>
-    <string name="reset">重置</string>
-    <string name="retrieve_from">提取自</string>
+    <!--<string name="reset">重置</string>-->
+    <!--<string name="retrieve_from">提取自</string>-->
 
     <string name="failed_to_open_remote_folder">登录失败：未知用户名或密码错误</string>
     <string name="english">英语</string>
@@ -358,7 +358,7 @@
     <string name="station_lost">Station # lost</string>
     <string name="enable_order_ack">Enable order acknowledgement</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
-    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <!--<string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>-->
     <string name="keep_notification_minutes">Reserve notification files for X minutes</string>
     <string-array name="pref_kds_log_mode_titles">
         <item>None</item>

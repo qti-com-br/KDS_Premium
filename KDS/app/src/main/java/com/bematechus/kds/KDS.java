@@ -5092,4 +5092,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     {
         broadcastStationsRelations();
     }
+
+    public String call_loadStationsRelationString(boolean bNeedNoCheckOption)
+    {
+        return KDSSettings.loadStationsRelationString(KDSApplication.getContext(), bNeedNoCheckOption);
+    }
 }

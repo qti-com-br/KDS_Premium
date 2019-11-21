@@ -156,14 +156,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void checkNetworkState()
     {
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
-            m_imgState.setImageResource(R.drawable.online);
+            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
             if (m_imgState.getTag() != null &&
                     (int) m_imgState.getTag() == 0)
 
             m_imgState.setTag(1);
         }
         else{
-            m_imgState.setImageResource(R.drawable.offline);
+            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
             if (m_imgState.getTag() == null ||
                     (int) m_imgState.getTag() == 1)
             m_imgState.setTag(0);

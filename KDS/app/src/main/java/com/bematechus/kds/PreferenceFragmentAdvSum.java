@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 /**
  * Created by Administrator on 2017/9/21.
  */
-public class PreferenceFragmentAdvSum extends KDSUIConfiguration.KDSPreferenceFragment implements  KDSUIDialogBase.KDSDialogBaseListener{
+public class PreferenceFragmentAdvSum extends KDSPreferenceFragment implements  KDSUIDialogBase.KDSDialogBaseListener{
 
     private static final String TAG = "AdvSumPref";
 

@@ -16,7 +16,7 @@
     <!--android:summary="All stations relationships"-->
     <!--<header android:fragment="com.bematechus.kds.KDSUIConfiguration$PreferenceFragmentStations"-->
         <!--android:title="@string/pref_kds_stations_title_relations" />-->
-    <header android:fragment="com.bematechus.kds.PreferenceFragmentStations"
+    <header android:fragment="com.bematechus.kdslib.PreferenceFragmentStations"
         android:title="@string/pref_kds_stations_title_relations" />
 
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$NotificationPreferenceFragment"
