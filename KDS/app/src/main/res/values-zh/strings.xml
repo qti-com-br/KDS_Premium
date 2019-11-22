@@ -145,7 +145,7 @@
     <string name="ip_search_title_port">端口</string>
     <string name="park_count">暂缓</string>
     <!--<string name="anonymous">匿名</string>-->
-    <string name="password_incorrect">密码错误!</string>
+    <!--<string name="password_incorrect">密码错误!</string>-->
     <!--<string name="error_relations_repeat_backup_mirror">终端 # 设置错误</string>-->
     <string name="error_relations_mirror_dead_loop">终端 # 镜像功能死循环</string>
     <string name="error_relations_backup_dead_loop">终端 # 备份功能死循环</string>

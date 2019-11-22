@@ -149,7 +149,7 @@
     <string name="ip_search_title_port">Port</string>
     <string name="park_count">Park:</string>
     <!--<string name="anonymous">Anonymous</string>-->
-    <string name="password_incorrect">Password is incorrect!</string>
+    <!--<string name="password_incorrect">Password is incorrect!</string>-->
     <!--<string name="error_relations_repeat_backup_mirror">Stations # settings error.</string>-->
     <string name="error_relations_mirror_dead_loop">Stations # mirror function dead loop.</string>
     <string name="error_relations_backup_dead_loop">Stations # backup function dead loop.</string>

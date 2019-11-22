@@ -122,7 +122,7 @@
         android:title="@string/clear_db"
         />
 
-    <com.bematechus.kds.KDSPreferenceEnablePassword
+    <com.bematechus.kdslib.KDSPreferenceEnablePassword
         android:key="kds_general_enable_password"
         android:title="@string/pref_kds_password_enabled"
         android:defaultValue="false" />

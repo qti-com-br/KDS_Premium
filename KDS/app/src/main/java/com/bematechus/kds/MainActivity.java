@@ -2988,7 +2988,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (pwd.isEmpty() || ( !pwd.equals(settingsPwd)) )
             {
                 KDSUIDialogBase errordlg = new KDSUIDialogBase();
-                errordlg.createInformationDialog(this, getString(R.string.error), this.getString(R.string.password_incorrect), false);
+                errordlg.createInformationDialog(this, getString(com.bematechus.kdslib.R.string.error), this.getString(com.bematechus.kdslib.R.string.password_incorrect), false);
                 errordlg.show();
                 //KDSUtil.showErrorMessage(this, this.getString(R.string.password_incorrect));
             }
