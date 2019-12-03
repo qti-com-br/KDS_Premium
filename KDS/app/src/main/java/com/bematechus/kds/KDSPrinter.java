@@ -2234,8 +2234,8 @@ print order data to  buffer, socket will send this buffer to serial port
             m_printerData.add(s);
         }
         //output for debug
-        for (int i=0;i < arPrint.size(); i++)
-            Log.i(TAG, arPrint.get(i));
+//        for (int i=0;i < arPrint.size(); i++)
+//            Log.i(TAG, arPrint.get(i));
         ////////////////////////////////////////
         arPrint.clear();
         //arrangeBuffer();
