@@ -2228,7 +2228,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 setSelectedItemGuid(userID, "");
 
                 if (!getUserUI(userID).getPrevCountString().isEmpty() &&
-                       // getUserUI(userID).getLayout().getLastShowingOrderGuid().equals(firstOrderGuid) && //comment it as KPP1-237
+                        getUserUI(userID).getLayout().getLastShowingOrderGuid().equals(firstOrderGuid) && //comment it as KPP1-237, use it as kpp1-254
+                        orderGuid.equals(firstOrderGuid) && //KPP1-254 Scroll to the previous page of orders when the last order is bumped off the last page
                         getUserUI(userID).getNextCountString().isEmpty()) {//kpp1-237
                     String estimateFirstOrderGuid = getUserUI(userID).getLayout().getPrevPageOrderGuid(nextGuid);
                     getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(estimateFirstOrderGuid);
