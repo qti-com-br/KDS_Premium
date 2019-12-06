@@ -10,6 +10,8 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.GestureDetectorCompat;
@@ -21,6 +23,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewParent;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import com.bematechus.kdslib.CanvasDC;
 import com.bematechus.kdslib.KDSConst;
@@ -50,6 +55,7 @@ public class KDSView extends View {
         public  void onViewPanelDoubleClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public void onSizeChanged();
         public void onViewDrawFinished();
+        public void onViewSlip(boolean bSlipToLeft);
     }
 
     public enum OrdersViewMode
@@ -154,6 +160,18 @@ public class KDSView extends View {
         public boolean onDoubleTap(MotionEvent e) {
             KDSView.this.onDoubleClick(e);
 
+            return true;
+        }
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                                float distanceX, float distanceY) {
+            KDSView.this.onScroll(e1, e2, distanceX, distanceY);
+//
+//            View v =(View) KDSView.this.getParent();
+//            v.setBackground(new BitmapDrawable( m_bitmapBuffer));
+//
+//            TranslateAnimation slide = new TranslateAnimation(KDSView.this.getX(), KDSView.this.getX()  + KDSView.this.getWidth(), KDSView.this.getY(), KDSView.this.getY()  );
+//            slide.setDuration(1000);
+//            KDSView.this.startAnimation(slide);
             return true;
         }
     }
@@ -932,7 +950,49 @@ public class KDSView extends View {
         }
     }
 
+    boolean m_bSliping = false;
+    private void onScroll(MotionEvent e1, MotionEvent e2,
+                        float distanceX, float distanceY)
+    {
+        if (m_bSliping) return;
+        View v =(View) KDSView.this.getParent();
+        Bitmap bmpBG =  m_bitmapBuffer.copy(m_bitmapBuffer.getConfig(),m_bitmapBuffer.isMutable() );
+        v.setBackground(new BitmapDrawable( bmpBG));
 
+        boolean bSlipToLeft = true;
+        float n = e2.getX() - e1.getX();
+        if (n == 0) return;
+        if (n >0)
+            bSlipToLeft = false;
+        if (m_eventsReceiver != null)
+            m_eventsReceiver.onViewSlip(bSlipToLeft);
+        TranslateAnimation slide = null;
+        if (bSlipToLeft) {
+            slide = new TranslateAnimation(KDSView.this.getX()+ KDSView.this.getWidth(), KDSView.this.getX() , KDSView.this.getY(), KDSView.this.getY());
+        }
+        else
+        {
+            slide = new TranslateAnimation(KDSView.this.getX()- KDSView.this.getWidth(), KDSView.this.getX() , KDSView.this.getY(), KDSView.this.getY());
+        }
+        slide.setDuration(1000);
+        slide.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                m_bSliping = true;
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                m_bSliping = false;
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        KDSView.this.startAnimation(slide);
+    }
 
 }
 

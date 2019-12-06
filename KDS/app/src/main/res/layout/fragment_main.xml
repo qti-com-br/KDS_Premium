@@ -89,14 +89,28 @@
                 android:numColumns="3"
                 android:visibility="visible"
                 android:background="@drawable/top_sum_border" />
-            <com.bematechus.kds.KDSIOSView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/viewOrdersA"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:weightSum="1"
+                android:id="@+id/layoutScrABG">
+                <com.bematechus.kds.KDSIOSView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/viewOrdersA"
+
+                    android:layout_weight="1" />
+            <!--<com.bematechus.kds.KDSIOSView-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/viewOrdersA"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_alignParentStart="true"-->
+                <!--android:layout_weight="1" />-->
+            </LinearLayout>
             <com.bematechus.kds.KDSScreenFocusIndicator
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/user_focused_header_height"
@@ -189,14 +203,28 @@
                  android:visibility="visible"
                  android:background="@drawable/media_listview_border"
                  android:layout_margin="2dp" />
-            <com.bematechus.kds.KDSIOSView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/viewOrdersB"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_weight="1" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:weightSum="1"
+                android:id="@+id/layoutScrBBG">
+                <com.bematechus.kds.KDSIOSView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/viewOrdersB"
+
+                    android:layout_weight="1" />
+            <!--<com.bematechus.kds.KDSIOSView-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/viewOrdersB"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_alignParentStart="true"-->
+                <!--android:layout_weight="1" />-->
+            </LinearLayout>
              <com.bematechus.kds.KDSScreenFocusIndicator
                  android:layout_width="fill_parent"
                  android:layout_height="@dimen/user_focused_header_height"

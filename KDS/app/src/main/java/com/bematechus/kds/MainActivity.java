@@ -5044,6 +5044,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //m_bWatingRefreshViewAsDblClick = true;
     }
 
+    public void onViewSlip(KDSLayout layout, boolean bSlipToLeft)
+    {
+        KDSUser.USER user = getUserFromLayout(layout);
+        if (bSlipToLeft)
+        {
+            opNextPage(user);
+        }
+        else
+        {
+            opPrevPage(user);
+        }
+    }
 //    public void onRedrawLayout(KDSLayout layout)
 //    {
 //        getKDS().refreshView();
