@@ -182,6 +182,9 @@ public class KDSView extends View {
             KDSView.this.onScroll(e1, e2, velocityX, velocityY);
             return true;
         }
+        public void onLongPress(MotionEvent e) {
+            KDSView.this.showContextMenu();
+        }
     }
 
     public boolean dispatchTouchEvent(MotionEvent event)

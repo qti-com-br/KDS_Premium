@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.os.Bundle;
 //import android.util.Log;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -510,6 +511,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             doActivation(bSilent, false, "");
         }
 
+        this.registerForContextMenu(getUserUI(KDSUser.USER.USER_A).getLayout().getView());
+
+        this.registerForContextMenu(getUserUI(KDSUser.USER.USER_B).getLayout().getView());
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -6726,5 +6730,45 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onShowStationStateMessage(String stationID, int nState){}
     public void onShowMessage(String message){}
+
+    /**
+     * for kdsview context menu
+     * @param menu
+     * @param v
+     * @param menuInfo
+     */
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+        super.onCreateContextMenu(menu, v, menuInfo);
+        int id =  v.getId();
+        KDSUser.USER user = KDSUser.USER.USER_A;
+        if (id == R.id.viewOrdersB)
+            user = KDSUser.USER.USER_B;
+        String focusedItem = getFocusedItemGUID(user);
+        if (focusedItem.isEmpty())
+            getMenuInflater().inflate(R.menu.order_menu,menu);
+        else
+            getMenuInflater().inflate(R.menu.item_menu,menu);
+
+
+
+    }
+
+    @Override
+    public boolean  onContextItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+            case R.id.order_bump:
+            break;
+            case R.id.order_transfer:
+            break;
+
+
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }
 }
 
