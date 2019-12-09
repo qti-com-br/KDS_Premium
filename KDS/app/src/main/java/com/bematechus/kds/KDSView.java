@@ -24,7 +24,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 
 import com.bematechus.kdslib.CanvasDC;
@@ -55,7 +57,7 @@ public class KDSView extends View {
         public  void onViewPanelDoubleClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public void onSizeChanged();
         public void onViewDrawFinished();
-        public void onViewSlip(boolean bSlipToLeft);
+        public boolean onViewSlip(boolean bSlipToLeft);
     }
 
     public enum OrdersViewMode
@@ -162,16 +164,22 @@ public class KDSView extends View {
 
             return true;
         }
-        public boolean onScroll(MotionEvent e1, MotionEvent e2,
-                                float distanceX, float distanceY) {
-            KDSView.this.onScroll(e1, e2, distanceX, distanceY);
-//
-//            View v =(View) KDSView.this.getParent();
-//            v.setBackground(new BitmapDrawable( m_bitmapBuffer));
-//
-//            TranslateAnimation slide = new TranslateAnimation(KDSView.this.getX(), KDSView.this.getX()  + KDSView.this.getWidth(), KDSView.this.getY(), KDSView.this.getY()  );
-//            slide.setDuration(1000);
-//            KDSView.this.startAnimation(slide);
+//        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+//                                float distanceX, float distanceY) {
+//            return false;
+//            //KDSView.this.onScroll(e1, e2, distanceX, distanceY);
+////
+////            View v =(View) KDSView.this.getParent();
+////            v.setBackground(new BitmapDrawable( m_bitmapBuffer));
+////
+////            TranslateAnimation slide = new TranslateAnimation(KDSView.this.getX(), KDSView.this.getX()  + KDSView.this.getWidth(), KDSView.this.getY(), KDSView.this.getY()  );
+////            slide.setDuration(1000);
+////            KDSView.this.startAnimation(slide);
+//            //return true;
+//        }
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                               float velocityY) {
+            KDSView.this.onScroll(e1, e2, velocityX, velocityY);
             return true;
         }
     }
@@ -950,48 +958,82 @@ public class KDSView extends View {
         }
     }
 
-    boolean m_bSliping = false;
+    //boolean m_bSliping = false;
+    final int SLIPPING_DURATION = 800;
+    final int SLIPPING_GAP = 10;
     private void onScroll(MotionEvent e1, MotionEvent e2,
                         float distanceX, float distanceY)
     {
-        if (m_bSliping) return;
-        View v =(View) KDSView.this.getParent();
+        if (getOrdersViewMode() != OrdersViewMode.Normal)
+            return;
+        //if (m_bSliping) return;
+        View viewParent =(View) KDSView.this.getParent();
         Bitmap bmpBG =  m_bitmapBuffer.copy(m_bitmapBuffer.getConfig(),m_bitmapBuffer.isMutable() );
-        v.setBackground(new BitmapDrawable( bmpBG));
+        viewParent.setBackground(new BitmapDrawable( bmpBG));
 
         boolean bSlipToLeft = true;
         float n = e2.getX() - e1.getX();
         if (n == 0) return;
         if (n >0)
             bSlipToLeft = false;
+        boolean bSlipWorked = false;
         if (m_eventsReceiver != null)
-            m_eventsReceiver.onViewSlip(bSlipToLeft);
-        TranslateAnimation slide = null;
+            bSlipWorked = m_eventsReceiver.onViewSlip(bSlipToLeft);
+
+        float fromX = 0;
+        float toX = 0;
         if (bSlipToLeft) {
-            slide = new TranslateAnimation(KDSView.this.getX()+ KDSView.this.getWidth(), KDSView.this.getX() , KDSView.this.getY(), KDSView.this.getY());
+            if (bSlipWorked) {
+                fromX = this.getX() + this.getWidth();
+                toX = this.getX();
+            }
+            else
+            {
+                fromX = this.getX();
+                toX = this.getX() - SLIPPING_GAP;
+                viewParent.setBackground(null);
+            }
+
         }
         else
-        {
-            slide = new TranslateAnimation(KDSView.this.getX()- KDSView.this.getWidth(), KDSView.this.getX() , KDSView.this.getY(), KDSView.this.getY());
+        { //to right
+            if (bSlipWorked) {
+                fromX = this.getX() - this.getWidth();
+                toX = this.getX();
+            }
+            else
+            {
+                fromX = this.getX();
+                toX = this.getX() + SLIPPING_GAP;
+                viewParent.setBackground(null);
+            }
         }
-        slide.setDuration(1000);
-        slide.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                m_bSliping = true;
-            }
+        playAnimation(bSlipWorked,fromX, toX);
+    }
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                m_bSliping = false;
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        KDSView.this.startAnimation(slide);
+    private void playAnimation(boolean bSlippingWorked, float fromX, float toX)
+    {
+        TranslateAnimation slide = new TranslateAnimation(fromX, toX ,
+                this.getY(), this.getY());
+        if (bSlippingWorked)
+            slide.setDuration(SLIPPING_DURATION);
+        else
+            slide.setDuration(SLIPPING_DURATION/2);
+//        if (bSlippingWorked) {
+//            AnimationSet as = new AnimationSet(false);
+//            as.addAnimation(slide);
+//
+//            // 创建透明度动画，第一个参数是开始的透明度，第二个参数是要转换到的透明度
+//            AlphaAnimation alphaAni = new AlphaAnimation(0.5f, 1);
+//            alphaAni.setDuration(SLIPPING_DURATION);
+//
+//            as.addAnimation(alphaAni);
+//            this.startAnimation(as);
+//        }
+//        else
+        {
+            this.startAnimation(slide);
+        }
     }
 
 }

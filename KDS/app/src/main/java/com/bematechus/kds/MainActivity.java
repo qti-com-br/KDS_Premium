@@ -5044,16 +5044,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //m_bWatingRefreshViewAsDblClick = true;
     }
 
-    public void onViewSlip(KDSLayout layout, boolean bSlipToLeft)
+    public boolean onViewSlip(KDSLayout layout, boolean bSlipToLeft)
     {
         KDSUser.USER user = getUserFromLayout(layout);
         if (bSlipToLeft)
         {
-            opNextPage(user);
+            return opNextPage(user);
         }
         else
         {
-            opPrevPage(user);
+            return opPrevPage(user);
         }
     }
 //    public void onRedrawLayout(KDSLayout layout)
@@ -6118,15 +6118,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * 2.0.25
      * Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
      * @param userID
+     * @return
+     *  true: do next page.
+     *  false; No more data
      */
-    private void opNextPage(KDSUser.USER userID)
+    private boolean opNextPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isUserLayoutReady(userID)) return;
-
+        if (!isUserLayoutReady(userID)) return false;
+        int ncount = getUserUI(userID).getLayout().getNextCount();
         getUserUI(userID).getLayout().focusNextPage();
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        return (ncount >0);
     }
 
     /**
@@ -6134,15 +6138,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
      * @param userID
      */
-    private void opPrevPage(KDSUser.USER userID)
+    private boolean opPrevPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isUserLayoutReady(userID)) return;
-
+        if (!isUserLayoutReady(userID)) return false;
+        int ncount = getUserUI(userID).getLayout().getPrevCount();
         getUserUI(userID).getLayout().focusPrevPage();
 
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        return (ncount >0);
     }
 
     TimeDog m_avgTimeDog = new TimeDog();

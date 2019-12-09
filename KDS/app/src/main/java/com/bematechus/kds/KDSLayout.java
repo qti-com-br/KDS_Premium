@@ -50,7 +50,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         public  void onViewPanelDoubleClicked(KDSLayout layout);
         public  void onViewPanelClicked(KDSLayout layout);
         public void onViewDrawingFinished(KDSLayout layout);
-        public void onViewSlip(KDSLayout layout, boolean bSlipToLeft);
+        public boolean onViewSlip(KDSLayout layout, boolean bSlipToLeft);
        // public void onRedrawLayout(KDSLayout layout);
     }
 
@@ -1266,10 +1266,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             m_eventsReceiver.onViewDrawingFinished(this);
     }
 
-    public void onViewSlip(boolean bSlipToLeft)
+    public boolean onViewSlip(boolean bSlipToLeft)
     {
         if (m_eventsReceiver != null)
-            m_eventsReceiver.onViewSlip(this, bSlipToLeft);
+            return m_eventsReceiver.onViewSlip(this, bSlipToLeft);
+        return false;
     }
 
     /**
