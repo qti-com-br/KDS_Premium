@@ -6760,10 +6760,32 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         switch(item.getItemId()){
             case R.id.order_bump:
+                opBump(getFocusedUserID());
             break;
+            case R.id.order_unbump:
+                opUnbump(getFocusedUserID());
+                break;
+            case R.id.order_unbump_last:
+                opUnbumpLast(getFocusedUserID());
+                break;
+            case R.id.order_park:
+                opPark(getFocusedUserID());
+                break;
+            case R.id.order_unpark:
+                opUnpark(getFocusedUserID());
+                break;
+            case R.id.order_print:
+                opPrint(getFocusedUserID());
+                break;
             case R.id.order_transfer:
-            break;
-
+                opTransfer(getFocusedUserID());
+                break;
+            case R.id.item_bump:
+                opBump(getFocusedUserID());
+                break;
+            case R.id.item_unbump:
+                opUnbump(getFocusedUserID());
+                break;
 
         }
 

@@ -6,6 +6,26 @@
         android:id="@+id/order_bump"
         android:title="Bump" />
     <item
+        android:id="@+id/order_unbump_last"
+        android:title="@string/touchpad_unbump_last" />
+    <item
+        android:id="@+id/order_unbump"
+        android:title="Unbump" />
+    <item
         android:id="@+id/order_transfer"
         android:title="Transfer" />
+    <item
+        android:id="@+id/order_print"
+        android:title="Print" />
+    <group>
+        <item
+            android:id="@+id/order_park"
+            android:title="Park" />
+        <item
+            android:id="@+id/order_unpark"
+            android:title="Unpark" />
+
+    </group>
+
+
 </menu>
