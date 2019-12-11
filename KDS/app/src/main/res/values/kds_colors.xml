@@ -14,7 +14,7 @@
     <color name="stage0_bg">#fed04e</color>
     <color name="stage1_bg">#f0750f</color>
     <color name="stage2_bg">#e62d05</color>
-    <color name="item_bg">#ffffffff</color>
+    <color name="item_bg">#FFFFFF</color>
     <color name="item_fg">#ff000000</color>
     <color name="condiment_bg">#ffffffff</color>
     <color name="condiment_fg">#ff000000</color>
@@ -100,7 +100,7 @@
     <!--<color name="touch_button_up_color">#21abae</color>-->
 
     <color name="touch_button_bg">#ffffff</color>
-    <color name="touch_button_fg">#21abae</color>
+    <color name="touch_button_fg">#21ABAE</color>
     <color name="lineitems_viewer_bg">#0e0e0e</color>
     <color name="grid_line_color">#B8B8B8</color>
 </resources>

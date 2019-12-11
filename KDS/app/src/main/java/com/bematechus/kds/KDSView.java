@@ -1,6 +1,7 @@
 package com.bematechus.kds;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -58,6 +59,7 @@ public class KDSView extends View {
         public void onSizeChanged();
         public void onViewDrawFinished();
         public boolean onViewSlip(boolean bSlipToLeft);
+        public void onViewLongPressed();
     }
 
     public enum OrdersViewMode
@@ -183,7 +185,9 @@ public class KDSView extends View {
             return true;
         }
         public void onLongPress(MotionEvent e) {
-            KDSView.this.showContextMenu();
+            //KDSView.this.showContextMenu();
+            if (m_eventsReceiver != null)
+                m_eventsReceiver.onViewLongPressed();
         }
     }
 
@@ -1038,6 +1042,7 @@ public class KDSView extends View {
             this.startAnimation(slide);
         }
     }
+
 
 }
 

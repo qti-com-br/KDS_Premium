@@ -109,7 +109,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         TabDisplay.TabDisplayEvents,
         Activation.ActivationEvents,
         SysTimeChangedReceiver.sysTimeChangedEvent,
-        KDSUIAboutDlg.AboutDlgEvent
+        KDSUIAboutDlg.AboutDlgEvent,
+        KDSContextMenu.OnContextMenuItemClickedReceiver
 
 {
     public enum GUI_MODE
@@ -511,9 +512,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             doActivation(bSilent, false, "");
         }
 
-        this.registerForContextMenu(getUserUI(KDSUser.USER.USER_A).getLayout().getView());
+        //this.registerForContextMenu(getUserUI(KDSUser.USER.USER_A).getLayout().getView());
 
-        this.registerForContextMenu(getUserUI(KDSUser.USER.USER_B).getLayout().getView());
+       // this.registerForContextMenu(getUserUI(KDSUser.USER.USER_B).getLayout().getView());
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -6731,66 +6732,140 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onShowStationStateMessage(String stationID, int nState){}
     public void onShowMessage(String message){}
 
-    /**
-     * for kdsview context menu
-     * @param menu
-     * @param v
-     * @param menuInfo
-     */
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//    /**
+//     * for kdsview context menu
+//     * @param menu
+//     * @param v
+//     * @param menuInfo
+//     */
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        int id =  v.getId();
+//        KDSUser.USER user = KDSUser.USER.USER_A;
+//        if (id == R.id.viewOrdersB)
+//            user = KDSUser.USER.USER_B;
+//        String focusedItem = getFocusedItemGUID(user);
+//        if (focusedItem.isEmpty())
+//            getMenuInflater().inflate(R.menu.order_menu,menu);
+//        else
+//            getMenuInflater().inflate(R.menu.item_menu,menu);
+//
+//
+//
+//    }
 
-        super.onCreateContextMenu(menu, v, menuInfo);
-        int id =  v.getId();
-        KDSUser.USER user = KDSUser.USER.USER_A;
-        if (id == R.id.viewOrdersB)
-            user = KDSUser.USER.USER_B;
+//    @Override
+//    public boolean  onContextItemSelected(MenuItem item) {
+//
+//        switch(item.getItemId()){
+//            case R.id.order_bump:
+//                opBump(getFocusedUserID());
+//            break;
+//            case R.id.order_unbump:
+//                opUnbump(getFocusedUserID());
+//                break;
+//            case R.id.order_unbump_last:
+//                opUnbumpLast(getFocusedUserID());
+//                break;
+//            case R.id.order_park:
+//                opPark(getFocusedUserID());
+//                break;
+//            case R.id.order_unpark:
+//                opUnpark(getFocusedUserID());
+//                break;
+//            case R.id.order_print:
+//                opPrint(getFocusedUserID());
+//                break;
+//            case R.id.order_transfer:
+//                opTransfer(getFocusedUserID());
+//                break;
+//            case R.id.item_bump:
+//                opBump(getFocusedUserID());
+//                break;
+//            case R.id.item_unbump:
+//                opUnbump(getFocusedUserID());
+//                break;
+//
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//
+//    }
+    KDSContextMenu m_contextMenu = new KDSContextMenu();
+
+    public void onViewLongPressed(KDSLayout layout)
+    {
+        KDSUser.USER user = getUserFromLayout(layout);
+
         String focusedItem = getFocusedItemGUID(user);
-        if (focusedItem.isEmpty())
-            getMenuInflater().inflate(R.menu.order_menu,menu);
-        else
-            getMenuInflater().inflate(R.menu.item_menu,menu);
+        int nBG = getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface).getBG();
+        int nFG = getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface).getFG();
+        KDSContextMenu.ContextMenuType menuType = KDSContextMenu.ContextMenuType.Order;
+        if (!focusedItem.isEmpty())
+            menuType = KDSContextMenu.ContextMenuType.Item;
 
 
+        m_contextMenu.showContextMenu(this, this, menuType, getSettings());
 
     }
-
-    @Override
-    public boolean  onContextItemSelected(MenuItem item) {
-
-        switch(item.getItemId()){
-            case R.id.order_bump:
+    public void onContextMenuItemClicked(KDSContextMenu.ContextMenuItemID nItemID)
+    {
+        switch(nItemID){
+            case order_bump:
                 opBump(getFocusedUserID());
-            break;
-            case R.id.order_unbump:
+                break;
+            case order_unbump:
                 opUnbump(getFocusedUserID());
                 break;
-            case R.id.order_unbump_last:
+            case order_unbump_last:
                 opUnbumpLast(getFocusedUserID());
                 break;
-            case R.id.order_park:
+            case order_park:
                 opPark(getFocusedUserID());
                 break;
-            case R.id.order_unpark:
+            case order_unpark:
                 opUnpark(getFocusedUserID());
                 break;
-            case R.id.order_print:
+            case order_print:
                 opPrint(getFocusedUserID());
                 break;
-            case R.id.order_transfer:
+            case order_sum:
+                opSummary(getFocusedUserID());
+                break;
+            case order_transfer:
                 opTransfer(getFocusedUserID());
                 break;
-            case R.id.item_bump:
+            case order_sort:
+                opSort(getFocusedUserID());
+                break;
+            case order_more:
+                opMore(getFocusedUserID());
+                break;
+            case order_page:
+                opPageOrder(getFocusedUserID());
+                break;
+            case order_test:
+                opTest(getFocusedUserID());
+                break;
+            case item_bump:
                 opBump(getFocusedUserID());
                 break;
-            case R.id.item_unbump:
+            case item_unbump:
                 opUnbump(getFocusedUserID());
+                break;
+            case item_transfer:
+                opTransfer(getFocusedUserID());
+                break;
+            case item_buildcard:
+                doMoreFunc_BuildCard(getFocusedUserID());
+                break;
+            case item_training:
+                doMoreFunc_Training_Video(getFocusedUserID());
                 break;
 
         }
-
-        return super.onOptionsItemSelected(item);
-
     }
 }
 

@@ -51,7 +51,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         public  void onViewPanelClicked(KDSLayout layout);
         public void onViewDrawingFinished(KDSLayout layout);
         public boolean onViewSlip(KDSLayout layout, boolean bSlipToLeft);
-       // public void onRedrawLayout(KDSLayout layout);
+        public void onViewLongPressed(KDSLayout layout);
+
     }
 
     private KDSLayoutDrawingDoneEvent m_eventsFinishedDrawing = null;
@@ -2589,4 +2590,9 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         return guid;
     }
 
+    public void onViewLongPressed()
+    {
+        if (m_eventsReceiver != null)
+            m_eventsReceiver.onViewLongPressed(this);
+    }
 }
