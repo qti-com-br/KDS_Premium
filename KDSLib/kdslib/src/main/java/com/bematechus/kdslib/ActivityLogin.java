@@ -103,7 +103,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                String oldUserName = Activation.loadUserName();
+                String oldUserName = Activation.loadOldUserName();
                 String newUserName = mUserNameView.getText().toString();
 
 
