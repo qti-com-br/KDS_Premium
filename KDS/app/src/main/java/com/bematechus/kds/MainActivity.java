@@ -6797,7 +6797,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onViewLongPressed(KDSLayout layout)
     {
+        if (getSettings().getStationFunc() == SettingsBase.StationFunc.Queue ||
+                getSettings().getStationFunc() == SettingsBase.StationFunc.Queue_Expo ||
+                getSettings().getStationFunc() == SettingsBase.StationFunc.TableTracker
+        )
+            return;
+
         KDSUser.USER user = getUserFromLayout(layout);
+        if (getUserUI(user).getLayout().getView().getOrdersViewMode() != KDSView.OrdersViewMode.Normal)
+            return;
 
         String focusedItem = getFocusedItemGUID(user);
         int nBG = getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface).getBG();
