@@ -52,6 +52,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static public final String PREF_KEY_STORE_GUID = "store_guid";
     static public final String PREF_KEY_STORE_NAME = "store_name";
 
+    static public final String PREF_KEY_ACTIVATION_OLD_USER_NAME = "activation_old_user_name";
+
     static final public String KDSROUTER = "KDSRouter";
 
     /**
@@ -1288,6 +1290,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
         editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
+
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+
         editor.apply();
         editor.commit();
         return 0;
@@ -2019,11 +2024,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static public void resetUserNamePwd()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String oldUserName = pref.getString(PREF_KEY_ACTIVATION_USER_NAME, "");
+
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(PREF_KEY_ACTIVATION_USER_NAME, "");
         editor.putString(PREF_KEY_ACTIVATION_PWD, "");
         //editor.putString(PREF_KEY_STORE_GUID, ""); //keep it for comparing changes
         editor.putString(PREF_KEY_STORE_NAME, "");
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, oldUserName);
 
         editor.apply();
         editor.commit();
@@ -2147,5 +2155,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         return ncount;
     }
 
+    static public String loadOldUserName()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+        return s;
+    }
 
 }
