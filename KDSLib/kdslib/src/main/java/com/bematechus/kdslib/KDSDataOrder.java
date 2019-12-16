@@ -1,8 +1,10 @@
 
 package com.bematechus.kdslib;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 /**
  *
@@ -780,7 +782,7 @@ public class KDSDataOrder extends KDSData {
      * @return
      *  3 + nItemsCount * 6;
      */
-    public static KDSDataOrder createTestOrder(String orderName, int nItemsCount, String toStations, int toScreen)
+    public static KDSDataOrder createTestOrder2(String orderName, int nItemsCount, String toStations, int toScreen)
     {
 
         KDSDataOrder c = new KDSDataOrder();
@@ -2927,4 +2929,99 @@ get the total qty of all found items
         }
         return true;
     }
+
+    public static KDSDataOrder createTestOrder(String orderName, int nItemsCount, String toStations, int toScreen)
+    {
+
+        String[] arItemsDescription = {"Cheese burger;Without cheese",         "Zinger burger",            "Extra tasty crispy",       "Fries;10 tomato ketchup",            "Chikcen Loaf",
+                                        "Original Recipe",      "Sundae;With strawberry;With blueberry","Orange juice",    "7-Up",                     "Mirinda Orange",
+                                        "Roast Chicken Wings", "Fresh Grade Legs",          "Chicken Popcorn",          "Mashed Potatoes", "Corn Salad" ,
+                                       "Egg tart",              "Ice-cream cone",           "Coffee;Without sugar",                       "Black Tea;With milk",        "Pepsi-Cola;Without ice" };
+
+        KDSDataOrder c = new KDSDataOrder();
+        c.setCustomMsg("Customer message");
+        c.setQueueMessage("Queue message");
+        c.setDestination("Fast food");
+        c.setFromPOSNumber("5");
+        c.setOrderName(orderName);
+        c.setOrderType("RUSH");
+        c.setPCKDSNumber("1");
+        c.setPreparationStartTime(new Date());
+        c.setScreen(toScreen);
+        c.setWaiterName("Jack");
+        c.setSortIdx(-1);
+        c.setStartTime(new Date());
+        c.setStatus(0);
+        c.setToTable("Tbl #4");
+        c.setTrackerID("2");
+        c.setPagerID("12");
+        c.setIconIdx(1);
+
+        KDSDataMessages msg = new KDSDataMessages();
+        for (int n=0; n<1; n++)
+        {
+            KDSDataMessage m = new KDSDataMessage();
+            m.setComponentGUID(c.getGUID());
+            m.setForComponentType(KDSDataMessage.FOR_Order);
+
+            m.setMessage("VIP customer");//Order Message " + KDSUtil.convertIntToString(n));
+            msg.addComponent(m);
+        }
+        c.setOrderMessages(msg);
+        Random r = new Random();
+        for (int i=0; i< nItemsCount; i++) {
+            KDSDataItem item = new KDSDataItem(c.getGUID());
+            item.setAddOnGroup(-1);
+//            if (i ==2)
+//                item.setHidden(true); //test
+            //item.setBG(Color.white);
+            //item.setFG(Color.BLACK);
+            item.setCategory("Category #2");
+
+            int index = r.nextInt(arItemsDescription.length);
+            String s = arItemsDescription[index];
+            ArrayList<String> names = KDSUtil.spliteString(s, ";");
+
+            //item.setDescription("item #" + KDSUtil.convertIntToString(i));
+            item.setDescription(names.get(0));
+            item.setItemName("itemname" + KDSUtil.convertIntToString(i));
+            item.setToStationsString(toStations);
+            item.setOrderID(-1);
+            item.setQty(2);
+//            for (int n = 0; n < 1; n++)
+//            {
+//                KDSDataModifier m = new KDSDataModifier();
+//                m.setDescription("Modifier $" + KDSUtil.convertIntToString(n));
+//                m.setCondimentName("Modifier $" + KDSUtil.convertIntToString(n));
+//                m.setItemGUID(item.getGUID());
+//                item.getModifiers().addComponent(m);
+//            }
+            //item.setToStationsString("");
+//            KDSDataMessages msgs = new KDSDataMessages();
+//            for (int n=0; n<1; n++)
+//            {
+//                KDSDataMessage m = new KDSDataMessage();
+//                m.setComponentGUID(item.getGUID());
+//                m.setForComponentType(KDSDataMessage.FOR_Item);
+//
+//                m.setMessage("Item #"+ KDSUtil.convertIntToString(i) +" Message " + KDSUtil.convertIntToString(n));
+//                msgs.addComponent(m);
+//            }
+//            item.setPreModifiers(msgs);
+
+            //condiments
+            if (names.size() >1)
+            for (int j=1; j<names.size(); j++)
+            {
+                KDSDataCondiment d = new KDSDataCondiment(item.getGUID());
+                d.setCondimentName("condiment $" + KDSUtil.convertIntToString(j));
+                d.setDescription(names.get(j));
+                item.getCondiments().addComponent(d);
+            }
+            c.getItems().addComponent(item);
+
+        }
+        return c;
+    }
+
 }
