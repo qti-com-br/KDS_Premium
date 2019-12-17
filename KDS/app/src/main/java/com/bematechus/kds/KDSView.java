@@ -58,8 +58,9 @@ public class KDSView extends View {
         public  void onViewPanelDoubleClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public void onSizeChanged();
         public void onViewDrawFinished();
-        public boolean onViewSlip(boolean bSlipToLeft);
+        public boolean onViewSlipLeftRight(boolean bSlipToLeft);
         public void onViewLongPressed();
+        public boolean onViewSlipUpDown(boolean bSlipToUp);
     }
 
     public enum OrdersViewMode
@@ -179,10 +180,28 @@ public class KDSView extends View {
 ////            KDSView.this.startAnimation(slide);
 //            //return true;
 //        }
+        final int SLIP_MIN_DISTANCE = 20;
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                                float velocityY) {
-            KDSView.this.onScroll(e1, e2, velocityX, velocityY);
-            return true;
+            float xDistance = Math.abs(e1.getX() - e2.getX());
+            float yDistance = Math.abs(e1.getY() - e2.getY());
+
+            boolean bLeftRight = false;
+            if (xDistance > yDistance)
+                bLeftRight = true;
+
+            if (bLeftRight) {
+                if (xDistance < SLIP_MIN_DISTANCE) return false;
+                KDSView.this.onSlipLeftRight(e1, e2, velocityX, velocityY);
+                return  true;
+            }
+            else
+            {
+                if (yDistance < SLIP_MIN_DISTANCE) return false;
+                KDSView.this.onSlipUpDown(e1, e2, velocityX, velocityY);
+                return  true;
+            }
+
         }
         public void onLongPress(MotionEvent e) {
             //KDSView.this.showContextMenu();
@@ -968,8 +987,7 @@ public class KDSView extends View {
     //boolean m_bSliping = false;
     final int SLIPPING_DURATION = 800;
     final int SLIPPING_GAP = 10;
-    private void onScroll(MotionEvent e1, MotionEvent e2,
-                        float distanceX, float distanceY)
+    private void onSlipLeftRight(MotionEvent e1, MotionEvent e2 , float velocityX, float velocityY)
     {
         if (getOrdersViewMode() != OrdersViewMode.Normal)
             return;
@@ -985,7 +1003,7 @@ public class KDSView extends View {
             bSlipToLeft = false;
         boolean bSlipWorked = false;
         if (m_eventsReceiver != null)
-            bSlipWorked = m_eventsReceiver.onViewSlip(bSlipToLeft);
+            bSlipWorked = m_eventsReceiver.onViewSlipLeftRight(bSlipToLeft);
 
         float fromX = 0;
         float toX = 0;
@@ -1043,6 +1061,16 @@ public class KDSView extends View {
         }
     }
 
+    private void onSlipUpDown(MotionEvent e1, MotionEvent e2 , float velocityX, float velocityY)
+    {
+        boolean bSlipToUP = true;
+        float n = e2.getY() - e1.getY();
+        if (n == 0) return;
+        if (n >0)
+            bSlipToUP = false;
+        if (m_eventsReceiver != null)
+            m_eventsReceiver.onViewSlipUpDown(bSlipToUP);
+    }
 
 }
 

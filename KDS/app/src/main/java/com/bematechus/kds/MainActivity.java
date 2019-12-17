@@ -1139,29 +1139,30 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         } else {
             if (id == R.id.action_touchpad) {
-                if (!isKDSValid()) return false;
-                if (getKDS().isSingleUserMode()) {
-                    m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
-                }
-                else {
-                    int n = KDSSettings.getEnumIndexValues(getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
-                    KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
-                    switch (orientation) {
-                        case Left_Right:
-                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
-                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
-
-                            //m_uiUserA.showVerticalTouchPad(!m_uiUserA.isVisibleVerticalTouchPad());
-                            //m_uiUserB.showVerticalTouchPad(!m_uiUserB.isVisibleVerticalTouchPad());
-
-                            break;
-                        case Up_Down:
-                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
-                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
-                            break;
-                    }
-
-                }
+//                if (!isKDSValid()) return false;
+//                if (getKDS().isSingleUserMode()) {
+//                    m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
+//                }
+//                else {
+//                    int n = KDSSettings.getEnumIndexValues(getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
+//                    KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
+//                    switch (orientation) {
+//                        case Left_Right:
+//                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
+//                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
+//
+//                            //m_uiUserA.showVerticalTouchPad(!m_uiUserA.isVisibleVerticalTouchPad());
+//                            //m_uiUserB.showVerticalTouchPad(!m_uiUserB.isVisibleVerticalTouchPad());
+//
+//                            break;
+//                        case Up_Down:
+//                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
+//                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
+//                            break;
+//                    }
+//
+//                }
+                if (!showTouchButtonsBar(!m_uiUserA.isVisibleTouchPad())) return false;
                 this.m_bSuspendChangedEvent = true;
                 SettingsBase.saveTouchPadVisible(this, m_uiUserA.isVisibleTouchPad());
                 this.m_bSuspendChangedEvent = false;
@@ -5049,7 +5050,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //m_bWatingRefreshViewAsDblClick = true;
     }
 
-    public boolean onViewSlip(KDSLayout layout, boolean bSlipToLeft)
+    public boolean onViewSlipLeftRight(KDSLayout layout, boolean bSlipToLeft)
     {
         KDSUser.USER user = getUserFromLayout(layout);
         if (bSlipToLeft)
@@ -6874,6 +6875,38 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 break;
 
         }
+    }
+
+    public boolean onViewSlipUpDown(KDSLayout layout, boolean bSlipToUp)
+    {
+
+        return showTouchButtonsBar(bSlipToUp);
+
+
+    }
+
+    private boolean showTouchButtonsBar(boolean bVisible)
+    {
+        if (!isKDSValid()) return false;
+        if (getKDS().isSingleUserMode()) {
+            m_uiUserA.showTouchPad(bVisible);
+        }
+        else {
+            int n = KDSSettings.getEnumIndexValues(getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
+            KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
+            switch (orientation) {
+                case Left_Right:
+                    m_uiUserA.showTouchPad(bVisible);
+                    m_uiUserB.showTouchPad(bVisible);
+                    break;
+                case Up_Down:
+                    m_uiUserA.showTouchPad(bVisible);
+                    m_uiUserB.showTouchPad(bVisible);
+                    break;
+            }
+
+        }
+        return  true;
     }
 }
 

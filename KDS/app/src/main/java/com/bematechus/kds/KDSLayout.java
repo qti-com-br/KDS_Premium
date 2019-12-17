@@ -50,9 +50,9 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         public  void onViewPanelDoubleClicked(KDSLayout layout);
         public  void onViewPanelClicked(KDSLayout layout);
         public void onViewDrawingFinished(KDSLayout layout);
-        public boolean onViewSlip(KDSLayout layout, boolean bSlipToLeft);
+        public boolean onViewSlipLeftRight(KDSLayout layout, boolean bSlipToLeft);
         public void onViewLongPressed(KDSLayout layout);
-
+        public boolean onViewSlipUpDown(KDSLayout layout, boolean bSlipToUp);
     }
 
     private KDSLayoutDrawingDoneEvent m_eventsFinishedDrawing = null;
@@ -1267,10 +1267,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             m_eventsReceiver.onViewDrawingFinished(this);
     }
 
-    public boolean onViewSlip(boolean bSlipToLeft)
+    public boolean onViewSlipLeftRight(boolean bSlipToLeft)
     {
         if (m_eventsReceiver != null)
-            return m_eventsReceiver.onViewSlip(this, bSlipToLeft);
+            return m_eventsReceiver.onViewSlipLeftRight(this, bSlipToLeft);
         return false;
     }
 
@@ -2594,5 +2594,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     {
         if (m_eventsReceiver != null)
             m_eventsReceiver.onViewLongPressed(this);
+    }
+
+    public boolean onViewSlipUpDown(boolean bSlipToUp)
+    {
+        if (m_eventsReceiver != null)
+            return m_eventsReceiver.onViewSlipUpDown(this, bSlipToUp);
+        return false;
     }
 }
