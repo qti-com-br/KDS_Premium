@@ -100,6 +100,8 @@ public class KDSContextMenu {
                 ContextMenuItemID nMenuItemID = ContextMenuItemID.unknown;
                 if (m_menuType == ContextMenuType.Order)
                     nMenuItemID = m_arOrderMenuItems.get(position).nID;
+                else
+                    nMenuItemID = m_arItemMenuItems.get(position).nID;
                 m_onItemClickListener.onContextMenuItemClicked(nMenuItemID);
                 menuDialog.hide();
                 //menuGrid.invalidate();
@@ -205,7 +207,7 @@ public class KDSContextMenu {
         //if (m_arOrderMenuItems.size() <=0)
         m_arOrderMenuItems.clear();
         m_arItemMenuItems.clear();
-
+        m_menuType = menuType;
         init_menu_items(context,settings);
         this.setOnItemClickListener(receiver);
 
