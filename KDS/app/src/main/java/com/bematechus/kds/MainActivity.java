@@ -1510,16 +1510,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opSummary(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isKDSValid()) return ;
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
-        if (getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled) &&
-                getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_always_visible))
-        {
-            this.getUserUI(userID).showSum(userID, pos, true);
-        }
-        else
-            this.getUserUI(userID).showSum(userID, pos, !this.getUserUI(userID).isVisibleSum(pos));
+        showSummary(userID,  !this.getUserUI(userID).isVisibleSum(pos));
+//        if (!isKDSValid()) return ;
+//        int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+//        KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+//        if (getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled) &&
+//                getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_always_visible))
+//        {
+//            this.getUserUI(userID).showSum(userID, pos, true);
+//        }
+//        else
+//            this.getUserUI(userID).showSum(userID, pos, !this.getUserUI(userID).isVisibleSum(pos));
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -5050,10 +5053,43 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //m_bWatingRefreshViewAsDblClick = true;
     }
 
-    public boolean onViewSlipLeftRight(KDSLayout layout, boolean bSlipToLeft)
+    public boolean onViewSlipLeftRight(KDSLayout layout, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
         KDSUser.USER user = getUserFromLayout(layout);
-        if (bSlipToLeft)
+        if (slipInBorder == KDSView.SlipInBorder.Left ||
+                slipInBorder == KDSView.SlipInBorder.Right) {
+            int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+            KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+            if  (pos== KDSSettings.SumPosition.Side ) {
+
+                if (getKDS().isSingleUserMode()) {
+                        if (slipInBorder == KDSView.SlipInBorder.Right) {
+                            showSummary(user,(slipDirection == KDSView.SlipDirection.Right2Left) );
+                            //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Right2Left) );
+                            return true;
+                        }
+
+                } else {
+                    if (user == KDSUser.USER.USER_A)
+                    {
+                        if (slipInBorder == KDSView.SlipInBorder.Left) {
+                            showSummary(user,(slipDirection == KDSView.SlipDirection.Left2Right) );
+                            //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Left2Right));
+                            return true;
+                        }
+                    }
+                    else if (user == KDSUser.USER.USER_B)
+                    {
+                        if (slipInBorder == KDSView.SlipInBorder.Right) {
+                            showSummary(user,(slipDirection == KDSView.SlipDirection.Right2Left) );
+                            //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Right2Left));
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        if (slipDirection == KDSView.SlipDirection.Right2Left)
         {
             return opNextPage(user);
         }
@@ -6877,10 +6913,22 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
-    public boolean onViewSlipUpDown(KDSLayout layout, boolean bSlipToUp)
+    public boolean onViewSlipUpDown(KDSLayout layout, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
+        KDSUser.USER user = getUserFromLayout(layout);
+        if (slipInBorder == KDSView.SlipInBorder.Top ) {
+            int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+            KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+            if  (pos== KDSSettings.SumPosition.Top ) {
+                showSummary(user,(slipDirection == KDSView.SlipDirection.Top2Bottom) );
+                //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Top2Bottom) );
+                return true;
+            }
+        }
+        if (slipInBorder == KDSView.SlipInBorder.Bottom)
+            return showTouchButtonsBar( (slipDirection == KDSView.SlipDirection.Bottom2Top));
 
-        return showTouchButtonsBar(bSlipToUp);
+        return false;
 
 
     }
@@ -6907,6 +6955,38 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         }
         return  true;
+    }
+
+    public boolean onViewSlipping(KDSLayout layout,KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    {
+        switch (slipDirection)
+        {
+
+            case Left2Right:
+            case Right2Left:
+                return onViewSlipLeftRight(layout, slipDirection, slipInBorder);
+
+            case Top2Bottom:
+            case Bottom2Top:
+                return onViewSlipUpDown(layout, slipDirection, slipInBorder);
+
+        }
+        return false;
+    }
+
+    private void showSummary(KDSUser.USER userID, boolean bVisible) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (!isKDSValid()) return ;
+        int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+        KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+        if (getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled) &&
+                getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_always_visible))
+        {
+            this.getUserUI(userID).showSum(userID, pos, true);
+        }
+        else
+            this.getUserUI(userID).showSum(userID, pos, bVisible);
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 }
 

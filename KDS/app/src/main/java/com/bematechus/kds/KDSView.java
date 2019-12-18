@@ -52,15 +52,31 @@ import java.util.Vector;
 public class KDSView extends View {
 
     public static final String TAG = "KDSView";
-
+    public enum SlipDirection
+    {
+        Left2Right,
+        Right2Left,
+        Top2Bottom,
+        Bottom2Top,
+    }
+    public enum SlipInBorder
+    {
+        None,
+        Left,
+        Right,
+        Top,
+        Bottom,
+    }
     public interface KDSViewEventsInterface {
         public  void onViewPanelClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public  void onViewPanelDoubleClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public void onSizeChanged();
         public void onViewDrawFinished();
-        public boolean onViewSlipLeftRight(boolean bSlipToLeft);
+        //public boolean onViewSlipLeftRight(boolean bSlipToLeft, boolean bInBorder);
         public void onViewLongPressed();
-        public boolean onViewSlipUpDown(boolean bSlipToUp);
+        //public boolean onViewSlipUpDown(boolean bSlipToUp, boolean bInBorder);
+        public boolean onViewSlipping(SlipDirection slipDirection, SlipInBorder slipInBorder);
+
     }
 
     public enum OrdersViewMode
@@ -987,6 +1003,7 @@ public class KDSView extends View {
     //boolean m_bSliping = false;
     final int SLIPPING_DURATION = 800;
     final int SLIPPING_GAP = 10;
+    final int SLIPPING_BORDER_SIZE = 50;
     private void onSlipLeftRight(MotionEvent e1, MotionEvent e2 , float velocityX, float velocityY)
     {
         if (getOrdersViewMode() != OrdersViewMode.Normal)
@@ -996,18 +1013,41 @@ public class KDSView extends View {
         Bitmap bmpBG =  m_bitmapBuffer.copy(m_bitmapBuffer.getConfig(),m_bitmapBuffer.isMutable() );
         viewParent.setBackground(new BitmapDrawable( bmpBG));
 
-        boolean bSlipToLeft = true;
+        SlipDirection slipDirect = SlipDirection.Right2Left;
         float n = e2.getX() - e1.getX();
         if (n == 0) return;
         if (n >0)
-            bSlipToLeft = false;
+            slipDirect = SlipDirection.Left2Right;
+            //bSlipToLeft = false;
+
+//        Rect rt = new Rect( this.getBounds());
+//        rt.inset(SLIPPING_BORDER_SIZE, SLIPPING_BORDER_SIZE);
+//        boolean bSlipInBorder = false;
+        SlipInBorder slipInBorder = checkPointBorderPosition(e1);// SlipInBorder.None;
+        if (slipInBorder == SlipInBorder.None)
+            slipInBorder = checkPointBorderPosition(e2);
+//        if (!rt.contains((int)e1.getX(), (int)e1.getY()) ||
+//                !rt.contains((int)e2.getX(), (int)e2.getY()))
+//        {
+//            if (e1.getY() > SLIPPING_BORDER_SIZE && e1.getY() < (rt.width()-SLIPPING_BORDER_SIZE) &&
+//                    e2.getY() > SLIPPING_BORDER_SIZE && e2.getY() < (rt.width()-SLIPPING_BORDER_SIZE))
+//                bSlipInBorder = true;
+//        }
+
+
+
         boolean bSlipWorked = false;
         if (m_eventsReceiver != null)
-            bSlipWorked = m_eventsReceiver.onViewSlipLeftRight(bSlipToLeft);
+            bSlipWorked = m_eventsReceiver.onViewSlipping(slipDirect, slipInBorder);
+            //bSlipWorked = m_eventsReceiver.onViewSlipLeftRight(bSlipToLeft, bSlipInBorder);
+        if (slipInBorder!= SlipInBorder.None)
+        {
+            if (bSlipWorked) return ; //it slip the summary.
+        }
 
         float fromX = 0;
         float toX = 0;
-        if (bSlipToLeft) {
+        if (slipDirect == SlipDirection.Right2Left) {
             if (bSlipWorked) {
                 fromX = this.getX() + this.getWidth();
                 toX = this.getX();
@@ -1063,14 +1103,59 @@ public class KDSView extends View {
 
     private void onSlipUpDown(MotionEvent e1, MotionEvent e2 , float velocityX, float velocityY)
     {
-        boolean bSlipToUP = true;
+        //boolean bSlipToUP = true;
+        SlipDirection slipDirection = SlipDirection.Bottom2Top;
         float n = e2.getY() - e1.getY();
         if (n == 0) return;
         if (n >0)
-            bSlipToUP = false;
+            slipDirection = SlipDirection.Top2Bottom;
+            //bSlipToUP = false;
+        SlipInBorder slipInBorder = checkPointBorderPosition(e1);// SlipInBorder.None;
+        if (slipInBorder == SlipInBorder.None)
+            slipInBorder = checkPointBorderPosition(e2);
+
         if (m_eventsReceiver != null)
-            m_eventsReceiver.onViewSlipUpDown(bSlipToUP);
+            m_eventsReceiver.onViewSlipping(slipDirection, slipInBorder);
     }
 
+    private SlipInBorder checkPointBorderPosition(MotionEvent e)
+    {
+        Rect rt = new Rect( this.getBounds());
+        rt.inset(SLIPPING_BORDER_SIZE, SLIPPING_BORDER_SIZE);
+        if (rt.contains((int)e.getX(), (int)e.getY()))
+            return SlipInBorder.None;
+
+        rt = new Rect( this.getBounds());
+        int x = (int)e.getX();
+        int y = (int)e.getY();
+        if (x < SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Left;
+        if (x > rt.width() - SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Right;
+        if (y < SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Top;
+        if ( y>rt.height() - SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Bottom;
+
+//        rt.right = rt.left + SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Left;
+//
+//        rt = new Rect( this.getBounds());
+//        rt.left = rt.right - SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Right;
+//
+//        rt = new Rect( this.getBounds());
+//        rt.bottom = rt.top + SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Top;
+//
+//        rt = new Rect( this.getBounds());
+//        rt.top = rt.bottom - SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Bottom;
+        return SlipInBorder.None;
+    }
 }
 

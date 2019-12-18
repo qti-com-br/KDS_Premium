@@ -50,9 +50,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         public  void onViewPanelDoubleClicked(KDSLayout layout);
         public  void onViewPanelClicked(KDSLayout layout);
         public void onViewDrawingFinished(KDSLayout layout);
-        public boolean onViewSlipLeftRight(KDSLayout layout, boolean bSlipToLeft);
+        //public boolean onViewSlipLeftRight(KDSLayout layout, boolean bSlipToLeft, boolean bInBorder);
         public void onViewLongPressed(KDSLayout layout);
-        public boolean onViewSlipUpDown(KDSLayout layout, boolean bSlipToUp);
+        //public boolean onViewSlipUpDown(KDSLayout layout, boolean bSlipToUp, boolean bInBorder);
+        public boolean onViewSlipping(KDSLayout layout,KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder);
     }
 
     private KDSLayoutDrawingDoneEvent m_eventsFinishedDrawing = null;
@@ -1267,12 +1268,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             m_eventsReceiver.onViewDrawingFinished(this);
     }
 
-    public boolean onViewSlipLeftRight(boolean bSlipToLeft)
-    {
-        if (m_eventsReceiver != null)
-            return m_eventsReceiver.onViewSlipLeftRight(this, bSlipToLeft);
-        return false;
-    }
+//    public boolean onViewSlipLeftRight(boolean bSlipToLeft, boolean bInBorder)
+//    {
+//        if (m_eventsReceiver != null)
+//            return m_eventsReceiver.onViewSlipLeftRight(this, bSlipToLeft, bInBorder);
+//        return false;
+//    }
 
     /**
      * interface
@@ -2596,10 +2597,16 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             m_eventsReceiver.onViewLongPressed(this);
     }
 
-    public boolean onViewSlipUpDown(boolean bSlipToUp)
+//    public boolean onViewSlipUpDown(boolean bSlipToUp, boolean bInBorder)
+//    {
+//        if (m_eventsReceiver != null)
+//            return m_eventsReceiver.onViewSlipUpDown(this, bSlipToUp,  bInBorder);
+//        return false;
+//    }
+    public boolean onViewSlipping(KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
         if (m_eventsReceiver != null)
-            return m_eventsReceiver.onViewSlipUpDown(this, bSlipToUp);
+            return m_eventsReceiver.onViewSlipping(this, slipDirection,  slipInBorder);
         return false;
     }
 }
