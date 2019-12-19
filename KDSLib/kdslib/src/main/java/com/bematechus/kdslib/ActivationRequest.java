@@ -1350,15 +1350,42 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
                     state = iOSOrderState.Preparation;
             }
             else
-            {//unbump or new
+            {//unbump or new, or expo update its preparation time value.
                 boolean bItemFinished = item.getLocalBumped();
-                if (bItemFinished) {
-                    if (bExpoStation)
+
+                if (bExpoStation)
+                {
+                    boolean bPrepFinished = (!item.getBumpedStationsString().isEmpty());
+                    if (bItemFinished)
                         state = iOSOrderState.Done;
-                    else
+                    else if (bPrepFinished)
                         state = iOSOrderState.Preparation;
+                    else
+                        state = iOSOrderState.New;
+                }
+                else
+                {
+                    if (bItemFinished)
+                        state = iOSOrderState.Preparation;
+                    else
+                        state = iOSOrderState.New;
+                }
+//                if (bItemFinished || bPrepFinished) {
+//                    if (bExpoStation)
+//                        state = iOSOrderState.Done;
+//                    else
+//                        state = iOSOrderState.Preparation;
+//                }
+            }
+
+            boolean bExpoUpdatePreparationTime = false;
+            //prep bumped,bump expo don't bumped
+            if (bExpoStation) {
+                if ((!item.getLocalBumped()) && (!item.getBumpedStationsString().isEmpty())) {
+                    bExpoUpdatePreparationTime = true;
                 }
             }
+
             String status = KDSUtil.convertIntToString(state.ordinal());//done
 
             long create_local_time = getLocalTimeSeconds(order.getStartTime());
@@ -1371,8 +1398,20 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("is_deleted" , "0");
             json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
             json.put("create_local_time", Long.toString(create_local_time));// localNow));
-            json.put("prepared_local_time", Long.toString( localNow) );
-            json.put("done_local_time" , Long.toString( localNow));
+            if (bExpoStation)
+            {
+                if (bExpoUpdatePreparationTime)
+                    json.put("prepared_local_time", Long.toString( localNow) );
+                else
+                    json.put("done_local_time" , Long.toString( localNow));
+            }
+            else
+            {
+                json.put("prepared_local_time", Long.toString( localNow) );
+                json.put("done_local_time" , Long.toString( localNow));
+            }
+
+
             if (bExpoStation)
                 json.put("done_device_id" , stationID);
             else
