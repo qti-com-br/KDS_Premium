@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KitchenGo KDS</string>
+    <string name="app_name">KitchenGo Premium</string>
     <string name="main_title">KitchenGo 厨房系统</string>
     <string name="order_queue_display_title">订单排序系统</string>
 
@@ -1119,6 +1119,7 @@
     <string name="for_lineitems_display">For line items display only.</string>
     <string name="log_orders">Log received orders xml</string>
     <string name="lineitems_line_height">Line height</string>
+    <string name="build_relationship_first">Please build your stations relationship first.</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

@@ -511,7 +511,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             boolean bSilent = Activation.hasDoRegister();//2.1.2
             doActivation(bSilent, false, "");
         }
-
+        checkRelationshipBuild();
         //this.registerForContextMenu(getUserUI(KDSUser.USER.USER_A).getLayout().getView());
 
        // this.registerForContextMenu(getUserUI(KDSUser.USER.USER_B).getLayout().getView());
@@ -666,6 +666,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return;
         getKDS().updateSettings(this);
 
+        checkRelationshipBuild();
 
     }
 
@@ -6987,6 +6988,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else
             this.getUserUI(userID).showSum(userID, pos, bVisible);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+    private void checkRelationshipBuild()
+    {
+        if (getKDS().getStationsConnections().getRelations().getRelationsSettings().size()==0)
+        {
+            showToastMessage(getString(R.string.build_relationship_first));
+        }
     }
 }
 
