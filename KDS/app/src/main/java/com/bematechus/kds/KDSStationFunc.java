@@ -1064,7 +1064,7 @@ public class KDSStationFunc {
      * @return
      *  order guid
      */
-    static public String doSyncCommandItemBumped(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    static public String doSyncCommandItemBumped(KDS kds, KDSXMLParserCommand command, String strOrinalData, ArrayList<KDSDataItem> arChangedItems)
     {
         switch (kds.getStationFunction())
         {
@@ -1076,7 +1076,7 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
-                return KDSStationExpeditor.exp_sync_item_bumped(kds, command);
+                return KDSStationExpeditor.exp_sync_item_bumped(kds, command, arChangedItems);
 
             case Mirror:
                 break;
@@ -1189,7 +1189,7 @@ public class KDSStationFunc {
      * @return
      *  order guid
      */
-    static public String doSyncCommandOrderBumped(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    static public String doSyncCommandOrderBumped(KDS kds, KDSXMLParserCommand command, String strOrinalData, ArrayList<KDSDataItem> arChangedItems)
     {
         switch (kds.getStationFunction())
         {
@@ -1201,7 +1201,7 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
-                String s = KDSStationExpeditor.exp_sync_order_bumped(kds, command);
+                String s = KDSStationExpeditor.exp_sync_order_bumped(kds, command, arChangedItems);
                 return s;
 
 

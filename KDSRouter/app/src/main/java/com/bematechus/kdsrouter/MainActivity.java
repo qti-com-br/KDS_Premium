@@ -450,7 +450,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (id == R.id.action_about)
         {
             //KDSUIAboutDlg.showAbout(this, getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
-            Drawable icon = this.getResources().getDrawable(R.drawable.ic_launcher);
+            Drawable icon = this.getResources().getDrawable(R.mipmap.ic_launcher);
             String ver = getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")";
 
             KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_KDS, icon, this);//kpp1-179

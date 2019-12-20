@@ -11,6 +11,7 @@ import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.TimeDog;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -187,7 +188,8 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * @param fromIP
      * @param order
      */
-    static public String exp_order_bumped_in_other_station(KDS kds,KDSDBCurrent db,KDSDataOrders orders,  String fromStationID, String fromIP, KDSDataOrder order)
+    static public String exp_order_bumped_in_other_station(KDS kds,KDSDBCurrent db,KDSDataOrders orders,  String fromStationID, String fromIP,
+                                                           KDSDataOrder order, ArrayList<KDSDataItem> arChangedItems)
     {
         KDSDataOrder orderExisted = orders.getOrderByName(order.getOrderName());
 
@@ -212,6 +214,8 @@ public class KDSStationExpeditor extends KDSStationNormal {
             expItem.addRemoteBumpedStation(fromStationID);
 
             db.itemSetRemoteBumpedStations(expItem);
+            if (arChangedItems != null)
+                arChangedItems.add(expItem);
 
         }
         db.finishTransaction(bStartedByMe);//2.0.15
@@ -725,7 +729,16 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * return:
      *  order guid
      */
-    static public  String exp_sync_order_bumped(KDS kds, KDSXMLParserCommand command)
+    /**
+     *
+     * @param kds
+     * @param command
+     * @param arChangedItems
+     *  use it to update backoffice item_bumps table "preparation_time" and "done_time".
+     * @return
+     *  order guid
+     */
+    static public  String exp_sync_order_bumped(KDS kds, KDSXMLParserCommand command, ArrayList<KDSDataItem> arChangedItems)
     {
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         if (strXml.isEmpty())
@@ -755,9 +768,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
                     }
                 }
                 else {
-                    orderGuid = exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                    orderGuid = exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                     if (kds.isMultpleUsersMode())
-                        exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                        exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
                 }
                 //don't show them
             }
@@ -770,9 +783,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
                         normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
                 }
                 else {
-                    orderGuid =  exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                    orderGuid =  exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                     if (kds.isMultpleUsersMode()) {
-                        String guid= exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                        String guid= exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
                         if (!orderGuid.isEmpty())
                             orderGuid += ",";
                         orderGuid += guid;
@@ -789,24 +802,24 @@ public class KDSStationExpeditor extends KDSStationNormal {
             //My primary backup is online or offline.
             if (kds.getStationsConnections().isPrimaryWhoUseMeAsMirrorActive())
             {
-                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                 if (kds.isMultpleUsersMode())
-                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
             }
             else
             {
-                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                 if (kds.isMultpleUsersMode())
-                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
             }
 
         }
         else
         { //I am common station
             //check if current database contains this order.
-            orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+            orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
             if (kds.isMultpleUsersMode())
-                exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
         }
 
         tt_checkAllItemsBumped(kds, order);
@@ -1044,7 +1057,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * @return
      *  order guid
      */
-    static public  String exp_sync_item_bumped(KDS kds,  KDSXMLParserCommand command)
+    static public  String exp_sync_item_bumped(KDS kds,  KDSXMLParserCommand command, ArrayList<KDSDataItem> arChangedItems)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
@@ -1142,11 +1155,15 @@ public class KDSStationExpeditor extends KDSStationNormal {
             if (itemA != null) {
                 if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
                     return "";
+                if (arChangedItems != null)
+                    arChangedItems.add(itemA);
             }
             if (itemB != null)
             {
                 if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
                     return "";
+                if (arChangedItems != null)
+                    arChangedItems.add(itemB);
             }
         }
 

@@ -2211,13 +2211,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Station_Bump_Order://in thread
                 //Please notice the xmldata just contains the order/item id.
                 checkLostFocusAfterSyncBumpOrderName(command, xmlData);
-                orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData);
+                ArrayList<KDSDataItem> arChangedItems = new ArrayList<>(); //retrieve changed items.
+                orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData, arChangedItems);
                 if (!orderGuid.isEmpty()) {
                     schedule_process_update_after_receive_new_order();
                     sortOrderForMoveFinishedToFront();
                     checkSMS(orderGuid, false); //2.1.10
                 }
-
+                if (arChangedItems.size() >0) //just expo save data to this array
+                {//kpp1-62, kpp1-74
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems);
+                }
                 break;
             case Station_Unbump_Order:
                 KDSStationFunc.doSyncCommandOrderUnbumped(this,command, xmlData);
@@ -2232,11 +2236,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSStationFunc. doSyncCommandOrderModified(this,command, xmlData);
                 break;
             case Station_Bump_Item:
-
-                orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData);
+                ArrayList<KDSDataItem> arChangedItem = new ArrayList<>(); //retrieve changed items.
+                orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData, arChangedItem);
                 sortOrderForMoveFinishedToFront();
                 checkSMS(orderGuid, false); //2.1.10
-
+                if (arChangedItem.size() >0) //just expo save data to this array
+                {//kpp1-62, kpp1-74
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem);
+                }
                 break;
             case Station_Unbump_Item:
                 orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData);
@@ -5096,5 +5103,33 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     public String call_loadStationsRelationString(boolean bNeedNoCheckOption)
     {
         return KDSSettings.loadStationsRelationString(KDSApplication.getContext(), bNeedNoCheckOption);
+    }
+
+    /**
+     * //kpp1-62, kpp1-74
+     * when expo receive item/order bumped, expo need update its preparation time in item_bumps table.
+     * @param arChangedItems
+     */
+    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, ArrayList<KDSDataItem> arChangedItems)
+    {
+        if (arChangedItems.size() <=0) return;
+        if (!this.isExpeditorStation()) return;
+
+
+        KDSDataOrder order = this.getUsers().getOrderByGUID(orderGuid);
+
+        if (order == null) return ;
+        if (m_activationHTTP == null)
+            return ;
+        m_activationHTTP.setStationID(getStationID());
+        m_activationHTTP.setStationFunc(getStationFunction());
+
+
+
+        for (int i=0; i< arChangedItems.size(); i++) {
+            KDSDataItem item =arChangedItems.get(i);
+            if (item != null)
+                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped());
+        }
     }
 }
