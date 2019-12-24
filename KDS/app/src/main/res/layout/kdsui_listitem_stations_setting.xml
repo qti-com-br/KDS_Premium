@@ -86,7 +86,7 @@
         android:editable="true"
         android:enabled="true"
         android:gravity="center"
-        android:inputType="text"
+        android:inputType="textNoSuggestions"
         android:paddingLeft="1dp"
         android:singleLine="true"
         android:text="2,6,5"
