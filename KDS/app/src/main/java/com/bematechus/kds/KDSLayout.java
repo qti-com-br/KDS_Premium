@@ -53,7 +53,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //public boolean onViewSlipLeftRight(KDSLayout layout, boolean bSlipToLeft, boolean bInBorder);
         public void onViewLongPressed(KDSLayout layout);
         //public boolean onViewSlipUpDown(KDSLayout layout, boolean bSlipToUp, boolean bInBorder);
-        public boolean onViewSlipping(KDSLayout layout,KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder);
+        public boolean onViewSlipping( KDSLayout layout,MotionEvent e1, MotionEvent e2,KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder);
     }
 
     private KDSLayoutDrawingDoneEvent m_eventsFinishedDrawing = null;
@@ -2603,10 +2603,26 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 //            return m_eventsReceiver.onViewSlipUpDown(this, bSlipToUp,  bInBorder);
 //        return false;
 //    }
-    public boolean onViewSlipping(KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    public boolean onViewSlipping(MotionEvent e1, MotionEvent e2, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
         if (m_eventsReceiver != null)
-            return m_eventsReceiver.onViewSlipping(this, slipDirection,  slipInBorder);
+            return m_eventsReceiver.onViewSlipping(this, e1, e2, slipDirection,  slipInBorder);
         return false;
+    }
+
+    public int getOrderNeedRows(KDSLayoutOrder dressedOrder)
+    {
+        //this.getEnv().getSettings().getBoolean()
+        boolean bEnableAddon = true;
+        boolean bNeedVoidRow = isNeedToAddVoidRow();
+        //int nNeedRowsWithoutTitleFooter = dressedOrder.get_need_how_many_rows_without_title_footer(bEnableAddon, bNeedVoidRow);
+        int nNeedRowsWithoutTitleFooter = get_need_how_many_rows_without_title_footer(dressedOrder,bEnableAddon, bNeedVoidRow);
+        //int nTitleRows = this.getSettings().getOrderTitleRows();
+
+        //nNeedRowsWithTitleWithoutFooter += (nTitleRows -1);
+        int nTitleRows = getEnv().getSettings().getInt(KDSSettings.ID.Order_Title_Rows);
+        int nFooterRows = getEnv().getSettings().getInt(KDSSettings.ID.Order_Footer_Rows);
+
+        return nNeedRowsWithoutTitleFooter + nTitleRows + nFooterRows;
     }
 }

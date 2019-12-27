@@ -1705,7 +1705,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
 
-
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (orderGuid.isEmpty()) return;
         KDSDataOrder order = getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
@@ -5045,6 +5044,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         KDSUser.USER user = getUserFromLayout(layout);// KDSUser.USER.USER_A;
 
+
+
         if (getSettings().getBoolean(KDSSettings.ID.Transfer_by_double_click))
             opTransfer(user);//do transfer
         else
@@ -5052,9 +5053,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (layout.getView() != null)
             layout.getView().setNeedDrawOnce();
         //m_bWatingRefreshViewAsDblClick = true;
+
     }
 
-    public boolean onViewSlipLeftRight(KDSLayout layout, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    public boolean onViewSlipLeftRight(KDSLayout layout,MotionEvent e1, MotionEvent e2,  KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
         KDSUser.USER user = getUserFromLayout(layout);
         if (slipInBorder == KDSView.SlipInBorder.Left ||
@@ -6914,7 +6916,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
-    public boolean onViewSlipUpDown(KDSLayout layout, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    public boolean onViewSlipUpDown(KDSLayout layout,MotionEvent e1, MotionEvent e2,  KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
         KDSUser.USER user = getUserFromLayout(layout);
         if (slipInBorder == KDSView.SlipInBorder.Top ) {
@@ -6929,6 +6931,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (slipInBorder == KDSView.SlipInBorder.Bottom)
             return showTouchButtonsBar( (slipDirection == KDSView.SlipDirection.Bottom2Top));
 
+        if (slipInBorder == KDSView.SlipInBorder.None)
+        {
+            if (layout.getView().findTouchPanel((int)e1.getX(),(int) e1.getY()) != null)
+            {
+                if (slipDirection == KDSView.SlipDirection.Bottom2Top)
+                    showOrderZoom(getSelectedOrderGuid(user));
+            }
+
+        }
         return false;
 
 
@@ -6958,18 +6969,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return  true;
     }
 
-    public boolean onViewSlipping(KDSLayout layout,KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    public boolean onViewSlipping(KDSLayout layout,MotionEvent e1, MotionEvent e2, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
         switch (slipDirection)
         {
 
             case Left2Right:
             case Right2Left:
-                return onViewSlipLeftRight(layout, slipDirection, slipInBorder);
+                return onViewSlipLeftRight(layout, e1, e2, slipDirection, slipInBorder);
 
             case Top2Bottom:
             case Bottom2Top:
-                return onViewSlipUpDown(layout, slipDirection, slipInBorder);
+                return onViewSlipUpDown(layout,e1, e2,  slipDirection, slipInBorder);
 
         }
         return false;
@@ -6996,6 +7007,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             showToastMessage(getString(R.string.build_relationship_first));
         }
+    }
+
+    private void showOrderZoom(String orderGuid)
+    {
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        KDSDlgOrderZoom dlg = new KDSDlgOrderZoom();
+        dlg.showOrder(this, order);
     }
 }
 

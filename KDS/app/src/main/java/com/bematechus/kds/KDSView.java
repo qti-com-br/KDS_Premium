@@ -75,7 +75,7 @@ public class KDSView extends View {
         //public boolean onViewSlipLeftRight(boolean bSlipToLeft, boolean bInBorder);
         public void onViewLongPressed();
         //public boolean onViewSlipUpDown(boolean bSlipToUp, boolean bInBorder);
-        public boolean onViewSlipping(SlipDirection slipDirection, SlipInBorder slipInBorder);
+        public boolean onViewSlipping(MotionEvent e1, MotionEvent e2,SlipDirection slipDirection, SlipInBorder slipInBorder);
 
     }
 
@@ -1038,7 +1038,7 @@ public class KDSView extends View {
 
         boolean bSlipWorked = false;
         if (m_eventsReceiver != null)
-            bSlipWorked = m_eventsReceiver.onViewSlipping(slipDirect, slipInBorder);
+            bSlipWorked = m_eventsReceiver.onViewSlipping(e1, e2, slipDirect, slipInBorder);
             //bSlipWorked = m_eventsReceiver.onViewSlipLeftRight(bSlipToLeft, bSlipInBorder);
         if (slipInBorder!= SlipInBorder.None)
         {
@@ -1115,7 +1115,7 @@ public class KDSView extends View {
             slipInBorder = checkPointBorderPosition(e2);
 
         if (m_eventsReceiver != null)
-            m_eventsReceiver.onViewSlipping(slipDirection, slipInBorder);
+            m_eventsReceiver.onViewSlipping(e1, e2, slipDirection, slipInBorder);
     }
 
     private SlipInBorder checkPointBorderPosition(MotionEvent e)
@@ -1156,6 +1156,18 @@ public class KDSView extends View {
 //        if (rt.contains((int)e.getX(), (int)e.getY()))
 //            return SlipInBorder.Bottom;
         return SlipInBorder.None;
+    }
+
+    public KDSViewPanel findTouchPanel(int x, int y)
+    {
+        int ncount = m_arPanels.size();
+        for (int i = 0; i < ncount; i++) {
+            KDSViewPanel panel = m_arPanels.get(i);
+            if (panel.pointInMe(x, y))
+                return panel;
+        }
+        return null;
+
     }
 }
 
