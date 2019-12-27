@@ -1761,8 +1761,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 r.getNextStepData().add( ActivationRequest.requestItemsSync(m_stationID,  order ) );
                 //postItemsRequest(m_stationID, order);
                 //postCondimentsRequest(m_stationID, order);
-                r.getNextStepData().add( ActivationRequest.requestCondimentsSync(m_stationID,  order ) );
+                ActivationRequest req =  ActivationRequest.requestCondimentsSync(m_stationID,  order );
+                if (req != null)
+                r.getNextStepData().add( req );
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+
                 r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false ));
                 //postCustomerRequest(m_stationID, order);
                 r.getNextStepData().add(ActivationRequest.requestCustomerSync(m_storeGuid, order));
@@ -1794,7 +1797,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void postCondimentsRequest(String stationID, KDSDataOrder order)
     {
         ActivationRequest r = ActivationRequest.requestCondimentsSync(stationID,  order );
-        m_http.request(r);
+        if (r != null)
+            m_http.request(r);
 
     }
 
@@ -1957,10 +1961,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      * @param item
      * @param bExpoStation
      * @param bBumped
+     * @param bForceUpdatePreparationTime
+     *  In expo. when it receive prep bump order, exp has to update all its items preparation time.
      */
-    public void postItemBumpRequest(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    public void postItemBumpRequest(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped, boolean bForceUpdatePreparationTime)
     {
-        ActivationRequest r = ActivationRequest.requestItemBumpSync(stationID,order,  item, bExpoStation , bBumped);
+        ActivationRequest r = ActivationRequest.requestItemBumpSync(stationID,order,  item, bExpoStation , bBumped, bForceUpdatePreparationTime);
         m_http.request(r);
     }
 

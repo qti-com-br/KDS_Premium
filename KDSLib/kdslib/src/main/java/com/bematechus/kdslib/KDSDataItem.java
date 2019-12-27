@@ -836,8 +836,8 @@ public class KDSDataItem extends KDSData {
     }
     public boolean addRemoteBumpedStation(String stationID)
     {
-        m_bumpedStations.addStation(stationID);
-        return true;
+        return m_bumpedStations.addStation(stationID);
+        //return true;
     }
 
     public boolean removeRemoteBumpedStation(String stationID)

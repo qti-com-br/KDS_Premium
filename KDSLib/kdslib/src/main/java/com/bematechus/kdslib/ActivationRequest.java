@@ -919,7 +919,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             condiments.getComponents().addAll(item.getCondiments().getComponents());
         }
 
-
+        if (condiments.getCount()<=0) return null;
         ActivationRequest r = createSyncRequest(COMMAND.Sync_condiments,"condiments",jsonCondiments(stationID, order,  condiments) );
         r.setTag(order);
         r.setDbTarget();
@@ -1333,7 +1333,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      *  False: unbump it.
      * @return
      */
-    static private JSONObject jsonItemBump(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static private JSONObject jsonItemBump(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped, boolean bForceUpdatePreparationTime)
     {
         JSONObject json = getJsonObj( "guid" , "'"+item.getItemBumpGuid()+"'");
 
@@ -1381,7 +1381,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             boolean bExpoUpdatePreparationTime = false;
             //prep bumped,bump expo don't bumped
             if (bExpoStation) {
-                if ((!item.getLocalBumped()) && (!item.getBumpedStationsString().isEmpty())) {
+                if (((!item.getLocalBumped()) && (!item.getBumpedStationsString().isEmpty())) ||
+                        bForceUpdatePreparationTime) {
                     bExpoUpdatePreparationTime = true;
                 }
             }
@@ -1511,8 +1512,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         for (int i=0; i< ncount; i++)
         {
             //if (bBumped)
-                if (items.getItem(i).getLocalBumped()) continue; //it has been upload to server,
-            ar.put(jsonItemBump(stationID,order,items.getItem(i), bExpoStation, bBumped) );
+            if (items.getItem(i).getLocalBumped()) continue; //it has been upload to server,
+            ar.put(jsonItemBump(stationID,order,items.getItem(i), bExpoStation, bBumped, false) );
         }
         return ar;
 
@@ -1528,20 +1529,20 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         return r;
     }
 
-    static public ActivationRequest requestItemBumpSync(String stationID,KDSDataOrder order,  KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static public ActivationRequest requestItemBumpSync(String stationID,KDSDataOrder order,  KDSDataItem item, boolean bExpoStation, boolean bBumped, boolean bForceUpdatePreparationTime)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bump,"item_bumps",jsonSingleItemBump(stationID,order, item , bExpoStation, bBumped));
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_item_bump,"item_bumps",jsonSingleItemBump(stationID,order, item , bExpoStation, bBumped, bForceUpdatePreparationTime));
         r.setTag(order);
         r.setDbTarget();
         return r;
     }
 
-    static private JSONArray jsonSingleItemBump(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped)
+    static private JSONArray jsonSingleItemBump(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped, boolean bForceUpdatePreparationTime)
     {
         JSONArray ar = new JSONArray();
 
-        ar.put(jsonItemBump(stationID,order,item, bExpoStation, bBumped) );
+        ar.put(jsonItemBump(stationID,order,item, bExpoStation, bBumped, bForceUpdatePreparationTime) );
 
         return ar;
 

@@ -211,11 +211,11 @@ public class KDSStationExpeditor extends KDSStationNormal {
             KDSDataItem expItem =  orderExisted.getItems().getItemByName(itemName);
             if (expItem == null) continue;
 
-            expItem.addRemoteBumpedStation(fromStationID);
-
-            db.itemSetRemoteBumpedStations(expItem);
-            if (arChangedItems != null)
-                arChangedItems.add(expItem);
+            if (expItem.addRemoteBumpedStation(fromStationID)) { //this item is not bump in prep, it will mark bumped here.
+                db.itemSetRemoteBumpedStations(expItem);
+                if (arChangedItems != null)
+                    arChangedItems.add(expItem);
+            }
 
         }
         db.finishTransaction(bStartedByMe);//2.0.15
