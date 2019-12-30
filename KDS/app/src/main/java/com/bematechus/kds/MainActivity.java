@@ -110,7 +110,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Activation.ActivationEvents,
         SysTimeChangedReceiver.sysTimeChangedEvent,
         KDSUIAboutDlg.AboutDlgEvent,
-        KDSContextMenu.OnContextMenuItemClickedReceiver
+        KDSContextMenu.OnContextMenuItemClickedReceiver,
+        KDSDlgOrderZoom.ZoomViewEvents
 
 {
     public enum GUI_MODE
@@ -2455,55 +2456,57 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
     }
+
     /**
      * bump selected item
      */
     public void onBumpItem(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isKDSValid()) return ;
-
-        //prevent queue stuck
-        if (suspendBumpWhenQueueRecovering()) {
-            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
-            return;
-        }
-
-        String orderGuid = getSelectedOrderGuid(userID);//
-        if (orderGuid.isEmpty()) return;
-
-        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
-
-        String itemGuid = getSelectedItemGuid(userID);
-        if (itemGuid.isEmpty()) return;
-
-        if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
-            return;
-
-        onRefreshSummary(userID);
-        //this.getSummaryFragment().refreshSummary();
-        //notification
-        notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
-        if (getKDS().isExpeditorStation())
-        {
-            if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
-                getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
-        }
-
-        lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
-        refreshView(userID);
-
-        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
-        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
-        if (order != null) {
-            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
-        }
-        //
-        //https://bematech.atlassian.net/browse/KPP1-62
-        if (order != null) { //if I continue bump order, show crash, KPP1-129
-            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
-            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
-        }
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        itemBump(userID,getSelectedOrderGuid(userID), getSelectedItemGuid(userID) );
+//        if (!isKDSValid()) return ;
+//
+//        //prevent queue stuck
+//        if (suspendBumpWhenQueueRecovering()) {
+//            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+//            return;
+//        }
+//
+//        String orderGuid = getSelectedOrderGuid(userID);//
+//        if (orderGuid.isEmpty()) return;
+//
+//        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
+//
+//        String itemGuid = getSelectedItemGuid(userID);
+//        if (itemGuid.isEmpty()) return;
+//
+//        if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
+//            return;
+//
+//        onRefreshSummary(userID);
+//        //this.getSummaryFragment().refreshSummary();
+//        //notification
+//        notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
+//        if (getKDS().isExpeditorStation())
+//        {
+//            if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
+//                getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
+//        }
+//
+//        lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
+//        refreshView(userID);
+//
+//        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
+//        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
+//        if (order != null) {
+//            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
+//        }
+//        //
+//        //https://bematech.atlassian.net/browse/KPP1-62
+//        if (order != null) { //if I continue bump order, show crash, KPP1-129
+//            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
+//            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
+//        }
+//        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
     private void notifyPOSItemBumpUnbump(KDSUser.USER userID,  String orderGuid, String itemGuid)
@@ -2736,19 +2739,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onUnbumpItem(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isKDSValid()) return ;
-        String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
-        if (orderGuid.isEmpty()) return;
-
-        String itemGuid = getSelectedItemGuid(userID);
-
-        unbumpItem(userID, orderGuid, itemGuid);
-
-        getKDS().checkSMS(orderGuid, false); //2.1.10
-        //https://bematech.atlassian.net/browse/KPP1-62
-        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
-        getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        itemUnbump(userID,getSelectedOrderGuid(userID), getSelectedItemGuid(userID) );
+//        if (!isKDSValid()) return ;
+//        String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
+//        if (orderGuid.isEmpty()) return;
+//
+//        String itemGuid = getSelectedItemGuid(userID);
+//
+//        unbumpItem(userID, orderGuid, itemGuid);
+//
+//        getKDS().checkSMS(orderGuid, false); //2.1.10
+//        //https://bematech.atlassian.net/browse/KPP1-62
+//        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+//        getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
+//        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
 
@@ -7012,8 +7016,97 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void showOrderZoom(String orderGuid)
     {
         KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
-        KDSDlgOrderZoom dlg = new KDSDlgOrderZoom();
+        KDSDlgOrderZoom dlg = KDSDlgOrderZoom.instance();
+        dlg.setReceiver(this);
+        dlg.setUser(getFocusedUserID());
+
         dlg.showOrder(this, order);
+    }
+
+    public boolean zoomViewItemOperations(KDSDlgOrderZoom.ZoomViewItemOperation operation,KDSUser.USER userID, String orderGuid, String itemGuid)
+    {
+        if (operation == KDSDlgOrderZoom.ZoomViewItemOperation.Bump)
+        {
+            itemBump(userID,  orderGuid, itemGuid);
+            //refreshView(userID);
+            return true;
+        }
+        else if (operation == KDSDlgOrderZoom.ZoomViewItemOperation.Unbump)
+        {
+            itemUnbump(userID, orderGuid, itemGuid);
+            //refreshView(userID);
+            return true;
+        }
+        return false;
+
+    }
+
+    private void itemBump(KDSUser.USER userID, String orderGuid, String itemGuid)
+    {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (!isKDSValid()) return ;
+
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return;
+        }
+
+        //String orderGuid = getSelectedOrderGuid(userID);//
+        if (orderGuid.isEmpty()) return;
+
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
+
+        //String itemGuid = getSelectedItemGuid(userID);
+        if (itemGuid.isEmpty()) return;
+
+        if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
+            return;
+
+        onRefreshSummary(userID);
+        //this.getSummaryFragment().refreshSummary();
+        //notification
+        notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
+        if (getKDS().isExpeditorStation())
+        {
+            if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
+                getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
+        }
+
+        lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
+        refreshView(userID);
+
+        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
+        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
+        if (order != null) {
+            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
+        }
+        //
+        //https://bematech.atlassian.net/browse/KPP1-62
+        if (order != null) { //if I continue bump order, show crash, KPP1-129
+            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
+            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
+        }
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
+    }
+
+    public void itemUnbump(KDSUser.USER userID, String orderGuid, String itemGuid) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (!isKDSValid()) return ;
+        //String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
+        if (orderGuid.isEmpty()) return;
+
+        //String itemGuid = getSelectedItemGuid(userID);
+
+        unbumpItem(userID, orderGuid, itemGuid);
+
+        getKDS().checkSMS(orderGuid, false); //2.1.10
+        //https://bematech.atlassian.net/browse/KPP1-62
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
     }
 }
 

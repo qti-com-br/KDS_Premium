@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="api_url" translatable="false">http://kitchengous.com/api/apiKDS</string>
-    <string name="db_url" translatable="false">http://54.70.214.221/api/apiKDS/Premium</string>
+    <string name="db_url" translatable="false">http://kitchengous.com/api/apiKDS/Premium</string>
+    <!--<string name="db_url" translatable="false">http://54.70.214.221/api/apiKDS/Premium</string>-->
 </resources>

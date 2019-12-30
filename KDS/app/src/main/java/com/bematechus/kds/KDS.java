@@ -4888,7 +4888,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         if (item == null) return false;
 
-        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped );
+        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped, false );
         return true;
 
     }
@@ -5129,7 +5129,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         for (int i=0; i< arChangedItems.size(); i++) {
             KDSDataItem item =arChangedItems.get(i);
             if (item != null)
-                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped());
+                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped(), true);
         }
     }
 }

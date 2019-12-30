@@ -125,19 +125,20 @@ public class KDSToStations {
         return "";
     }
 
-    public void addStation(String stationID)
+    public boolean addStation(String stationID)
     {
         //check if station existed.
         for (int i=0; i< m_arStations.size(); i++)
         {
             KDSToStation station =(KDSToStation) m_arStations.get(i);
             if (station.getPrimaryStation().equals(stationID))
-                return;
+                return false;
         }
 
         KDSToStation station = new KDSToStation();
         station.setPrimaryStation(stationID);
         m_arStations.add(station);
+        return true;
     }
     public void removeStation(String stationID)
     {
