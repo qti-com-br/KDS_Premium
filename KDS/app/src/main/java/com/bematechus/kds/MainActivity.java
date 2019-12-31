@@ -6937,7 +6937,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         if (slipInBorder == KDSView.SlipInBorder.None)
         {
-            if (layout.getView().findTouchPanel((int)e1.getX(),(int) e1.getY()) != null)
+            if (e1==null || layout.getView().findTouchPanel((int)e1.getX(),(int) e1.getY()) != null)
             {
                 if (slipDirection == KDSView.SlipDirection.Bottom2Top)
                     showOrderZoom(getSelectedOrderGuid(user));

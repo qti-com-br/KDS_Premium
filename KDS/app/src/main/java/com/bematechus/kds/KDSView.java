@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -233,11 +234,17 @@ public class KDSView extends View {
         {
             event.setAction(MotionEvent.ACTION_CANCEL);
         }
+
+        if (m_scaleGesture.onTouchEvent(event))
+            event.setAction(MotionEvent.ACTION_CANCEL);
+
         return super.dispatchTouchEvent(event);
     }
     private void init_gesture()
     {
         m_gesture = new GestureDetector (this.getContext(), new MyGestureListener());
+
+        m_scaleGesture = new ScaleGestureDetector(this.getContext(), new MyScaleGestureListener());
 
 
     }
@@ -1168,6 +1175,26 @@ public class KDSView extends View {
         }
         return null;
 
+    }
+
+    ScaleGestureDetector m_scaleGesture = null;//new GestureDetector(this);
+    class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector)
+        {
+
+            //一定要返回true才会进入onScale()这个函数
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector)
+        {
+
+            Log.i(TAG, "scale end");
+            if (m_eventsReceiver != null)
+                m_eventsReceiver.onViewSlipping(null, null, SlipDirection.Bottom2Top, SlipInBorder.None);
+        }
     }
 }
 

@@ -47,11 +47,13 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
     KDSLayout m_layout = null;
     ZoomViewEvents m_receiver = null;
     KDSUser.USER m_user = KDSUser.USER.USER_A;
+    AlertDialog m_dialog = null;
 
     static KDSDlgOrderZoom instance()
     {
-        if (m_instance == null)
-            m_instance = new KDSDlgOrderZoom();
+        if (m_instance != null)
+            m_instance.hide();
+        m_instance = new KDSDlgOrderZoom();
         return m_instance;
     }
 
@@ -84,27 +86,27 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
         settings.setTabEnableLineItemsView(false);//KDSGlobalVariables.getKDS().getSettings().getTabLineItemsTempEnabled());
         m_viewOrder.getEnv().setSettings(settings);
 
-        AlertDialog d = new AlertDialog.Builder(context)
+        m_dialog = new AlertDialog.Builder(context)
                 .create();
 
         // kill all padding from the dialog window
-        d.setView(view, 0, 0, 0, 0);
-        d.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        m_dialog.setView(view, 0, 0, 0, 0);
+        m_dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 m_instance = null;
             }
         });
-        d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        m_dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 m_instance = null;
             }
         });
-        return d;
+        return m_dialog;
     }
 
-    final float HEIGHT_FACTOR = 1.1F;
+    final float HEIGHT_FACTOR = 1.3F;
 
     public boolean showOrder(Context context, KDSDataOrder order)
     {
@@ -126,7 +128,7 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
             return false; //"The "showing paid order" items showing method maybe return null
         int nRows = m_layout.getOrderNeedRows(dressedOrder);
         int nRowH = Math.round(m_viewOrder.getBestBlockRowHeight()*HEIGHT_FACTOR);//getBlockAverageHeight();
-        int nViewHeight = nRows * (nRowH +1);
+        int nViewHeight = (nRows+1) * (nRowH );
         LinearLayout.LayoutParams linearParams =(LinearLayout.LayoutParams) m_viewOrder.getLayoutParams();
 
         linearParams.height=((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, nViewHeight, KDSApplication.getContext().getResources().getDisplayMetrics()));
@@ -261,5 +263,10 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
         //item.setLocalBumped(!item.getLocalBumped());
         refresh();
 
+    }
+    public void hide()
+    {
+        if (m_dialog != null)
+            m_dialog.hide();
     }
 }
