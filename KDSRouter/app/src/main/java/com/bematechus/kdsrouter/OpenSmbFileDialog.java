@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -102,7 +103,17 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         });
 
         m_listData = new ArrayList<Map<String, Object>>();
-        SimpleAdapter adapter = new SimpleAdapter(this.getView().getContext(), m_listData, R.layout.listitem_explorer, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path});
+        //SimpleAdapter adapter = new SimpleAdapter(this.getView().getContext(), m_listData, R.layout.listitem_explorer, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path});
+        SimpleAdapter adapter = new SimpleAdapter(this.getView().getContext(), m_listData, R.layout.listitem_explorer, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path})
+        {
+            public void setViewText(TextView v, String text) {
+                if (v.getId() == R.id.filedialogitem_path)
+                {
+                    text = removeUserIDPasswordForShowing(text);
+                }
+                v.setText(text);
+            }
+        };
         m_lstFiles.setAdapter(adapter);
 
         loadLastSmbSetting();
@@ -166,10 +177,15 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
 
     private void login()
     {
+
+
         String ip = m_txtIP.getText().toString();
         String user = m_txtUserID.getText().toString();
         String pwd = m_txtPwd.getText().toString();
         boolean banonymous = m_chkAnonymous.isChecked();
+
+        hideKeyboard(m_txtPwd);
+
 
         KDSSMBPath smbPath = new KDSSMBPath();
         smbPath.setPCName(ip);
@@ -453,7 +469,7 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
                     // 如果是文件
                     //((Activity)getContext()).dismissDialog(this.dialogid); // 让文件夹对话框消失
                     m_strSelectedFile = filepath;// + "/" +filename;
-                    m_txtSelected.setText(m_strSelectedFile);
+                    m_txtSelected.setText(removeUserIDPasswordForShowing(m_strSelectedFile));
                     enableOKButton(true);
                     return;
                 } else if (bIsDir) {
@@ -471,7 +487,7 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
     public void onSmbGetAllFiles()
     {
         addFilesToList(m_smb1Files, m_smb2Files);
-        m_txtSelected.setText(m_path);
+        m_txtSelected.setText(removeUserIDPasswordForShowing(m_path));
     }
 
     public void show() {
@@ -479,6 +495,23 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         enableOKButton(false);
     }
 
+    public static void hideKeyboard(View view){
+        InputMethodManager imm = (InputMethodManager) view.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
+    }
+
+    private String removeUserIDPasswordForShowing(String text)
+    {
+        int n0 = text.indexOf("//");
+        int n1 = text.indexOf("@");
+        if (n0 <0 || n1<0 ) return text;
+        String s = text.substring(0, n0+2);
+        String s1 = text.substring(n1+1);
+        return s + s1;
+    }
 }
 
 //package com.bematechus.kdsrouter;
