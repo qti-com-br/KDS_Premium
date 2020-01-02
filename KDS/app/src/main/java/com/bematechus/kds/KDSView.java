@@ -76,6 +76,7 @@ public class KDSView extends View {
         //public boolean onViewSlipLeftRight(boolean bSlipToLeft, boolean bInBorder);
         public void onViewLongPressed();
         //public boolean onViewSlipUpDown(boolean bSlipToUp, boolean bInBorder);
+        //Please notice: e1, e2 maybe null value.
         public boolean onViewSlipping(MotionEvent e1, MotionEvent e2,SlipDirection slipDirection, SlipInBorder slipInBorder);
 
     }

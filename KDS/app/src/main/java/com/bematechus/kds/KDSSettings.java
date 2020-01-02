@@ -2803,4 +2803,44 @@ public class KDSSettings extends SettingsBase {
       return ID.values()[n];
 
     }
+
+    public KDSSettings clone()
+    {
+        KDSSettings settings = new KDSSettings(KDSApplication.getContext());
+       try {
+        for (Map.Entry<ID, String> entry : m_mapPrefID.entrySet()) {
+
+         ID id = entry.getKey();
+         String tag = entry.getValue();
+         if (tag == null) continue;
+         Object obj = this.get(id);
+         if (tag.isEmpty()) continue;//fixed value
+
+         if (obj != null) {
+           if (obj instanceof KDSViewFontFace)
+           {
+             KDSViewFontFace ft = new KDSViewFontFace();
+             ft.copyFrom((KDSViewFontFace) obj);
+              settings.set(id, ft);
+           }
+           else
+            settings.set(id, obj);
+         }
+        }
+        settings.m_itemFocusImage = m_itemFocusImage;
+        settings.m_itemBumpedImage = m_itemBumpedImage;
+        settings.m_itemBumpedInOthersImage = m_itemBumpedInOthersImage;
+        settings.m_itemMoreImage = m_itemMoreImage;
+        settings.m_itemVoidByXmlCommand =m_itemVoidByXmlCommand;
+        settings.m_itemChangedImage  = m_itemChangedImage;
+        settings.m_orderCookStartedImage = m_orderCookStartedImage;
+        settings.m_itemExpoPartialImage = m_itemExpoPartialImage;
+       }
+       catch (Exception e)
+       {
+
+       }
+       return settings;
+
+    }
 }

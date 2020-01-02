@@ -17,6 +17,7 @@ import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.SettingsBase;
 
@@ -24,7 +25,8 @@ import com.bematechus.kdslib.SettingsBase;
  * Created by David.Wong on 2019/12/25.
  * Rev:
  */
-public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
+public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents,
+        KDSTimer.KDSTimerInterface{
 
     public enum ZoomViewItemOperation {
         None,
@@ -48,6 +50,8 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
     ZoomViewEvents m_receiver = null;
     KDSUser.USER m_user = KDSUser.USER.USER_A;
     AlertDialog m_dialog = null;
+    KDSDataOrders m_orders = null;
+    KDSTimer m_timer = new KDSTimer();
 
     static KDSDlgOrderZoom instance()
     {
@@ -71,7 +75,7 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
     }
 
 
-    private AlertDialog createDlg(Context context)
+    private AlertDialog createDlg(Context context, KDSSettings settingsOriginal)
     {
         View view = LayoutInflater.from(context).inflate(R.layout.order_zoom, null);
         //ScrollView sv = view.findViewById(R.id.scrollView);
@@ -80,8 +84,8 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
         m_viewOrder = view.findViewById(R.id.viewOrder);
 
 
-        KDSSettings settings = new KDSSettings(KDSApplication.getContext());
-        settings.loadSettings(KDSApplication.getContext());
+        KDSSettings settings = settingsOriginal.clone();
+        //settings.loadSettings(KDSApplication.getContext());
         settings.setTabCurrentFunc(SettingsBase.StationFunc.Prep);//KDSGlobalVariables.getKDS().getSettings().getTabFunc());
         settings.setTabEnableLineItemsView(false);//KDSGlobalVariables.getKDS().getSettings().getTabLineItemsTempEnabled());
         m_viewOrder.getEnv().setSettings(settings);
@@ -95,30 +99,37 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
             @Override
             public void onCancel(DialogInterface dialog) {
                 m_instance = null;
+                m_timer.stop();
             }
         });
         m_dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 m_instance = null;
+                m_timer.stop();
             }
         });
+
+        m_timer.start(null, this, 1000);
+
         return m_dialog;
     }
 
     final float HEIGHT_FACTOR = 1.3F;
 
-    public boolean showOrder(Context context, KDSDataOrder order)
+    public boolean showOrder(Context context,KDSSettings settings,  KDSDataOrder order)
     {
         m_order = order;//save it for items operations.
-        AlertDialog d = createDlg(context);
+        AlertDialog d = createDlg(context, settings);
 
         m_viewOrder.setRowsCols(1, 1);
         m_viewOrder.setLayoutFormat(KDSSettings.LayoutFormat.Vertical);
         changeSettingsForZoom();
 
-        KDSDataOrders orders = new KDSDataOrders();
-        orders.addComponent(order);
+//        KDSDataOrders orders = new KDSDataOrders();
+//        orders.addComponent(order);
+        m_orders = new KDSDataOrders();
+        m_orders.addComponent(order);
 
         m_layout = new KDSLayout(m_viewOrder);
         m_layout.setEventsReceiver(this);
@@ -128,14 +139,14 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
             return false; //"The "showing paid order" items showing method maybe return null
         int nRows = m_layout.getOrderNeedRows(dressedOrder);
         int nRowH = Math.round(m_viewOrder.getBestBlockRowHeight()*HEIGHT_FACTOR);//getBlockAverageHeight();
-        int nViewHeight = (nRows+1) * (nRowH );
+        int nViewHeight = (nRows+2) * (nRowH );
         LinearLayout.LayoutParams linearParams =(LinearLayout.LayoutParams) m_viewOrder.getLayoutParams();
 
         linearParams.height=((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, nViewHeight, KDSApplication.getContext().getResources().getDisplayMetrics()));
 
         m_viewOrder.setLayoutParams(linearParams);
 
-        m_layout.showOrders(orders);
+        m_layout.showOrders(m_orders);
 
         d.show();
         //d.getWindow().setBackgroundDrawable(null);
@@ -153,10 +164,10 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
 
     private boolean refresh()
     {
-        KDSDataOrders orders = new KDSDataOrders();
-        orders.addComponent(m_order);
+//        KDSDataOrders orders = new KDSDataOrders();
+//        orders.addComponent(m_order);
 
-        m_layout.showOrders(orders);
+        m_layout.showOrders(m_orders);
         return true;
     }
     final float ZOOM_FACTOR = 1.5F;
@@ -268,5 +279,10 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents {
     {
         if (m_dialog != null)
             m_dialog.hide();
+    }
+
+    public void onTime()
+    {
+        refresh();
     }
 }

@@ -7020,7 +7020,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         dlg.setReceiver(this);
         dlg.setUser(getFocusedUserID());
 
-        dlg.showOrder(this, order);
+        dlg.showOrder(this, getKDS().getSettings(), order);
     }
 
     public boolean zoomViewItemOperations(KDSDlgOrderZoom.ZoomViewItemOperation operation,KDSUser.USER userID, String orderGuid, String itemGuid)
