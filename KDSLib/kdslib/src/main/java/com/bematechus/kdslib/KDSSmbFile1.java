@@ -195,6 +195,7 @@ public class KDSSmbFile1 extends KDSSmbFile implements Runnable {
         try {
             SmbFile file = openSmbUri(remoteUriFolder);
             if (file == null) return false;
+
 //            if (isAnonymous(remoteUriFolder))
 //            {
 //                NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, null, null);
@@ -204,6 +205,7 @@ public class KDSSmbFile1 extends KDSSmbFile implements Runnable {
 //                file = new SmbFile(remoteUriFolder);
 //            }
             return file.exists();
+
 
         }
         catch (Exception e)
@@ -1248,6 +1250,26 @@ public class KDSSmbFile1 extends KDSSmbFile implements Runnable {
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
         return files;
+    }
+
+    static public String isValidLoginParameters(String remoteUriFolder)
+    {
+
+        try {
+            SmbFile file = openSmbUri(remoteUriFolder);
+            if (file == null) return "Can not open remote uri.";
+
+            //file.connect().getDate()>0);
+            file.connect();
+
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return e.getMessage();
+        }
+        return "";
     }
 }
 
