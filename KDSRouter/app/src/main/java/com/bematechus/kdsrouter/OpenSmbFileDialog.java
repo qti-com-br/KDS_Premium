@@ -246,10 +246,34 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
             protected Object doInBackground(Object[] objects) {
                 try {
                     String folder = (String) objects[0];
-                    if (KDSSmbFile.getEnabledSmbV2())
-                        m_smb2Files =  KDSSmbFile2.getFiles(folder);
-                    else
-                        m_smb1Files =  KDSSmbFile1.getFiles(folder);
+                    KDSSMBPath path = KDSSMBPath.parseString(folder);
+                    boolean isRoot = false;
+                    if (path.getFolder().equals(""))
+                    {
+                        isRoot = true;
+                    }
+                    if (KDSSmbFile.getEnabledSmbV2()) {
+                        if (isRoot)
+                        {
+                            String s = KDSSmbFile2.isValidLoginParameters(folder);
+                            if (!s.isEmpty()){
+                                m_handler.sendLoginError(s);
+                                return null;
+                            }
+                        }
+                        m_smb2Files = KDSSmbFile2.getFiles(folder);
+                    }
+                    else {
+                        if (isRoot)
+                        { //check if the login paramter is correct.
+                            String s = KDSSmbFile1.isValidLoginParameters(folder);
+                            if (!s.isEmpty()){
+                                m_handler.sendLoginError(s);
+                                return null;
+                            }
+                        }
+                        m_smb1Files = KDSSmbFile1.getFiles(folder);
+                    }
                     m_handler.sendRefreshMessage();
 
                 } catch(Exception e) {
@@ -511,6 +535,11 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         String s = text.substring(0, n0+2);
         String s1 = text.substring(n1+1);
         return s + s1;
+    }
+
+    public void onSmbErrorLogin(String errorMessage)
+    {
+        Toast.makeText(this.getView().getContext(),  errorMessage, Toast.LENGTH_LONG).show();
     }
 }
 

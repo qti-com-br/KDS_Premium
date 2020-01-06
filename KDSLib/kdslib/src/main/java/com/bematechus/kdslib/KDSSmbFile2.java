@@ -1374,6 +1374,27 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
         }
         return files;
     }
+
+    static public String isValidLoginParameters(String remoteUriFolder)
+    {
+
+        try {
+            SmbFile file = openSmbUri(remoteUriFolder);
+            if (file == null) return "Can not open remote uri.";
+
+            //file.connect().getDate()>0);
+            file.connect();
+
+
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return e.getMessage();
+        }
+        return "";
+    }
 }
 
 
