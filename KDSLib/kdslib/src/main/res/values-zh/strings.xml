@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KDSLib</string>
-    <string name="message">Message</string>
-    <string name="empty">Empty</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
+    <string name="message">消息</string>
+    <string name="empty">空</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
     <!-- kdssmbfile class use this strings -->
     <string name="folder_not_existed">The folder is not existed.</string>
     <string name="smb_folder_lost"> Can not access remote folder #</string>

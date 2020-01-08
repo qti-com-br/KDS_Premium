@@ -332,41 +332,41 @@
     <string name="english">英语</string>
     <string name="chinese">中文</string>
     <string name="downloading">下载中 ...</string>
-    <string name="str_message">Message</string>
-    <string name="category_name">Category Name:</string>
-    <string name="background">Background</string>
-    <string name="foreground">Foreground</string>
-    <string name="items_for_category">Items for category #</string>
-    <string name="no_data">No data</string>
-    <string name="export_csv">Export database to csv file</string>
-    <string name="import_csv">Import csv file to database</string>
-    <string name="file_name">File name:</string>
-    <string name="file_existed_overwrite_confirm">File is existed, do you want to overwrite it?</string>
-    <string name="no">No</string>
-    <string name="yes">Yes</string>
-    <string name="export_db_done">Database has been exported to</string>
-    <string name="import_csv_done">Imported file</string>
-    <string name="auto_add_modifier">Add received modifier to database automatically</string>
-    <string name="item_auto_add">Add received item to database automatically</string>
+    <string name="str_message">消息</string>
+    <string name="category_name">类名:</string>
+    <string name="background">背景</string>
+    <string name="foreground">前景</string>
+    <string name="items_for_category">类#的明细</string>
+    <string name="no_data">无数据</string>
+    <string name="export_csv">导出数据库到csv文件</string>
+    <string name="import_csv">导入csv文件到数据库</string>
+    <string name="file_name">文件名:</string>
+    <string name="file_existed_overwrite_confirm">文件存在，要覆盖它吗?</string>
+    <string name="no">否</string>
+    <string name="yes">是</string>
+    <string name="export_db_done">数据库已被导出到</string>
+    <string name="import_csv_done">导入文件</string>
+    <string name="auto_add_modifier">自动添加“明细改动”到数据库</string>
+    <string name="item_auto_add">自动添加“明细”到数据库</string>
 
-    <string name="pwd_do_not_match">Passwords do not match.</string>
+    <string name="pwd_do_not_match">密码不正确.</string>
 
-    <string name="log_mode">Log mode</string>
-    <string name="log_reserved_days">Reserve log files for X days</string>
-    <string name="log">Log</string>
-    <string name="log_orders">Lnable log received orders xml</string>
-    <string name="station_lost">Station # lost</string>
-    <string name="enable_order_ack">Enable order acknowledgement</string>
-    <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
+    <string name="log_mode">日志模式</string>
+    <string name="log_reserved_days">保存日志文件 X 天</string>
+    <string name="log">日志</string>
+    <string name="log_orders">记录收到的订单文件</string>
+    <string name="station_lost">终端 # 丢失</string>
+    <string name="enable_order_ack">启动订单发送反馈确认</string>
+    <string name="use_smb_v2_open_folder">用 SMB v2 打开远程文件夹</string>
     <!--<string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>-->
-    <string name="keep_notification_minutes">Reserve notification files for X minutes</string>
+    <string name="keep_notification_minutes">保存通知文件 X 分钟</string>
     <string-array name="pref_kds_log_mode_titles">
-        <item>None</item>
-        <item>Basic</item>
-        <item>Detail</item>
+        <item>无</item>
+        <item>基本</item>
+        <item>详细</item>
     </string-array>
-    <string name="title_activity_activity_login">Sign in</string>
-    <string name="logout">Logout</string>
-    <string name="export">Export</string>
-    <string name="str_import">Import</string>
+    <string name="title_activity_activity_login">登录</string>
+    <string name="logout">登出</string>
+    <string name="export">导出</string>
+    <string name="str_import">导入</string>
 </resources>
