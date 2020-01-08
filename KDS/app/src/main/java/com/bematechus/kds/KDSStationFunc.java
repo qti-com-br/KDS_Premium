@@ -1503,7 +1503,7 @@ public class KDSStationFunc {
      * @param command
      * @return
      */
-    static public boolean doSyncCommandOrderNew(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    static public void doSyncCommandOrderNew(KDS kds, KDSXMLParserCommand command, String strOrinalData)
     {
         switch (kds.getStationFunction())
         {
@@ -1519,6 +1519,7 @@ public class KDSStationFunc {
                 KDSStationExpeditor.exp_sync_order_new(kds, command);
                 kds.refreshView();
                 break;
+
             case Mirror:
                 break;
             case Backup:
@@ -1528,7 +1529,7 @@ public class KDSStationFunc {
             case Duplicate:
                 break;
         }
-        return true;
+        return ;
 
     }
 

@@ -19,6 +19,7 @@ import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
+import com.bematechus.kdslib.KDSDataItems;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
@@ -2209,7 +2210,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 }
                 if (arChangedItems.size() >0) //just expo save data to this array
                 {//kpp1-62, kpp1-74
-                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems);
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems, Activation.ItemJobFromOperations.Expo_sync_prep_bump_order);
                 }
                 break;
             case Station_Unbump_Order:
@@ -2231,7 +2232,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 checkSMS(orderGuid, false); //2.1.10
                 if (arChangedItem.size() >0) //just expo save data to this array
                 {//kpp1-62, kpp1-74
-                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem);
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
                 }
                 break;
             case Station_Unbump_Item:
@@ -4876,8 +4877,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         m_activationHTTP.setStationFunc(getStationFunction());
 
         if (item == null) return false;
-
-        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped, false );
+        Activation.ItemJobFromOperations opt = Activation.ItemJobFromOperations.Local_bump_item;
+        if (!bBumped)
+            opt = Activation.ItemJobFromOperations.Local_unbump_item;
+        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped,   opt);
         return true;
 
     }
@@ -5028,7 +5031,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * when expo receive item/order bumped, expo need update its preparation time in item_bumps table.
      * @param arChangedItems
      */
-    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, ArrayList<KDSDataItem> arChangedItems)
+    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, ArrayList<KDSDataItem> arChangedItems, Activation.ItemJobFromOperations fromOperations)
     {
         if (arChangedItems.size() <=0) return;
         if (!this.isExpeditorStation()) return;
@@ -5047,7 +5050,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         for (int i=0; i< arChangedItems.size(); i++) {
             KDSDataItem item =arChangedItems.get(i);
             if (item != null)
-                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped(), true);
+                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped(), fromOperations);
         }
+    }
+
+    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, KDSDataItems items, Activation.ItemJobFromOperations fromOperations)
+    {
+        ArrayList<KDSDataItem> ar = new ArrayList<>();
+        for (int i=0; i< items.getCount(); i++)
+            ar.add(items.getItem(i));
+        syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, ar, fromOperations);
     }
 }

@@ -90,6 +90,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         Fail_reponse_error,
     }
 
+    public enum ItemJobFromOperations
+    {
+        Local_new_order,
+        Local_bump_order,
+        Local_unbump_order,
+        Local_bump_item,
+        Local_unbump_item,
+        Expo_sync_prep_new_order,
+        Expo_sync_prep_bump_order,
+        Expo_sync_prep_unbump_order,
+        Expo_sync_prep_bump_item,
+        Expo_sync_prep_unbump_item,
+    }
     public interface ActivationEvents
     {
         public void onActivationSuccess();
@@ -1743,7 +1756,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     }
 
     /**
-     * post order to web database
+     * post order to web database.
+     * This is local operations
      * @param order
      * @param state
      */
@@ -1766,19 +1780,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 r.getNextStepData().add( req );
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
 
-                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false ));
+                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_new_order ));
                 //postCustomerRequest(m_stationID, order);
                 r.getNextStepData().add(ActivationRequest.requestCustomerSync(m_storeGuid, order));
 
                 break;
             case Bump:
                 if (!order.isAllItemsBumpedInLocal())
-                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true ));
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true, ItemJobFromOperations.Local_bump_order ));
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
                 break;
             case Unbump:
                 if (!order.isAllItemsBumpedInLocal())
-                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false ));
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_unbump_order ));
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
                 break;
         }
@@ -1938,12 +1952,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         return "";
     }
 
-    public void postItemBumpsRequest(String stationID, KDSDataOrder order, boolean bExpoStation, boolean bBumped)
-    {
-        ActivationRequest r = ActivationRequest.requestItemBumpsSync(stationID,  order, bExpoStation , bBumped);
-        m_http.request(r);
-
-    }
+//    public void postItemBumpsRequest(String stationID, KDSDataOrder order, boolean bExpoStation, boolean bBumped)
+//    {
+//        ActivationRequest r = ActivationRequest.requestItemBumpsSync(stationID,  order, bExpoStation , bBumped);
+//        m_http.request(r);
+//
+//    }
 
     public void onSyncItemBumpsResponse(ActivationHttp http, ActivationRequest request) {
         Object obj = request.getTag();
@@ -1961,12 +1975,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      * @param item
      * @param bExpoStation
      * @param bBumped
-     * @param bForceUpdatePreparationTime
+
      *  In expo. when it receive prep bump order, exp has to update all its items preparation time.
      */
-    public void postItemBumpRequest(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped, boolean bForceUpdatePreparationTime)
+    public void postItemBumpRequest(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped, ItemJobFromOperations fromOperation)
     {
-        ActivationRequest r = ActivationRequest.requestItemBumpSync(stationID,order,  item, bExpoStation , bBumped, bForceUpdatePreparationTime);
+        ActivationRequest r = ActivationRequest.requestItemBumpSync(stationID,order,  item, bExpoStation , bBumped,  fromOperation);
         m_http.request(r);
     }
 
