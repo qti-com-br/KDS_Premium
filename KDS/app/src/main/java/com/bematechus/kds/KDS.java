@@ -303,7 +303,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         KDSSettings.KDSUserMode mode = KDSSettings.KDSUserMode.values()[n];
         if (mode == KDSSettings.KDSUserMode.Single)
         {
-            m_users.setSingleUserMode();
+            m_users.setSingleUserMode(true);
         }
         else if (mode == KDSSettings.KDSUserMode.Multiple)
         {
@@ -3051,7 +3051,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
 
         try {
-            loadAllActiveOrdersInfo();
+            loadAllActiveOrdersInfo(false);
         }
         catch (Exception e)
         {
@@ -3061,7 +3061,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     }
 
-    public void loadAllActiveOrdersInfo()
+    /**
+     *
+     * @param bLoadAllToUserA
+     *      For queue
+     */
+    public void loadAllActiveOrdersInfo(boolean bLoadAllToUserA)
     {
 
         if (m_stationsConnection.isMirrorOfOthers()) //I am a mirror of other stations
@@ -3073,27 +3078,37 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 arStationID.add(primaryMirrors.get(i).getID());
 
             if (m_users.getUserA() != null) {
-                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_A.ordinal(), false));
-                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_A.ordinal(), true));
+                int userid = KDSSettings.KDSScreen.Screen_A.ordinal();
+                if (bLoadAllToUserA)
+                    userid = -1;
+                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, userid, false));
+                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, userid, true));
 
             }
-            if (m_users.getUserB() != null) {
-                m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), false));
-                m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+            if (!bLoadAllToUserA) {
+                if (m_users.getUserB() != null) {
+                    m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), false));
+                    m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), true));
 
+                }
             }
         }
         else {
 
             if (m_users.getUserA() != null) {
                 if (m_dbCurrent == null) return;
-                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_A.ordinal(), false));
-                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_A.ordinal(), true));
+                int userid = KDSSettings.KDSScreen.Screen_A.ordinal();
+                if (bLoadAllToUserA)
+                    userid = -1;
+                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), userid, false));
+                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), userid, true));
             }
-            if (m_users.getUserB() != null) {
-                if (m_dbCurrent == null) return;
-                m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), false));
-                m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+            if (!bLoadAllToUserA) {
+                if (m_users.getUserB() != null) {
+                    if (m_dbCurrent == null) return;
+                    m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), false));
+                    m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+                }
             }
 
 
@@ -5060,5 +5075,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         for (int i=0; i< items.getCount(); i++)
             ar.add(items.getItem(i));
         syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, ar, fromOperations);
+    }
+
+    public void loadAllActiveOrdersNoMatterUsers()
+    {
+
+        try {
+            loadAllActiveOrdersInfo(true);
+        }
+        catch (Exception e)
+        {
+            //KDSLog.e(TAG, e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e );
+        }
+
     }
 }

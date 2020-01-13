@@ -3824,7 +3824,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             getKDS().updateSettings(settings);
 
-            getKDS().getUsers().setSingleUserMode();
+            getKDS().getUsers().setSingleUserMode(true);
             m_queueView.updateSettings(settings);
             m_queueView.refresh();
             m_ttView.updateSettings(settings);
@@ -3869,7 +3869,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             getKDS().updateSettings(settings);
 
-            getKDS().getUsers().setSingleUserMode();
+            getKDS().getUsers().setSingleUserMode(true);
             m_queueView.updateSettings(settings);
             m_queueView.refresh();
             m_ttView.updateSettings(settings);
@@ -5515,12 +5515,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
-    private void reinitQueue()
+    /**
+     *
+     * @param bSetAllOrdersToUserAInDatabase
+     *      KPP1-272
+     *      In tab display and multiple user mode, the orders just need to load to userA temporary.
+     *      True: just all orders to user A in database, it will happen we change user mode.
+     *      false: Just load to user A, but don't change database. This just happened in Tab mode.
+     */
+    private void reinitQueue(boolean bSetAllOrdersToUserAInDatabase)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         setupGuiByMode(GUI_MODE.Queue);
 
-        getKDS().getUsers().setSingleUserMode();
+        getKDS().getUsers().setSingleUserMode(bSetAllOrdersToUserAInDatabase);
         m_queueView.updateSettings(getKDS().getSettings());
 
         m_uiUserA.showSummaryAlways( KDSUser.USER.USER_A);
@@ -5532,7 +5540,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!isKDSValid()) return ;
         initStationGeneralSteps();
-        reinitQueue();
+        reinitQueue(true);
 
     }
 
@@ -5984,13 +5992,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                 break;
             case Queue:
-
+                boolean isMultipleUserMode = getKDS().isMultpleUsersMode();
                 getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Queue);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
-                reinitQueue();
+                reinitQueue(false);
+                if (isMultipleUserMode)
+                    getKDS().loadAllActiveOrdersNoMatterUsers();//kpp1-272
                 refreshTabSort();
 
                 break;

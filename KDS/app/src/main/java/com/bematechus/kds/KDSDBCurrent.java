@@ -1198,6 +1198,7 @@ public class KDSDBCurrent extends KDSDBBase {
      * Just load all order info first, then use thread to load items.
      * @param arStationID It is useless, it is for future.
      * @param nScreen
+     *  -1: all order
      * @param bParked
      * @return
      */
@@ -1207,6 +1208,8 @@ public class KDSDBCurrent extends KDSDBBase {
         if (getDB() == null) return orders;
 
         String sql = String.format("%s,count(*) as itemsc from orders left join items on orders.guid=items.orderguid where orders.bumped<>1 and orders.screen=%d and orders.parked%s  group by orders.guid order by orders.id", getOrderFields(), nScreen, bParked ? "<>0" : "=0");
+        if (nScreen <0)
+            sql = String.format("%s,count(*) as itemsc from orders left join items on orders.guid=items.orderguid where orders.bumped<>1 and orders.parked%s  group by orders.guid order by orders.id", getOrderFields(), bParked ? "<>0" : "=0");
 
         Cursor c = getDB().rawQuery(sql, null);
         while (c.moveToNext()) {

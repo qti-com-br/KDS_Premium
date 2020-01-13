@@ -32,7 +32,13 @@ public class KDSUsers {
         m_kds = kds;
     }
 
-    public void setSingleUserMode()
+    /**
+     *
+     * @param bSetAllOrderToUserA
+     *      In queue, we need keep all users original user setting.
+     *
+     */
+    public void setSingleUserMode(boolean bSetAllOrderToUserA)
     {
         if (m_users.size() == 1)
             return;
@@ -41,7 +47,8 @@ public class KDSUsers {
         KDSUser user = new KDSUser(KDSUser.USER.USER_A);
         user.setKDS(m_kds);
         m_users.add(user);
-        m_kds.getCurrentDB().setAllActiveOrdersToUserA();//KPP1-195
+        if (bSetAllOrderToUserA) //kpp1-272
+            m_kds.getCurrentDB().setAllActiveOrdersToUserA();//KPP1-195
     }
     public void setTwoUserMode()
     {
