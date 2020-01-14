@@ -639,14 +639,14 @@ public class KDSUIConfiguration extends PreferenceActivity {
             if (srcType ==  KDSSettings.KDSDataSource.TCPIP) {
                 findPreference("kds_general_tcpport").setEnabled(true);
                 findPreference("kds_general_remote_folder").setEnabled(false);
-                findPreference("general_enable_smbv2").setEnabled(false);
+                //findPreference("general_enable_smbv2").setEnabled(false);
 
             }
             else if (srcType ==  KDSSettings.KDSDataSource.Folder)
             {
                 findPreference("kds_general_tcpport").setEnabled(false);
                 findPreference("kds_general_remote_folder").setEnabled(true);
-                findPreference("general_enable_smbv2").setEnabled(true);
+                //findPreference("general_enable_smbv2").setEnabled(true);
             }
 
         }

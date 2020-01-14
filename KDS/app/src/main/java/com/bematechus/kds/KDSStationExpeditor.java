@@ -1408,14 +1408,16 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * receive the sync command, check if I am backup/mirror station,
      * @param command
      */
-    static public void exp_sync_order_new(KDS kds, KDSXMLParserCommand command)
+    static public KDSDataOrder exp_sync_order_new(KDS kds, KDSXMLParserCommand command)
     {
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         if (strXml.isEmpty())
-            return;
+            return null;
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
         if (order == null)
-            return;
+            return null;
+        KDSDataOrder  changedOrder = null;
+        ArrayList<KDSDataOrder> changedOrders = null;
 
         if (kds.getStationsConnections().getRelations().isBackupStation())
         { //I am backup slave station
@@ -1423,10 +1425,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    func_orderAdd(kds.getUsers().getUserA(), order,strXml, false, false,false, true); //don't check add-on
+                    changedOrder = func_orderAdd(kds.getUsers().getUserA(), order,strXml, false, false,false, true); //don't check add-on
                 else
                 {
-                    kds.getUsers().users_orderAdd(order, strXml,false, false, true);
+                    changedOrders = kds.getUsers().users_orderAdd(order, strXml,false, false, true);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
@@ -1435,9 +1437,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
         { //I am mirror slave station
 
             if (kds.isSingleUserMode())
-                func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
             else
-                kds.getUsers().users_orderAdd(order, strXml,false,false, true);
+                changedOrders = kds.getUsers().users_orderAdd(order, strXml,false,false, true);
 
         }
         else
@@ -1448,9 +1450,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //                          //I have to fix this bug, in 24 stations "coke" branch.
 
             if (kds.isSingleUserMode())
-                func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
             else
-                kds.getUsers().users_orderAdd(order,strXml, false, false,true);
+                changedOrders = kds.getUsers().users_orderAdd(order,strXml, false, false,true);
         }
 
         tt_checkAllItemsBumped(kds, order);
@@ -1458,6 +1460,23 @@ public class KDSStationExpeditor extends KDSStationNormal {
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
         sync_with_queue(kds, command.getCode(), order, null, strXml);
+        //change order guid and start time for expo web backoffice usage.
+        //kpp1-267, don't need these code. New order has been added to expo before call this function.
+//        KDSDataOrder orderChanged = null;
+//        if (changedOrder != null)
+//            orderChanged = changedOrder;
+//        else
+//        {
+//            if (changedOrders != null)
+//            {
+//                if (changedOrders.size() >0)
+//                    orderChanged = changedOrders.get(0);
+//            }
+//        }
+//        order.setGUID(orderChanged.getGUID());
+//        order.setStartTime(orderChanged.getStartTime());
+
+        return order;
     }
 
     /**

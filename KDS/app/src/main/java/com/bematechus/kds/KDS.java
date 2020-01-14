@@ -20,6 +20,7 @@ import com.bematechus.kdslib.KDSCallback;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
+import com.bematechus.kdslib.KDSDataItems;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
@@ -308,7 +309,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         KDSSettings.KDSUserMode mode = KDSSettings.KDSUserMode.values()[n];
         if (mode == KDSSettings.KDSUserMode.Single)
         {
-            m_users.setSingleUserMode();
+            m_users.setSingleUserMode(true);
         }
         else if (mode == KDSSettings.KDSUserMode.Multiple)
         {
@@ -2220,7 +2221,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 }
                 if (arChangedItems.size() >0) //just expo save data to this array
                 {//kpp1-62, kpp1-74
-                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems);
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems, Activation.ItemJobFromOperations.Expo_sync_prep_bump_order);
                 }
                 break;
             case Station_Unbump_Order:
@@ -2242,7 +2243,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 checkSMS(orderGuid, false); //2.1.10
                 if (arChangedItem.size() >0) //just expo save data to this array
                 {//kpp1-62, kpp1-74
-                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem);
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
                 }
                 break;
             case Station_Unbump_Item:
@@ -3061,7 +3062,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     {
 
         try {
-            loadAllActiveOrdersInfo();
+            loadAllActiveOrdersInfo(false);
         }
         catch (Exception e)
         {
@@ -3071,7 +3072,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     }
 
-    public void loadAllActiveOrdersInfo()
+    /**
+     *
+     * @param bLoadAllToUserA
+     *      For queue
+     */
+    public void loadAllActiveOrdersInfo(boolean bLoadAllToUserA)
     {
 
         if (m_stationsConnection.isMirrorOfOthers()) //I am a mirror of other stations
@@ -3083,27 +3089,37 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 arStationID.add(primaryMirrors.get(i).getID());
 
             if (m_users.getUserA() != null) {
-                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_A.ordinal(), false));
-                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_A.ordinal(), true));
+                int userid = KDSSettings.KDSScreen.Screen_A.ordinal();
+                if (bLoadAllToUserA)
+                    userid = -1;
+                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, userid, false));
+                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, userid, true));
 
             }
-            if (m_users.getUserB() != null) {
-                m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), false));
-                m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+            if (!bLoadAllToUserA) {
+                if (m_users.getUserB() != null) {
+                    m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), false));
+                    m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), true));
 
+                }
             }
         }
         else {
 
             if (m_users.getUserA() != null) {
                 if (m_dbCurrent == null) return;
-                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_A.ordinal(), false));
-                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_A.ordinal(), true));
+                int userid = KDSSettings.KDSScreen.Screen_A.ordinal();
+                if (bLoadAllToUserA)
+                    userid = -1;
+                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), userid, false));
+                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), userid, true));
             }
-            if (m_users.getUserB() != null) {
-                if (m_dbCurrent == null) return;
-                m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), false));
-                m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+            if (!bLoadAllToUserA) {
+                if (m_users.getUserB() != null) {
+                    if (m_dbCurrent == null) return;
+                    m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), false));
+                    m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+                }
             }
 
 
@@ -4887,8 +4903,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         m_activationHTTP.setStationFunc(getStationFunction());
 
         if (item == null) return false;
-
-        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped, false );
+        Activation.ItemJobFromOperations opt = Activation.ItemJobFromOperations.Local_bump_item;
+        if (!bBumped)
+            opt = Activation.ItemJobFromOperations.Local_unbump_item;
+        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped,   opt);
         return true;
 
     }
@@ -5110,7 +5128,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      * when expo receive item/order bumped, expo need update its preparation time in item_bumps table.
      * @param arChangedItems
      */
-    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, ArrayList<KDSDataItem> arChangedItems)
+    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, ArrayList<KDSDataItem> arChangedItems, Activation.ItemJobFromOperations fromOperations)
     {
         if (arChangedItems.size() <=0) return;
         if (!this.isExpeditorStation()) return;
@@ -5129,7 +5147,29 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         for (int i=0; i< arChangedItems.size(); i++) {
             KDSDataItem item =arChangedItems.get(i);
             if (item != null)
-                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped(), true);
+                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped(), fromOperations);
         }
+    }
+
+    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, KDSDataItems items, Activation.ItemJobFromOperations fromOperations)
+    {
+        ArrayList<KDSDataItem> ar = new ArrayList<>();
+        for (int i=0; i< items.getCount(); i++)
+            ar.add(items.getItem(i));
+        syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, ar, fromOperations);
+    }
+
+    public void loadAllActiveOrdersNoMatterUsers()
+    {
+
+        try {
+            loadAllActiveOrdersInfo(true);
+        }
+        catch (Exception e)
+        {
+            //KDSLog.e(TAG, e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e );
+        }
+
     }
 }
