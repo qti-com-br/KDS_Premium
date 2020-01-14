@@ -10,7 +10,7 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add new device"
+            android:text="Add new device (all orders from other devices will be cleared!)"
             android:id="@+id/rbAddNew" />
 
         <RadioButton
