@@ -22,7 +22,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
         versionCode 3
-        versionName '2.4.0.0'
+        versionName '2.3.0.0'
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
@@ -56,22 +57,25 @@ android {
             versionCode 3
             versionName '2.3.0.0'
             dimension "default"
+            signingConfig signingConfigs.config
         }
         stage {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2
+            versionCode 3
             versionName '2.3.0.0'
             dimension "default"
+            signingConfig signingConfigs.config
         }
         prod {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2
+            versionCode 3
             versionName '2.3.0.0'
             dimension "default"
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
