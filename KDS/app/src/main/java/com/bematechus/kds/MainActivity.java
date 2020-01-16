@@ -3289,6 +3289,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     final static int TEST_COUNT = 1;
     private void opTest(KDSUser.USER userID) {
 
+        //KDSPrintImage prn = new KDSPrintImage();
+        //prn.test();
+
+
         //KDSEmail.sendErrorTo("kds", "kds version 1.02", "error .........err");
         //KDSEmail.sendTo("kds", "kds version 1.02", "error .........err");
 //        String ss = null;

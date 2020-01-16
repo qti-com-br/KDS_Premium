@@ -64,6 +64,8 @@ public class KDSPrinter {
     static final private char CMD_START_DBLWH = 0x10;//"<dblwh>";
     static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
 
+    static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
+
     static final private String TAG_CR = "<CR>";
     static final private String TAG_ITEMS = "<ITEMS>";
     static final private String TAG_CONDIMENTS = "<CONDIMENTS>";
@@ -86,6 +88,7 @@ public class KDSPrinter {
     static final private String TAG_EACH_CONDIMENT = "<CONDIMENT>";
     static final private String TAG_EACH_MODIFIER = "<MODIFIER>";
 
+    static final private String TAG_LOGO = "<LOGO>";
 
     final byte ESC = 0x1b;
     final byte GS = 0x1d;
@@ -120,6 +123,7 @@ public class KDSPrinter {
         TAGS_LINE_EACH_ITEM,
         TAGS_LINE_EACH_CONDIMENT,
         TAGS_LINE_EACH_MODIFIER,
+        TAGS_LINE_LOGO,
     }
 
     public enum TextAlign
@@ -465,6 +469,8 @@ return given CR in which index of tag array
                 return CRTagsLineType.TAGS_LINE_EACH_CONDIMENT;
             if (s.equals(TAG_EACH_MODIFIER))
                 return CRTagsLineType.TAGS_LINE_EACH_MODIFIER;
+            if (s.equals(TAG_LOGO))
+                return CRTagsLineType.TAGS_LINE_LOGO;
 
         }
 
@@ -2373,6 +2379,11 @@ print order data to  buffer, socket will send this buffer to serial port
                 printModifier(state, order,arLineTags , arPrint);
             }
             break;
+            case TAGS_LINE_LOGO:
+            {
+                printLogo(state, order,arLineTags , arPrint);
+            }
+            break;
             default:
             {
             }
@@ -2629,5 +2640,10 @@ print order data to  buffer, socket will send this buffer to serial port
                     break;
             }
         }
+    }
+
+    private void printLogo(PrintOrderState state, KDSDataOrder order,ArrayList<String> arLineTags, ArrayList<String> arPrint )
+    {
+
     }
 }

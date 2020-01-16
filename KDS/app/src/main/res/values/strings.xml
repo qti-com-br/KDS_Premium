@@ -1132,6 +1132,7 @@
     <string name="log_orders">Log received orders xml</string>
     <string name="lineitems_line_height">Line height</string>
     <string name="build_relationship_first">Please build your stations relationship first.</string>
+    <string name="logo_file">Logo file</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
