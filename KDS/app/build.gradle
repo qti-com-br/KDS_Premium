@@ -57,7 +57,6 @@ android {
             versionCode 3
             versionName '2.3.0.0'
             dimension "default"
-            signingConfig signingConfigs.config
         }
         stage {
             minSdkVersion 19
@@ -66,7 +65,6 @@ android {
             versionCode 3
             versionName '2.3.0.0'
             dimension "default"
-            signingConfig signingConfigs.config
         }
         prod {
             minSdkVersion 19
@@ -75,7 +73,6 @@ android {
             versionCode 3
             versionName '2.3.0.0'
             dimension "default"
-            signingConfig signingConfigs.config
         }
     }
     compileOptions {
