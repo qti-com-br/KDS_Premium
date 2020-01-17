@@ -638,6 +638,9 @@ return whole line tags
             case TAG_END_REVERSE:
                 ch = CMD_END_REVERSE;
                 break;
+            case TAG_LOGO:
+                ch = CMD_PRINT_LOGO;
+                break;
             default:
                 break;
         }
@@ -2045,6 +2048,7 @@ print order data to  buffer, socket will send this buffer to serial port
             case CMD_END_DBLWH:
             case CMD_START_REVERSE:
             case CMD_END_REVERSE:
+            case CMD_PRINT_LOGO:
                 return true;
 
         }
@@ -2101,6 +2105,11 @@ print order data to  buffer, socket will send this buffer to serial port
                 m_bemaPrinter.write(LR2000_END_REVERSE);
             }
             break;
+            case CMD_PRINT_LOGO:
+            {
+                sendLogoDataToPrinter();
+            }
+            break;
             default:
             {
             }
@@ -2126,6 +2135,7 @@ print order data to  buffer, socket will send this buffer to serial port
             case TAG_END_DBLH:
             case TAG_START_DBLWH:
             case TAG_END_DBLWH:
+            case TAG_LOGO:
                 return true;
             default:
                 return false;
@@ -2644,6 +2654,16 @@ print order data to  buffer, socket will send this buffer to serial port
 
     private void printLogo(PrintOrderState state, KDSDataOrder order,ArrayList<String> arLineTags, ArrayList<String> arPrint )
     {
+        String s = makeTagString(TAG_LOGO, null, null, null, null);
+        addPrintLines(arPrint, s);
 
+    }
+
+    /**
+     * send real command here.
+     */
+    private void sendLogoDataToPrinter()
+    {
+        Log.i(TAG, "Print logo command here");
     }
 }
