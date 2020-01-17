@@ -1219,7 +1219,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("printer_copies"));
             bindPreferenceSummaryToValue(findPreference("printer_codepage"));
             bindPreferenceSummaryToValue(findPreference("printer_howtoprint"));
-
+            bindPreferenceSummaryToValue(findPreference("printer_logo"));
 
             //bindPreferenceSummaryToValue(findPreference("printer_template"));
             KDSPrinter.PrinterPortType portType =getPortType(pref);
