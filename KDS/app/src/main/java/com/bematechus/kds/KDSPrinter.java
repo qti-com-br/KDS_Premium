@@ -490,10 +490,14 @@ return whole line tags
         int sindex, eindex;
         //arTags->RemoveAll();
         if (nLine <0) return arTags;
-        sindex = getCRIndexInTagsArray(nLine -1);
+        if (nLine == 0) //kpp1-276 the template first tag lost
+            sindex = -1;
+        else
+            sindex = getCRIndexInTagsArray(nLine -1);
         eindex = getCRIndexInTagsArray(nLine);
         sindex ++;
-
+        if (sindex <0 || eindex <0)//kpp1-276
+            return arTags;
         for (int i= sindex; i<=eindex; i++)
         {
             arTags.add(m_arLinesTags.get(i));
