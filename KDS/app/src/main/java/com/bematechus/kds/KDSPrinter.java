@@ -64,7 +64,7 @@ public class KDSPrinter {
     static final private char CMD_START_DBLWH = 0x10;//"<dblwh>";
     static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
 
-    static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
+    static final private char CMD_PRINT_LOGO = 0x380;//"</dblwh>";
 
     static final private String TAG_CR = "<CR>";
     static final private String TAG_ITEMS = "<ITEMS>";
