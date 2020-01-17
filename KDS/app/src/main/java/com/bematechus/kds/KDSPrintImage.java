@@ -25,9 +25,9 @@ public class KDSPrintImage {
     final byte ESC = 0x1b;
     final byte GS = 0x1d;
 
-    final int Image_Align_Left = -1;
-    final int Image_Align_Center = -2;
-    final int Image_Align_Right = -3;
+    static public final int Image_Align_Left = -1;
+    static public final int Image_Align_Center = -2;
+    static public final int Image_Align_Right = -3;
 
     private int ratioHeight(Bitmap bitmap, int nTargetWidth)
     {

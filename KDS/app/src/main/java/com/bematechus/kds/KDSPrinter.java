@@ -188,6 +188,9 @@ public class KDSPrinter {
     HowToPrintOrder m_howtoPrint = HowToPrintOrder.Manual;
 
     boolean m_bGroupCategory = false; //2.0.48
+
+    String m_strLogoFile = "";
+
     /**********************************************************************************************/
     /**
      *
@@ -1664,6 +1667,12 @@ print order data to  buffer, socket will send this buffer to serial port
 
         m_bGroupCategory = settings.getBoolean(KDSSettings.ID.Item_group_category);//2.0.48
 
+        s  = settings.getString(KDSSettings.ID.Printer_logo);
+        if (!s.equals(m_strLogoFile))
+        {
+            m_logoData.clear();
+        }
+
 
         updateCodepage(settings);
         if (m_bemaPrinter!= null) {
@@ -1858,8 +1867,8 @@ print order data to  buffer, socket will send this buffer to serial port
      */
     private void writeToPrinter()
     {
-        if (!isPrinterValid())
-            return;
+     //   if (!isPrinterValid()) //DEBUG
+     //       return;
 
         int ncount = m_printerData.size();
         //if (BuildVer.isDebug())
@@ -2663,11 +2672,49 @@ print order data to  buffer, socket will send this buffer to serial port
 
     }
 
+    KDSPrintImage m_logoData = new KDSPrintImage();
+    private boolean isLogoDataReady()
+    {
+        return (m_logoData.getDataSize() >0);
+    }
+
+    final int IMAGE_EACH_SIZE = 1024;
     /**
      * send real command here.
      */
     private void sendLogoDataToPrinter()
     {
+
+        if (!isLogoDataReady()) {
+            if (!m_strLogoFile.isEmpty())
+                m_logoData.printPicture(m_strLogoFile, -1, KDSPrintImage.Image_Align_Center);
+        }
+        if (isLogoDataReady())
+        {
+            int nlen = m_logoData.getDataSize();
+            byte[] buffer = new byte[nlen];
+            m_logoData.getData(buffer);
+            int nloop = nlen / IMAGE_EACH_SIZE;
+            if ((nlen % IMAGE_EACH_SIZE) >0)
+                nloop ++;
+            int offset = 0;
+            int nsize = 0;
+            //slow down printing speed
+            for (int i=0; i< nloop; i++) {
+                offset = i * IMAGE_EACH_SIZE;
+                nsize = IMAGE_EACH_SIZE;
+                if (offset + nsize > nlen)
+                    nsize = nlen - offset;
+                m_bemaPrinter.write(buffer, offset, nsize);
+                try {
+                    Thread.sleep(10);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
         Log.i(TAG, "Print logo command here");
     }
 }
