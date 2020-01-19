@@ -1867,8 +1867,8 @@ print order data to  buffer, socket will send this buffer to serial port
      */
     private void writeToPrinter()
     {
-     //   if (!isPrinterValid()) //DEBUG
-     //       return;
+        if (!isPrinterValid())
+            return;
 
         int ncount = m_printerData.size();
         //if (BuildVer.isDebug())
@@ -2678,7 +2678,7 @@ print order data to  buffer, socket will send this buffer to serial port
         return (m_logoData.getDataSize() >0);
     }
 
-    final int IMAGE_EACH_SIZE = 1024;
+    final int IMAGE_EACH_SIZE = 2048; //2k
     /**
      * send real command here.
      */
