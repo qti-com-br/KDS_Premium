@@ -58,11 +58,11 @@
     <string name="order_state_sold_out">Sold out</string>
     <string name="order_state_others">Others</string>
     <string name="info_first_message">Bematech KDS messages</string>
-    <string name="message">Message</string>
+    <!--<string name="message">Message</string>-->
     <!--<string name="str_message">Message</string>-->
     <!--<string name="receive_new_relations">It has received new relations setting.</string>-->
     <!--<string name="confirm_remove_relation_station">Do you want to remove station #</string>-->
-    <string name="confirm">Confirm</string>
+    <!--<string name="confirm">Confirm</string>-->
     <!--<string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>-->
     <!--<string name="confirm_broadcast_relations_changes">Changes have been made in stations relationship, do you want to save and update to all stations?</string>-->
     <string name="confirm_remove_relations_expo">Expeditor station # will be removed from Expo column, are you sure you want to change this?</string>
@@ -75,7 +75,7 @@
     <string name="confirm_import_db">Do you want to import settings from</string>
     <string name="data_backup_to">The data have been backup to</string>
     <!--<string name="update_to_all">Save &amp; Update to all</string>-->
-    <string name="delete">Delete</string>
+    <!--<string name="delete">Delete</string>-->
     <!--<string name="new_entry">New</string>-->
     <string name="save">Save</string>
     <!--<string name="show_id">Show Station ID</string>-->
@@ -106,7 +106,7 @@
         <!--<item>Order Queue Display</item>-->
     <!--</string-array>-->
 
-    <string name="error">Error</string>
+    <!--<string name="error">Error</string>-->
     <!--<string name="question">Question</string>-->
     <!--<string name="input">Input</string>-->
     <string name="input_station_id">This station doesn\'t have a ID yet, you will not be able to use it until you setup its ID!</string>
@@ -131,12 +131,12 @@
     <string name="settings">Settings</string>
     <string name="unbump_order_help">[0]--[9] single press to select order, double press to restore.\n# exit.</string>
     <string name="unpark_order_help">[0]--[9] single press to select order, double press to unpark.\n# exit.</string>
-    <string name="background">Background</string>
-    <string name="foreground">Foreground</string>
+    <!--<string name="background">Background</string>-->
+    <!--<string name="foreground">Foreground</string>-->
     <string name="find">Find</string>
     <!--<string name="str_find">Find</string>-->
     <!--<string name="pc_name">PC IP:</string>-->
-    <string name="password">Password</string>
+    <!--<string name="password">Password</string>-->
     <!--<string name="user_id">User ID:</string>-->
     <!--<string name="shared_folder">Shared folder:</string>-->
     <!--<string name="get">Get</string>-->
@@ -163,7 +163,7 @@
     <string name="must_select_item">Please select item</string>
 
     <string name="invalid_image_file">Invalid image file:</string>
-    <string name="downloading">Downloading ... </string>
+    <!--<string name="downloading">Downloading ... </string>-->
     <string name="unknown_file_format">Unknown file format: </string>
     <string name="no_more_unbump_order">No more unbumped orders</string>
     <string name="backup_of">Backup of</string>
@@ -174,21 +174,21 @@
     <!--<string name="please_input_slave_station">Please input station #\'s $ station</string>-->
     <!--<string name="please_input_primary_station">Please input station #\'s primary station</string>-->
 
-    <string name="check_new_version">Check new version</string>
-    <string name="current_version">Current version</string>
-    <string name="it_is_latest_version">It is latest version</string>
-    <string name="update_canceled">Updating canceled</string>
-    <string name="found_new_version">Found new version</string>
-    <string name="update_now">Upgrade now</string>
-    <string name="update_later">Later</string>
-    <string name="update">Upgrade</string>
-    <string name="checking">Checking ...</string>
-    <string name="update_error_download_error">Errors while downloading apk file</string>
-    <string name="update_error_download_apk_error">Can not download apk file</string>
-    <string name="update_error_apk_error">The apk file is wrong</string>
-    <string name="update_error_xml_error">Can not download updating file</string>
+    <!--<string name="check_new_version">Check new version</string>-->
+    <!--<string name="current_version">Current version</string>-->
+    <!--<string name="it_is_latest_version">It is latest version</string>-->
+    <!--<string name="update_canceled">Updating canceled</string>-->
+    <!--<string name="found_new_version">Found new version</string>-->
+    <!--<string name="update_now">Upgrade now</string>-->
+    <!--<string name="update_later">Later</string>-->
+    <!--<string name="update">Upgrade</string>-->
+    <!--<string name="checking">Checking ...</string>-->
+    <!--<string name="update_error_download_error">Errors while downloading apk file</string>-->
+    <!--<string name="update_error_download_apk_error">Can not download apk file</string>-->
+    <!--<string name="update_error_apk_error">The apk file is wrong</string>-->
+    <!--<string name="update_error_xml_error">Can not download updating file</string>-->
     <!--<string name="do_you_update">There is new version. Do you want to upgrade it now?</string>-->
-    <string name="invalid_update_file">Invalid update file</string>
+    <!--<string name="invalid_update_file">Invalid update file</string>-->
     <!--<string name="update_new_version">New version: #, recommended rate: $</string>-->
     <string name="input_ready_qty">Input ready qty</string>
 
@@ -238,7 +238,7 @@
     <string name="holder_id">Holder ID</string>
     <string name="table_name">Table Name</string>
 
-    <string name="size">Size</string>
+    <!--<string name="size">Size</string>-->
     <string name="station_number">Station number</string>
     <string name="ip_address">IP address</string>
     <string name="ip_port">IP port</string>
@@ -504,13 +504,13 @@
     <string name="id">ID</string>
     <string name="ip">IP</string>
     <string name="port">Port</string>
-    <string name="func">Function</string>
+    <!--<string name="func">Function</string>-->
     <string name="mirror">Mirror</string>
-    <string name="slave_func">Slave Function</string>
-    <string name="slave">Slave ID</string>
+    <!--<string name="slave_func">Slave Function</string>-->
+    <!--<string name="slave">Slave ID</string>-->
     <string name="backup">Backup</string>
-    <string name="status">Status</string>
-    <string name="expo">Expo</string>
+    <!--<string name="status">Status</string>-->
+    <!--<string name="expo">Expo</string>-->
 
     <string name="pref_kds_touch_font">Touch button font</string>
     <string name="pref_kds_touch_title">Touch buttons</string>
@@ -557,8 +557,8 @@
     <string name="pref_kds_order_premsg_bottom">Display order message under order.</string>
 
     <string name="item_font">Item font</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
+    <!--<string name="ok">OK</string>-->
+    <!--<string name="cancel">Cancel</string>-->
     <string name="focus_next">Move focus to next</string>
     <string name="focus_prev">Move focus to prev</string>
     <string name="focus_up">Move focus to up</string>
@@ -688,10 +688,10 @@
     <string name="restart_kds_as_language">A restart is needed in order to change language to #, do you want to change the language and restart now?</string>
     <string name="retrieve_remote_settings">Retrieve remote settings</string>
 
-    <string name="new_folder">New folder</string>
-    <string name="new_folder_name">New folder name</string>
-    <string name="fail_to_create_folder">Failed to create \"#\" folder</string>
-    <string name="up">Up</string>
+    <!--<string name="new_folder">New folder</string>-->
+    <!--<string name="new_folder_name">New folder name</string>-->
+    <!--<string name="fail_to_create_folder">Failed to create \"#\" folder</string>-->
+    <!--<string name="up">Up</string>-->
     <string name="select_order_status">Select [" # "] status.</string>
 
     <string name="manually">Manually</string>
@@ -726,19 +726,19 @@
 
     </string-array>
 
-    <string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>
-    <string name="can_not_remove_smb_file">Can not remove remote file #</string>
+    <!--<string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>-->
+    <!--<string name="can_not_remove_smb_file">Can not remove remote file #</string>-->
 
-    <string name="ignore_and_save">Ignore and save</string>
-    <string name="modify_setting">Modify setting</string>
-    <string name="cancel_setting"> Cancel setting</string>
+    <!--<string name="ignore_and_save">Ignore and save</string>-->
+    <!--<string name="modify_setting">Modify setting</string>-->
+    <!--<string name="cancel_setting"> Cancel setting</string>-->
 
-    <string name="smb_folder_lost"> Can not access remote folder #</string>
-    <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
-    <string name="folder_not_existed">The folder is not existed.</string>
+    <!--<string name="smb_folder_lost"> Can not access remote folder #</string>-->
+    <!--<string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>-->
+    <!--<string name="folder_not_existed">The folder is not existed.</string>-->
 
-    <string name="english">English</string>
-    <string name="chinese">Chinese</string>
+    <!--<string name="english">English</string>-->
+    <!--<string name="chinese">Chinese</string>-->
 
     <string name="data_restored">The data have been restored from #</string>
 
@@ -763,53 +763,53 @@
     <string name="db_will_clear">Database will be cleared!</string>
     <string name="data_will_lost">Data may be lost!</string>
 
-    <string name="open_file">Open file</string>
-    <string name="no_rights_to_access">No rights to access!</string>
+    <!--<string name="open_file">Open file</string>-->
+    <!--<string name="no_rights_to_access">No rights to access!</string>-->
     <string name="browse">Browse</string>
 
     <string name="data_restore_failed">Data restoring from # failed</string>
     <string name="load">Load</string>
     <string name="load_old_db_or_not">There are old database and settings, do you want to load them?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <!--<string name="yes">Yes</string>-->
+    <!--<string name="no">No</string>-->
 
-    <string name="time">Time</string>
-    <string name="statistic_report">Statistic report</string>
-    <string name="daily_report">Daily report</string>
-    <string name="weekly_report">Weekly report</string>
-    <string name="monthly_report">Monthly report</string>
-    <string name="one_time_report">One Time report</string>
-    <string name="day_of_week">Day of Week</string>
-    <string name="day_of_month">Day of Month</string>
-    <string name="total">Total</string>
+    <!--<string name="time">Time</string>-->
+    <!--<string name="statistic_report">Statistic report</string>-->
+    <!--<string name="daily_report">Daily report</string>-->
+    <!--<string name="weekly_report">Weekly report</string>-->
+    <!--<string name="monthly_report">Monthly report</string>-->
+    <!--<string name="one_time_report">One Time report</string>-->
+    <!--<string name="day_of_week">Day of Week</string>-->
+    <!--<string name="day_of_month">Day of Month</string>-->
+    <!--<string name="total">Total</string>-->
 
-    <string name="mins">mins</string>
-    <string name="hour_1">1 hr</string>
-    <string name="hours_8">8 hrs</string>
-    <string name="hours_12">12 hrs</string>
-    <string name="mins_15">15 mins</string>
-    <string name="mins_30">30 mins</string>
+    <!--<string name="mins">mins</string>-->
+    <!--<string name="hour_1">1 hr</string>-->
+    <!--<string name="hours_8">8 hrs</string>-->
+    <!--<string name="hours_12">12 hrs</string>-->
+    <!--<string name="mins_15">15 mins</string>-->
+    <!--<string name="mins_30">30 mins</string>-->
 
-    <string name="jan">Jan.</string>
-    <string name="feb">Feb.</string>
-    <string name="mar">Mar.</string>
-    <string name="apr">Apr.</string>
-    <string name="may">May</string>
-    <string name="jun">Jun.</string>
-    <string name="jul">Jul.</string>
-    <string name="aug">Aug.</string>
-    <string name="sep">Sep.</string>
-    <string name="oct">Oct.</string>
-    <string name="nov">Nov.</string>
-    <string name="dec">Dec.</string>
+    <!--<string name="jan">Jan.</string>-->
+    <!--<string name="feb">Feb.</string>-->
+    <!--<string name="mar">Mar.</string>-->
+    <!--<string name="apr">Apr.</string>-->
+    <!--<string name="may">May</string>-->
+    <!--<string name="jun">Jun.</string>-->
+    <!--<string name="jul">Jul.</string>-->
+    <!--<string name="aug">Aug.</string>-->
+    <!--<string name="sep">Sep.</string>-->
+    <!--<string name="oct">Oct.</string>-->
+    <!--<string name="nov">Nov.</string>-->
+    <!--<string name="dec">Dec.</string>-->
 
-    <string name="sunday">Sun</string>
-    <string name="monday">Mon</string>
-    <string name="tuesday">Tue</string>
-    <string name="wednesday">Wed</string>
-    <string name="thursday">Thu</string>
-    <string name="friday">Fri</string>
-    <string name="saturday">Sat</string>
+    <!--<string name="sunday">Sun</string>-->
+    <!--<string name="monday">Mon</string>-->
+    <!--<string name="tuesday">Tue</string>-->
+    <!--<string name="wednesday">Wed</string>-->
+    <!--<string name="thursday">Thu</string>-->
+    <!--<string name="friday">Fri</string>-->
+    <!--<string name="saturday">Sat</string>-->
 
     <string name="queue_expo_title">Queue-Expo Station</string>
     <string name="qexpo_bumpbar_pickup">Ready for pickup key</string>
@@ -956,8 +956,8 @@
     <string name="enable_tab_display">Enable tab display</string>
     <string name="enabled_disply_mode">Enabled display mode</string>
     <string name="down">Down</string>
-    <string name="empty">Empty</string>
-    <string name="find_folders">Find folders</string>
+    <!--<string name="empty">Empty</string>-->
+    <!--<string name="find_folders">Find folders</string>-->
     <string name="pref_title_database_keep_days">Number of days to keep data</string>
     <string name="move_to_adjust_column_size">Move to adjust column size</string>
     <string name="click_anywhere_to_add_new_column">Click anywhere to add new column</string>
@@ -1060,7 +1060,7 @@
 
     </string-array>
 
-    <string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>
+    <!--<string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>-->
 
     <string name="file_name">File name:</string>
     <string name="confirm_bump_unpaid">Bump off unpaid order with confirmation</string>
@@ -1082,37 +1082,37 @@
     <string name="title_activity_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">User name</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Login</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This user name is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">Username required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <!--<string name="prompt_email">User name</string>-->
+    <!--<string name="prompt_password">Password</string>-->
+    <!--<string name="action_sign_in">Login</string>-->
+    <!--<string name="action_sign_in_short">Sign in</string>-->
+    <!--<string name="error_invalid_email">This user name is invalid</string>-->
+    <!--<string name="error_invalid_password">This password is too short</string>-->
+    <!--<string name="error_incorrect_password">This password is incorrect</string>-->
+    <!--<string name="error_field_required">Username required</string>-->
+    <!--<string name="permission_rationale">"Contacts permissions are needed for providing email-->
+        <!--completions."-->
+    <!--</string>-->
     <string name="enable_order_ack">Enable order acknowledgement</string>
 
-    <string name="username_field_required">Username required</string>
-    <string name="password_field_required">Password required</string>
-    <string name="no_license_available">There is no license available</string>
-    <string name="license_deactivated">This KDS Stations’s license is deactivated.</string>
-    <string name="updating_license_data">Updating license data ...</string>
-    <string name="retrieve_licenses_data">Retrieve licenses data ...</string>
-    <string name="retrieve_store_settings">Retrieve store settings ...</string>
-    <string name="logining">Login ...</string>
-    <string name="str_ok">OK</string>
-    <string name="activation">Activation</string>
-    <string name="str_cancel">Cancel</string>
-    <string name="no_selected_license_to_replace">No selected license to replace</string>
-    <string name="item_group_by_category">Group items by its category</string>
-    <string name="inactive">(Inactive)</string>
+    <!--<string name="username_field_required">Username required</string>-->
+    <!--<string name="password_field_required">Password required</string>-->
+    <!--<string name="no_license_available">There is no license available</string>-->
+    <!--<string name="license_deactivated">This KDS Stations’s license is deactivated.</string>-->
+    <!--<string name="updating_license_data">Updating license data ...</string>-->
+    <!--<string name="retrieve_licenses_data">Retrieve licenses data ...</string>-->
+    <!--<string name="retrieve_store_settings">Retrieve store settings ...</string>-->
+    <!--<string name="logining">Login ...</string>-->
+    <!--<string name="str_ok">OK</string>-->
+    <!--<string name="activation">Activation</string>-->
+    <!--<string name="str_cancel">Cancel</string>-->
+    <!--<string name="no_selected_license_to_replace">No selected license to replace</string>-->
+    <!--<string name="item_group_by_category">Group items by its category</string>-->
+    <!--<string name="inactive">(Inactive)</string>-->
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
     <!--<string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>-->
-    <string name="cannot_sync_license_data">Can not sync data with server.</string>
-    <string name="cannot_replace_license_data">Can not replace data with server.</string>
+    <!--<string name="cannot_sync_license_data">Can not sync data with server.</string>-->
+    <!--<string name="cannot_replace_license_data">Can not replace data with server.</string>-->
     <!--<string name="my_serial_number">My serial number:</string>-->
     <string name="sms_feature_enabled">SMS feature enabled</string>
     <!--<string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>-->

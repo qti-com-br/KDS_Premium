@@ -247,6 +247,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         m_activation.setEventsReceiver(this);
+        Activation.setGlobalEventsReceiver(this); //for clear db after logout,KW-155
 
         if (!isMacMatch2()) {
             showErrorMac();
@@ -1062,7 +1063,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onForceClearDataBeforeLogin()
-    {
+    { //kw-155
+        this.getKDSRouter().clearAll();
+        this.getKDSRouter().getRouterDB().clear();
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        this.getSettings().setToDefault();
+
+        onSharedPreferenceChanged(pre, "");
 
     }
 

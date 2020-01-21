@@ -194,7 +194,7 @@ public class WeekEvtHeader extends View {
         arNames.add(context.getString(R.string.mon));
         arNames.add(context.getString(R.string.tue));
         arNames.add(context.getString(R.string.wed));
-        arNames.add(context.getString(R.string.thu));
+        arNames.add(context.getString(R.string.thursday));
         arNames.add(context.getString(R.string.fri));
         arNames.add(context.getString(R.string.sat));
         return true;

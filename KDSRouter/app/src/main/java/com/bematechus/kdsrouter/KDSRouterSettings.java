@@ -620,6 +620,22 @@ public class KDSRouterSettings extends SettingsBase {
 
     }
 
+    /**
+     * KW-155
+     *
+     */
+    public void setToDefault()
+    {
+        init_pref_map();
+        setDefaultValues(KDSApplication.getContext());
+
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences.Editor editor = pre.edit();
+        editor.clear();
+        editor.commit();
+
+
+    }
 //    static Language loadLanguageOption(Context c)
 //    {
 //        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(c);

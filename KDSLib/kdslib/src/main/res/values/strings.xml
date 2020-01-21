@@ -1,4 +1,5 @@
 <resources>
+    <string name="main_title">KitchenGo Premium</string>
     <string name="app_name">KDSLib</string>
     <string name="message">Message</string>
     <string name="empty">Empty</string>
@@ -9,7 +10,7 @@
     <string name="smb_folder_lost"> Can not access remote folder #</string>
     <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
     <string name="new_folder">New folder</string>
-    <string name="new_folder_name">New folder name</string>
+    <!--<string name="new_folder_name">New folder name</string>-->
     <string name="fail_to_create_folder">Failed to create \"#\" folder</string>
     <string name="up">Up</string>
     <string name="find_folders">Find folders</string>
@@ -83,7 +84,7 @@
     <string name="background">Background</string>
     <string name="foreground">Foreground</string>
     <string name="size">Size</string>
-    <string name="main_title">KitchenGo Premium KDS</string>
+
 
 
     <!-- Strings related to login -->
