@@ -11,8 +11,8 @@
 
     <string name="menu_activity_cleardb">清除数据库</string>
     <string name="menu_activity_showip">显示我的IP地址</string>
-    <string name="retrieve_config_waiting_data">等待数据 ...</string>
-    <string name="retrieve_config_done">完成! 请关闭设置对话框</string>
+    <!--<string name="retrieve_config_waiting_data">等待数据 ...</string>-->
+    <!--<string name="retrieve_config_done">完成! 请关闭设置对话框</string>-->
     <string name="menu_activity_touchpad">显示或隐藏触摸按钮</string>
     <string name="menu_activity_export">导出设置</string>
     <string name="menu_activity_import">导入设置</string>
@@ -55,7 +55,7 @@
     <string name="order_state_delivering">发到前台</string>
     <string name="order_state_sold_out">售出</string>
     <string name="order_state_others">其它</string>
-    <string name="info_first_message">Bematech KDS 消息</string>
+    <string name="info_first_message">KDS 消息</string>
     <!--<string name="message">消息</string>-->
     <!--<string name="str_message">消息</string>-->
     <!--<string name="receive_new_relations">KDS已收到最新的终端关系设置</string>-->
@@ -205,7 +205,7 @@
 
     <string name="tracker_caption_order_name">订单号</string>
     <string name="tracker_caption_table_name">位置</string>
-    <string name="tracker_only_one_allowed">只允许一个跟踪终端显示</string>
+    <!--<string name="tracker_only_one_allowed">只允许一个跟踪终端显示</string>-->
     <string name="confirm_reset_tt_authen">是否重置保留的授权信息?</string>
     <string name="reset_authen">重置授权</string>
 
@@ -519,8 +519,8 @@
     <string name="pref_kds_touch_training_enabled">启用【培训】触控按钮</string>
     <string name="pref_kds_touch_page_enabled">启用【呼叫】触控按钮</string>
 
-    <string name="pref_kds_screen_title_font">KDS 终端 name font</string>
-    <string name="pref_kds_screen_show_time">Show date &amp; time in title in KDS 终端</string>
+    <string name="pref_kds_screen_title_font">KDS终端标题字体</string>
+    <string name="pref_kds_screen_show_time">在终端标头中显示日期时间</string>
 
     <string name="pref_kds_bump_confirm_enabled">删除时显示确认对话框</string>
 
@@ -808,56 +808,56 @@
     <!--<string name="saturday">Sat</string>-->
 
     <string name="queue_expo_title">排队-总台 终端</string>
-    <string name="qexpo_bumpbar_pickup">Ready for pickup key</string>
-    <string name="qexpo_bumpbar_unpickup">Unready for pickup key</string>
+    <string name="qexpo_bumpbar_pickup">准备好提取键</string>
+    <string name="qexpo_bumpbar_unpickup">未准备好提取键</string>
     <string name="pref_kds_qexpo_title">排队-总台</string>
 
 
 
-    <string name="pref_tracker_id_from_userinfo_or_guesttable">The table-tracker number is from \"UserInfo\" or \"GuestTable\" tag</string>
+    <string name="pref_tracker_id_from_userinfo_or_guesttable">TT 号来自 \"UserInfo\" 或 \"GuestTable\" 标签</string>
     <string-array name="pref_trackerpager_userinfo_guesttable_titles">
-        <item>None</item>
+        <item>无</item>
         <item>UserInfo</item>
         <item>GuestTable</item>
     </string-array>
 
-    <string name="pref_pager_id_from_userinfo_guesttable">The pager number is from \"UserInfo\" or \"GuestTable\" tag</string>
-    <string name="tracker_reverse_color_ttid_empty">Reverse color if tracker-id is empty</string>
+    <string name="pref_pager_id_from_userinfo_guesttable">呼叫号来自 \"UserInfo\" 或 \"GuestTable\" 标签</string>
+    <string name="tracker_reverse_color_ttid_empty">如跟踪ID未分配， 反转颜色显示</string>
 
-    <string name="pref_tracker_show_assigned_tracker_id">Show assigned tracker ID</string>
-    <string name="pref_tracker_id_font">Tracker ID font</string>
-    <string name="pref_tracker_auto_assign_id">启用 Auto assign tracker ID</string>
-    <string name="tt_extra_id_location">Location</string>
-    <string name="tracker_can_not_find">Can not find TT</string>
-    <string name="tt_discorvery_failed">Stop Discovery Failed</string>
-    <string name="tt_start_discovery_failed">Start Discovery Failed</string>
-    <string name="tt_service_lost">Service Lost</string>
-    <string name="tt_gateway_find">TT gateway Found</string>
-    <string name="tt_discovery_stop">Discovery Stopped</string>
-    <string name="tt_discovery_started">Discovery Started</string>
-    <string name="tt_need_reset">Connection to gateway is not made, press button in gateway to connect.</string>
+    <string name="pref_tracker_show_assigned_tracker_id">显示分配的跟踪ID</string>
+    <string name="pref_tracker_id_font">跟踪ID字体</string>
+    <string name="pref_tracker_auto_assign_id">启用自动分配跟踪ID</string>
+    <string name="tt_extra_id_location">位置</string>
+    <string name="tracker_can_not_find">找不到TT</string>
+    <string name="tt_discorvery_failed">停止查找失败</string>
+    <string name="tt_start_discovery_failed">启动查找失败</string>
+    <string name="tt_service_lost">服务丢失</string>
+    <string name="tt_gateway_find">未发现TT</string>
+    <string name="tt_discovery_stop">查找已停止</string>
+    <string name="tt_discovery_started">查找已开始</string>
+    <string name="tt_need_reset">未连接TT网关， 按网关上的按钮来建立连接.</string>
 
-    <string name="pref_kds_general_users_orientation">Screens orientation</string>
+    <string name="pref_kds_general_users_orientation">屏幕方向</string>
     <string-array name="pref_kds_general_users_orientation_titles">
-        <item>Left and right</item>
-        <item>Up and down</item>
+        <item>左右</item>
+        <item>上下</item>
     </string-array>
 
-    <string name="pref_kds_general_title">Customize KDS 终端 name</string>
-    <string name="pref_kds_general_users_ratio">Screen ratio</string>
-    <string name="pref_kds_general_subtitle_font">Screen subtitle font</string>
-    <string name="pref_kds_general_subtitle_b_text">Screen 0 title</string>
-    <string name="pref_kds_general_subtitle_a_text">Screen 0 title</string>
-    <string name="screen_a">Screen 0</string>
-    <string name="screen_b">Screen 1</string>
-    <string name="summary_for">统计 for</string>
+    <string name="pref_kds_general_title">自定义KDS终端标头</string>
+    <string name="pref_kds_general_users_ratio">屏幕比例</string>
+    <string name="pref_kds_general_subtitle_font">屏幕标头字体</string>
+    <string name="pref_kds_general_subtitle_b_text">屏幕 1 标头</string>
+    <string name="pref_kds_general_subtitle_a_text">屏幕 0 标头</string>
+    <string name="screen_a">屏幕 0</string>
+    <string name="screen_b">屏幕 1</string>
+    <string name="summary_for">只统计</string>
     <string name="summary">统计</string>
 
-    <string name="pref_kds_screenb_orders_display">Screen 1 display</string>
-    <string name="pref_queue_simple_combine_status1">Combine 状态 1 to</string>
-    <string name="pref_queue_simple_combine_status2">Combine 状态 2 to</string>
-    <string name="pref_queue_simple_combine_status3">Combine 状态 3 to</string>
-    <string name="pref_queue_simple_combine_status4">Combine 状态 4 to</string>
+    <string name="pref_kds_screenb_orders_display">屏幕 1 显示模式</string>
+    <string name="pref_queue_simple_combine_status1">合并状态 1 到</string>
+    <string name="pref_queue_simple_combine_status2">合并 状态 2 到</string>
+    <string name="pref_queue_simple_combine_status3">合并 状态 3 到</string>
+    <string name="pref_queue_simple_combine_status4">合并 状态 4 到</string>
     <string-array name="pref_queue_combine_status1_titles">
         <item>状态 2</item>
         <item>状态 3</item>
@@ -879,33 +879,33 @@
         <item>状态 3</item>
     </string-array>
 
-    <string name="pref_queue_id_mode_line_bg">ID 模式 break line background color</string>
-    <string name="line_items_display">Line items display</string>
-    <string name="lineitems_caption_font">Line items diaply caption font</string>
-    <string name="col_content">列 count</string>
-    <string name="col_0_text">列 0 text</string>
-    <string name="col_0_size">列 0 size</string>
-    <string name="col_0_content">列 0 content</string>
+    <string name="pref_queue_id_mode_line_bg">ID模式分隔线颜色</string>
+    <string name="line_items_display">行显示模式</string>
+    <string name="lineitems_caption_font">行显示模式标头字体</string>
+    <string name="col_content">列数</string>
+    <string name="col_0_text">列 0 文本</string>
+    <string name="col_0_size">列 0 大小</string>
+    <string name="col_0_content">列 0 内容</string>
     <string name="str_id">ID</string>
-    <string name="lineitems_col1_text">列 1 text</string>
+    <string name="lineitems_col1_text">列 1 文本</string>
     <string name="description">描述</string>
-    <string name="lineitems_col1_size">列 1 size</string>
-    <string name="lineitems_col1_content">列 1 content</string>
-    <string name="lineitems_col2_text">列 2 text</string>
-    <string name="lineitems_col2_size">列 2 size</string>
-    <string name="lineitems_col2_content">列 2 content</string>
-    <string name="lineitems_col3_text">列 3 text</string>
-    <string name="lineitems_col3_size">列 3 size</string>
-    <string name="lineitems_col3_content">列 3 content</string>
-    <string name="lineitems_col4_text">列 4 text</string>
-    <string name="lineitems_col4_size">列 4 size</string>
-    <string name="lineitems_col4_content">列 4 content</string>
-    <string name="lineitems_col5_text">列 5 text</string>
-    <string name="lineitems_col5_size">列 5 size</string>
-    <string name="lineitems_col5_content">列 5 content</string>
-    <string name="condiments">Condiments</string>
-    <string name="timer">Timer</string>
-    <string name="lineitems_caption_text">line items display caption text</string>
+    <string name="lineitems_col1_size">列 1 大小</string>
+    <string name="lineitems_col1_content">列 1 内容</string>
+    <string name="lineitems_col2_text">列 2 文本</string>
+    <string name="lineitems_col2_size">列 2 大小</string>
+    <string name="lineitems_col2_content">列 2 内容</string>
+    <string name="lineitems_col3_text">列 3 文本</string>
+    <string name="lineitems_col3_size">列 3 大小</string>
+    <string name="lineitems_col3_content">列 3 内容</string>
+    <string name="lineitems_col4_text">列 4 文本</string>
+    <string name="lineitems_col4_size">列 4 大小</string>
+    <string name="lineitems_col4_content">列 4 内容</string>
+    <string name="lineitems_col5_text">列 5 文本</string>
+    <string name="lineitems_col5_size">列 5 大小</string>
+    <string name="lineitems_col5_content">列 5 内容</string>
+    <string name="condiments">调料</string>
+    <string name="timer">时长</string>
+    <string name="lineitems_caption_text">行显示模式标头文本</string>
 
     <string-array name="pref_kds_lineitems_cols_count_titles">
         <item>4</item>
@@ -918,85 +918,85 @@
         <item>订单 状态</item>
         <item>订单 type</item>
         <item>订单 table</item>
-        <item>Item 描述</item>
-        <item>Condiments</item>
-        <item>Quantity</item>
-        <item>Waiting time</item>
-        <item>Modifiers</item>
-        <item>Modifiers and condiments</item>
+        <item>明细描述</item>
+        <item>调料</item>
+        <item>数量</item>
+        <item>等待时间</item>
+        <item>改动</item>
+        <item>调料和改动</item>
     </string-array>
-    <string name="no_more_unbump_item">No more unbumped items</string>
-    <string name="advanced_summary">Advanced 统计</string>
-    <string name="input_item_description">Input item 描述</string>
-    <string name="enable_advanced_summary">启用 advanced 统计</string>
-    <string name="enable_smart_items_summary_format">启用 smart items 统计 format</string>
-    <string name="add_item">Add item</string>
-    <string name="browse_in_item_database">Browse in item 数据库</string>
-    <string name="sum_bgfg_color">统计 background/foreground color</string>
-    <string name="screen_default_font">Screen 默认 font</string>
-    <string name="rows">Rows:</string>
-    <string name="cols">Cols</string>
-    <string name="summary_items">统计 items</string>
-    <string name="move_up">Move up</string>
-    <string name="move_down">Move down</string>
-    <string name="summary_panel_always_visible">统计 panel always visible</string>
-    <string name="warning">Warning</string>
-    <string name="no_data_in_db">No data in 数据库.</string>
-    <string name="tab_display">Tab display</string>
-    <string name="input_destination">Input destination</string>
-    <string name="tab_display_next">Tab display next</string>
-    <string name="enable_tab_display">启用 tab display</string>
-    <string name="enabled_disply_mode">启用 display 模式</string>
-    <string name="down">Down</string>
+    <string name="no_more_unbump_item">没有更多删除的明细</string>
+    <string name="advanced_summary">高级统计</string>
+    <string name="input_item_description">输入明细描述</string>
+    <string name="enable_advanced_summary">启用高级统计</string>
+    <string name="enable_smart_items_summary_format">启用聪明明细统计数据格式</string>
+    <string name="add_item">添加明细</string>
+    <string name="browse_in_item_database">在数据库中浏览明细</string>
+    <string name="sum_bgfg_color">统计数据背景、前景颜色</string>
+    <string name="screen_default_font">屏幕默认字体</string>
+    <string name="rows">行数</string>
+    <string name="cols">列数</string>
+    <string name="summary_items">明细统计</string>
+    <string name="move_up">上移</string>
+    <string name="move_down">下移</string>
+    <string name="summary_panel_always_visible">总是显示统计板</string>
+    <string name="warning">警告</string>
+    <string name="no_data_in_db">数据库中没有数据.</string>
+    <string name="tab_display">卡片显示</string>
+    <string name="input_destination">输入目的</string>
+    <string name="tab_display_next">下一卡片显示</string>
+    <string name="enable_tab_display">启用卡片显示模式</string>
+    <string name="enabled_disply_mode">启用正常显示模式</string>
+    <string name="down">向下</string>
     <!--<string name="empty">Empty</string>-->
     <!--<string name="find_folders">Find folders</string>-->
-    <string name="pref_title_database_keep_days">Number of days to keep data</string>
-    <string name="move_to_adjust_column_size">Move to adjust 列 size</string>
-    <string name="click_anywhere_to_add_new_column">Click anywhere to add new 列</string>
-    <string name="click_and_drag_the_arrow_up_down_to_remove_column">Click and drag the arrow up/down to remove 列</string>
-    <string name="icon_display">Icon Display</string>
-    <string name="icon_display_enabled">Icon display enabled</string>
-    <string name="use_local_folder_to_load_icon">Using local folder to load icon(png/bmp/jpg)</string>
-    <string name="setup_local_icon_folder">Setup local icon folder</string>
-    <string name="item_mark_setting">Item mark setting</string>
-    <string name="icon_folder_name_rule">Please use number.extension to name img file in select folder. e.g: 1.png, 2.jpg,5.bmp</string>
-    <string name="auto_bump_park_order_mins">Auto bump parked 订单 minutes</string>
-    <string name="void_item_showing">Void item showing</string>
-    <string name="qty_changed">Qty changed</string>
-    <string name="enable_order_status_notify">启用 订单 状态 changed notification</string>
-    <string name="enable_item_qty_notify">启用 item quantity changed notifcation</string>
+    <string name="pref_title_database_keep_days">保存数据天数</string>
+    <string name="move_to_adjust_column_size">滑动改变列大小</string>
+    <string name="click_anywhere_to_add_new_column">点击任何位置添加新列</string>
+    <string name="click_and_drag_the_arrow_up_down_to_remove_column">向上/下拖拽箭头删除列</string>
+    <string name="icon_display">图标显示</string>
+    <string name="icon_display_enabled">启用图标显示</string>
+    <string name="use_local_folder_to_load_icon">从本地文件夹中导入图标(png/bmp/jpg)</string>
+    <string name="setup_local_icon_folder">设置本地图标文件夹</string>
+    <string name="item_mark_setting">明细标记设置</string>
+    <string name="icon_folder_name_rule">请用 数字.扩展名 的格式命名选定文件夹中的图形文件.例如：1.png, 2.jpg,5.bmp</string>
+    <string name="auto_bump_park_order_mins">自动删除保留订单时间（分钟）</string>
+    <string name="void_item_showing">移除数量显示</string>
+    <string name="qty_changed">改变的数量</string>
+    <string name="enable_order_status_notify">启用订单状态改变通知</string>
+    <string name="enable_item_qty_notify">启用明细数量改变通知</string>
     <string name="notification">通知</string>
-    <string name="tab_display_text">Tab display text</string>
+    <string name="tab_display_text">卡式显示文本</string>
     <string name="remote_support">远程支持</string>
-    <string name="sorted_orders">Sorted orders</string>
-    <string name="prep_mode_enabled">Smart 订单 advance enabled</string>
-    <string name="smart_order_mode">Smart 订单 模式</string>
-    <string name="log_mode">Log 模式</string>
-    <string name="log_reserved_days">Reserve log file for X days</string>
-    <string name="log">Log</string>
-    <string name="input_condiment_description">Input condiment</string>
-    <string name="text_wrap">Text wrap</string>
-    <string name="focus_blink">Selected 订单 blinking</string>
-    <string name="enable_line_items_display_mode">启用 line items display 模式</string>
-    <string name="sorting_in_smart">Sorting in line Item display with smart 订单 启用</string>
-    <string name="smart_timer_from_item_visible">订单 timer start from item visible</string>
-    <string name="each_condiment_go_to_next_line">Each condiment/modifier go to next line</string>
-    <string name="show_last_n_of_order_id">Show last N digit of 订单 ID</string>
+    <string name="sorted_orders">订单排序</string>
+    <string name="prep_mode_enabled">启用高级聪明订单</string>
+    <string name="smart_order_mode">聪明订单模式</string>
+    <string name="log_mode">日志模式</string>
+    <string name="log_reserved_days">保存日志文件 X 天</string>
+    <string name="log">日志</string>
+    <string name="input_condiment_description">输入调料</string>
+    <string name="text_wrap">文本换行</string>
+    <string name="focus_blink">闪烁选定的订单</string>
+    <string name="enable_line_items_display_mode">启用行明细显示模式</string>
+    <string name="sorting_in_smart">启用在行显示中聪明订单明细的排序</string>
+    <string name="smart_timer_from_item_visible">从明细可视时开始计算订单时间</string>
+    <string name="each_condiment_go_to_next_line">每个调料或改动显示在下一行</string>
+    <string name="show_last_n_of_order_id">显示订单号的最后 N 个数字</string>
 
     <string-array name="pref_kds_item_mark_method">
-        <item>Internal icon</item>
-        <item>Char</item>
-        <item>Color</item>
+        <item>内部图</item>
+        <item>字符</item>
+        <item>颜色</item>
     </string-array>
 
     <string-array name="pref_kds_void_item_showing_method_titles">
-        <item>Directly quantity Change</item>
-        <item>Insert VOID quantity line below item</item>
+        <item>直接改变数量</item>
+        <item>在明细下加入移除数量行</item>
     </string-array>
 
     <string-array name="pref_kds_void_qty_mark_titles">
-        <item>Brackets ()</item>
-        <item>Negtive sign -</item>
+        <item>括号 ()</item>
+        <item>负号 -</item>
     </string-array>
     <string-array name="pref_kds_smartorder_mode_titles">
         <item>停用</item>
@@ -1024,22 +1024,22 @@
 
     </string-array>
 
-    <string name="alert_disable_double_bump_queue">If you disable this option in Queue 终端, a Bumpbar is required to bump the 订单 off Queue display.</string>
+    <string name="alert_disable_double_bump_queue">如在排队终端停用此功能，排队终端需要用Bumpbar才能删除订单</string>
     <string name="pwd_do_not_match">密码不正确</string>
-    <string name="nand_lost">Cannot access NAND FLASH to save/load data, go to System Setting – Storage – NAND FLASH and click “Mount SD card” to mount the NAND FLASH.</string>
-    <string name="move_finished_order_to_front">Move finished orders to front of queue</string>
+    <string name="nand_lost">找不到NAND FLASH， 去 系统设置 – 存储 – NAND FLASH， 点击 “Mount SD card”</string>
+    <string name="move_finished_order_to_front">完成的订单排在前面</string>
     <string name="sd_disk_full">数据库或内存卡已满</string>
 
-    <string name="pref_kds_item_partial_bumped_mark_in_expo">If item goes to multiple stations and partial stations bump this item, Expo shows partial finish mark</string>
+    <string name="pref_kds_item_partial_bumped_mark_in_expo">如明细发送到多个终端， 并且部分终端删除了此明细， 总台标记此明细为部分完成</string>
     <string name="expo_confirmation_bump">总台删除时需要确认</string>
-    <string name="expo_cannot_bump_unless_prep_bump_all">Expo cannot bump the 订单 unless all its prep 终端 bump the items</string>
+    <string name="expo_cannot_bump_unless_prep_bump_all">终端删除全部明细后，总台才能删除订单</string>
     <string name="pref_kds_touch_prev_page_enabled">启用 [上一页] 按钮</string>
     <string name="pref_kds_touch_next_page_enabled">启用 [下一页] 按钮</string>
 
     <string name="touchpad_next_page">下一页</string>
     <string name="touchpad_prev_page">上一页</string>
-    <string name="avg_prep_time">平均G:</string>
-    <string name="real_time_period">Real time report period (mins)</string>
+    <string name="avg_prep_time">平均:</string>
+    <string name="real_time_period">实时报告时间间距(分钟)</string>
     <string name="title">标题</string>
     <string name="screen_title">KDS 终端</string>
     <string name="show_avg_prep_time">显示平均完成时间</string>
@@ -1116,11 +1116,14 @@
     <string name="transfer_by_double_disable_bump">如此功能启用， 双击完结将停止.</string>
     <string name="suspend_bump_while_queue_recover">我的排队终端正在接收数据， 完结订单暂停</string>
     <string name="offline_warning">离线，请检查!</string>
-    <string name="for_lineitems_display">只有在line items display下可用.</string>
+    <string name="for_lineitems_display">只有在行明细显示下可用.</string>
     <string name="log_orders">记录收到的订单文件</string>
     <string name="lineitems_line_height">行高</string>
     <string name="build_relationship_first">请先设置终端关系表.</string>
     <string name="logo_file">日志文件</string>
+    <string name="internal_icon">预制图标</string>
+    <string name="character">字符</string>
+    <string name="color">颜色</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>停用</item>

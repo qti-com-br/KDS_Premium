@@ -157,7 +157,7 @@
     <!--</string-array>-->
 
     <!--<string name="slave_func">副终端功能</string>-->
-    <string name="slave">副终端ID</string>
+    <!--<string name="slave">副终端ID</string>-->
     <!--<string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>-->
 
     <!--<string name="check_new_version">检查新版本</string>-->

@@ -193,7 +193,7 @@
     <string name="func">功能</string>
     <string name="expo">总台</string>
     <string name="slave_func">副终端功能</string>
-    <string name="slave">副终端ID</string>
+    <!--<string name="slave">副终端ID</string>-->
     <string name="status">状态</string>
     <string name="do_not_check_stations_relationship_in_this_station">不检查此终端的关系数据</string>
     <string name="update_to_all">保存和更新所有</string>
@@ -208,4 +208,5 @@
     <string name="shared_folder">共享目录</string>
     <string name="str_find">查找</string>
     <string name="password_incorrect">无效的密码</string>
+    <string name="slave">副终端</string>
 </resources>

@@ -184,9 +184,9 @@ public class KDSUIDlgItemMark extends KDSUIDialogBase implements KDSUIBGFGPicker
     {
         ArrayList<String> ar = new ArrayList<>();
         //No manually.
-        ar.add("Internal icon");//context.getString(R.string.sort_time_ascend));
-        ar.add("Character");//context.getString(R.string.sort_time_descen));
-        ar.add("Color");//context.getString(R.string.sort_name_ascend));
+        ar.add(context.getString(R.string.internal_icon));//context.getString(R.string.sort_time_ascend));
+        ar.add(context.getString(R.string.character));//context.getString(R.string.sort_time_descen));
+        ar.add(context.getString(R.string.color));//context.getString(R.string.sort_name_ascend));
 
 
         return ar;
