@@ -201,20 +201,22 @@ public class RouterAck {
 
     public ArrayList<String> getSendToStations()
     {
-        ArrayList<String> ar = new ArrayList<>();
+        return getSendToStations(m_arTargetStations);
 
-        for (int i=0; i< m_arTargetStations.size(); i++)
-        {
-            KDSToStation station = m_arTargetStations.get(i);
-            String primary = station.getPrimaryStation();
-            String slave = station.getSlaveStation();
-            if (!isExistedInArray(ar, primary))
-                ar.add(primary);
-            if (!isExistedInArray(ar, slave))
-                ar.add(slave);
-
-        }
-        return ar;
+//        ArrayList<String> ar = new ArrayList<>();
+//
+//        for (int i=0; i< m_arTargetStations.size(); i++)
+//        {
+//            KDSToStation station = m_arTargetStations.get(i);
+//            String primary = station.getPrimaryStation();
+//            String slave = station.getSlaveStation();
+//            if (!isExistedInArray(ar, primary))
+//                ar.add(primary);
+//            if (!isExistedInArray(ar, slave))
+//                ar.add(slave);
+//
+//        }
+//        return ar;
     }
 
     static public ArrayList<String> getSendToStations(ArrayList<KDSToStation> arStations)

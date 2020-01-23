@@ -2357,9 +2357,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         //checkLostStationsAndSaveToOffline(order, xmlOrder);
 
         if (getSettings().getBoolean(KDSRouterSettings.ID.Order_ack))
-        {
-            RouterAck ack = m_acks.add(order, xmlData, originalFileName);
-            ArrayList<String> ar = ack.getSendToStations();
+        {//This ack is the notification in ack folder. Router need to wait all stations return notification, then notify user.
+            RouterAck ack = m_acks.add(order, xmlData, originalFileName); //just wait given stations's ack notification.
+            ArrayList<KDSToStation> arToStations = getAllAcceptAnyItemsStations(); ////kpp1-279, expo need to receive data too, but if it is not existed in order file,router don't need to wait notification
+            arToStations.addAll(ack.getTargetStations());
+            //ArrayList<String> ar = ack.getSendToStations();
+            ArrayList<String> ar =  RouterAck.getSendToStations(arToStations);
             writeToAllStations(xmlOrder, ar);
 
         }
@@ -2372,7 +2375,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             else {
                 ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
                 ar.addAll(getAllAcceptAnyItemsStations());
-                ArrayList<String> arToStations = RouterAck.getSendToStations(ar);
+                ArrayList<String> arToStations = RouterAck.getSendToStations(ar);//it will remove repeated stations.
                 //send order xml data to necessary stations, for 24 stations lost certain prep issue
                 //if (!KDSConst._DEBUG) //heap size issue in this function
                 writeToAllStations(xmlOrder, arToStations);
