@@ -754,7 +754,7 @@
     <string name="restore_database">恢复数据库</string>
     <string name="ignore">忽略</string>
     <string name="reset_database">重置数据库</string>
-    <string name="abort">退出app</string>
+    <string name="abort">退出</string>
     <string name="db_error_detected">数据库有错误</string>
     <string name="db_will_clear">数据库要被清除!</string>
     <string name="data_will_lost">数据将丢失!</string>
@@ -764,7 +764,7 @@
     <!--<string name="no_rights_to_access">无访问权限!</string>-->
     <string name="browse">浏览</string>
     <string name="data_restore_failed">从 # 恢复数据失败</string>
-    <string name="load">Load</string>
+    <string name="load">导入</string>
     <string name="load_old_db_or_not">数据库中有旧数据,是否导入?</string>
     <!--<string name="yes">Yes</string>-->
     <!--<string name="no">No</string>-->
@@ -914,10 +914,10 @@
 
     </string-array>
     <string-array name="pref_kds_lineitems_cols_content_titles">
-        <item>订单 ID</item>
-        <item>订单 状态</item>
-        <item>订单 type</item>
-        <item>订单 table</item>
+        <item>订单ID</item>
+        <item>订单状态</item>
+        <item>订单类型</item>
+        <item>订单桌位</item>
         <item>明细描述</item>
         <item>调料</item>
         <item>数量</item>
