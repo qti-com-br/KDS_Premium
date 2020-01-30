@@ -55,7 +55,7 @@
     <string name="order_state_delivering">发到前台</string>
     <string name="order_state_sold_out">售出</string>
     <string name="order_state_others">其它</string>
-    <string name="info_first_message">Bematech KDS 消息</string>
+    <string name="info_first_message">Logic Controls KDS 消息</string>
     <string name="message">消息</string>
     <string name="str_message">消息</string>
     <string name="receive_new_relations">KDS已收到最新的终端关系设置</string>
