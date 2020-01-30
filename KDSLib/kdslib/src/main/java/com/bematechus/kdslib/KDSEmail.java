@@ -13,9 +13,9 @@ public class KDSEmail {
     {
         Intent intent=new Intent(Intent.ACTION_SENDTO);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setData(Uri.parse("mailto:qiu.chen@bematechus.com"));
+        intent.setData(Uri.parse("mailto:dev.team@logiccontrols.com"));
         //String[] tos = { "way.ping.li1@gmail.com" };
-        String[] ccs = { "edmond.cheng@bematechus.com,david.wong@bematechus.com" };
+        String[] ccs = { "support@logiccontrols.com" };
         //String[] bccs = {"way.ping.li3@gmail.com"};
         //intent.putExtra(Intent.EXTRA_EMAIL, tos);
         intent.putExtra(Intent.EXTRA_CC, ccs);
