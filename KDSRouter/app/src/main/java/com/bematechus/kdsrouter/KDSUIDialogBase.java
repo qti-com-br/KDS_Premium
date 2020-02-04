@@ -33,6 +33,7 @@ public class KDSUIDialogBase {
         public void onKDSDialogOK(KDSUIDialogBase dialog, Object obj);
 
     }
+    static KDSUIDialogBase m_singleInstance = null;
 
     protected AlertDialog dialog = null;
 
@@ -264,6 +265,15 @@ public class KDSUIDialogBase {
                             KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
                     }
                 })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    // if back button is used, call back our listener.
+                    @Override
+                    public void onCancel(DialogInterface paramDialogInterface) {
+                        if (KDSUIDialogBase.this.listener != null) {
+                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+                        }
+                    }
+                })
                 .create();
         if (noCancel) {
             dialog.setCanceledOnTouchOutside(false);
@@ -301,7 +311,9 @@ public class KDSUIDialogBase {
                     // if back button is used, call back our listener.
                     @Override
                     public void onCancel(DialogInterface paramDialogInterface) {
-
+//                        if (KDSUIDialogBase.this.listener != null) {
+//                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+//                        }
                     }
                 })
                 .create();
@@ -336,7 +348,9 @@ public class KDSUIDialogBase {
                     // if back button is used, call back our listener.
                     @Override
                     public void onCancel(DialogInterface paramDialogInterface) {
-
+//                        if (KDSUIDialogBase.this.listener != null) {
+//                            KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+//                        }
                     }
                 })
                 .create();
@@ -464,5 +478,39 @@ public class KDSUIDialogBase {
                 t.cancel();
             }
         }, m_nAutoCloseTimeoutMs);
+    }
+
+    /**
+     *
+     * @return
+     *  true: ok
+     *  false: failed.
+     */
+    protected boolean checkDataValidation()
+    {
+        return true;
+    }
+
+    static public KDSUIDialogBase singleInstance()
+    {
+
+        if (m_singleInstance != null) {
+            if (m_singleInstance.getDialog() != null) {
+                if (m_singleInstance.getDialog().isShowing())
+                    m_singleInstance.getDialog().cancel();
+            }
+            m_singleInstance = null;
+        }
+
+        m_singleInstance = new KDSUIDialogBase();
+        return m_singleInstance;
+    }
+
+    public void setCancelByClickOutside(boolean bEnable)
+    {
+
+        dialog.setCanceledOnTouchOutside(bEnable);
+        dialog.setCancelable(bEnable);
+
     }
 }

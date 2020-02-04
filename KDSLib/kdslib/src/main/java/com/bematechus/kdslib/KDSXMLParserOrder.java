@@ -9,6 +9,7 @@ package com.bematechus.kdslib;
 import android.graphics.Color;
 
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.Date;
 
 /**
@@ -102,6 +103,8 @@ public class KDSXMLParserOrder {
     //2.0.47
     public final static String DBXML_ELEMENT_CATEGORY_PRIORITY = "SortPriority";
 
+    public final static String DBXML_ELEMENT_KDSGUID = "KDSGUID";
+
     /************************************************************************/
     /* 
     <CatDelay> 
@@ -137,6 +140,11 @@ public class KDSXMLParserOrder {
      */
     public final static String DBXML_ELEMENT_CUSTOMER = "Customer";
     public final static String DBXML_ELEMENT_PHONE = "Phone";
+    public final static String DBXML_ELEMENT_ADDRESS = "Address";
+    public final static String DBXML_ELEMENT_ADDRESS2 = "Address2";
+    public final static String DBXML_ELEMENT_CITY = "City";
+    public final static String DBXML_ELEMENT_STATE = "State";
+    public final static String DBXML_ELEMENT_ZIP = "Zip";
     /**
      *
      * @param kdsStation
@@ -311,6 +319,11 @@ public class KDSXMLParserOrder {
                 doCustomerGroup(xml, order);
             }
             break;
+            case DBXML_ELEMENT_KDSGUID:
+            { //kpp1-75
+                order.setKDSGuid(strVal);
+            }
+            break;
         }
     }
     /***
@@ -328,7 +341,7 @@ public class KDSXMLParserOrder {
      */
     protected static void doOrderMessages(KDSXML xml,  KDSDataOrder order)
     {
-        ArrayList ar = getMessages(xml);
+        Vector ar = getMessages(xml);
         int ncount = ar.size();
         for (int i=0; i< ncount; i++)
         {
@@ -490,6 +503,7 @@ public class KDSXMLParserOrder {
                 {
                     int nBG = (int)KDSUtil.convertStringToLong(strVal, 0);
                     int c = KDSUtil.convertWebColor2RGB(nBG);
+
                     item.setBG( c );// c.getRGB());
                     item.setXmlFieldValid(KDSDataItem.VALID_ITEM_XML_FIELD.BG);
                 }
@@ -503,6 +517,7 @@ public class KDSXMLParserOrder {
                 {
                     int nFG = (int)KDSUtil.convertStringToLong(strVal, 0);
                     int c = KDSUtil.convertWebColor2RGB(nFG);
+
                     item.setFG( c);// c.getRGB());
                     item.setXmlFieldValid(KDSDataItem.VALID_ITEM_XML_FIELD.FG);
                 }
@@ -548,6 +563,7 @@ public class KDSXMLParserOrder {
             case  DBXML_ELEMENT_QTY:
             {
                 float n = KDSUtil.convertStringToFloat(strVal, 0);
+                if (n <0) n=0; //kpp1-194
                 item.setQty(n);
                 item.setXmlFieldValid(KDSDataItem.VALID_ITEM_XML_FIELD.Qty);
             }
@@ -646,9 +662,9 @@ public class KDSXMLParserOrder {
         }
     }
 
-    protected static ArrayList getMessages(KDSXML xml)
+    protected static Vector getMessages(KDSXML xml)
     {
-        ArrayList ar = new ArrayList();
+        Vector ar = new Vector();
 
         String strVal = xml.getSubGrouValue("Count", "");
         if (strVal.isEmpty())
@@ -685,7 +701,7 @@ public class KDSXMLParserOrder {
     protected static void doItemPremodifier(KDSXML xml,String grpName,
                                             KDSDataOrder order, KDSDataItem item)
     {
-        ArrayList ar = getMessages(xml);
+        Vector ar = getMessages(xml);
         int ncount = ar.size();
         for (int i=0; i< ncount; i++)
         {
@@ -697,7 +713,7 @@ public class KDSXMLParserOrder {
                 msg.setForComponentType(KDSDataMessage.FOR_Item);
                 msg.setComponentGUID(item.getGUID());
                 msg.setMessage(strVal);
-                item.getMessages().addComponent(msg);
+                item.getPreModifiers().addComponent(msg);
 
 
             }
@@ -899,7 +915,7 @@ public class KDSXMLParserOrder {
     protected static void doCondimentPremodifier(KDSXML xml,String grpName,
                                                  KDSDataOrder order, KDSDataItem item, KDSDataCondiment condiment)
     {
-        ArrayList ar = getMessages(xml);
+        Vector ar = getMessages(xml);
         int ncount = ar.size();
         for (int i=0; i< ncount; i++)
         {
@@ -982,7 +998,16 @@ public class KDSXMLParserOrder {
 
     }
     /********************
-     *
+     *<Customer></Customer> Start and end of the customer information. Everything inside these tags are for customer information
+     * Customer ID
+     * <ID>1</ID> ID number that is unique under the customer group tag
+     * <Name>John</Name> Customers name. (Not yet in use)
+     * <Phone>15555555555</Phone> Phone number used for SMS messaging. Twilio integration.
+     * <Address>123 Smith st</Address> Customers address. (Not yet in use)
+     * <Address2>Suite 100</Address2> Customers building or suite Number. (Note yet in use)
+     * <City>Albany</City> Customers city. (Not yet in use)
+     * <State>NY</State> Customers state. (Not yet in use)
+     * <Zip>11451</Zip> Customers Zip code. (Not yet in use)
      * @param xml
      * @param grpName
      * @param order
@@ -993,11 +1018,37 @@ public class KDSXMLParserOrder {
         switch (grpName) {
             case DBXML_ELEMENT_ID: {
 
-                order.setSMSCustomerID(strVal);
+                //order.setSMSCustomerID(strVal);
+                order.getCustomer().setID(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_NAME: {
+                order.getCustomer().setName(strVal);
             }
             break;
             case DBXML_ELEMENT_PHONE: {
-                order.setSMSCustomerPhone(strVal);
+                //order.setSMSCustomerPhone(strVal);
+                order.getCustomer().setPhone(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_ADDRESS: {
+                order.getCustomer().setAddress(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_ADDRESS2: {
+                order.getCustomer().setAddress2(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_CITY: {
+                order.getCustomer().setCity(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_STATE: {
+                order.getCustomer().setState(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_ZIP: {
+                order.getCustomer().setZip(strVal);
             }
             break;
 

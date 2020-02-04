@@ -55,7 +55,7 @@
     <string name="order_state_delivering">发到前台</string>
     <string name="order_state_sold_out">售出</string>
     <string name="order_state_others">其它</string>
-    <string name="info_first_message">Bematech KDS 消息</string>
+    <string name="info_first_message">Logic Controls KDS 消息</string>
     <string name="message">消息</string>
     <string name="str_message">消息</string>
     <string name="receive_new_relations">KDS已收到最新的终端关系设置</string>
@@ -181,9 +181,9 @@
     <string name="update_error_download_apk_error">不能下载apk文件</string>
     <string name="update_error_apk_error">apk文件格式错误</string>
     <string name="update_error_xml_error">不能下载更新文件</string>
-    <string name="do_you_update">发现新版本， 现在要更新吗？</string>
+    <!--<string name="do_you_update">发现新版本， 现在要更新吗？</string>-->
     <string name="invalid_update_file">无效的更新文件</string>
-    <string name="update_new_version">新版本: #, 推荐指数: $</string>
+    <!--<string name="update_new_version">新版本: #, 推荐指数: $</string>-->
     <string name="input_ready_qty">输入准备好的数量</string>
 
     <string name="queue_status_received">收到</string>
@@ -290,6 +290,7 @@
     <string-array name="pref_kds_panels_mode_titles">
         <item>横向扩展</item>
         <item>纵向扩展</item>
+        <!--<item>苹果模式</item>-->
     </string-array>
 
     <string name="pref_kds_panels_title_rows">显示区行数</string>
@@ -421,6 +422,7 @@
         <item>手动</item>
         <item>当删除时</item>
         <item>当接收到时</item>
+        <item>当传送时</item>
     </string-array>
 
     <!--baudrate-->
@@ -517,8 +519,8 @@
     <string name="pref_kds_touch_training_enabled">启用【培训】触控按钮</string>
     <string name="pref_kds_touch_page_enabled">启用【呼叫】触控按钮</string>
 
-    <string name="pref_kds_screen_title_font">屏幕标头字体</string>
-    <string name="pref_kds_screen_show_time">在屏幕头显示时间日期</string>
+    <string name="pref_kds_screen_title_font">KDS Station name font</string>
+    <string name="pref_kds_screen_show_time">Show date &amp; time in title in KDS Station</string>
 
     <string name="pref_kds_bump_confirm_enabled">删除时显示确认对话框</string>
 
@@ -841,7 +843,7 @@
         <item>Up and down</item>
     </string-array>
 
-    <string name="pref_kds_general_title">Customized title</string>
+    <string name="pref_kds_general_title">Customize KDS Station name</string>
     <string name="pref_kds_general_users_ratio">Screen ratio</string>
     <string name="pref_kds_general_subtitle_font">Screen subtitle font</string>
     <string name="pref_kds_general_subtitle_b_text">Screen 0 title</string>
@@ -1039,7 +1041,7 @@
     <string name="avg_prep_time">AVG:</string>
     <string name="real_time_period">Real time report period (mins)</string>
     <string name="title">Title</string>
-    <string name="screen_title">Screen title</string>
+    <string name="screen_title">KDS Station</string>
     <string name="show_avg_prep_time">Show average bump off time</string>
     <string-array name="pref_real_period_titles" >
         <item>1</item>
@@ -1096,11 +1098,27 @@
     <string name="item_group_by_category">Group items by its category</string>
     <string name="inactive">(Inactive)</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
+    <!--<string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>-->
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <!--<string name="my_serial_number">My serial number:</string>-->
     <string name="sms_feature_enabled">SMS feature enabled</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <string name="transfer_default_station">Transfer order to default station</string>
+    <string name="transfer_to_default_automaticlly">Transfer order to default station when do transferring</string>
+    <string name="pref_kds_transfer_title">Transfer</string>
+    <string name="transfer_default_station_offline">Transfer default station # is offline</string>
+    <string name="deliver_new_order_to_slave_expo">Deliver new order to my slave and expo</string>
+    <string name="router_running_no_deliver_new_order">If there is router app running or you have send order to slave/expo, disable it.</string>
+    <string name="auto_refresh_screen">Auto refresh screen in every X seconds.(Zero disable this option)</string>
+    <string name="logout">Logout</string>
+    <string name="transfer_by_double_click">Enable double-tap to transfer order</string>
+    <string name="transfer_by_double_disable_bump">When this feature is enabled, double-tap bump will be disabled.</string>
+    <string name="suspend_bump_while_queue_recover">My queue station is recovering data, bumping will suspend</string>
+    <string name="offline_warning">offline,please check!</string>
+    <string name="for_lineitems_display">For line items display only.</string>
+    <string name="log_orders">Log received orders xml</string>
+    <string name="lineitems_line_height">Line height</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

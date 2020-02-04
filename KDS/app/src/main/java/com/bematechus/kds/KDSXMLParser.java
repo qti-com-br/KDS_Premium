@@ -32,7 +32,7 @@ public class KDSXMLParser  {
         
     }
     static final private String  NOTIFY_TYPE = ("NotifyType");
-    protected static XMLType checkXmlType(String strText)
+    protected static XMLType checkXmlType_old(String strText)
     {
         if (strText.indexOf(KDSXMLParserOrder.DBXML_ELEMENT_FEEDBACK_ORDER_STATUS) >=0)
             return XMLType.Feedback_OrderStatus;
@@ -40,6 +40,27 @@ public class KDSXMLParser  {
         if (!x.loadString(strText))
             return XMLType.Unknown;
        return checkXmlType(x);
+    }
+    protected static XMLType checkXmlType(String strText)
+    {
+
+        if (strText.indexOf(KDSXMLParserOrder.DBXML_ELEMENT_FEEDBACK_ORDER_STATUS) >=0)
+            return XMLType.Feedback_OrderStatus;
+        if (strText.indexOf("</"+ KDSXMLParserCommand.DBXML_ELEMENT_COMMAND +">") >=0) //check the tag end symbol.
+            return XMLType.Command;//check command first. In command, it maybe contain <transaction>
+        if (strText.indexOf("</"+ KDSXMLParserOrder.DBXML_ELEMENT_TRANSACTION +">") >=0) { //check the tag end symbol, as <Transaction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            if (strText.indexOf(NOTIFY_TYPE) >=0) {
+                return XMLType.Notification;
+            }
+            else
+             return XMLType.Order;
+        }
+        return XMLType.Unknown;
+
+//        KDSXML x = new KDSXML();
+//        if (!x.loadString(strText))
+//            return XMLType.Unknown;
+//        return checkXmlType(x);
     }
     
     protected static XMLType checkXmlType(KDSXML x)
@@ -107,5 +128,53 @@ public class KDSXMLParser  {
      protected static KDSXMLParserCommand parseXmlCommand(KDSXML xml)
     {
         return KDSXMLParserCommand.parseCommand(xml);
+    }
+
+    static public KDSXMLParserCommand.KDSCommand quickGetCodeFromString(String xmlData)
+    {
+        String s = xmlData;
+        String tagStart = "<Code>";
+        String tagEnd = "</Code>";
+
+        int nStart = s.indexOf(tagStart);
+        if (nStart <0) return KDSXMLParserCommand.KDSCommand.Nothing;
+
+        nStart += tagStart.length();
+        int nEnd = s.indexOf(tagEnd);
+        if (nEnd <0) return KDSXMLParserCommand.KDSCommand.Nothing;
+        if (nEnd<= nStart) return KDSXMLParserCommand.KDSCommand.Nothing;
+        String strCommand = s.substring(nStart, nEnd);
+        if (strCommand.isEmpty()) return KDSXMLParserCommand.KDSCommand.Nothing;
+
+        int n = KDSUtil.convertStringToInt(strCommand, 0);
+        return KDSXMLParserCommand.KDSCommand.values()[n];
+
+
+
+
+
+    }
+    static public String quickGetOrderIDFromString(String xmlData)
+    {
+        String s = xmlData;
+        String tagStart = "<ID>";
+        String tagEnd = "</ID>";
+
+        int nStart = s.indexOf(tagStart);
+        if (nStart <0) return "";
+
+        nStart += tagStart.length();
+        int nEnd = s.indexOf(tagEnd);
+        if (nEnd <0) return "";
+        if (nEnd <= nStart) return "";
+        String strCommand = s.substring(nStart, nEnd);
+
+        return strCommand;
+
+
+
+
+
+
     }
 }

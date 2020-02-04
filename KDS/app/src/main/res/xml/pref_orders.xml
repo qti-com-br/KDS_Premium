@@ -7,11 +7,11 @@
         <!--android:defaultValue="/system/fonts/DroidSans.ttf,-3090381,-16777216,14"-->
         <!--android:title="@string/pref_kds_screen_title_font"-->
         <!--app:supportsColor="true"/>-->
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="focus_bg"
         android:defaultValue="@color/focus_bg"
         android:title="@string/pref_order_focus_color" />
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="block_border_bg"
         android:defaultValue="@color/border_bg"
         android:title="@string/pref_order_border_color" />
@@ -25,7 +25,7 @@
         <!--android:defaultValue="true" />-->
 
 
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="viewer_bg"
         android:defaultValue="@color/view_bg"
         android:title="@string/pref_kds_panels_viewer_bg" />
@@ -260,14 +260,14 @@
     </PreferenceScreen>
 
     <PreferenceCategory android:title="@string/pref_kds_panels_font">
-        <com.bematechus.kds.KDSPreferenceColorPicker
+        <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="panel_bg"
             android:defaultValue="0xffffffff"
             android:title="@string/pref_kds_panels_bg" />
         <com.bematechus.kdslib.KDSEditTextPreference
             android:key="panel_text_line_height"
             android:title= "@string/pref_kds_panels_row_height"
-            android:defaultValue="14"
+            android:defaultValue="16"
             android:selectAllOnFocus="true"
             android:inputType= "number"
             android:capitalize="words"
@@ -313,10 +313,10 @@
     android:title="@string/pref_kds_panels_show_number"
     android:defaultValue="true" />
 
-    <CheckBoxPreference
-        android:key="bumpbar_panelnum_focus"
-        android:title="@string/pref_kds_panelnum_focus_enabled"
-        android:defaultValue="false" />
+    <!--<CheckBoxPreference-->
+        <!--android:key="bumpbar_panelnum_focus"-->
+        <!--android:title="@string/pref_kds_panelnum_focus_enabled"-->
+        <!--android:defaultValue="false" />-->
 
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="panelnum_base"
@@ -331,7 +331,7 @@
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
 
-    <com.bematechus.kds.KDSPreferenceBGFGPicker
+    <com.bematechus.kdslib.KDSPreferenceBGFGPicker
         android:key="panelnum_bgfg"
         android:defaultValue="-16769076,-1"
         android:dependency="panels_show_number"
@@ -386,7 +386,7 @@
             />
         <com.bematechus.kds.KDSPreferenceFontPicker
             android:key="from_primary_font"
-            android:defaultValue="/system/fonts/DroidSans.ttf,@color/item_bg,@color/item_fg,12"
+            android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
             android:title="@string/pref_from_primary_font"
             app:supportsColor="true"/>
     </PreferenceCategory>

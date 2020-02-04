@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_launcher"
+        android:src="@mipmap/ic_launcher"
         android:padding="5dp" />
 
     <TextView
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="http://www.bematechus.com"
+        android:text="http://logiccontrols.com"
         android:id="@+id/textView7"
         android:layout_gravity="center_horizontal"
         android:autoLink="web"

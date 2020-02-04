@@ -4,6 +4,7 @@ import android.nfc.Tag;
 import android.util.Log;
 
 import com.bematechus.kdslib.ConditionStatistic;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSSocketInterface;
 import com.bematechus.kdslib.KDSSocketTCPSideClient;
 import com.bematechus.kdslib.KDSSocketTCPSideServer;
@@ -52,6 +53,8 @@ public class StatisticThread implements Runnable {
     }
     protected void doStatisticReport()
     {
+        if (! KDSConst.ENABLE_FEATURE_STATISTIC)
+            return;
         String param = m_command.getParam();
         ConditionStatistic c = ConditionStatistic.importXmlString(param);
         c.setStationFrom(m_kds.getStationID());
@@ -72,6 +75,7 @@ public class StatisticThread implements Runnable {
 
     protected void doSosReport()
     {
+        if (!KDSConst.ENABLE_FEATURE_STATISTIC) return;
         String param = m_command.getParam();
         SOSReportCondition c = SOSReportCondition.importXmlString(param);
 

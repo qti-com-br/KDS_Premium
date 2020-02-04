@@ -7,7 +7,10 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.UpdateManager;
+
+import java.util.ArrayList;
 /**
  *
  * Most of it is same as KDS file
@@ -64,6 +67,11 @@ public class KDSUIAboutDlg extends KDSUIDialogBase implements UpdateManager.Upda
             }
             else
                 activiationText = "Inactive";
+            //add serial number
+//            ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
+//            if (ar.size() >0)
+//                activiationText += "," + ar.get(0);
+            activiationText += "," + Activation.getMySerialNumber();
             m_txtActivation.setText(activiationText);
 
             m_txtActivation.setOnClickListener(new View.OnClickListener() {

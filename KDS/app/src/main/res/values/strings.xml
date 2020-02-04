@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KitchenGo KDS</string>
+    <string name="app_name">KitchenGo Premium</string>
     <string name="main_title">KitchenGo Premium KDS</string>
     <string name="order_queue_display_title">Order Queue Display</string>
 
@@ -57,7 +57,7 @@
     <string name="order_state_delivering">Delivering to counter</string>
     <string name="order_state_sold_out">Sold out</string>
     <string name="order_state_others">Others</string>
-    <string name="info_first_message">Bematech KDS messages</string>
+    <string name="info_first_message">Logic Controls KDS messages</string>
     <string name="message">Message</string>
     <string name="str_message">Message</string>
     <string name="receive_new_relations">It has received new relations setting.</string>
@@ -122,7 +122,7 @@
     <string name="no_active_stations">No available station is online</string>
     <string name="searching_active_stations">Searching for activate stations …</string>
     <string name="error_different_relations">The stations relationship is different with others, please edit stations relationship first.</string>
-    <string name="error_match_mac">Please run it in bematech device.</string>
+    <string name="error_match_mac">Please run it in a Logic Controls\' device.</string>
     <string name="back">Back</string>
     <string name="clear_messages">Clear log</string>
     <string name="cook_started">Cook started</string>
@@ -187,9 +187,9 @@
     <string name="update_error_download_apk_error">Can not download apk file</string>
     <string name="update_error_apk_error">The apk file is wrong</string>
     <string name="update_error_xml_error">Can not download updating file</string>
-    <string name="do_you_update">There is new version. Do you want to upgrade it now?</string>
+    <!--<string name="do_you_update">There is new version. Do you want to upgrade it now?</string>-->
     <string name="invalid_update_file">Invalid update file</string>
-    <string name="update_new_version">New version: #, recommended rate: $</string>
+    <!--<string name="update_new_version">New version: #, recommended rate: $</string>-->
     <string name="input_ready_qty">Input ready qty</string>
 
     <string name="queue_status_received">Order Received</string>
@@ -297,6 +297,7 @@
     <string-array name="pref_kds_panels_mode_titles">
         <item>Horizontal expand</item>
         <item>Vertical expand</item>
+        <!--<item>IOS like</item>-->
     </string-array>
 
     <string name="pref_kds_panels_title_rows">Panel rows</string>
@@ -430,6 +431,7 @@
         <item>Manual print</item>
         <item>Auto print after bump</item>
         <item>Auto print after receive</item>
+        <item>Print after transfer</item>
     </string-array>
 
     <!--baudrate-->
@@ -531,8 +533,8 @@
     <string name="pref_kds_touch_training_enabled">Enable [training] touch button</string>
     <string name="pref_kds_touch_page_enabled">Enable [page] touch button</string>
 
-    <string name="pref_kds_screen_title_font">Screen title font</string>
-    <string name="pref_kds_screen_show_time">Show date&amp;time in title</string>
+    <string name="pref_kds_screen_title_font">KDS Station name font</string>
+    <string name="pref_kds_screen_show_time">Show date &amp; time in title in KDS Station</string>
 
     <string name="pref_kds_bump_confirm_enabled">Show confirmation dialog after bumping an order</string>
 
@@ -843,7 +845,7 @@
         <item>Up and down</item>
     </string-array>
 
-    <string name="pref_kds_general_title">Customized title</string>
+    <string name="pref_kds_general_title">Customize KDS Station name</string>
 
     <string name="pref_kds_general_users_ratio">Screen ratio</string>
     <string name="pref_kds_general_subtitle_font">Screen subtitle font</string>
@@ -1048,7 +1050,7 @@
     <string name="avg_prep_time">AVG:</string>
     <string name="real_time_period">Real time report period (mins)</string>
     <string name="title">Title</string>
-    <string name="screen_title">Screen title</string>
+    <string name="screen_title">KDS Station</string>
     <string name="show_avg_prep_time">Show average bump off time</string>
     <string-array name="pref_real_period_titles">
         <item>1</item>
@@ -1108,11 +1110,27 @@
     <string name="item_group_by_category">Group items by its category</string>
     <string name="inactive">(Inactive)</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
+    <!--<string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>-->
     <string name="cannot_sync_license_data">Can not sync data with server.</string>
     <string name="cannot_replace_license_data">Can not replace data with server.</string>
     <!--<string name="my_serial_number">My serial number:</string>-->
     <string name="sms_feature_enabled">SMS feature enabled</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <string name="transfer_default_station">Transfer order to default station</string>
+    <string name="transfer_to_default_automaticlly">Transfer order to default station when do transferring</string>
+    <string name="pref_kds_transfer_title">Transfer</string>
+    <string name="transfer_default_station_offline">Transfer default station # is offline</string>
+    <string name="deliver_new_order_to_slave_expo">Deliver new order to my slave and expo</string>
+    <string name="router_running_no_deliver_new_order">If there is router app running or you have send order to slave/expo, disable it.</string>
+    <string name="auto_refresh_screen">Auto refresh screen in every X seconds.(Zero disable this option)</string>
+    <string name="logout">Logout</string>
+    <string name="transfer_by_double_click">Enable double-tap to transfer order</string>
+    <string name="transfer_by_double_disable_bump">When this feature is enabled, double-tap bump will be disabled.</string>
+    <string name="suspend_bump_while_queue_recover">My queue station is recovering data, bumping will suspend</string>
+    <string name="offline_warning">offline,please check!</string>
+    <string name="for_lineitems_display">For line items display only.</string>
+    <string name="log_orders">Log received orders xml</string>
+    <string name="lineitems_line_height">Line height</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

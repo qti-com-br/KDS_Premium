@@ -224,6 +224,7 @@ public class KDSSocketUDP implements KDSSocketInterface{
 
                 m_bufferRead.clear();
                 m_eventHandler.sendReceiveDataMessage(this, client.toString(), buffer, nlength);
+                buffer = null;
             }
         }
         catch (Exception e)
@@ -249,9 +250,12 @@ public class KDSSocketUDP implements KDSSocketInterface{
         {
             if (m_writeBuffer.count() <=0)
                 return;
-            Bundle b = m_writeBuffer.popupBundle();
-            ByteBuffer buf = ByteBuffer.wrap(b.getByteArray("data"));
-            String ip = b.getString("ip");
+            //Bundle b = m_writeBuffer.popupBundle();
+//            ByteBuffer buf = ByteBuffer.wrap(b.getByteArray("data"));
+//            String ip = b.getString("ip");
+            KDSSocketFIFOBuffer.BufferData b = m_writeBuffer.popupBundle();
+            ByteBuffer buf = ByteBuffer.wrap(b.bytes);
+            String ip = b.ip;
             writeData(ip, buf);
 
         }catch(Exception e)
@@ -411,6 +415,11 @@ public class KDSSocketUDP implements KDSSocketInterface{
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
         return null;
+    }
+
+    public boolean interface_WriteBufferIsFull()
+    {
+        return false;
     }
 
 }

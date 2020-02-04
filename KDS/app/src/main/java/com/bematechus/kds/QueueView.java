@@ -16,13 +16,17 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.TimeDog;
@@ -31,13 +35,15 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by Administrator on 2016/12/23.
  */
 public class QueueView  extends View {
 
-
+    final String TAG = "QueueView";
+    final int DEFAULT_SWITCH_PAGE_TIMEOUT_MS = 5000;
     private int ITEM_AVERAGE_HEIGHT = 80;
     final int BORDER_GAP = 4;
     private float ORDERID_AREA_PERCENT = (float) 0.40;// (float) 0.25;
@@ -81,9 +87,11 @@ public class QueueView  extends View {
 
     KDSSettings.QueueMode m_nViewMode = KDSSettings.QueueMode.Simple;//.Panels;
 
-    int m_nPageCounter = 0;
+    ArrayList<Integer> m_arPageCounter = new ArrayList<>();
+
+    //int m_nPageCounter = 0;
     TimeDog m_tdPage = new TimeDog();
-    int PAGE_TIMEOUT = 5000;
+    int PAGE_TIMEOUT = DEFAULT_SWITCH_PAGE_TIMEOUT_MS;
 
     Object m_locker = new Object();
 
@@ -196,6 +204,10 @@ public class QueueView  extends View {
 
     private void init()
     {
+        for (int i=0; i< QueueOrders.QueueStatus.values().length; i++)
+        {
+            m_arPageCounter.add(0);
+        }
 
         resetAllPaint();
 
@@ -320,7 +332,7 @@ public class QueueView  extends View {
 
     private void fireQueueItemClicked(KDSDataOrder order)
     {
-        focusOrder(order.getGUID());
+        //focusOrder(order.getGUID()); /don't need focus in queue
     }
 
     private void init_gesture()
@@ -329,9 +341,11 @@ public class QueueView  extends View {
 
 
     }
-    Handler m_refreshHanlder = new Handler(new Handler.Callback() {
+    Handler m_refreshHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            m_refreshHandler.removeMessages(0);
+
             QueueView.this.invalidate();
             return true;
         }
@@ -342,7 +356,7 @@ public class QueueView  extends View {
         //this.invalidate();
         Message m = new Message();
         m.what = 0;
-        m_refreshHanlder.sendMessage(m);
+        m_refreshHandler.sendMessage(m);
     }
     public Rect getBounds()
     {
@@ -423,6 +437,7 @@ public class QueueView  extends View {
 
 
 
+
     @Override
     protected void onDraw(Canvas canvas)
     {
@@ -430,22 +445,36 @@ public class QueueView  extends View {
 //        {//2.0.35
 //            m_queueOrders.sortByStateTime(m_sortMode == QueueOrders.QueueSort.State_descend);
 //        }
-        switch (m_nViewMode)
-        {
-            case Panels:
-                onDrawPanelMode(canvas);
-                break;
-            case Simple:
-                m_queueOrders.sortByStateTime(m_status1Sort,m_status2Sort,m_status3Sort,m_status4Sort );//2.0.36
-                onDrawSimpleMode(canvas);
-                break;
-        }
-        if (!m_strInputOrderID.isEmpty())
-        {
+        boolean bReverseReadyColorForFlash = false;
+        Calendar c = Calendar.getInstance();
+        int second = c.get(Calendar.SECOND);
+        if ( (second%2)==0)
+            bReverseReadyColorForFlash = true;
 
-            drawInputingIDIcon(canvas);
-        }
+        try {
+            //drawBackground(canvas);
+            //synchronized (m_queueOrders.getOrders().m_locker)
+            {
+                switch (m_nViewMode) {
+                    case Panels:
+                        onDrawPanelMode(canvas, bReverseReadyColorForFlash);
+                        break;
+                    case Simple:
+                        //m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
+                        onDrawSimpleMode(canvas, bReverseReadyColorForFlash);
+                        break;
+                }
+            }
+            if (!m_strInputOrderID.isEmpty()) {
 
+                drawInputingIDIcon(canvas);
+            }
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+
+        }
 
     }
 
@@ -462,7 +491,7 @@ public class QueueView  extends View {
         drawable.draw(canvas);
     }
 
-    private void onDrawPanelMode(Canvas canvas)
+    private void onDrawPanelMode(Canvas canvas, boolean bReverseColorForFlush)
     {
         if (canvas == null) return;
         Rect rect = this.getBounds();
@@ -476,9 +505,9 @@ public class QueueView  extends View {
             m_queueOrders.resetCoordinates();
 
             if (!m_bMoveReadyFront)
-                drawNormalQueue(g, rect);
+                drawNormalQueue(g, rect, bReverseColorForFlush);
             else
-                drawReadyMoveFrontQueue2(g, rect);
+                drawReadyMoveFrontQueue2(g, rect, bReverseColorForFlush);
         }
 
 
@@ -600,17 +629,25 @@ public class QueueView  extends View {
      * Just show order number
      * @param canvas
      */
-    private void onDrawSimpleMode(Canvas canvas)
+    private void onDrawSimpleMode(Canvas canvas, boolean bReverseReadyColorForFlash)
     {
-        if (canvas == null) return;
+        if (canvas == null) {
+            //System.out.println("onDrawSimpleMode if (canvas == null)" );
+            return;
+        }
         Rect rect = this.getBounds();
 
         Canvas g = get_double_buffer();
-        if (g == null) return;
+        if (g == null) {
+            //System.out.println("onDrawSimpleMode if (g == null)" );
+            return;
+        }
         drawBackground(g);
-        if (m_queueOrders.getOrders() == null) return;
+        if (m_queueOrders.getOrders() == null) {
+            //System.out.println("onDrawSimpleMode if (m_queueOrders.getOrders() == null)" );
 
-
+            return;
+        }
         m_queueOrders.resetCoordinates();
 
         if (isQueueExpo())
@@ -644,7 +681,7 @@ public class QueueView  extends View {
         if (m_bSimpleModeShowReceived) {
             Rect rt = new Rect(rect);
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Received));
+            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Received), bReverseReadyColorForFlash);
             nIndex ++;
         }
 
@@ -652,21 +689,21 @@ public class QueueView  extends View {
             Rect rt = new Rect(rect);
             rt.left = rt.left + (nColWidth+nGap) *nIndex;
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Preparation));
+            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Preparation), bReverseReadyColorForFlash);
             nIndex ++;
         }
         if (m_bSimpleModeShowReady) {
             Rect rt = new Rect(rect);
             rt.left = rt.left + (nColWidth+nGap) *nIndex;
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt,getSimpleColStatus( QueueOrders.QueueStatus.Ready));
+            drawSimpleModeCol(g, rt,getSimpleColStatus( QueueOrders.QueueStatus.Ready), bReverseReadyColorForFlash);
             nIndex ++;
         }
         if (m_bSimpleModeShowPickup) {
             Rect rt = new Rect(rect);
             rt.left = rt.left + (nColWidth+nGap) *nIndex;
             rt.right = rt.left + nColWidth;
-            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Pickup));
+            drawSimpleModeCol(g, rt, getSimpleColStatus(QueueOrders.QueueStatus.Pickup), bReverseReadyColorForFlash);
             nIndex++;
         }
 
@@ -676,7 +713,7 @@ public class QueueView  extends View {
         commit_double_buffer(canvas);
     }
 
-    private void drawNormalQueue(Canvas g,Rect rect)
+    private void drawNormalQueue(Canvas g,Rect rect, boolean bReverseColorForFlush)
     {
         int ncount = m_queueOrders.getOrders().getCount();
         int nRows = calculateRows(rect, ITEM_AVERAGE_HEIGHT);
@@ -694,7 +731,7 @@ public class QueueView  extends View {
                 break;
             }
             else {
-                drawItem(g, rect, nRows, m_nCols, m_queueOrders.getOrders().get(i), i);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                drawItem(g, rect, nRows, m_nCols, m_queueOrders.getOrders().get(i), i, bReverseColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
             }
         }
     }
@@ -703,7 +740,7 @@ public class QueueView  extends View {
     final float READY_RECT_PERCENT = (float)0.75;
 
 
-    private void drawReadyMoveFrontQueue2(Canvas g,Rect rect) {
+    private void drawReadyMoveFrontQueue2(Canvas g,Rect rect, boolean bReverseColorForFlush) {
         movePreparationFront(m_queueOrders.getOrders());
         moveReadyFront(m_queueOrders.getOrders());
 
@@ -727,13 +764,13 @@ public class QueueView  extends View {
 
         ArrayList<Integer> arPages = new ArrayList<>();
 
-        drawReadyInMoveFrontMode2(g, rtReady, m_nCols, arPages);
+        drawReadyInMoveFrontMode2(g, rtReady, m_nCols, arPages, bReverseColorForFlush);
 
-        drawNotReadyInMoveFrontMode2(g, rtNotReady);
+        drawNotReadyInMoveFrontMode2(g, rtNotReady, bReverseColorForFlush);
 
     }
 
-    private void drawNotReadyInMoveFrontMode2(Canvas g, Rect rtNotReady)
+    private void drawNotReadyInMoveFrontMode2(Canvas g, Rect rtNotReady, boolean bReverseColorForFlush)
     {
         Rect rtData = new Rect(rtNotReady);
         rtData.bottom -= PAGE_NUMBER_ROW_HEIGHT;
@@ -745,15 +782,14 @@ public class QueueView  extends View {
         status.add(QueueOrders.QueueStatus.Received);
       //  status.add(QueueOrders.QueueStatus.Preparation);
         int nPagesCount = getPageCount(status, nRows, NOT_READY_COLS);
-        int nPageIndex = getCurrentPageIndex(nPagesCount);
+        int nPageIndex = getCurrentPageIndex(nPagesCount, QueueOrders.QueueStatus.Received.ordinal());
         int nItemsStartIndex = nPageIndex * nTotalPanels;
         int nCurrentItemIndex = -1;
 
         for (int i=0; i< ncount; i++)
         {
             KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            if (QueueOrders.getOrderQueueStatus(order) == QueueOrders.QueueStatus.Received)
-
+            if (m_queueOrders.getStatus(order) == QueueOrders.QueueStatus.Received)
             {
                 nCurrentItemIndex ++;
                 if (nCurrentItemIndex < nItemsStartIndex) continue;
@@ -763,7 +799,7 @@ public class QueueView  extends View {
                 {
                     break;
                 }
-                drawItem(g, rtData, nRows, NOT_READY_COLS, order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                drawItem(g, rtData, nRows, NOT_READY_COLS, order, nPanelIndex, bReverseColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
                 nPanelIndex++;
 
             }
@@ -793,7 +829,7 @@ public class QueueView  extends View {
         }
     }
 
-    private void drawReadyInMoveFrontMode2(Canvas g, Rect rtReady, int nMaxCols, ArrayList<Integer> arPages)
+    private void drawReadyInMoveFrontMode2(Canvas g, Rect rtReady, int nMaxCols, ArrayList<Integer> arPages, boolean bReversColorForFlush)
     {
         Rect rtData = new Rect(rtReady);
         rtData.bottom -= PAGE_NUMBER_ROW_HEIGHT;
@@ -807,7 +843,7 @@ public class QueueView  extends View {
         status.add(QueueOrders.QueueStatus.Ready);
         status.add(QueueOrders.QueueStatus.Preparation);
         int nPagesCount = getPageCount(status, nRows, nMaxCols);
-        int nPageIndex = getCurrentPageIndex(nPagesCount);
+        int nPageIndex = getCurrentPageIndex(nPagesCount, QueueOrders.QueueStatus.Preparation.ordinal());
         int nItemsStartIndex = nPageIndex * nTotalPanels;
 
         int nCurrentItemIndex = -1;
@@ -826,7 +862,7 @@ public class QueueView  extends View {
                     break;
                 }
 
-                drawItem(g, rtData, nRows, nMaxCols, order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                drawItem(g, rtData, nRows, nMaxCols, order, nPanelIndex, bReversColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
                 nPanelIndex++;
 
             }
@@ -840,8 +876,19 @@ public class QueueView  extends View {
 
     }
 
+
     public void showOrders(KDSDataOrders orders)
     {
+        synchronized (m_locker) {
+            m_queueOrders.setOrders(orders);
+            if (m_nViewMode == KDSSettings.QueueMode.Simple)
+            {//move from ondraw to here.
+                m_queueOrders.sortByStateTime(m_status1Sort, m_status2Sort, m_status3Sort, m_status4Sort);//2.0.36
+            }
+            m_nRedrawRequestCounter++;
+        }
+        startShowOrdersThread();
+        /*
         synchronized (m_locker) {
             m_queueOrders.setOrders(orders);
 //            if (m_sortMode != QueueOrders.QueueSort.Default )
@@ -862,6 +909,7 @@ public class QueueView  extends View {
             }
         }
         refresh();
+        */
     }
 
     private void moveReadyFront(KDSDataOrders orders)
@@ -1002,7 +1050,7 @@ public class QueueView  extends View {
     {
         if (order == null) return false;
         synchronized (m_locker) {
-            QueueOrders.QueueStatus orderStatus = QueueOrders.getOrderQueueStatus(order);
+            QueueOrders.QueueStatus orderStatus = m_queueOrders.getStatus(order);
 
             if (orderStatus == QueueOrders.QueueStatus.Ready)//||
             //orderStatus == QueueOrders.QueueStatus.Preparation ||
@@ -1017,7 +1065,7 @@ public class QueueView  extends View {
     private boolean isPickupOrder(KDSDataOrder order)
     {
         synchronized (m_locker) {
-            QueueOrders.QueueStatus orderStatus = QueueOrders.getOrderQueueStatus(order);
+            QueueOrders.QueueStatus orderStatus = m_queueOrders.getStatus(order);
             if (
                     orderStatus == QueueOrders.QueueStatus.Pickup) {
                 return true;
@@ -1028,7 +1076,7 @@ public class QueueView  extends View {
 
     private boolean isPreparationOrder(KDSDataOrder order)
     {
-        QueueOrders.QueueStatus orderStatus =QueueOrders.getOrderQueueStatus(order);
+        QueueOrders.QueueStatus orderStatus =m_queueOrders.getStatus(order);
         return ( orderStatus == QueueOrders.QueueStatus.Preparation );
 
     }
@@ -1058,7 +1106,7 @@ public class QueueView  extends View {
      *
      * @param g
      */
-    public void drawItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex)
+    public void drawItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex, boolean bReverseReadyColor)
     {
         Rect rtCell = getItemRect(rect, nRows,nCols,nPanelIndex);
         if (rtCell.isEmpty()) return;
@@ -1070,37 +1118,43 @@ public class QueueView  extends View {
 
        g.save();
         //set the drawing area
+        try {
 
 
-       rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
-       g.clipRect(rtCell);
+            rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
+            g.clipRect(rtCell);
 
-        boolean bReverseReadyColorForFlash = false;
-        if (m_bFlashReadyOrder)
-        {
-            if (isReadyOrder(order))//||
-                    //isPreparationOrder(order))
-            {
-                Calendar c = Calendar.getInstance();
-                int second = c.get(Calendar.SECOND);
-                if ( (second%2)==0)
-                    bReverseReadyColorForFlash = true;
+            boolean bReverseReadyColorForFlash = false;
+            if (m_bFlashReadyOrder) {
+                if (isReadyOrder(order))//||
+                //isPreparationOrder(order))
+                {
+                    bReverseReadyColorForFlash = bReverseReadyColor;
+//                Calendar c = Calendar.getInstance();
+//                int second = c.get(Calendar.SECOND);
+//                if ( (second%2)==0)
+//                    bReverseReadyColorForFlash = true;
+                }
             }
+            // Paint paintBG = new Paint();
+            m_paintOrderTitle.setColor(getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+
+            int nTitleAreaWidth = (int) ((float) rtCell.width() * ORDERID_AREA_PERCENT);
+
+            Rect rtTitle = new Rect(rtCell);
+            rtTitle.right = rtTitle.left + nTitleAreaWidth;
+            drawTitle(g, rtTitle, order, false);// bReverseReadyColorForFlash);
+
+            Rect rtStatus = new Rect(rtCell);
+            rtStatus.left = rtStatus.left + nTitleAreaWidth;
+            drawStatus(g, rtStatus, order, bReverseReadyColorForFlash);
         }
-       // Paint paintBG = new Paint();
-        m_paintOrderTitle.setColor( getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
-
-        int nTitleAreaWidth =(int) ((float)rtCell.width() * ORDERID_AREA_PERCENT);
-
-        Rect rtTitle = new Rect(rtCell);
-        rtTitle.right = rtTitle.left + nTitleAreaWidth;
-        drawTitle(g, rtTitle, order,false);// bReverseReadyColorForFlash);
-
-        Rect rtStatus = new Rect(rtCell);
-        rtStatus.left = rtStatus.left + nTitleAreaWidth;
-        drawStatus(g, rtStatus, order, bReverseReadyColorForFlash);
+        catch ( Exception e)
+        {
+            e.printStackTrace();
+        }
         g.restore();
    //     g.clipRect(rect);
     }
@@ -1117,18 +1171,24 @@ public class QueueView  extends View {
         if (rtCell.isEmpty()) return;
 
         g.save();
-
-        rtCell = drawItemBorder(g, rtCell, false);
-        g.clipRect(rtCell);
+        try {
 
 
-        m_paintOrderTitle.setColor(m_ftOrderID.getBG());
-        g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+            rtCell = drawItemBorder(g, rtCell, false);
+            g.clipRect(rtCell);
 
-        m_paintOrderTitle.setColor(m_ftOrderID.getFG());
-        String s = makeMoreItemsString(nMoreItemsCount);
-        drawString(g, m_paintOrderTitle, rtCell, Paint.Align.CENTER, s);
 
+            m_paintOrderTitle.setColor(m_ftOrderID.getBG());
+            g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+
+            m_paintOrderTitle.setColor(m_ftOrderID.getFG());
+            String s = makeMoreItemsString(nMoreItemsCount);
+            drawString(g, m_paintOrderTitle, rtCell, Paint.Align.CENTER, s);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         g.restore();
 
     }
@@ -1229,7 +1289,8 @@ public class QueueView  extends View {
             rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftStatusCustomMessage, order.getQueueMessage(), false,bReverseReadyColorForFlash);
         //if (m_bShowOrderTimer)
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_order_timer))
-            rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeDurationString(), false,bReverseReadyColorForFlash);
+            rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeQueueDurationString(), false,bReverseReadyColorForFlash);
+            //rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeDurationString(), false,bReverseReadyColorForFlash);
         //if (m_bShowOrderID)
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_order_ID)) {
             int n = getSettings().getInt(KDSSettings.ID.Queue_order_id_length);
@@ -1356,7 +1417,7 @@ public class QueueView  extends View {
 
     private void drawStatus(Canvas g, Rect rt, KDSDataOrder order, boolean bReverseReadyColorForFlash)
     {
-        QueueOrders.QueueStatus status =  m_queueOrders.getOrderQueueStatus( order);
+        QueueOrders.QueueStatus status =  m_queueOrders.getStatus( order);
         drawStatus(g, rt, status, bReverseReadyColorForFlash);
 
     }
@@ -1444,24 +1505,32 @@ public class QueueView  extends View {
     private void drawWrapString(Canvas g,KDSViewFontFace ft,boolean bReverseColor, Rect rt, Paint.Align align, String string )
     {
         g.save();
-        TextPaint textPaint = new TextPaint();
-        textPaint.setTextSize(ft.getFontSize());
-        textPaint.setTypeface(ft.getTypeFace());
-        textPaint.setColor(getFG(ft, bReverseColor));// ft.getFG());
-        textPaint.setAntiAlias(true);
+        try {
 
-        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
-        if (align == Paint.Align.RIGHT)
-            al = Layout.Alignment.ALIGN_OPPOSITE;
-        else if (align == Paint.Align.LEFT)
-            al = Layout.Alignment.ALIGN_NORMAL;
-        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
-        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
 
-        int x = rt.left;
-        int y = rt.top + (rt.height() - sl.getHeight())/2;
-        g.translate(x,y);
-        sl.draw(g);
+            TextPaint textPaint = new TextPaint();
+            textPaint.setTextSize(ft.getFontSize());
+            textPaint.setTypeface(ft.getTypeFace());
+            textPaint.setColor(getFG(ft, bReverseColor));// ft.getFG());
+            textPaint.setAntiAlias(true);
+
+            Layout.Alignment al = Layout.Alignment.ALIGN_CENTER;
+            if (align == Paint.Align.RIGHT)
+                al = Layout.Alignment.ALIGN_OPPOSITE;
+            else if (align == Paint.Align.LEFT)
+                al = Layout.Alignment.ALIGN_NORMAL;
+            //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
+            StaticLayout sl = new StaticLayout(string, textPaint, rt.width(), al, 1.0f, 0.0f, true);
+
+            int x = rt.left;
+            int y = rt.top + (rt.height() - sl.getHeight()) / 2;
+            g.translate(x, y);
+            sl.draw(g);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         g.restore();
     }
 
@@ -1522,7 +1591,7 @@ public class QueueView  extends View {
 
         PAGE_TIMEOUT = settings.getInt(KDSSettings.ID.Queue_auto_switch_duration) * 1000;
         if (PAGE_TIMEOUT<=0)
-            PAGE_TIMEOUT = 5000;
+            PAGE_TIMEOUT = DEFAULT_SWITCH_PAGE_TIMEOUT_MS;
 
 
         //2.0.35
@@ -1560,8 +1629,13 @@ public class QueueView  extends View {
             m_status4Sort = getStatusSort( m_pickupCombinedToStatus);
         }
 
-        String s = settings.getString(KDSSettings.ID.Queue_auto_bump_timeout);
-        m_nAutoBumpTimeoutMs = KDSUtil.convertStringToInt(s, 0) *60000;
+        //String s = settings.getString(KDSSettings.ID.Queue_auto_bump_timeout);
+        //m_nAutoBumpTimeoutMs = KDSUtil.convertStringToInt(s, 0) *60000;
+        n = settings.getInt(KDSSettings.ID.Auto_bump_minutes);
+        m_nAutoBumpTimeoutMs = n * 60000;
+        if (!settings.getBoolean(KDSSettings.ID.Auto_bump_enabled))
+            m_nAutoBumpTimeoutMs = -1;
+
 
     }
 
@@ -1595,17 +1669,23 @@ public class QueueView  extends View {
 
     public void focusOrder(String orderGuid)
     {
-        synchronized (m_locker) {
-            m_queueOrders.setFocusedOrderGuid(orderGuid);
-            if (isQueueExpo()) {//if multiple pages, move to focused order guest_paging.
-                if (!orderGuid.isEmpty()) {
-                    int nPage = checkFocusedOrderInWhichPage();
-                    if (nPage >= 0)
-                        m_nPageCounter = nPage;
-                }
-            }
-        }
-        this.refresh();
+        //remove focus
+//        if (orderGuid.equals(KDSConst.RESET_ORDERS_LAYOUT))
+//            return;
+//        synchronized (m_locker) {
+//            m_queueOrders.setFocusedOrderGuid(orderGuid);
+//            if (isQueueExpo()) {//if multiple pages, move to focused order guest_paging.
+//                if (!orderGuid.isEmpty()) {
+//                    int nPage = checkFocusedOrderInWhichPage();
+//                    if (nPage >= 0) {
+//                        for  (int i=0;i< m_arPageCounter.size(); i++)
+//                            m_arPageCounter.set(i, nPage);
+//                        //m_nPageCounter = nPage;
+//                    }
+//                }
+//            }
+//        }
+//        this.refresh();
     }
 
     private int checkFocusedOrderInWhichPage()
@@ -1683,7 +1763,7 @@ public class QueueView  extends View {
         for (int i=0; i< ncount; i++)
         {
             KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            if (QueueOrders.getOrderQueueStatus(order) == QueueOrders.QueueStatus.Received)
+            if (m_queueOrders.getStatus(order) == QueueOrders.QueueStatus.Received)
 
             {
 //                nCurrentItemIndex ++;
@@ -1758,12 +1838,12 @@ public class QueueView  extends View {
             int nPanelIndex = 0;
             int nTotalPanels = nRows * getCols();
             //for guest_paging
-            int nPagesCount = getPageCount(status, nRows, getCols());
+            //int nPagesCount = getPageCount(status, nRows, getCols());
             int nPageIndex = 0;//getCurrentPageIndex(nPagesCount);
 
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = m_queueOrders.getOrders().get(i);
-                if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order))) {
+                if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
 //                nItemCurrentIndex ++;
 //                if (nItemCurrentIndex < nItemsStartIndex) continue;
                     if (order.getGUID().equals(getFocusedGuid()))
@@ -1846,37 +1926,38 @@ public class QueueView  extends View {
     public void focusNext()
     {
 
-        synchronized (m_locker) {
-            String s = m_queueOrders.getNextOrderGUID(m_queueOrders.getFocusedOrderGUID());
-
-            focusOrder(s);
-        }
+//        synchronized (m_locker) {
+//            String s = m_queueOrders.getNextOrderGUID(m_queueOrders.getFocusedOrderGUID());
+//
+//            focusOrder(s);
+//        }
     }
     public void focusPrev()
     {
-        synchronized (m_locker) {
-
-            String s = m_queueOrders.getPrevOrderGUID(m_queueOrders.getFocusedOrderGUID());
-            focusOrder(s);
-        }
+//        synchronized (m_locker) {
+//
+//            String s = m_queueOrders.getPrevOrderGUID(m_queueOrders.getFocusedOrderGUID());
+//            focusOrder(s);
+//        }
     }
 
     public void focusFirst()
     {
-        synchronized (m_locker) {
-            String s = "";
-            if (m_queueOrders.getOrders() == null) return;
-            if (m_queueOrders.getOrders().getCount() > 0)
-                s = m_queueOrders.getOrders().get(0).getGUID();
-            focusOrder(s);
-        }
+//        synchronized (m_locker) {
+//            String s = "";
+//            if (m_queueOrders.getOrders() == null) return;
+//            if (m_queueOrders.getOrders().getCount() > 0)
+//                s = m_queueOrders.getOrders().get(0).getGUID();
+//            focusOrder(s);
+//        }
     }
 
     public String getFocusedGuid()
     {
-        synchronized (m_locker) {
-            return m_queueOrders.getFocusedOrderGUID();
-        }
+        return "";
+//        synchronized (m_locker) {
+//            return m_queueOrders.getFocusedOrderGUID();
+//        }
     }
 
     public String getFirstOrderGuid()
@@ -1897,9 +1978,17 @@ public class QueueView  extends View {
     }
     public void onTimer()
     {
-        refreshTimer();
-        checkPageCounter();
-        checkAutoBump();
+        try {
+
+
+            refreshTimer();
+            checkPageCounter();
+            //checkAutoBump(); //move it to "MainActivity.java -->startCheckingThread()
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+        }
     }
     public KDSDataOrders getOrders()
     {
@@ -1925,7 +2014,7 @@ public class QueueView  extends View {
             for (int i = 0; i < ncount; i++) {
                 KDSDataOrder order = m_queueOrders.getOrders().get(i);
                 if (order == null) continue;
-                if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order))) {
+                if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
                     ncounter++;
                 }
             }
@@ -1940,15 +2029,25 @@ public class QueueView  extends View {
         int n = ncount/nTotalPanels;
         if ( (ncount%nTotalPanels) >0)
             n ++;
+        //Log.i(TAG, "pages count=" + n);
         return n;
     }
 
-    private int getCurrentPageIndex(int nPagesCount)
+    private int getCurrentPageIndex(int nPagesCount, int nStatus)
     {
         if (nPagesCount <= 0)
             return 0;
-        int n =  (m_nPageCounter % nPagesCount);
+        int counter = m_arPageCounter.get(nStatus);
+        int n = (counter% nPagesCount);
+        if (n == 0)
+            m_arPageCounter.set(nStatus, 0); //reset it.
         return n;
+
+//        int n =  (m_nPageCounter % nPagesCount);
+//        Log.i(TAG, "pages counter =" + m_nPageCounter);
+//        Log.i(TAG, "index pages count =" + nPagesCount);
+//        Log.i(TAG, "-------pages index=" + n);
+//        return n;
     }
 
     /**
@@ -1959,44 +2058,49 @@ public class QueueView  extends View {
      * @param arPages
      *  return this values
      */
-    private void drawSimpleModeWithGiveOrderStatus2(Canvas g, Rect rect,ArrayList<QueueOrders.QueueStatus> status, ArrayList<Integer> arPages )
+    private void drawSimpleModeWithGiveOrderStatus2(Canvas g, Rect rect,ArrayList<QueueOrders.QueueStatus> status, ArrayList<Integer> arPages, boolean bReverseColorForFlush )
     {
         Rect rtData = new Rect(rect);
         //rtData.bottom -= PAGE_NUMBER_ROW_HEIGHT;
+        synchronized (m_locker) {
+            int nRows = calculateRows(rtData,ITEM_AVERAGE_HEIGHT);
+            int ncount = m_queueOrders.getOrders().getCount();
+            int nPanelIndex = 0;
+            int nTotalPanels = nRows * getCols();
+            //for page
+            int nPagesCount = getPageCount(status, nRows, getCols());
+            int nPageIndex = getCurrentPageIndex(nPagesCount, status.get(0).ordinal());
+            int nItemsStartIndex = nPageIndex * nTotalPanels;
 
-        int nRows = calculateRows(rtData,ITEM_AVERAGE_HEIGHT);
-        int ncount = m_queueOrders.getOrders().getCount();
-        int nPanelIndex = 0;
-        int nTotalPanels = nRows * getCols();
-        //for guest_paging
-        int nPagesCount = getPageCount(status, nRows, getCols());
-        int nPageIndex = getCurrentPageIndex(nPagesCount);
-        int nItemsStartIndex = nPageIndex * nTotalPanels;
+            int nItemCurrentIndex = -1;
+            try {
 
-        int nItemCurrentIndex = -1;
-        for (int i=0; i< ncount; i++)
-        {
-            KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            if (isEqualToAnyStatus(status, QueueOrders.getOrderQueueStatus(order)) )
-            {
-                nItemCurrentIndex ++;
-                if (nItemCurrentIndex < nItemsStartIndex) continue;
+                for (int i = 0; i < ncount; i++) {
+                    KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                    if (order == null) break;
+                    if (isEqualToAnyStatus(status, m_queueOrders.getStatus(order))) {
+                        nItemCurrentIndex++;
+                        if (nItemCurrentIndex < nItemsStartIndex) continue;
 
-                if (nPanelIndex>= nTotalPanels)
-                {
-                    break;
+                        if (nPanelIndex >= nTotalPanels) {
+                            break;
+                        }
+
+                        drawSimpleItem(g, rtData, nRows, getCols(), order, nPanelIndex, bReverseColorForFlush);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
+                        nPanelIndex++;
+
+                    }
                 }
-
-                drawSimpleItem(g, rtData, nRows, getCols(), order, nPanelIndex);// m_items.get(i),WeekEvent.EVENT_COLOR_BG);
-                nPanelIndex++;
-
             }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            arPages.clear();
+            arPages.add(nPageIndex);
+            arPages.add(nPagesCount);
         }
-
-        arPages.clear();
-        arPages.add(nPageIndex);
-        arPages.add(nPagesCount);
-
     }
 
 
@@ -2009,7 +2113,7 @@ public class QueueView  extends View {
      *
      * @param g
      */
-    public void drawSimpleItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex)
+    public void drawSimpleItem(Canvas g,Rect rect, int nRows,int nCols,  KDSDataOrder order, int nPanelIndex, boolean bReverseReadyColor )
     {
         Rect rtCell = getItemRect(rect, nRows,nCols,nPanelIndex);
         if (rtCell.isEmpty()) return;
@@ -2018,36 +2122,43 @@ public class QueueView  extends View {
         if (order == null) return;
         //       Rect rtClip = g.getClipBounds();
         g.save();
-        //set the drawing area
-        // rtCell.inset(BORDER_GAP, BORDER_GAP);
-        rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
-        g.clipRect(rtCell);
+        try {
 
-        boolean bReverseReadyColorForFlash = false;
-        if (m_bFlashReadyOrder)
-        {
-            if (isReadyOrder(order))//||
-                    //isPreparationOrder(order))
-            {
-                Calendar c = Calendar.getInstance();
-                int second = c.get(Calendar.SECOND);
-                if ( (second%2)==0)
-                    bReverseReadyColorForFlash = true;
+
+            //set the drawing area
+            // rtCell.inset(BORDER_GAP, BORDER_GAP);
+            rtCell = drawItemBorder(g, rtCell, order.getGUID().equals(m_queueOrders.getFocusedOrderGUID()));
+            g.clipRect(rtCell);
+
+            boolean bReverseReadyColorForFlash = false;
+            if (m_bFlashReadyOrder) {
+                if (isReadyOrder(order))//||
+                //isPreparationOrder(order))
+                {
+                    bReverseReadyColorForFlash = bReverseReadyColor;
+//                Calendar c = Calendar.getInstance();
+//                int second = c.get(Calendar.SECOND);
+//                if ( (second%2)==0)
+//                    bReverseReadyColorForFlash = true;
+                }
             }
+            // Paint paintBG = new Paint();
+            m_paintOrderTitle.setColor(getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
+            //m_paintOrderTitle.setAlpha(0);
+            g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
+            //m_paintOrderTitle.setAlpha(255);
+            int nTitleAreaWidth = (int) ((float) rtCell.width() * ORDERID_AREA_PERCENT);
+
+            Rect rtTitle = new Rect(rtCell);
+            //rtTitle.right = rtTitle.left + nTitleAreaWidth;
+            drawTitle(g, rtTitle, order, bReverseReadyColorForFlash);
         }
-        // Paint paintBG = new Paint();
-        m_paintOrderTitle.setColor( getBG(m_ftOrderID, bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        //m_paintOrderTitle.setColor( getBG(m_ftOrderID, false));//bReverseReadyColorForFlash)); //m_ftOrderID.getBG());
-        //m_paintOrderTitle.setAlpha(0);
-        g.drawRect(rtCell, m_paintOrderTitle); //draw whole bg
-        //m_paintOrderTitle.setAlpha(255);
-        int nTitleAreaWidth =(int) ((float)rtCell.width() * ORDERID_AREA_PERCENT);
-
-        Rect rtTitle = new Rect(rtCell);
-        //rtTitle.right = rtTitle.left + nTitleAreaWidth;
-        drawTitle(g, rtTitle, order,bReverseReadyColorForFlash);
-
-
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        //make sure "restore" was called
         g.restore();
 
     }
@@ -2055,7 +2166,7 @@ public class QueueView  extends View {
 
     final int SIMPLE_HEADER_HEIGHT = 35;
     final int PAGE_NUMBER_ROW_HEIGHT = 30;
-    private void drawSimpleModeCol(Canvas canvas, Rect rect, ArrayList<QueueOrders.QueueStatus> status)
+    private void drawSimpleModeCol(Canvas canvas, Rect rect, ArrayList<QueueOrders.QueueStatus> status, boolean bReverseColorForFlush)
     {
         Rect rt = new Rect(rect);
 
@@ -2067,7 +2178,7 @@ public class QueueView  extends View {
         rt.bottom -= PAGE_NUMBER_ROW_HEIGHT;
 
         ArrayList<Integer> arPages = new ArrayList<>();
-        drawSimpleModeWithGiveOrderStatus2(canvas,rt, status, arPages );
+        drawSimpleModeWithGiveOrderStatus2(canvas,rt, status, arPages ,bReverseColorForFlush);
 
         rt.top =rect.bottom - PAGE_NUMBER_ROW_HEIGHT+5;
         rt.bottom = rect.bottom;
@@ -2095,11 +2206,17 @@ public class QueueView  extends View {
                 return;
         }
         if (m_tdPage.is_timeout(PAGE_TIMEOUT)) {
-            m_nPageCounter++;
+            for (int i=0;i< m_arPageCounter.size(); i++)
+            {
+                m_arPageCounter.set(i, m_arPageCounter.get(i)+1);
+                if (m_arPageCounter.get(i) > Integer.MAX_VALUE-1000)
+                    m_arPageCounter.set(i, 0);
+            }
+            //m_nPageCounter++;
             m_tdPage.reset();
         }
-        if (m_nPageCounter >Integer.MAX_VALUE-1000)
-            m_nPageCounter = 0;
+//        if (m_nPageCounter >Integer.MAX_VALUE-1000)
+//            m_nPageCounter = 0;
     }
 
     String m_strInputOrderID = "";
@@ -2112,56 +2229,56 @@ public class QueueView  extends View {
      */
     public void onKeyPressed(int keyCode, KeyEvent event, KDSSettings.ID eventID)
     {
-        if (!isQueueExpo()) return;
-        if (eventID != KDSSettings.ID.NULL ) {
-            m_strInputOrderID = "";
-            refresh();
-            return;
-        }
-        if (keyCode >= KeyEvent.KEYCODE_0 &&
-                keyCode <= KeyEvent.KEYCODE_9)
-        {
-            int n = keyCode - KeyEvent.KEYCODE_0;
-            m_strInputOrderID += KDSUtil.convertIntToString(n);
-            refreshFocusAfterInputing();
-            return;
-        }
-        else
-        {
-            m_strInputOrderID = "";
-            refresh();
-        }
+//        if (!isQueueExpo()) return;
+//        if (eventID != KDSSettings.ID.NULL ) {
+//            m_strInputOrderID = "";
+//            refresh();
+//            return;
+//        }
+//        if (keyCode >= KeyEvent.KEYCODE_0 &&
+//                keyCode <= KeyEvent.KEYCODE_9)
+//        {
+//            int n = keyCode - KeyEvent.KEYCODE_0;
+//            m_strInputOrderID += KDSUtil.convertIntToString(n);
+//            refreshFocusAfterInputing();
+//            return;
+//        }
+//        else
+//        {
+//            m_strInputOrderID = "";
+//            refresh();
+//        }
 
     }
 
     private void refreshFocusAfterInputing()
     {
-        String orderName = m_strInputOrderID;
-        String partialFitGuid = "";
-        int nMaxNameLength = 0;
-        synchronized (m_locker) {
-            for (int i = 0; i < m_queueOrders.getOrders().getCount(); i++) {
-                String dbOrderName = m_queueOrders.getOrders().get(i).getOrderName();
-                if (dbOrderName.length() > nMaxNameLength)
-                    nMaxNameLength = dbOrderName.length();
-                if (dbOrderName.equals(orderName)) {
-                    partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
-                    //this.focusOrder(m_queueOrders.getOrders().get(i).getGUID());
-                    //return;
-                    break;
-                } else if (dbOrderName.indexOf(orderName) == 0) {
-                    if (partialFitGuid.isEmpty())
-                        partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
-                }
-            }
-
-        }
-        this.focusOrder(partialFitGuid);
-        if (m_strInputOrderID.length() >= nMaxNameLength)
-            m_strInputOrderID = "";
-        if (partialFitGuid.isEmpty())
-            m_strInputOrderID = "";
-        refresh();
+//        String orderName = m_strInputOrderID;
+//        String partialFitGuid = "";
+//        int nMaxNameLength = 0;
+//        synchronized (m_locker) {
+//            for (int i = 0; i < m_queueOrders.getOrders().getCount(); i++) {
+//                String dbOrderName = m_queueOrders.getOrders().get(i).getOrderName();
+//                if (dbOrderName.length() > nMaxNameLength)
+//                    nMaxNameLength = dbOrderName.length();
+//                if (dbOrderName.equals(orderName)) {
+//                    partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
+//                    //this.focusOrder(m_queueOrders.getOrders().get(i).getGUID());
+//                    //return;
+//                    break;
+//                } else if (dbOrderName.indexOf(orderName) == 0) {
+//                    if (partialFitGuid.isEmpty())
+//                        partialFitGuid = m_queueOrders.getOrders().get(i).getGUID();
+//                }
+//            }
+//
+//        }
+//        this.focusOrder(partialFitGuid);
+//        if (m_strInputOrderID.length() >= nMaxNameLength)
+//            m_strInputOrderID = "";
+//        if (partialFitGuid.isEmpty())
+//            m_strInputOrderID = "";
+//        refresh();
 
     }
 
@@ -2169,53 +2286,191 @@ public class QueueView  extends View {
      * auto bump order if order is in status=3 or 4.
      *
      */
-    private void checkAutoBump()
+    public void checkAutoBump()
+    {
+        checkAutoBump(QueueOrders.QueueStatus.Ready,QueueOrders.QueueStatus.Pickup , false);
+        //remove it, We need to try to get this to work. Because this will cause many issues. Can you take a look at this.
+        //We need to see if we can find a solution for this.
+        //checkAutoBump(QueueOrders.QueueStatus.Received,QueueOrders.QueueStatus.Preparation , true);
+    }
+
+    Thread m_threadShowOrders = null;
+    int m_nRedrawRequestCounter = 0;
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startShowOrdersThread()
+    {
+        if (m_threadShowOrders == null ||
+                !m_threadShowOrders.isAlive())
+        {
+            m_threadShowOrders = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true)
+                    {
+                        if (m_threadShowOrders != Thread.currentThread())
+                            return;
+                        if (m_nRedrawRequestCounter <=0)
+                        {
+                            try {
+                                Thread.sleep(200);
+                                continue;
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        int nOld = m_nRedrawRequestCounter;
+                        try {
+                            showOrdersWithoutUIRefresh();
+                            refreshThroughMessage();
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                        m_nRedrawRequestCounter -= nOld;
+                        if (m_nRedrawRequestCounter<0)
+                            m_nRedrawRequestCounter = 0;
+                    }
+                }
+            });
+            m_threadShowOrders.setName("QueueShowOrders");
+            m_threadShowOrders.start();
+        }
+    }
+
+
+    public void showOrdersWithoutUIRefresh()
+    {
+
+        synchronized (m_locker) {
+
+            KDSDataOrders orders = m_queueOrders.getOrders();
+            if (m_nViewMode == KDSSettings.QueueMode.Simple)
+                m_queueOrders.sortByStateTime(m_status1Sort,m_status2Sort,m_status3Sort,m_status4Sort );
+
+            if (m_bMoveReadyFront)
+                moveReadyFront(orders);
+            //remove focus
+            m_queueOrders.setFocusedOrderGuid("");
+//            if (m_queueOrders.getFocusedOrderGUID().isEmpty()) {
+//                if (orders.getCount() > 0) {
+//                    if (!isQueueExpo())
+//                        m_queueOrders.setFocusedOrderGuid(orders.getFirstOrderGuid());
+//                }
+//            }
+        }
+        //refresh();
+    }
+
+    public void refreshThroughMessage()
+    {
+        Message m = new Message();
+        m.what = 0;
+        m_refreshHandler.sendMessage(m);
+
+    }
+
+
+
+//    private void checkAutoBumpForReceivedState()
+//    {
+//        checkAutoBump(QueueOrders.QueueStatus.Received,QueueOrders.QueueStatus.Preparation );
+//
+//
+//    }
+
+    /**
+     * check two status
+     * @param status0
+     * @param status1
+     */
+    public void checkAutoBump(QueueOrders.QueueStatus status0, QueueOrders.QueueStatus status1, boolean doubleTime)
     {
         if (m_nAutoBumpTimeoutMs <=0) return;
 
-        int ncount =  m_queueOrders.getOrders().getCount();
-        long dtNow = System.currentTimeMillis();
+        try {
 
-        ArrayList<KDSDataOrder> ar = new ArrayList<>();
-        ArrayList<QueueOrders.QueueStatus> arReadyStatus = getSimpleColStatus(QueueOrders.QueueStatus.Ready);
-        ArrayList<QueueOrders.QueueStatus> arPickupStatus = getSimpleColStatus(QueueOrders.QueueStatus.Pickup);
-        arReadyStatus.addAll(arPickupStatus);
 
-        for (int i=0; i< ncount; i++)
-        {
-            KDSDataOrder order = m_queueOrders.getOrders().get(i);
-            QueueOrders.QueueStatus status = QueueOrders.getOrderQueueStatus(order);
-            if (m_nViewMode == KDSSettings.QueueMode.Panels) {
-                if (status != QueueOrders.QueueStatus.Ready &&
-                        status != QueueOrders.QueueStatus.Pickup)
-                    continue;
-            }
-            else if (m_nViewMode == KDSSettings.QueueMode.Simple)
-            {
-                boolean bBumpIt = false;
-                for (int j=0; j< arReadyStatus.size(); j++)
-                {
-                    if (arReadyStatus.get(j) == status) {
-                        bBumpIt = true;
-                        break;
+            int ncount = m_queueOrders.getOrders().getCount();
+            long dtNow = System.currentTimeMillis();
+
+            ArrayList<KDSDataOrder> ar = new ArrayList<>();
+            ArrayList<QueueOrders.QueueStatus> arReadyStatus = getSimpleColStatus(status0);
+            ArrayList<QueueOrders.QueueStatus> arPickupStatus = getSimpleColStatus(status1);
+            arReadyStatus.addAll(arPickupStatus);
+
+            for (int i = 0; i < ncount; i++) {
+                if (i >= m_queueOrders.getOrders().getCount())
+                    break;
+                try {
+
+
+                    KDSDataOrder order = m_queueOrders.getOrders().get(i);
+                    if (order == null) break;
+                    QueueOrders.QueueStatus status = m_queueOrders.getStatus(order);
+                    if (m_nViewMode == KDSSettings.QueueMode.Panels) {
+                        if (status != status0 &&
+                                status != status1)
+                            continue;
+                    } else if (m_nViewMode == KDSSettings.QueueMode.Simple) {
+                        boolean bBumpIt = false;
+                        for (int j = 0; j < arReadyStatus.size(); j++) {
+                            if (arReadyStatus.get(j) == status) {
+                                bBumpIt = true;
+                                break;
+                            }
+                        }
+                        if (!bBumpIt) continue;
                     }
-                }
-                if (!bBumpIt) continue;
-            }
-            Date dtStart = order.getQueueStateTime();//.getStartTime();
-            if ( dtNow - dtStart.getTime() > m_nAutoBumpTimeoutMs)
-            {
-                ar.add(order);
-            }
-        }
-        for (int i=0; i< ar.size(); i++)
-        {
-            m_queueOrders.getOrders().removeComponent(ar.get(i));
-            KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
+                    Date dtStart = order.getQueueStateTime();//.getStartTime();
+                    long nTimeout = m_nAutoBumpTimeoutMs;
+                    if (doubleTime)
+                    {
+                        nTimeout *= 2;
+                    }
 
+                    if (dtNow - dtStart.getTime() > nTimeout) {
+                        ar.add(order);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    break;
+                }
+            }
+            boolean bFromMe = false;
+            if (ar.size()>0)
+                bFromMe = KDSGlobalVariables.getKDS().getCurrentDB().startTransaction();
+            for (int i = 0; i < ar.size(); i++) {
+                //m_queueOrders.getOrders().removeComponent(ar.get(i));//move to end
+                KDSGlobalVariables.getKDS().getCurrentDB().orderDelete(ar.get(i).getGUID());
+
+            }
+            if (ar.size()>0) {
+                KDSGlobalVariables.getKDS().getCurrentDB().finishTransaction(bFromMe);
+                synchronized (m_locker) {
+                    m_queueOrders.getOrders().getComponents().removeAll(ar);//clear once
+                }
+                //if (ar.size() >0) {
+                    //TimeDog td = new TimeDog();
+                //KDSGlobalVariables.getKDS().getCurrentDB().clearExpiredBumpedOrders(KDSGlobalVariables.getKDS().getSettings().getBumpReservedCount());
+                    //td.debug_print_Duration("checkAutoBumping->clearExpiredBumpedOrders");
+                //}
+                refresh();
+                ar.clear();
+            }
         }
-        if (ar.size() >0)
-            refresh();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
 

@@ -100,6 +100,8 @@ public class KDSXMLParserCommand {
         //sos
         SOS_Request_Report,
         SOS_Return_Report,
+        //order ack
+        ACK_XML,
         //KPP1-7, 2.0.50
         Queue_ask_sync_from_prep,
         Prep_sync_to_queue,
@@ -649,4 +651,32 @@ public class KDSXMLParserCommand {
     }
 
 
+
+    /**
+     * for ack xml data
+     * @param strStationID
+     * @param ipAddress
+     * @param macAddress
+     * @param ackGuid
+     * @return
+     */
+    static  public String createXmlAck(String strStationID, String ipAddress, String macAddress, String ackGuid)
+    {
+
+        return createCommandXmlString(KDSCommand.ACK_XML.ordinal(),
+                strStationID, ipAddress, macAddress, ackGuid);
+
+
+    }
+
+    static  public String createQuickXmlAck(String strStationID, String ipAddress, String macAddress, String ackGuid)
+    {
+
+        String s = String.format("<KDSCommand><Code>52</Code><Param Station=\"%s\" IP=\"%s\" MAC=\"%s\">%s</Param></KDSCommand>",
+                strStationID, ipAddress, macAddress, ackGuid);
+        return s;
+
+
+
+    }
 }

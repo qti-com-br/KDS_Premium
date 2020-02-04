@@ -9,6 +9,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,13 @@ public class KDSUsers {
         m_kds = kds;
     }
 
-    public void setSingleUserMode()
+    /**
+     *
+     * @param bSetAllOrderToUserA
+     *      In queue, we need keep all users original user setting.
+     *
+     */
+    public void setSingleUserMode(boolean bSetAllOrderToUserA)
     {
         if (m_users.size() == 1)
             return;
@@ -40,6 +47,8 @@ public class KDSUsers {
         KDSUser user = new KDSUser(KDSUser.USER.USER_A);
         user.setKDS(m_kds);
         m_users.add(user);
+        if (bSetAllOrderToUserA) //kpp1-272
+            m_kds.getCurrentDB().setAllActiveOrdersToUserA();//KPP1-195
     }
     public void setTwoUserMode()
     {
@@ -176,22 +185,35 @@ public class KDSUsers {
      *   return it for printing.
      *   The orders was added.
      */
-    public  ArrayList<KDSDataOrder> orderAdd(KDSDataOrder orderOriginal, boolean bAutoSyncWithOthers)
+    /**
+     *
+     * @param orderOriginal
+     * @param xmlData
+     * @param bAutoSyncWithOthers
+     *  If deliver order to my slave station
+     * @param bAutoSyncWithExpo
+     *  If deliver order to my expo/tt/queue(Expo type station).
+     * @param bRefreshView
+     * @return
+     * First is user A
+     * Second is user B.
+     */
+    public  ArrayList<KDSDataOrder> users_orderAdd(KDSDataOrder orderOriginal,String xmlData, boolean bAutoSyncWithOthers,boolean bAutoSyncWithExpo, boolean bRefreshView)
     {
         //TimeDog t = new TimeDog();
         ArrayList<KDSDataOrder> usersOrder = filterOrderToUsers(orderOriginal);
         //t.debug_print_Duration("orderAdd1");
-        ArrayList<KDSDataOrder> ordersReturn = new  ArrayList<KDSDataOrder>();
+        ArrayList<KDSDataOrder> ordersReturn = new  ArrayList<>();
         if (usersOrder.size() == 1) {
-            KDSDataOrder order =  getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers);
+            KDSDataOrder order =  getUserA().user_orderAdd(usersOrder.get(0),xmlData, bAutoSyncWithOthers,bAutoSyncWithExpo, bRefreshView);
             if (order != null)
                 ordersReturn.add(order);
             //t.debug_print_Duration("orderAdd2");
         }
         else if (usersOrder.size() >1)
         {
-            KDSDataOrder orderA = getUserA().orderAdd(usersOrder.get(0), bAutoSyncWithOthers);
-            KDSDataOrder orderB = getUserB().orderAdd(usersOrder.get(1), bAutoSyncWithOthers);
+            KDSDataOrder orderA = getUserA().user_orderAdd(usersOrder.get(0),xmlData, bAutoSyncWithOthers, bAutoSyncWithExpo,bRefreshView);
+            KDSDataOrder orderB = getUserB().user_orderAdd(usersOrder.get(1),xmlData, bAutoSyncWithOthers,bAutoSyncWithExpo, bRefreshView);
             if (orderA != null)
                 ordersReturn.add(orderA);
 
@@ -331,7 +353,7 @@ public class KDSUsers {
             }
         }
 
-        KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null);
+        KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null, "");
 
 
     }

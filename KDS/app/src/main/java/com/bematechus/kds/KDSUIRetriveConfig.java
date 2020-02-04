@@ -94,7 +94,8 @@ public class KDSUIRetriveConfig extends Activity implements   KDS.StationAnnounc
     protected void onDestroy() {
         super.onDestroy();
         KDS kds = KDSGlobalVariables.getKDS();
-        kds.removeEventReceiver(this);
+        if (kds != null)
+            kds.removeEventReceiver(this);
     }
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         KDSKbdRecorder.convertKeyEvent(keyCode,event);

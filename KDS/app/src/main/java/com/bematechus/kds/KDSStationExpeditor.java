@@ -2,13 +2,16 @@ package com.bematechus.kds;
 
 import android.app.ProgressDialog;
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
+import com.bematechus.kdslib.TimeDog;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -185,7 +188,8 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * @param fromIP
      * @param order
      */
-    static public String exp_order_bumped_in_other_station(KDS kds,KDSDBCurrent db,KDSDataOrders orders,  String fromStationID, String fromIP, KDSDataOrder order)
+    static public String exp_order_bumped_in_other_station(KDS kds,KDSDBCurrent db,KDSDataOrders orders,  String fromStationID, String fromIP,
+                                                           KDSDataOrder order, ArrayList<KDSDataItem> arChangedItems)
     {
         KDSDataOrder orderExisted = orders.getOrderByName(order.getOrderName());
 
@@ -207,9 +211,11 @@ public class KDSStationExpeditor extends KDSStationNormal {
             KDSDataItem expItem =  orderExisted.getItems().getItemByName(itemName);
             if (expItem == null) continue;
 
-            expItem.addRemoteBumpedStation(fromStationID);
-
-            db.itemSetRemoteBumpedStations(expItem);
+            if (expItem.addRemoteBumpedStation(fromStationID)) { //this item is not bump in prep, it will mark bumped here.
+                db.itemSetRemoteBumpedStations(expItem);
+                if (arChangedItems != null)
+                    arChangedItems.add(expItem);
+            }
 
         }
         db.finishTransaction(bStartedByMe);//2.0.15
@@ -277,10 +283,11 @@ public class KDSStationExpeditor extends KDSStationNormal {
             String itemName = order.getItems().getItem(i).getItemName();
             KDSDataItem expItem =  orderExisted.getItems().getItemByName(itemName);
             if (expItem == null) continue;
+            if (!order.getItems().getItem(i).getLocalBumped()) { //20190723 if this item has been bumped in prep station, don't reset its bumped_stations.
+                expItem.removeRemoteBumpedStation(fromStationID);
 
-            expItem.removeRemoteBumpedStation(fromStationID);
-
-            db.itemSetRemoteBumpedStations(expItem);
+                db.itemSetRemoteBumpedStations(expItem);
+            }
 
         }
         db.finishTransaction(bStartedByMe); //2.0.15
@@ -350,7 +357,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
 
 
@@ -479,14 +486,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
         }
         else if (itemB != null)
         {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
         }
 
         return true;
@@ -582,7 +589,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
 
             return orderA.getGUID();
         }
@@ -591,7 +598,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
             return orderB.getGUID();
         }
 
@@ -685,13 +692,13 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (userID == KDSUser.USER.USER_A) {
             sync_with_mirror(kds, command.getCode(), orderA, item);
             sync_with_backup(kds, command.getCode(), orderA, item);
-            sync_with_queue(kds, command.getCode(), orderA, item);
+            sync_with_queue(kds, command.getCode(), orderA, item, "");
         }
         else
         {
             sync_with_mirror(kds, command.getCode(), orderB, item);
             sync_with_backup(kds, command.getCode(), orderB, item);
-            sync_with_queue(kds, command.getCode(), orderB, item);
+            sync_with_queue(kds, command.getCode(), orderB, item, "");
         }
 
     }
@@ -722,18 +729,28 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * return:
      *  order guid
      */
-    static public  String exp_sync_order_bumped(KDS kds, KDSXMLParserCommand command)
+    /**
+     *
+     * @param kds
+     * @param command
+     * @param arChangedItems
+     *  use it to update backoffice item_bumps table "preparation_time" and "done_time".
+     * @return
+     *  order guid
+     */
+    static public  String exp_sync_order_bumped(KDS kds, KDSXMLParserCommand command, ArrayList<KDSDataItem> arChangedItems)
     {
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         if (strXml.isEmpty())
             return "";
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
-        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
+        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);//It just contains ID
 
         if (order == null)
             return "";
-
+        //if (BuildVer.isDebug())
+        //    System.out.println("from="+fromStationID + ",orderid=" + order.getOrderName());
         String orderGuid = "";
 
         if (kds.getStationsConnections().getRelations().isBackupStation())
@@ -751,9 +768,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
                     }
                 }
                 else {
-                    orderGuid = exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                    orderGuid = exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                     if (kds.isMultpleUsersMode())
-                        exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                        exp_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
                 }
                 //don't show them
             }
@@ -766,9 +783,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
                         normal_order_bumped_in_other_station(kds, kds.getSupportDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
                 }
                 else {
-                    orderGuid =  exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                    orderGuid =  exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                     if (kds.isMultpleUsersMode()) {
-                        String guid= exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                        String guid= exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
                         if (!orderGuid.isEmpty())
                             orderGuid += ",";
                         orderGuid += guid;
@@ -785,31 +802,31 @@ public class KDSStationExpeditor extends KDSStationNormal {
             //My primary backup is online or offline.
             if (kds.getStationsConnections().isPrimaryWhoUseMeAsMirrorActive())
             {
-                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                 if (kds.isMultpleUsersMode())
-                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(),  kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
             }
             else
             {
-                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
                 if (kds.isMultpleUsersMode())
-                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                    exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
             }
 
         }
         else
         { //I am common station
             //check if current database contains this order.
-            orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+            orderGuid = exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order,arChangedItems);
             if (kds.isMultpleUsersMode())
-                exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+                exp_order_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order,arChangedItems);
         }
 
         tt_checkAllItemsBumped(kds, order);
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
         return orderGuid;
 //        if (order != null)
@@ -943,7 +960,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
 
 
@@ -1025,7 +1042,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
 
 
 
@@ -1040,7 +1057,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * @return
      *  order guid
      */
-    static public  String exp_sync_item_bumped(KDS kds,  KDSXMLParserCommand command)
+    static public  String exp_sync_item_bumped(KDS kds,  KDSXMLParserCommand command, ArrayList<KDSDataItem> arChangedItems)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
@@ -1138,11 +1155,15 @@ public class KDSStationExpeditor extends KDSStationNormal {
             if (itemA != null) {
                 if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
                     return "";
+                if (arChangedItems != null)
+                    arChangedItems.add(itemA);
             }
             if (itemB != null)
             {
                 if (!exp_item_bumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
                     return "";
+                if (arChangedItems != null)
+                    arChangedItems.add(itemB);
             }
         }
 
@@ -1151,14 +1172,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
         }
         else if (itemB != null)
         {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
         }
 
         if (kds.isExpeditorStation())
@@ -1250,14 +1271,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
             tt_checkAllItemsBumped(kds, orderA);
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
-            sync_with_queue(kds, command.getCode(), orderA, itemA);
+            sync_with_queue(kds, command.getCode(), orderA, itemA, "");
         }
         else if (itemB != null)
         {
             tt_checkAllItemsBumped(kds, orderB);
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
-            sync_with_queue(kds, command.getCode(), orderB, itemB);
+            sync_with_queue(kds, command.getCode(), orderB, itemB, "");
         }
 
     }
@@ -1370,7 +1391,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
     }
 
     /**
@@ -1387,14 +1408,16 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * receive the sync command, check if I am backup/mirror station,
      * @param command
      */
-    static public void exp_sync_order_new(KDS kds, KDSXMLParserCommand command)
+    static public KDSDataOrder exp_sync_order_new(KDS kds, KDSXMLParserCommand command)
     {
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         if (strXml.isEmpty())
-            return;
+            return null;
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
         if (order == null)
-            return;
+            return null;
+        KDSDataOrder  changedOrder = null;
+        ArrayList<KDSDataOrder> changedOrders = null;
 
         if (kds.getStationsConnections().getRelations().isBackupStation())
         { //I am backup slave station
@@ -1402,10 +1425,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    orderAdd(kds.getUsers().getUserA(), order, false, false); //don't check add-on
+                    changedOrder = func_orderAdd(kds.getUsers().getUserA(), order,strXml, false, false,false, true); //don't check add-on
                 else
                 {
-                    kds.getUsers().orderAdd(order, false);
+                    changedOrders = kds.getUsers().users_orderAdd(order, strXml,false, false, true);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
@@ -1414,25 +1437,46 @@ public class KDSStationExpeditor extends KDSStationNormal {
         { //I am mirror slave station
 
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false);
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
             else
-                kds.getUsers().orderAdd(order, false);
+                changedOrders = kds.getUsers().users_orderAdd(order, strXml,false,false, true);
 
         }
         else
         { //I am common station, I am a expeditor.
             //check if current database contains this order.
+//            if (isThisOrderJustBeenAutoBump(kds, order.getOrderName()))
+//                return; //in one hour, we don't accept same order name. When auto bump enabled, if expo has bump given order,this station_add_new will cause add a new same name one.
+//                          //I have to fix this bug, in 24 stations "coke" branch.
+
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), order, false, false);
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
             else
-                kds.getUsers().orderAdd(order, false);
+                changedOrders = kds.getUsers().users_orderAdd(order,strXml, false, false,true);
         }
 
         tt_checkAllItemsBumped(kds, order);
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
+        //change order guid and start time for expo web backoffice usage.
+        //kpp1-267, don't need these code. New order has been added to expo before call this function.
+//        KDSDataOrder orderChanged = null;
+//        if (changedOrder != null)
+//            orderChanged = changedOrder;
+//        else
+//        {
+//            if (changedOrders != null)
+//            {
+//                if (changedOrders.size() >0)
+//                    orderChanged = changedOrders.get(0);
+//            }
+//        }
+//        order.setGUID(orderChanged.getGUID());
+//        order.setStartTime(orderChanged.getStartTime());
+
+        return order;
     }
 
     /**
@@ -1481,7 +1525,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
 
 
 
@@ -1523,7 +1567,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
     }
     /**
      *
@@ -1543,7 +1587,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (order == null) return;
         if (order != null)
         {
-            orderBump(kds.getUsers().getUserA(), order.getGUID());
+            orderBump(kds.getUsers().getUserA(), order.getGUID(), false);
 
             kds.refreshView();
         }
@@ -1552,10 +1596,25 @@ public class KDSStationExpeditor extends KDSStationNormal {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
-        sync_with_queue(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, "");
 
 
 
     }
+
+//    /*
+//       in one hour, we don't accept same order name.
+//       It is for Station_add_new_order command.
+//    */
+//    static private boolean isThisOrderJustBeenAutoBump(KDS kds, String orderName)
+//    {
+//        String guid =  kds.getCurrentDB().orderGetBumpedGuidFromName(orderName);
+//        if (guid.isEmpty()) return false;
+//        Date dt = kds.getCurrentDB().orderGetBumpedTime(guid);
+//        TimeDog td = new TimeDog(dt);
+//        return (!td.is_timeout(1 * 60 * 60 * 1000) );//one hour
+//
+//
+//    }
 
 }

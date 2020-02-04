@@ -2,6 +2,7 @@ package com.bematechus.kds;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.preference.PreferenceActivity;
@@ -19,27 +20,53 @@ public class KDSPreferenceSound extends DialogPreference implements KDSUIDialogB
 
     private String m_strSoundUri = "";
     private  String m_strKey = "";
-
+    private String m_strDefaultValue = "";
 
     public KDSPreferenceSound(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
-        m_strKey = this.getKey();
-        init_summary(context);
+        init(context, attrs);
+//        String defaultVal = attrs.getAttributeValue("http://schemas.android.com/apk/res/android", "defaultValue");
+//        m_strDefaultValue = defaultVal;
+//        m_strKey = this.getKey();
+//        init_summary(context);
     }
 
     public KDSPreferenceSound(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        m_strKey = this.getKey();
-        init_summary(context);
+        init(context, attrs);
+//        m_strKey = this.getKey();
+//        init_summary(context);
 
     }
+    private void init(Context context, AttributeSet attrs)
+    {
+
+//        int ncount = attrs.getAttributeCount();
+//        for (int i=0; i< ncount; i++)
+//        {
+//            String name = attrs.getAttributeName(i);
+//            String value = attrs.getAttributeValue(i);
+//            String s = name + value;
+//
+//        }
+        int nResID = attrs.getAttributeResourceValue("http://schemas.android.com/apk/res/android", "defaultValue", -1);
+        String defaultVal = "";
+        if (nResID!= -1)
+            defaultVal = context.getString(nResID);
+
+
+        m_strDefaultValue = defaultVal;
+        m_strKey = this.getKey();
+        init_summary(context);
+    }
+
+
     private void init_summary(Context context)
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
 
-        m_strSoundUri = pref.getString(m_strKey, "");
+        //m_strSoundUri = pref.getString(m_strKey, "");
+        m_strSoundUri = pref.getString(m_strKey,m_strDefaultValue);
 
         KDSSound sound = KDSSound.parseString(m_strSoundUri);
         this.setSummary(sound.getDescription());

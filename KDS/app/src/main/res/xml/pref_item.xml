@@ -7,7 +7,7 @@
         android:defaultValue="true" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="item_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/item_bg,@color/item_fg,12"
+        android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
         android:title="@string/item_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSListPreference
@@ -95,7 +95,7 @@
             <!--android:title="Change item color to"-->
             <!--android:defaultValue="false" />-->
 
-        <!--<com.bematechus.kds.KDSPreferenceBGFGPicker-->
+        <!--<com.bematechus.kdslib.KDSPreferenceBGFGPicker-->
             <!--android:key="void_item_bgfg"-->
             <!--android:defaultValue="-39424,0"-->
             <!--android:title="Color" />-->
@@ -123,7 +123,7 @@
             android:title="Void quantity line color enabled"
             android:defaultValue="false" />
 
-        <com.bematechus.kds.KDSPreferenceBGFGPicker
+        <com.bematechus.kdslib.KDSPreferenceBGFGPicker
             android:key="void_addline_line_bgfg"
             android:defaultValue="-39424,0"
             android:dependency="void_addline_line_color_enabled"

@@ -30,6 +30,8 @@ public class KDSDataCondiment extends KDSData {
     protected KDSToStations m_hiddenStations = new KDSToStations(); //just for parse xml. If this station is hidden, set "hidden" variable.
 
     Object m_tag = null; //use it to save my parent(item);
+
+
     /***************************************************************************/
     
     protected int m_nTransactionType = KDSDataOrder.TRANSTYPE_ADD;
@@ -172,9 +174,10 @@ public class KDSDataCondiment extends KDSData {
     }
     public boolean isAssignedColor()
     {
-        if (m_nFG != 0 || m_nBG != 0)
-            return true;
-        return false;
+        return isAssignedColor(m_nBG, m_nFG);
+//        if (m_nFG != 0 || m_nBG != 0)
+//            return true;
+//        return false;
     }
 
     public void setHiden(boolean bHiden)
@@ -340,5 +343,6 @@ public class KDSDataCondiment extends KDSData {
     {
         setHiden(isHiddenStation(stationID));
     }
-    
+
+
 }

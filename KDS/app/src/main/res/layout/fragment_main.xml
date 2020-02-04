@@ -89,7 +89,7 @@
                 android:numColumns="3"
                 android:visibility="visible"
                 android:background="@drawable/top_sum_border" />
-            <com.bematechus.kds.KDSView
+            <com.bematechus.kds.KDSIOSView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/viewOrdersA"
@@ -189,7 +189,7 @@
                  android:visibility="visible"
                  android:background="@drawable/media_listview_border"
                  android:layout_margin="2dp" />
-            <com.bematechus.kds.KDSView
+            <com.bematechus.kds.KDSIOSView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/viewOrdersB"

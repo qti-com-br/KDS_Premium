@@ -128,17 +128,21 @@ public class KDSSocketManager implements Runnable {
     private void threadSelect() {
         while (m_bRunning) {
            // boolean bSleep =true;// false; force it sleep 100 ms
+            if (m_threadSocket != Thread.currentThread())
+                return;
             try {
                 synchronized (m_locker) {
 //                    if (m_selector.keys().size() <= 0) {
 //                        bSleep = true;
 //                    } else {
+
                         if (m_selector.select(SELECT_TIMEOUT) > 0) {
                             //Thread.sleep(100);
                             Iterator<SelectionKey> keyIterator = m_selector.selectedKeys().iterator();
                             while (keyIterator.hasNext()) {
                                 SelectionKey key = keyIterator.next();
                                 if (key ==null) continue;
+
                                 if (key.isValid()) {
                                     KDSSocketInterface obj = (KDSSocketInterface) key.attachment();
                                     if (obj == null) continue;
@@ -159,6 +163,7 @@ public class KDSSocketManager implements Runnable {
                                 keyIterator.remove();
 
                             }
+
                         }
 //                        else {
 //                            bSleep = true;
@@ -250,7 +255,20 @@ public class KDSSocketManager implements Runnable {
 
             //check read
             if (key.isReadable()) {
-                obj.interface_OnTCPClientRead(channel);
+                if (!KDSApplication.isRouterApp()) {
+                    if (isAnySocketWriteBufferFull()) {//make sure it is stable. KPP1-Coke
+                        //Suspend others reading, just I can read new data.
+                        if (isSocketWriteBufferFull(key)) //Myself is full, still reading.
+                            obj.interface_OnTCPClientRead(channel);
+
+                    } else {
+                        obj.interface_OnTCPClientRead(channel);
+                    }
+                }
+                else {
+                    obj.interface_OnTCPClientRead(channel);
+                }
+
             }
             if ( key.isWritable()) {
                 obj.interface_OnTCPClientWrite(channel);
@@ -264,7 +282,7 @@ public class KDSSocketManager implements Runnable {
             }
             return true;
         } catch (Exception e) {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            //KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
             //KDSLog.e(TAG,KDSLog._FUNCLINE_() + KDSUtil.error(e) );
             return false;
 
@@ -548,6 +566,41 @@ public class KDSSocketManager implements Runnable {
             //e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Write buffer contains 10 pieces of data.
+     * Just waiting...
+     * @return
+     */
+    public boolean isAnySocketWriteBufferFull()
+    {
+        Iterator<SelectionKey> keyIterator = m_selector.keys().iterator();
+        while (keyIterator.hasNext()) {
+            SelectionKey key = keyIterator.next();
+            if (isSocketWriteBufferFull(key))
+                return true;
+
+        }
+        return false;
+    }
+
+    public boolean isSocketWriteBufferFull(SelectionKey key)
+    {
+
+
+        if (!key.isValid()) return false;
+
+        KDSSocketInterface obj = (KDSSocketInterface) key.attachment();
+        if (obj == null) return false;
+        if (obj.interface_isTCPClient()) {
+            if (obj.interface_WriteBufferIsFull())
+                return true;
+        }
+        return false;
+
+
+
     }
 
 

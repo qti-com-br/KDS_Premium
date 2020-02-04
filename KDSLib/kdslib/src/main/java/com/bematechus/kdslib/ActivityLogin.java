@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,7 +25,7 @@ import com.bematechus.kdslib.ActivationRequest;
 /**
  * A login screen that offers login via email/password.
  */
-public class ActivityLogin extends Activity implements  Activation.ActivationEvents{
+public class ActivityLogin extends Activity implements  Activation.ActivationEvents, DialogBaseNoBumpbarSupport.KDSDialogBaseListener {
 
 
     /**
@@ -41,13 +43,26 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     Activation m_activation = new Activation(this);
 
+    static ActivityLogin m_instance = null;
 
+    static public boolean isShowing()
+    {
+        return (m_instance != null);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        m_instance = null;
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        m_instance = this;
         Intent intent = this.getIntent();
         String s =  intent.getStringExtra("id");
         m_activation.setStationID(s);
@@ -60,6 +75,16 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mUserNameView = (AutoCompleteTextView) findViewById(R.id.email);
+        mUserNameView.setFilters(new InputFilter[]{
+                new InputFilter() {
+                    @Override
+                    public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                        if (source.equals("'"))
+                            return "";
+                        else return null;
+                    }
+                }
+        });
        // populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -78,7 +103,18 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                String oldUserName = Activation.loadOldUserName();
+                String newUserName = mUserNameView.getText().toString();
+                if (Activation.getGlobalEventsReceiver() != null) {
+                    if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
+                        showClearDataWarning();
+                    } else
+                        attemptLogin();
+                }
+                else
+                {
+                    attemptLogin();
+                }
             }
         });
 
@@ -94,7 +130,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         m_txtSerialID = (TextView) findViewById(R.id.txtSerialNumber);
 
         s = getString(R.string.my_serial_number);
-        s += macAddress;
+        //s += macAddress;
+        s += Activation.getMySerialNumber();
         m_txtSerialID.setText(s);
 
 
@@ -299,6 +336,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         this.setResult(1);
         String email = mUserNameView.getText().toString();
         String password = mPasswordView.getText().toString();
+        m_activation.checkStoreChanged();
         m_activation.saveUserNamePwd(email, password);
 
         this.finish();
@@ -335,47 +373,37 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
     {
 
     }
+    public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, Activation.SyncDataResult result)
+    {
 
-//    /**
-//     * Represents an asynchronous login/registration task used to authenticate
-//     * the user.
-//     */
-//    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-//
-//        private final String mEmail;
-//        private final String mPassword;
-//
-//        UserLoginTask(String email, String password) {
-//            mEmail = email;
-//            mPassword = password;
-//        }
-//
-//        @Override
-//        protected Boolean doInBackground(Void... params) {
-//
-//
-//
-//            return true;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(final Boolean success) {
-//            mAuthTask = null;
-//            showProgress(false);
-//
-//            if (success) {
-//                finish();
-//            } else {
-//                mPasswordView.setError(getString(R.string.error_incorrect_password));
-//                mPasswordView.requestFocus();
-//            }
-//        }
-//
-//        @Override
-//        protected void onCancelled() {
-//            mAuthTask = null;
-//            showProgress(false);
-//        }
-//    }
+    }
+    public void onDoActivationExplicit()
+    {
+
+    }
+
+    public void onForceClearDataBeforeLogin()
+    {
+
+    }
+
+    private void showClearDataWarning()
+    {
+        DialogBaseNoBumpbarSupport dlg = new DialogBaseNoBumpbarSupport();
+        dlg.createOkCancelDialog(this, null, getString(R.string.confirm), getString(R.string.login_other_store), false, this);
+        dlg.show();
+    }
+
+    public void onKDSDialogCancel(DialogBaseNoBumpbarSupport dialog)
+    {
+
+    }
+    public void onKDSDialogOK(DialogBaseNoBumpbarSupport dialog, Object obj)
+    {
+        m_activation.fireClearDataEvent();
+        attemptLogin();
+
+
+    }
 }
 

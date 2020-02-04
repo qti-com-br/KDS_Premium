@@ -1,7 +1,6 @@
 package com.bematechus.kdsrouter;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,10 +17,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -45,10 +40,10 @@ import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSLogOrderFile;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
-import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSTimer;
@@ -63,8 +58,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener,
         KDSRouter.KDSRouterEvents,
@@ -135,6 +128,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         checkNetworkState();
         checkLogFilesDeleting();
+        startCheckRemoteFolderNotificationThread();
 
         checkAutoActivation();
 
@@ -241,7 +235,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.i(TAG, ">>>>>>Enter mainactivity oncreate");
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         m_activation.setEventsReceiver(this);
@@ -280,6 +274,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_timer.start(this, this, 1000);
 
         updateTitle();
+
+
+
 
     }
 
@@ -350,6 +347,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
         String id = pre.getString("general_station_id", "");
+        if (!Activation.getStoreName().isEmpty())
+            id = Activation.getStoreName() + "-" + id;
         m_txtRouterID.setText(id);
 
     }
@@ -370,7 +369,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SHOW_SCHEDULE)
         {
-            getKDSRouter().scheduleRefresh();
+            if  (getKDSRouter() != null)
+                getKDSRouter().scheduleRefresh();
         }
         else if (requestCode == SHOW_SETTINGS)
         {
@@ -441,11 +441,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else if (id == R.id.action_about)
         {
-            KDSUIAboutDlg.showAbout(this, getVersionName());
+            KDSUIAboutDlg.showAbout(this, getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
         }
         else if (id == R.id.action_clear_log)
         {
             clearLog();
+        }
+        else if (id == R.id.action_logout) //add this new. KPP1-185
+        {
+            Activation.resetUserNamePwd();
+            onDoActivationExplicit();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -914,22 +919,28 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
     public void  showOtherRouterEnabledError()
     {
-        String strError = KDSApplication.getContext().getString(R.string.error_other_router_enabled);
+        try {
+            String strError = KDSApplication.getContext().getString(R.string.error_other_router_enabled);
 
-        String strOK = this.getString(R.string.ok);
-        AlertDialog d = new AlertDialog.Builder(this)
-                .setTitle(KDSApplication.getContext().getString(R.string.error))
-                .setMessage(strError)
-                .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+            String strOK = this.getString(R.string.ok);
+            AlertDialog d = new AlertDialog.Builder(this)
+                    .setTitle(KDSApplication.getContext().getString(R.string.error))
+                    .setMessage(strError)
+                    .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
+                                }
                             }
-                        }
-                )
+                    )
 
-                .create();
-        d.show();
+                    .create();
+            d.show();
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+        }
     }
 
     public void onAskOrderState(Object objSource, String orderName)
@@ -1029,6 +1040,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
+    public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, Activation.SyncDataResult result)
+    {
+
+    }
+    public void onDoActivationExplicit()
+    {
+        doActivation(false, true, "");
+    }
+
+    public void onForceClearDataBeforeLogin()
+    {
+
+    }
+
     private void checkActivationResult(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType)
     {
         if (m_activation.isActivationFailedEnoughToLock() || errType == ActivationRequest.ErrorType.License_disabled)
@@ -1069,6 +1094,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (m_activation.isDoLicensing()) return;
         if (!isKDSValid()) return;
         m_activation.setStationID(getKDSRouter().getStationID());
+        m_activation.setStationFunc(Activation.KDSROUTER);
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         if (ar.size()<=0) return;
         m_activation.setMacAddress(ar.get(0));
@@ -1123,6 +1149,61 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
     }
+    TimeDog m_notificationDog = new TimeDog();
+
+    Thread m_threadCheckingNotification = null;
+    final int NOTIFICATION_INTERVAL = 60000;// 1800000;
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startCheckRemoteFolderNotificationThread()
+    {
+        if (m_threadCheckingNotification == null ||
+                !m_threadCheckingNotification.isAlive())
+        {
+            m_threadCheckingNotification = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //while (getKDSRouter().isThreadRunning())
+                    while (true)
+                    {
+                        if (getKDSRouter() == null) {
+                            try {
+                                Thread.sleep(10000);
+                            } catch (Exception e) { }
+                            continue;
+
+                        }
+                        if (!getKDSRouter().isThreadRunning())
+                            break;
+                        try {
+                            if (!m_notificationDog.is_timeout(NOTIFICATION_INTERVAL)) //30 minutes
+                            {
+                                try {
+                                    Thread.sleep(10000);
+                                } catch (Exception e) { }
+                                continue;
+                            }
+                            m_notificationDog.reset();
+                            getKDSRouter().removeNotifications();
+
+
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadCheckingNotification.setName("RemoveNotification");
+            m_threadCheckingNotification.start();
+        }
+    }
+
 
     /**
      * 2.0.12

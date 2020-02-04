@@ -9,6 +9,7 @@ import com.bematechus.kdslib.ConditionBase;
 import com.bematechus.kdslib.ConditionOneTime;
 import com.bematechus.kdslib.ConditionStatistic;
 import com.bematechus.kdslib.DateSlots;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataCondiments;
@@ -150,14 +151,14 @@ public class KDSDBStatistic extends KDSDBBase {
 
             this.executeDML(sql);
             //set the finished time
-            java.util.Date dt = new java.util.Date();
-            sql = "update orders set finishedtime='" + KDSUtil.convertDateToString(dt) + "' where guid='" + guid + "'";//+ KDSUtil.ConvertIntToString(nOrderID);
-            this.executeDML(sql);
+            if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+                java.util.Date dt = new java.util.Date();
+                sql = "update orders set finishedtime='" + KDSUtil.convertDateToString(dt) + "' where guid='" + guid + "'";//+ KDSUtil.ConvertIntToString(nOrderID);
+                this.executeDML(sql);
 
-            KDSDataItems items = order.getItems();
-
-            itemsAdd(items);
-
+                KDSDataItems items = order.getItems();
+                itemsAdd(items);
+            }
             //this.finishTransaction(bTransactionByMe);
             this.commitTransaction(bTransactionByMe);
             return true;
@@ -176,6 +177,8 @@ public class KDSDBStatistic extends KDSDBBase {
     }
     private boolean itemsAdd(KDSDataItems items)
     {
+        if (!KDSConst.ENABLE_FEATURE_STATISTIC)
+            return true;
         int ncount = items.getCount();
         String sql = "";
         try
@@ -200,6 +203,8 @@ public class KDSDBStatistic extends KDSDBBase {
     }
     private boolean condimentsAdd(KDSDataCondiments condiments)
     {
+        if (!KDSConst.ENABLE_FEATURE_STATISTIC)
+            return true;
         int ncount = condiments.getCount();
         String sql = "";
         try
@@ -227,14 +232,27 @@ public class KDSDBStatistic extends KDSDBBase {
         String sql = KDSDataOrder.sqlDelete("orders",guid);
         if (!this.executeDML(sql))
             return false;
-        sql = "select guid from items where orderguid='" +guid+"'";// + Common.KDSUtil.ConvertIntToString(nID);
 
-        Cursor c = getDB().rawQuery(sql, null);
+//        sql = "select guid from items where orderguid='" +guid+"'";// + Common.KDSUtil.ConvertIntToString(nID);
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        while (c.moveToNext())
+//        {
+//            String itemguid = getString(c,0);
+//            itemDelete(itemguid);
+//        }
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            sql = String.format("delete from condiments where condiments.itemguid in (select guid from items where items.orderguid='%s')", guid);
+            if (!this.executeDML(sql))
+                return false;
+            sql = String.format("delete from messages where ObjType=1 and messages.ObjGUID in (select guid from items where items.orderguid='%s')", guid);
+            if (!this.executeDML(sql))
+                return false;
 
-        while (c.moveToNext())
-        {
-            String itemguid = getString(c,0);
-            itemDelete(itemguid);
+            sql = String.format("delete from items where items.orderguid='%s'", guid);
+            if (!this.executeDML(sql))
+                return false;
         }
         return true;
     }
@@ -1103,6 +1121,8 @@ public class KDSDBStatistic extends KDSDBBase {
     /************************************************************************/
     TimeSlotOrderReport createItems_Report(ConditionStatistic condition)
     {
+        if (!KDSConst.ENABLE_FEATURE_STATISTIC)
+            return null;
 
         String sql = "";
 
@@ -1182,25 +1202,35 @@ public class KDSDBStatistic extends KDSDBBase {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DAY_OF_YEAR, (-1) * nDaysBefore);
         Date dt = c.getTime();
-
-        String sql = String.format("select guid from orders where date(finishedtime)<='%s'", KDSUtil.convertDateToDbString(dt));
-        Cursor q = getDB().rawQuery(sql, null);
-        ArrayList<String> ar = new ArrayList<>();
-
-        while (q.moveToNext())
-        {
-
-            String orderguid = getString(q,0);
-            ar.add(orderguid);
-        }
-        q.close();
-       if (ar.size() <=0) return;
+        String strDate = KDSUtil.convertDateToDbString(dt);
         boolean bstartedbyme = this.startTransaction();
-        for (int i=0; i< ar.size(); i++)
-        {
-            removeOrder(ar.get(i));
+        String sql = "";
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            sql = String.format("delete from items where items.orderguid in (select guid from orders where date(finishedtime)<='%s')", strDate);
+            this.executeDML(sql);
         }
+        sql = String.format("delete from orders where date(finishedtime)<='%s'", strDate);
+        this.executeDML(sql);
         this.finishTransaction(bstartedbyme);
+
+//        String sql = String.format("select guid from orders where date(finishedtime)<='%s'", KDSUtil.convertDateToDbString(dt));
+//        Cursor q = getDB().rawQuery(sql, null);
+//        ArrayList<String> ar = new ArrayList<>();
+//
+//        while (q.moveToNext())
+//        {
+//
+//            String orderguid = getString(q,0);
+//            ar.add(orderguid);
+//        }
+//        q.close();
+//       if (ar.size() <=0) return;
+//        boolean bstartedbyme = this.startTransaction();
+//        for (int i=0; i< ar.size(); i++)
+//        {
+//            removeOrder(ar.get(i));
+//        }
+        //this.finishTransaction(bstartedbyme);
 
 
     }
@@ -1208,8 +1238,10 @@ public class KDSDBStatistic extends KDSDBBase {
     {
         String sql = String.format("delete from orders where guid='%s'", orderGuid);
         this.executeDML(sql);
-        sql = String.format("delete from items where orderguid='%s'", orderGuid);
-        this.executeDML(sql);
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            sql = String.format("delete from items where orderguid='%s'", orderGuid);
+            this.executeDML(sql);
+        }
         return true;
     }
 
@@ -1412,6 +1444,24 @@ public class KDSDBStatistic extends KDSDBBase {
 
     }
 
+
+    public void clear() {
+
+        boolean bStartedByMe = this.startTransaction();
+        String sql = "delete from orders";
+        this.executeDML(sql);
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            sql = "delete from items";
+            this.executeDML(sql);
+            sql = "delete from condiments";
+            this.executeDML(sql);
+            sql = "delete from messages";
+            this.executeDML(sql);
+        }
+        this.finishTransaction(bStartedByMe);
+
+
+    }
 
 
     /**********************************************************************

@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.bematechus.kdslib.KDSDataSumName;
+import com.bematechus.kdslib.KDSUIColorPickerDialog;
 import com.bematechus.kdslib.KDSUtil;
 
 /**

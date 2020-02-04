@@ -14,7 +14,7 @@
         android:negativeButtonText="@string/cancel"
         />
 
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="tracker_view_bg"
         android:defaultValue="@color/tracker_view_bg"
         android:title="@string/pref_queue_bg" />
@@ -50,12 +50,12 @@
         android:maxLines="1" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_order_name_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_order_name_bg,@color/tracker_order_name_fg,20"
+        android:defaultValue="default_font,@color/tracker_order_name_bg,@color/tracker_order_name_fg,large_size"
         android:title="@string/tracker_order_name_font"
         app:supportsColor="true"/>
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_table_name_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_table_name_bg,@color/tracker_table_name_fg,20"
+        android:defaultValue="default_font,@color/tracker_table_name_bg,@color/tracker_table_name_fg,large_size"
         android:title="@string/tracker_table_name_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSEditTextPreference
@@ -92,7 +92,7 @@
         android:defaultValue="true" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_order_timer_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_order_name_bg,@color/tracker_order_name_fg,14"
+        android:defaultValue="default_font,@color/tracker_order_name_bg,@color/tracker_order_name_fg,middle_size"
         android:title="@string/queue_order_timer_font"
         android:dependency="tracker_show_order_timer"
         app:supportsColor="true"/>
@@ -103,7 +103,7 @@
         android:defaultValue="true" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_tracker_id_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_order_name_bg,@color/tracker_order_name_fg,14"
+        android:defaultValue="default_font,@color/tracker_order_name_bg,@color/tracker_order_name_fg,middle_size"
         android:title="@string/pref_tracker_id_font"
         android:dependency="tracker_show_assigned_tracker_id"
         app:supportsColor="true"/>
@@ -161,7 +161,7 @@
         android:maxLines="1" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="tracker_alert_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/tracker_alert_bg,@color/tracker_alert_fg,14"
+        android:defaultValue="default_font,@color/tracker_alert_bg,@color/tracker_alert_fg,middle_size"
         android:title="@string/pref_tracker_alert_font"
         app:supportsColor="true"/>
     <com.bematechus.kds.KDSPreferenceTTMap

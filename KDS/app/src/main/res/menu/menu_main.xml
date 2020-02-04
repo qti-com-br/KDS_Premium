@@ -22,11 +22,15 @@
     <item android:id="@+id/action_import" android:title="@string/menu_activity_import"
         android:orderInCategory="100" app:showAsAction="never" />
 
-    <item android:id="@+id/action_restore" android:title="@string/menu_activity_restore"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <!--<item android:id="@+id/action_restore" android:title="@string/menu_activity_restore"-->
+        <!--android:orderInCategory="100" app:showAsAction="never" />-->
 
     <item android:id="@+id/action_remote_support" android:title="@string/remote_support"
         android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_logout" android:title="@string/logout"
+        android:orderInCategory="100" app:showAsAction="never" />
+
 
     <item android:id="@+id/action_about" android:title="@string/about"
         android:orderInCategory="100" app:showAsAction="never" />

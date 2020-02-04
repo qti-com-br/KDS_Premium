@@ -10,7 +10,7 @@
         android:title="@string/pref_kds_exp_alert_change_panel"
         android:dependency="exp_alert_enabled"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceColorPicker
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="exp_alert_color"
         android:defaultValue="@color/expalert_bg"
         android:dependency="exp_alert_enabled"

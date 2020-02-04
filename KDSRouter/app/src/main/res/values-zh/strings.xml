@@ -115,7 +115,7 @@
     <string name="searching_active_stations">查询在线终端 …</string>
     <string name="smb_folder_lost">不能打开远程文件夹 #</string>
     <string name="error_different_relations">终端关系与其它不同, 请改正.</string>
-    <string name="error_match_mac">请在bematech 设备上运行.</string>
+    <string name="error_match_mac">请在Logic Controls 设备上运行.</string>
 
     <string name="find">查找</string>
     <string name="pc_name">PC IP:</string>
@@ -171,7 +171,7 @@
     <string name="update_error_download_apk_error">不能下载apk文件</string>
     <string name="update_error_apk_error">Apk文件错误</string>
     <string name="update_error_xml_error">不能下载更新文件</string>
-    <string name="do_you_update">有新版本， 要现在更新吗?</string>
+    <!--<string name="do_you_update">有新版本， 要现在更新吗?</string>-->
     <string name="invalid_update_file">无效的更新文件</string>
     <string name="update_new_version">新版本: #, 推荐指数: $</string>
 
@@ -359,10 +359,14 @@
     <string name="enable_order_ack">Enable order acknowledgement</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <string name="keep_notification_minutes">Reserve notification files for X minutes</string>
     <string-array name="pref_kds_log_mode_titles">
         <item>None</item>
         <item>Basic</item>
         <item>Detail</item>
     </string-array>
     <string name="title_activity_activity_login">Sign in</string>
+    <string name="logout">Logout</string>
+    <string name="export">Export</string>
+    <string name="str_import">Import</string>
 </resources>

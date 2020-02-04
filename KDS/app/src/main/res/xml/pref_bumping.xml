@@ -86,4 +86,9 @@
         android:summary="@string/expo_cannot_bump_unless_prep_bump_all"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="bump_double_queue"
+        android:title="@string/pref_kds_bumping_double_queue_enabled"
+        android:summary="@string/pref_kds_bumping_double_queue_enabled_sum"
+        android:defaultValue="false" />
 </PreferenceScreen>

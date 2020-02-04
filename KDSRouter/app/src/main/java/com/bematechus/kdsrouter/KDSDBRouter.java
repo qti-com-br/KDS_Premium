@@ -601,6 +601,10 @@ public class KDSDBRouter extends KDSDBBase {
     public boolean categoryAddInfo(KDSRouterDataCategory category) {
 
         String sql = category.sqlAddNew();
+        //KPP1-143
+        if (categoryDescriptionExisted(category.m_strDescription))
+            return true; //prevent same description
+
         boolean bTransactionByMe = false;
         try {
             bTransactionByMe = startTransaction();
@@ -623,6 +627,7 @@ public class KDSDBRouter extends KDSDBBase {
 
         item.updateSumNamesGuid();
         item.updateModifiersGuid();
+
         String sql = item.sqlAddNew();
         boolean bTransactionByMe = false;
         try {
@@ -1271,7 +1276,8 @@ public class KDSDBRouter extends KDSDBBase {
                 if (item.fromCSV(s)) {
                     if (category != null) {
                         item.setCategoryGuid(category.getGUID());
-                        this.itemAdd(item);
+                        if (!itemExisted(category.getDescription(), item.getDescription())) //fix kpp1-143
+                            this.itemAdd(item);
                     }
                 }
             }
@@ -1469,6 +1475,10 @@ public class KDSDBRouter extends KDSDBBase {
 
     }
 
+    public boolean itemExisted(String categoryDescription, String itemDescription) {
+        String s = itemGetGuidFromDescription(categoryDescription, itemDescription);
+        return (!s.isEmpty());
+    }
 
     /***************************************************************************
      * SQL definitions

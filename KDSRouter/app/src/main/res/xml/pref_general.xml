@@ -73,7 +73,7 @@
         android:dependency="general_router_enabled"
         android:negativeButtonText="cancel"
         />
-    <SwitchPreference
+    <CheckBoxPreference
         android:defaultValue="false"
         android:key="general_enable_smbv2"
         android:title="@string/use_smb_v2_open_folder" />
@@ -130,6 +130,18 @@
         android:key="notification_order_acknowledgement"
         android:title="@string/enable_order_ack"
         android:defaultValue="false" />
+
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="notification_minutes"
+        android:title="@string/keep_notification_minutes"
+        android:defaultValue="10"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
 
     <com.bematechus.kdsrouter.KDSPreferenceEnablePassword
         android:key="kds_general_enable_password"

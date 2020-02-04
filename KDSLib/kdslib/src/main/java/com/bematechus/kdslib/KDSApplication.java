@@ -5,10 +5,15 @@ package com.bematechus.kdslib;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+//import org.acra.*;
+//import org.acra.annotation.*;
+
 
 /**
  * Use this to save the context.
  */
+//@AcraMailSender(mailTo = "david.wong@bematechus.com")
+//@AcraCore(buildConfigClass = BuildConfig.class)
 public class KDSApplication extends Application {
 
     public final String TAG = "KDSApplication";
@@ -17,7 +22,14 @@ public class KDSApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        //debug memory
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
+        ///////////////////////////////////////////
         instance = getApplicationContext();
         KDSLog.logAppStarted();
         m_osUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -61,4 +73,22 @@ public class KDSApplication extends Application {
 
         System.exit(0); // kill off the crashed app
     }
+
+    static public boolean isRouterApp()
+    {
+        if (getContext() == null) return false;
+        String s = getContext().getString(R.string.app_name);
+
+        s = s.toUpperCase();
+        return (s.indexOf("ROUTER")>=0);
+    }
+
+//    @Override
+//    protected void attachBaseContext(Context base) {
+//        super.attachBaseContext(base);
+//
+//        // The following line triggers the initialization of ACRA
+//        ACRA.init(this);
+//    }
+
 }

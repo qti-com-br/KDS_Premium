@@ -49,8 +49,8 @@ public class TimeDog {
         long msNow = dtNow.getTime();
         long msStart = m_dtStart.getTime();
         long ms = msNow - msStart ;
-        //System.out.println(strTitle + " Duration="+KDSUtil.convertIntToString(ms)+"ms");
-        KDSLog.d(strTitle, KDSLog._FUNCLINE_()+" Duration="+KDSUtil.convertIntToString(ms)+"ms");
+        System.out.println(strTitle + " Duration="+KDSUtil.convertIntToString(ms)+"ms");
+        //KDSLog.d(strTitle, KDSLog._FUNCLINE_()+" Duration="+KDSUtil.convertIntToString(ms)+"ms");
     }
     public String startTimeString()
     {

@@ -23,6 +23,7 @@ public class KDSBGFG {
 
         return (0xff000000|m_bg);
 
+
     }
     public void setBG(int nBG)
     {
@@ -62,5 +63,10 @@ public class KDSBGFG {
         KDSBGFG c = new KDSBGFG(nbg, nfg);
 
         return c;
+    }
+
+    public int getOriginalBG()
+    {
+        return m_bg;
     }
 }

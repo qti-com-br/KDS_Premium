@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +20,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 
 
+import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
@@ -30,14 +33,28 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by David.Wong on 2018/7/10.
  * Rev:
  */
-public class Activation implements ActivationHttp.ActivationHttpEvent {
+public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     static final String TAG = "ACTIVATION";
+    static public final String PREF_KEY_ACTIVATION_GUID = "activation_guid";
+    static public final String PREF_KEY_ACTIVATION_DATE = "activation_date";
+    static public final String PREF_KEY_ACTIVATION_LOST_COUNT = "activation_lost";
+    static public final String PREF_KEY_ACTIVATION_FAILED_DATE = "failed_date";
+    static public final String PREF_KEY_ACTIVATION_FAILED_REASON = "activation_fail_reason";
+    static public final String PREF_KEY_ACTIVATION_USER_NAME = "activation_user_name";
+    static public final String PREF_KEY_ACTIVATION_PWD = "activation_password";
+    static public final String PREF_KEY_STORE_GUID = "store_guid";
+    static public final String PREF_KEY_STORE_NAME = "store_name";
+
+    static public final String PREF_KEY_ACTIVATION_OLD_USER_NAME = "activation_old_user_name";
+
+    static final public String KDSROUTER = "KDSRouter";
 
     /**
      *
@@ -62,16 +79,38 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     public static final int HOUR_MS = 3600000;
     public static int MAX_LOST_COUNT = 120;
+    public static final int INACTIVE_TIMEOUT = 300000; //5 minutes
 //
     public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
 
+    public enum SyncDataResult
+    {
+        OK,
+        Fail_Http_exception,
+        Fail_reponse_error,
+    }
 
-
+    public enum ItemJobFromOperations
+    {
+        Local_new_order,
+        Local_bump_order,
+        Local_unbump_order,
+        Local_bump_item,
+        Local_unbump_item,
+        Expo_sync_prep_new_order,
+        Expo_sync_prep_bump_order,
+        Expo_sync_prep_unbump_order,
+        Expo_sync_prep_bump_item,
+        Expo_sync_prep_unbump_item,
+    }
     public interface ActivationEvents
     {
         public void onActivationSuccess();
         public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage);
         public void onSMSSendSuccess(String orderGuid, int smsState);
+        public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
+        public void onDoActivationExplicit();
+        public void onForceClearDataBeforeLogin();
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -79,23 +118,37 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static private String m_storeGuid = "";
 
 
-    private String m_myMacAddress = "";
-    private String m_stationID = "1";
+    static public String m_myMacAddress = "";
+    static private String m_stationID = "1";
+    static private String m_stationFuncName = SettingsBase.StationFunc.Prep.toString();
 
     private int m_nMaxLicenseCount = 0;
     ActivationEvents m_receiver = null;
 
     boolean m_bSilent = false;
-    private ArrayList<StoreDevice> m_devices = new ArrayList<>();
+    static private ArrayList<StoreDevice> m_devices = new ArrayList<>();//share in all instance
 
     Context m_context = null;
 
-    boolean m_bDoLicensing = false;
+    static boolean m_bDoLicensing = false;
 
-    int m_nSyncGetDevicesCount = 0; //record the loop count. Prevent dead loop.
+    int m_nSyncGetDevicesTries = 0; //record the loop count. Prevent dead loop.
     static private String m_storeName = ""; //2.0.50
     static private String m_storeKey = "";
 
+    static private String m_timeZone = "";
+
+    //for clear database when logout
+    static public ActivationEvents m_globalEventsReceiver = null;
+
+    static public void setGlobalEventsReceiver(ActivationEvents rec)
+    {
+        m_globalEventsReceiver = rec;
+    }
+    static public ActivationEvents getGlobalEventsReceiver()
+    {
+        return m_globalEventsReceiver;
+    }
 
     public boolean isDoLicensing()
     {
@@ -117,6 +170,14 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         m_stationID = stationID;
     }
+    public void setStationFunc(SettingsBase.StationFunc func)
+    {
+        m_stationFuncName = func.toString();
+    }
+    public void setStationFunc(String funcName)
+    {
+        m_stationFuncName = funcName;
+    }
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
@@ -124,6 +185,23 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             //m_myMacAddress = "19.ABCdef";//test	000ec3310238
 
         //m_myMacAddress = "000ec33102389";
+    }
+
+    /**
+     * use it as device serial number.
+     * @return
+     */
+    static public String getMySerialNumber()
+    {
+        //return m_myMacAddress;
+        String s = Build.SERIAL;
+        s = s.toUpperCase();
+        if (s.isEmpty() || s.equals("UNKNOWN"))
+        {
+            return m_myMacAddress;
+        }
+        else
+            return Build.SERIAL;
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {
@@ -135,8 +213,12 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         loadStoreGuid();
         loadStoreName();
     }
-    public void onHttpResponse(ActivationHttp http, ActivationRequest request)
+    public void onHttpResponse(HttpBase httpBase, HttpBase.HttpRequestBase r)
     {
+
+        ActivationRequest request = (ActivationRequest)r;
+        ActivationHttp http = (ActivationHttp) httpBase;
+
         if (request.m_httpResponseCode == ActivationHttp.HTTP_OK) {
             switch (request.m_command) {
                 case Unknown:
@@ -144,7 +226,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 case Login:
                     onActivationResponseLogin(http, request);
                     break;
-                case Sync:
+                case Sync_devices:
                     onActivationResponseSync(http, request);
                     break;
                 case Get_settings:
@@ -159,15 +241,54 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 case SMS:
                     onSMSResponse(http, request);
                     break;
+                case Sync_orders:
+                    onSyncOrderResponse(http, request);
+                    break;
+                case Sync_items:
+                    onSyncItemsResponse(http, request);
+                    break;
+                case Sync_condiments:
+                    onSyncCondimentsResponse(http, request);
+                    break;
+                case Sync_item_bumps:
+                    onSyncItemBumpsResponse(http, request);
+                    break;
+                case Sync_item_bump:
+                    onSyncItemBumpResponse(http, request);
+                    break;
+                case Sync_customer:
+                    onSyncCustomerResponse(http, request);
+
             }
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
         {//activatioinhttp code error/exception
-            onActivationHttpException(http, request);
+            if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bump
+                        )
+            {
+                onSyncDataHttpException(http, request);
+            }
+            else {
+                onActivationHttpException(http, request);
+            }
         }
         else
         {//http server return error code
-            onActivationResponseError(http, request);
+            if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_condiments ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bumps ||
+                    request.getCommand() == ActivationRequest.COMMAND.Sync_item_bump )
+            {
+                onSyncDataResponseError(http, request);
+            }
+            else {
+                onActivationResponseError(http, request);
+            }
         }
     }
     static public String getErrorMessage(String strResponse)
@@ -217,7 +338,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         String response = request.m_result;
         if (isResponseError(response))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.UserName_Password, getErrorMessage(response));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.UserName_Password, getErrorMessage(response));
             resetUserNamePassword();
             return;
         }
@@ -226,13 +347,13 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             if (jsonArray.length()<=0) return;
             JSONObject json = (JSONObject) jsonArray.get(0);
 
-            String store_guid = json.getString("store_guid");
+            String store_guid = json.getString(PREF_KEY_STORE_GUID);
             m_storeGuid = store_guid;
 
-            m_storeName =  json.getString("store_name");//2.0.50
+            m_storeName =  json.getString(PREF_KEY_STORE_NAME);//2.0.50
             m_storeKey =  json.getString("store_key");//2.0.50
 
-            System.out.println(m_storeGuid);
+            //System.out.println(m_storeGuid);
 
             //postSyncMac(m_licenseGuid, m_myMacAddress);
             postGetSettingsRequest();
@@ -262,15 +383,15 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, getErrorMessage(request.m_result));
             return;
         }
         try
         {
-            m_nSyncGetDevicesCount ++;
-            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+            m_nSyncGetDevicesTries ++;
+            if (m_nSyncGetDevicesTries > MAX_TRY_COUNT)
             {
-                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, m_context.getString(R.string.cannot_sync_license_data));
+                fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Sync_error, m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
             postGetDevicesRequest();
@@ -298,16 +419,22 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
             return;
         }
         try
         {
-            m_nSyncGetDevicesCount ++;
-            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+            m_nSyncGetDevicesTries ++;
+            if (m_nSyncGetDevicesTries > MAX_TRY_COUNT)
             {
-                fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, m_context.getString(R.string.cannot_replace_license_data));
+                fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, m_context.getString(R.string.cannot_replace_license_data));
                 return;
+            }
+            //kp1-173
+            //after replacing, its old station_id and function were not changed to mine if this station has set them.
+            if (request.getNextStepData().size()>0) {
+                if (!m_stationID.isEmpty())
+                    postNewStationInfo2Web((String)request.getNextStepData().get(0), m_stationID, m_stationFuncName); //kpp1-173
             }
             postGetDevicesRequest();
 
@@ -343,7 +470,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Settings_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Settings_error, getErrorMessage(request.m_result));
             return;
         }
         try
@@ -353,9 +480,11 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             if (ar.length()<=0) return;
             JSONObject json = (JSONObject) ar.get(0);
             int ncount = json.getInt("licenses_quantity");
+            m_timeZone = json.getString("timezone");
+
             m_nMaxLicenseCount = ncount;
 
-            System.out.println(ar.toString());
+            //System.out.println(ar.toString());
 
             postGetDevicesRequest();
         }
@@ -368,14 +497,17 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     private StoreDevice parseJsonDevice(JSONObject json)
     {
 
-        if (isDeletedDevice(json))
-            return null;
+
         StoreDevice device = new StoreDevice();
         device.setEnabled(isLicenseEnabled(json));
         device.setGuid(getGuid(json));
         device.setSerial(getLicenseSerial(json));
         device.setID( getLicenseID(json) );
         device.setUpdateTime(getUpdateTime(json));
+        device.setStationFunc(getStationFunc(json));
+        device.setDeleted(isDeletedDevice(json));
+        device.setStationName(getStationName(json));
+
         return device;
 
     }
@@ -417,14 +549,14 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         showProgressDialog(false, "");
         if (isResponseError(request.m_result))
         {
-            fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Devices_error, getErrorMessage(request.m_result));
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Devices_error, getErrorMessage(request.m_result));
             return;
         }
 
         try
         {
             JSONArray ar = new JSONArray(request.m_result);
-            System.out.println(ar.toString());
+            //System.out.println(ar.toString());
             m_devices.clear();
             for (int i=0; i< ar.length() ; i++)
             {
@@ -449,19 +581,64 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         for (int i=0; i< m_devices.size(); i++)
         {
-            String serial = m_devices.get(i).getSerial();
+            if (m_devices.get(i).isDeleted()) continue;
+            StoreDevice dev =m_devices.get(i);
+            String serial = dev.getSerial();
             serial = serial.toUpperCase();
-            if (serial.equals(m_myMacAddress.toUpperCase()))
-                return m_devices.get(i);
+            if (serial.equals(getMySerialNumber().toUpperCase())) {
+                //the router and kds can run in same device, and they have to register individually.
+                if (KDSApplication.isRouterApp())
+                {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        return dev;
+                    else
+                        continue;
+                }
+                else
+                {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        continue;
+                    else
+                        return dev;
+                }
+
+
+            }
 
         }
         return null;
     }
+
+    private StoreDevice findDeletedLicense()
+    {
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (!m_devices.get(i).isDeleted()) continue;
+            StoreDevice dev =m_devices.get(i);
+            String serial = dev.getSerial();
+            serial = serial.toUpperCase();
+            if (serial.equals(getMySerialNumber().toUpperCase())) {
+                //the router and kds can run in same device, and they have to register individually.
+                if (KDSApplication.isRouterApp()) {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        return dev;
+                    else
+                        continue;
+                } else {
+                    if (dev.getStationFunc().equals(Activation.KDSROUTER))
+                        continue;
+                    else
+                        return dev;
+                }
+               // return m_devices.get(i);
+            }
+        }
+        return null;
+    }
+
     private int MAX_TRY_COUNT = 3;
     private void checkMyActivation()
     {
-
-
         //I have been registered
         StoreDevice device = findMyLicense();
 
@@ -469,7 +646,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         {
             if (!device.getEnabled())
             {
-                fireFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.License_disabled,m_context.getString(R.string.license_deactivated));
+                fireActivationFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.License_disabled,m_context.getString(R.string.license_deactivated));
                 return;
             }
             else {
@@ -480,30 +657,41 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
         //no valid
         if (m_nMaxLicenseCount <=0 ||
-                (getEnabledDevicesCount() >= m_nMaxLicenseCount ))//2.1.2
+                (getRegisteredDevicesCount() >= m_nMaxLicenseCount ))//2.1.2
         {
-            fireFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.No_valid_license,  m_context.getString(R.string.no_license_available));
+            fireActivationFailEvent(ActivationRequest.COMMAND.Get_devices, ActivationRequest.ErrorType.No_valid_license,  m_context.getString(R.string.no_license_available));
             return;
         }
 
+        if (findDeletedLicense() != null)
+        {//I have been deleted
+            if (!ActivityLogin.isShowing())
+            {
+                if (m_receiver != null) {
+                    m_bDoLicensing = false;
+                    m_receiver.onDoActivationExplicit();
+                    return;
+                }
+            }
+        }
         //register me now
-        if (m_devices.size()<=0)
+        if (getDevicesCount()<=0)
         {//add new
-            if (m_nSyncGetDevicesCount > MAX_TRY_COUNT) {
-                fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
+            if (m_nSyncGetDevicesTries > MAX_TRY_COUNT) {
+                fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
                 return;
             }
-            postSyncMac("",m_stationID, m_myMacAddress, null);
+            postSyncNewMac("",m_stationID,m_stationFuncName, getMySerialNumber(), null);
             return;
         }
 
-        if (m_nSyncGetDevicesCount > MAX_TRY_COUNT)
+        if (m_nSyncGetDevicesTries > MAX_TRY_COUNT)
         {
-            fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
+            fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,m_context.getString(R.string.cannot_sync_license_data));
             return;
         }
-        if (m_nSyncGetDevicesCount>0)
-            fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Sync_error,"Sync data error, try again!");
+        if (m_nSyncGetDevicesTries>0)
+            fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Sync_error,"Sync data error, try again!");
 
         showRegisterOptionDlg();
 
@@ -627,21 +815,21 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void postLoginRequest(String userName, String pwd)
     {
 
-        ActivationRequest r = ActivationRequest.createLoginRequest(userName, pwd);
+        ActivationRequest r = ActivationRequest.requestLogin(userName, pwd);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.logining));
     }
 
     public void postGetSettingsRequest()
     {
-        ActivationRequest r = ActivationRequest.createGetSettingsRequest(m_storeGuid);
+        ActivationRequest r = ActivationRequest.requestGetSettings(m_storeGuid);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.retrieve_store_settings));
     }
 
     public void postGetDevicesRequest()
     {
-        ActivationRequest r = ActivationRequest.createGetDevicesRequest(m_storeGuid);
+        ActivationRequest r = ActivationRequest.requestGetDevices(m_storeGuid);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.retrieve_licenses_data));
     }
@@ -657,16 +845,17 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
      *      samples:
      *      [{"tok":"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"},{"data":[{"bump_transfer_device_id":"0","xml_order":"2","screen_id":"1","screen_size":"0","enable":"1","split_screen_child_device_id":"0","split_screen_parent_device_id":"0","function":"'EXPEDITOR'","id":"1","guid":"'c6ad5b2d-4d72-4ab1-a66a-f8d49a927603'","is_deleted":"0","update_time":"1537313373","store_guid":"'7dc418db-25a1-4b0c-aa41-b357acec2033'","name":"'1'","create_time":"1537313373","login":"0","license":"1","serial":"'5.123456789'","line_display":"0","parent_id":"0","update_device":"''"}],"req":"SYNC","entity":"devices"}]
      */
-    public void postSyncMac(String licenseGuid,String stationID, String macAddress, StoreDevice dev)
+    public void postSyncNewMac(String licenseGuid,String stationID,String stationFunc, String macAddress, StoreDevice dev)
     {
-        ActivationRequest r = ActivationRequest.createSyncMacRequest(m_storeGuid, stationID, licenseGuid, macAddress, dev);
+        ActivationRequest r = ActivationRequest.requestNewMac(m_storeGuid, stationID,stationFunc, licenseGuid, macAddress, dev);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
 
-    public void postReplacecMac(String licenseGuid,String macAddress)
+    public void postReplaceMac(String licenseGuid,String macAddress)
     {
-        ActivationRequest r = ActivationRequest.createReplaceMacRequest(m_storeGuid, licenseGuid, macAddress);
+        ActivationRequest r = ActivationRequest.requestReplaceMac(m_storeGuid, licenseGuid, macAddress);
+        r.getNextStepData().add(licenseGuid); //kpp1-173, use it to upload latest station id
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
     }
@@ -674,7 +863,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public void onActivationResponseError(ActivationHttp http, ActivationRequest request)
     {
         showProgressDialog(false, "");
-        System.out.println(request.m_httpResponseCode);
+        //System.out.println(request.m_httpResponseCode);
         if (request.m_httpResponseCode == 301)
             resetUserNamePassword();
         if (request.m_httpResponseCode == 404)
@@ -683,15 +872,15 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
         }
 
-        fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_error_code, "Http response error code =" + request.m_httpResponseCode);
+        fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_error_code, "Http response error code =" + request.m_httpResponseCode);
 
     }
 
     public void onActivationHttpException(ActivationHttp http, ActivationRequest request)
     {
         showProgressDialog(false, "");
-        System.out.println(request.m_httpResponseCode);
-        fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_exception, request.getResult());
+        //System.out.println(request.m_httpResponseCode);
+        fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Http_exception, request.getResult());
 
     }
 
@@ -709,7 +898,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         if (m_receiver != null)
             m_receiver.onActivationSuccess();
     }
-    public void fireFailEvent(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String strMessage)
+    public void fireActivationFailEvent(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String strMessage)
     {
         m_bDoLicensing = false;
         updateFailedCount();//record failed count
@@ -726,10 +915,11 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             v.setVisibility(View.GONE);
         else {
             v.setVisibility(View.VISIBLE);
-            if (getEnabledDevicesCount() >= m_nMaxLicenseCount)
-                showDevicesInList(view, false);
-            else
-                showDevicesInList(view, false);
+            showDevicesInList(view, true); //KPP1-173
+//            if (getEnabledDevicesCount() >= m_nMaxLicenseCount)
+//                showDevicesInList(view, false);
+//            else
+//                showDevicesInList(view, false);
 
         }
 
@@ -753,12 +943,27 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         int ncount = 0;
         for (int i=0; i< m_devices.size(); i++)
         {
+            if (m_devices.get(i).isDeleted()) continue;
             if (m_devices.get(i).getEnabled())
                 ncount ++;
 
         }
         return ncount;
     }
+
+    private int getDevicesCount()
+    {
+        int ncount = 0;
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+
+            ncount ++;
+
+        }
+        return ncount;
+    }
+
 
 //    private void showDisabledDevicesInList(View view)
 //    {
@@ -790,8 +995,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             }
             else
             {
-                if (!m_devices.get(i).getEnabled())
-                    ar.add(m_devices.get(i));
+                if (!m_devices.get(i).getEnabled()) {
+                    if (!m_devices.get(i).getGuid().isEmpty())
+                        ar.add(m_devices.get(i));
+                }
             }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(m_context, R.layout.activation_list_item,(List) ar);//m_devices);
@@ -799,11 +1006,15 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         adapter.notifyDataSetChanged();
     }
 
+    AlertDialog m_dlgRegisterOptions = null;
     /**
      * choose how to register this station
      */
     private void showRegisterOptionDlg()
     {
+        //Log.i(TAG, "reg: showRegisterOptionDlg");
+        if (m_storeName.isEmpty() || m_storeGuid.isEmpty()) return;
+
         Context context = m_context;// KDSApplication.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.dlg_register_option, null);
         RadioButton btnAddNew = (RadioButton) view.findViewById(R.id.rbAddNew);
@@ -826,7 +1037,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         });
 
 
-        AlertDialog d = new AlertDialog.Builder(context)
+        m_dlgRegisterOptions = new AlertDialog.Builder(context)
                 .setPositiveButton(context.getString(R.string.str_ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -838,7 +1049,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                         //RadioButton txtReplace = (RadioButton) dlg.findViewById(R.id.rbReplace);
 
                         afterSelectedRegisterOption((View)txtAddNew.getTag());
-
+                        m_dlgRegisterOptions = null;
                     }
                 })
                 .setTitle( context.getString(R.string.activation))
@@ -846,15 +1057,16 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         afterCancelRegisterOptionDlg();
+                        m_dlgRegisterOptions = null;
                     }
                 })
                 .create();
-        d.setView(view);
-        d.show();
-        d.setCancelable(false);
-        d.setCanceledOnTouchOutside(false);
+        m_dlgRegisterOptions.setView(view);
+        m_dlgRegisterOptions.show();
+        m_dlgRegisterOptions.setCancelable(false);
+        m_dlgRegisterOptions.setCanceledOnTouchOutside(false);
         //init gui
-        if (getEnabledDevicesCount() >= m_nMaxLicenseCount) {
+        if (getRegisteredDevicesCount() >= m_nMaxLicenseCount) {
             btnAddNew.setEnabled(false);
             btnAddNew.setChecked(false);
             btnReplace.setChecked(true);
@@ -872,7 +1084,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         RadioButton btnAddNew = (RadioButton) view.findViewById(R.id.rbAddNew);
         if (btnAddNew.isChecked())
         {
-            postSyncMac("", m_stationID, m_myMacAddress, null);
+            postSyncNewMac("", m_stationID,m_stationFuncName, getMySerialNumber(), null);
         }
         else
         {
@@ -880,10 +1092,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
             StoreDevice dev = findSelectedLicense(lst);
             if (dev == null) {
                 //Toast.makeText(KDSApplication.getContext(), "No selected item", Toast.LENGTH_LONG).show();
-                fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.No_selected_license_to_replace,  m_context.getString(R.string.no_selected_license_to_replace));
+                fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.No_selected_license_to_replace,  m_context.getString(R.string.no_selected_license_to_replace));
             }
             else
-                postReplacecMac(dev.getGuid(), m_myMacAddress);
+                postReplaceMac(dev.getGuid(), getMySerialNumber());
 
                 //postSyncMac(dev.getGuid(),m_stationID, m_myMacAddress, dev);
         }
@@ -903,7 +1115,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     private void afterCancelRegisterOptionDlg()
     {
-        fireFailEvent(ActivationRequest.COMMAND.Sync, ActivationRequest.ErrorType.Cancel_license_options, "Canceled");
+        fireActivationFailEvent(ActivationRequest.COMMAND.Sync_devices, ActivationRequest.ErrorType.Cancel_license_options, "Canceled");
     }
 
 
@@ -981,7 +1193,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static public String loadUserName()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("activation_user_name", "");
+        String s = pref.getString(PREF_KEY_ACTIVATION_USER_NAME, "");
         return s;
     }
 
@@ -989,10 +1201,10 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("activation_user_name", userName);
-        editor.putString("activation_password", pwd);
-        editor.putString("store_guid", m_storeGuid);
-        editor.putString("store_name", m_storeName);
+        editor.putString(PREF_KEY_ACTIVATION_USER_NAME, userName);
+        editor.putString(PREF_KEY_ACTIVATION_PWD, pwd);
+        editor.putString(PREF_KEY_STORE_GUID, m_storeGuid);
+        editor.putString(PREF_KEY_STORE_NAME, m_storeName);
 
         editor.apply();
         editor.commit();
@@ -1002,7 +1214,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static public String loadPassword()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("activation_password", "");
+        String s = pref.getString(PREF_KEY_ACTIVATION_PWD, "");
         return s;
     }
 
@@ -1020,7 +1232,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static public ActivationRequest.ErrorType loadLastFailedReason()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        int n = pref.getInt("activation_fail_reason", ActivationRequest.ErrorType.OK.ordinal());
+        int n = pref.getInt(PREF_KEY_ACTIVATION_FAILED_REASON, ActivationRequest.ErrorType.OK.ordinal());
         ActivationRequest.ErrorType e = ActivationRequest.ErrorType.values()[n];
         return e;
 
@@ -1032,7 +1244,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         int n = e.ordinal();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("activation_fail_reason", n);
+        editor.putInt(PREF_KEY_ACTIVATION_FAILED_REASON, n);
         editor.apply();
         editor.commit();
 
@@ -1053,7 +1265,7 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static public int loadFailedCount()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        int ncount = pref.getInt("activation_lost", 0);
+        int ncount = pref.getInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
         return ncount;
     }
 
@@ -1061,8 +1273,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     public int updateFailedCount()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        int ncount = pref.getInt("activation_lost", 0);
-        long nTime = pref.getLong("failed_date", 0);
+        int ncount = pref.getInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
+        long nTime = pref.getLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
 
         Date dt = new Date();
         long nDelay = dt.getTime() - nTime;
@@ -1077,8 +1289,8 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         }
 
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("activation_lost", ncount);
-        editor.putLong("failed_date", dt.getTime());
+        editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, ncount);
+        editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, dt.getTime());
 
         editor.apply();
         editor.commit();
@@ -1089,8 +1301,11 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("activation_lost", 0);
-        editor.putLong("failed_date", 0);
+        editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
+        editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
+
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+
         editor.apply();
         editor.commit();
         return 0;
@@ -1100,12 +1315,13 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("activation_guid", guid);
+        editor.putString(PREF_KEY_ACTIVATION_GUID, guid);
         Date dt = new Date();
 
-        editor.putLong("activation_date",dt.getTime());
+        editor.putLong(PREF_KEY_ACTIVATION_DATE,dt.getTime());
         editor.apply();
         editor.commit();
+
     }
 
 
@@ -1127,20 +1343,24 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
      */
     public void startActivation(boolean bSilent,boolean bForceShowNamePwdDlg, Activity caller, String showErrorMessage)
     {
+
         if (m_bDoLicensing) return;
         m_bDoLicensing = true;
-        m_nSyncGetDevicesCount = 0;
+        m_nSyncGetDevicesTries = 0;
+        //Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false"));
 
         m_bSilent = bSilent;
         String userName = loadUserName();
         String password = loadPassword();
+        //Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
+
 //        userName = USER_NAME;
 //        password = PASSWORD;
         if (userName.isEmpty() || password.isEmpty()) {
             if (m_bSilent) {
                 updateFailedCount();
                 m_bDoLicensing = false;
-                fireFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
+                fireActivationFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
                 return;
             }
             showLoginActivity(caller, showErrorMessage);
@@ -1192,32 +1412,34 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
                 return;
         }
 
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         m_bDoLicensing = true;
         Intent intent = new Intent(caller, ActivityLogin.class);
 
         intent.putExtra("func", KDSConst.SHOW_LOGIN);
         intent.putExtra("id", m_stationID);
-        intent.putExtra("mac", m_myMacAddress);
+        intent.putExtra("mac", getMySerialNumber());
         intent.putExtra("errmsg", showErrorMessage);
 
         caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
     }
 
 
     /**
      * 2.0.50
-     * @param orderGuid
+
      *  Local orderGuid value
-     * @param customerPhone
+     *
      * @param nSMSState
      *  See SMS_STATE_UNKNOWN ... in KDSDataOrder
      */
-    public void postSMS(String orderGuid, String customerPhone, int nSMSState)
+    public void postSMS(KDSDataOrder order,  int nSMSState)
     {
-        ActivationRequest r = ActivationRequest.createSMSRequest(m_storeGuid,m_storeName, customerPhone, orderGuid, nSMSState );
+        ActivationRequest r = ActivationRequest.requestSMS(m_storeGuid,m_storeName, order, nSMSState );
         m_http.request(r);
 
     }
@@ -1298,14 +1520,17 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
 
     static public String getStoreGuid()
     {
-        return m_storeGuid;
+        if (KDSConst._DEBUG)
+            return "123456789";
+        else
+            return m_storeGuid;
 
     }
 
     static public String loadStoreGuid()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("store_guid", "");
+        String s = pref.getString(PREF_KEY_STORE_GUID, "");
         m_storeGuid = s;
         return s;
     }
@@ -1317,17 +1542,31 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
     static public String loadStoreName()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-        String s = pref.getString("store_name", "");
+        String s = pref.getString(PREF_KEY_STORE_NAME, "");
         m_storeName = s;
         return s;
     }
-    class StoreDevice
+    static public class StoreDevice
     {
         String m_guid = "";
         String m_id = "";
         String m_serial = "";
         boolean m_bEnabled = true;
         long m_updateTime = 0;//UTC seconds, 2.1.4, for update sql.
+        String m_stationFunc = "";
+        boolean m_bDeleted = false;
+        String m_stationName = "";
+
+
+        public void setDeleted(boolean bDeleted)
+        {
+            m_bDeleted = bDeleted;
+        }
+
+        public boolean isDeleted()
+        {
+            return m_bDeleted;
+        }
 
         /**
          * 2.1.4
@@ -1391,8 +1630,556 @@ public class Activation implements ActivationHttp.ActivationHttpEvent {
         {
             return m_id;
         }
+        public void  setStationFunc(String func)
+        {
+            m_stationFunc = func;
+        }
+        public String getStationFunc()
+        {
+            return m_stationFunc;
+        }
+
+        public void setStationName(String name)
+        {
+            m_stationName = name;
+        }
+        public String getStationName()
+        {
+            return m_stationName;
+        }
     }
 
 
+    static public boolean isActivationPrefKey(String key)
+    {
+        switch (key) {
+            case PREF_KEY_ACTIVATION_GUID:
+            case PREF_KEY_ACTIVATION_DATE:
+            case PREF_KEY_ACTIVATION_LOST_COUNT:
+            case PREF_KEY_ACTIVATION_FAILED_DATE:
+            case PREF_KEY_ACTIVATION_FAILED_REASON :
+            case PREF_KEY_ACTIVATION_USER_NAME:
+            case PREF_KEY_ACTIVATION_PWD:
+                return true;
+        }
+        return false;
+    }
+    /**
+     * The order sync request return OK.
+     * Then, we start to send items and condiments in two request.
+     * @param http
+     * @param request
+     */
+    public void onSyncOrderResponse(ActivationHttp http, ActivationRequest request)
+    {
+
+        if (isResponseError(request.m_result))
+        {
+            Object obj = request.getTag();
+            if (obj == null) return;
+            KDSDataOrder order = (KDSDataOrder) obj;
+            //fireFailEvent(request.getCommand(), ActivationRequest.ErrorType.Replace_error, getErrorMessage(request.m_result));
+            //KDSUtil.showMsg(KDSApplication.getContext(),"Order sending failed: " + getErrorMessage(request.m_result) );
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getOrderName(), SyncDataResult.Fail_reponse_error);
+            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "Order sending failed");
+            return;
+        }
+        else
+        {
+            Object obj = request.getTag();
+            if (obj == null) return;
+
+            try {
+                ArrayList ar = request.getNextStepData();
+                if (ar.size() >0)
+                {
+                    for (int i=0; i< ar.size(); i++)
+                    {
+                        m_http.request((ActivationRequest)ar.get(i));
+                    }
+                }
+                KDSDataOrder order = (KDSDataOrder) obj;
+//                ActivationRequest.SyncDataFromOperation syncOp = request.getSyncDataFromOperation();
+//                switch (syncOp)
+//                {
+//
+//                    case Unknown:
+//                        break;
+//                    case New:
+//                        postItemsRequest(m_stationID, order);
+//                        postCondimentsRequest(m_stationID, order);
+//                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+//                        postCustomerRequest(m_stationID, order);
+//                        break;
+//                    case Bump:
+//                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
+//                        break;
+//                    case Unbump:
+//                        postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+//                        break;
+//                }
+
+                if (m_receiver != null)
+                    m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_orders, order.getOrderName(), SyncDataResult.OK);
+            }
+            catch (Exception e)
+            {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            }
+
+        }
+
+    }
+
+    /**
+     * Items sync ok.
+     * Send message to receiver.
+     * @param http
+     * @param request
+     */
+    public void onSyncItemsResponse(ActivationHttp http, ActivationRequest request) {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_items, order.getOrderName(), SyncDataResult.OK);
+
+    }
+
+    public void onSyncCondimentsResponse(ActivationHttp http, ActivationRequest request) {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_condiments, order.getOrderName(), SyncDataResult.OK);
+
+    }
+
+    /**
+     * post order to web database.
+     * This is local operations
+     * @param order
+     * @param state
+     */
+    public void postOrderRequest(KDSDataOrder order, ActivationRequest.iOSOrderState state, ActivationRequest.SyncDataFromOperation fromOperation)
+    {
+        ActivationRequest r = ActivationRequest.requestOrderSync(m_storeGuid,  order, state);
+        r.setSyncDataFromOperation(fromOperation);
+        ActivationRequest.SyncDataFromOperation syncOp = fromOperation;
+        switch (syncOp)
+        {
+
+            case Unknown:
+                break;
+            case New:
+                r.getNextStepData().add( ActivationRequest.requestItemsSync(m_stationID,  order ) );
+                //postItemsRequest(m_stationID, order);
+                //postCondimentsRequest(m_stationID, order);
+                ActivationRequest req =  ActivationRequest.requestCondimentsSync(m_stationID,  order );
+                if (req != null)
+                r.getNextStepData().add( req );
+                //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+
+                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_new_order ));
+                //postCustomerRequest(m_stationID, order);
+                r.getNextStepData().add(ActivationRequest.requestCustomerSync(m_storeGuid, order));
+
+                break;
+            case Bump:
+                if (!order.isAllItemsBumpedInLocal())
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true, ItemJobFromOperations.Local_bump_order ));
+                //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
+                break;
+            case Unbump:
+                if (!order.isAllItemsBumpedInLocal())
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_unbump_order ));
+                //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
+                break;
+        }
+
+        m_http.request(r);
+
+    }
+
+    public void postItemsRequest(String stationID, KDSDataOrder order)
+    {
+        ActivationRequest r = ActivationRequest.requestItemsSync(stationID,  order );
+        m_http.request(r);
+
+    }
+
+    public void postCondimentsRequest(String stationID, KDSDataOrder order)
+    {
+        ActivationRequest r = ActivationRequest.requestCondimentsSync(stationID,  order );
+        if (r != null)
+            m_http.request(r);
+
+    }
+
+    public void onSyncDataHttpException(ActivationHttp http, ActivationRequest request)
+    {
+        System.out.println(request.m_httpResponseCode);
+        //prepare for next try
+        request.resetFailedTime();
+        addRetryRequest(request);
+
+        if (m_receiver != null)
+        {
+            Object obj = request.getTag();
+            if (obj == null) return;
+            KDSDataOrder order = (KDSDataOrder) obj;
+            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getOrderName(), SyncDataResult.Fail_Http_exception);
+
+        }
+
+    }
+    public void onSyncDataResponseError(ActivationHttp http, ActivationRequest request)
+    {
+        System.out.println(request.m_httpResponseCode);
+        if (m_receiver != null)
+        {
+            Object obj = request.getTag();
+            if (obj == null) return;
+            KDSDataOrder order = (KDSDataOrder) obj;
+            m_receiver.onSyncWebReturnResult(request.getCommand(), order.getOrderName(), SyncDataResult.Fail_reponse_error);
+        }
+
+
+    }
+
+    ArrayList<ActivationRequest> m_arFailedRequest = new ArrayList<>();
+    Thread m_retryThread = null;
+    Object m_locker = new Object();
+
+    private void addRetryRequest(ActivationRequest r)
+    {
+        synchronized(m_locker)
+        {
+            m_arFailedRequest.add(r);
+        }
+        start();
+    }
+    public void start()
+    {
+        if (m_retryThread == null ||
+            !m_retryThread.isAlive())
+        {
+            m_retryThread = new Thread(this);
+            m_retryThread.start();
+        }
+
+    }
+    public void run()
+    {
+        while (true)
+        {
+            int ncount = 0;
+            synchronized (m_locker)
+            {
+                ncount = m_arFailedRequest.size();
+                if (ncount <=0)
+                    return;
+            }
+            ArrayList<ActivationRequest> ar = new ArrayList<>();
+
+            for (int i=0; i< ncount; i++) {
+                ActivationRequest r = m_arFailedRequest.get(i);
+                if (retryFailedRequest(r))
+                    ar.add(r);
+            }
+            for (int i=0; i< ar.size(); i++)
+            {
+                m_arFailedRequest.remove(ar.get(i));
+            }
+            ar.clear();
+            try {
+                Thread.sleep(RETRY_TIMEOUT);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+        }
+    }
+
+    final int RETRY_TIMEOUT = 5000;
+    final int RETRY_MAX_COUNT = 50;
+    /**
+     *
+     * @param r
+     * @return
+     *  True: try it again.
+     *  false: keep it for next loop
+     */
+    private boolean retryFailedRequest(ActivationRequest r)
+    {
+        Date dtStart = r.getFailedTime();
+        if (r.getRetryCount() > RETRY_MAX_COUNT)
+            return true;
+        TimeDog td = new TimeDog(dtStart);
+        if (td.is_timeout(RETRY_TIMEOUT))
+        {
+            r.updateRetryCount();
+            m_http.request(r);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean postNewStationInfo2Web(String stationID, String stationFunc)
+    {
+        StoreDevice devLicense = findMyLicense();
+        if (devLicense == null)
+            return false;
+
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,devLicense);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
+    }
+
+    private String getStationFunc(JSONObject json)
+    {
+        try {
+            String s = json.getString("function");
+            return s;
+        }
+        catch ( Exception e)
+        {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+//    public void postItemBumpsRequest(String stationID, KDSDataOrder order, boolean bExpoStation, boolean bBumped)
+//    {
+//        ActivationRequest r = ActivationRequest.requestItemBumpsSync(stationID,  order, bExpoStation , bBumped);
+//        m_http.request(r);
+//
+//    }
+
+    public void onSyncItemBumpsResponse(ActivationHttp http, ActivationRequest request) {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bumps, order.getOrderName(), SyncDataResult.OK);
+
+    }
+
+    /**
+     * sync single item bumped/unbumped event to backoffice
+     * @param stationID
+     * @param order
+     * @param item
+     * @param bExpoStation
+     * @param bBumped
+
+     *  In expo. when it receive prep bump order, exp has to update all its items preparation time.
+     */
+    public void postItemBumpRequest(String stationID,KDSDataOrder order, KDSDataItem item, boolean bExpoStation, boolean bBumped, ItemJobFromOperations fromOperation)
+    {
+        ActivationRequest r = ActivationRequest.requestItemBumpSync(stationID,order,  item, bExpoStation , bBumped,  fromOperation);
+        m_http.request(r);
+    }
+
+    public void onSyncItemBumpResponse(ActivationHttp http, ActivationRequest request) {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_item_bump, order.getOrderName(), SyncDataResult.OK);
+
+    }
+
+    static public String getTimeZone()
+    {
+        return TimeZone.getDefault().getID();
+        //use device timezone, don't use backoffice store timezone
+        //return m_timeZone;
+    }
+
+    public void postCustomerRequest(String stationID, KDSDataOrder order)
+    {
+        ActivationRequest r = ActivationRequest.requestCustomerSync(m_storeGuid, order );
+        m_http.request(r);
+
+    }
+
+    private void onSyncCustomerResponse(ActivationHttp http, ActivationRequest request)
+    {
+        Object obj = request.getTag();
+        if (obj == null) return;
+        KDSDataOrder order = (KDSDataOrder)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Sync_customer, order.getOrderName(), SyncDataResult.OK);
+    }
+
+    public void fireClearDataEvent()
+    {
+        if (m_globalEventsReceiver != null)
+            m_globalEventsReceiver.onForceClearDataBeforeLogin();
+    }
+
+    /**
+     * for kpp1-173
+     *
+     * @param licenseGuid
+     * @param stationID
+     * @param stationFunc
+     * @return
+     */
+    public boolean postNewStationInfo2Web(String licenseGuid, String stationID, String stationFunc)
+    {
+        StoreDevice dev = new StoreDevice();
+        dev.setGuid(licenseGuid);
+        dev.m_serial = getMySerialNumber();
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,dev);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
+    }
+
+    static public void resetUserNamePwd()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String oldUserName = pref.getString(PREF_KEY_ACTIVATION_USER_NAME, "");
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(PREF_KEY_ACTIVATION_USER_NAME, "");
+        editor.putString(PREF_KEY_ACTIVATION_PWD, "");
+        //editor.putString(PREF_KEY_STORE_GUID, ""); //keep it for comparing changes
+        editor.putString(PREF_KEY_STORE_NAME, "");
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, oldUserName);
+
+        editor.apply();
+        editor.commit();
+        m_storeGuid = "";
+        m_storeName = "";
+
+
+
+    }
+    static boolean m_bStoreChanged = false;
+    static public void checkStoreChanged()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString(PREF_KEY_STORE_GUID, "");
+        String oldStoreGuid =  s;
+        m_bStoreChanged = (!oldStoreGuid.equals(m_storeGuid));
+
+    }
+    static public boolean isStoreChanged()
+    {
+        return m_bStoreChanged;
+    }
+    static public void restStoreChangedFlag()
+    {
+        m_bStoreChanged = false;
+    }
+
+    private String getStationName(JSONObject json)
+    {
+        try {
+            String s = json.getString("name");
+            return s;
+        }
+        catch ( Exception e)
+        {
+
+        }
+        return "";
+    }
+
+    public boolean postNewStationName2Web(String stationID, String stationName)
+    {
+        StoreDevice dev = findMyLicense();
+        if (dev == null)
+            return false;
+        dev.setStationName(stationName);
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, dev.getStationFunc(),dev);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
+    }
+
+    public boolean postNewStationInfoToWeb(String stationID, String stationFunc, String stationName)
+    {
+        StoreDevice devLicense = findMyLicense();
+        if (devLicense == null)
+            return false;
+        devLicense.setStationName(stationName);
+        ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,devLicense);
+        m_http.request(r);
+        showProgressDialog(true, m_context.getString(R.string.updating_license_data));
+        return true;
+    }
+
+    static public ArrayList<StoreDevice> getDevices()
+    {
+        return m_devices;
+    }
+
+    /**
+     * check if this station id has been regiested in backoffice.
+     *
+     * @param stationNewID
+     * @return
+     *  true: It has been used.
+     *  false: new one.
+     *
+     */
+    static public boolean findDuplicatedDeviceIDAfterSetNewID(String stationNewID)
+    {
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+            StoreDevice dev =m_devices.get(i);
+            if (dev.getID().equals(stationNewID)) {
+                String serial = dev.getSerial();
+                serial = serial.toUpperCase();
+                if (!serial.equals(getMySerialNumber().toUpperCase())) {
+                    //the router and kds can run in same device, and they have to register individually.
+                    if (KDSApplication.isRouterApp()) {
+                        continue;
+                    } else {
+                       return true;
+                    }
+
+
+                }
+            }
+
+        }
+        return false;
+
+    }
+
+    /**
+     * KPP1-248
+     * The router should not occupy licences
+     * @return
+     */
+    private int getRegisteredDevicesCount()
+    {
+        int ncount = 0;
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+            if (m_devices.get(i).getStationFunc().equals(Activation.KDSROUTER) ) continue;
+            if (m_devices.get(i).getEnabled())
+                ncount ++;
+
+        }
+        return ncount;
+    }
+
+    static public String loadOldUserName()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        String s = pref.getString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+        return s;
+    }
 
 }

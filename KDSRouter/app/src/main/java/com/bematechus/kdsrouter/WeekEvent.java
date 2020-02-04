@@ -352,8 +352,8 @@ public class WeekEvent extends KDSData {
                 + " values ("
                 + "'" + item.getGUID() + "'"
                 + ",'" + item.getOrderGUID() + "'"
-                + ",'" + item.getDescription() + "'"
-                + ",'" + item.getCategory() + "'"
+                + ",'" + fixSqliteSingleQuotationIssue(item.getDescription()) + "'"
+                + ",'" + fixSqliteSingleQuotationIssue(item.getCategory()) + "'"
                 + "," + KDSUtil.convertFloatToString( item.getQty())
                 + ",'"+ item.getToStations().getString() + "'"
 

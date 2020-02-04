@@ -12,10 +12,13 @@ import com.bematechus.bemaLibrary.PrinterInfo;
 import com.bematechus.bemaLibrary.PrinterStatus;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
+import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataItems;
+import com.bematechus.kdslib.KDSDataModifier;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSocketTCPSideBase;
@@ -26,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 
 /**
  *
@@ -48,6 +52,49 @@ public class KDSPrinter {
     static final private char CMD_START_BOLD = 0x01;//"<B>";
     static final private char CMD_END_BOLD = 0x02;//"</B>";
     static final private char CMD_PAPER_CUT = 0x03;//"<PC>";
+    //reverse printing
+    static final private char CMD_START_REVERSE = 0x04;//"<black>";
+    static final private char CMD_END_REVERSE = 0x05;//"</black>";
+    //change font size
+    static final private char CMD_START_DBLW = 0x06;//"<dblw>";
+    static final private char CMD_END_DBLW = 0x07;//"</dblw>";
+    static final private char CMD_START_DBLH = 0x08;//"<dblh>";
+    static final private char CMD_END_DBLH = 0x09;//"</dblh>";
+    static final private char CMD_START_DBLWH = 0x10;//"<dblwh>";
+    static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
+
+    static final private String TAG_CR = "<CR>";
+    static final private String TAG_ITEMS = "<ITEMS>";
+    static final private String TAG_CONDIMENTS = "<CONDIMENTS>";
+    static final private String TAG_MODIFIERS = "<MODIFIERS>";
+
+    //reverse printing
+    static final private String TAG_START_REVERSE = "<BLACK>";
+    static final private String TAG_END_REVERSE = "</BLACK>";
+    //change font size
+    static final private String TAG_START_DBLW = "<DBLW>";
+    static final private String TAG_END_DBLW = "</DBLW>";
+    static final private String TAG_START_DBLH = "<DBLH>";
+    static final private String TAG_END_DBLH = "</DBLH>";
+    static final private String TAG_START_DBLWH = "<DBLWH>";
+    static final private String TAG_END_DBLWH = "</DBLWH>";
+
+
+    final byte ESC = 0x1b;
+    final byte GS = 0x1d;
+
+    byte[] LR2000_START_BOLD = new byte[]{ESC, 0x45, 1};
+    byte[] LR2000_END_BOLD = new byte[]{ESC, 0x45, 0};
+    byte[] LR2000_PAPER_CUT = new byte[]{ESC, 0x6d};
+    byte[] LR2000_START_REVERSE = new byte[]{GS, 0x42, 1};
+    byte[] LR2000_END_REVERSE = new byte[]{GS, 0x42, 0};
+    //
+    byte[] LR2000_START_DBLW = new byte[]{GS, 0x21, 0x10};
+
+    byte[] LR2000_START_DBLH = new byte[]{GS, 0x21, 0x01};
+
+    byte[] LR2000_START_DBLWH = new byte[]{GS, 0x21, 0x11};
+    byte[] LR2000_END_DBLWH = new byte[]{GS, 0x21, 0};
 
     public enum PrinterPortType{
         USB,
@@ -60,6 +107,7 @@ public class KDSPrinter {
         TAGS_LINE_NORMAL ,
         TAGS_LINE_ITEM ,
         TAGS_LINE_CONDIMENT  ,
+        TAGS_LINE_MODIFIER,
     }
 
     public enum TextAlign
@@ -88,6 +136,7 @@ public class KDSPrinter {
         Manual,
         WhileBump,
         WhileReceive,
+        WhileTransfer,
     }
 
     public enum SerialBaudrate
@@ -107,7 +156,9 @@ public class KDSPrinter {
     private PrinterType m_nPrinterType = PrinterType.LR2000;
     PrinterPortType m_nPortType = PrinterPortType.USB;
 
-    private ArrayList<String> m_printerData = new ArrayList<String>();//the data will been printed
+    //private ArrayList<String> m_printerData = new ArrayList<String>();//the data will been printed
+    Vector<String> m_printerData = new Vector<>();//the data will been printed
+
     private int m_nCopies = 1; //print how many copies
 
     private BemaPrinter m_bemaPrinter = null;// new BemaPrinter();
@@ -340,7 +391,7 @@ return how many physical printing lines
             s = s.toUpperCase();
 
 
-            if (s.equals("<CR>"))
+            if (s.equals(TAG_CR))
                 count++;
         }
 
@@ -365,7 +416,7 @@ return given CR in which index of tag array
             s = s.toUpperCase();
 
 
-            if (s.equals("<CR>"))
+            if (s.equals(TAG_CR))
                 count++;
 
             if (count -1 == nIndex) return i;
@@ -384,10 +435,12 @@ return given CR in which index of tag array
             s = s.trim();
             s = s.toUpperCase();
 
-            if (s.equals("<ITEMS>"))
+            if (s.equals(TAG_ITEMS))
                 return  CRTagsLineType.TAGS_LINE_ITEM;
-            if (s.equals("<CONDIMENTS>"))
+            if (s.equals(TAG_CONDIMENTS))
                 return CRTagsLineType.TAGS_LINE_CONDIMENT;
+            if (s.equals(TAG_MODIFIERS))
+                return CRTagsLineType.TAGS_LINE_MODIFIER;
 
         }
 
@@ -407,10 +460,14 @@ return whole line tags
         int sindex, eindex;
         //arTags->RemoveAll();
         if (nLine <0) return arTags;
-        sindex = getCRIndexInTagsArray(nLine -1);
+        if (nLine == 0) //kpp1-276 the template first tag lost
+            sindex = -1;
+        else
+            sindex = getCRIndexInTagsArray(nLine -1);
         eindex = getCRIndexInTagsArray(nLine);
         sindex ++;
-
+        if (sindex <0 || eindex <0)//kpp1-276
+            return arTags;
         for (int i= sindex; i<=eindex; i++)
         {
             arTags.add(m_arLinesTags.get(i));
@@ -493,13 +550,55 @@ return whole line tags
     private  String  getCmdSet(String tag)
     {
         char ch = 0;
-        if (tag.equals(TAG_START_BOLD) )
-            ch = CMD_START_BOLD;
-        if (tag.equals(TAG_END_BOLD) )
-            ch = CMD_END_BOLD;
-        if (tag.equals(TAG_PAPER_CUT)) {
-            ch = CMD_PAPER_CUT;
+        switch (tag)
+        {
+            case TAG_START_BOLD:
+                ch = CMD_START_BOLD;
+                break;
+            case TAG_END_BOLD:
+                ch = CMD_END_BOLD;
+                break;
+            case TAG_PAPER_CUT:
+                ch = CMD_PAPER_CUT;
+                break;
+            case TAG_START_DBLW:
+                ch = CMD_START_DBLW;
+                break;
+            case TAG_END_DBLW:
+                ch = CMD_END_DBLW;
+                break;
+            case TAG_START_DBLH:
+                ch = CMD_START_DBLH;
+                break;
+            case TAG_END_DBLH:
+                ch = CMD_END_DBLH;
+                break;
+            case TAG_START_DBLWH:
+                ch = CMD_START_DBLWH;
+                break;
+            case TAG_END_DBLWH:
+                ch = CMD_END_DBLWH;
+                break;
+            case TAG_START_REVERSE:
+                ch = CMD_START_REVERSE;
+                break;
+            case TAG_END_REVERSE:
+                ch = CMD_END_REVERSE;
+                break;
+            default:
+                break;
         }
+//        if (tag.equals(TAG_START_BOLD) )
+//            ch = CMD_START_BOLD;
+//        if (tag.equals(TAG_END_BOLD) )
+//            ch = CMD_END_BOLD;
+//        if (tag.equals(TAG_PAPER_CUT)) {
+//            ch = CMD_PAPER_CUT;
+//        }
+//        if (tag.equals(TAG_START_DBLW)) {
+//            ch = CMD_START_DBLW;
+//        }
+//
         if (ch !=0)
         {
             String s = "";
@@ -579,14 +678,14 @@ return whole line tags
      * @param pCondiment
      * @return
      */
-    private String makeTagString( String tag, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment)
+    private String makeTagString(String tag, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment, KDSDataModifier pModifier)
     {
         String t = tag;
         t = t.trim();
         t = t.toUpperCase();
 
         String s = ("");
-        if (t.equals("<CR>"))
+        if (t.equals(TAG_CR))
         {
 
             m_nCurrentAlignment = TextAlign.ALIGN_LEFT;
@@ -612,10 +711,15 @@ return whole line tags
             s = makeTabString(t);
             return s;
         }
-        if (t.equals("<B>") || t.equals("</B>") ||
-                t.equals("<RED>") || t.equals("</RED>") ||
-                t.equals("<I>") || t.equals("</I>") ||
-                t.equals("<PC>"))
+//        if (t.equals(TAG_START_BOLD) || t.equals(TAG_END_BOLD) ||
+//                t.equals("<RED>") || t.equals("</RED>") ||
+//                t.equals("<I>") || t.equals("</I>") ||
+//                t.equals(TAG_PAPER_CUT) ||
+//                t.equals(TAG_START_REVERSE) || t.equals(TAG_END_REVERSE) ||
+//                t.equals(TAG_START_DBLW) || t.equals(TAG_END_DBLW) ||
+//                t.equals(TAG_START_DBLH) || t.equals(TAG_END_DBLH) ||
+//                t.equals(TAG_START_DBLWH) || t.equals(TAG_END_DBLWH) )
+        if (isPrinterCommandTag(t))
         {
             s += getCmdSet(t);
             return s;
@@ -734,14 +838,14 @@ return whole line tags
             else
                 return ("");
         }
-        if (t.equals("<ITEMS>"))
+        if (t.equals(TAG_ITEMS))
         {
             if (pItem == null) return ("");
 
             return pItem.getDescription();// ->GetText();
         }
 
-        if (t.equals("<CONDIMENTS>"))
+        if (t.equals(TAG_CONDIMENTS))
         {
             if (pCondiment == null) return ("");
             return pCondiment.getDescription();
@@ -759,6 +863,11 @@ return whole line tags
             if (pOrder == null) return ("");
             return getStartTimeString(pOrder.getStartTime());
 
+        }
+        if (t.equals(TAG_MODIFIERS))
+        {
+            if (pModifier == null) return ("");
+            return pModifier.getDescription();
         }
 
         return tag;
@@ -808,7 +917,7 @@ return whole line tags
         }
 
     }
-    private  String makeTagsString(ArrayList<String> arTags, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment)
+    private  String makeTagsString(ArrayList<String> arTags, KDSDataOrder pOrder, KDSDataItem pItem, KDSDataCondiment pCondiment, KDSDataModifier pModifier)
     {
         //one line
         String str="", s="";
@@ -824,7 +933,7 @@ return whole line tags
         for (int i=0; i< arTags.size(); i++)
         {
             tag = arTags.get(i);
-            s = makeTagString(tag, pOrder, pItem, pCondiment);
+            s = makeTagString(tag, pOrder, pItem, pCondiment, pModifier);
             addNewTagStringToLine(arLineAlign, s);
         }
         return makePrintString(arLineAlign.get(0), arLineAlign.get(1), arLineAlign.get(2));
@@ -845,23 +954,44 @@ return whole line tags
 /************************************************************************/
 /*
 return the ascii string len, it is unicode len
+
                                                                      */
     /************************************************************************/
+    /**
+     *
+     * @param s
+     * @return
+     */
     private  int getStringPrintLen(String s)
     {
         int count=0;
         char ch;
         int nunicode = 0;
+        boolean bDoubleWidthEnabled = false; //support double width printing
+
         for (int i=0; i< s.length(); i++)
         {
             ch = s.charAt(i);
-            if (isUnicode(ch))
+            if (isUnicode(ch)) {
                 nunicode++;
+                if (bDoubleWidthEnabled)
+                    nunicode ++;
+            }
             else
             {
                 if (isPrintable(ch))
                 {
                     count ++;
+                    if (bDoubleWidthEnabled )
+                        count ++;
+                }
+                else if (isDoubleWidthStartCommand(ch))
+                {
+                    bDoubleWidthEnabled = true;
+                }
+                else if (isDoubleWidthEndCommand(ch))
+                {
+                    bDoubleWidthEnabled = false;
                 }
             }
         }
@@ -956,19 +1086,27 @@ return the ascii string len, it is unicode len
     {
 //	char buffer[20];
 
-        String cmdRed = getCmdSet(("<RED>"));
-        String cmdERed = getCmdSet(("</RED>"));
-        String cmdBold = getCmdSet(("<B>"));
-        String cmdEBold = getCmdSet(("</B>"));
+//        String cmdRed = getCmdSet(("<RED>"));
+//        String cmdERed = getCmdSet(("</RED>"));
+        String cmdBold = getCmdSet(TAG_START_BOLD);
+        String cmdEBold = getCmdSet(TAG_END_BOLD);
+        String cmdBlack = getCmdSet(TAG_START_REVERSE);
+        String cmdEBlack = getCmdSet(TAG_END_REVERSE);
+        String cmdDblH = getCmdSet(TAG_START_DBLH);
+        String cmdEDblH = getCmdSet(TAG_END_DBLH);
+        String cmdDblW = getCmdSet(TAG_START_DBLW);
+        String cmdEDblW = getCmdSet(TAG_END_DBLW);
+        String cmdDblWH = getCmdSet(TAG_START_DBLWH);
+        String cmdEDblWH = getCmdSet(TAG_END_DBLWH);
 
-        boolean bBold=false, bRed= false;
+        boolean bBold=false;//, bRed= false;
 
         int index;
-        if (!cmdRed.isEmpty() )
-        {
-            index = s.indexOf(cmdRed);
-            if (index >=0) bRed = true;
-        }
+//        if (!cmdRed.isEmpty() )
+//        {
+//            index = s.indexOf(cmdRed);
+//            if (index >=0) bRed = true;
+//        }
         if (!cmdBold.isEmpty() )
         {
 
@@ -977,7 +1115,8 @@ return the ascii string len, it is unicode len
         }
 
 
-        if (!bBold && !bRed)
+        //if (!bBold && !bRed)
+        if (!bBold)
         {
             arBuffer.add(s);
             return;
@@ -986,7 +1125,6 @@ return the ascii string len, it is unicode len
 
         if (m_bSimulateBold && bBold)
         {
-
             replaceTagStringToLine(arBuffer, cmdBold, cmdEBold, s, false);
         }
         {
@@ -1053,19 +1191,55 @@ return the ascii string len, it is unicode len
             s = s.trim();
             s = s.toUpperCase();
 
-            if (s.equals("<CR>"))
+            if (s.equals(TAG_CR))
                 count++;
-            if (s.equals("<CONDIMENTS>"))
-                break;
+            if (s.equals(TAG_CONDIMENTS))
+                return count;
+                //break;
         }
 
-        return count;
+        return -1;
 
     }
 
+    private int getModifierTagsLineNumber()
+    {
+        int count = 0;
+        String s;
 
+        for (int i=0; i< m_arLinesTags.size(); i++)
+        {
+            s = m_arLinesTags.get(i);
+            s = s.trim();
+            s = s.toUpperCase();
 
-    private void makeItemsStrings(ArrayList<String> parPrint, ArrayList<String> parItemTags, ArrayList<String> parCondimentTags, KDSDataOrder pOrder)
+            if (s.equals(TAG_CR))
+                count++;
+            if (s.equals(TAG_MODIFIERS))
+                return count;
+                //break;
+        }
+
+        return -1;
+
+    }
+
+    /**
+     *
+     *
+     * @param parPrint
+     * @param parItemTags
+     * @param parCondimentTags
+     * @param pOrder
+     * @param parModifierTags
+     * @param nCondimentLineIndex
+     *  The line number in template.
+     *      Use it to find out condiment is in front of modifier or not.
+     * @param nModifierLineIndex
+     *  The line number in template.
+     *  Use it to find out modifier is in front of condiment or not.
+     */
+    private void makeItemsStrings(ArrayList<String> parPrint, ArrayList<String> parItemTags, ArrayList<String> parCondimentTags, KDSDataOrder pOrder,ArrayList<String> parModifierTags, int nCondimentLineIndex,int nModifierLineIndex)
     {
 
 
@@ -1085,19 +1259,47 @@ return the ascii string len, it is unicode len
 
             }
             else {
-                s = makeTagsString(parItemTags, pOrder, pItem, null);
+                s = makeTagsString(parItemTags, pOrder, pItem, null, null);
             }
             addPrintLines(parPrint, s);
+            //check if print condiment first
+            if (nCondimentLineIndex >=0) {
+                if (nCondimentLineIndex < nModifierLineIndex) {
+                    condimentcount = pItem.getCondiments().getCount();
+                    for (int j = 0; j < condimentcount; j++) {
+                        KDSDataCondiment pCondiment = pItem.getCondiments().getCondiment(j);
+                        s = makeTagsString(parCondimentTags, pOrder, null, pCondiment, null); // pItem, pCondiment); //2.5.4.31
+                        //parPrint->Add(s);
+                        addPrintLines(parPrint, s);
 
-            condimentcount = pItem.getCondiments().getCount();
-            for (int j=0; j<condimentcount; j++)
-            {
-                KDSDataCondiment pCondiment = pItem.getCondiments().getCondiment(j);
-                s = makeTagsString(parCondimentTags,pOrder,null, pCondiment); // pItem, pCondiment); //2.5.4.31
-                //parPrint->Add(s);
-                addPrintLines(parPrint, s);
-
+                    }
+                }
             }
+            //print modifiers
+            int modifiersCount = pItem.getModifiers().getCount();
+            if (nModifierLineIndex >= 0) {
+                for (int j = 0; j < modifiersCount; j++) {
+                    KDSDataModifier pModifier = pItem.getModifiers().getModifier(j);
+                    s = makeTagsString(parModifierTags, pOrder, null, null, pModifier); // pItem, pCondiment); //2.5.4.31
+                    //parPrint->Add(s);
+                    addPrintLines(parPrint, s);
+
+                }
+            }
+            //check if print condiment after modifiers
+            if (nCondimentLineIndex >=0) {
+                if (nCondimentLineIndex >= nModifierLineIndex) {
+                    condimentcount = pItem.getCondiments().getCount();
+                    for (int j = 0; j < condimentcount; j++) {
+                        KDSDataCondiment pCondiment = pItem.getCondiments().getCondiment(j);
+                        s = makeTagsString(parCondimentTags, pOrder, null, pCondiment, null); // pItem, pCondiment); //2.5.4.31
+                        //parPrint->Add(s);
+                        addPrintLines(parPrint, s);
+
+                    }
+                }
+            }
+
         }
 
     }
@@ -1115,7 +1317,10 @@ print order data to  buffer, socket will send this buffer to serial port
     {
         if (order == null) return;
         if (!isEnabled()) return;
+        int len = m_printerData.size();
+        int msz = MAX_PRINT_LINES;
 
+        if (len >= msz) return;
 
         if (m_bGroupCategory)
         {
@@ -1132,8 +1337,9 @@ print order data to  buffer, socket will send this buffer to serial port
         ArrayList<String> arPrint = new ArrayList<String>();
         ArrayList<String> arLineTags = new ArrayList<String>();
 
-        ArrayList<String> arItemTags = new ArrayList<String>();
-        ArrayList<String> arCondimentTags = new ArrayList<String>();
+        ArrayList<String> arItemTags = new ArrayList<>();
+        ArrayList<String> arCondimentTags = new ArrayList<>();
+        ArrayList<String> arModifierTags = new ArrayList<>();
 
 
         //return how many physical printing lines
@@ -1150,25 +1356,33 @@ print order data to  buffer, socket will send this buffer to serial port
             switch (getCRLineType(arLineTags))
             {
                 case TAGS_LINE_NORMAL: {
-                    s = makeTagsString(arLineTags, order,null, null);
+                    s = makeTagsString(arLineTags, order,null, null, null);
                     addPrintLines(arPrint, s);
                     //arPrint.Add(s);
                 }
                 break;
                 case TAGS_LINE_ITEM: {
                     arItemTags.addAll(arLineTags);
-                    int nindex = getCondimentTagsLineNumber();
-                    if (nindex >=0)
+                    int nCondimentLineIndex = getCondimentTagsLineNumber();
+                    if (nCondimentLineIndex >=0)
                     {
-                        arCondimentTags = getCRLineTags(nindex);
+                        arCondimentTags = getCRLineTags(nCondimentLineIndex);
                     }
-                    makeItemsStrings(arPrint, arItemTags, arCondimentTags, order);
+                    int nModifierLineIndex = getModifierTagsLineNumber();
+                    if (nModifierLineIndex >=0)
+                    {
+                        arModifierTags = getCRLineTags(nModifierLineIndex);
+                    }
+
+                    makeItemsStrings(arPrint, arItemTags, arCondimentTags, order, arModifierTags, nCondimentLineIndex, nModifierLineIndex);
                 }
                 break;
                 case TAGS_LINE_CONDIMENT:
+                case TAGS_LINE_MODIFIER:
                 {
                     continue;
                 }
+
                 //break;
                 default:
                 {
@@ -1178,7 +1392,8 @@ print order data to  buffer, socket will send this buffer to serial port
 
 
         }
-        synchronized (m_locker) {
+        //synchronized (m_locker)
+        {
             s = "";
             s += (CHAR_Start_Order);
 
@@ -1191,7 +1406,7 @@ print order data to  buffer, socket will send this buffer to serial port
             m_printerData.add(s);
         }
         arPrint.clear();
-        arrangeBuffer();
+        //arrangeBuffer();
 
     }
 
@@ -1206,6 +1421,7 @@ print order data to  buffer, socket will send this buffer to serial port
 
             if (len <= msz) return;
             int n = len - msz;
+
             for (int i = 0; i < n; i++) {
                 m_printerData.remove(msz);
             }
@@ -1360,7 +1576,13 @@ print order data to  buffer, socket will send this buffer to serial port
 
         m_nCopies = settings.getInt(KDSSettings.ID.Printer_copies);
         m_nPortType = PrinterPortType.values()[ settings.getInt(KDSSettings.ID.Printer_Port)];
-        m_howtoPrint = HowToPrintOrder.values()[settings.getInt(KDSSettings.ID.Printer_howtoprint)];
+        try {
+            m_howtoPrint = HowToPrintOrder.values()[settings.getInt(KDSSettings.ID.Printer_howtoprint)];
+        }
+        catch (Exception e)
+        {
+
+        }
 
         m_bGroupCategory = settings.getBoolean(KDSSettings.ID.Item_group_category);//2.0.48
 
@@ -1408,7 +1630,8 @@ print order data to  buffer, socket will send this buffer to serial port
         }
 
         //2.0.13
-        writeToPrinter();
+        //remove it from onping function, use its own thread.
+        //writeToPrinter();
 
     }
 
@@ -1417,7 +1640,13 @@ print order data to  buffer, socket will send this buffer to serial port
         if (m_bemaPrinter == null) return;
         PrinterStatus ps = m_bemaPrinter.getStatus();
         m_bSerialPrinterValid =  ps.isOnline();
-
+//        //DEBUG
+//        m_bSerialPrinterValid = true;
+        ///////////////////////////////////////
+        if (!m_bSerialPrinterValid)
+        {
+            this.reset();
+        }
     }
     /**
      * check if the usb printer existed.
@@ -1476,7 +1705,6 @@ print order data to  buffer, socket will send this buffer to serial port
     public boolean isPrinterValid()
     {
 
-
         KDSSettings settings = m_kds.getSettings();
         PortInfo portInfo = this.getPortInfo(settings);
         switch (portInfo.getType())
@@ -1498,6 +1726,7 @@ print order data to  buffer, socket will send this buffer to serial port
                 break;
         }
         return false;
+
     }
     public boolean isOpened()
     {
@@ -1530,16 +1759,14 @@ print order data to  buffer, socket will send this buffer to serial port
         {
             this.open(false);
         }
-        if (isOpened())
-        {
-            showMsg("Write data to printer");
-            writeToPrinter();
-        }
+        startPrintingThread();
+//        if (isOpened())
+//        {
+//            showMsg("Write data to printer");
+//            writeToPrinter();
+//        }
     }
 
-    byte[] LR2000_START_BOLD = new byte[]{0x1b, 0x45, 1};
-    byte[] LR2000_END_BOLD = new byte[]{0x1b, 0x45, 0};
-    byte[] LR2000_PAPER_CUT = new byte[]{0x1b, 0x6d};
 
 
     /**
@@ -1555,20 +1782,21 @@ print order data to  buffer, socket will send this buffer to serial port
     {
         if (!isPrinterValid())
             return;
-        synchronized (m_locker) {
-            int ncount = m_printerData.size();
-            //2.0.13
-            int nWriteCount = ncount > MAX_WRITE_COUNT?MAX_WRITE_COUNT:ncount;
 
+        int ncount = m_printerData.size();
+        //if (BuildVer.isDebug())
+        //System.out.println("printer buffer lines=" + ncount);
+        if (ncount <=0) return;
+        //2.0.13
+        int nWriteCount = ncount > MAX_WRITE_COUNT?MAX_WRITE_COUNT:ncount;
+        synchronized (m_locker) {
             for (int i = 0; i < nWriteCount; i++) {
                 String s = m_printerData.get(0); //2.0.13
                 writeString(s);
                 //debug
                 //Log.e(TAG, s);
-
                 m_printerData.remove(0); //2.0.13
             }
-            //m_printerData.clear();
         }
     }
     private void writeString(String s)
@@ -1578,35 +1806,269 @@ print order data to  buffer, socket will send this buffer to serial port
         for (int i=0; i< s.length(); i++)
         {
             ch = s.charAt(i);
-            if (ch == CMD_END_BOLD)
+            if (isPrinterCommandChar(ch))
             {
                 if (!willPrint.isEmpty())
                     m_bemaPrinter.printText(willPrint);
                 willPrint = "";
-                m_bemaPrinter.write(LR2000_START_BOLD);
-
-            }
-            else if (ch == CMD_END_BOLD)
-            {
-                if (!willPrint.isEmpty())
-                    m_bemaPrinter.printText(willPrint);
-                willPrint = "";
-                m_bemaPrinter.write(LR2000_END_BOLD);
-            }
-            else if (ch == CMD_PAPER_CUT)
-            {
-                if (!willPrint.isEmpty())
-                    m_bemaPrinter.printText(willPrint);
-                willPrint = "";
-                m_bemaPrinter.write(LR2000_PAPER_CUT);
+                writePrinterCommandByCommandChar(ch);
             }
             else
             {
                 willPrint += ch;
             }
+//            switch (ch) {
+//                case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_BOLD);
+//
+//                }
+//                break;
+//                case CMD_END_BOLD:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_END_BOLD);
+//                }
+//                case CMD_PAPER_CUT:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_PAPER_CUT);
+//                }
+//                break;
+//                case CMD_START_DBLW:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_DBLW);
+//                }
+//                break;
+//                case CMD_START_DBLH:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_DBLH);
+//                }
+//                break;
+//                case CMD_START_DBLWH:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_DBLWH);
+//                }
+//                break;
+//                case CMD_END_DBLW:
+//                case CMD_END_DBLH:
+//                case CMD_END_DBLWH:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_END_DBLWH);
+//                }
+//                break;
+//                case CMD_START_REVERSE:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_START_REVERSE);
+//                }
+//                break;
+//                case CMD_END_REVERSE:
+//                {
+//                    if (!willPrint.isEmpty())
+//                        m_bemaPrinter.printText(willPrint);
+//                    willPrint = "";
+//                    m_bemaPrinter.write(LR2000_END_REVERSE);
+//                }
+//                break;
+//                default:
+//                {
+//                    willPrint += ch;
+//                }
+//                break;
+//            }
         }
 
         if (!willPrint.isEmpty())
             m_bemaPrinter.printText(willPrint);
+    }
+
+    Thread m_threadPrinting = null;
+
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startPrintingThread()
+    {
+        if (m_threadPrinting == null ||
+                !m_threadPrinting.isAlive())
+        {
+            m_threadPrinting = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (getKDS().isThreadRunning())
+                    {
+                        try {
+                            if (m_threadPrinting != Thread.currentThread())
+                                return;
+                            if (m_printerData.size() > 0)
+                                onPing();
+                            writeToPrinter();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadPrinting.setName("Printing");
+            m_threadPrinting.start();
+        }
+    }
+
+    public void reset()
+    {
+        this.close();
+        try
+        {
+            Thread.sleep(200);
+        }
+        catch (Exception e)
+        {
+
+        }
+        this.open(true);
+    }
+
+    private boolean isPrinterCommandChar( char ch)
+    {
+        switch (ch) {
+            case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+            case CMD_END_BOLD:
+            case CMD_PAPER_CUT:
+            case CMD_START_DBLW:
+            case CMD_START_DBLH:
+            case CMD_START_DBLWH:
+            case CMD_END_DBLW:
+            case CMD_END_DBLH:
+            case CMD_END_DBLWH:
+            case CMD_START_REVERSE:
+            case CMD_END_REVERSE:
+                return true;
+
+        }
+        return false;
+    }
+
+    private void writePrinterCommandByCommandChar(char ch)
+    {
+        switch (ch) {
+            case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+            {
+                m_bemaPrinter.write(LR2000_START_BOLD);
+            }
+            break;
+            case CMD_END_BOLD:
+            {
+                m_bemaPrinter.write(LR2000_END_BOLD);
+            }
+            break;
+            case CMD_PAPER_CUT:
+            {
+                m_bemaPrinter.write(LR2000_PAPER_CUT);
+            }
+            break;
+            case CMD_START_DBLW:
+            {
+                m_bemaPrinter.write(LR2000_START_DBLW);
+            }
+            break;
+            case CMD_START_DBLH:
+            {
+                m_bemaPrinter.write(LR2000_START_DBLH);
+            }
+            break;
+            case CMD_START_DBLWH:
+            {
+                m_bemaPrinter.write(LR2000_START_DBLWH);
+            }
+            break;
+            case CMD_END_DBLW:
+            case CMD_END_DBLH:
+            case CMD_END_DBLWH:
+            {
+                m_bemaPrinter.write(LR2000_END_DBLWH);
+            }
+            break;
+            case CMD_START_REVERSE:
+            {
+                m_bemaPrinter.write(LR2000_START_REVERSE);
+            }
+            break;
+            case CMD_END_REVERSE:
+            {
+                m_bemaPrinter.write(LR2000_END_REVERSE);
+            }
+            break;
+            default:
+            {
+            }
+            break;
+        }
+    }
+
+    private boolean isPrinterCommandTag(String tag) {
+        switch (tag) {
+
+            case TAG_START_BOLD:
+            case TAG_END_BOLD:
+            case "<RED>":
+            case "</RED>":
+            case "<I>":
+            case "</I>":
+            case TAG_PAPER_CUT:
+            case TAG_START_REVERSE:
+            case TAG_END_REVERSE:
+            case TAG_START_DBLW:
+            case TAG_END_DBLW:
+            case TAG_START_DBLH:
+            case TAG_END_DBLH:
+            case TAG_START_DBLWH:
+            case TAG_END_DBLWH:
+                return true;
+            default:
+                return false;
+        }
+    }
+    private boolean isDoubleWidthStartCommand(char ch)
+    {
+        if (ch == CMD_START_DBLW ||
+            ch == CMD_START_DBLWH)
+            return true;
+        return false;
+    }
+    private boolean isDoubleWidthEndCommand(char ch)
+    {
+        return (ch  == CMD_END_DBLWH);
     }
 }

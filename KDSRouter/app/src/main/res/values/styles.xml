@@ -53,4 +53,16 @@
         <attr name="bordersize" format="dimension" />
     </declare-styleable>
 
+    <style name="settings_style" parent="AppTheme">
+        <item name="android:windowTitleSize">30dp</item>
+        <item name="android:windowTitleBackgroundStyle">@style/settingsWindowTitleBackgroundStyle</item>
+        <item name="android:windowTitleStyle">@style/settingsWindowTitleStyle</item>
+        <!--<item name="android:colorBackground">@drawable/settings_page_bg</item>-->
+        <!--<item name="android:focusable">false</item>-->
+        <!--<item name="android:listSelector">@drawable/kdslistselector</item>-->
+        <!--<item name="android:textColor">#ff000000</item>-->
+        <!--<item name="android:cacheColorHint">#ffffffff</item>-->
+        <item name="android:windowNoTitle">false</item>  <!-- 用来设定是否显示标题  -->
+        <!--<item name="android:windowBackground">@color/settings_page_bg</item>-->
+    </style>
 </resources>

@@ -142,7 +142,7 @@ public class AudioPlayer  extends Handler implements Runnable {
     public void start()
     {
         m_timeDog.reset();
-        (new Thread(this)).start();
+        (new Thread(this, "AudioPlay")).start();
     }
     @Override
     public void run() {

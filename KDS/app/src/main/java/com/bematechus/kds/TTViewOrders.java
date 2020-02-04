@@ -9,6 +9,7 @@ import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2017/4/12.
@@ -20,9 +21,9 @@ public class TTViewOrders {
     String m_strFocusedOrderGUID = "";
 
 
-    ArrayList<Rect> m_rects = new ArrayList();
+    Vector<Rect> m_rects = new Vector();
 
-    ArrayList<ExtraTTID> m_arExtraTrackerID = new ArrayList<>(); //those ID existed in gateway, but no order use them.
+    Vector<ExtraTTID> m_arExtraTrackerID = new Vector<>(); //those ID existed in gateway, but no order use them.
 
     public String getFocusedOrderGUID()
     {
@@ -35,7 +36,9 @@ public class TTViewOrders {
     public void setOrders(KDSDataOrders orders)
     {
         m_orders = orders;
-        sortOrders();
+        synchronized (m_orders.m_locker) {
+            sortOrders();
+        }
     }
 
     public void sortOrders()
@@ -49,7 +52,7 @@ public class TTViewOrders {
         return m_orders;
     }
 
-    public  ArrayList<Rect> getCoordinates()
+    public  Vector<Rect> getCoordinates()
     {
         return m_rects;
     }
@@ -67,34 +70,41 @@ public class TTViewOrders {
 
     public void setOrderCoordinate(KDSDataOrder order, Rect rt)
     {
-        int nindex = m_orders.getIndex(order);
-        setOrderCoordinate(nindex, rt);
+        synchronized (m_orders.m_locker) {
+            int nindex = m_orders.getIndex(order);
+            setOrderCoordinate(nindex, rt);
+        }
 
     }
 
     public String getNextOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
-        if (ar.size() <=0) return "";
-        int nIndex =  this.getOrders().getOrderIndexByGUID(fromGuid);
-        nIndex ++;
+        Vector ar = this.getOrders().getComponents();
+        synchronized (getOrders().m_locker) {
+            if (ar.size() <= 0) return "";
+            int nIndex = this.getOrders().getOrderIndexByGUID(fromGuid);
+            nIndex++;
 
-        if (nIndex >= getCoordinates().size())
-            nIndex =0;
-        KDSDataOrder c = (KDSDataOrder)ar.get(nIndex) ;
-        return c.getGUID();
+            if (nIndex >= getCoordinates().size())
+                nIndex = 0;
+            KDSDataOrder c = (KDSDataOrder) ar.get(nIndex);
+            return c.getGUID();
+        }
     }
 
     public String getPrevOrderGUID(String fromGuid)
     {
-        ArrayList ar = this.getOrders().getComponents();
-        if (ar.size() <=0)  return "";
-        int nIndex = this.getOrders().getOrderIndexByGUID(fromGuid);
-        nIndex --;
-        if (nIndex < 0 )
-            nIndex =getCoordinates().size() -1;
-        KDSDataOrder c = (KDSDataOrder)ar.get(nIndex) ;
-        return c.getGUID();
+
+        Vector ar = this.getOrders().getComponents();
+        synchronized (getOrders().m_locker) {
+            if (ar.size() <= 0) return "";
+            int nIndex = this.getOrders().getOrderIndexByGUID(fromGuid);
+            nIndex--;
+            if (nIndex < 0)
+                nIndex = getCoordinates().size() - 1;
+            KDSDataOrder c = (KDSDataOrder) ar.get(nIndex);
+            return c.getGUID();
+        }
     }
     public void resetCoordinates()
     {
@@ -138,50 +148,49 @@ public class TTViewOrders {
     public void updateOrdersHolderID(KDSDBCurrent db, ArrayList<TTOrder> ar,boolean bAutoAssign, int nAutoAssignTimeoutSeconds)
     {
         if (getOrders() == null) return;
+        synchronized (getOrders().m_locker) {
+            if (bAutoAssign)
+                autoAssignOrdersTrackerID(db, ar, nAutoAssignTimeoutSeconds);
 
-        if (bAutoAssign)
-            autoAssignOrdersTrackerID(db, ar,nAutoAssignTimeoutSeconds);
+            ArrayList<KDSDataOrder> arWillRemoved = new ArrayList<>();
 
-        ArrayList<KDSDataOrder> arWillRemoved = new ArrayList<>();
+            for (int i = 0; i < getOrders().getCount(); i++) {
+                String trackerID = getOrders().get(i).getTrackerID();
+                if (findTTItem(ar, trackerID) != null)
+                    getOrders().get(i).setTTFindMyTrackerID(true);
 
-        for (int i=0; i< getOrders().getCount(); i++)
-        {
-            String trackerID =  getOrders().get(i).getTrackerID();
-            if (findTTItem(ar, trackerID)!= null)
-                getOrders().get(i).setTTFindMyTrackerID(true);
-
-            String holderID = findHolderID(trackerID, ar);
-            if (holderID.equals(HOLDER_ID_EMPTY))
-                getOrders().get(i).setToTable("");
-            else if (holderID.equals(TRACKER_ID_NOT_EXISTED)) //it is not existed in TT server
-            {
-                arWillRemoved.add(getOrders().get(i));
+                String holderID = findHolderID(trackerID, ar);
+                if (holderID.equals(HOLDER_ID_EMPTY))
+                    getOrders().get(i).setToTable("");
+                else if (holderID.equals(TRACKER_ID_NOT_EXISTED)) //it is not existed in TT server
+                {
+                    arWillRemoved.add(getOrders().get(i));
+                } else
+                    getOrders().get(i).setToTable(holderID);
             }
-            else
-                getOrders().get(i).setToTable(holderID);
-        }
 
 //        TimeDog td = new TimeDog();
-        for (int i=0; i< arWillRemoved.size(); i++)
-        {
-            if (arWillRemoved.get(i).getTTFindMyTrackerID())//.m_bTTFindMyTrackerID) //has existed in gateway before, not lost. That means the tt was removed.
-                KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A),arWillRemoved.get(i).getGUID());
+            for (int i = 0; i < arWillRemoved.size(); i++) {
+                if (arWillRemoved.get(i).getTTFindMyTrackerID())//.m_bTTFindMyTrackerID) //has existed in gateway before, not lost. That means the tt was removed.
+                    KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A), arWillRemoved.get(i).getGUID(), true);
+            }
+            arWillRemoved.clear();
         }
-        arWillRemoved.clear();
     }
 
 
     public boolean isAssignedTrackerID(String trackerID)
     {
-        for (int i=0; i< getOrders().getCount(); i++)
-        {
-            String ttID =  getOrders().get(i).getTrackerID();
-            if (ttID.isEmpty()) continue;
-            if (ttID.equals(trackerID))
-                return true;
+        synchronized (getOrders().m_locker) {
+            for (int i = 0; i < getOrders().getCount(); i++) {
+                String ttID = getOrders().get(i).getTrackerID();
+                if (ttID.isEmpty()) continue;
+                if (ttID.equals(trackerID))
+                    return true;
 
+            }
+            return false;
         }
-        return false;
     }
 
     public void autoAssignOrdersTrackerID(KDSDBCurrent db,  ArrayList<TTOrder> ar, int nAutoAssignTimeoutSeconds)
@@ -189,13 +198,13 @@ public class TTViewOrders {
         if (getOrders() == null) return;
         ArrayList<KDSDataOrder> arOrdersEmptyTrackerID = new ArrayList<>();
 
+        synchronized (getOrders().m_locker) {
+            for (int i = 0; i < getOrders().getCount(); i++) {
+                String trackerID = getOrders().get(i).getTrackerID();
+                if (trackerID.isEmpty())
+                    arOrdersEmptyTrackerID.add(getOrders().get(i));
 
-        for (int i=0; i< getOrders().getCount(); i++)
-        {
-            String trackerID =  getOrders().get(i).getTrackerID();
-            if (trackerID.isEmpty())
-                arOrdersEmptyTrackerID.add(getOrders().get(i));
-
+            }
         }
         TimeDog td = new TimeDog();
 
@@ -269,9 +278,12 @@ public class TTViewOrders {
     public void clearOrders()
     {
         for (int i=0; i< getOrders().getCount(); i++) {
-            KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A), getOrders().get(i).getGUID());
+            KDSStationFunc.orderBump(KDSGlobalVariables.getKDS().getUsers().getUser(KDSUser.USER.USER_A), getOrders().get(i).getGUID(), false);
         }
-        getOrders().clear();
+        synchronized (getOrders().m_locker) {
+            getOrders().clear();
+        }
+        KDSGlobalVariables.getKDS().refreshView();
     }
 
     final String HOLDER_ID_EMPTY = "-1";
@@ -302,20 +314,22 @@ public class TTViewOrders {
 
     public void moveUnassignedToEnd()
     {
-        ArrayList<KDSDataOrder> ar = new ArrayList<>();
+        Vector<KDSDataOrder> ar = new Vector<>();
         if (m_orders == null) return;
-        for (int i=0; i< m_orders.getCount(); i++)
-        {
-            if (m_orders.get(i).getTrackerID().isEmpty())
-                ar.add(m_orders.get(i));
+        synchronized (m_orders.m_locker) {
+            for (int i = 0; i < m_orders.getCount(); i++) {
+                if (m_orders.get(i).getTrackerID().isEmpty())
+                    ar.add(m_orders.get(i));
+            }
+
+//            for (int i = 0; i < ar.size(); i++)
+//                m_orders.removeComponent(ar.get(i));
+            m_orders.getComponents().removeAll(ar);
+
+//            for (int i = 0; i < ar.size(); i++)
+//                m_orders.addComponent(ar.get(i));
+            m_orders.getComponents().addAll(ar);
         }
-
-        for (int i=0; i< ar.size(); i++)
-            m_orders.removeComponent(ar.get(i));
-
-        for (int i=0; i< ar.size(); i++)
-            m_orders.addComponent(ar.get(i));
-
     }
 
     /**
@@ -327,18 +341,21 @@ public class TTViewOrders {
         ArrayList<KDSDataOrder> ar = new ArrayList<>();
         if (m_orders == null) return;
         TimeDog td = new TimeDog();
-        for (int i=0; i< m_orders.getCount(); i++)
-        {
-            if (m_orders.get(i).getTTReceiveExpoBumpNotification()){//.m_bTTReceiveExpoBumpNotification) {
-                td.reset(m_orders.get(i).getTTReceiveExpoBumpNotificationDate());//.m_dtTTReceiveExpoBumpNotification);
-                if (td.is_timeout( (int)(timeoutRemoveMinutes *60 * 1000)))
-                    ar.add(m_orders.get(i));
+        synchronized (m_orders.m_locker) {
+            for (int i = 0; i < m_orders.getCount(); i++) {
+                if (m_orders.get(i).getTTReceiveExpoBumpNotification()) {//.m_bTTReceiveExpoBumpNotification) {
+                    td.reset(m_orders.get(i).getTTReceiveExpoBumpNotificationDate());//.m_dtTTReceiveExpoBumpNotification);
+                    if (td.is_timeout((int) (timeoutRemoveMinutes * 60 * 1000)))
+                        ar.add(m_orders.get(i));
+                }
             }
+
+            //m_orders.getComponents().removeAll(ar);
+            //m_orders.sortOrders();
+            m_orders.removeComponents(ar);
+//        for (int i=0; i< ar.size(); i++)
+//            m_orders.removeComponent(ar.get(i));
         }
-
-        for (int i=0; i< ar.size(); i++)
-            m_orders.removeComponent(ar.get(i));
-
        ar.clear();
     }
 
@@ -353,18 +370,20 @@ public class TTViewOrders {
         ArrayList<KDSDataOrder> ar = new ArrayList<>();
         if (m_orders == null) return ar;
         TimeDog td = new TimeDog();
-        for (int i=0; i< m_orders.getCount(); i++)
-        {
-            if (m_orders.get(i).getTTAllItemsBumped()){//.m_bTTAllItemsBumped) {
-                td.reset(m_orders.get(i).getTTAllItemsBumpedDate());//.m_dtTTAllItemsBumped);
-                if (td.is_timeout((int)(timeoutRemoveMinutes * 60 * 1000)))
-                    ar.add(m_orders.get(i));
+        synchronized (m_orders.m_locker) {
+            for (int i = 0; i < m_orders.getCount(); i++) {
+                if (m_orders.get(i).getTTAllItemsBumped()) {//.m_bTTAllItemsBumped) {
+                    td.reset(m_orders.get(i).getTTAllItemsBumpedDate());//.m_dtTTAllItemsBumped);
+                    if (td.is_timeout((int) (timeoutRemoveMinutes * 60 * 1000)))
+                        ar.add(m_orders.get(i));
+                }
             }
+
+//            for (int i = 0; i < ar.size(); i++)
+//                m_orders.removeComponent(ar.get(i));
+            m_orders.getComponents().removeAll(ar);
+            ar.clear();
         }
-
-        for (int i=0; i< ar.size(); i++)
-            m_orders.removeComponent(ar.get(i));
-
 
         return ar;
     }

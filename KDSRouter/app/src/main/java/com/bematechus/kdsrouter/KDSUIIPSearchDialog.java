@@ -166,6 +166,7 @@ public class KDSUIIPSearchDialog extends KDSUIDialogBase implements KDSRouter.St
         station.setIP(stationReceived.getIP());
         station.setPort(stationReceived.getPort());
         ((MyAdapter) m_lstStations.getAdapter()).getListData().add(station);
+        KDSStationIP.sortStations(((MyAdapter) m_lstStations.getAdapter()).getListData());
         ((MyAdapter) m_lstStations.getAdapter()).notifyDataSetChanged();
 
         String str = this.getDialog().getContext().getString(R.string.active_stations_list);

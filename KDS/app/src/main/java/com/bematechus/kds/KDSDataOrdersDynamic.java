@@ -89,6 +89,9 @@ public class KDSDataOrdersDynamic extends KDSDataOrders {
         if (c.getItems().getCount()<=0) {
             KDSLog.d(TAG, KDSLog._FUNCLINE_()+"get="+ KDSUtil.convertIntToString(nIndex));
             getCurrentDB().orderLoadData(c);
+            if (c.getItems().getCount() <=0) {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "loaditems count=" + KDSUtil.convertIntToString(c.getItems().getCount()));
+            }
         }
         return c;
 

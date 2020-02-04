@@ -120,7 +120,7 @@
     <string name="searching_active_stations">Searching for activate stations …</string>
     <string name="smb_folder_lost"> Can not access remote folder #</string>
     <string name="error_different_relations">The stations relation is different with others, please edit relations first.</string>
-    <string name="error_match_mac">Please run it in bematech device.</string>
+    <string name="error_match_mac">Please run it in a Logic Controls\' device.</string>
 
     <string name="find">Find</string>
     <string name="pc_name">PC IP:</string>
@@ -178,7 +178,7 @@
     <string name="update_error_download_apk_error">Can not download apk file</string>
     <string name="update_error_apk_error">The apk file is wrong</string>
     <string name="update_error_xml_error">Can not download updating file</string>
-    <string name="do_you_update">There is new version. Do you want to upgrade it now?</string>
+    <!--<string name="do_you_update">There is new version. Do you want to upgrade it now?</string>-->
     <string name="invalid_update_file">Invalid update file</string>
     <string name="update_new_version">New version: #, recommended rate: $</string>
 
@@ -364,10 +364,14 @@
     <string name="enable_order_ack">Enable order acknowledgement</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <string name="keep_notification_minutes">Reserve notification files for X minutes</string>
     <string-array name="pref_kds_log_mode_titles">
         <item>None</item>
         <item>Basic</item>
         <item>Detail</item>
     </string-array>
     <string name="title_activity_activity_login">Sign in</string>
+    <string name="logout">Logout</string>
+    <string name="export">Export</string>
+    <string name="str_import">Import</string>
 </resources>

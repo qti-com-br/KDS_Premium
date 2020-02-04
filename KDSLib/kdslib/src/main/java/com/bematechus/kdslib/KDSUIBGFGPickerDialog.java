@@ -16,7 +16,7 @@ import android.widget.TextView;
  */
 public class KDSUIBGFGPickerDialog {
 
-    static Object g_instance = null;
+    public static Object g_instance = null;
 
     public interface OnBGFGPickerDlgListener {
         public void onCancel(KDSUIBGFGPickerDialog dialog);

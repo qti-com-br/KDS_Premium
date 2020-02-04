@@ -15,6 +15,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 
 
 /**
@@ -120,6 +121,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     {
         try {
             m_socketChannel.socket().setSoLinger(true, 0);
+
+
         }
         catch (Exception e)
         {
@@ -178,27 +181,88 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     {
 
         if (!this.isConnected()) return;
-        ByteBuffer buf = m_writeBuffer.popup();
-        if (buf != null) {
-            write_to_socket(buf);
+
+        ArrayList<ByteBuffer> bufs = m_writeBuffer.popup1KB();
+        if (bufs.size()<=0) return;
+        for (int i=0; i< bufs.size(); i++)
+        {
+
+            write_to_socket(bufs.get(i));
 
         }
+        bufs.clear();
+//        ByteBuffer buf = m_writeBuffer.popup();
+//        if (buf != null) {
+//
+//            write_to_socket(buf);
+//
+//        }
     }
     public boolean interface_isUDP(){return false;}
     public boolean interface_isTCPListen(){return false;}
     public boolean interface_isTCPClient(){return true;}
+    //ByteBuffer m_directByteBuffer = ByteBuffer.allocateDirect(10240); //10k
 
     protected  boolean write_to_socket(ByteBuffer buf)
     {
-        try
-        {
+
+
+        try {
             //buf.rewind();
-            int nwrite =  m_socketChannel.write(buf);
-            if (nwrite >0) {
-                if (m_eventHandler != null)
-                    m_eventHandler.sendWriteDoneMessage(this,this.getRemoteIP(), nwrite );
+//            if (false)
+//            {
+//                int nwrite = buf.capacity();
+//
+//                if (nwrite > 0) {
+//                    if (m_eventHandler != null)
+//                        m_eventHandler.sendWriteDoneMessage(this, this.getRemoteIP(), nwrite);
+//                }
+//                return true;
+//            }
+//            else
+                {
+            //Unsafe unsafe = GetUsafeInstance.getUnsafeInstance();
+
+//                if (m_directByteBuffer.capacity() < buf.capacity()) {
+//                    m_directByteBuffer = ByteBuffer.allocateDirect(buf.capacity());
+//                }
+//                //ByteBuffer byteBuffer = ByteBuffer.allocateDirect(buf.capacity());
+//                System.arraycopy(buf.array(), 0, m_directByteBuffer.array(), 0, buf.capacity());
+//                m_directByteBuffer.limit(buf.limit());
+//                m_directByteBuffer.position(buf.position());
+                int nwrite = 0;
+
+                for (int i=0; i< 500; i++) {
+                    if (buf.hasRemaining() ) {
+                        nwrite += m_socketChannel.write(buf); //memory leak
+
+                        Thread.sleep(50);
+                    }
+                    else
+                        break;
+//                        break;
+//                    if (m_directByteBuffer.hasRemaining() ) {
+//                        nwrite += m_socketChannel.write(m_directByteBuffer); //memory leak
+//
+//                        Thread.sleep(200);
+//                    }
+//                    else
+//                        break;
+                }
+
+                buf.clear();
+
+                //m_directByteBuffer.clear();
+
+
+                if (nwrite > 0) {
+                    if (m_eventHandler != null)
+                        m_eventHandler.sendWriteDoneMessage(this, this.getRemoteIP(), nwrite);
+                }
+
+                return true;
             }
-            return true;
+
         }
         catch (Exception e)
         {
@@ -220,19 +284,23 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     protected  boolean write(String strText)
     {
 
+
         byte[] bytes = KDSUtil.convertStringToUtf8Bytes(strText);
         ByteBuffer buf = ByteBuffer.wrap(bytes);
 
         return write(buf);
+
 
     }
 
     public boolean writeXmlTextCommand(String strXml)
     {
 
+        //if (KDSConst._DEBUG) return true; //heap size issue here
 
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildXMLCommand(strXml);
         return write(buf);
+
 
     }
 
@@ -329,6 +397,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     public void interface_OnTCPClientRead(SocketChannel channel)
     {
         if (channel.socket() == null) return;
+
     //            if (this.m_bServerSide)
     //                KDSUtil.debug(" ----------Server read------------");
     //            else
@@ -349,7 +418,12 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
             {//20160930, use it again, as unormal close kds app, we don't know connect closed.
                 //it cause kds app start again, can not been reconnected
                 //if (channel.socket() == null) {
-                KDSLog.e(TAG,KDSLog._FUNCLINE_()+ "read data <0");
+
+                String remote_ip = "unkown ip";
+
+                if (channel.socket() != null)
+                    remote_ip = channel.socket().getInetAddress().getHostAddress() + ",local port=" +KDSUtil.convertIntToString(channel.socket().getLocalPort());
+                KDSLog.e(TAG,KDSLog._FUNCLINE_()+ "read from ["+remote_ip + "] data <0");
                     interface_OnTCPClientDisconnected(channel);
                     return;
                 //}
@@ -391,6 +465,10 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         }
         catch (Exception e)
         {
+            String remote_ip = "unkown ip";
+            if (channel.socket() != null)
+                remote_ip = channel.socket().getInetAddress().getHostAddress() + ", local port=" +KDSUtil.convertIntToString(channel.socket().getLocalPort());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() +"Exception when read from: "+remote_ip);//+ KDSLog.getStackTrace(e));
             KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ KDSLog.getStackTrace(e));
             //KDSLog.e(TAG,KDSLog._FUNCLINE_()+ e.toString());
             //Log.e(TAG,KDSLog._FUNCLINE_() + KDSUtil.error(e) );
@@ -456,13 +534,17 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         if (m_eventHandler != null)
             m_eventHandler.sendReceiveXmlMessage(this, strXml);
         //slow down socket speed, let the gui drawing
-        try {
-            Thread.sleep(500);
-        }
-        catch (Exception e)
-        {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
-        }
+        //don't need this, we have pass most command xml to thread.
+//        if (!KDSApplication.isRouterApp())
+//        {
+//            try {
+//                //Thread.sleep(500);
+//            }
+//            catch (Exception e)
+//            {
+//                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+//            }
+//        }
     }
 
     public void closeChannel(SocketChannel channel)
@@ -520,7 +602,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
             Process p = Runtime.getRuntime().exec("/system/bin/ping -W 1 -c " + pingNum + " " + strIP); // 10.83.50.111  m_strForNetAddress
             int status = p.waitFor();
 
-            BufferedReader buf = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            InputStreamReader ir = new InputStreamReader(p.getInputStream());
+            BufferedReader buf = new BufferedReader(ir);//new InputStreamReader(p.getInputStream()));
 
             String str = new String();
             String strInfo = "";
@@ -530,6 +613,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
                 strInfo+=str;
             }
             KDSLog.i(TAG,KDSLog._FUNCLINE_()+ strInfo);
+            buf.close();
+            ir.close();
             if (strInfo.indexOf("time=") >=0)
                 return true;
             return false;//strInfo;
@@ -542,6 +627,18 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         return false;
     }
 
+
+    public boolean isBufferTooManyWritingData(int nMaxCount)
+    {
+        return (m_writeBuffer.count() > nMaxCount);
+
+    }
+
+    final int MAX_WRITE_BUFFER_SIZE = 30;
+    public boolean interface_WriteBufferIsFull()
+    {
+        return isBufferTooManyWritingData(MAX_WRITE_BUFFER_SIZE);
+    }
 
 }
 

@@ -12,15 +12,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
+import com.bematechus.kdslib.KDSDataItems;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSLogOrderFile;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSmbFile;
@@ -46,15 +50,20 @@ import com.bematechus.kdslib.KDSToStation;
 import com.bematechus.kdslib.KDSToStations;
 import com.bematechus.kdslib.KDSToast;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.KDSXMLParserOrder;
+import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
 import java.nio.ByteBuffer;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * The KDS app main interface.
@@ -167,7 +176,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     Broadcaster m_broadcaster = new Broadcaster(this);
 
-    Activation m_activationSMS = null; //sms feature. 2.1.10
+    Activation m_activationHTTP = null; //sms feature. 2.1.10
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -177,7 +186,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     public void setSMSActivation(Activation a)
     {
-        m_activationSMS = a;
+        m_activationHTTP = a;
     }
 
     public void setDBEventsReceiver(KDSDBBase.DBEvents evReceiver )
@@ -294,7 +303,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         KDSSettings.KDSUserMode mode = KDSSettings.KDSUserMode.values()[n];
         if (mode == KDSSettings.KDSUserMode.Single)
         {
-            m_users.setSingleUserMode();
+            m_users.setSingleUserMode(true);
         }
         else if (mode == KDSSettings.KDSUserMode.Multiple)
         {
@@ -317,7 +326,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
 
         KDSLog.setLogLevel(settings.getInt(KDSSettings.ID.Log_mode));
-
+        KDSLogOrderFile.setEnabled(m_settings.getBoolean(KDSSettings.ID.Log_orders));
         String stationOldID = m_strKDSStationID;
         m_strKDSStationID = settings.getString(KDSSettings.ID.KDS_ID);
         if (!m_strKDSStationID.equals(stationOldID))
@@ -380,8 +389,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void updateStationFunction()
     {
         KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
-
+        SettingsBase.StationFunc old = m_settings.getStationFunc();
         m_settings.setStationFunc(func);
+        if (old != func)
+        { //update the activation backoffice
+            if (m_activationHTTP != null)
+                m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+        }
+
     }
 
 //    public KDSSettings.StationFunc getOriginalStationFunc()
@@ -396,11 +411,23 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     public void setEventReceiver(KDSEvents receiver)
     {
         int ncount = m_arKdsEventsReceiver.size();
+        if (receiver instanceof MainActivity)
+        { //I see two MainActivity in it once.
+            for (int i= 0; i< ncount; i++) {
+                if (m_arKdsEventsReceiver.get(i) instanceof MainActivity) {
+                    m_arKdsEventsReceiver.remove(i);
+                    break;
+                }
+            }
+        }
+        ncount = m_arKdsEventsReceiver.size();
         for (int i= 0; i< ncount; i++)
         {
             if (m_arKdsEventsReceiver.get(i) == receiver)
                 return;
         }
+
+
 
         m_arKdsEventsReceiver.add(receiver);
         //m_eventReceiver = receiver;
@@ -415,7 +442,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
     }
 
-    TimeDog m_clearDbTimeDog = new TimeDog();
+    //TimeDog m_clearDbTimeDog = new TimeDog();
     /**
      * check connection in a loop
      */
@@ -427,11 +454,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 getPagerManager().onTime();
         }
 
-        if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
-        {
-            remove_statistic_old_data();
-            m_clearDbTimeDog.reset();
-        }
+//        //if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
+//        if (m_clearDbTimeDog.is_timeout(18000)) //30x60x1000, 30mins //debug
+//        {
+//            remove_statistic_old_data();
+//            m_clearDbTimeDog.reset();
+//        }
     }
 
     public boolean startPOSListener()
@@ -476,8 +504,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
         else
         {
+
             m_strLocalIP = ar.get(0);
-            m_strLocalMAC = ar.get(1);
+            //In cell phone,if I just open data , no wifi, app crash.
+            if (ar.size() >1)
+                m_strLocalMAC = ar.get(1);
+            else
+                m_strLocalMAC = "";
         }
     }
 
@@ -1089,6 +1122,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     m_udpBuffer.remove(ncommand_end);
                     if (!isMyStoreIP(remoteStationIP)) return;
 
+                    if (!this.getSettings().getBoolean(KDSSettings.ID.Smart_Order_Enabled))
+                        break; //just smart mode needs this.
                     String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
 
                     onPreparationTimeModeItemBumpUnbumped(utf8, (command ==KDSSocketTCPCommandBuffer.UDP_ITEM_BUMPED) );
@@ -1193,12 +1228,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             s = s.replace("<Relations>", "");
             s = s.replace("</Relations>", "");
             if (s.isEmpty()) return;
+            SettingsBase.StationFunc oldFunc = getSettings().getStationFunc();
+
             KDSSettings.saveStationsRelation(m_context, s);
             //update the station ID.
             this.updateSettings(m_context);
 
             for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
                 m_arKdsEventsReceiver.get(i).onReceiveNewRelations();
+            if (getSettings().getStationFunc() != oldFunc)
+            {
+                onMyFunctionChanged(oldFunc, getSettings().getStationFunc());
+
+            }
 
         }
         else if (xmlCommand.indexOf("<RelationsRet>") >= 0)
@@ -1627,14 +1669,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         {
             //doSmbError(xmlData); //20170612
             Message msg = new Message();
-            msg.obj = xmlData;
+            msg.obj = new String(xmlData);
             msg.what = MESSAGE_TO_MAIN.SMB_ERROR.ordinal();
             //m_smbErrorHandler.sendMessage(msg);
             m_refreshHandler.sendMessage(msg);
 
         }
         else {
-            doOrderXml(null, xmlData,smbFileName, true); //2.0.34
+            doOrderXmlInThread(MESSAGE_TO_MAIN.Order, null, xmlData,smbFileName, true); //2.0.34
         }
         //Log.d("SMB Text", xmlData);
     }
@@ -1669,6 +1711,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     /**
      * it is in socket thread call this function,
      * so, if update the gui, please change data to main thread first.
+     * Rev:
+     *  Use the handle to call this function. So it is in main thread now.
+     *
      * @param sock
      * @param xmlData
      */
@@ -1676,35 +1721,53 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
 
         if (!isEnabled()) return;
-        KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
+        //do ack for xml, KPP1-93
+        xmlData = m_stationsConnection.responseAck(this.getStationID(), this.getLocalIpAddress(), this.getLocalMacAddress(),sock, xmlData);
 
+        KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
+//        if (BuildVer.isDebug())
+//            Log.i(TAG, "XML Type=" + ntype.toString());
         switch (ntype)
         {
             case Unknown:
                 return;
             case Order:
                 //doOrderXml(sock, xmlData);
-                Message msgOrder = new Message();
-                msgOrder.what = MESSAGE_TO_MAIN.Order.ordinal();
-                MessageParam paramOrder = new MessageParam();
-                paramOrder.obj0 = sock;
-                paramOrder.obj1 = xmlData;
+                doOrderXmlInThread(MESSAGE_TO_MAIN.Order, sock, xmlData, "",false); //2.0.34
+//                Message msgOrder = new Message();
+//                msgOrder.what = MESSAGE_TO_MAIN.Order.ordinal();
+//                MessageParam paramOrder = new MessageParam();
+//                paramOrder.obj0 = sock;
+//                paramOrder.obj1 = new String(xmlData);
+//                msgOrder.obj = paramOrder;
 
-                msgOrder.obj = paramOrder;
+//                KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), xmlData);
+//                Log.i(TAG, "receive order: " + order.getOrderName());
+//
 
-                m_refreshHandler.sendMessage(msgOrder);
+//                m_refreshHandler.sendMessage(msgOrder);
                 break;
             case Command:
-                Message msg = new Message();
-                msg.what = MESSAGE_TO_MAIN.COMMAND_XML.ordinal();
-                MessageParam p = new MessageParam();
-                p.obj0 = sock;
-                p.obj1 = xmlData;
-                msg.obj = p;
-                m_refreshHandler.sendMessage(msg);
+                if (!doCommandXmlInMainUI(sock, xmlData) )
+                    doOrderXmlInThread(MESSAGE_TO_MAIN.COMMAND_XML, sock, xmlData, "", false); //2.0.34
+
+//                Message msg = new Message();
+//                msg.what = MESSAGE_TO_MAIN.COMMAND_XML.ordinal();
+//                MessageParam p = new MessageParam();
+//                p.obj0 = sock;
+//                p.obj1 = xmlData;
+//                msg.obj = p;
+//                m_refreshHandler.sendMessage(msg);
                 //doCommandXml(sock, xmlData); //20170612
                 break;
         }
+//        try {
+//            Thread.sleep(500);
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + KDSLog.getStackTrace(e));
+//        }
     }
 
 
@@ -1833,20 +1896,27 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         SMB_ERROR,
         COMMAND_XML,
         Order,
+        Reset_Focus_after_new_order, //20190403, as the reset focus will calculate all items, it is slow. I move it out of doxml thread.
+        Toast_msg,
     }
 
     Handler m_refreshHandler = new Handler(){
         public void handleMessage(Message msg) {
             int n = msg.what;
             MESSAGE_TO_MAIN w = MESSAGE_TO_MAIN.values()[n];
+//            if (BuildVer.isDebug())
+//                Log.i(TAG, "Message =" + w.toString());
             switch (w) {
                 case REFRESH_ALL:
+                    m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_ALL.ordinal());
                     KDS.this.doRefreshView();
                     break;
                 case REFRESH_A:
+                    m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_A.ordinal());
                     KDS.this.doRefreshView(KDSUser.USER.USER_A, (RefreshViewParam) msg.obj);
                     break;
                 case REFRESH_B:
+                    m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_B.ordinal());
                     KDS.this.doRefreshView(KDSUser.USER.USER_B, (RefreshViewParam) msg.obj);
                     break;
                 case ASK_ORDER_STATUS:
@@ -1862,13 +1932,32 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 case COMMAND_XML:
                     MessageParam x = (MessageParam)msg.obj;
 
-                    doCommandXml((KDSSocketInterface) x.obj0, (String)x.obj1);
+                    //doCommandXml((KDSSocketInterface) x.obj0, (String)x.obj1);
+                    if (!doCommandXmlInMainUI((KDSSocketInterface) x.obj0, (String) x.obj1))
+                        doOrderXmlInThread(MESSAGE_TO_MAIN.COMMAND_XML, (KDSSocketInterface) x.obj0, (String) x.obj1, "", false); //2.0.34
+
                     break;
                 case Order:
-                    MessageParam xcode = (MessageParam)msg.obj;
 
-                    doOrderXml((KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
+                    MessageParam xcode = (MessageParam)msg.obj;
+//                    String s = (String)xcode.obj1;
+//                    KDSDataOrder data =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), s);
+//                    Log.i(TAG, "receive order: " + data.getOrderName());
+
+                    doOrderXmlInThread(MESSAGE_TO_MAIN.Order, (KDSSocketInterface) xcode.obj0, (String)xcode.obj1, "",false); //2.0.34
                     break;
+                case Reset_Focus_after_new_order:
+                {
+                    m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.Reset_Focus_after_new_order.ordinal());
+                    setFocusAfterReceiveOrder();
+                }
+                break;
+                case Toast_msg:
+                {
+                    String s = (String) msg.obj;
+                    KDSToast.showMessage(KDSApplication.getContext(), s); //for test
+                }
+                break;
 
             }
         }
@@ -1897,22 +1986,31 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @param xmlData
      */
     //private void doOrderXml(KDSSocketInterface sock, String xmlData)
-    public void doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder)
+    public KDSDataOrder doOrderXml(Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder, boolean bRefreshView)
     {
-        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), xmlData);
 
+        KDSLogOrderFile.i(TAG, KDSLogOrderFile.formatOrderLog(xmlData));//kpp1-223
+
+        Object obj = KDSXMLParser.parseXml(getStationID(), xmlData);
+        if (obj == null) return null;
+        if (!(obj instanceof  KDSDataOrder))
+            return null;
+        KDSDataOrder order =(KDSDataOrder) obj;// KDSXMLParser.parseXml(getStationID(), xmlData);
+
+        //Log.i(TAG, "receive order: " + order.getOrderName());
         //2.0.39
         if (order == null) {
-            if (KDSConst.ENABLE_FEATURE_ORDER_ACKNOWLEDGEMENT) {
+            //if (KDSConst.ENABLE_FEATURE_ORDER_ACKNOWLEDGEMENT) {
                 if (this.getSettings().getBoolean(KDSSettings.ID.Notification_order_acknowledgement)) {
                     doOrderAcknowledgement(objSource, order, 0, originalFileName, xmlData, KDSUtil.createNewGUID(), KDSPosNotificationFactory.ACK_ERR_BAD, false);
                 }
-            }
-            return;
+            //}
+            return null;
         }
         else
         {//2.0.44
-            if (KDSConst.ENABLE_FEATURE_ORDER_ACKNOWLEDGEMENT) {
+//            if (KDSConst.ENABLE_FEATURE_ORDER_ACKNOWLEDGEMENT)
+//            {
                 if (this.getSettings().getBoolean(KDSSettings.ID.Notification_order_acknowledgement)) {//ack error ack
                     KDSPosNotificationFactory.OrderParamError error = KDSPosNotificationFactory.checkOrderParameters(order);
                     if (error != KDSPosNotificationFactory.OrderParamError.OK) {
@@ -1922,10 +2020,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                             if (KDSToStations.findInToStationsArray(ar, getStationID()) != KDSToStations.PrimarySlaveStation.Unknown)
                                doOrderAcknowledgement(objSource, order, 1, originalFileName, xmlData, KDSUtil.createNewGUID(), errorCode, false);
                         }
-                        return;
+                        return null;
                     }
                 }
-            }
+            //}
         }
         //preparation time mode
         //boolean bPrepEnabled = (KDSSettings.SmartMode.values()[ this.getSettings().getInt(KDSSettings.ID.Smart_mode)] == KDSSettings.SmartMode.Advanced );
@@ -1941,7 +2039,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             changeTrackerIDByUserInfo(order);
 
             if (order.getOrderType().equals(KDSDataOrder.ORDER_TYPE_SCHEDULE))
-                return; //tracker don't need schedule
+                return null; //tracker don't need schedule
         }
 
         //for pager feature
@@ -1966,15 +2064,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             //update the hidden option accroding to my station ID.
             order.setItemHiddenOptionAfterGetNewOrder(getStationID());
 
-            nAcceptItemsCount = doOrderFilter(order, bForceAcceptThisOrder);
-            schedule_process_update_after_receive_new_order();
+            nAcceptItemsCount = doOrderFilter(order, xmlData, bForceAcceptThisOrder,false, bRefreshView);
+            if (bRefreshView)
+                schedule_process_update_after_receive_new_order();
         }
-
-        refreshView();
+        if (bRefreshView)
+            refreshView();
         if (this.getSettings().getBoolean(KDSSettings.ID.Notification_order_acknowledgement))
         {
             doOrderAcknowledgement(objSource,order,nAcceptItemsCount,originalFileName, xmlData, order.getOrderName(),KDSPosNotificationFactory.ACK_ERR_OK, true);
         }
+        return order;
 
 
     }
@@ -2029,6 +2129,22 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         writeXmlToPOSOrderAcknowledgement(objSrc, s, fileName);
     }
 
+    private boolean doNotHandleThisCommand(String xmlData)
+    {
+        return false;
+//        if (KDSConst.ENABLE_ADD_NEW_ANNOUNCE) return false;
+//        KDSXMLParserCommand.KDSCommand code = KDSXMLParser.quickGetCodeFromString(xmlData);
+//        return doNotHandleThisCommand(code);
+
+//        if (code == KDSXMLParserCommand.KDSCommand.Nothing)
+//            return true;
+//        if (code == KDSXMLParserCommand.KDSCommand.Station_Add_New_Order)
+//        {
+//            if (this.isQueueExpo() || this.isExpeditorStation() || this.isTrackerView())
+//                return true;
+//        }
+//        return false;
+    }
 
     /**
      * receive the command xml
@@ -2037,6 +2153,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     private void doCommandXml(KDSSocketInterface sock, String xmlData)
     {
+
         KDSXMLParserCommand command = (KDSXMLParserCommand)KDSXMLParser.parseXml(this.getStationID(), xmlData);
         if (command == null) return;//different version cause command messed.
         KDSXMLParserCommand.KDSCommand code = command.getCode();
@@ -2045,8 +2162,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         if (fromStationID.equals(this.getStationID()) &&
                 code != KDSXMLParserCommand.KDSCommand.Station_Transfer_Order)
             return; //don't do loop
-        String orderGuidDoOperation = "";
+        //String orderGuidDoOperation = "";
         String orderGuid = "";
+        //if (BuildVer.isDebug())
+        //    System.out.println("code="+KDSUtil.convertIntToString(code.ordinal()) + ",from=" + fromStationID);
         //showMessage("receive command="+KDSUtil.convertIntToString(code.ordinal()));
         switch (code)
         {
@@ -2061,29 +2180,42 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 doConfigRequireXmlCommand(sock, command, xmlData);
                 break;
             case Broadcast_Station_Configuration: //I received configuation from other
-                doConfigReceivedXmlCommand( command, xmlData);
+                doConfigReceivedXmlCommand( command, xmlData); //it need UI.
                 break;
             case Broadcast_Station_Active:
                 break;
             case Broadcast_All_Configurations:
                 break;
-            case Station_Add_New_Order:
+            case Station_Add_New_Order: //in thread
+                //Just for coke 24 stations. As they use smb data source, we don't need this.
+                //And, it can cause expo stack issue.
+                if (doNotHandleThisCommand(xmlData))
+                    break;
+//                if (this.isQueueExpo() || this.isExpeditorStation() || this.isTrackerView())
+//                    break;
+
                 KDSStationFunc.doSyncCommandOrderNew(this, command, xmlData);
                 setFocusAfterReceiveOrder();
                 schedule_process_update_after_receive_new_order();
                 break;
-            case Station_Bump_Order:
-
+            case Station_Bump_Order://in thread
+                //Please notice the xmldata just contains the order/item id.
                 checkLostFocusAfterSyncBumpOrderName(command, xmlData);
-                orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData);
-                schedule_process_update_after_receive_new_order();
-                sortOrderForMoveFinishedToFront();
-                checkSMS(orderGuid, false); //2.1.10
-
+                ArrayList<KDSDataItem> arChangedItems = new ArrayList<>(); //retrieve changed items.
+                orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData, arChangedItems);
+                if (!orderGuid.isEmpty()) {
+                    schedule_process_update_after_receive_new_order();
+                    sortOrderForMoveFinishedToFront();
+                    checkSMS(orderGuid, false); //2.1.10
+                }
+                if (arChangedItems.size() >0) //just expo save data to this array
+                {//kpp1-62, kpp1-74
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems, Activation.ItemJobFromOperations.Expo_sync_prep_bump_order);
+                }
                 break;
             case Station_Unbump_Order:
                 KDSStationFunc.doSyncCommandOrderUnbumped(this,command, xmlData);
-                schedule_process_update_to_be_prepare_qty();
+                schedule_process_update_to_be_prepare_qty(true);
                 schedule_process_update_after_receive_new_order();
                 sortOrderForMoveFinishedToFront();
                 break;
@@ -2094,16 +2226,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 KDSStationFunc. doSyncCommandOrderModified(this,command, xmlData);
                 break;
             case Station_Bump_Item:
-
-                orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData);
+                ArrayList<KDSDataItem> arChangedItem = new ArrayList<>(); //retrieve changed items.
+                orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData, arChangedItem);
                 sortOrderForMoveFinishedToFront();
                 checkSMS(orderGuid, false); //2.1.10
-
+                if (arChangedItem.size() >0) //just expo save data to this array
+                {//kpp1-62, kpp1-74
+                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
+                }
                 break;
             case Station_Unbump_Item:
                 orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData);
                 sortOrderForMoveFinishedToFront();
-                schedule_process_update_to_be_prepare_qty();
+                schedule_process_update_to_be_prepare_qty(true);
 
                 checkSMS(orderGuid, false); //2.1.10
                 break;
@@ -2111,7 +2246,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
                 break;
             case Station_Transfer_Order://order transfered to me
-                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData);
+                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, fromStationID);
                 setFocusAfterReceiveOrder();
                 getSoundManager().playSound(KDSSettings.ID.Sound_transfer_order);
                 break;
@@ -2232,6 +2367,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 doSosReport(sock, command);
             }
             break;
+            case ACK_XML:
+            {
+                commandAckXml(fromStationID, command, xmlData);
+            }
+            break;
             case Queue_ask_sync_from_prep:
             {
                 syncOrdersStatusWithQueue(sock, fromStationID, fromIP);
@@ -2249,7 +2389,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             break;
             case Prep_sync_new_order_to_queue:
             {
-                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData);
+                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, "");
             }
             break;
 
@@ -2275,9 +2415,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         if (isExpeditorStation()) return;//2.0.15
 
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
-        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), strXml);
-        if (order == null) return;
-        String orderName = order.getOrderName();
+        //KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), strXml);
+        //if (order == null) return;
+        //String orderName = order.getOrderName();
+        String orderName = KDSXMLParser.quickGetOrderIDFromString(strXml);
+
         KDSDataOrder existedOrder =this.getUsers().getUserA().getOrders().getOrderByName(orderName);
 
         String userAGuid = "";
@@ -2362,10 +2504,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      *
      *   return accept items count
      * @param order
-     *
+     * @param xmlData
+     * @param bForceAcceptThisOrderNoStationIDItems
+     * @param bForceDeliverToExpo
+     *  For order test
+     * @param bRefreshView
+     * @return
      */
-    public int  doOrderFilter(KDSDataOrder order, boolean bForceAcceptThisOrderNoStationIDItems)
+    public int  doOrderFilter(KDSDataOrder order,String xmlData, boolean bForceAcceptThisOrderNoStationIDItems, boolean bForceDeliverToExpo,boolean bRefreshView)
     {
+
+
         bForceAcceptThisOrderNoStationIDItems = true;//2.0.36
         //if (bForceAcceptThisOrderNoStationIDItems)//2.0.36
             assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
@@ -2373,8 +2522,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         //save it for sms feature.
         ArrayList<KDSToStation> arTargetStations = KDSDataOrder.getOrderTargetStations(order);
         order.setSmsOriginalToStations(arTargetStations);
-
-        order = justKeepMyStationItems(order);
+        ArrayList<KDSDataItem> removedItems = new ArrayList<>();
+        order = justKeepMyStationItems(order, removedItems);
 
         if (order == null) return 0;
         int nItemsCount = order.getItems().getCount();
@@ -2389,7 +2538,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (writeOrderToWorkLoad(order))
                     return nItemsCount;
             }
-            filterInNormalStation(order, arTargetStations);
+            //TimeDog td = new TimeDog();
+            String manipulatedXmlData = manipulateOrderXml(xmlData, removedItems);
+
+            filterInNormalStation(order,manipulatedXmlData, arTargetStations,bForceDeliverToExpo, bRefreshView);
+            //td.debug_print_Duration("filterInNormalStation=");
 
         }
         return nItemsCount;
@@ -2409,7 +2562,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (writeOrderToWorkLoad(schOrder))
                     continue;
             }
-            filterInNormalStation(schOrder, null);
+            filterInNormalStation(schOrder, "", null, false,true);
 
         }
 
@@ -2455,7 +2608,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public boolean isPrepStation()
     {
-        return (getStationFunction() == SettingsBase.StationFunc.Normal);
+        return (getStationFunction() == SettingsBase.StationFunc.Prep);
     }
     public boolean isQueueStation()
     {
@@ -2512,9 +2665,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @param order
      * @return
      */
-    private KDSDataOrder keepExpoItemsAccordingToStationsSetting(KDSDataOrder order)
+    private KDSDataOrder keepExpoItemsAccordingToStationsSetting(KDSDataOrder order, ArrayList<KDSDataItem> removedItems)
     {
+
         if (!this.isExpeditorStation() && !this.isQueueExpo())
+            return order;
+        //KKPP1-152
+        if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||
+                order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
+                order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER)
             return order;
 
         ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(getStationID());
@@ -2532,6 +2691,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             if (!isItemToStations(item, arPrepWhoUseMeAsExpo))
             {
                 order.getItems().removeComponent(i);
+                removedItems.add(item);
             }
         }
         return order;
@@ -2561,15 +2721,17 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @param order
      * @return
      */
-    public KDSDataOrder justKeepMyStationItems(KDSDataOrder order)
+    public KDSDataOrder justKeepMyStationItems(KDSDataOrder order,ArrayList<KDSDataItem> removedItems )
     {
+
+
         //2.0.33
         //KPP1-37
         //Queue expo supports certain stations
         //just keep the items which target station uses I as expo/expo-queue.
         //For KPP1-37, I add queue-expo filter at here.
         if (this.isExpeditorStation() || this.isQueueExpo()) //2.1.15.3, KPP1-37
-            keepExpoItemsAccordingToStationsSetting(order);
+            keepExpoItemsAccordingToStationsSetting(order,removedItems);
 
 
         //20160418, keep all items if i am expo station
@@ -2599,8 +2761,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         {
             if (order.getItems().getItem(i).isExpitem())
             {
-                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) )
+                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) ) {
+                    removedItems.add(order.getItems().getItem(i));
                     order.getItems().removeComponent(i);
+                }
                 continue;
 
             }
@@ -2621,6 +2785,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                         continue;
                 }
                 //remove this unassigned station
+                removedItems.add(order.getItems().getItem(i));
                 order.getItems().removeComponent(i);
             }
             else
@@ -2637,11 +2802,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     public void setFocusAfterReceiveOrder()
     {
-
+        //TimeDog td = new TimeDog();
         setFocusAfterReceiveOrder(KDSUser.USER.USER_A);
         if (this.isMultpleUsersMode())
             setFocusAfterReceiveOrder(KDSUser.USER.USER_B);
-
+        //td.debug_print_Duration("setFocusAfterReceiveOrder duration");
 
     }
 
@@ -2690,7 +2855,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      * @return
      *  items count
      */
-    public int filterInNormalStation(KDSDataOrder order, ArrayList<KDSToStation> arOriginalTargetStations)
+    public int filterInNormalStation(KDSDataOrder order,String xmlData, ArrayList<KDSToStation> arOriginalTargetStations,boolean bForceDeliverToExpo, boolean bRefreshView)
     {
         int nItemsCount = 0;
         if (order != null)
@@ -2709,16 +2874,20 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case KDSDataOrder.TRANSTYPE_UNKNOWN: {
                 break;
             }
-            case KDSDataOrder. TRANSTYPE_ADD:{
-                if (order.getItems().getCount()<=0) return nItemsCount;
-               //KDSStationFunc.orderAdd(this, order, true, true);
+            case KDSDataOrder. TRANSTYPE_ADD: {
+                if (order.getItems().getCount() <= 0) return nItemsCount;
+                //KDSStationFunc.orderAdd(this, order, true, true);
                 //TimeDog t = new TimeDog();
-                ArrayList<KDSDataOrder> ordersAdded =  m_users.orderAdd(order, true);//////
+                boolean bDeliverToExpo = getSettings().getBoolean(KDSSettings.ID.Deliver_new_order_to_slave_expo);
+                if (bForceDeliverToExpo)
+                    bDeliverToExpo = true; //for test button
+                ArrayList<KDSDataOrder> ordersAdded = m_users.users_orderAdd(order, xmlData,true, bDeliverToExpo, bRefreshView);//////
+                //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts
-                for (int i=0; i< ordersAdded.size(); i++) {
+                for (int i = 0; i < ordersAdded.size(); i++) {
                     ordersAdded.get(i).prep_set_sorts(order.prep_get_sorts());
                     //send sms
-                    if (i ==0) {
+                    if (i == 0) {
 
                         checkSMS(ordersAdded.get(i), false, arOriginalTargetStations); //2.1.10
                     }
@@ -2726,23 +2895,20 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 //t.debug_print_Duration("TRANSTYPE_ADD1");
                 //beep
                 if (this.getSettings().getBoolean(KDSSettings.ID.Beeper_Enabled)) {
-                    KDSBeeper.BeeperType beeperType = KDSBeeper.BeeperType.values()[ getSettings().getInt(KDSSettings.ID.Beeper_Type)];
+                    KDSBeeper.BeeperType beeperType = KDSBeeper.BeeperType.values()[getSettings().getInt(KDSSettings.ID.Beeper_Type)];
                     if (beeperType == KDSBeeper.BeeperType.Any)
                         KDSBeeper.beep();
-                    else if (beeperType == KDSBeeper.BeeperType.Rush)
-                    {
+                    else if (beeperType == KDSBeeper.BeeperType.Rush) {
                         for (int i = 0; i < ordersAdded.size(); i++) {
                             if (ordersAdded.get(i).isRush())
                                 KDSBeeper.beep();
                         }
                     }
                 }
-                if (getStationsConnections().isBackupOfOthers())
-                {
+                if (getStationsConnections().isBackupOfOthers()) {
                     if (m_kdsState.getPrimaryOfBackupLost())
                         getSoundManager().playSound(KDSSettings.ID.Sound_backup_station_orders_received);
-                }
-                else
+                } else
                     getSoundManager().playSound(KDSSettings.ID.Sound_new_order);
                 //t.debug_print_Duration("TRANSTYPE_ADD2");
                 //print it
@@ -2755,15 +2921,28 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     }
                 }
                 //t.debug_print_Duration("TRANSTYPE_ADD3");
-                this.getCurrentDB().clearExpiredBumpedOrders( getSettings().getBumpReservedCount());
+                if (bRefreshView)
+                {
+                    this.getCurrentDB().clearExpiredBumpedOrders(getSettings().getBumpReservedCount());
 //                if (ordersAdded.size() == 1)
 //                { //focus first one
+                    //t.debug_print_Duration("TRANSTYPE_ADD4");
 
-                schedule_process_update_to_be_prepare_qty();
-                setFocusAfterReceiveOrder();
+                    schedule_process_update_to_be_prepare_qty(bRefreshView);
 
-                resetOrdersForSaveMemoryAfterGetNewOrder(ordersAdded);
-
+                    setFocusAfterReceiveOrder();
+                }
+                //do it before reset all items for save memory.
+                //sync with backoffice
+                for (int i = 0; i < ordersAdded.size(); i++) {
+                    syncOrderToWebDatabase(ordersAdded.get(i), ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+                }
+                //t.debug_print_Duration("TRANSTYPE_ADD5");
+                //20190619
+                // in coke branch, it have ghost orders existed. I comment this function.
+                //It will prevent the empty order existed.
+                //resetOrdersForSaveMemoryAfterGetNewOrder(ordersAdded);
+                //t.debug_print_Duration("TRANSTYPE_ADD6");
 
             }
             break;
@@ -2778,7 +2957,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             case KDSDataOrder. TRANSTYPE_MODIFY:{
                 //KDSStationFunc.orderInfoModify(this, order);
                 m_users.orderInfoModify(order, false);
-                schedule_process_update_to_be_prepare_qty();
+                schedule_process_update_to_be_prepare_qty(true);
                 getSoundManager().playSound(KDSSettings.ID.Sound_modify_order);
                 //send sms
                 checkSMS(order, false, null); //2.1.10
@@ -2872,7 +3051,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
 
         try {
-            loadAllActiveOrdersInfo();
+            loadAllActiveOrdersInfo(false);
         }
         catch (Exception e)
         {
@@ -2882,7 +3061,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     }
 
-    public void loadAllActiveOrdersInfo()
+    /**
+     *
+     * @param bLoadAllToUserA
+     *      For queue
+     */
+    public void loadAllActiveOrdersInfo(boolean bLoadAllToUserA)
     {
 
         if (m_stationsConnection.isMirrorOfOthers()) //I am a mirror of other stations
@@ -2894,27 +3078,37 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 arStationID.add(primaryMirrors.get(i).getID());
 
             if (m_users.getUserA() != null) {
-                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_A.ordinal(), false));
-                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_A.ordinal(), true));
+                int userid = KDSSettings.KDSScreen.Screen_A.ordinal();
+                if (bLoadAllToUserA)
+                    userid = -1;
+                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, userid, false));
+                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, userid, true));
 
             }
-            if (m_users.getUserB() != null) {
-                m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), false));
-                m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+            if (!bLoadAllToUserA) {
+                if (m_users.getUserB() != null) {
+                    m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), false));
+                    m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(arStationID, KDSSettings.KDSScreen.Screen_B.ordinal(), true));
 
+                }
             }
         }
         else {
 
             if (m_users.getUserA() != null) {
                 if (m_dbCurrent == null) return;
-                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_A.ordinal(), false));
-                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_A.ordinal(), true));
+                int userid = KDSSettings.KDSScreen.Screen_A.ordinal();
+                if (bLoadAllToUserA)
+                    userid = -1;
+                m_users.getUserA().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), userid, false));
+                m_users.getUserA().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), userid, true));
             }
-            if (m_users.getUserB() != null) {
-                if (m_dbCurrent == null) return;
-                m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), false));
-                m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+            if (!bLoadAllToUserA) {
+                if (m_users.getUserB() != null) {
+                    if (m_dbCurrent == null) return;
+                    m_users.getUserB().setOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), false));
+                    m_users.getUserB().setParkedOrders(m_dbCurrent.ordersLoadAllJustInfo(getStationID(), KDSSettings.KDSScreen.Screen_B.ordinal(), true));
+                }
             }
 
 
@@ -2939,12 +3133,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         Message msg = new Message();
         msg.what = MESSAGE_TO_MAIN.REFRESH_ALL.ordinal();
+
         m_refreshHandler.sendMessage(msg);
     }
 
     public void doRefreshView()
     {
-        KDSLog.d(TAG, KDSUtil.getCurrentTimeForLog()+ " refreshView");
+
+        //KDSLog.d(TAG, KDSUtil.getCurrentTimeForLog()+ " refreshView");
+        m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_ALL.ordinal());
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++) {
             m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_A, m_users.getUserA().getOrders(), RefreshViewParam.None);
             m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_A);
@@ -3055,6 +3252,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         while (m_bRunning) {
 
+            if (m_threadPing != Thread.currentThread()) return;
             if (m_dogAnnounce.is_timeout(KDSConst.ACTIVE_PLUS_FREQUENCE))
             {
                 m_dogAnnounce.reset();
@@ -3068,7 +3266,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
             m_stationsConnection.connectAllStations();
 
-            m_printer.onPing();
+            //m_printer.onPing();
 
             try {
                 Thread.sleep(KDSConst.PING_THREAD_SLEEP);
@@ -3148,6 +3346,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      */
     public void doConfigRequireXmlCommand(KDSSocketInterface sock, KDSXMLParserCommand command,String xmlOriginalData)
     {
+
         String s = m_settings.outputXmlText(this.m_context);
         s = KDSXMLParserCommand.createBroadConfiguration(s);
         if (sock instanceof KDSSocketTCPSideBase)
@@ -3161,9 +3360,16 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public void doConfigReceivedXmlCommand( KDSXMLParserCommand command,String xmlOriginalData)
     {
+        //Log.i(TAG, "--->get new settings <----");
+        if (KDSGlobalVariables.getMainActivity() != null)
+            KDSGlobalVariables.getMainActivity().suspendChangedEvent(true);
         String strConfig = command.getParam(KDSConst.KDS_Str_Param, "");
         loadSettingsXml(strConfig);
-
+        //kpp1-212
+        if (KDSGlobalVariables.getMainActivity() != null) {
+            KDSGlobalVariables.getMainActivity().suspendChangedEvent(false);
+            KDSGlobalVariables.getMainActivity().onSharedPreferenceChanged(null, "");
+        }
 
     }
 
@@ -3171,12 +3377,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     {
         if (strConfig.isEmpty())
             return;
+        SettingsBase.StationFunc oldFunc = m_settings.getStationFunc();
+        Log.i(TAG, "old func=" + oldFunc);
         m_settings.parseXmlText(m_context, strConfig, true, true);
         m_settings.save(m_context);
 
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
             m_arKdsEventsReceiver.get(i).onRetrieveNewConfigFromOtherStation();
         this.m_stationsConnection.refreshRelations(m_context, this.getStationID());
+        //don't save old data.
+        SettingsBase.StationFunc newFunc = m_settings.getStationFunc();
+        Log.i(TAG, "new func=" + newFunc);
+        if (oldFunc != newFunc)
+            onMyFunctionChanged(oldFunc, newFunc);
     }
 
     public void loadSettingsXmlAll(String strConfig)
@@ -3210,7 +3423,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_config_data));// "Waiting for config data...");
             }
             else {
-                conn.addBufferedData(s);
+                //conn.addBufferedData(s);
+                m_stationsConnection.getNoConnectionBuffer().add(stationID, s, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_new_connection));//"Waiting for new connection...");
             }
@@ -3230,7 +3444,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_config_data));//"Waiting for config data...");
             }
             else {
-                willConn.addBufferedData(s);
+                //willConn.addBufferedData(s);
+                m_stationsConnection.getNoConnectionBuffer().add(stationActive.getID(), s, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
                 if (txtInfo != null)
                     txtInfo.setText(txtInfo.getContext().getString(R.string.waiting_for_connecting));//"Waiting for connecting...");
             }
@@ -3405,10 +3620,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         m_users.ordersClear();
         this.getCurrentDB().clear();
         this.getSupportDB().clear();
-        //this.getStatisticDB().clear();
+        this.getStationsConnections().clear();//clear buffered data
+        m_xmlDataBuffer.clear(); //For speed.
+        m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.Order.ordinal());
+        this.getStatisticDB().clear(); //clear this data too, as we don't need it any more.
         this.refreshView();
     }
 
+    public void clearStatisticData()
+    {
+
+        this.getStatisticDB().clear();
+    }
     public KDSSettings getSettings()
     {
         return m_settings; //this settings is saved in layout
@@ -3485,7 +3708,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 //    }
     public boolean writeXmlToPOSNotification( String strXml,String toFileName)
     {
-        return writeXmlToPOSData(strXml, KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
+        return writeXmlToPOSData(KDSXML.formatXml(strXml), KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
+        //return writeXmlToPOSData(strXml, KDSConst.SMB_FOLDER_NOTIFICATION, toFileName );
 
 //        try {
 //            KDSSettings.KDSDataSource source = KDSSettings.KDSDataSource.values()[getSettings().getInt(KDSSettings.ID.KDS_Data_Source)];
@@ -3718,7 +3942,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 this.getCurrentDB().itemSetLocalBumped(pitem);
                 //pdb->item_schedule_set_ready(nStation, get_user_id(),orderID, arItemID.GetAt(j), true );
                 //sync expediter station
-                KDSStationFunc.sync_with_stations(this, KDSXMLParserCommand.KDSCommand.Station_Bump_Item, pNormalOrder, pitem);
+                KDSStationFunc.sync_with_stations(this, KDSXMLParserCommand.KDSCommand.Station_Bump_Item, pNormalOrder, pitem, "");
 
                 //sync_order_operation_inform_expeditor(pLs6kParent, nStation, pNormalOrder, pitem, Station_Inform_Exp_Schedule_Item_Ready);
                 //sync_order_operation_inform_parent(pLs6kParent, get_user_id() , ORDER_OPERATION_ITEM_SET_READY,pNormalOrder->GetOrderID(),
@@ -3728,18 +3952,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         }
         this.getCurrentDB().schedule_process_set_item_ready_qty(pScheduleOrder);//->m_nInStation,pOrder->m_nUser, orderID, pOrder->get_prepare_item()->GetID(), nnewready );
-        schedule_process_update_to_be_prepare_qty();
+        schedule_process_update_to_be_prepare_qty(true);
       //  if (bchanged) refreshView();
     }
 
     /**
      * check all schedule order, and update its to_be_prepared qty
      */
-    public void schedule_process_update_to_be_prepare_qty()
+    public void schedule_process_update_to_be_prepare_qty(boolean bRefreshView)
     {
-        schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_A);
+        schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_A, bRefreshView);
         if (isMultpleUsersMode())
-            schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_B);
+            schedule_process_update_to_be_prepare_qty(KDSUser.USER.USER_B, bRefreshView);
     }
 
     /**
@@ -3747,27 +3971,33 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
      *      It load all items to buffer, this will slow down the showing speed
      * @param userID
      */
-    public void schedule_process_update_to_be_prepare_qty(KDSUser.USER userID)
-    {
+    public void schedule_process_update_to_be_prepare_qty(KDSUser.USER userID, boolean bRefreshView) {
         if (getUsers() == null) return;
         if (getUsers().getUser(userID) == null) return;
         KDSDataOrdersDynamic orders = getUsers().getUser(userID).getOrders();
-      //  boolean bchanged = false;
-        for (int i=0; i< orders.getCount(); i++)
-        {
-           // if (!orders.get(i).is_schedule_process_order()) continue;
-            KDSDataOrder order = orders.getOrderByIndexWithoutLoadData(i);
-            if (order == null) return;
-            if (!orders.getOrderByIndexWithoutLoadData(i).is_schedule_process_order()) continue;
+        //  boolean bchanged = false;
+        //synchronized (orders.m_locker) { //there is java.lang.NullPointerException.
+        //this locker will slow down the doxml speed, just use try --catch.
+        try {
+            for (int i = 0; i < orders.getCount(); i++) {
+                // if (!orders.get(i).is_schedule_process_order()) continue;
 
-            if (getCurrentDB().schedule_order_update_not_ready_qty((ScheduleProcessOrder) orders.get(i)))
-            {//changed,
-                KDSStationFunc.sync_with_stations(this, KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed,  orders.get(i), orders.get(i).getItems().getItem(0));
-                //bchanged = true;
+                KDSDataOrder order = orders.getOrderByIndexWithoutLoadData(i);
+                if (order == null) break;
+                if (!order.is_schedule_process_order()) continue;
+
+                if (getCurrentDB().schedule_order_update_not_ready_qty((ScheduleProcessOrder) orders.get(i))) {//changed,
+                    KDSStationFunc.sync_with_stations(this, KDSXMLParserCommand.KDSCommand.Schedule_Item_Ready_Qty_Changed, orders.get(i), orders.get(i).getItems().getItem(0), "");
+                    //bchanged = true;
+                }
+
             }
 
-        }
+    }
+    catch (Exception e) {
+    }
   //      if (bchanged)
+        if (bRefreshView)
             refreshView();
     }
 
@@ -3814,6 +4044,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         t.m_command = command;
         t.m_kds = this;
         Thread c = new Thread(t);
+        c.setName("SosReport");
         c.start();
     }
 
@@ -3825,6 +4056,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         t.m_command = command;
         t.m_kds = this;
         Thread c = new Thread(t);
+        c.setName("StatisticReport");
         c.start();
 
 
@@ -3832,6 +4064,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public void remove_statistic_old_data()
     {
+
         int nDays = getSettings().getInt(KDSSettings.ID.Statistic_keep_days);
         if (nDays <0)
             nDays = 0;
@@ -3959,10 +4192,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
         if (order.isSMSStateChanged(this.isExpeditorStation(), bOrderBumped))
         {
-            if (m_activationSMS != null) {
+            if (m_activationHTTP != null) {
                 int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
-                m_activationSMS.postSMS(order.getGUID(), order.getSMSCustomerPhone(), nSMSState);
-                KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
+                m_activationHTTP.postSMS( order, nSMSState);
+
+                showToastMessage("SMS:" + KDSDataOrder.getSMSStateString(nSMSState));
+                //KDSToast.showMessage(KDSApplication.getContext(), "SMS:" + KDSUtil.convertIntToString(nSMSState)); //for test
             }
         }
     }
@@ -4129,8 +4364,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         String storeGuid = "";
         if (ar.size() >6) {
             storeGuid = ar.get(6);
-            if (storeGuid.isEmpty()) //don't need empty store.
-                return;
+            if (!KDSConst._DEBUG) {
+                if (storeGuid.isEmpty()) //don't need empty store.
+                    return;
+            }
         }
 
         //check the store guid, different store can run in same ethernet.
@@ -4176,9 +4413,216 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
     }
 
+    public boolean isThreadRunning()
+    {
+        return m_bRunning;
+    }
+    Thread m_threadOrdersXml = null;
+    Object m_lockerForOrdersThread = new Object();
+    Vector<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new Vector<>();
+
+    final int BATCH_MAX_COUNT = 5;
+    /**
+     * 20190222
+     * Release UI works.
+     * @param objSource
+     * @param xmlData
+     * @param originalFileName
+     * @param bForceAcceptThisOrder
+     */
+    public void doOrderXmlInThread(MESSAGE_TO_MAIN xmlType, Object objSource, String xmlData,String originalFileName, boolean bForceAcceptThisOrder)
+    {
 
 
+        if (xmlType == MESSAGE_TO_MAIN.COMMAND_XML &&
+                doNotHandleThisCommand(xmlData))
+            return;
+        DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
+        data.m_objSource = objSource;
+        data.m_originalFileName = originalFileName;
+        data.m_xmlData = xmlData;
+        data.m_bForceAcceptThisOrder = bForceAcceptThisOrder;
+        data.m_xmlType = xmlType;
 
+        synchronized (m_lockerForOrdersThread) {
+            m_xmlDataBuffer.add(data);
+        }
+
+        if (m_threadOrdersXml == null ||
+                !m_threadOrdersXml.isAlive())
+        {
+
+            m_threadOrdersXml = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (m_threadOrdersXml != Thread.currentThread())
+                            return;
+                        Vector<DoOrdersXmlThreadBuffer> arDone = new Vector<>();
+                        //List<DoOrdersXmlThreadBuffer> arDoing = null;
+                        while (m_bRunning) {
+                            int ncount = m_xmlDataBuffer.size();
+                            //Log.i(TAG, KDSUtil.convertIntToString(ncount));
+                            if (ncount <= 0) {
+                                try {
+                                    Thread.sleep(50);
+                                    continue;
+                                } catch (Exception e) {
+                                }
+
+                            }
+                            if (BuildVer.isDebug())
+                                Log.i(TAG, "Waiting order xml=" + KDSUtil.convertIntToString(ncount));
+                            if (ncount > BATCH_MAX_COUNT) ncount = BATCH_MAX_COUNT;
+                            arDone.clear();
+                            //arDoing = m_xmlDataBuffer.subList(0, ncount);
+                            //DoOrdersXmlThreadBuffer data = null;
+                            boolean bAddNew = false;
+                            for (int i = 0; i < ncount; i++) {
+                                try {
+                                    DoOrdersXmlThreadBuffer data = m_xmlDataBuffer.get(i);
+                                    switch (data.m_xmlType) {
+                                        case Order:
+
+                                            //TimeDog td = new TimeDog();
+                                            //td.debug_print_Duration("-------------------------");
+                                            KDSDataOrder order = doOrderXml(data.m_objSource, data.m_xmlData, data.m_originalFileName, data.m_bForceAcceptThisOrder, false);
+                                            if (order != null)
+                                            {
+                                                if (order.getTransType() == KDSDataOrder.TRANSTYPE_ADD) {
+                                                    bAddNew = true;
+                                                    //syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+                                                }
+                                                order = null;
+                                            }
+                                            //td.debug_print_Duration("Order duration:");
+                                            break;
+                                        case COMMAND_XML:
+                                            //TimeDog td1 = new TimeDog();
+                                            doCommandXml((KDSSocketInterface) data.m_objSource, data.m_xmlData);
+                                            //td1.debug_print_Duration("command duration:");
+
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    arDone.add(data);
+                                    //Thread.sleep(10);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            //remove finished xml
+                            synchronized (m_lockerForOrdersThread) {
+                                //arDoing.clear();
+                                m_xmlDataBuffer.removeAll(arDone);
+                            }
+                            arDone.clear();
+                            try {
+                                if (bAddNew) {
+                                    //TimeDog td2 = new TimeDog();
+                                    getCurrentDB().clearExpiredBumpedOrders( getSettings().getBumpReservedCount());
+                                    //td2.debug_print_Duration("others1:");
+                                    schedule_process_update_to_be_prepare_qty(false);
+                                    //td2.debug_print_Duration("others2:");
+                                    //setFocusAfterReceiveOrder();
+                                    setFocusAfterReceiveOrderThroughMessage();
+                                    //td2.debug_print_Duration("others duration:");
+                                }
+                            }
+                            catch ( Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                            refreshView();
+                            try {
+                                Thread.sleep(5);
+
+                            } catch (Exception e) {
+                            }
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+                    }
+                }
+            });
+            m_threadOrdersXml.setName("DoXml");
+            m_threadOrdersXml.setPriority(Thread.MAX_PRIORITY);
+            m_threadOrdersXml.start();
+        }
+    }
+
+    static class DoOrdersXmlThreadBuffer
+    {
+        Object m_objSource = null;
+        String m_originalFileName = null;
+        String m_xmlData = null;
+        boolean m_bForceAcceptThisOrder = false;
+        MESSAGE_TO_MAIN m_xmlType = null;//MESSAGE_TO_MAIN.REFRESH_A;
+    }
+
+    private boolean doCommandXmlInMainUI(KDSSocketInterface sock, String xmlData)
+    {
+//        String s = xmlData;
+//        int nStart = s.indexOf("<Code>");
+//        nStart += 6;
+//
+//        int nEnd = s.indexOf("</Code>");
+//        //nEnd --;
+//
+//        s = s.substring(nStart, nEnd);
+//        int n = KDSUtil.convertStringToInt(s, -1);
+//        if (n <0 ) return true;
+//
+//        KDSXMLParserCommand.KDSCommand code = KDSXMLParserCommand.KDSCommand.values()[n];
+//
+        KDSXMLParserCommand.KDSCommand code = KDSXMLParser.quickGetCodeFromString(xmlData);
+
+        switch (code)
+        {
+            case Station_Bump_Order:
+            case Station_Add_New_Order: //Please notice: add_new, if local don't have this order, expo will add a new one.
+            case Queue_Pickup: //for queue,
+            case Queue_Unready:
+            case Queue_Ready:
+            case Expo_Bump_Order:
+            case Expo_Bump_Item:
+            case Expo_Unbump_Item:
+            case Expo_Unbump_Order: //end for queue
+            //case ACK_XML:
+            case Prep_sync_to_queue://20190729, this can cause queue station freeze, so I move it to thread.
+                return false;
+            case ACK_XML:
+            {
+                doAck(xmlData);//do it as quick as possible.
+                return true;
+            }
+            default: {
+                doCommandXml(sock, xmlData);
+                return true;
+            }
+
+        }
+
+
+    }
+
+    TimeDog m_clearDbTimeDog = new TimeDog();
+    /**
+     * Call it in mainactiviy checking thread.
+     */
+    public void checkRemovingStatisticExpiredData()
+    {
+        if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
+        //if (m_clearDbTimeDog.is_timeout(18000)) //30x60x1000, 30mins
+        {
+            remove_statistic_old_data();
+            m_clearDbTimeDog.reset();
+        }
+    }
 
 
     /**
@@ -4236,7 +4680,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             if (conn.getSock().isConnected())
                 conn.getSock().writeXmlTextCommand(data);
             else
-                conn.addBufferedData(data);
+                m_stationsConnection.getNoConnectionBuffer().add(stationID, data, NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
+                //conn.addBufferedData(data);
         }
         else
         {
@@ -4339,5 +4784,310 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             writeDataThroughSocket(sock, stationID, ip, s);
 
         }
+    }
+    /**
+     * change the order xml
+     * As KDSDataOrder output xml is too slow,I change original xml directly.
+     *
+     * @param originalXml
+     * @param removedItems
+     * @return
+     */
+    private String manipulateOrderXml(String originalXml, ArrayList<KDSDataItem> removedItems)
+    {
+        for (int i=0; i< removedItems.size(); i++) {
+
+            originalXml = removeItemFromOrderXml(originalXml, removedItems.get(i));
+        }
+        return originalXml;
+    }
+    private String removeItemFromOrderXml(String originalXml, KDSDataItem removedItem)
+    {
+        String strID = removedItem.getItemName();
+        String itemStartTag = "<" + KDSXMLParserOrder.DBXML_ELEMENT_ITEM + ">";
+        String itemEndTag =  "</" + KDSXMLParserOrder.DBXML_ELEMENT_ITEM + ">";
+        String idStartTag =  "<" + KDSXMLParserOrder.DBXML_ELEMENT_ID + ">";
+        String idEndTag =  "</" + KDSXMLParserOrder.DBXML_ELEMENT_ID + ">";
+
+
+        int nItemStartIndex = 0;
+        int nItemEndIndex = originalXml.length()-1;
+        int nIDStartIndex = -1;
+        int nIDEndIndex = -1;
+        while ( (nItemStartIndex = originalXml.indexOf(itemStartTag,nItemStartIndex )) >=0)
+        {
+            nItemEndIndex = originalXml.indexOf(itemEndTag, nItemStartIndex);
+            if (nItemEndIndex <0) break;
+            nIDStartIndex = originalXml.indexOf(idStartTag, nItemStartIndex);
+            nIDEndIndex = originalXml.indexOf(idEndTag, nItemStartIndex);
+            if (nIDStartIndex > nItemStartIndex && nIDStartIndex < nItemEndIndex &&
+                nIDEndIndex >nItemStartIndex && nIDEndIndex <nItemEndIndex)
+            { //id is between item tag
+                String id = originalXml.substring(nIDStartIndex + idStartTag.length(), nIDEndIndex);
+                if (strID.equals(id))
+                {
+                    originalXml = removeString(originalXml, nItemStartIndex, nItemEndIndex + itemEndTag.length());
+                    break;
+                }
+            }
+            nItemStartIndex = nItemEndIndex;
+        }
+        return originalXml;
+    }
+    private String removeString(String original, int fromIndex, int toIndex)
+    {
+        String s = original.substring(0, fromIndex);
+        String s1 = original.substring(toIndex);
+        return s + s1;
+    }
+
+    public void setFocusAfterReceiveOrderThroughMessage()
+    {
+
+        m_refreshHandler.sendEmptyMessage(MESSAGE_TO_MAIN.Reset_Focus_after_new_order.ordinal());
+//        setFocusAfterReceiveOrder(KDSUser.USER.USER_A);
+//        if (this.isMultpleUsersMode())
+//            setFocusAfterReceiveOrder(KDSUser.USER.USER_B);
+
+
+    }
+
+    private boolean doNotHandleThisCommand(KDSXMLParserCommand.KDSCommand code)
+    {
+        return false;
+//
+//        if (code == KDSXMLParserCommand.KDSCommand.Nothing)
+//            return true;
+//        if (code == KDSXMLParserCommand.KDSCommand.Station_Add_New_Order)
+//        {
+//            if (KDSConst.ENABLE_ADD_NEW_ANNOUNCE) return false; //handle it.
+//            if (this.isQueueExpo() || this.isExpeditorStation() || this.isTrackerView())
+//                return true;
+//        }
+//        return false;
+    }
+
+    /**
+     * KPP1-41
+     * @param order
+     */
+    public boolean syncOrderToWebDatabase(KDSDataOrder order, ActivationRequest.iOSOrderState iosState, ActivationRequest.SyncDataFromOperation fromOperation)
+    {
+        if (m_activationHTTP == null)
+            return false;
+        m_activationHTTP.setStationID(getStationID());
+        m_activationHTTP.setStationFunc(getStationFunction());
+
+        m_activationHTTP.postOrderRequest(order, iosState, fromOperation);
+        return true;
+
+    }
+
+    public boolean syncItemBumpUnbumpToWebDatabase(KDSDataOrder order,KDSDataItem item, boolean bBumped)
+    {
+        if (order == null) return false;
+        if (m_activationHTTP == null)
+            return false;
+        m_activationHTTP.setStationID(getStationID());
+        m_activationHTTP.setStationFunc(getStationFunction());
+
+        if (item == null) return false;
+        Activation.ItemJobFromOperations opt = Activation.ItemJobFromOperations.Local_bump_item;
+        if (!bBumped)
+            opt = Activation.ItemJobFromOperations.Local_unbump_item;
+        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped,   opt);
+        return true;
+
+    }
+
+    public void showToastMessage(String msg)
+    {
+        Message m = new Message();
+        m.what = MESSAGE_TO_MAIN.Toast_msg.ordinal();
+        m.obj = msg;
+        m_refreshHandler.sendMessage(m);
+    }
+
+    /**
+     * return ack from remote station
+     * Format:
+     *  the parameter just is the ackguid value.
+     * @param fromStationID
+     * @param command
+     * @param xmlData
+     */
+    public void commandAckXml(String fromStationID, KDSXMLParserCommand command,String xmlData)
+    {
+        String ackguid = command.getParam();
+        m_stationsConnection.onReceiveAckXml(fromStationID, ackguid);
+
+    }
+
+    public void onMyFunctionChanged(SettingsBase.StationFunc oldFunc, SettingsBase.StationFunc newFunc)
+    {
+        this.clearAll();
+    }
+
+    Thread m_threadACK = null;
+    Vector<String> m_arReceivedAck = new Vector<>();
+    Object m_ackLocker = new Object();
+
+    final int MAX_DO_ACK_COUNT = 10;
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    private void startACKThread()
+    {
+        if (m_threadACK == null ||
+                !m_threadACK.isAlive())
+        {
+            m_threadACK = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (isThreadRunning())
+                    {
+                        try {
+                            if (m_threadACK != Thread.currentThread())
+                                return;
+                           doACKInThread();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        catch ( Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            m_threadACK.setName("RecACK");
+            m_threadACK.start();
+        }
+    }
+
+    private void doACKInThread()
+    {
+        int ncount = 0;
+        synchronized (m_ackLocker)
+        {
+            ncount = m_arReceivedAck.size();
+        }
+        if (ncount <=0) return;
+
+        if (ncount >MAX_DO_ACK_COUNT)
+            ncount = MAX_DO_ACK_COUNT;
+
+        Vector<String> ack = new Vector<>();
+
+        for (int i=0; i< ncount; i++)
+        {
+            ack.add(m_arReceivedAck.get(i));
+
+        }
+        synchronized (m_ackLocker)
+        {
+            m_arReceivedAck.removeAll(ack);
+        }
+
+        for (int i=0; i< ncount ; i++)
+        {
+            String xmlData = ack.get(i);
+            KDSXMLParserCommand command = (KDSXMLParserCommand)KDSXMLParser.parseXml(this.getStationID(), xmlData);
+            if (command == null) continue;//different version cause command messed.
+            KDSXMLParserCommand.KDSCommand code = command.getCode();
+            String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
+
+            if (fromStationID.equals(this.getStationID()))
+                continue; //don't do loop
+
+            commandAckXml(fromStationID, command, xmlData);
+        }
+
+    }
+
+    private void doAck(String ackXml)
+    {
+        synchronized (m_ackLocker)
+        {
+            m_arReceivedAck.add(ackXml);
+        }
+        startACKThread();
+    }
+
+    /**
+     * Use this function to broadcast new relationships.
+     * It called by preferencedfragmentstations.java nad mainactivity.java.
+     *
+     */
+    static public void broadcastStationsRelations()
+    {
+        String s = KDSSettings.loadStationsRelationString(KDSApplication.getContext(), true);
+        Object[] arParams = new Object[]{s};
+
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                String strData =(String) params[0];
+                KDSGlobalVariables.getKDS().getBroadcaster().broadcastRelations(strData);
+                return null;
+            }
+
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arParams);
+    }
+
+    /**
+     * //kpp1-62, kpp1-74
+     * when expo receive item/order bumped, expo need update its preparation time in item_bumps table.
+     * @param arChangedItems
+     */
+    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, ArrayList<KDSDataItem> arChangedItems, Activation.ItemJobFromOperations fromOperations)
+    {
+        if (arChangedItems.size() <=0) return;
+        if (!this.isExpeditorStation()) return;
+
+
+        KDSDataOrder order = this.getUsers().getOrderByGUID(orderGuid);
+
+        if (order == null) return ;
+        if (m_activationHTTP == null)
+            return ;
+        m_activationHTTP.setStationID(getStationID());
+        m_activationHTTP.setStationFunc(getStationFunction());
+
+
+
+        for (int i=0; i< arChangedItems.size(); i++) {
+            KDSDataItem item =arChangedItems.get(i);
+            if (item != null)
+                m_activationHTTP.postItemBumpRequest(this.getStationID(), order, item,true, item.getLocalBumped(), fromOperations);
+        }
+    }
+
+    private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, KDSDataItems items, Activation.ItemJobFromOperations fromOperations)
+    {
+        ArrayList<KDSDataItem> ar = new ArrayList<>();
+        for (int i=0; i< items.getCount(); i++)
+            ar.add(items.getItem(i));
+        syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, ar, fromOperations);
+    }
+
+    public void loadAllActiveOrdersNoMatterUsers()
+    {
+
+        try {
+            loadAllActiveOrdersInfo(true);
+        }
+        catch (Exception e)
+        {
+            //KDSLog.e(TAG, e.toString());
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e );
+        }
+
     }
 }

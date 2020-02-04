@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2015/9/29 0029.
@@ -17,7 +18,12 @@ public class KDSStationsConnection {
     ArrayList<KDSStationConnection> m_arStatisticApp = new ArrayList<>() ; //POS connects to this station
 
     protected ArrayList<KDSStationConnection> m_arConnection = new ArrayList<>(); //connections
-    ArrayList<KDSStationConnection> m_arTimeoutConnecting = new ArrayList<>(); //connections can not connected(timeout).
+    //ArrayList<KDSStationConnection> m_arTimeoutConnecting = new ArrayList<>(); //connections can not connected(timeout). mainly purpose is offline data. Now we use m_buffersForWaitingConnection to save offline data
+                                                                                 //so I comment it.
+
+    protected NoConnectionDataBuffers m_buffersForWaitingConnection = new NoConnectionDataBuffers(); //KPP1-coke
+
+    AckManager m_ackManager = new AckManager();//for ack of each xml file.
 
     KDSSocketManager m_socketManager = null;
     KDSSocketMessageHandler m_socketEventHandler = null;
@@ -81,7 +87,8 @@ public class KDSStationsConnection {
         int ncount = stations.size();
         for (int i=0; i< ncount; i++)
         {
-            connectToStation(stations.get(i));
+            if (stations.get(i) != null) //I find here can get null station. just filter it.
+                connectToStation(stations.get(i));
         }
     }
 
@@ -90,7 +97,7 @@ public class KDSStationsConnection {
      * @param station
      * @return
      */
-    private KDSStationConnection getConnection(KDSStationIP station)
+    public KDSStationConnection getConnection(KDSStationIP station)
     {
         synchronized (m_connectionLocker) {
             int ncount = m_arConnection.size();
@@ -129,21 +136,24 @@ public class KDSStationsConnection {
     public KDSStationConnection connectToStation(KDSStationIP station)
     {
 
+        if (station == null)
+            return null;
+
         KDSStationConnection tcp = getConnection(station);
         if (tcp == null)
         {
 
             tcp = KDSStationConnection.fromIPStation(station);
             //copy the buffered data
-            KDSStationConnection timeoutConn =findStationByID(m_arTimeoutConnecting, station.getID());
-            if (timeoutConn != null)
-            {
-                if (timeoutConn.getBufferedCount() >0)
-                {
-                    tcp.copyBufferedData(timeoutConn);
-                }
-                m_arTimeoutConnecting.remove(timeoutConn);
-            }
+//            KDSStationConnection timeoutConn =findStationByID(m_arTimeoutConnecting, station.getID());
+//            if (timeoutConn != null)
+//            {
+////                if (timeoutConn.getBufferedCount() >0) //I use kdsstationsconnection-->m_buffersForWaitingConnection to save offline data.
+////                {
+////                    tcp.copyBufferedData(timeoutConn);
+////                }
+//                m_arTimeoutConnecting.remove(timeoutConn);
+//            }
             //connect this station.
             if (connectConnection(tcp)) {
                 //debug_info( " (connectStation(tcp)), add connection");
@@ -321,23 +331,29 @@ public class KDSStationsConnection {
         {
             ncount = m_arConnection.size();
             for (int i = ncount - 1; i >= 0; i--) {
-                int nErrorCode = m_arConnection.get(i).isConnectionTimeoutWithErrorCode();
+                KDSStationConnection conn = m_arConnection.get(i);
+                int nErrorCode = conn.isConnectionTimeoutWithErrorCode();
+
+                String loginfo = "ID=" + conn.getID() + ",ip=" + conn.getIP()+",port="+ conn.getPort();
                 //if (m_arConnection.get(i).isConnectionTimeout()) {
                 if (nErrorCode != 0) {
                     //debug_info("remove timeout(" +KDSUtil.convertIntToString(nErrorCode) +") " + m_arConnection.get(i).getIP());
-                    m_arConnection.get(i).getSock().close();
-                    if (m_arConnection.get(i).getBufferedCount() >0)
-                        m_arTimeoutConnecting.add(m_arConnection.get(i)); //save it, for next use
-                    m_arConnection.get(i).getSock().freeCommandBuffer();
+
+                    KDSLog.e(TAG, KDSLog._FUNCLINE_() + "connect timeout, remove it:"+loginfo);
+                    conn.getSock().close();
+//                    if (conn.getBufferedCount() >0)
+//                        m_arTimeoutConnecting.add(conn); //save it, for next use. mainly purpose is offline data.
+                    conn.getSock().freeCommandBuffer();
                     m_arConnection.remove(i);
                 }
-                else if (findActiveStationByIP(arLostStations, m_arConnection.get(i).getIP()) != null)
+                else if (findActiveStationByIP(arLostStations, conn.getIP()) != null)
                 {//lost
-                    m_arConnection.get(i).getSock().close();
-                    if (m_arConnection.get(i).getBufferedCount() >0)
-                        m_arTimeoutConnecting.add(m_arConnection.get(i)); //save it, for later
+                    KDSLog.e(TAG, KDSLog._FUNCLINE_() + "station inactive, close it:"+loginfo);
+                    conn.getSock().close();
+//                    if (conn.getBufferedCount() >0)
+//                        m_arTimeoutConnecting.add(conn); //save it, for later.mainly purpose is offline data.
                     //debug_info("remove "+m_arConnection.get(i).getIP() + " station lost");
-                    m_arConnection.get(i).getSock().freeCommandBuffer();
+                    conn.getSock().freeCommandBuffer();
                     m_arConnection.remove(i);
                 }
 
@@ -444,8 +460,11 @@ public class KDSStationsConnection {
     {
         // m_socksManager.stopThread();
         synchronized (m_connectionLocker) {
-            ArrayList<KDSStationIP> ar =m_stationsRelations.getAllStationsNeedToConnect();
-            connectStations(ar);
+            //add offline stations in offlie database
+            ArrayList<String> arOffline = m_buffersForWaitingConnection.getStationsOfflineAndAck();
+            ArrayList<KDSStationIP> ar =m_stationsRelations.getAllStationsNeedToConnect(arOffline);
+
+            connectStations(ar); //please notice the ar can contains null station!!!
         }
     }
 
@@ -690,23 +709,59 @@ public class KDSStationsConnection {
             return;
         if (station.getSock().isConnected())
         {
-            if (station.getBufferedCount()>0)
-            {
-                int n = station.getBufferedCount();
-                for (int i=0; i< n; i++) {
-                    KDSStationDataBuffered data = station.popupStationBufferedData();
-                    if (!data.getData().isEmpty()) {
-                        station.getSock().writeXmlTextCommand(data.getData());
-                        kds.showMessage("write buffered to "+ ip);
-                        if (!data.getDescription().isEmpty())
+            //send all no ack data to station,
+            if (m_ackManager.isWaitingAck())
+            {//send all again
+                //AckDataStation ackStation = m_ackManager.getStation(station.getID());
+                AckDataStation ackStation = m_ackManager.getTimeoutAck(station.getID(), -1);
+                if (ackStation != null)
+                {
+                    synchronized (ackStation.m_locker)
+                    {
+                        try {
+                            int ncount = ackStation.getData().size();
+                            for (int i = 0; i < ncount; i++) {
+                                station.getSock().writeXmlTextCommand(ackStation.getData().get(i).getWithAckXmlData());
+                                ackStation.getData().get(i).resetTimer();
+                            }
+                        }catch (Exception e)
                         {
-                            kds.onFinishSendBufferedData(data);//.getDescription(), data.getOrderGuid());
+                            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
                         }
                     }
-
                 }
             }
+            startRestoreDataThread(kds, station, ip);
+
+//            //send all offline data to station
+//            NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(station.getID());
+//
+//            if (buf != null && buf.getData().size()>0)
+//            {
+//                //station.appendBufferedData(buf.getData());
+//                //buf.getData().clear();
+//                int n = buf.getData().size();//station.getBufferedCount();
+//                for (int i=0; i< n; i++) {
+//                    KDSStationDataBuffered data = buf.popup();//.getData().get(i);// station.popupStationBufferedData();
+//                    if (data == null) break;
+//                    if (!data.getData().isEmpty()) {
+//                        String strXml = data.getData();
+//                        String withAckXml = m_ackManager.add(station.getID(), strXml);
+//                        station.getSock().writeXmlTextCommand(withAckXml);
+//                        //station.getSock().writeXmlTextCommand(data.getData());
+//                        kds.showMessage("write buffered to "+ ip);
+//                        if (!data.getDescription().isEmpty() || data.isTransferOrderOfflineData())
+//                        {
+//                            kds.onFinishSendBufferedData(data);//.getDescription(), data.getOrderGuid());
+//                        }
+//                    }
+//
+//                }
+//            }
+//            m_buffersForWaitingConnection.remove(station.getID());
         }
+
+        startCheckingAckThread();
     }
 
     KDSStationConnection findStationBySock(ArrayList<KDSStationConnection> ar,KDSSocketInterface sock )
@@ -916,118 +971,122 @@ public class KDSStationsConnection {
 
     public  void connectStationWithData(KDSStationIP station, String strXml)
     {
-//        KDSStationConnection conn = KDSStationConnection.fromIPStation(station);
+        connectStationWithData(station, strXml, -1);
+////        KDSStationConnection conn = KDSStationConnection.fromIPStation(station);
+////
+////        conn.addBufferedData(strXml);
+////
+////        if (connectConnection(conn)) {
+////            synchronized (m_connectionLocker) {
+////                //KDSStationConnection connExisted = findConnectionByID(station.getID());
+////                m_arConnection.add(conn);
+////            }
+////        }
 //
-//        conn.addBufferedData(strXml);
 //
-//        if (connectConnection(conn)) {
-//            synchronized (m_connectionLocker) {
-//                //KDSStationConnection connExisted = findConnectionByID(station.getID());
-//                m_arConnection.add(conn);
+//        KDSStationConnection connection = getConnection(station);
+//        if (connection == null)
+//        {//this station is closed
+//            if (this.isActiveStation(station ))
+//            { //this station is active, but don't connect
+//                KDSStationConnection conn = KDSStationConnection.fromIPStation(station);
+//
+//                conn.addBufferedData(strXml);
+//
+//                if (connectConnection(conn)) {
+//                    synchronized (m_connectionLocker) {
+//                        //KDSStationConnection connExisted = findConnectionByID(station.getID());
+//                        m_arConnection.add(conn);
+//                    }
+//                }
 //            }
+//
 //        }
-
-
-        KDSStationConnection connection = getConnection(station);
-        if (connection == null)
-        {//this station is closed
-            if (this.isActiveStation(station ))
-            { //this station is active, but don't connect
-                KDSStationConnection conn = KDSStationConnection.fromIPStation(station);
-
-                conn.addBufferedData(strXml);
-
-                if (connectConnection(conn)) {
-                    synchronized (m_connectionLocker) {
-                        //KDSStationConnection connExisted = findConnectionByID(station.getID());
-                        m_arConnection.add(conn);
-                    }
-                }
-            }
-
-        }
-        else if (connection.getSock().isConnected())
-        {
-
-            connection.getSock().writeXmlTextCommand(strXml);
-
-        }
-        else if (!connection.getSock().isConnected())
-        {
-            connection.addBufferedData(strXml);
-        }
+//        else if (connection.getSock().isConnected())
+//        {
+//
+//            connection.getSock().writeXmlTextCommand(strXml);
+//
+//        }
+//        else if (!connection.getSock().isConnected())
+//        {
+//            connection.addBufferedData(strXml);
+//        }
 
     }
 
+
     public boolean writeDataToStationOrItsBackup(KDSStationIP station, String strXml)
     {
-        KDSStationConnection connection = getConnection(station);
-        if (connection == null)
-        {//this station is closed
-            if (this.isActiveStation(station )
-                    && m_stationsRelations.isEnabled(station.getID())) //for enable
-            { //this station is active, but don't connect
-                connectStationWithData(station, strXml);
-            }
-            else
-            {//this station is not active, check its backup station.
-                String stationID = station.getID();
-                KDSStationIP backupStation =  getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
-                if (backupStation == null) return false;
-                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
-                    return false;
-                //find out its backup station and it is actived.
-                //check if there are existed connection.
-                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
-                if (backupConnection == null)
-                {
-                    connectStationWithData(backupStation, strXml);
-                }
-                else if (!backupConnection.getSock().isConnected())
-                {
-                    backupConnection.addBufferedData(strXml);
-
-                }
-                else if (backupConnection.getSock().isConnected()) {
-                    backupConnection.getSock().writeXmlTextCommand(strXml);
-                }
-
-            }
-
-        }
-        else if (connection.getSock().isConnected())
-        {
-            if (m_stationsRelations.isEnabled(station.getID() ) )
-                connection.getSock().writeXmlTextCommand(strXml);
-            else
-            {
-                String stationID = station.getID();
-                KDSStationIP backupStation =getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
-                if (backupStation == null) return false;
-                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
-                    return false;
-                //find out its backup station and it is actived.
-                //check if there are existed connection.
-                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
-                if (backupConnection == null)
-                {
-                    connectStationWithData(backupStation, strXml);
-                }
-                else if (!backupConnection.getSock().isConnected())
-                {
-                    backupConnection.addBufferedData(strXml);
-
-                }
-                else if (backupConnection.getSock().isConnected()) {
-                    backupConnection.getSock().writeXmlTextCommand(strXml);
-                }
-            }
-        }
-        else if (!connection.getSock().isConnected())
-        {
-            connection.addBufferedData(strXml);
-        }
-        return true;
+        return writeDataToStationOrItsBackup(station, strXml,NoConnectionDataBuffers.MAX_BACKUP_DATA_COUNT);
+//
+//        KDSStationConnection connection = getConnection(station);
+//        if (connection == null)
+//        {//this station is closed
+//            if (this.isActiveStation(station )
+//                    && m_stationsRelations.isEnabled(station.getID())) //for enable
+//            { //this station is active, but don't connect
+//                connectStationWithData(station, strXml);
+//            }
+//            else
+//            {//this station is not active, check its backup station.
+//                String stationID = station.getID();
+//                KDSStationIP backupStation =  getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
+//                if (backupStation == null) return false;
+//                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+//                    return false;
+//                //find out its backup station and it is actived.
+//                //check if there are existed connection.
+//                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+//                if (backupConnection == null)
+//                {
+//                    connectStationWithData(backupStation, strXml);
+//                }
+//                else if (!backupConnection.getSock().isConnected())
+//                {
+//                    backupConnection.addBufferedData(strXml);
+//
+//                }
+//                else if (backupConnection.getSock().isConnected()) {
+//                    backupConnection.getSock().writeXmlTextCommand(strXml);
+//                }
+//
+//            }
+//
+//        }
+//        else if (connection.getSock().isConnected())
+//        {
+//            if (m_stationsRelations.isEnabled(station.getID() ) )
+//                connection.getSock().writeXmlTextCommand(strXml);
+//            else
+//            {
+//                String stationID = station.getID();
+//                KDSStationIP backupStation =getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
+//                if (backupStation == null) return false;
+//                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+//                    return false;
+//                //find out its backup station and it is actived.
+//                //check if there are existed connection.
+//                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+//                if (backupConnection == null)
+//                {
+//                    connectStationWithData(backupStation, strXml);
+//                }
+//                else if (!backupConnection.getSock().isConnected())
+//                {
+//                    backupConnection.addBufferedData(strXml);
+//
+//                }
+//                else if (backupConnection.getSock().isConnected()) {
+//                    backupConnection.getSock().writeXmlTextCommand(strXml);
+//                }
+//            }
+//        }
+//        else if (!connection.getSock().isConnected())
+//        {
+//            connection.addBufferedData(strXml);
+//        }
+//        return true;
 
     }
 
@@ -1043,73 +1102,76 @@ public class KDSStationsConnection {
      */
     public boolean writeDataToStationOrItsSlave(KDSStationIP station, String strXml)
     {
-        KDSStationConnection connection = getConnection(station);
-        if (connection == null)
-        {//this station is closed
-            if (this.isActiveStation(station )
-                    && m_stationsRelations.isEnabled(station.getID())) //for enable
-            { //this station is active, but don't connect
-                connectStationWithData(station, strXml);
-            }
-            else
-            {//this station is not active, check its backup station.
-                String stationID = station.getID();
-                KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
-                if (backupStation == null) return false;
-                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
-                    return false;
-                //find out its backup station and it is actived.
-                //check if there are existed connection.
-                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
-                if (backupConnection == null)
-                {
-                    connectStationWithData(backupStation, strXml);
-                }
-                else if (!backupConnection.getSock().isConnected())
-                {
-                    backupConnection.addBufferedData(strXml);
-
-                }
-                else if (backupConnection.getSock().isConnected()) {
-                    backupConnection.getSock().writeXmlTextCommand(strXml);
-                }
-
-            }
-
-        }
-        else if (connection.getSock().isConnected())
-        {
-            if (m_stationsRelations.isEnabled(station.getID() ) )
-                connection.getSock().writeXmlTextCommand(strXml);
-            else
-            {
-                String stationID = station.getID();
-                KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
-                if (backupStation == null) return false;
-                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
-                    return false;
-                //find out its backup station and it is actived.
-                //check if there are existed connection.
-                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
-                if (backupConnection == null)
-                {
-                    connectStationWithData(backupStation, strXml);
-                }
-                else if (!backupConnection.getSock().isConnected())
-                {
-                    backupConnection.addBufferedData(strXml);
-
-                }
-                else if (backupConnection.getSock().isConnected()) {
-                    backupConnection.getSock().writeXmlTextCommand(strXml);
-                }
-            }
-        }
-        else if (!connection.getSock().isConnected())
-        {
-            connection.addBufferedData(strXml);
-        }
-        return true;
+        return writeDataToStationOrItsSlave(station, strXml, -1);
+//
+//        KDSStationConnection connection = getConnection(station);
+//        if (connection == null)
+//        {//this station is closed
+//            if (this.isActiveStation(station )
+//                    && m_stationsRelations.isEnabled(station.getID())) //for enable
+//            { //this station is active, but don't connect
+//                connectStationWithData(station, strXml);
+//            }
+//            else
+//            {//this station is not active, check its backup station.
+//                String stationID = station.getID();
+//                KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
+//                if (backupStation == null) return false;
+//                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+//                    return false;
+//                //find out its backup station and it is actived.
+//                //check if there are existed connection.
+//                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+//                if (backupConnection == null)
+//                {
+//                    connectStationWithData(backupStation, strXml);
+//                }
+//                else if (!backupConnection.getSock().isConnected())
+//                {
+//                    backupConnection.addBufferedData(strXml);
+//
+//                }
+//                else if (backupConnection.getSock().isConnected()) {
+//                    backupConnection.getSock().writeXmlTextCommand(strXml);
+//                }
+//
+//            }
+//
+//        }
+//        else if (connection.getSock().isConnected())
+//        {
+//            if (m_stationsRelations.isEnabled(station.getID() ) )
+//                connection.getSock().writeXmlTextCommand(strXml);
+//            else
+//            {
+//                String stationID = station.getID();
+//                KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
+//                if (backupStation == null) return false;
+//                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+//                    return false;
+//                //find out its backup station and it is actived.
+//                //check if there are existed connection.
+//                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+//                if (backupConnection == null)
+//                {
+//                    connectStationWithData(backupStation, strXml);
+//                }
+//                else if (!backupConnection.getSock().isConnected())
+//                {
+//
+//                    backupConnection.addBufferedData(strXml);
+//
+//                }
+//                else if (backupConnection.getSock().isConnected()) {
+//                    backupConnection.getSock().writeXmlTextCommand(strXml);
+//                }
+//            }
+//        }
+//        else if (!connection.getSock().isConnected())
+//        {
+//            connection.addBufferedData(strXml);
+//        }
+//        return true;
 
     }
 
@@ -1158,6 +1220,15 @@ public class KDSStationsConnection {
             if (station.getID().equals(myStationID)) continue;
             writeDataToStationOrItsBackup(station, strXml);
         }
+
+        ncount =m_stationsRelations.getQueueExpoStations().size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationIP station =  m_stationsRelations.getQueueExpoStations().get(i);
+            if (station.getID().equals(myStationID)) continue;
+            writeDataToStationOrItsBackup(station, strXml);
+        }
+
         return true;
     }
 
@@ -1323,7 +1394,11 @@ public class KDSStationsConnection {
     public boolean isMyQueueDisplayStationsExisted()
     {
         int ncount =m_stationsRelations.getQueueStations().size();
+        if  (ncount >0)
+            return true;
+        ncount = m_stationsRelations.getQueueExpoStations().size();
         return (ncount >0);
+
     }
 
     /**
@@ -1549,6 +1624,255 @@ public class KDSStationsConnection {
         }
     }
 
+    /**
+     *
+     * @param station
+     * @param strXml
+     * @param nMaxBufferCount
+     *  -1: no limitation
+     * @return
+     */
+    public boolean writeDataToStationOrItsBackup(KDSStationIP station, String strXml, int nMaxBufferCount)
+    {
+        KDSStationConnection connection = getConnection(station);
+        if (connection == null)
+        {//this station is closed
+            if (this.isActiveStation(station )
+                    && m_stationsRelations.isEnabled(station.getID())) //for enable
+            { //this station is active, but don't connect
+                connectStationWithData(station, strXml,nMaxBufferCount);
+            }
+            else
+            {//this station is not active, check its backup station.
+                String stationID = station.getID();
+                KDSStationIP backupStation =  getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
+                //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
+                if (backupStation != null) {
+                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+                }
+
+                if (backupStation == null) {
+                    //still write to primary station
+                    Log.i(TAG, "Write to station: " + station);
+                    connectStationWithData(station, strXml,nMaxBufferCount);//KPP1-Coke
+                    return false;
+                }
+                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+                    return false;
+                //find out its backup station and it is actived.
+                //check if there are existed connection.
+                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+                if (backupConnection == null)
+                {
+                    connectStationWithData(backupStation, strXml,nMaxBufferCount);
+                    //check if slave is queue station, if it is queue/expo, backup offline orders.20190531
+//                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+//                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+
+                }
+                else if (!backupConnection.getSock().isConnected())
+                {
+                    m_buffersForWaitingConnection.add(backupStation.getID(), strXml, nMaxBufferCount);
+                    //backupConnection.addBufferedData(strXml,nMaxBufferCount);
+
+                }
+                else if (backupConnection.getSock().isConnected()) {
+                    String withAckXml = m_ackManager.add(backupStation.getID(), strXml);
+                    backupConnection.getSock().writeXmlTextCommand(withAckXml);
+                    //backupConnection.getSock().writeXmlTextCommand(strXml);
+                    //check if slave is queue station, if it is queue/expo, backup offline orders. 20190531
+//                    if (m_stationsRelations.isQueueExpoStation(backupStation.getID()))
+//                        m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+                }
+
+            }
+
+        }
+        else if (connection.getSock().isConnected())
+        {
+            if (m_stationsRelations.isEnabled(station.getID() ) ||
+                    (!m_stationsRelations.isExistedInRelationshipTable(station.getID())) //kpp1-171,active, but it is not in relation table.
+            ) {
+                String withAckXml = m_ackManager.add(station.getID(), strXml);
+                connection.getSock().writeXmlTextCommand(withAckXml);
+                //connection.getSock().writeXmlTextCommand(strXml);
+            }
+            else
+            {
+                String stationID = station.getID();
+                KDSStationIP backupStation =getFirstActiveBackupStation(stationID);// getFirstActiveSlaveStation(stationID);
+                if (backupStation == null) return false;
+                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+                    return false;
+                //find out its backup station and it is actived.
+                //check if there are existed connection.
+                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+                if (backupConnection == null)
+                {
+                    connectStationWithData(backupStation, strXml,nMaxBufferCount);
+                }
+                else if (!backupConnection.getSock().isConnected())
+                {
+                    m_buffersForWaitingConnection.add(backupStation.getID(), strXml, nMaxBufferCount);
+                    //backupConnection.addBufferedData(strXml,nMaxBufferCount);
+
+                }
+                else if (backupConnection.getSock().isConnected()) {
+                    String withAckXml = m_ackManager.add(backupStation.getID(), strXml);
+                    backupConnection.getSock().writeXmlTextCommand(withAckXml);
+                    //backupConnection.getSock().writeXmlTextCommand(strXml);
+                }
+            }
+        }
+        else if (!connection.getSock().isConnected())
+        {
+            m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+            //connection.addBufferedData(strXml,nMaxBufferCount);
+        }
+        return true;
+
+    }
+
+    /**
+     *
+     * @param station
+     * @param strXml
+     * @param nMaxBufferCount
+     *  -1: no limitation
+     */
+    public  void connectStationWithData(KDSStationIP station, String strXml, int nMaxBufferCount)
+    {
+
+        KDSStationConnection connection = getConnection(station);
+        if (connection == null)
+        {//this station is closed
+            if (this.isActiveStation(station )) //KPP1-Coke, No matter station existed or not, just buffer data.
+            { //this station is active, but don't connect
+                KDSStationConnection conn = KDSStationConnection.fromIPStation(station);
+                m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+                //conn.addBufferedData(strXml,nMaxBufferCount);
+
+                if (connectConnection(conn)) {
+                    synchronized (m_connectionLocker) {
+                        //KDSStationConnection connExisted = findConnectionByID(station.getID());
+                        m_arConnection.add(conn);
+                    }
+                }
+            }
+            else
+            {//just buffer data
+                Log.i(TAG, "backup data :" + station);
+                m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+            }
+
+        }
+        else if (connection.getSock().isConnected())
+        {
+            String withAckXml = m_ackManager.add(station.getID(), strXml);
+            connection.getSock().writeXmlTextCommand(withAckXml);
+            //connection.getSock().writeXmlTextCommand(strXml);
+
+        }
+        else if (!connection.getSock().isConnected())
+        {
+            //connection.addBufferedData(strXml,nMaxBufferCount);
+            m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+        }
+
+    }
+
+
+    /**
+     * it should not used
+     * @param station
+     * @param strXml
+     * @param nMaxBufferCount
+     * @return
+     */
+    public boolean writeDataToStationOrItsSlave(KDSStationIP station, String strXml, int nMaxBufferCount)
+    {
+        KDSStationConnection connection = getConnection(station);
+        if (connection == null)
+        {//this station is closed
+            if (this.isActiveStation(station )
+                    && m_stationsRelations.isEnabled(station.getID())) //for enable
+            { //this station is active, but don't connect
+                connectStationWithData(station, strXml,nMaxBufferCount);
+            }
+            else
+            {//this station is not active, check its backup station.
+                String stationID = station.getID();
+                KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
+                if (backupStation == null) return false;
+                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+                    return false;
+                //find out its backup station and it is actived.
+                //check if there are existed connection.
+                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+                if (backupConnection == null)
+                {
+                    connectStationWithData(backupStation, strXml ,nMaxBufferCount);
+                }
+                else if (!backupConnection.getSock().isConnected())
+                {
+                    m_buffersForWaitingConnection.add(backupStation.getID(), strXml, nMaxBufferCount);
+                    //backupConnection.addBufferedData(strXml);
+
+                }
+                else if (backupConnection.getSock().isConnected()) {
+                    String withAckXml = m_ackManager.add(backupStation.getID(), strXml);
+                    backupConnection.getSock().writeXmlTextCommand(withAckXml);
+                    //backupConnection.getSock().writeXmlTextCommand(strXml);
+                }
+
+            }
+
+        }
+        else if (connection.getSock().isConnected())
+        {
+            if (m_stationsRelations.isEnabled(station.getID() ) ) {
+                String withAckXml = m_ackManager.add(station.getID(), strXml);
+                connection.getSock().writeXmlTextCommand(withAckXml);
+                //connection.getSock().writeXmlTextCommand(strXml);
+            }
+            else
+            {
+                String stationID = station.getID();
+                KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
+                if (backupStation == null) return false;
+                if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
+                    return false;
+                //find out its backup station and it is actived.
+                //check if there are existed connection.
+                KDSStationConnection backupConnection = findConnectionByID(backupStation.getID());
+                if (backupConnection == null)
+                {
+                    connectStationWithData(backupStation, strXml ,nMaxBufferCount);
+                }
+                else if (!backupConnection.getSock().isConnected())
+                {
+                    m_buffersForWaitingConnection.add(backupStation.getID(), strXml, nMaxBufferCount);
+                    //backupConnection.addBufferedData(strXml);
+
+                }
+                else if (backupConnection.getSock().isConnected()) {
+                    String withAckXml = m_ackManager.add(backupStation.getID(), strXml);
+                    backupConnection.getSock().writeXmlTextCommand(withAckXml);
+                    //backupConnection.getSock().writeXmlTextCommand(strXml);
+                }
+            }
+        }
+        else if (!connection.getSock().isConnected())
+        {
+            m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
+            //connection.addBufferedData(strXml);
+        }
+        return true;
+
+    }
+
+
 //    /**
 //     * * Used in Router app
 //     */
@@ -1660,7 +1984,350 @@ public class KDSStationsConnection {
 //        return false;
 //    }
 
+    public NoConnectionDataBuffers getNoConnectionBuffer()
+    {
+        return m_buffersForWaitingConnection;
+    }
 
+    public void onReceiveAckXml(String stationID, String ackGuid)
+    {
+        //Log.i(TAG, "onReceiveAckXml:" + stationID +","+ackGuid);
+        m_ackManager.removeAck(stationID, ackGuid);
+
+//        AckDataStation station =  m_ackManager.getStation(stationID);
+//        station.remove(ackGuid);
+        //Log.i(TAG, "onReceiveAckXml:count=" + station.getData().size());
+    }
+
+    /**
+     *
+     * @param sock
+     * @param xmlData
+     * @return
+     *  return string that removed ack guid
+     */
+    public String responseAck(String myStationID, String myIPAddress, String myMac, KDSSocketInterface sock, String xmlData)
+    {
+        //<ACKGUID>92348529384592834598234</ACKGUID>
+        String ackguid = AckData.parseAckGuid(xmlData);
+        if (ackguid.isEmpty())
+            return xmlData;
+
+        xmlData = AckData.removeAckGuid(xmlData, ackguid);
+        KDSStationConnection conn = getConnection(sock);
+        if (conn == null)
+        {
+            conn = getPOSConnection(sock); //try server listen (POS) connection again.
+        }
+        if (conn!= null)
+        {
+
+            //conn.getSock().writeXmlTextCommand(KDSXMLParserCommand.createXmlAck(myStationID, myIPAddress, myMac, ackguid));
+            conn.getSock().writeXmlTextCommand(KDSXMLParserCommand.createQuickXmlAck(myStationID, myIPAddress, myMac, ackguid));
+        }
+
+        return xmlData;
+    }
+
+    public KDSStationConnection getPOSConnection(KDSSocketInterface sock)
+    {
+
+        synchronized (m_connectionLocker) {
+            int ncount = m_arPOSStations.size();
+            for (int i = 0; i < ncount; i++) {
+                if (m_arPOSStations.get(i).getSock() == sock)
+                    return m_arPOSStations.get(i);
+            }
+
+        }
+        return null;
+    }
+
+    Thread m_threadCheckingAck = null;
+
+    /**
+     * Move some timer functions to here.
+     * Just release main UI.
+     * All feature in this thread are no ui drawing request.
+     * And, in checkautobumping function, it use message to refresh UI.
+     */
+    public void startCheckingAckThread()
+    {
+        if (m_threadCheckingAck == null ||
+                !m_threadCheckingAck.isAlive())
+        {
+            m_threadCheckingAck = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true)
+                    {
+                        if (m_threadCheckingAck != Thread.currentThread())
+                            return;
+                        if (!m_ackManager.isWaitingAck() )
+                        {
+                            try {
+                                Thread.sleep(1000);
+                                continue;
+                            } catch (Exception e) {
+
+                            }
+                        }
+                        try {
+
+                            checkTimeoutAck();
+                            Thread.sleep(1000);
+
+                        }
+                        catch ( Exception e)
+                        {
+                            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e);
+                            //e.printStackTrace();
+                        }
+
+                    }
+                }
+            });
+            m_threadCheckingAck.setName("CheckingAck");
+            m_threadCheckingAck.start();
+        }
+    }
+
+    final int BATCH_ACK_COUNT = 3;
+//    private void checkTimeoutAck()
+//    {
+//        ArrayList<AckData> arTimeout = new ArrayList<>();
+//        for (int i=0; i< m_ackManager.getStationsCount(); i++)
+//        {
+//            AckDataStation station = m_ackManager.getStations().get(i);
+//            arTimeout.clear();
+//            station.findTimeoutData(arTimeout, BATCH_ACK_COUNT);
+//            if (arTimeout.size() >0)
+//            {
+//                resendXmlData(station, arTimeout);
+//            }
+//            arTimeout.clear();
+//
+//        }
+//    }
+
+    private void checkTimeoutAck()
+    {
+        //ArrayList<AckData> arTimeout = new ArrayList<>();
+        ArrayList<String> arStations = m_ackManager.getAckStations();
+
+        for (int i=0; i< arStations.size(); i++)
+        {
+            String stationID = arStations.get(i);
+
+            AckDataStation station = m_ackManager.getTimeoutAck(stationID, BATCH_ACK_COUNT);
+
+            if (station.getData().size() >0)
+            {
+               // Log.i(TAG, "--->Resend data <---");
+               // Log.i(TAG, station.getStationID());
+                resendXmlData(station);
+            }
+
+
+        }
+    }
+
+    private void resendXmlData(AckDataStation station, ArrayList<AckData> arTimeout)
+    {
+        String stationID = station.getStationID();
+        KDSStationConnection conn = findConnectionByID(stationID);
+        if (conn == null)
+            return;
+        if (!conn.isConnected())
+            return;
+        for (int i=0; i< arTimeout.size(); i++) {
+            conn.getSock().writeXmlTextCommand(arTimeout.get(i).getWithAckXmlData());
+            arTimeout.get(i).resetTimer();
+
+        }
+    }
+
+    private void resendXmlData(AckDataStation station)
+    {
+
+        String stationID = station.getStationID();
+        KDSStationConnection conn = findConnectionByID(stationID);
+        if (conn == null)
+            return;
+        if (!conn.isConnected())
+            return;
+        for (int i=0; i< station.getData().size(); i++) {
+            conn.getSock().writeXmlTextCommand(station.getData().get(i).getWithAckXmlData());
+            m_ackManager.resetAckTime(station.getData().get(i).getGuid());
+        }
+
+        station.getData().clear();
+
+    }
+
+
+    ArrayList<RestoreData> m_arRestoring = new ArrayList<>();
+    /**
+     * If there are many data waiting the connection, it will lock others operation.
+     * So, I move them to a new thread.
+     */
+    public void startRestoreDataThread(KDSBase kds, KDSStationConnection station, String ip)
+    {
+        synchronized (m_arRestoring) {
+            for (int i = 0; i < m_arRestoring.size(); i++) {
+                if (m_arRestoring.get(i).getStationID().equals(station.getID()))
+                    return;
+            }
+        }
+        RestoreData d = new RestoreData(kds, station, ip);
+        synchronized (m_arRestoring) {
+            m_arRestoring.add(d);
+        }
+        Thread t = new Thread(d);
+        t.setName("RstData#" + station.getID());
+        t.start();
+
+    }
+
+    class RestoreData implements Runnable
+    {
+        KDSStationConnection m_station = null;
+        KDSBase m_kds = null;
+        String m_ip = "";
+        public String getStationID()
+        {
+            if (m_station == null) return "";
+            return m_station.getID();
+        }
+        public RestoreData(KDSBase kds, KDSStationConnection station, String ip)
+        {
+            m_ip = ip;
+            m_kds = kds;
+            m_station = station;
+        }
+
+        @Override
+        public void run() {
+
+
+                if (m_station == null || m_kds == null)
+                    return;
+                try {
+//                    //send all no ack data to station,
+//                    if (m_ackManager.isWaitingAck()) {//send all again
+//                        //AckDataStation ackStation = m_ackManager.getStation(station.getID());
+//                        AckDataStation ackStation = m_ackManager.getTimeoutAck(m_station.getID(), -1);
+//                        if (ackStation != null) {
+//                            synchronized (ackStation.m_locker) {
+//                                try {
+//                                    int ncount = ackStation.getData().size();
+//                                    for (int i = 0; i < ncount; i++) {
+//                                        m_station.getSock().writeXmlTextCommand(ackStation.getData().get(i).getWithAckXmlData());
+//                                        ackStation.getData().get(i).resetTimer();
+//                                    }
+//                                } catch (Exception e) {
+//                                    KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+//                                }
+//                            }
+//                        }
+//                    }
+                    //send all offline data to station
+                    NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(m_station.getID());
+
+                    if (buf != null && buf.getData().size() > 0) {
+                        //station.appendBufferedData(buf.getData());
+                        //buf.getData().clear();
+                        int n = buf.getData().size();//station.getBufferedCount();
+                        for (int i = 0; i < n; i++) {
+                            KDSStationDataBuffered data = buf.popup();//.getData().get(i);// station.popupStationBufferedData();
+                            if (data == null) break;
+                            if (!data.getData().isEmpty()) {
+                                String strXml = data.getData();
+                                String withAckXml = m_ackManager.add(m_station.getID(), strXml);
+                                m_station.getSock().writeXmlTextCommand(withAckXml);
+                                //station.getSock().writeXmlTextCommand(data.getData());
+                                m_kds.showMessage("write buffered to " + m_ip);
+                                if (!data.getDescription().isEmpty() || data.isTransferOrderOfflineData()) {
+                                    m_kds.onFinishSendBufferedData(data);//.getDescription(), data.getOrderGuid());
+                                }
+                            }
+
+                        }
+                    }
+                    m_buffersForWaitingConnection.remove(m_station.getID());
+                }
+                catch (Exception e)
+                {
+                    KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+                }
+                finally {
+                    synchronized (m_arRestoring) {
+                        m_arRestoring.remove(this);
+                    }
+                }
+
+        }
+    }
+
+    public  KDSStationIP getMyQueueStation()
+    {
+        KDSStationIP station = null;
+        int ncount =m_stationsRelations.getQueueStations().size();
+        if  (ncount <= 0) {
+            ncount = m_stationsRelations.getQueueExpoStations().size();
+            if (ncount <=0)
+                return null;
+            else
+                station =  m_stationsRelations.getQueueExpoStations().get(0);
+        }
+        else {
+            station = m_stationsRelations.getQueueStations().get(0);
+        }
+        return station;
+    }
+
+    public boolean isMyQueueOnline()
+    {
+        KDSStationIP station = getMyQueueStation();
+        if (station == null) return false;
+
+        if (this.getConnection(station) == null)
+            return false;
+        boolean bOnline =  (this.getConnection(station).isConnected());
+        return bOnline;
+
+
+    }
+    public boolean isThereOfflineData(String stationID)
+    {
+        NoConnectionDataBuffer buf = m_buffersForWaitingConnection.findStation(stationID);
+        if (buf == null) return false;
+        return (buf.getSize() >0);
+
+    }
+
+    /**
+     * clear all buffered offline data
+     * KPP1-144
+     * @return
+     */
+    public boolean clear()
+    {
+        m_ackManager.clear();
+        m_buffersForWaitingConnection.clear();
+        return true;
+    }
+    public boolean writeToStations(String myStationID,ArrayList<KDSStationIP> arStations, String strXml)
+    {
+        int ncount = arStations.size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationIP station =  arStations.get(i);
+            if (station.getID().equals(myStationID)) continue;
+            writeDataToStationOrItsBackup(station, strXml);
+        }
+        return true;
+    }
 }
 
 

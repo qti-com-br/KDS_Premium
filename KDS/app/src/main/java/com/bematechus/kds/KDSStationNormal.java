@@ -88,13 +88,14 @@ public class KDSStationNormal extends KDSStationFunc {
 
     /**
      * In normal station, get information that given order was bumped by others station.
-     * we should set expeditor satation.
+     * we should set expeditor station.
      * Mark all items to "bumped" in exp
      * @param db
      *  Save to which db, this is for support and current
      * @param fromStationID
      * @param fromIP
      * @param orderReceived
+     *  It just contains ID
      * return order GUID
      */
     static public String normal_order_bumped_in_other_station(KDS kds,KDSDBCurrent db,KDSDataOrders orders,  String fromStationID, String fromIP, KDSDataOrder orderReceived)
@@ -169,9 +170,9 @@ public class KDSStationNormal extends KDSStationFunc {
             else
             { //primary is offline now, svae to current database.
                 if (kds.isSingleUserMode())
-                    orderAdd(kds.getUsers().getUserA(), orderReceived, false, false); //don't check add-on
+                    func_orderAdd(kds.getUsers().getUserA(), orderReceived, strXml,false, false, false,true); //don't check add-on
                 else
-                    kds.getUsers().orderAdd(orderReceived, false); //TODO: there are some issues !!!, it maybe is not same as primary
+                    kds.getUsers().users_orderAdd(orderReceived, strXml,false, false,true); //TODO: there are some issues !!!, it maybe is not same as primary
             }
         }
         else if (kds.getStationsConnections().getRelations().isMirrorStation())
@@ -186,16 +187,16 @@ public class KDSStationNormal extends KDSStationFunc {
 //                orderAdd(kds, order, false);
 //            }
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), orderReceived, false, false);
+                func_orderAdd(kds.getUsers().getUserA(), orderReceived, strXml,false, false,false, true);
             else
-                kds.getUsers().orderAdd(orderReceived, false);
+                kds.getUsers().users_orderAdd(orderReceived, strXml,false, false, true);
 
         }
         else
         { //I am common station, I am a expeditor.
             //check if current database contains this order.
             if (kds.isSingleUserMode())
-                orderAdd(kds.getUsers().getUserA(), orderReceived, false, false);
+                func_orderAdd(kds.getUsers().getUserA(), orderReceived, strXml,false, false,false, true);
         }
 
         //sync to others

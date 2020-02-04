@@ -13,15 +13,15 @@
         android:key="lineitems_modifier_condiment_each_line"
         android:title="@string/each_condiment_go_to_next_line"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceColorPicker
-        android:key="viewer_bg"
-        android:defaultValue="0xff0e0e0e"
+    <com.bematechus.kdslib.KDSPreferenceColorPicker
+        android:key="lineitems_viewer_bg"
+        android:defaultValue="@color/lineitems_viewer_bg"
         android:dependency="lineitems_enabled"
         android:title="@string/pref_kds_panels_viewer_bg" />
 
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="lineitems_default_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/lineitems_bg,@color/lineitems_fg,12"
+        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,normal_size"
         android:title="@string/screen_default_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>
@@ -40,10 +40,20 @@
         android:maxLines="1" />
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="lineitems_caption_font"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/lineitems_bg,@color/lineitems_fg,12"
+        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,normal_size"
         android:title="@string/lineitems_caption_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="lineitems_line_height"
+        android:title="@string/lineitems_line_height"
+        android:defaultValue="30"
+        android:dependency="lineitems_enabled"
+        android:entries="@array/pref_kds_lineitems_line_height_titles"
+        android:entryValues="@array/pref_kds_lineitems_line_height_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
     <!--<com.bematechus.kds.KDSListPreference-->
         <!--android:key="lineitems_cols_count"-->
         <!--android:title="@string/col_content"-->

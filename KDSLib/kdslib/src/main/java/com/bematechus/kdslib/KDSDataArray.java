@@ -7,17 +7,20 @@
 package com.bematechus.kdslib;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
  * @author David.Wong
  */
 public class KDSDataArray {
-    protected ArrayList m_arComponents = new ArrayList();
+    static public String STRINGS_SEPARATOR = ",   ";
+    static public String STRINGS_EACH_LINE_SEPARATOR = "\n";
+    protected Vector m_arComponents = new Vector();
 
     protected Object m_locker = new Object();
 
-    public ArrayList getComponents()
+    public Vector getComponents()
     {
         return m_arComponents;
     }
@@ -78,7 +81,8 @@ public class KDSDataArray {
     }
     public int getCount()
     {
-        synchronized (m_locker) {
+        synchronized (m_locker)
+        {
             return m_arComponents.size();
         }
     }

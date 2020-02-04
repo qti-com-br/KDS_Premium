@@ -2,6 +2,7 @@
 
 package com.bematechus.kdslib;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
@@ -107,7 +108,7 @@ public class KDSDataItems extends KDSDataArray {
     public KDSDataItem getDataItem(int nIndex)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             int nDataItemIndex = -1;
             for (int i = 0; i < ar.size(); i++) {
 
@@ -128,7 +129,7 @@ public class KDSDataItems extends KDSDataArray {
     public void copyTo(KDSDataItems objs)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
                 KDSDataItem c = new KDSDataItem();
                 KDSDataItem original = (KDSDataItem) ar.get(i);
@@ -141,7 +142,7 @@ public class KDSDataItems extends KDSDataArray {
     public KDSDataItem getItemByName(String itemName)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
 
                 KDSDataItem item = (KDSDataItem) ar.get(i);
@@ -156,7 +157,7 @@ public class KDSDataItems extends KDSDataArray {
     public KDSDataItem getItemByGUID(String itemGUID)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             for (int i = 0; i < ar.size(); i++) {
                 KDSDataItem item = (KDSDataItem) ar.get(i);
                 if (item.getGUID().equals(itemGUID))
@@ -170,7 +171,7 @@ public class KDSDataItems extends KDSDataArray {
     public int getItemIndexByGUID(String itemGUID)
     {
         synchronized (m_locker) {
-            ArrayList ar = this.getComponents();
+            Vector ar = this.getComponents();
             KDSDataItem item = getItemByGUID(itemGUID);
             if (item == null) return -1;
             return ar.indexOf(item);
@@ -385,4 +386,5 @@ public class KDSDataItems extends KDSDataArray {
 
         }
     }
+
 }

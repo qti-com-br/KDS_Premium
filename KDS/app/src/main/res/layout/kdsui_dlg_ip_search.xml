@@ -91,7 +91,7 @@
     </LinearLayout>
 
 
-    <ListView
+    <com.bematechus.kds.HandleDataListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/lstStations"
@@ -104,7 +104,9 @@
         android:headerDividersEnabled="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:contextClickable="true" />
 
     <!--android:layout_alignParentBottom="true"-->
             <!--android:layout_alignParentRight="true"/>-->

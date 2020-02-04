@@ -7,8 +7,18 @@ import android.graphics.Typeface;
  * Created by Administrator on 2015/8/13 0013.
  */
 public class KDSViewFontFace {
-    static public final String DEFULT_FONT_FILE =  "/system/fonts/DroidSans.ttf";
-    static public final int DEFAULT_FONT_SIZE = 12;
+    //static public final String DEFULT_FONT_FILE =  "/system/fonts/DroidSans.ttf";
+    //static public final String DEFULT_FONT_FILE =  "/system/fonts/NanumGothic.ttf";
+    //static public final String DEFULT_FONT_FILE =  "/system/fonts/Clockopia.ttf";
+    static public final String DEFULT_FONT_FILE =  "/system/fonts/Roboto-Regular.ttf";
+
+
+    static public final int FONT_SIZE_SMALL = 12;
+    static public final int FONT_SIZE_NORMAL = 14;
+    static public final int FONT_SIZE_MIDDLE = 17;
+    static public final int FONT_SIZE_LARGE = 20;
+    static public final int DEFAULT_FONT_SIZE = FONT_SIZE_NORMAL;
+
     static public final int DEFAULT_BG = Color.WHITE;
     static public final int DEFAULT_FG = Color.BLACK;
     ////////////////////////////////////////////////////////////////////
@@ -35,14 +45,31 @@ public class KDSViewFontFace {
     public String toString()
     {
         String s = m_strFontFilePath;
+        if (m_strFontFilePath.equals(DEFULT_FONT_FILE))
+            s = FLAG_DEFAULT_FONT;
         s += ",";
         s +=  Integer.toString(m_colorBG);
         s += ",";
         s +=  Integer.toString(m_colorFG);
         s += ",";
-        s +=  Integer.toString(m_nFontSize);
+        if (m_nFontSize == FONT_SIZE_NORMAL)
+            s += FLAG_SIZE_NORMAL;
+        else if (m_nFontSize == FONT_SIZE_MIDDLE)
+            s += FLAG_SIZE_MIDDLE;
+        else if (m_nFontSize == FONT_SIZE_LARGE)
+            s += FLAG_SIZE_LARGE;
+        else if (m_nFontSize == FONT_SIZE_SMALL)
+            s += FLAG_SIZE_SMALL;
+        else
+            s +=  Integer.toString(m_nFontSize);
         return s;
     }
+
+    static public String FLAG_DEFAULT_FONT = "default_font";
+    static public String FLAG_SIZE_NORMAL = "normal_size";
+    static public String FLAG_SIZE_MIDDLE = "middle_size";
+    static public String FLAG_SIZE_LARGE = "large_size";
+    static public String FLAG_SIZE_SMALL = "small_size";
 
     /**
      *
@@ -57,6 +84,8 @@ public class KDSViewFontFace {
         int n = s.indexOf(",", 0);
         if (n <0) return ff;
         ff.m_strFontFilePath = s.substring(0, n );
+        if (ff.m_strFontFilePath.equals(FLAG_DEFAULT_FONT))
+            ff.m_strFontFilePath = DEFULT_FONT_FILE;
         s = s.substring(n + 1);
 
         n = s.indexOf(",", 0);
@@ -73,7 +102,16 @@ public class KDSViewFontFace {
 
 //        n = s.indexOf(",", 0);
 //        if (n <0) return ff;
-        ff.m_nFontSize = Integer.parseInt(s);
+        if (s.indexOf(FLAG_SIZE_NORMAL)>=0)
+            ff.m_nFontSize = FONT_SIZE_NORMAL;
+        else if (s.indexOf(FLAG_SIZE_MIDDLE) >=0)
+            ff.m_nFontSize = FONT_SIZE_MIDDLE;
+        else if (s.indexOf(FLAG_SIZE_LARGE) >=0)
+            ff.m_nFontSize = FONT_SIZE_LARGE;
+        else if (s.indexOf(FLAG_SIZE_SMALL) >=0)
+            ff.m_nFontSize = FONT_SIZE_SMALL;
+        else
+            ff.m_nFontSize = KDSUtil.convertStringToInt(s, FONT_SIZE_NORMAL);
 
         return ff;
     }

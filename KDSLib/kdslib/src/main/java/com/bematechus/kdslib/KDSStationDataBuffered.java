@@ -75,4 +75,9 @@ public class KDSStationDataBuffered {
     }
 
 
+    public boolean isTransferOrderOfflineData()
+    {
+        return ( (!m_strItemGuid.isEmpty()) || (!m_strOrderGuid.isEmpty() ) );
+
+    }
 }

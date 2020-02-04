@@ -43,7 +43,7 @@ public class KDSSmbFile extends Handler {
     }
 
 
-    static private boolean m_bEnableSmbV2 = true;
+    static private boolean m_bEnableSmbV2 = false; //default is false
     static public void smb_setEnableSmbV2(boolean bEnabled)
     {
         m_bEnableSmbV2 = bEnabled;
@@ -184,5 +184,36 @@ public class KDSSmbFile extends Handler {
     }
 
 
+    static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles, ArrayList<String> ar)
+    {
+        if (m_bEnableSmbV2)
+            return KDSSmbFile2.findAllXmlFiles(remoteUriFolder, nMaxFiles, ar);
+        else
+            return KDSSmbFile1.findAllXmlFiles(remoteUriFolder, nMaxFiles, ar);
+    }
 
+    static public boolean isExistedSubFolder(String strRootFolder, String strSubFolder)
+    {
+        if (m_bEnableSmbV2)
+            return KDSSmbFile2.isExistedSubFolder(strRootFolder, strSubFolder);
+        else
+            return KDSSmbFile1.isExistedSubFolder(strRootFolder, strSubFolder);
+    }
+
+    static public boolean createSubDir(String newDir)
+    {
+        if (m_bEnableSmbV2)
+            return KDSSmbFile2.createSubDir(newDir);
+        else
+            return KDSSmbFile1.createSubDir(newDir);
+    }
+
+    static public Object[] findAllFiles(String remoteUriFolder)
+    {
+
+        if (m_bEnableSmbV2)
+            return KDSSmbFile2.findAllFiles(remoteUriFolder);
+        else
+            return KDSSmbFile1.findAllFiles(remoteUriFolder);
+    }
 }

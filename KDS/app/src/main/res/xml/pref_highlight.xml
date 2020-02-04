@@ -4,7 +4,7 @@
         android:key="hightlight_rush"
         android:title="@string/pref_kds_highlight_rush_enabled"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceBGFGPicker
+    <com.bematechus.kdslib.KDSPreferenceBGFGPicker
         android:key="rush_bgfg"
         android:defaultValue="-39424,0"
         android:dependency="hightlight_rush"
@@ -15,11 +15,11 @@
         android:key="hightlight_fire"
         android:title="@string/pref_kds_highlight_fire_enabled"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceBGFGPicker
+    <com.bematechus.kdslib.KDSPreferenceBGFGPicker
         android:key="fire_bgfg"
         android:defaultValue="-4521814,0"
         android:dependency="hightlight_fire"
-        android:title="@string/pref_kds_rush_bgfg" />
+        android:title="@string/pref_kds_fire_bgfg" />
 
 
 
@@ -27,11 +27,15 @@
         android:key="hightlight_dest"
         android:title="@string/pref_kds_highlight_dest_enabled"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceBGFGPicker
+    <com.bematechus.kdslib.KDSPreferenceBGFGPicker
         android:key="dest_bgfg"
         android:defaultValue="-5636045,0"
         android:dependency="hightlight_dest"
         android:title="@string/pref_kds_dest_bgfg" />
+    <CheckBoxPreference
+        android:key="bumpbar_panelnum_focus"
+        android:title="@string/pref_kds_panelnum_focus_enabled"
+        android:defaultValue="false" />
 
 
 

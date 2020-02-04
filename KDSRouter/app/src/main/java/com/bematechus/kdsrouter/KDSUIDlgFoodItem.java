@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSDataSumName;
 import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSSMBPath;
+import com.bematechus.kdslib.KDSUIColorPickerDialog;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
@@ -126,6 +127,7 @@ public class KDSUIDlgFoodItem  extends  KDSUIDialogBase  implements KDSUIColorPi
 
     public KDSUIDlgFoodItem(final Context context, KDSUIDialogBase.KDSDialogBaseListener listener, KDSRouterDataItem item) {
         this.int_dialog(context, listener, R.layout.dlg_item, "");
+        this.setCancelByClickOutside(false);
         m_item = item;
         if (m_item == null) {
             this.setTitle(context.getString(R.string.new_item));

@@ -27,6 +27,7 @@ public class KDSUIDialogBase {
         public void onKDSDialogOK(KDSUIDialogBase dialog, Object obj);
 
     }
+    static KDSUIDialogBase m_singleInstance = null;
 
     protected AlertDialog dialog = null;
 
@@ -85,6 +86,7 @@ public class KDSUIDialogBase {
             }
         }
     }
+
 
     static public String makeButtonText(Context context, int nResID, KDSSettings.ID funcKey )
     {
@@ -619,6 +621,8 @@ public class KDSUIDialogBase {
                     evID =  KDSSettings.ID.Bumpbar_OK;
 
                 if (evID == KDSSettings.ID.Bumpbar_OK) {
+                    if (!checkDataValidation())
+                        return true;
                     onOkClicked();
                     dialog.dismiss();
                     if (KDSUIDialogBase.this.listener != null)
@@ -659,5 +663,29 @@ public class KDSUIDialogBase {
         }, m_nAutoCloseTimeoutMs);
     }
 
+    /**
+     *
+     * @return
+     *  true: ok
+     *  false: failed.
+     */
+    protected boolean checkDataValidation()
+    {
+        return true;
+    }
 
+    static public KDSUIDialogBase singleInstance()
+    {
+
+        if (m_singleInstance != null) {
+            if (m_singleInstance.getDialog() != null) {
+                if (m_singleInstance.getDialog().isShowing())
+                    m_singleInstance.getDialog().cancel();
+            }
+            m_singleInstance = null;
+        }
+
+        m_singleInstance = new KDSUIDialogBase();
+        return m_singleInstance;
+    }
 }

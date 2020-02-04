@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSUIColorPickerDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 

@@ -66,7 +66,7 @@ public class KDSLayoutOrder extends KDSDataOrder {
                 }
             }
             //item messages
-            ncounter += item.getMessages().getCount();
+            ncounter += item.getPreModifiers().getCount();
             //count the condiments;
             int ncondiments = item.getCondiments().getCount();
             for (int j = 0; j< ncondiments; j++)
@@ -107,7 +107,7 @@ public class KDSLayoutOrder extends KDSDataOrder {
         item.setFG(grayFG);
         //item messages
 
-        smartMessagesGray(item.getMessages(), grayBG, grayFG);
+        smartMessagesGray(item.getPreModifiers(), grayBG, grayFG);
 
         //the condiments;
         int ncondiments = item.getCondiments().getCount();

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
@@ -94,20 +95,23 @@ public class KDSUIDlgInputItemDescription  extends KDSUIDialogBase {
         ArrayList<String> arStatistic = null;
         if (m_mode == Mode.Item) {
             arCurrent = KDSGlobalVariables.getKDS().getCurrentDB().getUniqueItems(s);
-            arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueItems(s);
+            if (KDSConst.ENABLE_FEATURE_STATISTIC)
+                arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueItems(s);
         }
         else if (m_mode == Mode.Condiment)
         {
             arCurrent = KDSGlobalVariables.getKDS().getCurrentDB().getUniqueCondiments(s);
-            arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueCondiments(s);
+            if (KDSConst.ENABLE_FEATURE_STATISTIC)
+                arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueCondiments(s);
         }
-        for (int i=0; i< arStatistic.size(); i++)
-        {
-            if (KDSUtil.isExistedInArray(arCurrent, arStatistic.get(i)))
-                continue;
-            else
-                arCurrent.add(arStatistic.get(i));
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            for (int i = 0; i < arStatistic.size(); i++) {
+                if (KDSUtil.isExistedInArray(arCurrent, arStatistic.get(i)))
+                    continue;
+                else
+                    arCurrent.add(arStatistic.get(i));
 
+            }
         }
         m_arData.clear();
         m_arData.addAll(arCurrent);

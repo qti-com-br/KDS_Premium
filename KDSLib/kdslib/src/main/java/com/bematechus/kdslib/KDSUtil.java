@@ -142,6 +142,7 @@ public class KDSUtil {
     {
         try
         {
+            strID = strID.trim();
             if (strID.isEmpty()) return nDefault;
             int nID = Integer.parseInt(strID);
             return nID;
@@ -205,7 +206,7 @@ public class KDSUtil {
     static public String convertDateToString(Date dt)
     {
 
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf= m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String str=sdf.format(dt);
         return str;
@@ -217,9 +218,9 @@ public class KDSUtil {
         String s = strDate;
         SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf = m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            sdf = m_dateShortFormat2;// new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try
         {
@@ -239,9 +240,9 @@ public class KDSUtil {
         String s = strDate;
         SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat2;// new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
         try
         {
             Date date = sdf.parse(s, new ParsePosition(0));// null).parse(s);
@@ -256,6 +257,12 @@ public class KDSUtil {
     }
 
     static public Calendar g_calender = null;
+    static private SimpleDateFormat m_dateLongFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    static private SimpleDateFormat m_dateLongFormat2 =  new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+    static private SimpleDateFormat m_dateShortFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    static private SimpleDateFormat m_dateShortFormat2 =  new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+    static private SimpleDateFormat m_timeLongFormat =  new SimpleDateFormat("HH:mm:ss");
+    static private SimpleDateFormat m_timeShortFormat =  new SimpleDateFormat("HH:mm");
     /**
      * the format is fixed:
      *  "yyyy-MM-dd HH:mm:ss"
@@ -266,12 +273,14 @@ public class KDSUtil {
     {
 
         String s = strDate;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = null;//new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         //SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+            sdf = m_dateLongFormat2;// new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault());
+        else
+            sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         //t.debug_print_Duration("load time");
         try
         {
@@ -290,7 +299,7 @@ public class KDSUtil {
         String s = strDate;
         if (s == null) return dtDefault;
         if (s.isEmpty()) return  dtDefault;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = m_dateLongFormat1;// new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         try
         {
             Date date = sdf.parse(s, new ParsePosition(0));// null).parse(s);
@@ -1297,7 +1306,7 @@ just 16bits value
 
         // TimeDog d = new TimeDog();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd");
 
         String str = sdf.format(dt);
 
@@ -1307,7 +1316,7 @@ just 16bits value
 
         // TimeDog d = new TimeDog();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf = m_timeLongFormat;// new SimpleDateFormat("HH:mm:ss");
 
         String str = sdf.format(dt);
 
@@ -1318,7 +1327,7 @@ just 16bits value
 
         // TimeDog d = new TimeDog();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = m_timeShortFormat;// new SimpleDateFormat("HH:mm");
 
         String str = sdf.format(dt);
 
@@ -1341,9 +1350,9 @@ just 16bits value
        // sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat sdf = null;
         if (strDate.indexOf("-") >=0)
-            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf = m_dateShortFormat1;// new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         else if (strDate.indexOf("/")>=0)
-            sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            sdf = m_dateShortFormat2;// new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
         try
         {
@@ -1691,6 +1700,20 @@ just 16bits value
         }
         return ip;
     }
+    /**
+     * simulate the physical keyboard
+     * @param keyCode
+     */
+    static public void sendKeyCode(int keyCode) {
+        try {
+
+            String keyCommand = "input keyevent " + KDSUtil.convertIntToString(keyCode);
+            Runtime.getRuntime().exec(keyCommand);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      *
@@ -1711,8 +1734,6 @@ just 16bits value
         }
         return port;
     }
-
-
 
 
     public static List listAvailableStorage(Context context) {
@@ -1773,4 +1794,149 @@ just 16bits value
         }
     }
 
+
+
+//    public static List listAvailableStorage(Context context) {
+//        ArrayList storagges = new ArrayList();
+//        StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+//        try {
+//            Class<?>[] paramClasses = {};
+//            Method getVolumeList = StorageManager.class.getMethod("getVolumeList", paramClasses);
+//            getVolumeList.setAccessible(true);
+//            Object[] params = {};
+//            Object[] invokes = (Object[]) getVolumeList.invoke(storageManager, params);
+//            if (invokes != null) {
+//                StorageInfo info = null;
+//                for (int i = 0; i < invokes.length; i++) {
+//                    Object obj = invokes[i];
+//                    Method getPath = obj.getClass().getMethod("getPath", new Class[0]);
+//                    String path = (String) getPath.invoke(obj, new Object[0]);
+//                    info = new StorageInfo(path);
+//                    File file = new File(info.path);
+//                    if ((file.exists()) && (file.isDirectory()) && (file.canWrite())) {
+//                        Method isRemovable = obj.getClass().getMethod("isRemovable", new Class[0]);
+//                        String state = null;
+//                        try {
+//                            Method getVolumeState = StorageManager.class.getMethod("getVolumeState", String.class);
+//                            state = (String) getVolumeState.invoke(storageManager, info.path);
+//                            info.state = state;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        if (info.isMounted()) {
+//                            info.isRemoveable = ((Boolean) isRemovable.invoke(obj, new Object[0])).booleanValue();
+//                            storagges.add(info);
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        storagges.trimToSize();
+//
+//        return storagges;
+//    }
+
+
+//    static public class StorageInfo {
+//        public String path;
+//        public String state;
+//        public boolean isRemoveable;
+//
+//        public StorageInfo(String path) {
+//            this.path = path;
+//        }
+//
+//        public boolean isMounted() {
+//            return "mounted".equals(state);
+//        }
+//    }
+
+
+    static public String getVersionName(Context context) {
+        String appVersion = "";
+        PackageManager manager = context.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+            appVersion = info.versionName; //version name, set it in build.gradle file.
+            //or [App properties(right click)]-->[open module settings]-->app-->flavors-->version name
+        } catch (Exception e) {
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        return appVersion;
+    }
+
+    static public String getVersionCodeString(Context context) {
+        int appVersionCode = 0;
+        PackageManager manager = context.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+            appVersionCode = info.versionCode; //version name, set it in build.gradle file.
+            //or [App properties(right click)]-->[open module settings]-->app-->flavors-->version name
+        } catch (Exception e) {
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+
+        return KDSUtil.convertIntToString(appVersionCode);
+    }
+    static public boolean isDigitalString(String str)
+    {
+        if (str.isEmpty())
+            return false;
+        for (int i=0; i< str.length(); i++)
+        {
+            if (!Character.isDigit(str.charAt(i)))
+                return false;
+        }
+        return true;
+    }
+
+    static public boolean isValidLongValString(String str)
+    {
+        if (!isDigitalString(str))
+            return false;
+        long l = Long.MAX_VALUE;
+        String s = convertIntToString(l);
+        int len = s.length();
+        if (str.length() > len)
+            return false;
+        return true;
+
+    }
+
+    /**
+     *
+     * @param filePath
+     * @return
+     *  The folder full name, without last /
+     */
+    static public String fileGetFolderFromPath(String filePath)
+    {
+        String s = filePath;
+        int n = s.lastIndexOf("/");
+        if (n <=0) return s;
+        s = s.substring(0, n);
+        return s;
+    }
+
+    /**
+     *
+     * @param filePath
+     * @return
+     *  the file anme only
+     */
+    static public String fileGetFileNameFromPath(String filePath)
+    {
+        String s = filePath;
+        int n = s.lastIndexOf("/");
+        if (n <=0) return s;
+        s = s.substring(n +1 );
+        return s;
+    }
 }

@@ -1,8 +1,10 @@
 
 package com.bematechus.kdslib;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 /**
  *
@@ -70,6 +72,7 @@ public class KDSDataOrder extends KDSData {
     protected KDSDataItems m_items = new KDSDataItems();
     protected Object m_objTag = null;
 
+    protected KDSDataCustomer m_customer = new KDSDataCustomer();
 
     protected  boolean m_bQueueReady = false;  //for expo double bumping while Queue enabled
 
@@ -102,8 +105,8 @@ public class KDSDataOrder extends KDSData {
     public static final int SMS_STATE_PREPARED = 1;
     public static final int SMS_STATE_DONE = 2;
 
-    String m_smsCustomerID = "";
-    String m_smsCustomerPhone = "";
+//    String m_smsCustomerID = "";
+//    String m_smsCustomerPhone = "";
     int m_smsLastState = SMS_STATE_UNKNOWN; //this state has been send to server.
 
     //for SMS. If no expo existed, use it to record which has bumped/(items bumped).
@@ -127,7 +130,12 @@ public class KDSDataOrder extends KDSData {
     /***************************************************************************/
     // for modiy, delete ...
     protected int m_nTransactionType = TRANSTYPE_ADD; //see above definition, don't save it to database
-    
+
+    //kpp1-75
+    protected String m_kdsGUID = KDSUtil.createNewGUID();; //for backoffice. KPP1-75. Use it to identify same order in all stations.
+
+
+
     public enum VALID_ORDER_XML_FIELD
     {
         Name,
@@ -164,6 +172,8 @@ public class KDSDataOrder extends KDSData {
         m_arValidFields = new boolean[VALID_ORDER_XML_FIELD.Count.ordinal()];
        
         resetXmlFieldsValidFlag();
+
+
     }
     public KDSDataOrder(String guid)
     {
@@ -490,8 +500,8 @@ public class KDSDataOrder extends KDSData {
         obj.m_nSmartTimerDelayShowing = m_nSmartTimerDelayShowing;//for smart hidden.
 
         //2.0.50
-        obj.m_smsCustomerID = m_smsCustomerID;
-        obj.m_smsCustomerPhone = m_smsCustomerPhone;
+        //obj.m_smsCustomerID = m_smsCustomerID;
+        //obj.m_smsCustomerPhone = m_smsCustomerPhone;
         obj.m_smsLastState = m_smsLastState;
         //2.1.15
         obj.m_smsOriginalOrderGoToStations = m_smsOriginalOrderGoToStations;
@@ -499,6 +509,9 @@ public class KDSDataOrder extends KDSData {
         obj.m_dtQueueStateTime = m_dtQueueStateTime;
 
         this.getOrderMessages().copyTo(obj.getOrderMessages());
+        this.getCustomer().copyTo(obj.getCustomer());
+
+        obj.m_kdsGUID = m_kdsGUID;
     }
     /***************************************************************************
      * 
@@ -531,7 +544,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -560,10 +573,12 @@ public class KDSDataOrder extends KDSData {
             + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"//2.0.8, for auto bump time
             + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"//2.0.34, for queue state time
             + ",0" //2.0.34, use it for queue status sort.
-            + ",'" + getSMSCustomerID() +"'" //2.0.50, for sms customer id
-            +",'" + m_smsCustomerPhone + "'" //2.0.50 for sms customer phone number
+            + ",'" + m_customer.getID() +"'" //2.0.50, for sms customer id
+            +",'" + m_customer.getPhone() + "'" //2.0.50 for sms customer phone number
             + "," +  KDSUtil.convertFloatToString(m_smsLastState)  ////2.0.50 for sms state.//-1=unknown, 0 = new, 1 = prepared, 2 = done
             + ",'" + m_smsOriginalOrderGoToStations +"'" //r4
+            +",'" + m_customer.getName() + "'" //r5
+            +",'" + getKDSGuid() + "'" //r6
             +  ")";
         return sql;
          
@@ -574,39 +589,55 @@ public class KDSDataOrder extends KDSData {
     {
         if (tblName.isEmpty())
             tblName = "orders";
-        String sql = "insert into "
-                + tblName
-                + " ("
-                + "GUID,Name,Waiter,Start,ToTbl,"
-                + "Station,Screen,POS,OrderType,Dest,"
-                + "CustMsg,QueueMsg,Parked,IconIdx,EvtFired,PrepStart,"
-                + "Status,SortIdx,OrderDelay,fromprimary)"
-                + " values ("
-                + "'" + getGUID() + "'"
-                + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
-                + ",'" + fixSqliteSingleQuotationIssue( getWaiterName()) + "'"
-                + ",'" + KDSUtil.convertDateToString( getStartTime()) +"'"
-                + ",'" + fixSqliteSingleQuotationIssue(  getToTable()) +"'"
+        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
+            String sql = "insert into "
+                    + tblName
+                    + " ("
+                    + "GUID,Name,Waiter,Start,ToTbl,"
+                    + "Station,Screen,POS,OrderType,Dest,"
+                    + "CustMsg,QueueMsg,Parked,IconIdx,EvtFired,PrepStart,"
+                    + "Status,SortIdx,OrderDelay,fromprimary)"
+                    + " values ("
+                    + "'" + getGUID() + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getOrderName()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getWaiterName()) + "'"
+                    + ",'" + KDSUtil.convertDateToString(getStartTime()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getToTable()) + "'"
 
-                + ",'" + fixSqliteSingleQuotationIssue(  getPCKDSNumber() )+ "'"
-                + ","+ KDSUtil.convertIntToString(getScreen())
-                + ",'" +fixSqliteSingleQuotationIssue(  getFromPOSNumber() )+"'"
-                + ",'" + fixSqliteSingleQuotationIssue(  getOrderType()) + "'"
-                + ",'" +fixSqliteSingleQuotationIssue(  getDestination()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getPCKDSNumber()) + "'"
+                    + "," + KDSUtil.convertIntToString(getScreen())
+                    + ",'" + fixSqliteSingleQuotationIssue(getFromPOSNumber()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getOrderType()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getDestination()) + "'"
 
-                + ",'" +fixSqliteSingleQuotationIssue(  getCustomMsg()) + "'"
-                + ",'" +fixSqliteSingleQuotationIssue(  getQueueMessage()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getCustomMsg()) + "'"
+                    + ",'" + fixSqliteSingleQuotationIssue(getQueueMessage()) + "'"
 
-                + "," + KDSUtil.convertIntToString(getParked())
-                + "," +  KDSUtil.convertIntToString(getIconIdx())
-                + "," +  KDSUtil.convertIntToString(getOrderEvtFired())
-                + ",'" + KDSUtil.convertDateToString(getPreparationStartTime()) +"'"
-                + "," + KDSUtil.convertIntToString(getStatus())
-                + "," + KDSUtil.convertIntToString(getSortIdx())
-                + "," + KDSUtil.convertFloatToString(getOrderDelay())
-                + ",0 )";
-        return sql;
+                    + "," + KDSUtil.convertIntToString(getParked())
+                    + "," + KDSUtil.convertIntToString(getIconIdx())
+                    + "," + KDSUtil.convertIntToString(getOrderEvtFired())
+                    + ",'" + KDSUtil.convertDateToString(getPreparationStartTime()) + "'"
+                    + "," + KDSUtil.convertIntToString(getStatus())
+                    + "," + KDSUtil.convertIntToString(getSortIdx())
+                    + "," + KDSUtil.convertFloatToString(getOrderDelay())
+                    + ",0 )";
+            return sql;
+        }
+        else
+        {
+            Date dt = new Date();
+            String strDt = KDSUtil.convertDateToString(dt);
 
+            String sql = "insert into "
+                    + tblName
+                    + " ( GUID,Screen,Start,finishedtime)"
+                    + " values ("
+                    + "'" + getGUID() + "'"
+                    + "," + KDSUtil.convertIntToString(getScreen())
+                    + ",'" + KDSUtil.convertDateToString(getStartTime()) + "'"
+                    + ",'" + strDt +"' )";
+            return sql;
+        }
 
     }
 
@@ -751,8 +782,9 @@ public class KDSDataOrder extends KDSData {
      * @return
      *  3 + nItemsCount * 6;
      */
-    public static KDSDataOrder createTestOrder(String orderName, int nItemsCount, String toStations)
+    public static KDSDataOrder createTestOrder2(String orderName, int nItemsCount, String toStations, int toScreen)
     {
+
         KDSDataOrder c = new KDSDataOrder();
         c.setCustomMsg("Customer message");
         c.setQueueMessage("Queue message");
@@ -762,7 +794,7 @@ public class KDSDataOrder extends KDSData {
         c.setOrderType("RUSH");
         c.setPCKDSNumber("1");
         c.setPreparationStartTime(new Date());
-        c.setScreen(0);
+        c.setScreen(toScreen);
         c.setWaiterName("David Wong");
         c.setSortIdx(-1);
         c.setStartTime(new Date());
@@ -784,8 +816,7 @@ public class KDSDataOrder extends KDSData {
         }
         c.setOrderMessages(msg);
         
-        for (int i=0; i< nItemsCount; i++)
-        {
+        for (int i=0; i< nItemsCount; i++) {
             KDSDataItem item = new KDSDataItem(c.getGUID());
             item.setAddOnGroup(-1);
 //            if (i ==2)
@@ -794,11 +825,19 @@ public class KDSDataOrder extends KDSData {
             //item.setFG(Color.BLACK);
             item.setCategory("Category #2");
             //item.setDescription("item #" + KDSUtil.convertIntToString(i));
-            item.setDescription("item #" + KDSUtil.convertIntToString(i));
+            item.setDescription("item " + KDSUtil.convertIntToString(i));
             item.setItemName("itemname" + KDSUtil.convertIntToString(i));
             item.setToStationsString(toStations);
             item.setOrderID(-1);
             item.setQty(2);
+            for (int n = 0; n < 1; n++)
+            {
+                KDSDataModifier m = new KDSDataModifier();
+                m.setDescription("Modifier $" + KDSUtil.convertIntToString(n));
+                m.setCondimentName("Modifier $" + KDSUtil.convertIntToString(n));
+                m.setItemGUID(item.getGUID());
+                item.getModifiers().addComponent(m);
+            }
             //item.setToStationsString("");
             KDSDataMessages msgs = new KDSDataMessages();
             for (int n=0; n<1; n++)
@@ -810,7 +849,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item #"+ KDSUtil.convertIntToString(i) +" Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -965,7 +1004,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<1; j++)
@@ -1048,7 +1087,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -1133,7 +1172,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -1229,7 +1268,7 @@ public class KDSDataOrder extends KDSData {
                 m.setMessage("Item Message " + KDSUtil.convertIntToString(n));
                 msgs.addComponent(m);
             }
-            item.setMessages(msgs);
+            item.setPreModifiers(msgs);
 
             //condiments
             for (int j=0; j<2; j++)
@@ -1345,11 +1384,16 @@ public class KDSDataOrder extends KDSData {
      */
     public String createXml()
     {
+        //TimeDog td = new TimeDog();
         KDSXML xml = new KDSXML();
         xml.new_doc_with_root( KDSConst.KDS_Str_Transaction);
         outputOrderInformationToXML(xml, true);
+        //td.debug_print_Duration("createXml-1");
         this.getItems().outputXml(xml);
-        return xml.get_xml_string();
+        //td.debug_print_Duration("createXml-2");
+        String s = xml.get_xml_string();
+        //td.debug_print_Duration("createXml");
+        return s;
     }
 
 //    public boolean outputToXml(KDSXML xml)
@@ -1383,6 +1427,8 @@ public class KDSDataOrder extends KDSData {
             pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_QUEUE_READY, getQueueReady()?"1":"0");
 
             //pxml->xmj_getFrstGroup(_T("Order"));
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_KDSGUID,this.getKDSGuid(), false);
+            //
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
             String s;
@@ -1429,8 +1475,10 @@ public class KDSDataOrder extends KDSData {
 
             //2.0.50 SMS feature
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER, true);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getSMSCustomerID(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER,this.getSMSCustomerPhone(), false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getCustomer().getID(), false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PHONE,this.getCustomer().getPhone(), false);
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_NAME,this.getCustomer().getName(), false);
+            pxml.back_to_parent(); //kpp1-222
             //
 
             //2.5.4.19 add received time and restore time
@@ -2432,41 +2480,41 @@ get the total qty of all found items
 
 
 
-    /**
-     * 2.0.50
-     * @return
-     */
-    public String getSMSCustomerID()
-    {
-        return m_smsCustomerID;
-    }
+//    /**
+//     * 2.0.50
+//     * @return
+//     */
+//    public String getSMSCustomerID()
+//    {
+//        return m_smsCustomerID;
+//    }
 
-    /**
-     * 2.0.50
-     * @param customerID
-     */
-    public void setSMSCustomerID(String customerID)
-    {
-        m_smsCustomerID = customerID;
-    }
+//    /**
+//     * 2.0.50
+//     * @param customerID
+//     */
+//    public void setSMSCustomerID(String customerID)
+//    {
+//        m_smsCustomerID = customerID;
+//    }
 
-    /**
-     * 2.0.50 SMS feature
-     * @return
-     */
-    public String getSMSCustomerPhone()
-    {
-        return m_smsCustomerPhone;
-    }
+//    /**
+//     * 2.0.50 SMS feature
+//     * @return
+//     */
+//    public String getSMSCustomerPhone()
+//    {
+//        return m_smsCustomerPhone;
+//    }
 
-    /**
-     * 2.0.50 SMS feature
-     * @param phone
-     */
-    public void setSMSCustomerPhone(String phone)
-    {
-        m_smsCustomerPhone = phone;
-    }
+//    /**
+//     * 2.0.50 SMS feature
+//     * @param phone
+//     */
+//    public void setSMSCustomerPhone(String phone)
+//    {
+//        m_smsCustomerPhone = phone;
+//    }
 
     /**
      * 2.0.50 SMS feature
@@ -2489,16 +2537,21 @@ get the total qty of all found items
     public int getFinishedItemsCount()
     {
         int nFinished = 0;
-        int ncount = this.getItems().getCount();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSDataItem item = this.getItems().getItem(i);
-            if (item.getLocalBumped() ||
-               (!item.getBumpedStationsString().isEmpty()) ||
-                item.isReady() ||
-                item.isMarked() )
-                    nFinished ++;
+        try {
+            int ncount = this.getItems().getCount();
+            for (int i = 0; i < ncount; i++) {
+                KDSDataItem item = this.getItems().getItem(i);
+                if (item.getLocalBumped() ||
+                        (!item.getBumpedStationsString().isEmpty()) ||
+                        item.isReady() ||
+                        item.isMarked())
+                    nFinished++;
 
+
+            }
+        }
+        catch ( Exception e)
+        {
 
         }
         return nFinished;
@@ -2780,4 +2833,196 @@ get the total qty of all found items
             return s;
         }
     }
+
+    /**
+     * Just contains ID in it. Order ID, item ID. Without condiments ID.
+     * It is for order bump notification. Make the data flow shortly
+     * format:
+     *  <Order>
+     *      <ID><ID/>
+     *      <Item>
+     *          <ID></ID>
+     *      </Item>
+     *      <Item>
+     *         <ID></ID>
+     *      </Item>
+     *  </Order>
+     * @return
+     */
+    public String createIDXml()
+    {
+        //TimeDog td = new TimeDog();
+        KDSXML xml = new KDSXML();
+        xml.new_doc_with_root( KDSConst.KDS_Str_Transaction);
+        xml.back_to_root();
+        xml.getFirstGroup(KDSConst.KDS_Str_Transaction);
+
+        xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDER, true);
+
+        xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
+        //xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
+
+        for (int i=0; i< getItems().getCount(); i++)
+        {
+            xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ITEM, true);
+            xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,getItems().getItem(i).getItemName(), false);
+            xml.back_to_parent();
+        }
+
+        String s = xml.get_xml_string();
+
+        return s;
+    }
+
+    public String makeQueueDurationString() {
+        Date begin = getQueueStateTime();
+        return makeDurationString(begin);
+    }
+
+    public void setItemsTransferedFromStationID(String fromStationID)
+    {
+        for (int i=0; i< getItems().getCount(); i++)
+        {
+            getItems().getItem(i).setTransferedFromStationID(fromStationID);
+        }
+    }
+
+    public KDSDataCustomer getCustomer()
+    {
+        return m_customer;
+    }
+
+    public void setKDSGuid(String guid)
+    {
+        m_kdsGUID = guid;
+    }
+    public String getKDSGuid()
+    {
+        return m_kdsGUID;
+    }
+
+    static public String getSMSStateString(int nState)
+    {
+        switch (nState)
+        {
+            case SMS_STATE_NEW:
+                return "New";
+            case SMS_STATE_PREPARED:
+                return "Prepared";
+            case SMS_STATE_DONE:
+                return "Done";
+            case SMS_STATE_UNKNOWN:
+                return "Unknown";
+            default:
+                return "Unknown";
+        }
+    }
+
+    public boolean isAllItemsBumpedInLocal()
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
+    }
+
+    public static KDSDataOrder createTestOrder(String orderName, int nItemsCount, String toStations, int toScreen)
+    {
+
+        String[] arItemsDescription = {"Cheese burger;Without cheese",         "Zinger burger",            "Extra tasty crispy",       "Fries;10 tomato ketchup",            "Chikcen Loaf",
+                                        "Original Recipe",      "Sundae;With strawberry;With blueberry","Orange juice",    "7-Up",                     "Mirinda Orange",
+                                        "Roast Chicken Wings", "Fresh Grade Legs",          "Chicken Popcorn",          "Mashed Potatoes", "Corn Salad" ,
+                                       "Egg tart",              "Ice-cream cone",           "Coffee;Without sugar",                       "Black Tea;With milk",        "Pepsi-Cola;Without ice" };
+
+        KDSDataOrder c = new KDSDataOrder();
+        c.setCustomMsg("Customer message");
+        c.setQueueMessage("Queue message");
+        c.setDestination("Fast food");
+        c.setFromPOSNumber("5");
+        c.setOrderName(orderName);
+        c.setOrderType("RUSH");
+        c.setPCKDSNumber("1");
+        c.setPreparationStartTime(new Date());
+        c.setScreen(toScreen);
+        c.setWaiterName("Jack");
+        c.setSortIdx(-1);
+        c.setStartTime(new Date());
+        c.setStatus(0);
+        c.setToTable("Tbl #4");
+        c.setTrackerID("2");
+        c.setPagerID("12");
+        c.setIconIdx(1);
+
+        KDSDataMessages msg = new KDSDataMessages();
+        for (int n=0; n<1; n++)
+        {
+            KDSDataMessage m = new KDSDataMessage();
+            m.setComponentGUID(c.getGUID());
+            m.setForComponentType(KDSDataMessage.FOR_Order);
+
+            m.setMessage("VIP customer");//Order Message " + KDSUtil.convertIntToString(n));
+            msg.addComponent(m);
+        }
+        c.setOrderMessages(msg);
+        Random r = new Random();
+        for (int i=0; i< nItemsCount; i++) {
+            KDSDataItem item = new KDSDataItem(c.getGUID());
+            item.setAddOnGroup(-1);
+//            if (i ==2)
+//                item.setHidden(true); //test
+            //item.setBG(Color.white);
+            //item.setFG(Color.BLACK);
+            item.setCategory("Category #2");
+
+            int index = r.nextInt(arItemsDescription.length);
+            String s = arItemsDescription[index];
+            ArrayList<String> names = KDSUtil.spliteString(s, ";");
+
+            //item.setDescription("item #" + KDSUtil.convertIntToString(i));
+            item.setDescription(names.get(0));
+            item.setItemName("itemname" + KDSUtil.convertIntToString(i));
+            item.setToStationsString(toStations);
+            item.setOrderID(-1);
+            item.setQty(2);
+//            for (int n = 0; n < 1; n++)
+//            {
+//                KDSDataModifier m = new KDSDataModifier();
+//                m.setDescription("Modifier $" + KDSUtil.convertIntToString(n));
+//                m.setCondimentName("Modifier $" + KDSUtil.convertIntToString(n));
+//                m.setItemGUID(item.getGUID());
+//                item.getModifiers().addComponent(m);
+//            }
+            //item.setToStationsString("");
+//            KDSDataMessages msgs = new KDSDataMessages();
+//            for (int n=0; n<1; n++)
+//            {
+//                KDSDataMessage m = new KDSDataMessage();
+//                m.setComponentGUID(item.getGUID());
+//                m.setForComponentType(KDSDataMessage.FOR_Item);
+//
+//                m.setMessage("Item #"+ KDSUtil.convertIntToString(i) +" Message " + KDSUtil.convertIntToString(n));
+//                msgs.addComponent(m);
+//            }
+//            item.setPreModifiers(msgs);
+
+            //condiments
+            if (names.size() >1)
+            for (int j=1; j<names.size(); j++)
+            {
+                KDSDataCondiment d = new KDSDataCondiment(item.getGUID());
+                d.setCondimentName("condiment $" + KDSUtil.convertIntToString(j));
+                d.setDescription(names.get(j));
+                item.getCondiments().addComponent(d);
+            }
+            c.getItems().addComponent(item);
+
+        }
+        return c;
+    }
+
+
 }

@@ -7,7 +7,7 @@
 
     <com.bematechus.kds.KDSPreferenceFontPicker
         android:key="caption_normal"
-        android:defaultValue="/system/fonts/DroidSans.ttf,@color/caption_bg,@color/caption_fg,12"
+        android:defaultValue="default_font,@color/caption_bg,@color/caption_fg,normal_size"
         android:title="@string/pref_order_caption_normal_font"
         app:supportsColor="true"/>
 
@@ -32,7 +32,7 @@
             android:positiveButtonText="@string/ok"
             android:negativeButtonText="@string/cancel"
             android:maxLines="1" />
-        <com.bematechus.kds.KDSPreferenceColorPicker
+        <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="caption_stage0_color"
             android:defaultValue="@color/stage0_bg"
             android:dependency="caption_enable_stage0"
@@ -55,7 +55,7 @@
             android:positiveButtonText="@string/ok"
             android:negativeButtonText="@string/cancel"
             android:maxLines="1" />
-        <com.bematechus.kds.KDSPreferenceColorPicker
+        <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="caption_stage1_color"
             android:defaultValue="@color/stage1_bg"
             android:dependency="caption_enable_stage1"
@@ -78,7 +78,7 @@
             android:positiveButtonText="@string/ok"
             android:negativeButtonText="@string/cancel"
             android:maxLines="1" />
-        <com.bematechus.kds.KDSPreferenceColorPicker
+        <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="caption_stage2_color"
             android:defaultValue="@color/stage2_bg"
             android:dependency="caption_enable_stage2"

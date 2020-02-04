@@ -3,6 +3,8 @@ package com.bematechus.kdslib;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 /**
  *  >>>>>>> SAME AS KDS APP FILE <<<<<<<
@@ -56,7 +58,7 @@ public class KDSStationsRelation extends KDSStationIP {
     }
     public void reset()
     {
-        m_nFunction = SettingsBase.StationFunc.Normal;
+        m_nFunction = SettingsBase.StationFunc.Prep;
         // m_strStationID = "";
         m_strExpStations = "";
         m_strSlaveStations = "";
@@ -80,7 +82,7 @@ public class KDSStationsRelation extends KDSStationIP {
         switch (func)
         {
 
-            case Normal:
+            case Prep:
                 break;
             case Expeditor:
                 setExpStations("");
@@ -284,7 +286,7 @@ public class KDSStationsRelation extends KDSStationIP {
      *      1,2,3,4
      * @return
      */
-    static ArrayList<KDSStationIP> parseStationsString(String strStations)
+    public static ArrayList<KDSStationIP> parseStationsString(String strStations)
     {
         ArrayList<String> ar = KDSUtil.spliteString(strStations, ",");
         int ncount = ar.size();
@@ -757,4 +759,76 @@ public class KDSStationsRelation extends KDSStationIP {
 
     }
 
+
+    static public void sortStationsRelation(List<KDSStationsRelation> ar)
+    {
+        Collections.sort(ar, new Comparator<KDSStationIP>() {
+            @Override
+            public int compare(KDSStationIP o1, KDSStationIP o2) {
+
+                return (o1.getID().compareTo(o2.getID()));
+
+            }
+        });
+
+    }
+
+    /**
+     * find give station queue-expeditors
+     * @param arRelations
+     * @param stationID
+     * @return
+     */
+    static ArrayList<KDSStationIP> findQueueExpOfStation(ArrayList<KDSStationsRelation> arRelations, String stationID)
+    {
+        // ArrayList<KDSTCPStation> ar = new ArrayList<KDSTCPStation>();
+        KDSStationsRelation relation = findStation(arRelations, stationID);
+        if (relation == null)
+            return new ArrayList<KDSStationIP>();
+        ArrayList<KDSStationIP> arReturn = parseStationsString(relation.getExpStations());
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+        for (int i=0; i< arReturn.size(); i++)
+        {
+            KDSStationsRelation r = findStation(arRelations, arReturn.get(i).getID());
+            if (r == null) continue; //KPP1-159
+            if (r.getFunction() == SettingsBase.StationFunc.Queue_Expo)
+                ar.add(arReturn.get(i));
+        }
+        //get station ip and port settings.
+        return setIpFromSettenRelations(arRelations, ar);
+
+    }
+
+    /**
+     *
+     * @param strStations
+     *  stations:
+     *         format: 1, 3, 5,12
+     * @param oldStationID
+     * @param newStationID
+     * @return
+     */
+    public static String replaceStation(String strStations, String oldStationID, String newStationID)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(strStations, ",");
+        boolean bchanged = false;
+        for (int i=0; i< ar.size(); i++)
+        {
+            String s = ar.get(i);
+            s = s.trim();
+            if (s.equals(oldStationID))
+            {
+                bchanged = true;
+                ar.set(i, newStationID);
+            }
+
+        }
+        if (bchanged)
+        {
+            return makeStationsString(ar);
+        }
+        else
+            return strStations;
+
+    }
 }

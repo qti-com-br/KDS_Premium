@@ -181,7 +181,6 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             KDSSmbFile.smb_setEnableSmbV2(bEnableSmbV2);
         }
 
-
     }
 
     static final private int HEADERS_WIDTH = 200;
@@ -398,6 +397,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             bindPreferenceSummaryToValue(findPreference("general_router_primary"));
             bindPreferenceSummaryToValue(findPreference("general_router_slave"));
             bindPreferenceSummaryToValue(findPreference("kds_general_language"));
+            bindPreferenceSummaryToValue(findPreference("notification_minutes"));
 
             KDSRouterSettings.KDSDataSource dataType =getDataSourceType(pref);
 
@@ -407,6 +407,13 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             m_timer.start(this.getActivity(), this, 2000);
             boolean m_bDisableChangedEvent = false;
 
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
         }
         private KDSRouterSettings.KDSDataSource getDataSourceType(SharedPreferences prefs)
         {
@@ -716,6 +723,13 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
             pref.registerOnSharedPreferenceChangeListener(this);
 
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
         {

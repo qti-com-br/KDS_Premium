@@ -45,6 +45,8 @@
     <!--android:summary="Order title contents"-->
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$CaptionPreferenceFragment"
         android:title="@string/pref_kds_caption_title" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$FooterPreferenceFragment"
+        android:title="@string/pref_kds_footer_title" />
     <!--android:summary="Color for RUSH/FIRE order"-->
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$HighlightPreferenceFragment"
         android:title="@string/pref_kds_highlight_title" />
@@ -64,9 +66,9 @@
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$MessagePreferenceFragment"
         android:title="@string/pref_kds_premsg_title" />
     <!--android:summary="Footer font,color"-->
-    <header android:title="@string/pref_kds_category_footer" />
-    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$FooterPreferenceFragment"
-        android:title="@string/pref_kds_footer_title" />
+    <!--<header android:title="@string/pref_kds_category_footer" />-->
+    <!--<header android:fragment="com.bematechus.kds.KDSUIConfiguration$FooterPreferenceFragment"-->
+        <!--android:title="@string/pref_kds_footer_title" />-->
     <header android:title="@string/pref_kds_category_operations" />
     <!--android:summary="Bump confirmation, reserved days"-->
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$BumpingPreferenceFragment"
@@ -77,6 +79,8 @@
     <!--android:summary="Touch buttons visible/invisible"-->
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TouchPreferenceFragment"
         android:title="@string/pref_kds_touch_title" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TransferPreferenceFragment"
+        android:title="@string/pref_kds_transfer_title" />
     <!--android:summary="Print ticket format,port."-->
 
     <!--<header android:title="@string/pref_kds_category_accessories" />-->

@@ -1,13 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
-    defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-    }
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+//    defaultConfig {
+//        minSdkVersion 19
+//        targetSdkVersion 22
+//        versionCode 1
+//        versionName "1.0"
+//    }
     buildTypes {
         release {
             minifyEnabled false
@@ -38,7 +39,11 @@ android {
             dimension "default"
         }
     }
+    compileOptions {
     buildToolsVersion '28.0.3'
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -50,4 +55,9 @@ dependencies {
     api files('libs/slf4j-api-1.7.25.jar')
     api files('libs/jcifsng-2.1.1.jar')
     api files('libs/jcifs-1.3.18.jar')
+    //def acraVersion = '5.3.0'
+    //implementation "ch.acra:acra-mail:$acraVersion"
+    implementation files('libs/jcifsng-2.1.1.jar')
+    implementation files('libs/slf4j-api-1.7.25.jar')
+    implementation files('libs/bcprov-jdk15on-1.58.jar')
 }

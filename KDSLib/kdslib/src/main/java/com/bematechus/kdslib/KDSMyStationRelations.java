@@ -18,6 +18,7 @@ public class KDSMyStationRelations {
     private Object m_locker = new Object();
     ArrayList<KDSStationIP> m_arExpStations = new ArrayList<KDSStationIP>(); //my expeditor stations
     ArrayList<KDSStationIP> m_arSlaveStations = new ArrayList<KDSStationIP>(); //my slave stations
+    ArrayList<KDSStationIP> m_arQueueExpStations = new ArrayList<KDSStationIP>(); //my queue-expo stations
 
     ArrayList<KDSStationIP> m_arPrimaryOfSlaveBackupStations = new ArrayList<KDSStationIP>(); //who use me as backup station.
     ArrayList<KDSStationIP> m_arPrimaryOfSlaveWorkLoadStations = new ArrayList<KDSStationIP>(); //who use me as work load station.
@@ -45,6 +46,7 @@ public class KDSMyStationRelations {
             //find all stations relations
             m_arExpStations = KDSStationsRelation.findExpOfStation(m_arStationsRelations, stationID);
             m_arSlaveStations = KDSStationsRelation.findSlaveOfStation(m_arStationsRelations, stationID);
+            m_arQueueExpStations = KDSStationsRelation.findQueueExpOfStation(m_arStationsRelations, stationID);
             m_arPrimaryOfSlaveBackupStations =  KDSStationsRelation.findPrimaryWhoUseMeAsBackup(m_arStationsRelations, stationID);
 
             m_arPrimaryOfSlaveWorkLoadStations =  KDSStationsRelation.findPrimaryWhoUseMeAsWorkLoad(m_arStationsRelations, stationID);
@@ -270,7 +272,12 @@ public class KDSMyStationRelations {
 
         ar.addAll(m_arPrimaryOfSlaveWorkLoadStations);
         ar.addAll(m_arPrimaryOfSlaveDuplicatedStations);
+        //add this two, 20190606
 
+        ar.addAll(m_arQueueExpStations);
+        ar.addAll(m_arSlaveStations);
+        //keep unique stations
+        removeDuplicatedStations(ar);
         return ar;
 
     }
@@ -314,7 +321,7 @@ public class KDSMyStationRelations {
      */
     public SettingsBase.StationFunc getStationFunction(String stationID, String stationSlaveID)
     {
-        SettingsBase.StationFunc func = SettingsBase.StationFunc.Normal;
+        SettingsBase.StationFunc func = SettingsBase.StationFunc.Prep;
 
         int ncount =  m_arStationsRelations.size();
         for (int i=0; i< ncount; i++)
@@ -331,7 +338,7 @@ public class KDSMyStationRelations {
         switch (func)
         {
 
-            case Normal:
+            case Prep:
 
             case Expeditor:
 
@@ -355,7 +362,7 @@ public class KDSMyStationRelations {
         switch (myStationFunction)
         {
 
-            case Normal:
+            case Prep:
             case Expeditor:
             case Queue:
                 return myStationFunction;
@@ -383,7 +390,7 @@ public class KDSMyStationRelations {
 
         if (!parentStationID.isEmpty())
             return getStationFunction(parentStationID, stationID);
-        return SettingsBase.StationFunc.Normal;
+        return SettingsBase.StationFunc.Prep;
     }
     public KDSStationsRelation getMyRelations()
     {
@@ -444,7 +451,7 @@ public class KDSMyStationRelations {
         for (int i=0; i< arPrimary.size();i++)
         {
             KDSStationsRelation r= KDSStationsRelation.findStation(m_arStationsRelations,  arPrimary.get(i).getID());
-            if (r.getFunction() == SettingsBase.StationFunc.Normal)
+            if (r.getFunction() == SettingsBase.StationFunc.Prep)
                 return r.getID();
         }
         return "";
@@ -464,7 +471,7 @@ public class KDSMyStationRelations {
         {
 
             relation = m_arStationsRelations.get(i);
-            if (relation.getFunction() != SettingsBase.StationFunc.Normal)
+            if (relation.getFunction() != SettingsBase.StationFunc.Prep)
                 continue;
             if (relation.getID().equals(expoStationID))
                 continue;
@@ -480,5 +487,106 @@ public class KDSMyStationRelations {
 
         }
         return arReturn;
+    }
+
+    public ArrayList<KDSStationIP> getQueueExpoStations()
+    {
+        return m_arQueueExpStations;
+
+    }
+
+    /**
+     * check if given station is queue or expo station.
+     *
+     * @param stationID
+     * @return
+     */
+    public boolean isQueueExpoStation(String stationID)
+    {
+        KDSStationsRelation station =  KDSStationsRelation.findStation(m_arStationsRelations, stationID);
+        if (station == null)
+            return false;
+        return (station.getFunction() == SettingsBase.StationFunc.Queue ||
+                station.getFunction() == SettingsBase.StationFunc.Queue_Expo ||
+                station.getFunction() == SettingsBase.StationFunc.Expeditor);
+    }
+
+    public void removeDuplicatedStations(ArrayList<KDSStationIP> ar)
+    {
+        ArrayList<KDSStationIP> arUnique = new ArrayList<>();
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (!existedInStationsArrary(arUnique, ar.get(i)))
+            {
+                arUnique.add(ar.get(i));
+            }
+        }
+        ar.clear();
+        ar.addAll(arUnique);
+
+    }
+    private boolean existedInStationsArrary(ArrayList<KDSStationIP> ar, KDSStationIP station)
+    {
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (ar.get(i).getID().equals(station.getID()))
+                return true;
+        }
+        return false;
+    }
+
+    public ArrayList<KDSStationIP> getAllStationsNeedToConnect(ArrayList<String> offlineStations)
+    {
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+        ar.addAll(m_arExpStations);
+        ar.addAll(m_arPrimaryOfSlaveMirrorStations);
+        ar.addAll(m_arPrimaryOfSlaveBackupStations);
+
+        ar.addAll(m_arPrimaryOfSlaveWorkLoadStations);
+        ar.addAll(m_arPrimaryOfSlaveDuplicatedStations);
+        //add this two, 20190606
+
+        ar.addAll(m_arQueueExpStations);
+        ar.addAll(m_arSlaveStations);
+        for (int i=0; i< offlineStations.size(); i++)
+        {
+            KDSStationsRelation r = KDSStationsRelation.findStation(m_arStationsRelations,offlineStations.get(i));
+            if (r != null)
+                ar.add(r);
+        }
+
+        //keep unique stations
+        removeDuplicatedStations(ar);
+        return ar;
+
+    }
+
+    /**
+     * return all stations that relate to me.
+     * For check them offline.
+     * @return
+     */
+    public ArrayList<KDSStationIP> getAllAttachedStations()
+    {
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+        ar.addAll(getSlaveStations());
+        ar.addAll(getExpStations());
+        return ar;
+    }
+
+    /**
+     * check if given station existed in relationship table.
+     * for KPP1-171
+     * @param stationID
+     * @return
+     */
+    public boolean isExistedInRelationshipTable(String stationID)
+    {
+        for (int i=0; i<m_arStationsRelations.size(); i++)
+        {
+            if (m_arStationsRelations.get(i).getID().equals(stationID))
+                return true;
+        }
+        return false;
     }
 }
