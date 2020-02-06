@@ -4281,7 +4281,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (m_queueView == null) return;
-        m_queueView.showOrders(this.getKDS().getUsers().getUserA().getOrders());
+        KDSDataOrders ordersA = this.getKDS().getUsers().getUserA().getOrders();
+
+        KDSDataOrders ordersB = null;
+        if (getKDS().getUsers().getUserB() != null)
+            ordersB = this.getKDS().getUsers().getUserB().getOrders();
+        m_queueView.showOrders(getKDS().getUsers());//ordersA, ordersB);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -5607,7 +5612,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         setupGuiByMode(GUI_MODE.Queue);
 
-        getKDS().getUsers().setSingleUserMode(bSetAllOrdersToUserAInDatabase);
+        //kpp1-288, I start to pass two user orders to queue view, so don't need following function.
+        //getKDS().getUsers().setSingleUserMode(bSetAllOrdersToUserAInDatabase);
         m_queueView.updateSettings(getKDS().getSettings());
 
         m_uiUserA.showSummaryAlways( KDSUser.USER.USER_A);
@@ -5620,6 +5626,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         initStationGeneralSteps();
         reinitQueue(true);
+        //call this function again, as the queue conflict with tab
+        init_common_in_create_and_pref_changed(); //kpp1-288, the screen is not shown when tab enabled and queue enabled
 
     }
 
@@ -6071,15 +6079,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                 break;
             case Queue:
-                boolean isMultipleUserMode = getKDS().isMultpleUsersMode();
+                //boolean isMultipleUserMode = getKDS().isMultpleUsersMode();
                 getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Queue);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
                 reinitQueue(false);
-                if (isMultipleUserMode)
-                    getKDS().loadAllActiveOrdersNoMatterUsers();//kpp1-272
+                //if (isMultipleUserMode)
+                //    getKDS().loadAllActiveOrdersNoMatterUsers();//kpp1-272
                 refreshTabSort();
 
                 break;

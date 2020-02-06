@@ -74,7 +74,7 @@ public class TabDisplay {
             if (m_arData.get(i).getFunc() == KDSSettings.TabFunction.Orders) {
                 m_eventsReceiver.onTabClicked(m_arData.get(i));
                 ((MyAdapter)m_lstTab.getAdapter()).setSelected(m_arData.get(i));
-
+                changeDisplayMode(m_arData.get(i));//kpp1-288
                 return ;
             }
         }

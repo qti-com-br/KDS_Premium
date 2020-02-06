@@ -413,7 +413,16 @@ public class KDSDataOrders extends KDSDataArray {
                                 KDSDataOrder c2 = (KDSDataOrder) o2;
                                 String dt1 = c1.makeDurationString();
                                 String dt2 = c2.makeDurationString();
-                                return dt1.compareTo(dt2);
+                                int n = dt1.compareTo(dt2);
+                                if (n ==0)
+                                {
+                                    String name1 = c1.getOrderName();//.makeDurationString();
+                                    String name2 = c2.getOrderName();
+                                    return compareOrderNames(name1, name2);
+
+                                }
+                                else
+                                    return n;
                             }
                         }
                 );
@@ -428,7 +437,15 @@ public class KDSDataOrders extends KDSDataArray {
                                 String dt1 = c1.makeDurationString();
                                 String dt2 = c2.makeDurationString();
                                 int nresult = dt1.compareTo(dt2);
-                                return (-1) * nresult;
+                                if (nresult ==0)
+                                {
+                                    String name1 = c1.getOrderName();//.makeDurationString();
+                                    String name2 = c2.getOrderName();
+                                    return compareOrderNames(name1, name2);
+
+                                }
+                                else
+                                    return (-1) * nresult;
                             }
                         }
                 );
@@ -444,21 +461,22 @@ public class KDSDataOrders extends KDSDataArray {
                                 KDSDataOrder c2 = (KDSDataOrder) o2;
                                 String name1 = c1.getOrderName();//.makeDurationString();
                                 String name2 = c2.getOrderName();
-                                if (KDSUtil.isValidLongValString(name1) && KDSUtil.isValidLongValString(name2))
-                                {
-                                    long order1 = KDSUtil.convertStringToLong(name1, -1);
-                                    long order2 = KDSUtil.convertStringToLong(name2, -1);
-                                    int nresult = 0;//name1.compareTo( name2 ) ;
-                                    if (order1 > order2)
-                                        nresult = 1;
-                                    else if (order1 < order2)
-                                        nresult = -1;
-                                    return nresult;
-
-                                }
-                                else {
-                                    return name1.compareTo(name2);
-                                }
+                                return compareOrderNames(name1, name2);
+//                                if (KDSUtil.isValidLongValString(name1) && KDSUtil.isValidLongValString(name2))
+//                                {
+//                                    long order1 = KDSUtil.convertStringToLong(name1, -1);
+//                                    long order2 = KDSUtil.convertStringToLong(name2, -1);
+//                                    int nresult = 0;//name1.compareTo( name2 ) ;
+//                                    if (order1 > order2)
+//                                        nresult = 1;
+//                                    else if (order1 < order2)
+//                                        nresult = -1;
+//                                    return nresult;
+//
+//                                }
+//                                else {
+//                                    return name1.compareTo(name2);
+//                                }
                             }
                         }
                 );
@@ -472,23 +490,26 @@ public class KDSDataOrders extends KDSDataArray {
                                 KDSDataOrder c2 = (KDSDataOrder) o2;
                                 String name1 = c1.getOrderName();//.makeDurationString();
                                 String name2 = c2.getOrderName();
-                                if (KDSUtil.isValidLongValString(name1) && KDSUtil.isValidLongValString(name2))
-                                {
-                                    long order1 = KDSUtil.convertStringToLong(name1, -1);
-                                    long order2 = KDSUtil.convertStringToLong(name2, -1);
-                                    int nresult = 0;//name1.compareTo( name2 ) ;
-                                    if (order1 > order2)
-                                        nresult = -1;
-                                    else if (order1 < order2)
-                                        nresult = 1;
-                                    return nresult;
+                                int nresult = compareOrderNames(name1, name2);
+                                return (-1)*nresult;
 
-                                }
-                                else {
-
-                                    int nresult = name1.compareTo(name2);
-                                    return (-1) * nresult;
-                                }
+//                                if (KDSUtil.isValidLongValString(name1) && KDSUtil.isValidLongValString(name2))
+//                                {
+//                                    long order1 = KDSUtil.convertStringToLong(name1, -1);
+//                                    long order2 = KDSUtil.convertStringToLong(name2, -1);
+//                                    int nresult = 0;//name1.compareTo( name2 ) ;
+//                                    if (order1 > order2)
+//                                        nresult = -1;
+//                                    else if (order1 < order2)
+//                                        nresult = 1;
+//                                    return nresult;
+//
+//                                }
+//                                else {
+//
+//                                    int nresult = name1.compareTo(name2);
+//                                    return (-1) * nresult;
+//                                }
                             }
                         }
                 );
@@ -1059,5 +1080,24 @@ public class KDSDataOrders extends KDSDataArray {
             return "";
         }
 
+    }
+
+    private int compareOrderNames(String name1, String name2)
+    {
+        if (KDSUtil.isValidLongValString(name1) && KDSUtil.isValidLongValString(name2))
+        {
+            long order1 = KDSUtil.convertStringToLong(name1, -1);
+            long order2 = KDSUtil.convertStringToLong(name2, -1);
+            int nresult = 0;//name1.compareTo( name2 ) ;
+            if (order1 > order2)
+                nresult = 1;
+            else if (order1 < order2)
+                nresult = -1;
+            return nresult;
+
+        }
+        else {
+            return name1.compareTo(name2);
+        }
     }
 }
