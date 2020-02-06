@@ -57,7 +57,7 @@
     <string name="order_state_delivering">Delivering to counter</string>
     <string name="order_state_sold_out">Sold out</string>
     <string name="order_state_others">Others</string>
-    <string name="info_first_message">Bematech KDS messages</string>
+    <string name="info_first_message">Logic Controls KDS messages</string>
     <!--<string name="message">Message</string>-->
     <!--<string name="str_message">Message</string>-->
     <!--<string name="receive_new_relations">It has received new relations setting.</string>-->
@@ -122,7 +122,7 @@
     <!--<string name="no_active_stations">No available station is online</string>-->
     <!--<string name="searching_active_stations">Searching for activate stations …</string>-->
     <string name="error_different_relations">The stations relationship is different with others, please edit stations relationship first.</string>
-    <string name="error_match_mac">Please run it in bematech device.</string>
+    <string name="error_match_mac">Please run it in a Logic Controls\' device.</string>
     <string name="back">Back</string>
     <string name="clear_messages">Clear log</string>
     <string name="cook_started">Cook started</string>
