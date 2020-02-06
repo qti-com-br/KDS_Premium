@@ -297,7 +297,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //auto refresh screen, as the indian station hide orders!!!!
         auto_refresh_screen();
         //testException();
-        checkMyAttachedStationsOffline();
+        //checkMyAttachedStationsOffline(); //kpp1-290
+        checkOfflineStations(); //kpp1-290
 
     }
 
@@ -7129,6 +7130,67 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
         getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
+    }
+
+    /**
+     * KPP1-290,Showing offline status of station
+     * It will  check all offline stations.
+     */
+    public void checkOfflineStations()
+    {
+        ArrayList<KDSStationIP> ar = getKDS().getStationsConnections().getRelations().getAllValidStations();//.getAllAttachedStations();
+        if (ar.size() > 0) {
+            boolean anyOffline = false;
+            ArrayList<String> arOffline = new ArrayList<>();//use it to show offline stations.
+            for (int i = 0; i < ar.size(); i++) {
+                KDSStationActived station = getKDS().getStationsConnections().findActivedStationByID(ar.get(i).getID());
+                if (station == null) {
+                    anyOffline = true;
+                    arOffline.add(ar.get(i).getID());
+                    //break;
+                }
+            }
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            if (anyOffline) {
+                //m_nFlashTitleCounter++;
+                //if ((m_nFlashTitleCounter % 2) == 1) {
+                if (KDSGlobalVariables.getBlinkingStep()) {
+                    bg = ff.getFG();
+                    fg = ff.getBG();
+                }
+            }
+            String text = "";
+            for (int i=0; i< arOffline.size(); i++)
+            {
+                text += "#" + arOffline.get(i);
+                if (i < arOffline.size()-1)
+                    text += ",";
+
+            }
+            if (arOffline.size()>0 ) {
+                text += " " + getString(R.string.offline_warning);
+                getTextView(R.id.txtTitle).setText(text);
+
+            }
+            else
+            {
+                updateTitle();
+            }
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+        }
+        else
+        {
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+            //updateTitle();
+        }
 
     }
 }

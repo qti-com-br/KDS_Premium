@@ -1127,7 +1127,7 @@
     <string name="transfer_by_double_click">Enable double-tap to transfer order</string>
     <string name="transfer_by_double_disable_bump">When this feature is enabled, double-tap bump will be disabled.</string>
     <string name="suspend_bump_while_queue_recover">My queue station is recovering data, bumping will suspend</string>
-    <string name="offline_warning">offline,please check!</string>
+    <string name="offline_warning">OFFLINE,PLEASE CHECK!</string>
     <string name="for_lineitems_display">For line items display only.</string>
     <string name="log_orders">Log received orders xml</string>
     <string name="lineitems_line_height">Line height</string>
