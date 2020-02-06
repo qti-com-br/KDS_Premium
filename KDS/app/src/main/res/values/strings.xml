@@ -57,7 +57,6 @@
     <string name="order_state_delivering">Delivering to counter</string>
     <string name="order_state_sold_out">Sold out</string>
     <string name="order_state_others">Others</string>
-<<<<<<< HEAD
     <string name="info_first_message">Bematech KDS messages</string>
     <!--<string name="message">Message</string>-->
     <!--<string name="str_message">Message</string>-->
@@ -66,16 +65,6 @@
     <!--<string name="confirm">Confirm</string>-->
     <!--<string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>-->
     <!--<string name="confirm_broadcast_relations_changes">Changes have been made in stations relationship, do you want to save and update to all stations?</string>-->
-=======
-    <string name="info_first_message">Logic Controls KDS messages</string>
-    <string name="message">Message</string>
-    <string name="str_message">Message</string>
-    <string name="receive_new_relations">It has received new relations setting.</string>
-    <string name="confirm_remove_relation_station">Do you want to remove station #</string>
-    <string name="confirm">Confirm</string>
-    <string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>
-    <string name="confirm_broadcast_relations_changes">Changes have been made in stations relationship, do you want to save and update to all stations?</string>
->>>>>>> stage
     <string name="confirm_remove_relations_expo">Expeditor station # will be removed from Expo column, are you sure you want to change this?</string>
     <!--<string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>-->
     <!--<string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>-->
@@ -133,7 +122,7 @@
     <!--<string name="no_active_stations">No available station is online</string>-->
     <!--<string name="searching_active_stations">Searching for activate stations …</string>-->
     <string name="error_different_relations">The stations relationship is different with others, please edit stations relationship first.</string>
-    <string name="error_match_mac">Please run it in a Logic Controls\' device.</string>
+    <string name="error_match_mac">Please run it in bematech device.</string>
     <string name="back">Back</string>
     <string name="clear_messages">Clear log</string>
     <string name="cook_started">Cook started</string>
