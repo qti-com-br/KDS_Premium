@@ -24,7 +24,7 @@
         <item>-1</item>
     </string-array>
 
-    <string name="bema_website" translatable="false">http://www.bematechus.com</string>
+    <string name="bema_website" translatable="false">http://logiccontrols.com</string>
     <!--<string name="pref_kds_language" translatable="false">Language</string>-->
     <!--<string-array name="pref_kds_language_titles" translatable="false">-->
         <!--<item>English</item>-->
