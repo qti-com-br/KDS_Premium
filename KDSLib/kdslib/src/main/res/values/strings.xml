@@ -207,4 +207,5 @@
     <string name="shared_folder">Shared folder:</string>
     <string name="str_find">Find</string>
     <string name="password_incorrect">Password is incorrect!</string>
+    <string name="error_not_expo_or_prep">Error, this station is not expo or prep.</string>
 </resources>
