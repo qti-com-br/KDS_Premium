@@ -297,7 +297,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //auto refresh screen, as the indian station hide orders!!!!
         auto_refresh_screen();
         //testException();
-        checkMyAttachedStationsOffline();
+        //checkMyAttachedStationsOffline(); //kpp1-290
+        checkOfflineStations(); //kpp1-290
 
     }
 
@@ -4281,7 +4282,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (m_queueView == null) return;
-        m_queueView.showOrders(this.getKDS().getUsers().getUserA().getOrders());
+        KDSDataOrders ordersA = this.getKDS().getUsers().getUserA().getOrders();
+
+        KDSDataOrders ordersB = null;
+        if (getKDS().getUsers().getUserB() != null)
+            ordersB = this.getKDS().getUsers().getUserB().getOrders();
+        m_queueView.showOrders(getKDS().getUsers());//ordersA, ordersB);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -5607,7 +5613,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         setupGuiByMode(GUI_MODE.Queue);
 
-        getKDS().getUsers().setSingleUserMode(bSetAllOrdersToUserAInDatabase);
+        //kpp1-288, I start to pass two user orders to queue view, so don't need following function.
+        //getKDS().getUsers().setSingleUserMode(bSetAllOrdersToUserAInDatabase);
         m_queueView.updateSettings(getKDS().getSettings());
 
         m_uiUserA.showSummaryAlways( KDSUser.USER.USER_A);
@@ -5620,6 +5627,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         initStationGeneralSteps();
         reinitQueue(true);
+        //call this function again, as the queue conflict with tab
+        init_common_in_create_and_pref_changed(); //kpp1-288, the screen is not shown when tab enabled and queue enabled
 
     }
 
@@ -6071,15 +6080,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                 break;
             case Queue:
-                boolean isMultipleUserMode = getKDS().isMultpleUsersMode();
+                //boolean isMultipleUserMode = getKDS().isMultpleUsersMode();
                 getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Queue);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
                 reinitQueue(false);
-                if (isMultipleUserMode)
-                    getKDS().loadAllActiveOrdersNoMatterUsers();//kpp1-272
+                //if (isMultipleUserMode)
+                //    getKDS().loadAllActiveOrdersNoMatterUsers();//kpp1-272
                 refreshTabSort();
 
                 break;
@@ -7121,6 +7130,67 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
         getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
+    }
+
+    /**
+     * KPP1-290,Showing offline status of station
+     * It will  check all offline stations.
+     */
+    public void checkOfflineStations()
+    {
+        ArrayList<KDSStationIP> ar = getKDS().getStationsConnections().getRelations().getAllValidStations();//.getAllAttachedStations();
+        if (ar.size() > 0) {
+            boolean anyOffline = false;
+            ArrayList<String> arOffline = new ArrayList<>();//use it to show offline stations.
+            for (int i = 0; i < ar.size(); i++) {
+                KDSStationActived station = getKDS().getStationsConnections().findActivedStationByID(ar.get(i).getID());
+                if (station == null) {
+                    anyOffline = true;
+                    arOffline.add(ar.get(i).getID());
+                    //break;
+                }
+            }
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            if (anyOffline) {
+                //m_nFlashTitleCounter++;
+                //if ((m_nFlashTitleCounter % 2) == 1) {
+                if (KDSGlobalVariables.getBlinkingStep()) {
+                    bg = ff.getFG();
+                    fg = ff.getBG();
+                }
+            }
+            String text = "";
+            for (int i=0; i< arOffline.size(); i++)
+            {
+                text += "#" + arOffline.get(i);
+                if (i < arOffline.size()-1)
+                    text += ",";
+
+            }
+            if (arOffline.size()>0 ) {
+                text += " " + getString(R.string.offline_warning);
+                getTextView(R.id.txtTitle).setText(text);
+
+            }
+            else
+            {
+                updateTitle();
+            }
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+        }
+        else
+        {
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+            //updateTitle();
+        }
 
     }
 }

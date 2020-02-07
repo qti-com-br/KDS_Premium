@@ -34,7 +34,9 @@ public class QueueOrders {
         State_ascend,
         State_descend,
     }
-    KDSDataOrders m_orders = null;
+//    KDSDataOrders m_ordersA = null;
+//    KDSDataOrders m_ordersB = null;
+
     String m_strFocusedOrderGUID = "";
 
 
@@ -52,15 +54,24 @@ public class QueueOrders {
             return;
         m_strFocusedOrderGUID = focusedGuid;
     }
-    public void setOrders(KDSDataOrders orders)
-    {
-        m_orders = orders;
-        refreshOrdersStatus();
-    }
-    public KDSDataOrders getOrders()
-    {
-        return m_orders;
-    }
+//    public void setOrders(KDSDataOrders ordersA, KDSDataOrders ordersB)
+//    {
+//        m_ordersA = ordersA;
+//        m_ordersB = ordersB;
+//        refreshOrdersStatus();
+//    }
+//    public KDSDataOrders getOrders2()
+//    {
+//        KDSDataOrders orders = new KDSDataOrders();
+//        if (m_ordersA != null)
+//            orders.getComponents().addAll(m_ordersA.getComponents());
+//        if (m_ordersB != null)
+//            orders.getComponents().addAll(m_ordersB.getComponents());
+//        if (m_ordersA != null)
+//            orders.setSortMethod(KDSConst.OrderSortBy.Waiting_Time, KDSConst.SortSequence.Descend, m_ordersA.getMoveRushToFront(), m_ordersA.getMoveFinishedToFront());
+//        orders.sortOrders();
+//        return orders;
+//    }
     public  ArrayList<Rect> getCoordinates()
     {
         return m_rects;
@@ -80,7 +91,7 @@ public class QueueOrders {
 
     public void setOrderCoordinate(KDSDataOrder order, Rect rt)
     {
-        int nindex = m_orders.getIndex(order);
+        int nindex = getOrders().getIndex(order);
         setOrderCoordinate(nindex, rt);
 
     }
@@ -316,9 +327,9 @@ public class QueueOrders {
     {
 
         m_ordersStatus.clear();
-        for (int i=0; i< m_orders.getCount(); i++)
+        for (int i=0; i< getOrders().getCount(); i++)
         {
-            KDSDataOrder order = m_orders.get(i);
+            KDSDataOrder order = getOrders().get(i);
             if (order == null) break;
             QueueStatus status = getOrderQueueStatus(order);
             m_ordersStatus.put(order.getGUID(), status);
@@ -337,5 +348,57 @@ public class QueueOrders {
             m_ordersStatus.put(guid, status);
             return status;
         }
+    }
+
+    //kpp1-288
+    KDSUsers m_users = null;
+    public void setOrders(KDSUsers users)
+    {
+        m_users = users;
+        refreshOrdersStatus();
+    }
+
+    public KDSDataOrders getOrders()
+    {
+        if (m_users == null) return null;
+        if (m_users.getUsersCount() == 1)
+        {
+            return m_users.getUserA().getOrders();
+        }
+        KDSDataOrders orders = new KDSDataOrders();
+
+
+        if (m_users.getUserA() != null)
+            orders.getComponents().addAll(m_users.getUserA().getOrders().getComponents());
+        if (m_users.getUserB() != null)
+            orders.getComponents().addAll(m_users.getUserB().getOrders().getComponents());
+        if (m_users.getUserB() != null)//just multiple users do sort
+        {
+            orders.setSortMethod(KDSConst.OrderSortBy.Waiting_Time, KDSConst.SortSequence.Descend, m_users.getUserA().getOrders().getMoveRushToFront(), m_users.getUserA().getOrders().getMoveFinishedToFront());
+
+        }
+        return orders;
+    }
+
+    public boolean isReady()
+    {
+        return (m_users != null);
+    }
+    public void removeAll(ArrayList<KDSDataOrder> ar)
+    {
+        if (m_users.getUserA() != null)
+            m_users.getUserA().getOrders().getComponents().removeAll(ar);
+        if (m_users.getUserB() != null)
+            m_users.getUserB().getOrders().getComponents().removeAll(ar);
+
+    }
+    public int getCount()
+    {
+        int n = 0;
+        if (m_users.getUserA() != null)
+            n += m_users.getUserA().getOrders().getCount();
+        if (m_users.getUserB() != null)
+            n += m_users.getUserB().getOrders().getCount();
+        return n;
     }
 }

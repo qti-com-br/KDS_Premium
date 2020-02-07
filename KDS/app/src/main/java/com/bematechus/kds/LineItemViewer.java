@@ -24,6 +24,7 @@ import com.bematechus.kdslib.KDSDataCondiments;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 
@@ -34,7 +35,7 @@ import java.util.Date;
  * For show Line items view
  */
 public class LineItemViewer {
-
+    final String TAG = "LineItemViewer";
     /**
      * 2.0.27
      */
@@ -304,6 +305,7 @@ public class LineItemViewer {
         for (int i=fromOrderIndex; i< nOrdersCount; i++)
         {
             KDSDataOrder order =  m_orders.get(i);
+            if (order == null) continue;
             int fromItemIndex  =0;
             if (order.getGUID().equals(fromOrderGuid))
             {
@@ -350,6 +352,21 @@ public class LineItemViewer {
 
         String fromOrderGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
         String fromItemGuid = getEnv().getStateValues().getFirstItemGuid();
+        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
+        if (m_orders.getOrderByGUID(fromOrderGuid) == null) //this order has been bumped by expo and so on
+        {
+            fromOrderGuid = "";
+            fromItemGuid = "";
+            if (m_orders.getCount()>0) {
+                KDSDataOrder order = m_orders.get(0);
+                fromOrderGuid = order.getGUID();
+                if (order.getItems().getCount()>0)
+                    fromItemGuid = order.getItems().getItem(0).getGUID();
+            }
+            getEnv().getStateValues().setFirstShowingOrderGUID(fromOrderGuid);
+            getEnv().getStateValues().setFirstItemGuid(fromItemGuid);
+        }
+
 
 
         if (m_bShowBottomGrid)
@@ -358,10 +375,15 @@ public class LineItemViewer {
         }
         else
         {
-            if (smartSortEnabled())
-                showOrdersSmart(m_orders, fromOrderGuid, fromItemGuid);
-            else
-                showOrdersNormal(m_orders, fromOrderGuid, fromItemGuid);
+            try {
+                if (smartSortEnabled())
+                    showOrdersSmart(m_orders, fromOrderGuid, fromItemGuid);
+                else
+                    showOrdersNormal(m_orders, fromOrderGuid, fromItemGuid);
+            }catch (Exception e)
+            {
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(), e );
+            }
 
 //
 //            int nRows = m_gridTop.getRows();
