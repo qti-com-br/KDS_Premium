@@ -115,7 +115,7 @@
     <!--<string name="searching_active_stations">查询在线终端 …</string>-->
     <!--<string name="smb_folder_lost">不能打开远程文件夹 #</string>-->
     <string name="error_different_relations">终端关系与其它不同, 请改正.</string>
-    <string name="error_match_mac">请在Logic Controls 设备上运行.</string>
+    <string name="error_match_mac">请在bematech 设备上运行.</string>
 
     <string name="find">查找</string>
     <!--<string name="pc_name">PC IP:</string>-->

@@ -69,7 +69,7 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
     }
     static final String TAG = "UpdateManager";
     //static final String UPDATE_LOG_URI_FOLDER ="http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/";// "http://www.cnblogs.com/manongxiaojiang/archive/2012/10/13/";
-    static final String UPDATE_LOG_URI_FOLDER ="http://logiccontrols.com/Logic_FTP/KDS/KitchenGo/KDS_Release/";
+    static final String UPDATE_LOG_URI_FOLDER ="http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/KDS_Release/";
 
 
     private String m_strAppApkName = "";//"2722068.html";
