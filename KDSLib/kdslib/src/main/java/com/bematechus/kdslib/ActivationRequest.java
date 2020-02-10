@@ -955,7 +955,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             long utcNow = getUTCTimeSeconds();// dt.getTime()/1000;
 
-            json.put("kdsguid","'" + order.getKDSGuid() + "'" );
+            //json.put("kdsguid","'" + order.getKDSGuid() + "'" ); //in kpp1-296, remove it. As this field was not created.
             json.put("guid", "'" + order.getGUID() + "'");
             json.put("store_guid","'" + store_guid + "'" );
             json.put("destination", "'" + order.getDestination()+"'");
@@ -978,7 +978,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296  //https://bematech.atlassian.net/browse/KPP1-63
             json.put("phone", "'" + order.getCustomer().getPhone()+"'");
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             json.put("is_hidden", "0");
@@ -1028,7 +1029,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() +"'");
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() +"'");
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("printed_status", "0");
             json.put("item_bump_guid", "'" + item.getItemBumpGuid() +"'" ); //https://bematech.atlassian.net/browse/KPP1-64
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
@@ -1093,7 +1095,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             String prepTime = "0";
             if (item != null)
@@ -1384,7 +1387,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted" , "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("create_local_time", Long.toString(create_local_time));// localNow));
             if (bExpoStation)
             {
@@ -1645,7 +1649,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time", Long.toString( utcNow)); //seconds
             json.put("upload_time", Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device", "'"+Activation.getMySerialNumber() + "'");//
+            //json.put("update_device", "'"+Activation.getMySerialNumber() + "'");//
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("create_local_time",Long.toString( localNow)); //seconds
 
         }

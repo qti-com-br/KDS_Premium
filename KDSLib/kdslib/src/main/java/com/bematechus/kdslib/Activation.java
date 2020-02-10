@@ -577,7 +577,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
     }
 
-    private StoreDevice findMyLicense()
+    static private StoreDevice findMyLicense()
     {
         for (int i=0; i< m_devices.size(); i++)
         {
@@ -2197,4 +2197,23 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         return s;
     }
 
+    /**
+     * KPP1-296
+     * 1) Syncing error while bumping/unbumping orders
+     * 2) App is sending serial number instead of device guid in Sync json
+     *
+     * Root cause for (1) is found: app is sending an unknown column called 'kdsguid'.
+     * Please remove it from the json.
+     *
+     * For (2), wrong data may cause reporting issues.
+     * @return
+     */
+    static String getMyDeviceGuid()
+    {
+
+        StoreDevice dev = findMyLicense();
+        if (dev == null) return "";
+        return dev.getGuid();
+
+    }
 }
