@@ -1939,4 +1939,27 @@ just 16bits value
         s = s.substring(n +1 );
         return s;
     }
+
+    /**
+     * KPP1-298
+     * @param id
+     * @return
+     */
+    static public boolean isValidStationID(String id)
+    {
+        //kpp1-298 don't allow station id 0.
+        if ((!KDSUtil.isDigitalString(id)) ||
+                (KDSUtil.convertStringToInt(id, 0) < KDSConst.MIN_STATION_ID )||
+                (KDSUtil.convertStringToInt(id, 0) > KDSConst.MAX_STATION_ID ) )
+        {
+            return false;
+        }
+        int n = KDSUtil.convertStringToInt(id, 0);
+        String str = KDSUtil.convertIntToString(n); //remove 0 in front of string.
+        if (!str.equals(id))
+        {
+            return false;
+        }
+        return true;
+    }
 }
