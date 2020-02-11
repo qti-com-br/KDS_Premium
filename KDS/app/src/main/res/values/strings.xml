@@ -110,13 +110,13 @@
     <!--<string name="question">Question</string>-->
     <!--<string name="input">Input</string>-->
     <string name="input_station_id">This station doesn\'t have a ID yet, you will not be able to use it until you setup its ID!</string>
-    <string name="input_id_title">Please enter station ID(0~99)</string>
+    <string name="input_id_title">Please enter station ID(1~99)</string>
     <!--<string name="select_station">Please choose station first.</string>-->
     <!--<string name="select_retrieve_station">Select station</string>-->
     <string name="confirm_bump_normal">Do you want to bump order # ?</string>
     <string name="confirm_bump_expo_outstanding">Order # contains outstanding items.Do you still want to bump it?</string>
     <string name="error_isnot_unique_id">The ID # used by others.Please change it.</string>
-    <string name="error_id_out_range">Please input ID value between 0 and 99.</string>
+    <string name="error_id_out_range">Please input ID value between 1 and 99.</string>
     <string name="error_id_is_empty">Please input ID.</string>
     <!--<string name="active_stations_list">Stations</string>-->
     <!--<string name="no_active_stations">No available station is online</string>-->
@@ -1136,6 +1136,7 @@
     <string name="internal_icon">Internal icon</string>
     <string name="character">Character</string>
     <string name="color">Color</string>
+
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
