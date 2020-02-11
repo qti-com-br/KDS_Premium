@@ -103,20 +103,21 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                String oldUserName = Activation.loadOldUserName();
-                String newUserName = mUserNameView.getText().toString();
-
-
-                if (Activation.getGlobalEventsReceiver() != null) {
-                    if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
-                        showClearDataWarning();
-                    } else
-                        attemptLogin();
-                }
-                else
-                {
-                    attemptLogin();
-                }
+                // KPP1-299, comment them, the settings has been reset when logout.
+//                String oldUserName = Activation.loadOldUserName();
+//                String newUserName = mUserNameView.getText().toString();
+//
+//                if (Activation.getGlobalEventsReceiver() != null) {
+//                    if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
+//                        showClearDataWarning();
+//                    } else
+//                        attemptLogin();
+//                }
+//                else
+//                {
+//                    attemptLogin();
+//                }
+                attemptLogin();
             }
         });
 
