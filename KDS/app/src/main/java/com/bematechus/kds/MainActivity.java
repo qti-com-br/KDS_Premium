@@ -1214,6 +1214,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             {
                 Activation.resetUserNamePwd();
                 resetStationID();
+                setToDefaultSettings(); //kpp1-299 Station Relationship remembered
                 onDoActivationExplicit();
                 //m_activation.cancelActivation();
 
