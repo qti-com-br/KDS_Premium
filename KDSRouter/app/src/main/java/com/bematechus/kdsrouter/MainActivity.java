@@ -463,6 +463,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (id == R.id.action_logout) //add this new. KPP1-185
         {
             Activation.resetUserNamePwd();
+            setToDefaultSettings(); //kpp1-299 Station Relationship remembered
             onDoActivationExplicit();
         }
         return super.onOptionsItemSelected(item);
@@ -1121,6 +1122,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
 
+    /**
+     * KPP1-299,Station Relationship remembered
+     * Clear everything when logout
+     */
+    public void setToDefaultSettings()
+    {
+        this.getSettings().setToDefault();
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
