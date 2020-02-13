@@ -104,20 +104,29 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
             @Override
             public void onClick(View view) {
                 // KPP1-299, comment them, the settings has been reset when logout.
-//                String oldUserName = Activation.loadOldUserName();
-//                String newUserName = mUserNameView.getText().toString();
-//
-//                if (Activation.getGlobalEventsReceiver() != null) {
-//                    if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
-//                        showClearDataWarning();
-//                    } else
-//                        attemptLogin();
-//                }
-//                else
-//                {
-//                    attemptLogin();
-//                }
-                attemptLogin();
+                //there are two login.
+                //  1. Logout then login
+                //  2. In about, call login. Or, remove license in backoffice, app auto call login.
+                String oldUserName = Activation.loadOldUserName();
+                String newUserName = mUserNameView.getText().toString();
+
+                if (Activation.getGlobalEventsReceiver() != null) {
+                    if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
+                        if (Activation.getGlobalEventsReceiver().isAppContainsOldData()) {
+                            showClearDataWarning();
+                        }
+                        else
+                        {
+                            attemptLogin();
+                        }
+                    } else
+                        attemptLogin();
+                }
+                else
+                {
+                    attemptLogin();
+                }
+               // attemptLogin();
             }
         });
 
@@ -407,6 +416,11 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         attemptLogin();
 
 
+    }
+
+    public boolean isAppContainsOldData()
+    {
+        return false;
     }
 }
 

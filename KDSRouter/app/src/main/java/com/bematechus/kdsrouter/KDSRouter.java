@@ -3816,4 +3816,14 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arParams);
     }
+
+    /**
+     * KPP1-299
+     * @return
+     */
+    public boolean isDbEmpty()
+    {
+        return m_dbRouter.isEmpty();
+
+    }
 }

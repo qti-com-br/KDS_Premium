@@ -107,6 +107,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Import_Data,
         Reset_TT_Authen,
         Restart_me,
+        Logout,//kpp1-299
 
     }
 
@@ -462,9 +463,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else if (id == R.id.action_logout) //add this new. KPP1-185
         {
-            Activation.resetUserNamePwd();
-            setToDefaultSettings(); //kpp1-299 Station Relationship remembered
-            onDoActivationExplicit();
+            showConfirmLogoutDialog();
+
+//            Activation.resetUserNamePwd();
+//            setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+//            onDoActivationExplicit();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1006,6 +1009,21 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
 
         }
+        else if (dlg instanceof  KDSUIDialogBase)
+        {
+            if (dlg.getTag() == null) return;
+            Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
+            switch (confirm) {
+                case Logout:
+                {
+                    doLogout();
+                }
+                break;
+                default: {
+                    break;
+                }
+            }
+        }
     }
 
     public boolean isKDSValid()
@@ -1304,4 +1322,40 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onSetFocusToOrder(String orderGuid){}
     public void onTTBumpOrder(String orderName){}
     public void onXmlCommandBumpOrder(String orderGuid){}
+
+    /**
+     * check if the settings changed.
+     * @return
+     */
+    public boolean isAppContainsOldData()
+    {
+        if (!this.getSettings().isDefaultSettings())
+            return true;
+        if (!this.getKDSRouter().isDbEmpty())
+            return true;
+        return false;
+
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void showConfirmLogoutDialog()
+    {
+        KDSUIDialogBase d = new KDSUIDialogBase();
+        d.createOkCancelDialog(this,Confirm_Dialog.Logout, getString(R.string.yes), getString(R.string.no),getString(R.string.confirm), getString(R.string.confirm_logout),true, this );
+        d.show();
+    }
+    /**
+     * kpp1-299
+     */
+    private void doLogout()
+    {
+        Activation.resetUserNamePwd();
+        setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+        Activation.resetOldLoginUser(); //kpp1-299
+        getKDSRouter().clearAll(); //clear database too.
+
+        onDoActivationExplicit();
+    }
 }
