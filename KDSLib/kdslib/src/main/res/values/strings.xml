@@ -207,4 +207,5 @@
     <string name="shared_folder">Shared folder:</string>
     <string name="str_find">Find</string>
     <string name="password_incorrect">Password is incorrect!</string>
+    <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
 </resources>
