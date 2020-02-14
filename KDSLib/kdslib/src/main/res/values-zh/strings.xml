@@ -209,4 +209,7 @@
     <string name="str_find">查找</string>
     <string name="password_incorrect">无效的密码</string>
     <string name="slave">副终端</string>
+    <string name="ip">IP</string>
+    <string name="port">端口</string>
+    <string name="file_name">文件名:</string>
 </resources>

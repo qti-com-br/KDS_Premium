@@ -207,4 +207,7 @@
     <string name="shared_folder">Shared folder:</string>
     <string name="str_find">Find</string>
     <string name="password_incorrect">Password is incorrect!</string>
+    <string name="ip">IP</string>
+    <string name="port">Port</string>
+    <string name="file_name">File name:</string>
 </resources>

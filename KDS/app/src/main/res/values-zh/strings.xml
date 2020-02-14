@@ -488,8 +488,8 @@
     </string-array>
 
     <string name="id">ID</string>
-    <string name="ip">IP</string>
-    <string name="port">端口</string>
+    <!--<string name="ip">IP</string>-->
+    <!--<string name="port">端口</string>-->
     <!--<string name="func">功能</string>-->
     <string name="mirror">镜像</string>
     <!--<string name="slave_func">副终端功能</string>-->
@@ -1051,7 +1051,7 @@
 
     </string-array>
     <!--<string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>-->
-    <string name="file_name">文件名:</string>
+    <!--<string name="file_name">文件名:</string>-->
     <string name="confirm_bump_unpaid">删除未付款订单前要确认</string>
     <string name="confirm_bump_outstanding">删除未完成订单前要确认</string>
     <string-array name="pref_queue_sort_titles">
