@@ -111,6 +111,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
         public void onDoActivationExplicit();
         public void onForceClearDataBeforeLogin();
+        public boolean isAppContainsOldData();
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -577,7 +578,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
     }
 
-    private StoreDevice findMyLicense()
+    static private StoreDevice findMyLicense()
     {
         for (int i=0; i< m_devices.size(); i++)
         {
@@ -1207,6 +1208,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putString(PREF_KEY_STORE_GUID, m_storeGuid);
         editor.putString(PREF_KEY_STORE_NAME, m_storeName);
 
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, userName); //kpp1-299, save current as old one.
+
         editor.apply();
         editor.commit();
 
@@ -1305,7 +1308,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
         editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
 
-        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+        //editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");//kpp1-299, remove it. Keep old one always.
 
         editor.apply();
         editor.commit();
@@ -2197,4 +2200,35 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         return s;
     }
 
+    /**
+     * KPP1-296
+     * 1) Syncing error while bumping/unbumping orders
+     * 2) App is sending serial number instead of device guid in Sync json
+     *
+     * Root cause for (1) is found: app is sending an unknown column called 'kdsguid'.
+     * Please remove it from the json.
+     *
+     * For (2), wrong data may cause reporting issues.
+     * @return
+     */
+    static String getMyDeviceGuid()
+    {
+
+        StoreDevice dev = findMyLicense();
+        if (dev == null) return "";
+        return dev.getGuid();
+
+    }
+
+    static public void resetOldLoginUser()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+
+        editor.apply();
+        editor.commit();
+
+    }
 }

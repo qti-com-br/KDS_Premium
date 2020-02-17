@@ -2846,4 +2846,28 @@ public class KDSSettings extends SettingsBase {
        return settings;
 
     }
+
+   /**
+   * check if the settings are default values
+   * @return
+   */
+   public boolean isDefaultSettings()
+   {
+       if (!loadStationsRelationString(KDSApplication.getContext(), true).isEmpty())
+         return false;
+       KDSSettings settings = new KDSSettings(KDSApplication.getContext()); //default one.
+       for (Map.Entry<ID, Object> entry : settings.m_mapSettings.entrySet())
+       {
+          ID id = entry.getKey();
+          Object obj = entry.getValue();
+          String defaultVal = convertConfigValToString(obj);
+          String myVal = convertConfigValToString(this.get(id));
+          if (!defaultVal.equals(myVal))
+             return false;
+
+       }
+       return true;
+   }
+
+
 }
