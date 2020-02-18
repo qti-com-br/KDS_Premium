@@ -1320,7 +1320,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onShowMessage(KDSBase.MessageType msgType, String message){}
     public void onRefreshView(int nUserID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
     public void onSetFocusToOrder(String orderGuid){}
-    public void onTTBumpOrder(String orderName){}
+
+    /**
+     * KPP1-305.Remove license restriction from Router
+     * While network restored, check activation again.
+     *  Use this function to get network restored event,
+     *  I don't want to add new event function in router app.
+     * @param orderName
+     */
+    public void onTTBumpOrder(String orderName){
+        doActivation(true, false, "");
+    }
+
     public void onXmlCommandBumpOrder(String orderGuid){}
 
     /**

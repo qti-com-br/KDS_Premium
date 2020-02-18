@@ -486,8 +486,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             m_nMaxLicenseCount = ncount;
 
             //System.out.println(ar.toString());
-
-            postGetDevicesRequest();
+            if (KDSApplication.isRouterApp()) //kpp1-305, Remove license restriction from Router
+                fireSuccessEvent();
+            else
+                postGetDevicesRequest();
         }
         catch (Exception e)
         {
