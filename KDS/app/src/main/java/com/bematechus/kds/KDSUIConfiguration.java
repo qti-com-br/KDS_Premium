@@ -40,11 +40,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSEditTextPreference;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
+import com.bematechus.kdslib.KDSToast;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIRetriveConfig;
@@ -380,7 +383,11 @@ public class KDSUIConfiguration extends PreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("kds_general_id"));
+//            //kpp1-298 don't allow station id =0;
+//            ((KDSEditTextPreference)findPreference("kds_general_id")).setInputStationID(true);
+            bindPreferenceSummaryToValue(findPreference("kds_general_id"));//kpp1-298 don't allow station id =0;
+            setStationIDPrefChangeListener();//kpp1-298 don't allow station id =0;
+
             bindPreferenceSummaryToValue(findPreference("kds_general_datasrc"));
             bindPreferenceSummaryToValue(findPreference("kds_general_tcpport"));
           //  bindPreferenceSummaryToValue(findPreference("kds_general_remote_folder"));
@@ -649,6 +656,32 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 //findPreference("general_enable_smbv2").setEnabled(true);
             }
 
+        }
+
+        /**
+         * KPP1-298
+         * Don't allow station ID is zero.
+         * Please notice this function has conflicts with bindPreferenceSummaryToValue funciton.
+         * They all set the onPreferenceChange listener.
+         */
+        private void setStationIDPrefChangeListener()
+        {
+            findPreference("kds_general_id").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                    String s = (String)newValue;
+
+                    if (!KDSUtil.isValidStationID(s)){
+                        KDSToast.showMessage(KDSApplication.getContext(), KDSApplication.getContext().getString(R.string.error_id_out_range));
+                        return false;
+                    }
+
+                    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,newValue);
+
+                    return true;
+                }
+            });
         }
     }
 

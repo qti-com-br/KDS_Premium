@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 /**
@@ -22,7 +23,6 @@ public class KDSEditTextPreference extends EditTextPreference {
 
     public KDSEditTextPreference(Context context) {
         super(context);
-
     }
 
     /**

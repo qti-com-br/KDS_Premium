@@ -117,7 +117,7 @@ public class KDSRouterSettings extends SettingsBase {
 
 
     //all data saved in this buffer
-    private HashMap<ID, Object> m_mapSettings = new HashMap<ID, Object>();
+    protected HashMap<ID, Object> m_mapSettings = new HashMap<ID, Object>();
 
     //from ID to pref data
     private HashMap<ID, String> m_mapPrefID = new HashMap<ID,String>();
@@ -660,4 +660,26 @@ public class KDSRouterSettings extends SettingsBase {
 //                return KDSApplication.getContext().getString(R.string.english);//"English";
 //        }
 //    }
+
+    /**
+     * check if the settings are default values
+     * @return
+     */
+    public boolean isDefaultSettings()
+    {
+        if (!loadStationsRelationString(KDSApplication.getContext(), true).isEmpty())
+            return false;
+        KDSRouterSettings settings = new KDSRouterSettings(KDSApplication.getContext()); //default one.
+        for (Map.Entry<ID, Object> entry : settings.m_mapSettings.entrySet())
+        {
+            ID id = entry.getKey();
+            Object obj = entry.getValue();
+            String defaultVal = convertConfigValToString(obj);
+            String myVal = convertConfigValToString(this.get(id));
+            if (!defaultVal.equals(myVal))
+                return false;
+
+        }
+        return true;
+    }
 }

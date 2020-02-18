@@ -346,28 +346,32 @@ public class LineItemViewer {
             return;
             //buildGrids();
         m_orders = orders;
+
+        checkFirstAndFocusOrderValid();
+
+//        String fromOrderGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
+//        String fromItemGuid = getEnv().getStateValues().getFirstItemGuid();
+//        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
+//        if (m_orders.getOrderByGUID(fromOrderGuid) == null) //this order has been bumped by expo and so on
+//        {
+//            fromOrderGuid = "";
+//            fromItemGuid = "";
+//            if (m_orders.getCount()>0) {
+//                KDSDataOrder order = m_orders.get(0);
+//                fromOrderGuid = order.getGUID();
+//                if (order.getItems().getCount()>0)
+//                    fromItemGuid = order.getItems().getItem(0).getGUID();
+//            }
+//            getEnv().getStateValues().setFirstShowingOrderGUID(fromOrderGuid);
+//            getEnv().getStateValues().setFirstItemGuid(fromItemGuid);
+//        }
+
         adjustFirstItemForShowingFocus(m_gridTop);
         m_gridTop.clear();
         buildGridTitles(m_gridTop.getRow(0));
 
         String fromOrderGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
         String fromItemGuid = getEnv().getStateValues().getFirstItemGuid();
-        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
-        if (m_orders.getOrderByGUID(fromOrderGuid) == null) //this order has been bumped by expo and so on
-        {
-            fromOrderGuid = "";
-            fromItemGuid = "";
-            if (m_orders.getCount()>0) {
-                KDSDataOrder order = m_orders.get(0);
-                fromOrderGuid = order.getGUID();
-                if (order.getItems().getCount()>0)
-                    fromItemGuid = order.getItems().getItem(0).getGUID();
-            }
-            getEnv().getStateValues().setFirstShowingOrderGUID(fromOrderGuid);
-            getEnv().getStateValues().setFirstItemGuid(fromItemGuid);
-        }
-
-
 
         if (m_bShowBottomGrid)
         {
@@ -2300,6 +2304,43 @@ public class LineItemViewer {
             }
 
             this.refresh();
+        }
+    }
+
+    private void checkFirstAndFocusOrderValid()
+    {
+        String focusedOrderGuid = getEnv().getStateValues().getFocusedOrderGUID();
+        String forcusedItemGuid = getEnv().getStateValues().getFocusedItemGUID();
+        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
+        if (m_orders.getOrderByGUID(focusedOrderGuid) == null) //this order has been bumped by expo and so on
+        { //set focused to first one.
+            focusedOrderGuid = "";
+            forcusedItemGuid = "";
+            if (m_orders.getCount()>0) {
+                KDSDataOrder order =  m_orders.get(0);
+                focusedOrderGuid = order.getGUID();
+                if (order.getItems().getCount()>0)
+                    forcusedItemGuid = order.getItems().getItem(0).getGUID();
+            }
+            getEnv().getStateValues().setFocusedOrderGUID(focusedOrderGuid);
+            getEnv().getStateValues().setFocusedItemGUID(forcusedItemGuid);
+        }
+
+        String fromOrderGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
+        String fromItemGuid = getEnv().getStateValues().getFirstItemGuid();
+        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
+        if (m_orders.getOrderByGUID(fromOrderGuid) == null) //this order has been bumped by expo and so on
+        { //show start first one.
+            fromOrderGuid = "";
+            fromItemGuid = "";
+            if (m_orders.getCount()>0) {
+                KDSDataOrder order = m_orders.get(0);
+                fromOrderGuid = order.getGUID();
+                if (order.getItems().getCount()>0)
+                    fromItemGuid = order.getItems().getItem(0).getGUID();
+            }
+            getEnv().getStateValues().setFirstShowingOrderGUID(fromOrderGuid);
+            getEnv().getStateValues().setFirstItemGuid(fromItemGuid);
         }
     }
 

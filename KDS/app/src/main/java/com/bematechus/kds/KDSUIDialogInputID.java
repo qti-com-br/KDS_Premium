@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivityLogin;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.StationAnnounceEvents;
 
 import java.util.ArrayList;
@@ -156,6 +158,14 @@ public class KDSUIDialogInputID extends KDSUIDialogBase implements StationAnnoun
             showErrorMessage( this.getDialog().getContext().getString(R.string.error_id_out_range));
             return false;
         }
+
+        //kpp1-298 don't allow station id 0.
+        if (!KDSUtil.isValidStationID(id))
+        {
+            showErrorMessage( this.getDialog().getContext().getString(R.string.error_id_out_range));
+            return false;
+        }
+
 
         if (findStationByID(id)) {
             String s = this.getDialog().getContext().getString(R.string.error_isnot_unique_id);
