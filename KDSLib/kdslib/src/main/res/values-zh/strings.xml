@@ -209,5 +209,6 @@
     <string name="str_find">查找</string>
     <string name="password_incorrect">无效的密码</string>
     <string name="slave">副终端</string>
+    <string name="error_not_expo_or_prep">错误,此终端不是expo 或prep.</string>
     <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
 </resources>
