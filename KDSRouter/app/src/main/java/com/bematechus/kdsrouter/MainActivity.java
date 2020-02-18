@@ -1130,7 +1130,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
         if (m_activation.isDoLicensing()) {
-            showToastMessage("Internal activation is in process, please logout again later.");
+            showToastMessage(getString(R.string.internal_doing_activation));//"Internal activation is in process, please logout again later.");
             return; //kpp1-304, maybe this cause kds can not logout issue.
         }
         if (!isKDSValid()) return;
@@ -1138,7 +1138,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_activation.setStationFunc(Activation.KDSROUTER);
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         if (ar.size()<=0) {
-            showToastMessage("No network interface detected");
+            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
             return;//kpp1-304, maybe this cause kds can not logout issue.
         }
         m_activation.setMacAddress(ar.get(0));
