@@ -344,6 +344,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     private void onNetworkRestored()
     {
         this.startNetwork();
+        //KPP1-305, Remove license restriction from Router
+        //let main ui know network restored.
+        //I don't want to add new event function, just use unused one.
+        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+            m_arKdsEventsReceiver.get(i).onTTBumpOrder("");
 
     }
     private void onNetworkLost()

@@ -57,21 +57,16 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      pwd: 123456
      */
 
-    //test server api
-    static final String API_URL_TEST = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
-    //production server api
-    static final String API_URL_PRODUCTION = "https://kdsgo.com/api/apiKDS";
 
-    //test db url
-    static final String DB_URL_TEST = "http://54.70.214.221/api/apiKDS/Premium";
 
-    static String API_URL = API_URL_TEST;
+
+    static String API_URL;
 
     //Web database sync feature.
     //DEV:http://54.70.214.221/api/apiKDS/Premium
     //STAGE: http://kitchengous.com/api/apiKDS/Premium
     //PROD: https://kdsgo.com/api/apiKDS/Premium
-    static String DB_URL = DB_URL_TEST;
+    static String DB_URL;
     //
     public static final String TOKEN = "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"; //fixed
 

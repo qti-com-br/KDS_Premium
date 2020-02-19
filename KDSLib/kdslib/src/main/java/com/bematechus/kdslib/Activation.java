@@ -78,7 +78,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 //    static int MAX_LOST_COUNT = 120;
 
     public static final int HOUR_MS = 3600000;
-    public static int MAX_LOST_COUNT = 120;
+    public static int MAX_LOST_COUNT = 120; //kpp1-301,
     public static final int INACTIVE_TIMEOUT = 300000; //5 minutes
 //
     public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
@@ -487,8 +487,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             m_nMaxLicenseCount = ncount;
 
             //System.out.println(ar.toString());
-
-            postGetDevicesRequest();
+            if (KDSApplication.isRouterApp()) //kpp1-305, Remove license restriction from Router
+                fireSuccessEvent();
+            else
+                postGetDevicesRequest();
         }
         catch (Exception e)
         {

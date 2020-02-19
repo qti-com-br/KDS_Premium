@@ -886,7 +886,15 @@ public class PreferenceFragmentStations
 
             }
 
-
+            /**
+             *
+             * @param primaryStationID
+             *  set which station
+             * @param slaveStationID
+             *  primaryStationID's slave station id.
+             * @param slaveStationFunc
+             *  The slave station use what function.
+             */
             private void changeStationSlaveFunctionAccordingItsSlaveStatioin(String primaryStationID, String slaveStationID, SettingsBase.StationFunc slaveStationFunc)
             {
                 KDSStationsRelation primaryRelation = getStationRelation(primaryStationID);
@@ -910,7 +918,8 @@ public class PreferenceFragmentStations
                         break;
                     case Mirror:
                         slaveFunc =  SettingsBase.SlaveFunc.Mirror;
-                        if (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep)
+                        if ( (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep) &&
+                                (primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor)) //kpp1-286, expo allow mirror
                             return;
                         break;
                     case Backup:
@@ -929,7 +938,8 @@ public class PreferenceFragmentStations
                         break;
                     case Duplicate:
                         slaveFunc =  SettingsBase.SlaveFunc.Duplicate_station;
-                        if (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep )
+                        if (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep &&
+                           (primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor)) //kpp1-286, expo allow mirror
                             return;
                         break;
                 }
@@ -1098,12 +1108,15 @@ public class PreferenceFragmentStations
                     case Queue:
                         //2.0.11, comment it, allow prep station has queue slave.
                         if ( (!isExpoStation(primaryID)) && (!isPrepStation(primaryID)))
-                            strErr =  PreferenceFragmentStations.this.getString(R.string.error_not_expo);
+                            strErr =  PreferenceFragmentStations.this.getString(R.string.error_not_expo_or_prep);//R.string.error_not_expo);
                         break;
                     case Mirror:
-
-                    case Workload:
                     case Duplicate:
+                        //kpp1-286, just expo and prep allow mirror and duplicate.
+                        if ( (!isExpoStation(primaryID)) && (!isPrepStation(primaryID)))
+                            strErr =  PreferenceFragmentStations.this.getString(R.string.error_not_expo_or_prep);//R.string.error_not_expo);
+                        break; //kpp1-286, Duplicate and Mirror Expeditor
+                    case Workload:
                         if (!isPrepStation(primaryID))
                             strErr = PreferenceFragmentStations.this.getString(R.string.error_not_prep);
                         break;
@@ -2053,7 +2066,7 @@ public class PreferenceFragmentStations
         }
         //2.0.11, change it from 5 o 6, allow queue for prep station.
         final static int PREP_SLAVE_OPTIONS = 6;
-        final static int EXPO_SLAVE_OPTIONS = 3;
+        final static int EXPO_SLAVE_OPTIONS = 5; //kpp1-286, Duplicate and Mirror Expeditor. Change it from 3 to 5.
 
         final static int NO_SLAVE_OPTIONS = 1;
         final static int MIRROR_SLAVE_OPTIONS = 1;
@@ -2068,6 +2081,12 @@ public class PreferenceFragmentStations
         ArrayList<SlaveFunction> m_slaveFuncBackupSpinnerList = new ArrayList<>();
         ArrayList<SlaveFunction> m_slaveFuncOtherSpinnerList = new ArrayList<>();
 
+        /**
+         * according to the function to decide what slave supported.
+         * @param context
+         * @param spinner
+         * @param stationFunction
+         */
         private void initSlaveFunctionSpinner(Context context, Spinner spinner, SettingsBase.StationFunc stationFunction)
         {
             SpinnerAdapter oldAdapter =  spinner.getAdapter();
@@ -2122,6 +2141,9 @@ public class PreferenceFragmentStations
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Unknown.ordinal()), SettingsBase.SlaveFunc.Unknown));
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Backup.ordinal()), SettingsBase.SlaveFunc.Backup));
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Order_Queue_Display.ordinal()), SettingsBase.SlaveFunc.Order_Queue_Display));
+                        //kpp1-285, Duplicate and Mirror Expeditor.
+                        m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Mirror.ordinal()), SettingsBase.SlaveFunc.Mirror));
+                        m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Duplicate_station.ordinal()), SettingsBase.SlaveFunc.Duplicate_station));
                     }
                     list = m_slaveFuncExpoSpinnerList;
                     break;
