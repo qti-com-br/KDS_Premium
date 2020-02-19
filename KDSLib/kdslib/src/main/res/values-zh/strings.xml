@@ -212,4 +212,6 @@
     <string name="ip">IP</string>
     <string name="port">端口</string>
     <string name="file_name">文件名:</string>
+    <string name="error_not_expo_or_prep">错误,此终端不是expo 或prep.</string>
+    <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
 </resources>

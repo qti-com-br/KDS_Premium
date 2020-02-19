@@ -20,7 +20,7 @@
             android:textStyle="bold"
             android:clickable="false"
             android:enabled="true"
-            android:background="@drawable/lci" />
+            android:background="@mipmap/ic_launcher" />
         <!--<ImageView-->
         <!--android:layout_width="30dp"-->
         <!--android:layout_height="30dp"-->

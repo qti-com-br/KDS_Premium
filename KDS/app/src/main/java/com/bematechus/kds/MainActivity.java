@@ -187,7 +187,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Restart_me,
         Load_Old_Data,
         CONFIRM_BUMP,
-
+        Logout,
     }
 
 
@@ -1212,9 +1212,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
             else if (id == R.id.action_logout)
             {
-                Activation.resetUserNamePwd();
-                resetStationID();
-                onDoActivationExplicit();
+                showConfirmLogoutDialog();
+//                Activation.resetUserNamePwd();
+//                resetStationID();
+//                setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+//                onDoActivationExplicit();
                 //m_activation.cancelActivation();
 
             }
@@ -3083,6 +3085,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     if (stationID.isEmpty()) {
                         inputStationID();
                     }
+                }
+                break;
+                case Logout:
+                {
+                    doLogout();
                 }
                 break;
                 default: {
@@ -6413,6 +6420,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
+        Activation.resetOldLoginUser(); //kpp1-299
         onSharedPreferenceChanged(pre, "");
         inputStationID();
         //pre.unregisterOnSharedPreferenceChangeListener(this);
@@ -6473,6 +6481,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void setToDefaultSettings()
     {
         this.getSettings().setToDefault();
+
     }
 
     TimeDog m_tdAutoRefreshScreen = new TimeDog();
@@ -7192,6 +7201,44 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //updateTitle();
         }
 
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void showConfirmLogoutDialog()
+    {
+        KDSUIDialogBase d = new KDSUIDialogBase();
+        d.createOkCancelDialog(this,Confirm_Dialog.Logout, getString(R.string.yes), getString(R.string.no),getString(R.string.confirm), getString(R.string.confirm_logout),true, this );
+        d.show();
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void doLogout()
+    {
+        Activation.resetUserNamePwd();
+        resetStationID();
+        setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+        Activation.resetOldLoginUser(); //kpp1-299
+        getKDS().clearAll(); //clear database too.
+        getKDS().clearStatisticData();
+        onDoActivationExplicit();
+    }
+
+    /**
+     * kpp1-299
+     * @return
+     * default value: false;
+     */
+    public boolean isAppContainsOldData()
+    {
+        if (!this.getSettings().isDefaultSettings())
+            return true;
+        if (!this.getKDS().isDbEmpty())
+            return true;
+        return false;
     }
 }
 

@@ -78,7 +78,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 //    static int MAX_LOST_COUNT = 120;
 
     public static final int HOUR_MS = 3600000;
-    public static int MAX_LOST_COUNT = 120;
+    public static int MAX_LOST_COUNT = 120; //kpp1-301,
     public static final int INACTIVE_TIMEOUT = 300000; //5 minutes
 //
     public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
@@ -111,6 +111,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
         public void onDoActivationExplicit();
         public void onForceClearDataBeforeLogin();
+        public boolean isAppContainsOldData();
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -485,8 +486,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             m_nMaxLicenseCount = ncount;
 
             //System.out.println(ar.toString());
-
-            postGetDevicesRequest();
+            if (KDSApplication.isRouterApp()) //kpp1-305, Remove license restriction from Router
+                fireSuccessEvent();
+            else
+                postGetDevicesRequest();
         }
         catch (Exception e)
         {
@@ -1207,6 +1210,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putString(PREF_KEY_STORE_GUID, m_storeGuid);
         editor.putString(PREF_KEY_STORE_NAME, m_storeName);
 
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, userName); //kpp1-299, save current as old one.
+
         editor.apply();
         editor.commit();
 
@@ -1305,7 +1310,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
         editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
 
-        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+        //editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");//kpp1-299, remove it. Keep old one always.
 
         editor.apply();
         editor.commit();
@@ -2214,6 +2219,18 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         StoreDevice dev = findMyLicense();
         if (dev == null) return "";
         return dev.getGuid();
+
+    }
+
+    static public void resetOldLoginUser()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+
+        editor.apply();
+        editor.commit();
 
     }
 }

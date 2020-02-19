@@ -210,4 +210,7 @@
     <string name="ip">IP</string>
     <string name="port">Port</string>
     <string name="file_name">File name:</string>
+    <string name="error_not_expo_or_prep">Error, this station is not expo or prep.</string>
+    <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
+
 </resources>
