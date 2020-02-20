@@ -122,6 +122,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         No_selected_license_to_replace,
         Cancel_license_options,
         Replace_error,
+        App_type_error, //kpp1-211 just premium app can login
     }
 
     COMMAND m_command = COMMAND.Unknown;
