@@ -154,6 +154,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean isDoLicensing()
     {
+
         return m_bDoLicensing;
     }
     public void setDoLicensing(boolean bDoing)
