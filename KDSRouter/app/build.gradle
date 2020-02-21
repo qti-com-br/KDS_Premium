@@ -50,6 +50,7 @@ android {
             renderscriptOptimLevel 3
             minifyEnabled false
             zipAlignEnabled true
+            signingConfig signingConfigs.config
         }
     }
     android.applicationVariants.all { variant ->

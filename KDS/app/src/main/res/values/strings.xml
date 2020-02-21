@@ -502,8 +502,8 @@
     </string-array>
 
     <string name="id">ID</string>
-    <string name="ip">IP</string>
-    <string name="port">Port</string>
+    <!--<string name="ip">IP</string>-->
+    <!--<string name="port">Port</string>-->
     <!--<string name="func">Function</string>-->
     <string name="mirror">Mirror</string>
     <!--<string name="slave_func">Slave Function</string>-->
@@ -1062,7 +1062,7 @@
 
     <!--<string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>-->
 
-    <string name="file_name">File name:</string>
+    <!--<string name="file_name">File name:</string>-->
     <string name="confirm_bump_unpaid">Bump off unpaid order with confirmation</string>
     <string name="confirm_bump_outstanding">Bump off outstanding order with confirmation</string>
 

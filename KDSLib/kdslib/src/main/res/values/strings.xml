@@ -207,6 +207,9 @@
     <string name="shared_folder">Shared folder:</string>
     <string name="str_find">Find</string>
     <string name="password_incorrect">Password is incorrect!</string>
+    <string name="ip">IP</string>
+    <string name="port">Port</string>
+    <string name="file_name">File name:</string>
     <string name="error_not_expo_or_prep">Error, this station is not expo or prep.</string>
     <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
     <string name="internal_doing_activation">Internal activation is in process, please logout again later.</string>
