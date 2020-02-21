@@ -1700,6 +1700,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             case REQ_GET_DEVICES://"GET_DEVICES":
             case REQ_DEVICE_REPLACE://"DEVICE_REPLACE":
             case REQ_SMS_ORDER://"SMS_ORDER":
+            case REQ_SYNC: //SYNC
                 return true;
             default:
                 return false;
