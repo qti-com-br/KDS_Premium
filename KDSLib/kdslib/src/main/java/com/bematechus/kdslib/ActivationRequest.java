@@ -44,6 +44,14 @@ import java.util.UUID;
 public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     static final String TAG = "ActivationRequest";
+    static final String TOK = "tok";
+    static final String REQ = "req";
+    static final String REQ_LOGIN = "LOGIN";
+    static final String REQ_GET_SETTINGS =  "GET_SETTINGS";
+    static final String REQ_GET_DEVICES =  "GET_DEVICES";
+    static final String REQ_DEVICE_REPLACE =  "DEVICE_REPLACE";
+    static final String REQ_SMS_ORDER =  "SMS_ORDER";
+    static final String REQ_SYNC =  "SYNC";
     /**
      *
      * Management
@@ -179,8 +187,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         String pwd = password;//PASSWORD;
 
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "LOGIN");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_LOGIN);//"LOGIN");
         try {
 
             json.put("username", userName);
@@ -208,8 +216,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "GET_SETTINGS");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_SETTINGS);//"GET_SETTINGS");
         try {
 
             json.put("store_guid",store_guid );
@@ -234,8 +242,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "GET_DEVICES");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_DEVICES);//"GET_DEVICES");
         try {
 
             json.put("store_guid",store_guid );
@@ -262,6 +270,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONObject jsonobj = new JSONObject(new LinkedHashMap());
         try {
             jsonobj.put(name, value);
+
+//            //kpp1-306 Send device's language code in every API request
+            if (name.equals(REQ) && isNeedLanguageReq(value))
+                jsonobj.put("language",  KDSUtil.getLanguageString() );
             return jsonobj;
         }catch (Exception e)
         {
@@ -391,8 +403,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "DEVICE_REPLACE");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_DEVICE_REPLACE);//"DEVICE_REPLACE");
 
         try {
             json.put("store_guid", store_guid );
@@ -739,8 +751,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "SMS_ORDER");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_SMS_ORDER);//"SMS_ORDER");
 
         try {
             json.put("store_guid", store_guid);
@@ -786,8 +798,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "SYNC");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_SYNC);//"SYNC");
         try {
 
             json.put("entity",tblName );
@@ -1672,5 +1684,28 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         ar.put(jsonCustomer(storeGuid,order, customer) );
         return ar;
+    }
+
+    /**
+     * kpp1-306 Send device's language code in every API request
+     * @param reqValue
+     * @return
+     */
+    static boolean isNeedLanguageReq(String reqValue)
+    {
+        switch (reqValue.toUpperCase())
+        {
+            case REQ_LOGIN://"LOGIN":
+            case REQ_GET_SETTINGS://"GET_SETTINGS":
+            case REQ_GET_DEVICES://"GET_DEVICES":
+            case REQ_DEVICE_REPLACE://"DEVICE_REPLACE":
+            case REQ_SMS_ORDER://"SMS_ORDER":
+            case REQ_SYNC: //SYNC
+                return true;
+            default:
+                return false;
+
+        }
+
     }
 }

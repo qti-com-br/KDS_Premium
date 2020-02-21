@@ -1962,4 +1962,13 @@ just 16bits value
         }
         return true;
     }
+
+
+    public static String getLanguageString() {
+        Locale locale = KDSApplication.getContext().getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        return language;
+
+
+    }
 }
