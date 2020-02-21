@@ -212,8 +212,8 @@
     <string name="file_name">File name:</string>
     <string name="error_not_expo_or_prep">Error, this station is not expo or prep.</string>
     <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
+    <string name="only_premium_plan_login">Only allow stores with Premium plan to log into Premium.</string>
     <string name="internal_doing_activation">Internal activation is in process, please logout again later.</string>
     <string name="no_network_detected">No network interface detected.</string>
-
 
 </resources>

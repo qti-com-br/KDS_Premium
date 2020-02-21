@@ -82,6 +82,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public static final int INACTIVE_TIMEOUT = 300000; //5 minutes
 //
     public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
+    public static String PREMIUM_APP = "bc68f95c-1af5-47b1-a76b-e469f151ec3f";
 
     public enum SyncDataResult
     {
@@ -483,7 +484,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             JSONObject json = (JSONObject) ar.get(0);
             int ncount = json.getInt("licenses_quantity");
             m_timeZone = json.getString("timezone");
-
+            String app = json.getString("store_app");
+            if (!app.equals(PREMIUM_APP))
+            {//kpp1-211 Only allow stores with Premium plan to log into Premium.
+                fireActivationFailEvent(ActivationRequest.COMMAND.Get_settings, ActivationRequest.ErrorType.App_type_error, m_context.getString(R.string.only_premium_plan_login));
+                return;
+            }
             m_nMaxLicenseCount = ncount;
 
             //System.out.println(ar.toString());
