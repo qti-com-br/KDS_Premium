@@ -1945,7 +1945,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         StoreDevice devLicense = findMyLicense();
         if (devLicense == null)
             return false;
-
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,devLicense);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
@@ -2045,6 +2045,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public boolean postNewStationInfo2Web(String licenseGuid, String stationID, String stationFunc)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice dev = new StoreDevice();
         dev.setGuid(licenseGuid);
         dev.m_serial = getMySerialNumber();
@@ -2107,6 +2108,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean postNewStationName2Web(String stationID, String stationName)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice dev = findMyLicense();
         if (dev == null)
             return false;
@@ -2119,6 +2121,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean postNewStationInfoToWeb(String stationID, String stationFunc, String stationName)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice devLicense = findMyLicense();
         if (devLicense == null)
             return false;
