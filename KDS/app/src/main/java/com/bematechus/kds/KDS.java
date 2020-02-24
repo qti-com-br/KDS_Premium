@@ -404,8 +404,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         m_settings.setStationFunc(func);
         if (old != func)
         { //update the activation backoffice
-            if (m_activationHTTP != null)
-                m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+            if (m_activationHTTP != null) {
+                if (!getStationID().isEmpty())//kpp1-309 Expeditor and Queue deleted at logout on premium
+                    m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+            }
         }
 
     }
