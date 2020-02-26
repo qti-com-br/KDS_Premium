@@ -4,7 +4,8 @@
     <!-- =======================MY code ===================== -->
 
     <!-- TCP/IP port number -->
-    <com.bematechus.kdslib.KDSEditTextPreference
+    <!--<com.bematechus.kdslib.KDSEditTextPreference-->
+    <com.bematechus.kds.KDSPreferenceInputID
         android:key="kds_general_id"
         android:title="@string/pref_kds_general_title_number"
         android:defaultValue=""
