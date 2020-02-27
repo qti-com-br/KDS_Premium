@@ -80,10 +80,13 @@ public class KDSUIDialogInputID extends KDSUIDialogBase implements StationAnnoun
         return d;
     }
 
-    public void init_input_dialog(Context context, KDSDialogBaseListener listener, int resDlgID) {
+    public void init_input_dialog(Context context, KDSDialogBaseListener listener, int resDlgID, boolean bCancelButton) {
         this.listener = listener;
         m_view = LayoutInflater.from(context).inflate(resDlgID, null);
-        dialog = createOkButtonsDialog(context);
+        if (!bCancelButton)
+            dialog = createOkButtonsDialog(context);
+        else
+            dialog = createOkCancelButtonsDialog(context);
         // kill all padding from the dialog window
         dialog.setView(m_view, 0, 0, 0, 0);
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
@@ -109,22 +112,37 @@ public class KDSUIDialogInputID extends KDSUIDialogBase implements StationAnnoun
             }
         });
 
+        if (bCancelButton)
+        {
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (KDSUIDialogInputID.this.listener != null) {
+                        KDSUIDialogInputID.this.listener.onKDSDialogCancel(KDSUIDialogInputID.this);
+                    }
+                }
+            });
+        };
+
     }
 
     public KDSUIDialogInputID(final Context context,String strTitle, String strDescription, String strInitText, KDSUIDialogBase.KDSDialogBaseListener listener) {
-        this.init_input_dialog(context, listener, R.layout.kdsui_dlg_input_id);//, "");
-        this.setTitle(strTitle);
-        m_txtText = (TextView)this.getView().findViewById(R.id.txtText);
-        m_txtText.setText(strInitText);
-        m_txtDescription = (TextView)this.getView().findViewById(R.id.txtInfo);
-        m_txtDescription.setText(strDescription);
-        m_lstStations = (ListView)this.getView().findViewById(R.id.lstStations);
+        buildDialog(context, strTitle, strDescription, strInitText, listener, false);
 
-        m_lstStations.setAdapter(new ArrayAdapter<String>(context,
-                android.R.layout.simple_list_item_1, m_lstIPs));
-
-        this.getDialog().setCancelable(false);//.setFinishOnTouchOutside(false);
-        this.getDialog().setCanceledOnTouchOutside(false);
+//        this.init_input_dialog(context, listener, R.layout.kdsui_dlg_input_id);//, "");
+//        this.setTitle(strTitle);
+//        m_txtText = (TextView)this.getView().findViewById(R.id.txtText);
+//        m_txtText.setText(strInitText);
+//        m_txtText.setSelected(true); //kpp1-302
+//        m_txtDescription = (TextView)this.getView().findViewById(R.id.txtInfo);
+//        m_txtDescription.setText(strDescription);
+//        m_lstStations = (ListView)this.getView().findViewById(R.id.lstStations);
+//
+//        m_lstStations.setAdapter(new ArrayAdapter<String>(context,
+//                android.R.layout.simple_list_item_1, m_lstIPs));
+//
+//        this.getDialog().setCancelable(false);//.setFinishOnTouchOutside(false);
+//        this.getDialog().setCanceledOnTouchOutside(false);
 
 
     }
@@ -252,4 +270,95 @@ public class KDSUIDialogInputID extends KDSUIDialogBase implements StationAnnoun
         });
     }
 
+    /**
+     * KPP1-302 Duplicate Station IDs
+     * @param context
+     * @param strTitle
+     * @param strDescription
+     * @param strInitText
+     * @param listener
+     * @param bCancelButton
+     */
+    private void buildDialog(final Context context,String strTitle, String strDescription, String strInitText, KDSUIDialogBase.KDSDialogBaseListener listener, boolean bCancelButton)
+    {
+        this.init_input_dialog(context, listener, R.layout.kdsui_dlg_input_id, bCancelButton );//, "");
+        this.setTitle(strTitle);
+        m_txtText = (TextView)this.getView().findViewById(R.id.txtText);
+        m_txtText.setText(strInitText);
+        if (bCancelButton)
+            m_txtText.setSelectAllOnFocus(true); //kpp1-302
+        m_txtDescription = (TextView)this.getView().findViewById(R.id.txtInfo);
+        m_txtDescription.setText(strDescription);
+        m_lstStations = (ListView)this.getView().findViewById(R.id.lstStations);
+
+        m_lstStations.setAdapter(new ArrayAdapter<String>(context,
+                android.R.layout.simple_list_item_1, m_lstIPs));
+        if (!bCancelButton) { //In prefenece settings, we allow cancel it by click outside.
+            this.getDialog().setCancelable(false);//.setFinishOnTouchOutside(false);
+            this.getDialog().setCanceledOnTouchOutside(false);
+        }
+
+    }
+
+    /**
+     * KPP1-302 Duplicate Station IDs
+     * @param context
+     * @param strTitle
+     * @param strDescription
+     * @param strInitText
+     * @param listener
+     * @param bCancelButton
+     */
+    public KDSUIDialogInputID(final Context context,String strTitle, String strDescription, String strInitText, KDSUIDialogBase.KDSDialogBaseListener listener, boolean bCancelButton) {
+
+        buildDialog(context, strTitle, strDescription, strInitText, listener, bCancelButton);
+
+    }
+
+    /**
+     * KPP1-302 Duplicate Station IDs
+     * @param context
+     * @return
+     */
+    public AlertDialog createOkCancelButtonsDialog(Context context)
+    {
+
+        String strOK = makeCtrlEnterButtonText(context, context.getString( R.string.ok), DialogEvent.OK);// KDSSettings.ID.Bumpbar_OK );
+        String strCancel = makeCtrlEnterButtonText(context, context.getString( R.string.cancel), DialogEvent.Cancel);// KDSSettings.ID.Bumpbar_OK );
+        AlertDialog d = new AlertDialog.Builder(context)
+                .setPositiveButton(strOK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if ( ((String)getResult()).isEmpty())
+                            return;
+
+                        onOkButtonClicked();
+
+                        //saveToSmb();
+                        if (KDSUIDialogInputID.this.listener != null) {
+                            KDSUIDialogInputID.this.listener.onKDSDialogOK(KDSUIDialogInputID.this, getResult());
+                        }
+                    }
+                })
+                .setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onCancelButtonClicked();
+                    }
+                })
+                .create();
+        return d;
+    }
+
+    /**
+     * KPP1-302 Duplicate Station IDs
+     * @return
+     */
+    public boolean onCancelButtonClicked()
+    {
+        if (KDSUIDialogInputID.this.listener != null) {
+            KDSUIDialogInputID.this.listener.onKDSDialogCancel(KDSUIDialogInputID.this);
+        }
+        return true;
+    }
 }

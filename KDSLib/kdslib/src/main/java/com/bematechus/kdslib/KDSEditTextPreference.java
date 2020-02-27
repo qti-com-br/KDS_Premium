@@ -34,16 +34,17 @@ public class KDSEditTextPreference extends EditTextPreference {
      */
     protected void showDialog(Bundle state) {
         super.showDialog(state);
-        this.getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP)
-                {
-                    KDSKbdRecorder.convertKeyEvent(keyCode, event);
-                }
-                return false;
-            }
-        });
+        setMyKeyListener();
+//        this.getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+//            @Override
+//            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_UP)
+//                {
+//                    KDSKbdRecorder.convertKeyEvent(keyCode, event);
+//                }
+//                return false;
+//            }
+//        });
 
     }
 
@@ -85,4 +86,17 @@ public class KDSEditTextPreference extends EditTextPreference {
 
     }
 
+    protected void setMyKeyListener()
+    {
+        this.getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP)
+                {
+                    KDSKbdRecorder.convertKeyEvent(keyCode, event);
+                }
+                return false;
+            }
+        });
+    }
 }
