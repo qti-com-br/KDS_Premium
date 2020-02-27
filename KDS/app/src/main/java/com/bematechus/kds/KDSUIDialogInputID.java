@@ -112,6 +112,18 @@ public class KDSUIDialogInputID extends KDSUIDialogBase implements StationAnnoun
             }
         });
 
+        if (bCancelButton)
+        {
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (KDSUIDialogInputID.this.listener != null) {
+                        KDSUIDialogInputID.this.listener.onKDSDialogCancel(KDSUIDialogInputID.this);
+                    }
+                }
+            });
+        };
+
     }
 
     public KDSUIDialogInputID(final Context context,String strTitle, String strDescription, String strInitText, KDSUIDialogBase.KDSDialogBaseListener listener) {
@@ -281,9 +293,11 @@ public class KDSUIDialogInputID extends KDSUIDialogBase implements StationAnnoun
 
         m_lstStations.setAdapter(new ArrayAdapter<String>(context,
                 android.R.layout.simple_list_item_1, m_lstIPs));
+        if (!bCancelButton) { //In prefenece settings, we allow cancel it by click outside.
+            this.getDialog().setCancelable(false);//.setFinishOnTouchOutside(false);
+            this.getDialog().setCanceledOnTouchOutside(false);
+        }
 
-        this.getDialog().setCancelable(false);//.setFinishOnTouchOutside(false);
-        this.getDialog().setCanceledOnTouchOutside(false);
     }
 
     /**
