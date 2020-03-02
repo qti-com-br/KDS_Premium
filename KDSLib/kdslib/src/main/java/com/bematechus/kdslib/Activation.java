@@ -196,15 +196,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     static public String getMySerialNumber()
     {
-        //return m_myMacAddress;
-        String s = Build.SERIAL;
-        s = s.toUpperCase();
-        if (s.isEmpty() || s.equals("UNKNOWN"))
-        {
-            return m_myMacAddress;
+        // >= Android 5.0 (API 21): try using Serial Number
+        // Otherwise: use MAC Address
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String device_serial = Build.SERIAL;
+            if (!device_serial.isEmpty() && !device_serial.equals(Build.UNKNOWN)) {
+                return device_serial;
+            }
         }
-        else
-            return Build.SERIAL;
+        return m_myMacAddress;
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {
