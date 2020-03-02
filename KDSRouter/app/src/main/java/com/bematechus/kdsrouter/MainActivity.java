@@ -1375,4 +1375,5 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         onDoActivationExplicit();
     }
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams){return null;}
 }

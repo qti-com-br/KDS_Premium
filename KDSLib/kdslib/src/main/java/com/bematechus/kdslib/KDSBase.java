@@ -22,6 +22,14 @@ public class KDSBase {
         Normal,
         Toast,
     }
+
+    /**
+     *  for onKDSEvent
+     */
+    public enum KDSEventType
+    {
+        Received_rush_order,
+    }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);
         void onStationDisconnected(String ip);
@@ -38,7 +46,23 @@ public class KDSBase {
         void onRefreshSummary(int nUserID);//KDSUser.USER userID);
         void onSetFocusToOrder(String orderGuid); //set focus to this order
         void onXmlCommandBumpOrder(String orderGuid);
+        /**
+         * In KDSRouter app
+         * KPP1-305.Remove license restriction from Router
+         * While network restored, check activation again.
+         *  Use this function to get network restored event,
+         *  I don't want to add new event function in router app.
+         * @param orderName
+         */
         void onTTBumpOrder(String orderName);
+
+        /**
+         * One events common definition, we don't need to add too many functions again.
+         * @param evt
+         * @param arParams
+         * @return
+         */
+        Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams);
 
     }
 

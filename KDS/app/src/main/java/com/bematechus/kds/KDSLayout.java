@@ -187,7 +187,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         */
     }
 
-    public void adjustFocusOrderLayoutFirstShowingOrder()
+    /**
+     *
+     * @param bForMoveRushFront
+     *      true: it is for move rush to front calling
+     *      false: normal use
+     */
+    public void adjustFocusOrderLayoutFirstShowingOrder(boolean bForMoveRushFront)
     {
         if (m_orders == null) return;
         String focusedGuid = getEnv().getStateValues().getFocusedOrderGUID();
@@ -199,7 +205,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             if (!currentFirstGuid.isEmpty())
             {
                 if (m_orders.getOrderIndexByGUID(currentFirstGuid) >=0) {
-                    if (checkOrdersCanShowFocus(m_orders, currentFirstGuid, focusedGuid)) {
+                    boolean bIsLayoutFull = true;
+                    if (bForMoveRushFront)
+                        bIsLayoutFull = isLayoutFull();
+                    if (checkOrdersCanShowFocus(m_orders, currentFirstGuid, focusedGuid) && bIsLayoutFull) {
                         return;
                     }
                 }
@@ -1527,7 +1536,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (m_orders == null) return false;
         if (orderGuid.equals(KDSConst.RESET_ORDERS_LAYOUT))
         {//try best to show previous orders
-            adjustFocusOrderLayoutFirstShowingOrder();
+            adjustFocusOrderLayoutFirstShowingOrder(false);
             return true;
         }
         if (m_orders.getIndex(orderGuid) <0)
@@ -2625,4 +2634,6 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         return nNeedRowsWithoutTitleFooter + nTitleRows + nFooterRows;
     }
+
+
 }
