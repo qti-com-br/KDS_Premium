@@ -191,6 +191,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      *
      * @param bForMoveRushFront
      *      true: it is for move rush to front calling
+     *              If it is for rush order receiving, just move one order.
      *      false: normal use
      */
     public void adjustFocusOrderLayoutFirstShowingOrder(boolean bForMoveRushFront)
@@ -206,7 +207,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             {
                 if (m_orders.getOrderIndexByGUID(currentFirstGuid) >=0) {
                     boolean bIsLayoutFull = true;
-                    if (bForMoveRushFront)
+                    if (bForMoveRushFront) //just rush received event needs to check layout full or not.
                         bIsLayoutFull = isLayoutFull();
                     if (checkOrdersCanShowFocus(m_orders, currentFirstGuid, focusedGuid) && bIsLayoutFull) {
                         return;
@@ -223,10 +224,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 //            }
             //KPP1-252, from focused order to first, reverse check. For speed
             int nFocusedIndex = m_orders.getIndex(focusedGuid);
-            if (nFocusedIndex == 0) {
+            if (nFocusedIndex == 0) {//it is first order and focused, still use it.
                 getEnv().getStateValues().setFirstShowingOrderGUID(focusedGuid);
                 return;
             }
+            //
+            int ncurrentFirstOrderIndex = m_orders.getIndex(currentFirstGuid);
+
             for (int i = nFocusedIndex-1; i >=0; i--) {
                 String fromGuid = m_orders.get(i).getGUID();
                 if (checkOrdersCanShowFocus(m_orders, fromGuid, focusedGuid)) {
@@ -244,6 +248,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     fromGuid = m_orders.get(i).getGUID();
                     getEnv().getStateValues().setFirstShowingOrderGUID(fromGuid);
                     return;
+                }
+                if (bForMoveRushFront)
+                { //KPP1-310 just move one order once, otherwise, it will confusing user.
+                    if (i <ncurrentFirstOrderIndex) {
+                        getEnv().getStateValues().setFirstShowingOrderGUID(fromGuid);
+                        return;
+                    }
                 }
             }
         }
