@@ -2848,7 +2848,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
 
         //refreshWithNewDbDataAndFocusFirst(); //kpp1-251, use below line code
-        this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder();
+        this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder(false);
 
         notifiyPOSOrderUnbump(userID, orderGuid);
         //KPP1-41
@@ -7245,6 +7245,37 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!this.getKDS().isDbEmpty())
             return true;
         return false;
+    }
+
+    /**
+     *  kpp1-310
+     * @param evt
+     * @param arParams
+     * @return
+     */
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams)
+    {
+        switch (evt)
+        {
+            case Received_rush_order:
+            {
+                /* arParams:
+                    The orders added to users. Index 0: userA, index 1: userB order.
+                 */
+                getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+                if (arParams.size() >1)
+                    getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+
+
+            }
+            break;
+            default:
+            {
+                break;
+            }
+
+        }
+        return null;
     }
 }
 

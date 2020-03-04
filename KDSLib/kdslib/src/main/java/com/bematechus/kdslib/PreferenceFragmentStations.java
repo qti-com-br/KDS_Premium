@@ -2851,7 +2851,7 @@ public class PreferenceFragmentStations
     public void onRefreshView(int userID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
     public void onShowStationStateMessage(String stationID, int nState){}
     public void onShowMessage(String message){}
-
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams){return null;}
 }
 
 //    @Override

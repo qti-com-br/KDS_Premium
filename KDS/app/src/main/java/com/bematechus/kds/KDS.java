@@ -2910,6 +2910,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 if (bForceDeliverToExpo)
                     bDeliverToExpo = true; //for test button
                 ArrayList<KDSDataOrder> ordersAdded = m_users.users_orderAdd(order, xmlData,true, bDeliverToExpo, bRefreshView);//////
+                //kpp1-310 Rush orders creating previous page
+                checkRushOrderReceivedThenChangeFirstShowingOrder(ordersAdded);
                 //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts
                 for (int i = 0; i < ordersAdded.size(); i++) {
@@ -5188,5 +5190,34 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             KDSLog.e(TAG,KDSLog._FUNCLINE_(),e );
         }
 
+    }
+
+    /**
+     * If move rush to front, call this function, and reset the first showing order.
+     *
+     * @param arOrdersAdded
+     *  index 0: order add to user A
+     *  index 1: order add to user B
+     */
+    private void checkRushOrderReceivedThenChangeFirstShowingOrder(ArrayList<KDSDataOrder> arOrdersAdded)
+    {
+        if (!getSettings().getBoolean(KDSSettings.ID.Orders_sort_rush_front))
+            return;
+        for (int i=0; i< arOrdersAdded.size(); i++)
+        {
+            KDSDataOrder order = arOrdersAdded.get(i);
+            if (order.getOrderType().toUpperCase().equals(KDSDataOrder.ORDER_TYPE_RUSH))
+            {
+                if (m_arKdsEventsReceiver != null)
+                {
+                    ArrayList<Object> arOrders = new ArrayList<>();
+                    arOrders.addAll(arOrdersAdded);
+                    for (int j = 0; j< m_arKdsEventsReceiver.size(); j++)
+                    {
+                        m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Received_rush_order, arOrders);
+                    }
+                }
+            }
+        }
     }
 }
