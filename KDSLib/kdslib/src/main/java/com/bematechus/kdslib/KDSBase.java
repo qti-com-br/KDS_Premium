@@ -28,7 +28,8 @@ public class KDSBase {
      */
     public enum KDSEventType
     {
-        Received_rush_order,
+        Received_rush_order, //params: 0: useA new order. 1: userB new order.
+        TCP_listen_port_error, //params: 0: error message.
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);

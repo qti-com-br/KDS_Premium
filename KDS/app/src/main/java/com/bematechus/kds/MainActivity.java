@@ -390,10 +390,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
         getKDS().setDBEventsReceiver(this);
+        getKDS().setEventReceiver(this); //kpp1-312, move this function to top of getKDS().start();
         getKDS().start();
 
 
-        getKDS().setEventReceiver(this);
+        //
 
         if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         {
@@ -7267,6 +7268,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
 
 
+            }
+            break;
+            case TCP_listen_port_error: //kp1-312
+            {
+                String s = (String) arParams.get(0);
+                showToastMessage(s);
             }
             break;
             default:

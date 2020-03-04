@@ -368,14 +368,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 m_stationsConnection.disconnectPOSConnections();
                 // kpp1-312, show error message.
                 String error = m_listenPOS.startServer(m_nDataSourceIpPort, m_socksManager, m_sockEventsMessageHandler );
-                if (!error.isEmpty())
-                {
-                    for  (int i=0; i<m_arKdsEventsReceiver.size(); i++)
-                    {
-                        //m_arKdsEventsReceiver.get(i).
-                    }
-                }
-
+                fireTcpListenServerErrorEvent(m_nDataSourceIpPort, error);
             }
         }
         startPOSListener();
@@ -389,7 +382,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 m_listenStations.stop();
                 //disconnectStations(m_arConnectMeStations);
                 m_stationsConnection.closeAllStationsConnections();//.disconnectAllStationsConnectedToMe();
-                m_listenStations.startServer(m_nStationsInternalIpPort, m_socksManager, m_sockEventsMessageHandler );
+                String error = m_listenStations.startServer(m_nStationsInternalIpPort, m_socksManager, m_sockEventsMessageHandler );
+                fireTcpListenServerErrorEvent(m_nStationsInternalIpPort, error);
 
             }
         }
@@ -492,7 +486,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         if (srcType == KDSSettings.KDSDataSource.TCPIP)
         {
             stopPOSListener();
-            m_listenPOS.startServer(m_nDataSourceIpPort, m_socksManager, m_sockEventsMessageHandler);
+            String error = m_listenPOS.startServer(m_nDataSourceIpPort, m_socksManager, m_sockEventsMessageHandler);
+            fireTcpListenServerErrorEvent(m_nDataSourceIpPort, error);
         }
         else
         {
@@ -604,8 +599,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         startPOSListener();
 //        startStatisticListener(); //don't support statistic anymore
+        //test kpp1-312
+        String error = m_listenStations.startServer(m_nStationsInternalIpPort, m_socksManager, m_sockEventsMessageHandler);
+        //String error = m_listenStations.startServer(80, m_socksManager, m_sockEventsMessageHandler);
+        fireTcpListenServerErrorEvent(m_nStationsInternalIpPort, error);
 
-        m_listenStations.startServer(m_nStationsInternalIpPort, m_socksManager, m_sockEventsMessageHandler);
 
         this.getBroadcaster().broadcastRequireStationsUDPInThread();
 
@@ -5219,5 +5217,23 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 }
             }
         }
+    }
+
+            /**
+             * kpp1-312 Cannot receive orders on expo
+             * @param nListenPort
+             * @param errorMessage
+             */
+    private void fireTcpListenServerErrorEvent(int nListenPort, String errorMessage)
+    {
+        if (errorMessage.isEmpty()) return;
+        ArrayList<Object> ar = new ArrayList<>();
+        String s = String.format("Errors listen TCP port: %d,  %s", nListenPort, errorMessage);
+        ar.add(s);
+        for  (int i=0; i<m_arKdsEventsReceiver.size(); i++)
+        {
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSBase.KDSEventType.TCP_listen_port_error, ar);
+        }
+
     }
 }
