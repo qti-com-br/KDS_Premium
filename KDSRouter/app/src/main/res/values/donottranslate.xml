@@ -11,9 +11,9 @@
 
     </string-array>
 
-    <string name="pref_general_default_tcp_port" translatable="false">4000</string>
-    <string name="pref_general_default_backup_port" translatable="false">4001</string>
-    <string name="pref_general_default_station_port" translatable="false">3000</string>
+    <!--<string name="pref_general_default_tcp_port" translatable="false">4000</string>-->
+    <!--<string name="pref_general_default_backup_port" translatable="false">4001</string>-->
+    <!--<string name="pref_general_default_station_port" translatable="false">3000</string>-->
 
     <string-array name="pref_sync_frequency_values" translate="false">
         <item>15</item>

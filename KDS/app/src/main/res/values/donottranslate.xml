@@ -37,9 +37,9 @@
         <item>1</item>
     </string-array>
 
-    <string name="pref_kds_general_default_tcp_port" translatable="false">3000</string>
+    <!--<string name="pref_kds_general_default_tcp_port" translatable="false">3000</string>-->
     <string name="pref_kds_general_default_remote_folder" translatable="false"></string>
-    <string name="pref_kds_general_default_stations_port" translatable="false">3001</string>
+    <!--<string name="pref_kds_general_default_stations_port" translatable="false">3001</string>-->
     <string-array name="pref_kds_general_functions_values" translatable="false">
         <item>0</item>
         <item>1</item>

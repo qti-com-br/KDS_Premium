@@ -41,6 +41,7 @@ import android.widget.ListView;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataArray;
 import com.bematechus.kdslib.KDSEditTextPreference;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
@@ -756,7 +757,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 
 
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());//this.getActivity().getApplicationContext());
-            String routerRelationPort = pref.getString("general_backup_ipport", "4001");
+            String routerRelationPort = pref.getString("general_backup_ipport", KDSUtil.convertIntToString(KDSApplication.getContext().getResources().getInteger(R.integer.default_router_backup_tcpip_port)));//"4001");
             if (stationReceived.getPort().equals(routerRelationPort))
                 return;
 

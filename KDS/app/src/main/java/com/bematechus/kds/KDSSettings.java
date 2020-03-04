@@ -59,9 +59,9 @@ public class KDSSettings extends SettingsBase {
 
 
 
-    static final public int UDP_ANNOUNCER_PORT = 5000;
-    static final public int UDP_ROUTER_ANNOUNCER_PORT = 5001; //write data to router. Use two port is for KDS and KDSRouter running in same station.
-    static final public int UDP_STATISTIC_ANNOUNCER_PORT = 5002; //write data to statistic app.
+    static final public int UDP_STATION_ANNOUNCER_UDP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_stations_announce_udp_port);// 5000;
+    static final public int UDP_ROUTER_ANNOUNCER_UDP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_router_announce_udp_port);// 5001; //write data to router. Use two port is for KDS and KDSRouter running in same station.
+    //static final public int UDP_STATISTIC_ANNOUNCER_PORT = 5002; //write data to statistic app.//don't support statistic anymore
     static final public int COMDIMENT_LEADING_POSITION  = 10;
 
     static final public int DEFAULT_BLOCK_BORDER_INSET = 7;
@@ -1355,9 +1355,9 @@ public class KDSSettings extends SettingsBase {
         set(ID.KDS_ID, "");
         set(ID.KDS_Function, 0);
         set(ID.KDS_Data_Source, KDSDataSource.TCPIP.ordinal());
-        set(ID.KDS_Data_TCP_Port, 3000);
+        set(ID.KDS_Data_TCP_Port, m_contextTmp.getResources().getInteger(R.integer.default_stations_datasource_tcpip_port));// 3000);
         set(ID.KDS_Data_Folder, "");
-        set(ID.KDS_Station_Port, 3001);
+        set(ID.KDS_Station_Port,m_contextTmp.getResources().getInteger(R.integer.default_stations_internal_tcpip_port));// 3001);
         set(ID.Users_Mode, "0"); //default single user
 
         set(ID.View_Margin, 5);

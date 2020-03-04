@@ -27,15 +27,15 @@ import java.util.Set;
  */
 public class KDSRouterSettings extends SettingsBase {
     static public String TAG = "KDSRouterSettings";
-    static final public int DEFAULT_POS_IP_PORT = 3000;//please make it same as the default values in strings xml file.
-    static final public int DEFAULT_STATION_IP_PORT = 3001;
+    static final public int DEFAULT_STATIONS_DATASOURCE_TCPIP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_stations_datasource_tcpip_port);// 3000;//please make it same as the default values in strings xml file.
+    //static final public int DEFAULT_STATIONS_INTERNAL_TCPIP_PORT =KDSApplication.getContext().getResources().getInteger(R.integer.default_stations_internal_tcpip_port);// 3001;
 
-    static final public int UDP_ANNOUNCER_PORT = 5000; //for normal stations
-    static final public int UDP_ROUTER_ANNOUNCER_PORT = 5001; //write data to router. Use two port is for KDS and KDSRouter running in same station.
+    static final public int UDP_STATIONS_ANNOUNCER_UDP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_stations_announce_udp_port);// 5000; //for normal stations
+    static final public int UDP_ROUTER_ANNOUNCER_UDP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_router_announce_udp_port);// 5001; //write data to router. Use two port is for KDS and KDSRouter running in same station.
 
 
-    static final public int DEFAULT_LISTEN_POS_PORT = 4000;
-    static final public int DEFAULT_ROUTER_BACKUP_TCP_PORT = 4001;
+    static final public int DEFAULT_ROUTER_DATASOURCE_TCPIP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_router_datasource_tcpip_port);//4000;
+    static final public int DEFAULT_ROUTER_BACKUP_TCP_PORT =KDSApplication.getContext().getResources().getInteger(R.integer.default_router_backup_tcpip_port);// 4001;
 
 
 
@@ -198,10 +198,10 @@ public class KDSRouterSettings extends SettingsBase {
         set(ID.KDSRouter_Enabled, false);
         set(ID.KDSRouter_Default_Station, "1");
         set(ID.KDSRouter_Data_Source, KDSDataSource.TCPIP.ordinal());
-        set(ID.KDSRouter_Data_POS_IPPort, KDSUtil.convertIntToString(DEFAULT_LISTEN_POS_PORT));// "4000");
+        set(ID.KDSRouter_Data_POS_IPPort, KDSUtil.convertIntToString(DEFAULT_ROUTER_DATASOURCE_TCPIP_PORT));// "4000");
         set(ID.KDSRouter_Data_Folder, "");
-        set(ID.KDSRouter_Backup_IPPort, "4001"); //for router backup,
-        set(ID.KDSRouter_Connect_Station_IPPort, "3000");
+        set(ID.KDSRouter_Backup_IPPort,  KDSUtil.convertIntToString(DEFAULT_ROUTER_BACKUP_TCP_PORT));//"4001"); //for router backup,
+        set(ID.KDSRouter_Connect_Station_IPPort, KDSUtil.convertIntToString(DEFAULT_STATIONS_DATASOURCE_TCPIP_PORT));// "3000");
         set(ID.KDSRouter_Default_Station,"kdsrouter");
         set(ID.KDSRouter_Primary_Router, "");
         set(ID.KDSRouter_Slave_Router, "");
