@@ -3,6 +3,7 @@ package com.bematechus.kdslib;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -230,5 +231,46 @@ public class KDSBase {
 
         }
 
+    }
+
+    /**
+     * kpp1-312 Cannot receive orders on expo
+     * @param nListenPort
+     * @param errorMessage
+     */
+    protected void fireTcpListenServerErrorEvent(ArrayList<KDSEvents> evReceivers, int nListenPort, String errorMessage)
+    {
+        if (errorMessage.isEmpty()) return;
+
+        String s = String.format("Errors listen TCP port: %d,  %s", nListenPort, errorMessage);
+        if (evReceivers.size() >0) {
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(s);
+            for (int i = 0; i < evReceivers.size(); i++) {
+                evReceivers.get(i).onKDSEvent(KDSBase.KDSEventType.TCP_listen_port_error, ar);
+            }
+        }
+        else
+        { //if no receiver, just show error, as this messaga is urgent.
+            showToastMessage(s);
+
+        }
+
+    }
+
+    Toast m_toast = null;
+    protected void showToastMessage(String message) {
+        int duration = Toast.LENGTH_LONG;
+        try {
+            if (m_toast == null)
+                m_toast = Toast.makeText(KDSApplication.getContext(), message, duration);
+            else
+                m_toast.setText(message);
+            if (m_toast != null)
+                m_toast.show();
+        }catch (Exception e)
+        {
+
+        }
     }
 }

@@ -258,8 +258,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                 m_listenRouters.stop();
                 //disconnectStations(m_arConnectMeStations);
                 m_stationsConnection.closeAllStationsConnections();//.disconnectAllStationsConnectedToMe();
-                if (bEnabled)
-                    m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler );
+                if (bEnabled) {
+                   String error = m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler);
+                   fireTcpListenServerErrorEvent(m_nRouterBackupPort, error);
+
+                }
 
             }
         }
@@ -366,7 +369,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         if (srcType == KDSRouterSettings.KDSDataSource.TCPIP)
         {
             stopPOSListener();
-            m_listenPOS.startServer(m_nPOSPort, m_socksManager, m_sockEventsMessageHandler);
+            String error = m_listenPOS.startServer(m_nPOSPort, m_socksManager, m_sockEventsMessageHandler);
+            //kpp1-312 test
+            //String error = m_listenPOS.startServer(80, m_socksManager, m_sockEventsMessageHandler);
+            fireTcpListenServerErrorEvent(m_nPOSPort, error);
         }
         else
         {
@@ -429,7 +435,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         startPOSListener();
 
 
-        m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler);
+        String error = m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler);
+        fireTcpListenServerErrorEvent(m_nRouterBackupPort, error);
+
         this.broadcastRequireStationsUDPInThread();
 
 
@@ -3829,6 +3837,19 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     public boolean isDbEmpty()
     {
         return m_dbRouter.isEmpty();
+
+    }
+
+
+
+    /**
+     * kpp1-312 Cannot receive orders on expo
+     * @param nListenPort
+     * @param errorMessage
+     */
+    private void fireTcpListenServerErrorEvent(int nListenPort, String errorMessage)
+    {
+        fireTcpListenServerErrorEvent(m_arKdsEventsReceiver,nListenPort,  errorMessage);
 
     }
 }

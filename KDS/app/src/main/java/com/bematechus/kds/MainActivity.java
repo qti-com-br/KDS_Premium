@@ -4135,14 +4135,17 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     Toast m_toast = null;
     public void showToastMessage(String message) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
-        int duration = Toast.LENGTH_SHORT;
-        if (m_toast == null)
-            m_toast = Toast.makeText(this, message, duration);
-        else
-            m_toast.setText(message);
-        m_toast.setDuration(duration);
 
-        m_toast.show();
+        int duration = Toast.LENGTH_SHORT;
+        showToastMessage(message, duration);
+
+//        if (m_toast == null)
+//            m_toast = Toast.makeText(this, message, duration);
+//        else
+//            m_toast.setText(message);
+//        m_toast.setDuration(duration);
+//
+//        m_toast.show();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -7273,7 +7276,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case TCP_listen_port_error: //kp1-312
             {
                 String s = (String) arParams.get(0);
-                showToastMessage(s);
+                showToastMessage(s, Toast.LENGTH_LONG);
             }
             break;
             default:
@@ -7284,5 +7287,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         return null;
     }
+
+    public void showToastMessage(String message, int duration) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
+        if (m_toast == null)
+            m_toast = Toast.makeText(this, message, duration);
+        else
+            m_toast.setText(message);
+        m_toast.setDuration(duration);
+
+        m_toast.show();
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
 }
 

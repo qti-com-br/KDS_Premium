@@ -599,8 +599,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         startPOSListener();
 //        startStatisticListener(); //don't support statistic anymore
-        //test kpp1-312
+
         String error = m_listenStations.startServer(m_nStationsInternalIpPort, m_socksManager, m_sockEventsMessageHandler);
+        //test kpp1-312
         //String error = m_listenStations.startServer(80, m_socksManager, m_sockEventsMessageHandler);
         fireTcpListenServerErrorEvent(m_nStationsInternalIpPort, error);
 
@@ -5226,14 +5227,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
              */
     private void fireTcpListenServerErrorEvent(int nListenPort, String errorMessage)
     {
-        if (errorMessage.isEmpty()) return;
-        ArrayList<Object> ar = new ArrayList<>();
-        String s = String.format("Errors listen TCP port: %d,  %s", nListenPort, errorMessage);
-        ar.add(s);
-        for  (int i=0; i<m_arKdsEventsReceiver.size(); i++)
-        {
-            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSBase.KDSEventType.TCP_listen_port_error, ar);
-        }
+        fireTcpListenServerErrorEvent(m_arKdsEventsReceiver,nListenPort,  errorMessage);
 
     }
 }
