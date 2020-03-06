@@ -824,7 +824,9 @@ public class PreferenceFragmentStations
 
         }
 
-
+        /**
+         * add attached edittext to it.
+         */
         private class CustomTextWatcher implements TextWatcher {
             private EditText mEditText;
 
@@ -2326,11 +2328,30 @@ public class PreferenceFragmentStations
 
 
         }
+
+        /**
+         * Just expo station can been input to expo_col,
+         *
+         * @param s
+         *  The new text will been set to expo text col.
+         *  format: 1,2,4,5
+         * @param validText
+         *  Use array to return valid expo string.
+         * @return
+         *  true: all stations are expo station
+         *  false: there are no-expo station in it.
+         *
+         */
+        private boolean isValidExpoString(String s, ArrayList<String> validText)
+        {
+
+        }
         private void init_edittext_changed_event(EditText v)
         {
 
             v.addTextChangedListener(new CustomTextWatcher(v) {
                 public void afterTextChanged(Editable s) {
+
                     //PreferenceFragmentStations.this.save();
                     EditText t = this.getEditText();
                     View viewRow = (View) t.getTag();
@@ -2343,6 +2364,9 @@ public class PreferenceFragmentStations
                         relation.setID(s.toString());
                     }
                     else if (t.getId() == R.id.txtExpStations) {
+                        //kpp1-297, just expo station number can been setten to this text box.
+
+                        //
                         relation.setExpStations(s.toString());
                     } else if (t.getId() == R.id.txtSlaveStations) {
                         relation.setSlaveStations(s.toString());
@@ -2350,6 +2374,7 @@ public class PreferenceFragmentStations
 
                     ImageView img = (ImageView) viewRow.findViewById(R.id.imgEdit);
                     setImageEditingIcon(img, relation);
+
                 }
             });
         }
