@@ -1264,6 +1264,10 @@ public class PreferenceFragmentStations
                             removeSlaveStation(relation.getID(), relation.getFunction());
 
                         relation.setFunction(newStationFunc);
+                        //kpp1-297 Set a new function for Expo: what will happen with linked devices? - Do not allow or Remove references
+                        relation.setSlaveFunc(SettingsBase.SlaveFunc.Unknown);
+                        relation.setSlaveStations("");
+                        //
                         if (bRemoveExpo)
                             confirmRemoveExpo2(relation);
                         break;
@@ -1579,21 +1583,21 @@ public class PreferenceFragmentStations
                 d.show();
                 return false;
             }
-            private boolean isExpoStation(String stationID)
-            {
-                if (stationID.isEmpty()) return false;
-                for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
-                {
-                    if (MyAdapter.this.getListData().get(i).getID().equals(stationID))
-                    {
-                        if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
-                                MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
-                            return true;
-                    }
-                }
-                return false;
-
-            }
+//            public boolean isExpoStation(String stationID)
+//            {
+//                if (stationID.isEmpty()) return false;
+//                for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
+//                {
+//                    if (MyAdapter.this.getListData().get(i).getID().equals(stationID))
+//                    {
+//                        if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+//                                MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
+//                            return true;
+//                    }
+//                }
+//                return false;
+//
+//            }
 
             private boolean isPrepStation(String stationID)
             {
@@ -2053,6 +2057,46 @@ public class PreferenceFragmentStations
             return false;
         }
 
+        public boolean isExpoStation(String stationID)
+        {
+            if (stationID.isEmpty()) return false;
+            for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
+            {
+                if (MyAdapter.this.getListData().get(i).getID().equals(stationID))
+                {
+                    if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+                            MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
+                        return true;
+                }
+            }
+            return false;
+
+        }
+
+        /**
+         * kpp1-297
+         * while inputing, if number is any station pre-text,
+         * keep it.
+         * @param stationID
+         * @return
+         */
+        public boolean isAnyExpoStationPrefix(String stationID)
+        {
+            if (stationID.isEmpty()) return true;
+            for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
+            {
+                String id = MyAdapter.this.getListData().get(i).getID();
+                if (id.indexOf(stationID) == 0)
+                {
+                    if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+                            MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
+                        return true;
+                }
+            }
+            return false;
+
+        }
+
         public boolean isMoreThanOneTrackerStation(KDSStationsRelation trackerRelation)
         {
             for (int i=0; i<  this.getListData().size(); i++)
@@ -2330,11 +2374,16 @@ public class PreferenceFragmentStations
         }
 
         /**
+         * kpp1-297
          * Just expo station can been input to expo_col,
          *
          * @param s
          *  The new text will been set to expo text col.
+         *  We need to check this tring, make sure all stations is expo in it.
          *  format: 1,2,4,5
+         * @param bCheckPrefix
+         *  true: check the text if exist in expo prefix. User is inputing case.
+         *  false: don't check it.
          * @param validText
          *  Use array to return valid expo string.
          * @return
@@ -2342,10 +2391,91 @@ public class PreferenceFragmentStations
          *  false: there are no-expo station in it.
          *
          */
-        private boolean isValidExpoString(String s, ArrayList<String> validText)
+        private boolean isValidExpoString(String s,boolean bCheckPrefix, ArrayList<String> validText)
         {
+            ArrayList<String> ar = KDSUtil.spliteString(s, ",");
+            if (ar.size() <=0) return true;
+            if (ar.get(ar.size()-1).isEmpty()) return true; //last one is empty, user is inputing
+            ArrayList<String> arValidExpo = new ArrayList<>();
+            boolean bAllIsExpo = true;
+            for (int i=0; i< ar.size(); i++)
+            {
+                String station = ar.get(i);
+                if (MyAdapter.this.isExpoStation(station))
+                {
+                    arValidExpo.add(station);
+                }
+                else
+                {
+                    if (bCheckPrefix) {
+                        if (MyAdapter.this.isAnyExpoStationPrefix(station)) {
+                            arValidExpo.add(station);
+                        } else {
+                            bAllIsExpo = false;
+                        }
+                    }
+                    else
+                    {
+                        bAllIsExpo = false;
+                    }
+                }
+
+            }
+            String str = s;
+            if (!bAllIsExpo)
+            {
+                str = "";
+                for (int i=0; i< arValidExpo.size(); i++)
+                {
+                    str += arValidExpo.get(i);
+                    if (i <arValidExpo.size()-1)
+                        str += ",";
+                }
+            }
+            validText.add(str);
+
+            return bAllIsExpo;
+        }
+        //kpp1-297
+        private void showExpoColDataErrorToastMessage()
+        {
+            Toast.makeText( KDSApplication.getContext(), "Expo field just accept expo station number.", Toast.LENGTH_LONG).show();
+        }
+        //kpp1-297
+        private void init_expo_view_focus_event(View v, Object objTag)
+        {
+            v.setTag(objTag);
+            v.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+
+                        PreferenceFragmentStations.this.onListItemClicked((View) (v.getTag()));
+                        MyAdapter.this.m_viewEditing = v;
+
+                    }
+                    else
+                    {
+                        TextView t = (TextView) v;
+                        String s =  t.getText().toString();
+                        ArrayList<String> ar = new ArrayList<>();
+                        if (!isValidExpoString(s,false, ar))
+                        {
+                            s = ar.get(0);
+                            t.setText(s);
+                            int nposition = (Integer) ((ViewGroup)v.getTag()).getTag();
+                            MyAdapter.this.getListData().get(nposition).setExpStations(s);
+                            showExpoColDataErrorToastMessage();
+
+                        }
+                    }
+                }
+            });
+
+
 
         }
+
         private void init_edittext_changed_event(EditText v)
         {
 
@@ -2365,9 +2495,17 @@ public class PreferenceFragmentStations
                     }
                     else if (t.getId() == R.id.txtExpStations) {
                         //kpp1-297, just expo station number can been setten to this text box.
-
-                        //
-                        relation.setExpStations(s.toString());
+                        ArrayList<String> arValidText = new ArrayList<>();
+                        if (!isValidExpoString(s.toString(), true, arValidText))
+                        {
+                            relation.setExpStations(arValidText.get(0));
+                            s.replace(0, s.length(),arValidText.get(0) ); //set new text
+                            showExpoColDataErrorToastMessage();
+                        }
+                        else {
+                            //
+                            relation.setExpStations(s.toString());
+                        }
                     } else if (t.getId() == R.id.txtSlaveStations) {
                         relation.setSlaveStations(s.toString());
                     }
@@ -2520,7 +2658,7 @@ public class PreferenceFragmentStations
             EditText txtExp = ((EditText) convertView.findViewById(R.id.txtExpStations));
             viewHolder.m_txtExp = txtExp;
             txtExp.setText(r.getExpStations());
-            init_view_focus_event(txtExp, convertView);
+            init_expo_view_focus_event(txtExp, convertView); //kpp1-297, use this function.
             if (bNewView)
                 init_edittext_changed_event(txtExp);
 
