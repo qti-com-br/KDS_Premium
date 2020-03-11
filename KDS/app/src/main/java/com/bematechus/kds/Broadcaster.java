@@ -54,7 +54,7 @@ public class Broadcaster {
 //        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand(getStationID(), m_strLocalIP, strport, getLocalMacAddress());
         ByteBuffer buf = makeAnnounceToRouterBuffer();
 
-        getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
+        getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf);
     }
 
     public void broadcastClearDBCommand()
@@ -63,7 +63,7 @@ public class Broadcaster {
         getUDP().broadcastData(buf);
 
         //to router, KPP1-145
-        getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
+        getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf);
     }
 
     public void broadcastItemBumpUnbump(KDSDataOrder order, boolean bBumped)
@@ -120,7 +120,7 @@ public class Broadcaster {
 
         getKDS().getUDP().broadcastData(buf);
 
-        getKDS().getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
+        getKDS().getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf);
 
 
     }
@@ -132,7 +132,7 @@ public class Broadcaster {
 
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildRequireRelationsCommand();
         getUDP().broadcastData(buf);
-        getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
+        getUDP().broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf);
         return dt;
     }
 
@@ -195,7 +195,7 @@ public class Broadcaster {
         (new KDSBroadcastThread(getUDP(), makeStationAnnounceBuffer())).start();
 
         // ByteBuffer buf = makeAnnounceToRouterBuffer();
-        (new KDSBroadcastThread(getUDP(),KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeAnnounceToRouterBuffer())).start();
+        (new KDSBroadcastThread(getUDP(),KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, makeAnnounceToRouterBuffer())).start();
 
     }
 
@@ -229,9 +229,9 @@ public class Broadcaster {
         ByteBuffer buf =  KDSSocketTCPCommandBuffer.buildXMLCommand(s);
         String ip = parseRemoteUDPIP(toIP);
         String port = parseRemoteUDPPort(toIP);
-        int nport = KDSSettings.UDP_ANNOUNCER_PORT;
+        int nport = KDSSettings.UDP_STATION_ANNOUNCER_UDP_PORT;
         if (!port.isEmpty())
-            nport = KDSUtil.convertStringToInt(port,KDSSettings.UDP_ANNOUNCER_PORT );
+            nport = KDSUtil.convertStringToInt(port,KDSSettings.UDP_STATION_ANNOUNCER_UDP_PORT );
         getUDP().broadcastData(ip, nport, buf);
 
 

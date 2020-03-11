@@ -1375,5 +1375,26 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         onDoActivationExplicit();
     }
-    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams){return null;}
+
+            /**
+             * In kpp1-312, use it to show tcp/ip port occupied error.
+             * @param evt
+             * @param arParams
+             * @return
+             */
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams)
+    {
+        switch (evt)
+        {
+            case Received_rush_order:
+                break;
+            case TCP_listen_port_error:
+            {
+                String s = (String) arParams.get(0);
+                showToastMessage(s);
+            }
+            break;
+        }
+        return null;
+    }
 }
