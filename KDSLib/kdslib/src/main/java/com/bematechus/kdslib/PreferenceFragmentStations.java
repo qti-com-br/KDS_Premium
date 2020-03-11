@@ -2439,7 +2439,7 @@ public class PreferenceFragmentStations
         //kpp1-297
         private void showExpoColDataErrorToastMessage()
         {
-            Toast.makeText( KDSApplication.getContext(), "Expo field just accept expo station number.", Toast.LENGTH_LONG).show();
+            Toast.makeText( KDSApplication.getContext(), getString(R.string.expo_field_just_accept_expo), Toast.LENGTH_SHORT).show();
         }
         //kpp1-297
         private void init_expo_view_focus_event(View v, Object objTag)
