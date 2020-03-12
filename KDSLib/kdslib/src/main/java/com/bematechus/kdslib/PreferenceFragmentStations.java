@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -248,6 +249,7 @@ public class PreferenceFragmentStations
             if (viewFocused.getTag() != viewRow)
             {
                 ((EditText)viewFocused).clearFocus();
+
             }
         }
 
@@ -2444,15 +2446,14 @@ public class PreferenceFragmentStations
         //kpp1-297
         private void init_expo_view_focus_event(View v, Object objTag)
         {
+
             v.setTag(objTag);
             v.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-
-                        PreferenceFragmentStations.this.onListItemClicked((View) (v.getTag()));
                         MyAdapter.this.m_viewEditing = v;
-
+                        PreferenceFragmentStations.this.onListItemClicked((View) (v.getTag()));
                     }
                     else
                     {
@@ -2471,8 +2472,6 @@ public class PreferenceFragmentStations
                     }
                 }
             });
-
-
 
         }
 
@@ -2641,7 +2640,8 @@ public class PreferenceFragmentStations
             }
 
             boolean bNewView = false;
-            if (convertView == null) {
+            //if (convertView == null) //test kpp1-297-1
+            {
                 convertView = mInflater.inflate(R.layout.kdsui_listitem_stations_setting, null);
                 bNewView = true;
                 //bLoadingData = true;
