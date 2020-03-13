@@ -2520,14 +2520,21 @@ public class PreferenceFragmentStations
         public void setImageEditingIcon(ImageView img, KDSStationsRelation relation)
         {
             KDSStationsRelation.EditingState state = checkEditingState(relation, true);
-            ViewHolder holder = (ViewHolder) relation.getTag();
+           ViewHolder holder = (ViewHolder) relation.getTag();
             if (state == KDSStationsRelation.EditingState.Changed) {
                 if (img != null)
                     img.setImageResource(R.drawable.edit_24px_16);
 
             } else if (state != KDSStationsRelation.EditingState.OK) {
-                if (img != null)
-                    img.setImageResource(R.drawable.delete_24px_32);
+                if (img != null) {
+                    //kpp1-295 KDS Station receiving a X when logged out
+                    boolean bSetIcon = true;
+                    if ((state == KDSStationsRelation.EditingState.Error_ID) && (!holder.m_txtStationID.getText().toString().isEmpty()))
+                        bSetIcon = false;
+                    ////
+                    if (bSetIcon)
+                        img.setImageResource(R.drawable.error_16px);//delete_24px_32); //kpp1-295. Use new icon
+                }
             } else {
                 if (img != null)
                     img.setImageResource(0);
