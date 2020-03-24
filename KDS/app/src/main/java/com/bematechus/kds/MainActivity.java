@@ -2861,6 +2861,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             getKDS().syncOrderToWebDatabase(order, iosstate, ActivationRequest.SyncDataFromOperation.Unbump);
         }
         refreshPrevNext(userID); //kpp1-251, while bump then unbump last one, "next" count is not correct.
+        this.refreshView();//kpp1-316
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
