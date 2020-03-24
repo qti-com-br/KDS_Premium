@@ -7059,7 +7059,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void showOrderZoom(String orderGuid)
     {
+        if (orderGuid.isEmpty()) return; //kpp1-317
         KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null) return ; //kpp1-317
         KDSDlgOrderZoom dlg = KDSDlgOrderZoom.instance();
         dlg.setReceiver(this);
         dlg.setUser(getFocusedUserID());
