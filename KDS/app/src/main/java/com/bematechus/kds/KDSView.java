@@ -1193,6 +1193,7 @@ public class KDSView extends View {
         {
 
             Log.i(TAG, "scale end");
+
             if (m_eventsReceiver != null)
                 m_eventsReceiver.onViewSlipping(null, null, SlipDirection.Bottom2Top, SlipInBorder.None);
         }
