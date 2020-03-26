@@ -1021,12 +1021,15 @@ return whole line tags
     }
     private boolean isUnicode(char ch)
     {
+        if (ch == CMD_PRINT_LOGO) return false;
         if ((((ch & 0xff00)>>8) & 0x00ff) > 0)
             return true;
         return false;
     }
     private boolean isPrintable(char ch)
     {
+        if (ch == CMD_PRINT_LOGO)
+            return false;
         return (ch >=0x20);
 
 
@@ -1038,6 +1041,7 @@ return the ascii string len, it is unicode len
                                                                      */
     /************************************************************************/
     /**
+     * the actually printed length. Include double width, and unicode.
      *
      * @param s
      * @return
@@ -1796,23 +1800,22 @@ print order data to  buffer, socket will send this buffer to serial port
         PortInfo portInfo = this.getPortInfo(settings);
         switch (portInfo.getType())
         {
-
-            case SERIAL:
+            case SERIAL: {
                 return m_bSerialPrinterValid;
-
-
+            }
             case USB:
             {
               return isUsbPrinterValid();
             }
-
             case TCP: //ping it
+            {
                 return m_bNetworkPrinterValid;
-
+            }
             case UNDEFINED:
                 break;
         }
         return false;
+
 
     }
     public boolean isOpened()
@@ -1904,87 +1907,6 @@ print order data to  buffer, socket will send this buffer to serial port
             {
                 willPrint += ch;
             }
-//            switch (ch) {
-//                case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_BOLD);
-//
-//                }
-//                break;
-//                case CMD_END_BOLD:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_END_BOLD);
-//                }
-//                case CMD_PAPER_CUT:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_PAPER_CUT);
-//                }
-//                break;
-//                case CMD_START_DBLW:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_DBLW);
-//                }
-//                break;
-//                case CMD_START_DBLH:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_DBLH);
-//                }
-//                break;
-//                case CMD_START_DBLWH:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_DBLWH);
-//                }
-//                break;
-//                case CMD_END_DBLW:
-//                case CMD_END_DBLH:
-//                case CMD_END_DBLWH:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_END_DBLWH);
-//                }
-//                break;
-//                case CMD_START_REVERSE:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_REVERSE);
-//                }
-//                break;
-//                case CMD_END_REVERSE:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_END_REVERSE);
-//                }
-//                break;
-//                default:
-//                {
-//                    willPrint += ch;
-//                }
-//                break;
-//            }
         }
 
         if (!willPrint.isEmpty())
