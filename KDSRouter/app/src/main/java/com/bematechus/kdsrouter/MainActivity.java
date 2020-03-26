@@ -107,6 +107,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Import_Data,
         Reset_TT_Authen,
         Restart_me,
+        Logout,//kpp1-299
 
     }
 
@@ -462,8 +463,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else if (id == R.id.action_logout) //add this new. KPP1-185
         {
-            Activation.resetUserNamePwd();
-            onDoActivationExplicit();
+            showConfirmLogoutDialog();
+
+//            Activation.resetUserNamePwd();
+//            setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+//            onDoActivationExplicit();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1005,6 +1009,21 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
 
         }
+        else if (dlg instanceof  KDSUIDialogBase)
+        {
+            if (dlg.getTag() == null) return;
+            Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
+            switch (confirm) {
+                case Logout:
+                {
+                    doLogout();
+                }
+                break;
+                default: {
+                    break;
+                }
+            }
+        }
     }
 
     public boolean isKDSValid()
@@ -1110,17 +1129,31 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activation.isDoLicensing()) return;
+        if (m_activation.isDoLicensing()) {
+            showToastMessage(getString(R.string.internal_doing_activation));//"Internal activation is in process, please logout again later.");
+            return; //kpp1-304, maybe this cause kds can not logout issue.
+        }
         if (!isKDSValid()) return;
         m_activation.setStationID(getKDSRouter().getStationID());
         m_activation.setStationFunc(Activation.KDSROUTER);
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        if (ar.size()<=0) return;
+        if (ar.size()<=0) {
+            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+            return;//kpp1-304, maybe this cause kds can not logout issue.
+        }
         m_activation.setMacAddress(ar.get(0));
         //  m_activation.setMacAddress("BEMA0000011");//test
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
 
+    /**
+     * KPP1-299,Station Relationship remembered
+     * Clear everything when logout
+     */
+    public void setToDefaultSettings()
+    {
+        this.getSettings().setToDefault();
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1293,6 +1326,75 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onShowMessage(KDSBase.MessageType msgType, String message){}
     public void onRefreshView(int nUserID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
     public void onSetFocusToOrder(String orderGuid){}
-    public void onTTBumpOrder(String orderName){}
+
+    /**
+     * KPP1-305.Remove license restriction from Router
+     * While network restored, check activation again.
+     *  Use this function to get network restored event,
+     *  I don't want to add new event function in router app.
+     * @param orderName
+     */
+    public void onTTBumpOrder(String orderName){
+        doActivation(true, false, "");
+    }
+
     public void onXmlCommandBumpOrder(String orderGuid){}
+
+    /**
+     * check if the settings changed.
+     * @return
+     */
+    public boolean isAppContainsOldData()
+    {
+        if (!this.getSettings().isDefaultSettings())
+            return true;
+        if (!this.getKDSRouter().isDbEmpty())
+            return true;
+        return false;
+
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void showConfirmLogoutDialog()
+    {
+        KDSUIDialogBase d = new KDSUIDialogBase();
+        d.createOkCancelDialog(this,Confirm_Dialog.Logout, getString(R.string.yes), getString(R.string.no),getString(R.string.confirm), getString(R.string.confirm_logout),true, this );
+        d.show();
+    }
+    /**
+     * kpp1-299
+     */
+    private void doLogout()
+    {
+        Activation.resetUserNamePwd();
+        setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+        Activation.resetOldLoginUser(); //kpp1-299
+        getKDSRouter().clearAll(); //clear database too.
+
+        onDoActivationExplicit();
+    }
+
+            /**
+             * In kpp1-312, use it to show tcp/ip port occupied error.
+             * @param evt
+             * @param arParams
+             * @return
+             */
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams)
+    {
+        switch (evt)
+        {
+            case Received_rush_order:
+                break;
+            case TCP_listen_port_error:
+            {
+                String s = (String) arParams.get(0);
+                showToastMessage(s);
+            }
+            break;
+        }
+        return null;
+    }
 }

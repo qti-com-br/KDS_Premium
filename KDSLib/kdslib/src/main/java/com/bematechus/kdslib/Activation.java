@@ -78,10 +78,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 //    static int MAX_LOST_COUNT = 120;
 
     public static final int HOUR_MS = 3600000;
-    public static int MAX_LOST_COUNT = 120;
+    public static int MAX_LOST_COUNT = 120; //kpp1-301,
     public static final int INACTIVE_TIMEOUT = 300000; //5 minutes
 //
     public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
+    public static String PREMIUM_APP = "bc68f95c-1af5-47b1-a76b-e469f151ec3f";
 
     public enum SyncDataResult
     {
@@ -111,6 +112,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
         public void onDoActivationExplicit();
         public void onForceClearDataBeforeLogin();
+        public boolean isAppContainsOldData();
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -152,6 +154,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean isDoLicensing()
     {
+
         return m_bDoLicensing;
     }
     public void setDoLicensing(boolean bDoing)
@@ -481,12 +484,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             JSONObject json = (JSONObject) ar.get(0);
             int ncount = json.getInt("licenses_quantity");
             m_timeZone = json.getString("timezone");
-
+            String app = json.getString("store_app");
+            if (!app.equals(PREMIUM_APP))
+            {//kpp1-211 Only allow stores with Premium plan to log into Premium.
+                fireActivationFailEvent(ActivationRequest.COMMAND.Get_settings, ActivationRequest.ErrorType.App_type_error, m_context.getString(R.string.only_premium_plan_login));
+                return;
+            }
             m_nMaxLicenseCount = ncount;
 
             //System.out.println(ar.toString());
-
-            postGetDevicesRequest();
+            if (KDSApplication.isRouterApp()) //kpp1-305, Remove license restriction from Router
+                fireSuccessEvent();
+            else
+                postGetDevicesRequest();
         }
         catch (Exception e)
         {
@@ -1207,6 +1217,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putString(PREF_KEY_STORE_GUID, m_storeGuid);
         editor.putString(PREF_KEY_STORE_NAME, m_storeName);
 
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, userName); //kpp1-299, save current as old one.
+
         editor.apply();
         editor.commit();
 
@@ -1305,7 +1317,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
         editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
 
-        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+        //editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");//kpp1-299, remove it. Keep old one always.
 
         editor.apply();
         editor.commit();
@@ -1933,7 +1945,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         StoreDevice devLicense = findMyLicense();
         if (devLicense == null)
             return false;
-
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,devLicense);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
@@ -2033,6 +2045,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public boolean postNewStationInfo2Web(String licenseGuid, String stationID, String stationFunc)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice dev = new StoreDevice();
         dev.setGuid(licenseGuid);
         dev.m_serial = getMySerialNumber();
@@ -2095,6 +2108,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean postNewStationName2Web(String stationID, String stationName)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice dev = findMyLicense();
         if (dev == null)
             return false;
@@ -2107,6 +2121,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean postNewStationInfoToWeb(String stationID, String stationFunc, String stationName)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice devLicense = findMyLicense();
         if (devLicense == null)
             return false;
@@ -2214,6 +2229,18 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         StoreDevice dev = findMyLicense();
         if (dev == null) return "";
         return dev.getGuid();
+
+    }
+
+    static public void resetOldLoginUser()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+
+        editor.apply();
+        editor.commit();
 
     }
 }

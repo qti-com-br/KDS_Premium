@@ -209,4 +209,13 @@
     <string name="str_find">查找</string>
     <string name="password_incorrect">无效的密码</string>
     <string name="slave">副终端</string>
+    <string name="ip">IP</string>
+    <string name="port">端口</string>
+    <string name="file_name">文件名:</string>
+    <string name="error_not_expo_or_prep">错误,此终端不是expo 或prep.</string>
+    <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
+    <string name="only_premium_plan_login">Only allow stores with Premium plan to log into Premium.</string>
+    <string name="internal_doing_activation">Internal activation is in process, please logout again later.</string>
+    <string name="no_network_detected">No network interface detected.</string>
+    <string name="expo_field_just_accept_expo">Expo field just accept expo station number.</string>
 </resources>

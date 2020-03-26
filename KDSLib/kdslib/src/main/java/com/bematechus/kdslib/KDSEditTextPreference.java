@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 /**
@@ -22,7 +23,6 @@ public class KDSEditTextPreference extends EditTextPreference {
 
     public KDSEditTextPreference(Context context) {
         super(context);
-
     }
 
     /**
@@ -34,16 +34,17 @@ public class KDSEditTextPreference extends EditTextPreference {
      */
     protected void showDialog(Bundle state) {
         super.showDialog(state);
-        this.getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP)
-                {
-                    KDSKbdRecorder.convertKeyEvent(keyCode, event);
-                }
-                return false;
-            }
-        });
+        setMyKeyListener();
+//        this.getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+//            @Override
+//            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_UP)
+//                {
+//                    KDSKbdRecorder.convertKeyEvent(keyCode, event);
+//                }
+//                return false;
+//            }
+//        });
 
     }
 
@@ -85,4 +86,17 @@ public class KDSEditTextPreference extends EditTextPreference {
 
     }
 
+    protected void setMyKeyListener()
+    {
+        this.getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP)
+                {
+                    KDSKbdRecorder.convertKeyEvent(keyCode, event);
+                }
+                return false;
+            }
+        });
+    }
 }

@@ -4,11 +4,12 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/txtInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginLeft="5dp"
         android:text="@string/input_station_id"
-        android:id="@+id/txtInfo" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:layout_width="match_parent"
@@ -17,11 +18,12 @@
         android:inputType="number" />
 
     <TextView
+        android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginLeft="5dp"
         android:text="@string/active_stations"
-        android:id="@+id/textView5" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ListView
         android:layout_width="match_parent"

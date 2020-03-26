@@ -44,6 +44,14 @@ import java.util.UUID;
 public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     static final String TAG = "ActivationRequest";
+    static final String TOK = "tok";
+    static final String REQ = "req";
+    static final String REQ_LOGIN = "LOGIN";
+    static final String REQ_GET_SETTINGS =  "GET_SETTINGS";
+    static final String REQ_GET_DEVICES =  "GET_DEVICES";
+    static final String REQ_DEVICE_REPLACE =  "DEVICE_REPLACE";
+    static final String REQ_SMS_ORDER =  "SMS_ORDER";
+    static final String REQ_SYNC =  "SYNC";
     /**
      *
      * Management
@@ -57,21 +65,16 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      pwd: 123456
      */
 
-    //test server api
-    static final String API_URL_TEST = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
-    //production server api
-    static final String API_URL_PRODUCTION = "https://kdsgo.com/api/apiKDS";
 
-    //test db url
-    static final String DB_URL_TEST = "http://54.70.214.221/api/apiKDS/Premium";
 
-    static String API_URL = API_URL_TEST;
+
+    static String API_URL;
 
     //Web database sync feature.
     //DEV:http://54.70.214.221/api/apiKDS/Premium
     //STAGE: http://kitchengous.com/api/apiKDS/Premium
     //PROD: https://kdsgo.com/api/apiKDS/Premium
-    static String DB_URL = DB_URL_TEST;
+    static String DB_URL;
     //
     public static final String TOKEN = "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"; //fixed
 
@@ -127,6 +130,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         No_selected_license_to_replace,
         Cancel_license_options,
         Replace_error,
+        App_type_error, //kpp1-211 just premium app can login
     }
 
     COMMAND m_command = COMMAND.Unknown;
@@ -184,8 +188,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         String pwd = password;//PASSWORD;
 
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "LOGIN");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_LOGIN);//"LOGIN");
         try {
 
             json.put("username", userName);
@@ -213,8 +217,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "GET_SETTINGS");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_SETTINGS);//"GET_SETTINGS");
         try {
 
             json.put("store_guid",store_guid );
@@ -239,8 +243,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "GET_DEVICES");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_DEVICES);//"GET_DEVICES");
         try {
 
             json.put("store_guid",store_guid );
@@ -267,6 +271,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONObject jsonobj = new JSONObject(new LinkedHashMap());
         try {
             jsonobj.put(name, value);
+
+//            //kpp1-306 Send device's language code in every API request
+            if (name.equals(REQ) && isNeedLanguageReq(value))
+                jsonobj.put("language",  KDSUtil.getLanguageString() );
             return jsonobj;
         }catch (Exception e)
         {
@@ -396,8 +404,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "DEVICE_REPLACE");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_DEVICE_REPLACE);//"DEVICE_REPLACE");
 
         try {
             json.put("store_guid", store_guid );
@@ -744,8 +752,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "SMS_ORDER");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_SMS_ORDER);//"SMS_ORDER");
 
         try {
             json.put("store_guid", store_guid);
@@ -791,8 +799,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "SYNC");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_SYNC);//"SYNC");
         try {
 
             json.put("entity",tblName );
@@ -1473,6 +1481,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             //for router id
             if (stationFunc.equals(Activation.KDSROUTER))
                 n = 1000;
+            if (n == 0) n =1; //kpp1-298, Do not allow id 0
             json.put("id", KDSUtil.convertIntToString(n));
             json.put("store_guid","'" + store_guid + "'" );
             json.put("serial", "'"+mac+"'"); //mac address
@@ -1676,5 +1685,28 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         ar.put(jsonCustomer(storeGuid,order, customer) );
         return ar;
+    }
+
+    /**
+     * kpp1-306 Send device's language code in every API request
+     * @param reqValue
+     * @return
+     */
+    static boolean isNeedLanguageReq(String reqValue)
+    {
+        switch (reqValue.toUpperCase())
+        {
+            case REQ_LOGIN://"LOGIN":
+            case REQ_GET_SETTINGS://"GET_SETTINGS":
+            case REQ_GET_DEVICES://"GET_DEVICES":
+            case REQ_DEVICE_REPLACE://"DEVICE_REPLACE":
+            case REQ_SMS_ORDER://"SMS_ORDER":
+            case REQ_SYNC: //SYNC
+                return true;
+            default:
+                return false;
+
+        }
+
     }
 }

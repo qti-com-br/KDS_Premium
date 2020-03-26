@@ -187,7 +187,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Restart_me,
         Load_Old_Data,
         CONFIRM_BUMP,
-
+        Logout,
     }
 
 
@@ -390,10 +390,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
         getKDS().setDBEventsReceiver(this);
+        getKDS().setEventReceiver(this); //kpp1-312, move this function to top of getKDS().start();
         getKDS().start();
 
 
-        getKDS().setEventReceiver(this);
+        //
 
         if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         {
@@ -1212,9 +1213,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
             else if (id == R.id.action_logout)
             {
-                Activation.resetUserNamePwd();
-                resetStationID();
-                onDoActivationExplicit();
+                showConfirmLogoutDialog();
+//                Activation.resetUserNamePwd();
+//                resetStationID();
+//                setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+//                onDoActivationExplicit();
                 //m_activation.cancelActivation();
 
             }
@@ -2846,7 +2849,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
 
         //refreshWithNewDbDataAndFocusFirst(); //kpp1-251, use below line code
-        this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder();
+        this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder(false);
 
         notifiyPOSOrderUnbump(userID, orderGuid);
         //KPP1-41
@@ -2858,6 +2861,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             getKDS().syncOrderToWebDatabase(order, iosstate, ActivationRequest.SyncDataFromOperation.Unbump);
         }
         refreshPrevNext(userID); //kpp1-251, while bump then unbump last one, "next" count is not correct.
+        this.refreshView();//kpp1-316
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -3083,6 +3087,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     if (stationID.isEmpty()) {
                         inputStationID();
                     }
+                }
+                break;
+                case Logout:
+                {
+                    doLogout();
                 }
                 break;
                 default: {
@@ -4127,14 +4136,17 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     Toast m_toast = null;
     public void showToastMessage(String message) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
-        int duration = Toast.LENGTH_SHORT;
-        if (m_toast == null)
-            m_toast = Toast.makeText(this, message, duration);
-        else
-            m_toast.setText(message);
-        m_toast.setDuration(duration);
 
-        m_toast.show();
+        int duration = Toast.LENGTH_SHORT;
+        showToastMessage(message, duration);
+
+//        if (m_toast == null)
+//            m_toast = Toast.makeText(this, message, duration);
+//        else
+//            m_toast.setText(message);
+//        m_toast.setDuration(duration);
+//
+//        m_toast.show();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -6363,10 +6375,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activation.isDoLicensing()) return;
+        if (m_activation.isDoLicensing()) {
+            showToastMessage(getString(R.string.internal_doing_activation));// "Internal activation is in process, please logout again later.");
+            return; //kpp1-304, maybe this cause kds can not logout issue.
+        }
         m_activation.setStationID(getKDS().getStationID());
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        if (ar.size()<=0) return;
+        if (ar.size()<=0) {
+            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+            return;//kpp1-304, maybe this cause kds can not logout issue.
+        }
         m_activation.setMacAddress(ar.get(0));
       //  m_activation.setMacAddress("BEMA0000011");//test
         //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
@@ -6413,6 +6431,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
+        Activation.resetOldLoginUser(); //kpp1-299
         onSharedPreferenceChanged(pre, "");
         inputStationID();
         //pre.unregisterOnSharedPreferenceChangeListener(this);
@@ -6473,6 +6492,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void setToDefaultSettings()
     {
         this.getSettings().setToDefault();
+
     }
 
     TimeDog m_tdAutoRefreshScreen = new TimeDog();
@@ -7039,7 +7059,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void showOrderZoom(String orderGuid)
     {
+        if (orderGuid.isEmpty()) return; //kpp1-317
         KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null) return ; //kpp1-317
         KDSDlgOrderZoom dlg = KDSDlgOrderZoom.instance();
         dlg.setReceiver(this);
         dlg.setUser(getFocusedUserID());
@@ -7193,5 +7215,93 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
     }
+
+    /**
+     * kpp1-299
+     */
+    private void showConfirmLogoutDialog()
+    {
+        KDSUIDialogBase d = new KDSUIDialogBase();
+        d.createOkCancelDialog(this,Confirm_Dialog.Logout, getString(R.string.yes), getString(R.string.no),getString(R.string.confirm), getString(R.string.confirm_logout),true, this );
+        d.show();
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void doLogout()
+    {
+        Activation.resetUserNamePwd();
+        resetStationID();
+        setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+        Activation.resetOldLoginUser(); //kpp1-299
+        getKDS().clearAll(); //clear database too.
+        getKDS().clearStatisticData();
+        onDoActivationExplicit();
+    }
+
+    /**
+     * kpp1-299
+     * @return
+     * default value: false;
+     */
+    public boolean isAppContainsOldData()
+    {
+        if (!this.getSettings().isDefaultSettings())
+            return true;
+        if (!this.getKDS().isDbEmpty())
+            return true;
+        return false;
+    }
+
+    /**
+     *  kpp1-310
+     * @param evt
+     * @param arParams
+     * @return
+     */
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams)
+    {
+        switch (evt)
+        {
+            case Received_rush_order:
+            {
+                /* arParams:
+                    The orders added to users. Index 0: userA, index 1: userB order.
+                 */
+                getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+                if (arParams.size() >1)
+                    getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+
+
+            }
+            break;
+            case TCP_listen_port_error: //kp1-312
+            {
+                String s = (String) arParams.get(0);
+                showToastMessage(s, Toast.LENGTH_LONG);
+            }
+            break;
+            default:
+            {
+                break;
+            }
+
+        }
+        return null;
+    }
+
+    public void showToastMessage(String message, int duration) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
+        if (m_toast == null)
+            m_toast = Toast.makeText(this, message, duration);
+        else
+            m_toast.setText(message);
+        m_toast.setDuration(duration);
+
+        m_toast.show();
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
 }
 

@@ -3,6 +3,7 @@ package com.bematechus.kdslib;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,15 @@ public class KDSBase {
         Normal,
         Toast,
     }
+
+    /**
+     *  for onKDSEvent
+     */
+    public enum KDSEventType
+    {
+        Received_rush_order, //params: 0: useA new order. 1: userB new order.
+        TCP_listen_port_error, //params: 0: error message.
+    }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);
         void onStationDisconnected(String ip);
@@ -38,7 +48,23 @@ public class KDSBase {
         void onRefreshSummary(int nUserID);//KDSUser.USER userID);
         void onSetFocusToOrder(String orderGuid); //set focus to this order
         void onXmlCommandBumpOrder(String orderGuid);
+        /**
+         * In KDSRouter app
+         * KPP1-305.Remove license restriction from Router
+         * While network restored, check activation again.
+         *  Use this function to get network restored event,
+         *  I don't want to add new event function in router app.
+         * @param orderName
+         */
         void onTTBumpOrder(String orderName);
+
+        /**
+         * One events common definition, we don't need to add too many functions again.
+         * @param evt
+         * @param arParams
+         * @return
+         */
+        Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams);
 
     }
 
@@ -205,5 +231,46 @@ public class KDSBase {
 
         }
 
+    }
+
+    /**
+     * kpp1-312 Cannot receive orders on expo
+     * @param nListenPort
+     * @param errorMessage
+     */
+    protected void fireTcpListenServerErrorEvent(ArrayList<KDSEvents> evReceivers, int nListenPort, String errorMessage)
+    {
+        if (errorMessage.isEmpty()) return;
+
+        String s = String.format("Errors listen TCP port: %d,  %s", nListenPort, errorMessage);
+        if (evReceivers.size() >0) {
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(s);
+            for (int i = 0; i < evReceivers.size(); i++) {
+                evReceivers.get(i).onKDSEvent(KDSBase.KDSEventType.TCP_listen_port_error, ar);
+            }
+        }
+        else
+        { //if no receiver, just show error, as this messaga is urgent.
+            showToastMessage(s);
+
+        }
+
+    }
+
+    Toast m_toast = null;
+    protected void showToastMessage(String message) {
+        int duration = Toast.LENGTH_LONG;
+        try {
+            if (m_toast == null)
+                m_toast = Toast.makeText(KDSApplication.getContext(), message, duration);
+            else
+                m_toast.setText(message);
+            if (m_toast != null)
+                m_toast.show();
+        }catch (Exception e)
+        {
+
+        }
     }
 }

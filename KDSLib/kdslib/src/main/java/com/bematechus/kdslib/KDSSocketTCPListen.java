@@ -40,10 +40,13 @@ public class KDSSocketTCPListen implements KDSSocketInterface{
      }
     /**
     * Build the server
+     * kpp1-312, change function return error message.
     * @param nport
     * @return
+     *  empty: ok
+     *  other: error information
     */
-    private boolean buildServer(int nport)
+    private String buildServer(int nport)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_()+ "buildServer");
        try {
@@ -53,7 +56,7 @@ public class KDSSocketTCPListen implements KDSSocketInterface{
            InetSocketAddress address = new InetSocketAddress(nport) ;
            m_serverChannel.configureBlocking(false) ;
            ss.bind(address) ;
-           return true;
+           return "";
 
 
        } catch (Exception e) {
@@ -61,16 +64,28 @@ public class KDSSocketTCPListen implements KDSSocketInterface{
            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
            //KDSLog.e(TAG,KDSLog._FUNCLINE_() + KDSUtil.error(e));
            //e.printStackTrace();
-           return false;
+           return e.getMessage();
        }
     }
-    public boolean startServer(int nPort,KDSSocketManager manager, KDSSocketMessageHandler h )
+
+    /**
+     * rev.
+     *  kpp1-312, change return error string.
+     * @param nPort
+     * @param manager
+     * @param h
+     * @return
+     *  empty: ok
+     *  other: error message
+     */
+    public String startServer(int nPort,KDSSocketManager manager, KDSSocketMessageHandler h )
     {
+        String errorMsg = "";
         m_nListenPort = nPort;
         this.setEventHandler(h);
-        buildServer(nPort);
+        errorMsg = buildServer(nPort);
         interface_addToSocketManager(manager);
-        return true;
+        return errorMsg;
     }
 
     public void stop()

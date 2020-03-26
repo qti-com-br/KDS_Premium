@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -248,6 +249,7 @@ public class PreferenceFragmentStations
             if (viewFocused.getTag() != viewRow)
             {
                 ((EditText)viewFocused).clearFocus();
+
             }
         }
 
@@ -824,7 +826,9 @@ public class PreferenceFragmentStations
 
         }
 
-
+        /**
+         * add attached edittext to it.
+         */
         private class CustomTextWatcher implements TextWatcher {
             private EditText mEditText;
 
@@ -886,7 +890,15 @@ public class PreferenceFragmentStations
 
             }
 
-
+            /**
+             *
+             * @param primaryStationID
+             *  set which station
+             * @param slaveStationID
+             *  primaryStationID's slave station id.
+             * @param slaveStationFunc
+             *  The slave station use what function.
+             */
             private void changeStationSlaveFunctionAccordingItsSlaveStatioin(String primaryStationID, String slaveStationID, SettingsBase.StationFunc slaveStationFunc)
             {
                 KDSStationsRelation primaryRelation = getStationRelation(primaryStationID);
@@ -910,7 +922,8 @@ public class PreferenceFragmentStations
                         break;
                     case Mirror:
                         slaveFunc =  SettingsBase.SlaveFunc.Mirror;
-                        if (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep)
+                        if ( (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep) &&
+                                (primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor)) //kpp1-286, expo allow mirror
                             return;
                         break;
                     case Backup:
@@ -929,7 +942,8 @@ public class PreferenceFragmentStations
                         break;
                     case Duplicate:
                         slaveFunc =  SettingsBase.SlaveFunc.Duplicate_station;
-                        if (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep )
+                        if (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep &&
+                           (primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor)) //kpp1-286, expo allow mirror
                             return;
                         break;
                 }
@@ -1098,12 +1112,15 @@ public class PreferenceFragmentStations
                     case Queue:
                         //2.0.11, comment it, allow prep station has queue slave.
                         if ( (!isExpoStation(primaryID)) && (!isPrepStation(primaryID)))
-                            strErr =  PreferenceFragmentStations.this.getString(R.string.error_not_expo);
+                            strErr =  PreferenceFragmentStations.this.getString(R.string.error_not_expo_or_prep);//R.string.error_not_expo);
                         break;
                     case Mirror:
-
-                    case Workload:
                     case Duplicate:
+                        //kpp1-286, just expo and prep allow mirror and duplicate.
+                        if ( (!isExpoStation(primaryID)) && (!isPrepStation(primaryID)))
+                            strErr =  PreferenceFragmentStations.this.getString(R.string.error_not_expo_or_prep);//R.string.error_not_expo);
+                        break; //kpp1-286, Duplicate and Mirror Expeditor
+                    case Workload:
                         if (!isPrepStation(primaryID))
                             strErr = PreferenceFragmentStations.this.getString(R.string.error_not_prep);
                         break;
@@ -1249,6 +1266,10 @@ public class PreferenceFragmentStations
                             removeSlaveStation(relation.getID(), relation.getFunction());
 
                         relation.setFunction(newStationFunc);
+                        //kpp1-297 Set a new function for Expo: what will happen with linked devices? - Do not allow or Remove references
+                        relation.setSlaveFunc(SettingsBase.SlaveFunc.Unknown);
+                        relation.setSlaveStations("");
+                        //
                         if (bRemoveExpo)
                             confirmRemoveExpo2(relation);
                         break;
@@ -1564,21 +1585,21 @@ public class PreferenceFragmentStations
                 d.show();
                 return false;
             }
-            private boolean isExpoStation(String stationID)
-            {
-                if (stationID.isEmpty()) return false;
-                for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
-                {
-                    if (MyAdapter.this.getListData().get(i).getID().equals(stationID))
-                    {
-                        if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
-                                MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
-                            return true;
-                    }
-                }
-                return false;
-
-            }
+//            public boolean isExpoStation(String stationID)
+//            {
+//                if (stationID.isEmpty()) return false;
+//                for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
+//                {
+//                    if (MyAdapter.this.getListData().get(i).getID().equals(stationID))
+//                    {
+//                        if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+//                                MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
+//                            return true;
+//                    }
+//                }
+//                return false;
+//
+//            }
 
             private boolean isPrepStation(String stationID)
             {
@@ -2038,6 +2059,46 @@ public class PreferenceFragmentStations
             return false;
         }
 
+        public boolean isExpoStation(String stationID)
+        {
+            if (stationID.isEmpty()) return false;
+            for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
+            {
+                if (MyAdapter.this.getListData().get(i).getID().equals(stationID))
+                {
+                    if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+                            MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
+                        return true;
+                }
+            }
+            return false;
+
+        }
+
+        /**
+         * kpp1-297
+         * while inputing, if number is any station pre-text,
+         * keep it.
+         * @param stationID
+         * @return
+         */
+        public boolean isAnyExpoStationPrefix(String stationID)
+        {
+            if (stationID.isEmpty()) return true;
+            for (int i=0; i<  MyAdapter.this.getListData().size(); i++)
+            {
+                String id = MyAdapter.this.getListData().get(i).getID();
+                if (id.indexOf(stationID) == 0)
+                {
+                    if (MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+                            MyAdapter.this.getListData().get(i).getFunction() == SettingsBase.StationFunc.Queue_Expo)
+                        return true;
+                }
+            }
+            return false;
+
+        }
+
         public boolean isMoreThanOneTrackerStation(KDSStationsRelation trackerRelation)
         {
             for (int i=0; i<  this.getListData().size(); i++)
@@ -2053,7 +2114,7 @@ public class PreferenceFragmentStations
         }
         //2.0.11, change it from 5 o 6, allow queue for prep station.
         final static int PREP_SLAVE_OPTIONS = 6;
-        final static int EXPO_SLAVE_OPTIONS = 3;
+        final static int EXPO_SLAVE_OPTIONS = 5; //kpp1-286, Duplicate and Mirror Expeditor. Change it from 3 to 5.
 
         final static int NO_SLAVE_OPTIONS = 1;
         final static int MIRROR_SLAVE_OPTIONS = 1;
@@ -2068,6 +2129,12 @@ public class PreferenceFragmentStations
         ArrayList<SlaveFunction> m_slaveFuncBackupSpinnerList = new ArrayList<>();
         ArrayList<SlaveFunction> m_slaveFuncOtherSpinnerList = new ArrayList<>();
 
+        /**
+         * according to the function to decide what slave supported.
+         * @param context
+         * @param spinner
+         * @param stationFunction
+         */
         private void initSlaveFunctionSpinner(Context context, Spinner spinner, SettingsBase.StationFunc stationFunction)
         {
             SpinnerAdapter oldAdapter =  spinner.getAdapter();
@@ -2122,6 +2189,9 @@ public class PreferenceFragmentStations
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Unknown.ordinal()), SettingsBase.SlaveFunc.Unknown));
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Backup.ordinal()), SettingsBase.SlaveFunc.Backup));
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Order_Queue_Display.ordinal()), SettingsBase.SlaveFunc.Order_Queue_Display));
+                        //kpp1-285, Duplicate and Mirror Expeditor.
+                        m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Mirror.ordinal()), SettingsBase.SlaveFunc.Mirror));
+                        m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Duplicate_station.ordinal()), SettingsBase.SlaveFunc.Duplicate_station));
                     }
                     list = m_slaveFuncExpoSpinnerList;
                     break;
@@ -2304,11 +2374,113 @@ public class PreferenceFragmentStations
 
 
         }
+
+        /**
+         * kpp1-297
+         * Just expo station can been input to expo_col,
+         *
+         * @param s
+         *  The new text will been set to expo text col.
+         *  We need to check this tring, make sure all stations is expo in it.
+         *  format: 1,2,4,5
+         * @param bCheckPrefix
+         *  true: check the text if exist in expo prefix. User is inputing case.
+         *  false: don't check it.
+         * @param validText
+         *  Use array to return valid expo string.
+         * @return
+         *  true: all stations are expo station
+         *  false: there are no-expo station in it.
+         *
+         */
+        private boolean isValidExpoString(String s,boolean bCheckPrefix, ArrayList<String> validText)
+        {
+            ArrayList<String> ar = KDSUtil.spliteString(s, ",");
+            if (ar.size() <=0) return true;
+            if (ar.get(ar.size()-1).isEmpty()) return true; //last one is empty, user is inputing
+            ArrayList<String> arValidExpo = new ArrayList<>();
+            boolean bAllIsExpo = true;
+            for (int i=0; i< ar.size(); i++)
+            {
+                String station = ar.get(i);
+                if (MyAdapter.this.isExpoStation(station))
+                {
+                    arValidExpo.add(station);
+                }
+                else
+                {
+                    if (bCheckPrefix) {
+                        if (MyAdapter.this.isAnyExpoStationPrefix(station)) {
+                            arValidExpo.add(station);
+                        } else {
+                            bAllIsExpo = false;
+                        }
+                    }
+                    else
+                    {
+                        bAllIsExpo = false;
+                    }
+                }
+
+            }
+            String str = s;
+            if (!bAllIsExpo)
+            {
+                str = "";
+                for (int i=0; i< arValidExpo.size(); i++)
+                {
+                    str += arValidExpo.get(i);
+                    if (i <arValidExpo.size()-1)
+                        str += ",";
+                }
+            }
+            validText.add(str);
+
+            return bAllIsExpo;
+        }
+        //kpp1-297
+        private void showExpoColDataErrorToastMessage()
+        {
+            Toast.makeText( KDSApplication.getContext(), getString(R.string.expo_field_just_accept_expo), Toast.LENGTH_SHORT).show();
+        }
+        //kpp1-297
+        private void init_expo_view_focus_event(View v, Object objTag)
+        {
+
+            v.setTag(objTag);
+            v.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        MyAdapter.this.m_viewEditing = v;
+                        PreferenceFragmentStations.this.onListItemClicked((View) (v.getTag()));
+                    }
+                    else
+                    {
+                        TextView t = (TextView) v;
+                        String s =  t.getText().toString();
+                        ArrayList<String> ar = new ArrayList<>();
+                        if (!isValidExpoString(s,false, ar))
+                        {
+                            s = ar.get(0);
+                            t.setText(s);
+                            int nposition = (Integer) ((ViewGroup)v.getTag()).getTag();
+                            MyAdapter.this.getListData().get(nposition).setExpStations(s);
+                            showExpoColDataErrorToastMessage();
+
+                        }
+                    }
+                }
+            });
+
+        }
+
         private void init_edittext_changed_event(EditText v)
         {
 
             v.addTextChangedListener(new CustomTextWatcher(v) {
                 public void afterTextChanged(Editable s) {
+
                     //PreferenceFragmentStations.this.save();
                     EditText t = this.getEditText();
                     View viewRow = (View) t.getTag();
@@ -2321,13 +2493,25 @@ public class PreferenceFragmentStations
                         relation.setID(s.toString());
                     }
                     else if (t.getId() == R.id.txtExpStations) {
-                        relation.setExpStations(s.toString());
+                        //kpp1-297, just expo station number can been setten to this text box.
+                        ArrayList<String> arValidText = new ArrayList<>();
+                        if (!isValidExpoString(s.toString(), true, arValidText))
+                        {
+                            relation.setExpStations(arValidText.get(0));
+                            s.replace(0, s.length(),arValidText.get(0) ); //set new text
+                            showExpoColDataErrorToastMessage();
+                        }
+                        else {
+                            //
+                            relation.setExpStations(s.toString());
+                        }
                     } else if (t.getId() == R.id.txtSlaveStations) {
                         relation.setSlaveStations(s.toString());
                     }
 
                     ImageView img = (ImageView) viewRow.findViewById(R.id.imgEdit);
                     setImageEditingIcon(img, relation);
+
                 }
             });
         }
@@ -2335,14 +2519,21 @@ public class PreferenceFragmentStations
         public void setImageEditingIcon(ImageView img, KDSStationsRelation relation)
         {
             KDSStationsRelation.EditingState state = checkEditingState(relation, true);
-            ViewHolder holder = (ViewHolder) relation.getTag();
+           ViewHolder holder = (ViewHolder) relation.getTag();
             if (state == KDSStationsRelation.EditingState.Changed) {
                 if (img != null)
                     img.setImageResource(R.drawable.edit_24px_16);
 
             } else if (state != KDSStationsRelation.EditingState.OK) {
-                if (img != null)
-                    img.setImageResource(R.drawable.delete_24px_32);
+                if (img != null) {
+                    //kpp1-295 KDS Station receiving a X when logged out
+                    boolean bSetIcon = true;
+                    if ((state == KDSStationsRelation.EditingState.Error_ID) && (!holder.m_txtStationID.getText().toString().isEmpty()))
+                        bSetIcon = false;
+                    ////
+                    if (bSetIcon)
+                        img.setImageResource(R.drawable.error_16px);//delete_24px_32); //kpp1-295. Use new icon
+                }
             } else {
                 if (img != null)
                     img.setImageResource(0);
@@ -2456,7 +2647,8 @@ public class PreferenceFragmentStations
             }
 
             boolean bNewView = false;
-            if (convertView == null) {
+            //if (convertView == null) //test kpp1-297-1
+            {
                 convertView = mInflater.inflate(R.layout.kdsui_listitem_stations_setting, null);
                 bNewView = true;
                 //bLoadingData = true;
@@ -2473,7 +2665,7 @@ public class PreferenceFragmentStations
             EditText txtExp = ((EditText) convertView.findViewById(R.id.txtExpStations));
             viewHolder.m_txtExp = txtExp;
             txtExp.setText(r.getExpStations());
-            init_view_focus_event(txtExp, convertView);
+            init_expo_view_focus_event(txtExp, convertView); //kpp1-297, use this function.
             if (bNewView)
                 init_edittext_changed_event(txtExp);
 
@@ -2829,7 +3021,7 @@ public class PreferenceFragmentStations
     public void onRefreshView(int userID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
     public void onShowStationStateMessage(String stationID, int nState){}
     public void onShowMessage(String message){}
-
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams){return null;}
 }
 
 //    @Override

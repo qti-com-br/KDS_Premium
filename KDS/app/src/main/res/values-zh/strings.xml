@@ -107,13 +107,13 @@
     <!--<string name="question">询问</string>-->
     <!--<string name="input">输入</string>-->
     <string name="input_station_id">在使用前，必须输入终端ID</string>
-    <string name="input_id_title">请输入终端ID(0~99)</string>
+    <string name="input_id_title">请输入终端ID(1~99)</string>
     <!--<string name="select_station">请选择终端</string>-->
     <!--<string name="select_retrieve_station">选择终端</string>-->
     <string name="confirm_bump_normal">是否要删除订单 # ?</string>
     <string name="confirm_bump_expo_outstanding">订单 # 包含未完成菜名， 是否仍然要删除?</string>
     <string name="error_isnot_unique_id">ID # 已被占用，请输入其它</string>
-    <string name="error_id_out_range">请输入ID, 范围（0--99）</string>
+    <string name="error_id_out_range">请输入ID, 范围（1--99）</string>
     <string name="error_id_is_empty">请输入ID</string>
     <!--<string name="active_stations_list">终端</string>-->
     <!--<string name="no_active_stations">无在线终端</string>-->
@@ -488,8 +488,8 @@
     </string-array>
 
     <string name="id">ID</string>
-    <string name="ip">IP</string>
-    <string name="port">端口</string>
+    <!--<string name="ip">IP</string>-->
+    <!--<string name="port">端口</string>-->
     <!--<string name="func">功能</string>-->
     <string name="mirror">镜像</string>
     <!--<string name="slave_func">副终端功能</string>-->
@@ -1051,7 +1051,7 @@
 
     </string-array>
     <!--<string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>-->
-    <string name="file_name">文件名:</string>
+    <!--<string name="file_name">文件名:</string>-->
     <string name="confirm_bump_unpaid">删除未付款订单前要确认</string>
     <string name="confirm_bump_outstanding">删除未完成订单前要确认</string>
     <string-array name="pref_queue_sort_titles">

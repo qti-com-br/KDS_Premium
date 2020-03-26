@@ -89,9 +89,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
     /********************************************************************************************/
 
-    int m_nPOSPort = 4000;
+    int m_nPOSPort = KDSRouterSettings.DEFAULT_ROUTER_DATASOURCE_TCPIP_PORT;// 4000;
 
-    int m_nRouterBackupPort = 4001;
+    int m_nRouterBackupPort = KDSRouterSettings.DEFAULT_ROUTER_BACKUP_TCP_PORT;// 4001;
 
     String m_primaryRouterID = "";//2015-12-29
     String m_slaveRouterID = "";//2015-12-29
@@ -258,8 +258,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                 m_listenRouters.stop();
                 //disconnectStations(m_arConnectMeStations);
                 m_stationsConnection.closeAllStationsConnections();//.disconnectAllStationsConnectedToMe();
-                if (bEnabled)
-                    m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler );
+                if (bEnabled) {
+                   String error = m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler);
+                   fireTcpListenServerErrorEvent(m_nRouterBackupPort, error);
+
+                }
 
             }
         }
@@ -344,6 +347,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     private void onNetworkRestored()
     {
         this.startNetwork();
+        //KPP1-305, Remove license restriction from Router
+        //let main ui know network restored.
+        //I don't want to add new event function, just use unused one.
+        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+            m_arKdsEventsReceiver.get(i).onTTBumpOrder("");
 
     }
     private void onNetworkLost()
@@ -361,7 +369,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         if (srcType == KDSRouterSettings.KDSDataSource.TCPIP)
         {
             stopPOSListener();
-            m_listenPOS.startServer(m_nPOSPort, m_socksManager, m_sockEventsMessageHandler);
+            String error = m_listenPOS.startServer(m_nPOSPort, m_socksManager, m_sockEventsMessageHandler);
+            //kpp1-312 test
+            //String error = m_listenPOS.startServer(80, m_socksManager, m_sockEventsMessageHandler);
+            fireTcpListenServerErrorEvent(m_nPOSPort, error);
         }
         else
         {
@@ -415,7 +426,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         refreshIPandMAC();
 
         m_socksManager.startThread();
-        m_udpStationAnnouncer.start(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_PORT, m_sockEventsMessageHandler, m_socksManager);
+        m_udpStationAnnouncer.start(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, m_sockEventsMessageHandler, m_socksManager);
 
         //let others stations know me as soon as possible.
         this.broadcastStationAnnounceInThread();
@@ -424,7 +435,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         startPOSListener();
 
 
-        m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler);
+        String error = m_listenRouters.startServer(m_nRouterBackupPort, m_socksManager, m_sockEventsMessageHandler);
+        fireTcpListenServerErrorEvent(m_nRouterBackupPort, error);
+
         this.broadcastRequireStationsUDPInThread();
 
 
@@ -639,7 +652,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
     public ByteBuffer makeAnnounceToRouterBuffer()
     {
-        int port = KDSSettings.UDP_ROUTER_ANNOUNCER_PORT;
+        int port = KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT;
         String strport = KDSUtil.convertIntToString(port);
         boolean bEnabled = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
         boolean bBackupMode = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Backup);
@@ -650,14 +663,14 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     public void broadcastRouterAnnounceInThread()
     {
 
-        (new KDSBroadcastThread(m_udpStationAnnouncer,KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeAnnounceToRouterBuffer())).start();
+        (new KDSBroadcastThread(m_udpStationAnnouncer,KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, makeAnnounceToRouterBuffer())).start();
 
     }
 
     public void broadcastAskRoutersInThread()
     {
         ByteBuffer buf =  KDSSocketTCPCommandBuffer.buildAskRoutersCommand();
-        (new KDSBroadcastThread(m_udpStationAnnouncer,KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, buf)).start();
+        (new KDSBroadcastThread(m_udpStationAnnouncer,KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf)).start();
 
     }
 
@@ -1580,7 +1593,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             KDSLog.d(TAG, "sockevent_onTCPAccept, listenPOS accept ");
             m_stationsConnection.onAcceptPOSConnection(sock, sockClient);
             String strPort = this.getSettings().getString(KDSRouterSettings.ID.KDSRouter_Data_POS_IPPort);
-            c.setListenPort(KDSUtil.convertStringToInt(strPort,KDSRouterSettings.DEFAULT_LISTEN_POS_PORT ));
+            c.setListenPort(KDSUtil.convertStringToInt(strPort,KDSRouterSettings.DEFAULT_ROUTER_DATASOURCE_TCPIP_PORT ));
             //bFireEvent = true;
         }
         else if (sock == m_listenRouters) {
@@ -3181,7 +3194,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     {
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildRequireStationsCommand();
 
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ANNOUNCER_PORT, buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_STATIONS_ANNOUNCER_UDP_PORT, buf);
     }
 
     /**
@@ -3314,9 +3327,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         s += "</Relations>";
         ByteBuffer buf =  KDSSocketTCPCommandBuffer.buildXMLCommand(s);
 
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ANNOUNCER_PORT, buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_STATIONS_ANNOUNCER_UDP_PORT, buf);
 
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf);
 
 
     }
@@ -3328,8 +3341,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         s += "</RelationsRet>";
         ByteBuffer buf =  KDSSocketTCPCommandBuffer.buildXMLCommand(s);
 
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ANNOUNCER_PORT,buf);
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_STATIONS_ANNOUNCER_UDP_PORT,buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf);
 
     }
 
@@ -3337,8 +3350,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     {
 
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildRequireRelationsCommand();
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ANNOUNCER_PORT,buf);
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_PORT, buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_STATIONS_ANNOUNCER_UDP_PORT,buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, buf);
     }
 
     public void udpAskRelations(String stationID)
@@ -3347,9 +3360,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         KDSStationActived station =  this.getStationsConnections().findActivedStationByID(stationID);
         if (station == null) return;
         int nport = KDSUtil.convertStringToInt(station.getPort(), 0);
-        int udpPort = KDSRouterSettings.UDP_ANNOUNCER_PORT;
+        int udpPort = KDSRouterSettings.UDP_STATIONS_ANNOUNCER_UDP_PORT;
         if (nport == getSettings().getInt(KDSRouterSettings.ID.KDSRouter_Backup_IPPort))
-            udpPort = KDSRouterSettings.UDP_ROUTER_ANNOUNCER_PORT;
+            udpPort = KDSRouterSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT;
 
         m_udpStationAnnouncer.broadcastData(station.getIP(), udpPort, buf);
 
@@ -3365,7 +3378,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     {
 
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildShowStationIDCommand();
-        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_ANNOUNCER_PORT, buf);
+        m_udpStationAnnouncer.broadcastData(KDSRouterSettings.UDP_STATIONS_ANNOUNCER_UDP_PORT, buf);
 
     }
 
@@ -3678,12 +3691,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     private void broadcastRouterAnnounce()
     {
         m_bufferForRouterAnnounce.clear();
-        m_udpStationAnnouncer.broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_PORT, makeAnnounceToRouterBuffer(m_bufferForRouterAnnounce));
+        m_udpStationAnnouncer.broadcastData(KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT, makeAnnounceToRouterBuffer(m_bufferForRouterAnnounce));
     }
 
     private ByteBuffer makeAnnounceToRouterBuffer(ByteBuffer buf)
     {
-        int port = KDSSettings.UDP_ROUTER_ANNOUNCER_PORT;
+        int port = KDSSettings.UDP_ROUTER_ANNOUNCER_UDP_PORT;
         String strport = KDSUtil.convertIntToString(port);
         boolean bEnabled = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
         boolean bBackupMode = getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Backup);
@@ -3815,5 +3828,28 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             }
 
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arParams);
+    }
+
+    /**
+     * KPP1-299
+     * @return
+     */
+    public boolean isDbEmpty()
+    {
+        return m_dbRouter.isEmpty();
+
+    }
+
+
+
+    /**
+     * kpp1-312 Cannot receive orders on expo
+     * @param nListenPort
+     * @param errorMessage
+     */
+    private void fireTcpListenServerErrorEvent(int nListenPort, String errorMessage)
+    {
+        fireTcpListenServerErrorEvent(m_arKdsEventsReceiver,nListenPort,  errorMessage);
+
     }
 }
