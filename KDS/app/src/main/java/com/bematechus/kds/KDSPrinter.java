@@ -2163,7 +2163,8 @@ print order data to  buffer, socket will send this buffer to serial port
     }
     private boolean isDoubleWidthEndCommand(char ch)
     {
-        return (ch  == CMD_END_DBLWH);
+        return (ch  == CMD_END_DBLWH ||
+                ch ==  CMD_END_DBLW);//kpp1-215
     }
 
 

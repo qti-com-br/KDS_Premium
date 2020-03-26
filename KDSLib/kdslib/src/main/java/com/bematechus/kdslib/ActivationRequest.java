@@ -1507,7 +1507,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("xml_order" , "2");
             //KPP1-55//https://bematech.atlassian.net/browse/KPP1-55
             //json.put("app_version" , "'" + KDSUtil.getVersionName(KDSApplication.getContext()) + "'");
-            //json.put("app_version_code" , KDSUtil.convertIntToString(KDSUtil.getVersionCode(KDSApplication.getContext())));
+            //json.put("app_version_code" , KDSUtil.getVersionCodeString(KDSApplication.getContext()));
         }
         catch (Exception e)
         {
