@@ -177,7 +177,8 @@ public class KDSUser {
 
         for (int i= 0; i< m_ordersTabHidden.getCount(); i++)
         {
-            m_ordersDynamic.addComponent(m_ordersTabHidden.get(i));
+            if (m_ordersDynamic.getOrderByGUID(m_ordersTabHidden.get(i).getGUID()) == null) //kpp1-319 Destination Orders Duplicating
+                m_ordersDynamic.addComponent(m_ordersTabHidden.get(i));
 
         }
         if (m_ordersTabHidden.getCount() >0) {
