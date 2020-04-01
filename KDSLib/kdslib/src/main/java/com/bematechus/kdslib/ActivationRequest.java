@@ -194,6 +194,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             json.put("username", userName);
             json.put("password", pwd);
+            //kpp1-55,+
+            json.put("appVersionCode", KDSUtil.getVersionCodeString(KDSApplication.getContext()));
         }
         catch (Exception e)
         {
