@@ -5,4 +5,5 @@
     <integer name="queue_title_order_id_font_size">20</integer>
     <integer name="queue_title_order_status_font_size">20</integer>
     <integer name="pwd_length">4</integer>
+    <integer name="top_sum_cols">3</integer>
 </resources>

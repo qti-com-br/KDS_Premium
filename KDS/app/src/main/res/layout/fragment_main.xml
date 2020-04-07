@@ -84,13 +84,13 @@
                     android:gravity="center|center_vertical|center_horizontal" />
             </LinearLayout>
 
-            <GridView
+            <com.bematechus.kds.AutoGridView
+                android:id="@+id/sumTopA"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:id="@+id/sumTopA"
-                android:numColumns="3"
-                android:visibility="visible"
-                android:background="@drawable/top_sum_border" />
+                android:background="@drawable/top_sum_border"
+                android:numColumns="@integer/top_sum_cols"
+                android:visibility="visible" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -198,14 +198,13 @@
                     android:gravity="center|center_vertical|center_horizontal" />
             </LinearLayout>
 
-            <GridView
-                 android:layout_width="match_parent"
-                 android:layout_height="80dp"
-                 android:id="@+id/sumTopB"
-                 android:numColumns="3"
-                 android:visibility="visible"
-                 android:background="@drawable/media_listview_border"
-                 android:layout_margin="2dp" />
+            <com.bematechus.kds.AutoGridView
+                android:id="@+id/sumTopB"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@drawable/top_sum_border"
+                android:numColumns="@integer/top_sum_cols"
+                android:visibility="visible" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

@@ -2129,6 +2129,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String guid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (guid.isEmpty()) return;
         bumpOrderOperation(userID, guid, true);
+        refreshSum();//kpp1-320
         getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_bump_order);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -3685,7 +3686,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             build_gui_according_to_user_mode(m);
 
 
-            if (oldSumOrderBy != newSumOrderBy)
+            if (oldSumOrderBy != newSumOrderBy ||
+                    key.equals("sum_type") || key.equals("sum_bgfg"))//kpp1-320
             {
                 refreshSum();
             }
@@ -3706,6 +3708,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (getKDS().isMultpleUsersMode())
                     onRefreshSummary(KDSUser.USER.USER_B);
             }
+
+
 
         }
 
