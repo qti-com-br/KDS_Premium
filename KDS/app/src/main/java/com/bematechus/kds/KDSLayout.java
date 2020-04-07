@@ -1181,8 +1181,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         }
 
-        if (getEnv().getSettings().getInt(KDSSettings.ID.Order_Footer_Rows) > 0)
-            addCellToPanel(panel, dressedOrder, KDSLayoutCell.CellSubType.OrderFooter);
+        if (getEnv().getSettings().getInt(KDSSettings.ID.Order_Footer_Rows) > 0) {
+            KDSViewBlockCell cell =addCellToPanel(panel, dressedOrder, KDSLayoutCell.CellSubType.OrderFooter_Last);//OrderFooter); //kpp1-321 Footer Not Displaying With Vert Expand
+            if (cell != null) //kpp1-321 Footer Not Displaying With Vertical Expand. Set its font
+                cell.setFontFace(getEnv().getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Footer_FontFace));
+        }
+
+
 
         return true;
     }
