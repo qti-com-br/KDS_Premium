@@ -200,6 +200,13 @@ public class KDSUser {
         return ar.size();
     }
 
+    /**
+     * Rev.
+     *  If all items preparation time is 0, this function will cause line items display move order up/up automaticly. (Smart sort enabled).
+     *
+     * @param orderName
+     * @param itemName
+     */
     public void prep_other_station_item_bumped(String orderName,String itemName)
     {
         KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
@@ -207,12 +214,13 @@ public class KDSUser {
         PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
         if (prepItem == null) return;
         prepItem.setFinished(true);//, order.getDurationSeconds());
-        if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
-            PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
-            if (maxItem != null)
-            {
-                maxItem.RealStartTime =  order.getDurationSeconds();
-                getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
+        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
+            if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+                PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
+                if (maxItem != null) {
+                    maxItem.RealStartTime = order.getDurationSeconds();
+                    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
+                }
             }
         }
         getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);

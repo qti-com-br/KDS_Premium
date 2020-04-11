@@ -2451,7 +2451,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (order.getItems().getItemByGUID(focusedItemGuid) == null)
             return;
 
-        user.getOrders().isNoOtherActiveItemsBehindMe(focusedItemGuid);
+        //user.getOrders().isNoOtherActiveItemsBehindMe(focusedItemGuid);//kpp1-322
         if (getUserUI(userID).getLayout().focusNext().isEmpty())
             opFocusPrev(userID);
 
