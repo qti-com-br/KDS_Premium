@@ -1774,11 +1774,24 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         m_view.getLineItemsViewer().showOrders(orders);//, firstOrderGuid, firstItemGuid);
     }
 
+    /**
+     *
+     * kpp1-322 if smart sort enabled, focus messed
+     * @param fromOrderGuid
+     * @param fromItemGuid
+     * @return
+     */
     public KDSDataItem getNextActiveLineItem(String fromOrderGuid, String fromItemGuid)
     {
         int nOrderIndex = m_orders.getIndex(fromOrderGuid);
         if (nOrderIndex <0) return null;
-        
+
+        //kpp1-322
+        if (m_view.getLineItemsViewer().smartSortEnabled())
+        {
+            return m_view.getLineItemsViewer().smartSortGetNext(fromOrderGuid, fromItemGuid);
+        }
+
         int nItemIndex = m_orders.getOrderByGUID(fromOrderGuid).getItems().getItemIndexByGUID(fromItemGuid);
         nItemIndex ++;
         for (int i=nOrderIndex; i< m_orders.getCount(); i++)
@@ -1823,6 +1836,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     public KDSDataItem getPrevActiveLineItem(String fromOrderGuid, String fromItemGuid)
     {
+        //kpp1-322
+        if (m_view.getLineItemsViewer().smartSortEnabled())
+        {
+            return m_view.getLineItemsViewer().smartSortGetPrev(fromOrderGuid, fromItemGuid);
+        }
+        //
         int nOrderIndex = m_orders.getIndex(fromOrderGuid);
         int nItemIndex = m_orders.getOrderByGUID(fromOrderGuid).getItems().getItemIndexByGUID(fromItemGuid);
         nItemIndex --;
@@ -1848,6 +1867,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      */
     public KDSDataItem getPrevActiveLineItem(String fromOrderGuid, String fromItemGuid, int nDistance)
     {
+
+        //kpp1-322
+        if (m_view.getLineItemsViewer().smartSortEnabled())
+        {
+            return m_view.getLineItemsViewer().smartSortGetPrev(fromOrderGuid, fromItemGuid, nDistance);
+        }
+
         int nOrderIndex = m_orders.getIndex(fromOrderGuid);
         int nItemIndex = m_orders.getOrderByGUID(fromOrderGuid).getItems().getItemIndexByGUID(fromItemGuid);
         nItemIndex --;
@@ -1874,6 +1900,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     public KDSDataItem getFirstActiveLineItem()
     {
+        //kpp1-322
+        if (m_view.getLineItemsViewer().smartSortEnabled())
+        {
+            return m_view.getLineItemsViewer().smartSortGetFirstItem();
+        }
+
         int nOrderIndex = 0;
         int nItemIndex = 0;
         //nItemIndex --;
@@ -1899,8 +1931,6 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (orderGUID.isEmpty() || itemGUID.isEmpty()) {
             return focusFirstShowingLineItem();
         }
-
-
 
         KDSDataItem nextItem = getNextActiveLineItem(orderGUID, itemGUID);
         if (nextItem == null)
@@ -1941,8 +1971,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             return "";
         }
 
-        int nOrderIndex = m_orders.getIndex(orderGUID);
-        int nItemIndex = m_orders.getOrderByGUID(orderGUID).getItems().getItemIndexByGUID(itemGUID);
+        //int nOrderIndex = m_orders.getIndex(orderGUID);
+        //int nItemIndex = m_orders.getOrderByGUID(orderGUID).getItems().getItemIndexByGUID(itemGUID);
 
         KDSDataItem prevItem = getPrevActiveLineItem(orderGUID, itemGUID);
         if (prevItem == null)
@@ -2408,11 +2438,14 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     public boolean showOrdersWithoutUIRefresh(KDSDataOrders orders) {
 
         if (orders == null) return false;
+
+
         //TimeDog t = new TimeDog();
         //m_orders = orders;
         KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
         //m_view.clear();
         //synchronized (m_view.m_panelsLocker) {
+        if (!getEnv().getSettings().getBoolean(KDSSettings.ID.LineItems_Enabled)) //kpp1-322
             m_view.clearPanels();
 //            if (layoutFormat == KDSSettings.LayoutFormat.iOS_Like)
 //            {
@@ -2428,6 +2461,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         }
         synchronized (m_view.m_panelsLocker) {
             if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.Normal) {
+
                 int nBlockRows = m_view.getAverageRowsInBlock();
                 int nStartOrderIndex = 0;
                 if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
@@ -2467,14 +2501,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                         //if return 0(order showing error), still go to next order.
                         //return 1: ok.
                         if (nreturn == -1 ||//no space. All screen filled by orders
-                            nreturn == -2 ||//rows error, the panel size is too small.
-                            nreturn == -3)  //settings error, this should not happen
+                                nreturn == -2 ||//rows error, the panel size is too small.
+                                nreturn == -3)  //settings error, this should not happen
                         {
                             break;
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
                     }
                     //t.debug_print_Duration("showOrders3");
@@ -2484,23 +2516,41 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 //this.getView().refresh();//.invalidate();
                 //t.debug_print_Duration("showOrders4");
                 return true;
+
             } else if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.LineItems) {
-                if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
-                    getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
-                if (getEnv().getStateValues().getFocusedOrderGUID().isEmpty()) {
-                    getEnv().getStateValues().setFocusedOrderGUID(orders.get(0).getGUID());
-
+                if (m_view.getLineItemsViewer().smartSortEnabled())
+                {  //kpp1-322
+//                    if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
+//                        getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
+//                    if (getEnv().getStateValues().getFocusedOrderGUID().isEmpty()) {
+//                        getEnv().getStateValues().setFocusedOrderGUID(orders.get(0).getGUID());
+//
+//                    }
+//                    if (getEnv().getStateValues().getFocusedItemGUID().isEmpty()) {
+//
+//                        getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+//                    }
+//                    if (getEnv().getStateValues().getFirstItemGuid().isEmpty()) {
+//                        getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+//                    }
                 }
-                if (getEnv().getStateValues().getFocusedItemGUID().isEmpty()) {
-                    //getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getItem(0).getGUID());
-                    getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+                else {
+                    if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
+                        getEnv().getStateValues().setFirstShowingOrderGUID(orders.get(0).getGUID());
+                    if (getEnv().getStateValues().getFocusedOrderGUID().isEmpty()) {
+                        getEnv().getStateValues().setFocusedOrderGUID(orders.get(0).getGUID());
 
-                }
-                if (getEnv().getStateValues().getFirstItemGuid().isEmpty()) {
-                    //getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getItem(0).getGUID());
-                    getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getFirstUnbumpedItemGuid());
-                }
+                    }
+                    if (getEnv().getStateValues().getFocusedItemGUID().isEmpty()) {
+                        //getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getItem(0).getGUID());
+                        getEnv().getStateValues().setFocusedItemGUID(orders.get(0).getItems().getFirstUnbumpedItemGuid());
 
+                    }
+                    if (getEnv().getStateValues().getFirstItemGuid().isEmpty()) {
+                        //getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getItem(0).getGUID());
+                        getEnv().getStateValues().setFirstItemGuid(orders.get(0).getItems().getFirstUnbumpedItemGuid());
+                    }
+                }
                 showOrdersInLineItemsMode(orders);
 
                 //m_view.getLineItemsViewer().showOrders(orders);

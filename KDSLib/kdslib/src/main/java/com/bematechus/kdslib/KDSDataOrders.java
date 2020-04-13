@@ -1100,4 +1100,27 @@ public class KDSDataOrders extends KDSDataArray {
             return name1.compareTo(name2);
         }
     }
+
+    /**
+     * kpp1-322
+     * @param orderGUID
+     * @return
+     */
+    public KDSDataOrder getOrderByGUIDNoLocker(String orderGUID)
+    {
+
+        try {
+            Vector ar = this.getComponents();
+            for (int i = 0; i < ar.size(); i++) {
+                KDSDataOrder c = (KDSDataOrder) ar.get(i);
+                if (c.getGUID().equals(orderGUID))
+                    return c;
+
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
 }

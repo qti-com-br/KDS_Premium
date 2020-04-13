@@ -25,7 +25,7 @@ android {
         applicationId "com.bematechus.kdsrouter"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 2
+        versionCode 3
         versionName '2.3.0.0'
     }
     buildTypes {
@@ -73,7 +73,7 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2
+            versionCode 3
             versionName '2.4.0.0'
             dimension "default"
         }
@@ -81,7 +81,7 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2
+            versionCode 3
             versionName '2.3.0.0'
             dimension "default"
         }
@@ -89,7 +89,7 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2
+            versionCode 3
             versionName '2.3.0.0'
             dimension "default"
         }
