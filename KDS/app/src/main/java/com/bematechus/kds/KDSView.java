@@ -15,7 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.GestureDetectorCompat;
+//import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -464,7 +464,11 @@ public class KDSView extends View {
      */
     public int getBlockAverageHeight()
     {
-        return (this.getValidRect().height() ) /getEnv().getSettingsRows();// getSettings().getInt(KDSSettings.ID.Panels_Blocks_Rows);// - getEnv().getPanelsRowsGap();
+        KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
+        int nrows = getEnv().getSettingsRows();
+        if (layoutFormat == KDSSettings.LayoutFormat.Vertical)
+            nrows = 1;//kpp1-324
+        return (this.getValidRect().height() ) / nrows;//getEnv().getSettingsRows();// getSettings().getInt(KDSSettings.ID.Panels_Blocks_Rows);// - getEnv().getPanelsRowsGap();
     }
 
     /**

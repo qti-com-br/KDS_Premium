@@ -261,6 +261,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     }
 
 
+    /**
+     * check if the screen start order is good one. We can not move focus order to next page.
+     * @param orders
+     * @param firstOrderGuid
+     * @param focusedOrderGuid
+     * @return
+     */
     private boolean checkOrdersCanShowFocus(KDSDataOrders orders, String firstOrderGuid, String focusedOrderGuid) {
 
 
@@ -2578,42 +2585,51 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     }
 
+    /**
+     * for page up feature.
+     *
+     * @param orderGuid
+     *  current first order guid.
+     * @return
+     */
     public String getPrevPageOrderGuid(String orderGuid)
     {
-        String guid =  orderGuid;
-        if (m_orders == null)
-            return "";
-        int nindex = m_orders.getIndex(guid);
-        int nPanelsCount = m_view.getMaxPanelsCount();
-        nindex-=nPanelsCount;
+        return getPrevPageOrderGuid2(orderGuid);
 
-        KDSDataOrder order = null;
-        int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
-        KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
-        if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
-            order = m_orders.getPrevPaidOrderFrom(nindex);
-        else
-            order = m_orders.get(nindex);
-        guid = "";
-        if (order != null)
-        {//return to first
-            guid = order.getGUID();
-        }
-        else
-        {
-
-            if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
-                guid  = m_orders.getFirstPaidOrderGuid();//.getPrevPaidOrderFrom(m_orders.getCount() -1);
-            else
-                guid = m_orders.getFirstOrderGuid();//.get(m_orders.getCount() -1);
-//            //order = m_orders.get(m_orders.getCount() -1 );
-//            if (order != null)
-//                guid = order.getGUID();
-        }
-
-
-
-        return guid;
+//        String guid =  orderGuid;
+//        if (m_orders == null)
+//            return "";
+//        int nindex = m_orders.getIndex(guid);
+//        int nPanelsCount = m_view.getMaxPanelsCount();
+//        nindex-=nPanelsCount;
+//
+//        KDSDataOrder order = null;
+//        int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
+//        KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
+//        if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+//            order = m_orders.getPrevPaidOrderFrom(nindex);
+//        else
+//            order = m_orders.get(nindex);
+//        guid = "";
+//        if (order != null)
+//        {//return to first
+//            guid = order.getGUID();
+//        }
+//        else
+//        {
+//
+//            if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+//                guid  = m_orders.getFirstPaidOrderGuid();//.getPrevPaidOrderFrom(m_orders.getCount() -1);
+//            else
+//                guid = m_orders.getFirstOrderGuid();//.get(m_orders.getCount() -1);
+////            //order = m_orders.get(m_orders.getCount() -1 );
+////            if (order != null)
+////                guid = order.getGUID();
+//        }
+//
+//
+//
+//        return guid;
     }
 
     public void onViewLongPressed()
@@ -2652,4 +2668,150 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     }
 
 
+    /**
+     * KPP1-323
+     * for page up feature.
+     *
+     * @param orderGuid
+     *  current first order guid.
+     * @return
+     */
+    public String getPrevPageOrderGuid2(String orderGuid)
+    {
+        String guid =  orderGuid;
+        if (m_orders == null)
+            return "";
+        int nindex = m_orders.getIndex(guid);
+        int nPanelsCount = m_view.getMaxPanelsCount();
+        nindex-=nPanelsCount;
+
+        KDSDataOrder order = null;
+        int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
+        KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
+
+//        if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+//            order = m_orders.getPrevPaidOrderFrom(nindex);
+//        else
+//            order = m_orders.get(nindex);
+        order = getOrderAccordingToShowingMethod(itemShowingMethod, nindex);
+
+        guid = "";
+        if (order != null)
+        {//return to first
+            guid = order.getGUID();
+            //kpp1-324
+            if (this.checkOrdersCanShowFocus(m_orders, guid, orderGuid))
+            {//this estimated one is visible, move prev again, until invisible.
+                String prevGuid = "";
+                for (int i=nindex-1; i>=0; i--)
+                {
+                    order = getOrderAccordingToShowingMethod(itemShowingMethod, i);
+                    if (order != null)
+                    {
+                        if (this.checkOrdersCanShowFocus(m_orders, order.getGUID(), orderGuid)) {
+                            if (i !=0)
+                                continue;
+                            else
+                            {
+                                prevGuid = order.getGUID();
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            prevGuid = getOrderGuidAccordingToShowingMethod(itemShowingMethod, i+1);
+                            if (prevGuid.isEmpty()) {
+                                prevGuid = order.getGUID();
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!prevGuid.isEmpty())
+                    guid = prevGuid;
+            }
+            else
+            {//this estimated order is not correct one, move next
+                String prevGuid = "";
+                for (int i=nindex+1; i<m_orders.getCount(); i++)
+                {
+                    order = getOrderAccordingToShowingMethod(itemShowingMethod, i);
+                    if (order != null)
+                    {
+                        if (!this.checkOrdersCanShowFocus(m_orders, order.getGUID(), orderGuid)) {
+                            if (i != (m_orders.getCount()-1))
+                                continue;
+                            else
+                            {
+                                prevGuid = order.getGUID();
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            prevGuid = order.getGUID();
+                            break;
+
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!prevGuid.isEmpty())
+                    guid = prevGuid;
+            }
+        }
+        else
+        {//order == null
+
+            if (itemShowingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+                guid  = m_orders.getFirstPaidOrderGuid();//.getPrevPaidOrderFrom(m_orders.getCount() -1);
+            else
+                guid = m_orders.getFirstOrderGuid();//.get(m_orders.getCount() -1);
+
+        }
+
+
+
+        return guid;
+    }
+
+
+    /**
+     * KPP1-323
+     * @param showingMethod
+     * @param nindex
+     * @return
+     */
+    private KDSDataOrder getOrderAccordingToShowingMethod(KDSSettings.ItemShowingMethod showingMethod, int nindex)
+    {
+        if (showingMethod == KDSSettings.ItemShowingMethod.When_order_is_paid)
+            return m_orders.getPrevPaidOrderFrom(nindex);
+        else
+            return m_orders.get(nindex);
+    }
+
+    /**
+     * KPP1-323
+     * @param showingMethod
+     * @param nindex
+     * @return
+     */
+    private String getOrderGuidAccordingToShowingMethod(KDSSettings.ItemShowingMethod showingMethod, int nindex)
+    {
+        KDSDataOrder order = getOrderAccordingToShowingMethod(showingMethod, nindex);
+        if (order == null)
+            return "";
+        else
+        {
+            return order.getGUID();
+        }
+
+    }
 }
