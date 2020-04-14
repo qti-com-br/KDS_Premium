@@ -464,7 +464,11 @@ public class KDSView extends View {
      */
     public int getBlockAverageHeight()
     {
-        return (this.getValidRect().height() ) /getEnv().getSettingsRows();// getSettings().getInt(KDSSettings.ID.Panels_Blocks_Rows);// - getEnv().getPanelsRowsGap();
+        KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
+        int nrows = getEnv().getSettingsRows();
+        if (layoutFormat == KDSSettings.LayoutFormat.Vertical)
+            nrows = 1;//kpp1-324
+        return (this.getValidRect().height() ) / nrows;//getEnv().getSettingsRows();// getSettings().getInt(KDSSettings.ID.Panels_Blocks_Rows);// - getEnv().getPanelsRowsGap();
     }
 
     /**
