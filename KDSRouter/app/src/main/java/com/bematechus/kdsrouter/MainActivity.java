@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
+import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
@@ -52,6 +53,7 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIAboutDlg;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgAgreement;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
@@ -286,6 +288,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         updateTitle();
 
 
+        KDSUIDlgAgreement.forceAgreementAgreed(this, this);
 
 
     }
@@ -387,6 +390,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_bShowingSettingsActivity = false;
 
         }
+        else if (requestCode == KDSConst.SHOW_LOGIN)
+        {
+            if (resultCode == ActivityLogin.Login_Result.Agreement_disagree.ordinal())
+            {//kpp1-325
+                this.setResult(0);
+                this.finish();
+            }
+            //
+        }
+
     }
     public boolean showSettingsDialog()
     {
@@ -978,7 +991,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onKDSDialogCancel(KDSUIDialogBase dialog)
     {
-
+        if (dialog instanceof KDSUIDlgAgreement)
+        {//kpp1-325
+            KDSUIDlgAgreement.setAgreementAgreed(false);
+            this.finish();
+        }
     }
 
     // static final String DEFAULT_PASSWORD = "123";
@@ -1008,6 +1025,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 showSettingsDialog();
             }
 
+        }
+        else if (dlg instanceof KDSUIDlgAgreement)
+        {//kpp1-325
+            KDSUIDlgAgreement.setAgreementAgreed(true);
         }
         else if (dlg instanceof  KDSUIDialogBase)
         {
