@@ -75,6 +75,7 @@ import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSUIAboutDlg;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDialogConfirm;
+import com.bematechus.kdslib.KDSUIDlgAgreement;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
@@ -518,6 +519,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //this.registerForContextMenu(getUserUI(KDSUser.USER.USER_A).getLayout().getView());
 
        // this.registerForContextMenu(getUserUI(KDSUser.USER.USER_B).getLayout().getView());
+
+        // kpp1-325
+        forceAgreementAgreed();
+
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -2820,6 +2825,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case KDSConst.SHOW_LOGIN:
             {
                 if (!isKDSValid()) return ;
+                if (resultCode == ActivityLogin.Login_Result.Agreement_disagree.ordinal())
+                {//kpp1-325
+                   this.setResult(0);
+                   this.finish();
+                }
+                //
                 m_activation.setDoLicensing( false );
                 if (m_activation.isStoreChanged())
                 {
@@ -2897,7 +2908,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * @param dlg
      */
     public void onKDSDialogCancel(KDSUIDialogBase dlg) {
-        if (dlg instanceof KDSUIDialogBase) {
+         if (dlg instanceof KDSUIDlgAgreement)
+        {//kpp1-325
+            KDSUIDlgAgreement.setAgreementAgreed(false);
+            this.finish();
+        }
+        else if (dlg instanceof KDSUIDialogBase) {
             if (dlg.getTag() == null) return;
             Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
             switch (confirm) {
@@ -3054,6 +3070,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             MainActivity.this.import_settings(path, true);
 
         }
+        else if (dlg instanceof KDSUIDlgAgreement)
+        {
+            KDSUIDlgAgreement.setAgreementAgreed(true);
+        }
         else if (dlg instanceof KDSUIDialogBase) {
             if (dlg.getTag() == null) return;
             Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
@@ -3101,6 +3121,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
 
         }
+
+
 
     }
 
@@ -3631,7 +3653,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().onMyFunctionChanged(oldFunc, newFunc);
             }
         }
-        else if (key.equals("kds_general_language"))
+        else if (key.equals("kds_general_language") ||
+                key.equals("agreement"))
         {
             return;
         }
@@ -7307,5 +7330,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
+    public void forceAgreementAgreed()
+    {
+        KDSUIDlgAgreement.forceAgreementAgreed(this, this);
+//
+//        //debug
+//        KDSUIDlgAgreement.setAgreementAgreed(false);
+//        //
+//        if (KDSUIDlgAgreement.isAgreementAgreed())
+//            return;
+//
+//        //KDSUIDlgAgreement dlg = new KDSUIDlgAgreement(this, this);
+//        KDSUIDlgAgreement dlg =KDSUIDlgAgreement.instance(this, this);
+//        dlg.show();
+    }
 }
 
