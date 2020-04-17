@@ -1267,8 +1267,10 @@ public class PreferenceFragmentStations
 
                         relation.setFunction(newStationFunc);
                         //kpp1-297 Set a new function for Expo: what will happen with linked devices? - Do not allow or Remove references
-                        relation.setSlaveFunc(SettingsBase.SlaveFunc.Unknown);
-                        relation.setSlaveStations("");
+                        if (bRemoveExpo) {//kpp1-326
+                            relation.setSlaveFunc(SettingsBase.SlaveFunc.Unknown);
+                            relation.setSlaveStations("");
+                        }
                         //
                         if (bRemoveExpo)
                             confirmRemoveExpo2(relation);
@@ -1352,8 +1354,9 @@ public class PreferenceFragmentStations
                             bRemoveExpo = true;
                         SettingsBase.StationFunc sfunction = MyAdapter.this.getStationChainFunction(relation.getID(), "");
                         if ( (sfunction == SettingsBase.StationFunc.Expeditor|| sfunction == SettingsBase.StationFunc.Queue_Expo )
-                                && newStationFunc != SettingsBase.StationFunc.Backup) {
-                            if (!bIsQueue) //if this is queue, don't remove it as expo
+                                && newStationFunc != SettingsBase.StationFunc.Backup )
+                                 {
+                            if (!bIsQueue && (newStationFunc != relation.getFunction())) //if this is queue, don't remove it as expo. kpp1-326
                                 bRemoveExpo = true;
                         }
                         initSlaveFunctionSpinner(KDSApplication.getContext(), slaveFuncSpinner,  newStationFunc);
@@ -1651,8 +1654,12 @@ public class PreferenceFragmentStations
 
                 m_npositionBeforeShowSlaveDialog = position;
                 m_slaveFunctionBeforeShowSlaveDialog = slaveFunctionValue;
+               // TextView txtSlaves =  viewRow.findViewById(R.id.txtSlaveStations);
 
-                if (slaveFunctionValue.getFunction() != SettingsBase.SlaveFunc.Unknown) {
+                if ( (slaveFunctionValue.getFunction() != SettingsBase.SlaveFunc.Unknown))
+                        //&&
+                        //txtSlaves.getText().toString().isEmpty() ) //kpp1-326
+                {
                     inputSlaveStationID(t, position, relation);
 
                 }
