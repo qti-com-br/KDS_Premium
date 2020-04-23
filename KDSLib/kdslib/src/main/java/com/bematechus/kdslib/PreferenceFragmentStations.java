@@ -1684,7 +1684,9 @@ public class PreferenceFragmentStations
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                TextView v1 = (TextView) view;
+                //if (MyAdapter.this.m_bSuspendSpinnerEvent) return; //kpp1-326-1
+
+               // TextView v1 = (TextView) view;
 
                 Spinner t = this.getSpinner();
                 View viewRow = (View) t.getTag();
@@ -1695,6 +1697,8 @@ public class PreferenceFragmentStations
 
                 if (t.getId() == R.id.spinnerFunc)
                 {
+                    if (relation.getFunction() ==  ((MyStationFuncSpinnerAdapter) t.getAdapter()).getItem(position).getFunction())
+                        return;
                     onStationFunctionItemSelected2(parent, view, position, id);
 
                 }
@@ -1707,6 +1711,9 @@ public class PreferenceFragmentStations
                 }
                 else if (t.getId() == R.id.spinnerSlaveFunc)
                 {//slave function
+
+                    if (relation.getSlaveFunc() ==  ((MySlaveSpinnerArrayAdapter) t.getAdapter()).getSlaveFunction(position).getFunction())
+                        return;
                     onSlaveFunctionItemSelected(parent, view, position, id);
                 }
                 setImageEditingIcon((ImageView)viewRow.findViewById(R.id.imgEdit), relation);
@@ -2566,11 +2573,11 @@ public class PreferenceFragmentStations
 
             initSlaveFunctionSpinner(getActivity().getApplicationContext(), spinner,relation.getFunction());
 
-
-            if (spinner.getOnItemSelectedListener() == null) {
-                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
-
-            }
+//kpp1-326-1
+//            if (spinner.getOnItemSelectedListener() == null) {
+//                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
+//
+//            }
 
             boolean bChanged = false;
             SettingsBase.SlaveFunc oldSlaveFunc = relation.getSlaveFunc();
@@ -2589,16 +2596,21 @@ public class PreferenceFragmentStations
                 relation.setSlaveFunc(SettingsBase.SlaveFunc.Unknown);
                 relation.setSlaveStations("");
                 ((MySlaveSpinnerArrayAdapter) spinner.getAdapter()).notifyDataSetChanged();
-                return;
-            }
-
-            if (relation.getSlaveFunc() == SettingsBase.SlaveFunc.Unknown)
-            {
-                ((MySlaveSpinnerArrayAdapter) spinner.getAdapter()).setTextColor(Color.GRAY);
-
+                //return;//kpp1-326-1
             }
             else {
-                ((MySlaveSpinnerArrayAdapter) spinner.getAdapter()).resetTextColor();
+
+                if (relation.getSlaveFunc() == SettingsBase.SlaveFunc.Unknown) {
+                    ((MySlaveSpinnerArrayAdapter) spinner.getAdapter()).setTextColor(Color.GRAY);
+
+                } else {
+                    ((MySlaveSpinnerArrayAdapter) spinner.getAdapter()).resetTextColor();
+
+                }
+            }
+            //kpp1-326-1
+            if (spinner.getOnItemSelectedListener() == null) {
+                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
 
             }
 
@@ -2608,11 +2620,11 @@ public class PreferenceFragmentStations
         {
 
             initStationfunctionSpinner2(getActivity().getApplicationContext(), spinner,relation);
-
-            if (spinner.getOnItemSelectedListener() == null) {
-                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
-
-            }
+//kpp1-326-1
+//            if (spinner.getOnItemSelectedListener() == null) {
+//                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
+//
+//            }
 
             boolean bChanged = false;
             SettingsBase.StationFunc oldStationFunc = relation.getFunction();
@@ -2631,12 +2643,17 @@ public class PreferenceFragmentStations
                 relation.setSlaveStations("");
 
                 ((MyStationFuncSpinnerAdapter) spinner.getAdapter()).notifyDataSetChanged();
-                return;
+                //return;//kpp1-326-1
+            }
+            //kpp1-326-1
+            if (spinner.getOnItemSelectedListener() == null) {
+                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
+
             }
 
 
-
         }
+        //boolean m_bSuspendSpinnerEvent = false;
 
         public View getView(int position, View convertView, ViewGroup parent) {
             //ViewHolder holder = null;
@@ -2683,7 +2700,7 @@ public class PreferenceFragmentStations
             init_view_focus_event(txtSlave, convertView);
             init_view_click_event(txtSlave, convertView);
             //init_edittext_changed_event(txtSlave);
-
+            //m_bSuspendSpinnerEvent = true;
             Spinner spinnerSlaveFunc = ((Spinner) convertView.findViewById(R.id.spinnerSlaveFunc));
             viewHolder.m_spinnerSlaveFunc = spinnerSlaveFunc;
             spinnerSlaveFunc.setTag(convertView);
@@ -2716,16 +2733,21 @@ public class PreferenceFragmentStations
             if (bNewView)
                 initSpinner(getActivity().getApplicationContext(), viewHolder.m_spinnerStatus, Arrays.asList( getActivity().getApplicationContext().getResources().getStringArray(R.array.station_status)));
 
-
-            if (spinner.getOnItemSelectedListener() == null) {
-                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
-
-            }
+//kpp1-326-1
+//            if (spinner.getOnItemSelectedListener() == null) {
+//                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
+//
+//            }
 
             if (r.getStatus() == SettingsBase.StationStatus.Enabled) {
                 spinner.setSelection(0);
             } else {
                 spinner.setSelection(1);
+            }
+            //kpp1-326-1
+            if (spinner.getOnItemSelectedListener() == null) {
+                spinner.setOnItemSelectedListener(new CustomSpinnerItemSelectedListener(spinner));
+
             }
 
             init_view_focus_event(spinner, convertView);
@@ -2748,6 +2770,7 @@ public class PreferenceFragmentStations
 //                tp.setUnderlineText(false);
 //
 //            }
+            //m_bSuspendSpinnerEvent = false;
             return convertView;
 
         }
