@@ -119,6 +119,9 @@
         android:title="@string/pref_kds_sound_title" />
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$LogPreferenceFragment"
         android:title="@string/log" />
+
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$CleaningPreferenceFragment"
+        android:title="@string/cleaning" />
     <!--<header android:title="Retrieve remote settings">-->
         <!--<intent android:action= "android.intent.action.VIEW"-->
             <!--android:targetPackage="com.bematechus.kds"-->

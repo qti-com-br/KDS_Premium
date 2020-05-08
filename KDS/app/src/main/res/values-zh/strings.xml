@@ -1124,6 +1124,14 @@
     <string name="internal_icon">预制图标</string>
     <string name="character">字符</string>
     <string name="color">颜色</string>
+    <string name="cleaning">Cleaning</string>
+    <string name="cleaning_alarm">Cleaning Alarm</string>
+    <string name="you_should_clean_your_devics_s_the_screen_will_be_frozon_while_you_clean_them">You should clean your devics(s). The screen will be frozon while you clean them.</string>
+    <string name="clean_freeze_screen_now">[CLEAN] FREEZE SCREEN NOW</string>
+    <string name="remind_me_in_minutes">[1] REMIND ME IN # MINUTES</string>
+    <string name="dismiss_clert">[9] DISMISS CLERT</string>
+    <string name="cleaning_mode_started_by_bump_bar">Cleaning mode started by bump bar</string>
+    <string name="will_return_in_seconds">Will return in # seconds</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>停用</item>
@@ -1182,5 +1190,25 @@
 
     </string-array>
 
+    <string-array name="pref_cleaning_alert_type">
+        <item>Show floating alert button</item>
+        <item>Show dialog with options</item>
+        <item>Start cleaning screen</item>
+    </string-array>
+    <string-array name="pref_cleaning_interval">
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>4 hours</item>
+        <item>5 hours</item>
+        <item>6 hours</item>
+        <item>Custom ...</item>
+    </string-array>
+    <string-array name="pref_cleaning_snooze_time">
+        <item>Disabled</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
 
+    </string-array>
 </resources>

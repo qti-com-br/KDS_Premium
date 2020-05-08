@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="cleaning_enable_alerts"
+        android:title="Enable alerts"
+        android:summary="Enable recurrent alerts for reminding the user to clean their devices."
+        android:defaultValue="true" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="cleaning_alert_type"
+        android:title="Alert type"
+        android:summary="Set the alert behavior"
+        android:defaultValue="1"
+        android:entries="@array/pref_cleaning_alert_type"
+        android:entryValues="@array/pref_cleaning_alert_type_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <!--<com.bematechus.kdslib.KDSListPreference-->
+        <!--android:key="cleaning_reminder_interval"-->
+        <!--android:title="Set reminder interval"-->
+        <!--android:defaultValue="2"-->
+        <!--android:entries="@array/pref_cleaning_interval"-->
+        <!--android:entryValues="@array/pref_cleaning_interval_values"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
+
+    <com.bematechus.kds.KDSPreferenceCleaningInterval
+        android:key="cleaning_reminder_interval"
+        android:title="Set reminder interval"
+        android:defaultValue="2"
+        android:entries="@array/pref_cleaning_interval"
+        android:entryValues="@array/pref_cleaning_interval_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <CheckBoxPreference
+        android:key="cleaning_enable_dismiss_button"
+        android:title="Enable dismiss button"
+        android:summary="Allow user to dismiss the alerm"
+        android:defaultValue="true" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="cleaning_snooze_time"
+        android:title="Snooze time"
+        android:summary="Set a default snoozing time or disable the option"
+        android:defaultValue="0"
+        android:entries="@array/pref_cleaning_snooze_time"
+        android:entryValues="@array/pref_cleaning_snooze_time_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <CheckBoxPreference
+        android:key="cleaning_startup_alert"
+        android:title="Start up alert"
+        android:summary="Display the alert immediately after app initializes."
+        android:defaultValue="true" />
+</PreferenceScreen>

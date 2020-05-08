@@ -52,6 +52,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static final String REQ_DEVICE_REPLACE =  "DEVICE_REPLACE";
     static final String REQ_SMS_ORDER =  "SMS_ORDER";
     static final String REQ_SYNC =  "SYNC";
+    static final String REQ_CLEANING_RESPONSE =  "STORE_CLEAN_RESPONSE";
     /**
      *
      * Management
@@ -113,7 +114,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Sync_item_bumps,
         Sync_item_bump,
         Sync_customer,
-
+        Cleaning,
     }
 
     public enum ErrorType
@@ -1704,11 +1705,56 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             case REQ_DEVICE_REPLACE://"DEVICE_REPLACE":
             case REQ_SMS_ORDER://"SMS_ORDER":
             case REQ_SYNC: //SYNC
+            case REQ_CLEANING_RESPONSE:
                 return true;
             default:
                 return false;
 
         }
+
+    }
+
+    /**
+     * {   
+     *   "0": {           
+     *     "tok": "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"   
+     *   },
+     *   "1": {
+     *     "req": "STORE_CLEAN_RESPONSE",
+     *     "language": "en",
+     *     "store_guid": "cf541647-9a87-4698-baf3-aca801b4e095",
+     *     "device_guid": "0068f197-d823-4097-a2b1-990250446d73",
+     *     "response": "SNOOZE"
+     *   }
+     * }
+      * @param store_guid
+     * @return
+     */
+    static public ActivationRequest requestCleaningResponse( String store_guid, String licenseGuid, String strResponse)
+    {
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_CLEANING_RESPONSE);
+        try {
+
+            json.put("store_guid",store_guid );
+            json.put("device_guid", licenseGuid );
+            json.put("response", strResponse);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Get_devices );
+        return r;
+
 
     }
 }

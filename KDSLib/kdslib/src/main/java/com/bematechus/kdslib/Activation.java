@@ -261,6 +261,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                     break;
                 case Sync_customer:
                     onSyncCustomerResponse(http, request);
+                    break;
+                case Cleaning:
+                    onCleaningHttpResponse(http, request);
+                    break;
 
             }
         }
@@ -2242,5 +2246,39 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.apply();
         editor.commit();
 
+    }
+
+    public enum CleaningResponse
+    {
+        CLEAN,
+        SNOOZE,
+        DISMISS,
+    }
+    /**
+
+     * @param nResponse
+     *      0: cleaning
+     *      1: snooze
+     *      2: dismiss
+     */
+    public void postCleaningResultResponse(CleaningResponse nResponse)
+    {
+
+        String s = nResponse.toString();
+
+        ActivationRequest r = ActivationRequest.requestCleaningResponse(m_storeGuid,getMyDeviceGuid(), s);
+        r.setCommand(ActivationRequest.COMMAND.Cleaning);
+        r.setTag(s);
+        m_http.request(r);
+
+    }
+
+    private void onCleaningHttpResponse(ActivationHttp http, ActivationRequest request)
+    {
+        Object obj = request.getTag();
+        if (obj == null) return;
+       String str = (String)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Cleaning, str, SyncDataResult.OK);
     }
 }

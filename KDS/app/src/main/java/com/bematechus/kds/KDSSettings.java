@@ -554,16 +554,23 @@ public class KDSSettings extends SettingsBase {
        Transfer_default_station, //KPP1-42
        Transfer_auto_to_default,
 
-     //
-     Deliver_new_order_to_slave_expo,
-     //Josie need this feature
-     Transfer_by_double_click,
+       //
+       Deliver_new_order_to_slave_expo,
+       //Josie need this feature
+       Transfer_by_double_click,
 
-     LineItems_view_bg, //kpp1-183
-     Log_orders,
-     LineItems_line_height, //kpp1-229
+       LineItems_view_bg, //kpp1-183
+       Log_orders,
+       LineItems_line_height, //kpp1-229
 
-     Printer_logo,
+       Printer_logo,
+       //cleaning habits
+        cleaning_enable_alert,
+        cleaning_alert_type,
+        cleaning_reminder_interval,
+        cleaning_enable_dismiss_button,
+        cleaning_snooze_time,
+        cleaning_startup_alert,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -778,6 +785,12 @@ public class KDSSettings extends SettingsBase {
         Negative_sign,
     }
 
+    public enum CleaningAlertType
+    {
+        FloatButton,
+        ShowDialog,
+        CleanScreen,
+    }
 //    public enum SmartMode
 //    {
 //        Disabled,
@@ -1299,10 +1312,16 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.Transfer_by_double_click,"bool_transfer_by_double_click",false);//
         init_option(ID.LineItems_view_bg,"int_lineitems_viewer_bg",getResColor( R.color.lineitems_viewer_bg));
-       init_option(ID.Log_orders,"bool_log_orders",false);
-       init_option(ID.LineItems_line_height,"string_lineitems_line_height","30");
-       init_option(ID.Printer_logo,"string_printer_logo","");
-
+        init_option(ID.Log_orders,"bool_log_orders",false);
+        init_option(ID.LineItems_line_height,"string_lineitems_line_height","30");
+        init_option(ID.Printer_logo,"string_printer_logo","");
+        //cleaning habits
+        init_option(ID.cleaning_enable_alert,"bool_cleaning_enable_alerts",false);
+        init_option(ID.cleaning_alert_type,"string_cleaning_alert_type","1");
+        init_option(ID.cleaning_reminder_interval,"string_cleaning_reminder_interval","2h");
+        init_option(ID.cleaning_enable_dismiss_button,"bool_cleaning_enable_dismiss_button",false);
+        init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","0");
+        init_option(ID.cleaning_startup_alert,"bool_cleaning_startup_alert",true);
 
 
 
