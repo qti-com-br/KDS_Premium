@@ -2326,4 +2326,41 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
     }
 
+    /**
+     * This fragment shows data and sync preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class CleaningPreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener  {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_cleaning);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+            bindPreferenceSummaryToValue(findPreference("cleaning_alert_type"));
+            //bindPreferenceSummaryToValue(findPreference("cleaning_reminder_interval"));
+            bindPreferenceSummaryToValue(findPreference("cleaning_snooze_time"));
+            KDSPreferenceCleaningInterval p = (KDSPreferenceCleaningInterval) findPreference("cleaning_reminder_interval");
+            p.updateSummary();
+
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.registerOnSharedPreferenceChangeListener(this);
+
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
+        {
+
+        }
+    }
+
 }

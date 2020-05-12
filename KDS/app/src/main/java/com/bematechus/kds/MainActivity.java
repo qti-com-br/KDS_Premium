@@ -21,6 +21,8 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 //import android.util.Log;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -244,6 +246,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     Activation m_activation = new Activation(this);
 
+    CleaningHabitsManager m_cleaning = new CleaningHabitsManager();
     /**
      * the interface of timer
      */
@@ -300,6 +303,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //testException();
         //checkMyAttachedStationsOffline(); //kpp1-290
         checkOfflineStations(); //kpp1-290
+
+        m_cleaning.checkCleaningHabits();
 
     }
 
@@ -528,6 +533,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        //initCleaningFloatButton();
+        m_cleaning.init(this, this.findViewById(R.id.fabCleaning), m_activation);
     }
 
     /**
@@ -3338,6 +3345,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //test
         //getKDS().getStatisticDB().outputOrdersTableDataSql(getKDS().getStatisticDB(), "orders", "");
+
+        DlgCleaningPinchout d = new DlgCleaningPinchout(this);
+        d.show();
     }
 
 
@@ -3677,7 +3687,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             this.getSettings().set(KDSSettings.ID.Log_mode, s);
 
         }
-
+        else if (key.equals("cleaning_alert_type") || key.equals("cleaning_reminder_interval") || key.equals("cleaning_enable_alerts"))
+        {
+            m_cleaning.resetAll();
+        }
         else {
 
             if (key.equals("isDirtyPrefs")) return;
@@ -7344,5 +7357,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        KDSUIDlgAgreement dlg =KDSUIDlgAgreement.instance(this, this);
 //        dlg.show();
     }
+
+
 }
 

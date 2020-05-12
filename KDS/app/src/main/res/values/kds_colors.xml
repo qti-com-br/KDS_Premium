@@ -8,7 +8,7 @@
     <color name="panelnum_bg">#414141</color>
     <color name="panelnum_fg">#fff1f1e8</color>
     <color name="caption_bg">#bbbbbb</color>
-    <color name="caption_fg">#ff000000</color>
+    <color name="caption_fg">#000000</color>
     <color name="focus_bg">#414141</color>
     <color name="focus_fg">#ff000000</color>
     <color name="stage0_bg">#fed04e</color>
@@ -16,7 +16,7 @@
     <color name="stage2_bg">#e62d05</color>
     <color name="item_bg">#FFFFFF</color>
     <color name="item_fg">#ff000000</color>
-    <color name="condiment_bg">#ffffffff</color>
+    <color name="condiment_bg">#FFFFFF</color>
     <color name="condiment_fg">#ff000000</color>
     <color name="premsg_bg">#ffffffff</color>
     <color name="premsg_fg">#ff000000</color>
@@ -103,4 +103,8 @@
     <color name="touch_button_fg">#21ABAE</color>
     <color name="lineitems_viewer_bg">#0e0e0e</color>
     <color name="grid_line_color">#B8B8B8</color>
+
+    <color name="cleaning_button_bg">#902625</color>
+    <color name="cleaning_pinchout_color">#80000000</color>
+
 </resources>

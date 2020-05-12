@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="cleaning_enable_alerts"
+        android:title="@string/cleaning_enable_alerts"
+        android:summary="@string/cleaning_enable_alerts_summary"
+        android:defaultValue="true" />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="cleaning_alert_type"
+        android:title="@string/cleaning_alert_type"
+        android:summary="@string/cleaning_alert_type_summary"
+        android:defaultValue="1"
+        android:entries="@array/pref_cleaning_alert_type"
+        android:entryValues="@array/pref_cleaning_alert_type_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <!--<com.bematechus.kdslib.KDSListPreference-->
+        <!--android:key="cleaning_reminder_interval"-->
+        <!--android:title="Set reminder interval"-->
+        <!--android:defaultValue="2"-->
+        <!--android:entries="@array/pref_cleaning_interval"-->
+        <!--android:entryValues="@array/pref_cleaning_interval_values"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
+
+    <com.bematechus.kds.KDSPreferenceCleaningInterval
+        android:key="cleaning_reminder_interval"
+        android:title="@string/cleaning_set_reminder_interval"
+        android:defaultValue="2"
+        android:entries="@array/pref_cleaning_interval"
+        android:entryValues="@array/pref_cleaning_interval_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <CheckBoxPreference
+        android:key="cleaning_enable_dismiss_button"
+        android:title="@string/cleaning_enable_dismiss_button"
+        android:summary="@string/cleaning_enable_dismiss_button_summary"
+        android:defaultValue="true" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="cleaning_snooze_time"
+        android:title="@string/cleaning_snooze_time"
+        android:summary="@string/cleaning_snooze_time_summary"
+        android:defaultValue="0"
+        android:entries="@array/pref_cleaning_snooze_time"
+        android:entryValues="@array/pref_cleaning_snooze_time_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <CheckBoxPreference
+        android:key="cleaning_startup_alert"
+        android:title="@string/cleaning_startup_alert"
+        android:summary="@string/cleaning_startup_alert_summary"
+        android:defaultValue="true" />
+</PreferenceScreen>
