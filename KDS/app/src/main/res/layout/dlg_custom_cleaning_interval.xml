@@ -19,7 +19,7 @@
             android:id="@+id/textView16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Custom interval"
+            android:text="@string/custom_interval"
             android:textSize="12sp" />
 
         <LinearLayout
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="minutes" />
+                android:text="@string/minutes" />
         </LinearLayout>
     </LinearLayout>
 

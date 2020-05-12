@@ -75,9 +75,10 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
         d.setReceiver(this);
         d.show();
     }
+    final int ALERT_DLG_COUNTDOWN = 10;
 
     public void cleaningShowBumpbarDlg() {
-        DlgCleaningBumpbar d = DlgCleaningBumpbar.instance(m_context, 10);
+        DlgCleaningBumpbar d = DlgCleaningBumpbar.instance(m_context, ALERT_DLG_COUNTDOWN);
         d.setReceiver(this);
         d.show();
     }
@@ -120,12 +121,12 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
             //float nInterval = getSettings().getFloat(KDSSettings.ID.cleaning_reminder_interval);//hours
             String s = getSettings().getString(KDSSettings.ID.cleaning_reminder_interval);
             int nInterval = 0;
-            if (s.indexOf("m") >= 0) {
-                s = s.replace("m", "");
+            if (s.indexOf(KDSPreferenceCleaningInterval.SUFFIX_MINUTE) >= 0) {
+                s = s.replace(KDSPreferenceCleaningInterval.SUFFIX_MINUTE, "");
                 int nIntervalM = Integer.parseInt(s);
                 nInterval = nIntervalM * 60;//seconds
             } else {
-                s = s.replace("h", "");
+                s = s.replace(KDSPreferenceCleaningInterval.SUFFIX_HOUR, "");
                 int nIntervalH = Integer.parseInt(s);
                 nInterval = nIntervalH * 60 * 60;//seconds
             }
@@ -228,6 +229,9 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
     }
     boolean m_bFlashToggle = false;
     ColorStateList m_oldColors = null;
+
+    final int ALPHA_GRAY = 200;
+    final int ALPHA_FULL = 255;
     public void onTime()
     {
         if (m_fab.getVisibility() != View.VISIBLE) return ;
@@ -237,12 +241,12 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
         //m_oldMode = m_fab.getBackgroundTintMode();
 
         if (m_bFlashToggle) {
-            ColorStateList list = m_oldColors.withAlpha(200);
+            ColorStateList list = m_oldColors.withAlpha(ALPHA_GRAY);
             m_fab.setBackgroundTintList(list);
         //    m_fab.setBackgroundTintMode(PorterDuff.Mode.DARKEN);
         }
         else {
-            ColorStateList list = m_oldColors.withAlpha(255);
+            ColorStateList list = m_oldColors.withAlpha(ALPHA_FULL);
             m_fab.setBackgroundTintList(list);
             //  m_fab.setBackgroundTintMode(m_oldMode);
             //m_fab.setRippleColor(0);

@@ -491,10 +491,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|right"
         android:layout_marginRight="50dp"
-
         android:clickable="true"
         android:src="@android:drawable/ic_dialog_alert"
         android:visibility="gone"
-
         app:backgroundTint="@color/cleaning_button_bg" />
 </FrameLayout>

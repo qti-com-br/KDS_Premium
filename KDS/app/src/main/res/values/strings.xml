@@ -1144,7 +1144,30 @@
     <string name="dismiss_clert">[9] DISMISS CLERT</string>
     <string name="cleaning_mode_started_by_bump_bar">Cleaning mode started by bump bar</string>
     <string name="will_return_in_seconds">Will return in # seconds</string>
-
+    <string name="cleaning_mode">Cleaning mode</string>
+    <string name="pinch_out_when_finished">Pinch out when finished</string>
+    <string name="custom_interval">Custom interval</string>
+    <string name="minutes">minutes</string>
+    <string name="hours">hours</string>
+    <string name="cleaning_enable_alerts">Enable alerts</string>
+    <string name="cleaning_enable_alerts_summary">Enable recurrent alerts for reminding the user to clean their devices.</string>
+    <string name="cleaning_alert_type">Alert type</string>
+    <string name="cleaning_alert_type_summary">Set the alert behavior</string>
+    <string name="cleaning_set_reminder_interval">Set reminder interval</string>
+    <string name="cleaning_enable_dismiss_button">Enable dismiss button</string>
+    <string name="cleaning_enable_dismiss_button_summary">Allow user to dismiss the alerm</string>
+    <string name="cleaning_snooze_time">Snooze time</string>
+    <string name="cleaning_snooze_time_summary">Set a default snoozing time or disable the option</string>
+    <string name="cleaning_startup_alert">Start up alert</string>
+    <string name="cleaning_startup_alert_summary">Display the alert immediately after app initializes.</string>
+    <string name="hour">hour</string>
+    <string name="one_hour">1 hour</string>
+    <string name="two_hours">2 hours</string>
+    <string name="three_hours">3 hours</string>
+    <string name="four_hours">4 hours</string>
+    <string name="five_hours">5 hours</string>
+    <string name="six_hours">6 hours</string>
+    <string name="custom">Custom ...</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>

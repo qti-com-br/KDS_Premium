@@ -17,20 +17,23 @@ import android.widget.RadioGroup;
  */
 public class KDSPreferenceCleaningInterval extends DialogPreference {
 
+    static public String SUFFIX_MINUTE = "m";
+    static public String SUFFIX_HOUR = "h";
+
     private View m_view;
     @Override
     protected View onCreateDialogView() {
 
         m_view=super.onCreateDialogView();
         //spinner1 = (Spinner) view.findViewById(R.id.spinnerbase);
-        String s = getPersistedString("2h");
+        String s = getPersistedString("2"+SUFFIX_HOUR);
         String s1 = s;
         int id = R.id.rb2;
         int ar[] = new int[]{R.id.rb1, R.id.rb2, R.id.rb3, R.id.rb4, R.id.rb5, R.id.rb6, R.id.rbCustom};
-        if (s1.indexOf("m") >=0)
+        if (s1.indexOf(SUFFIX_MINUTE) >=0)
             id = R.id.rbCustom;
         else {
-            s1 = s1.replace("h", "");
+            s1 = s1.replace(SUFFIX_HOUR, "");
             int n = Integer.parseInt(s1) - 1;
 
 
@@ -83,27 +86,27 @@ public class KDSPreferenceCleaningInterval extends DialogPreference {
     {
         RadioGroup rg =  m_view.findViewById(R.id.rgInterval);
         int id = rg.getCheckedRadioButtonId();
-        String s = "2h";
+        String s = "2"+SUFFIX_HOUR;
 
         switch (id)
         {
             case R.id.rb1:
-                s = "1h";
+                s = "1"+SUFFIX_HOUR;
                 break;
             case R.id.rb2:
-                s = "2h";
+                s = "2"+SUFFIX_HOUR;
                 break;
             case R.id.rb3:
-                s = "3h";
+                s = "3"+SUFFIX_HOUR;
                 break;
             case R.id.rb4:
-                s = "4h";
+                s = "4"+SUFFIX_HOUR;
                 break;
             case R.id.rb5:
-                s = "5h";
+                s = "5"+SUFFIX_HOUR;
                 break;
             case R.id.rb6:
-                s = "6h";
+                s = "6"+SUFFIX_HOUR;
                 break;
             case R.id.rbCustom:
             {
@@ -127,7 +130,7 @@ public class KDSPreferenceCleaningInterval extends DialogPreference {
 
     public void updateSummary()
     {
-        String s = getPersistedString("2h");
+        String s = getPersistedString("2"+SUFFIX_HOUR);
         updateSummary(s);
     }
     /**
@@ -139,8 +142,14 @@ public class KDSPreferenceCleaningInterval extends DialogPreference {
     public void updateSummary(String val)
     {
         String s = val;
-        s = s.replace("m", " minutes");
-        s = s.replace("h", " hours");
+        s = s.replace(SUFFIX_MINUTE, " "+ getContext().getString(R.string.minutes));
+        if (s.equals("1h"))
+        {
+            s = s.replace(SUFFIX_HOUR, " " + getContext().getString(R.string.hour));
+        }
+        else {
+            s = s.replace(SUFFIX_HOUR, " " + getContext().getString(R.string.hours));
+        }
         this.setSummary(s);
     }
 
@@ -157,7 +166,7 @@ public class KDSPreferenceCleaningInterval extends DialogPreference {
                         EditText t =  m_viewCustom.findViewById(R.id.txtInterval);
                         String s= t.getText().toString();
                         if (!s.isEmpty()) {
-                            s += "m";
+                            s += SUFFIX_MINUTE;// "m";
                             persistString(s);
                             updateSummary(s);
                         }

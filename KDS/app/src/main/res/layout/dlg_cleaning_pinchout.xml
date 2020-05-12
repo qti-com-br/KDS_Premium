@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Cleaning mode"
+            android:text="@string/cleaning_mode"
             android:textColor="@color/condiment_bg"
             android:textSize="18sp" />
 
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Pinch out when finished"
+            android:text="@string/pinch_out_when_finished"
             android:textColor="@color/condiment_bg"
             android:textSize="18sp" />
 
