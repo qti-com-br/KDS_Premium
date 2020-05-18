@@ -1320,7 +1320,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.cleaning_alert_type,"string_cleaning_alert_type","1");
         init_option(ID.cleaning_reminder_interval,"string_cleaning_reminder_interval","2h");
         init_option(ID.cleaning_enable_dismiss_button,"bool_cleaning_enable_dismiss_button",false);
-        init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","0");
+        init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","5");
         init_option(ID.cleaning_startup_alert,"bool_cleaning_startup_alert",true);
 
 
