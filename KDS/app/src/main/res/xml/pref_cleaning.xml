@@ -45,7 +45,7 @@
         android:key="cleaning_snooze_time"
         android:title="@string/cleaning_snooze_time"
         android:summary="@string/cleaning_snooze_time_summary"
-        android:defaultValue="0"
+        android:defaultValue="5"
         android:entries="@array/pref_cleaning_snooze_time"
         android:entryValues="@array/pref_cleaning_snooze_time_values"
         android:dependency="cleaning_enable_alerts"

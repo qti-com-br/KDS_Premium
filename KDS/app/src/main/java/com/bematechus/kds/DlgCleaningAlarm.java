@@ -104,6 +104,11 @@ public class DlgCleaningAlarm extends Dialog {
                 }
             });
         }
+        else
+        { //kpp1-330
+            t = v.findViewById(R.id.btnRemindMe);
+            t.setVisibility(View.GONE);
+        }
 
         t = v.findViewById(R.id.btnDismiss);
         t.setOnClickListener(new View.OnClickListener() {
