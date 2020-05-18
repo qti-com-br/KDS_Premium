@@ -4,7 +4,7 @@
         android:key="cleaning_enable_alerts"
         android:title="@string/cleaning_enable_alerts"
         android:summary="@string/cleaning_enable_alerts_summary"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
     <com.bematechus.kdslib.KDSListPreference
         android:key="cleaning_alert_type"
         android:title="@string/cleaning_alert_type"

@@ -2847,6 +2847,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
                 if (getKDS().getStationID().isEmpty())
                     inputStationID();
+
+
             }
             default:
                 break;
@@ -3007,6 +3009,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             getKDS().setStationAnnounceEventsReceiver(null);
             String s = (String) dlg.getResult();
             afterInputStationID(s);
+
         } else if (dlg instanceof KDSUIDialogConfirm) {
             KDSUIDialogConfirm d = (KDSUIDialogConfirm) dlg;
             if ((Confirm_Dialog) d.getTag() ==Confirm_Dialog.CONFIRM_BUMP) {
@@ -7357,6 +7360,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        KDSUIDlgAgreement dlg =KDSUIDlgAgreement.instance(this, this);
 //        dlg.show();
     }
+
 
 
 }
