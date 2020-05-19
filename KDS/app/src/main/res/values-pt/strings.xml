@@ -85,8 +85,8 @@
 	<string name='ip_search_title_ip'>Endereço IP</string>
 	<string name='ip_search_title_port'>Porta</string>
 	<string name='park_count'>Estacionar:</string>
-	<string name='error_relations_mirror_dead_loop'>Erro &#x27;dead loop&#x27; das estações Espelho #.</string>
-	<string name='error_relations_backup_dead_loop'>Erro &#x27;dead loop&#x27; das estações Backup #.</string>
+	<string name='error_relations_mirror_dead_loop'>Erro \'dead loop\' das estações Espelho #.</string>
+	<string name='error_relations_backup_dead_loop'>Erro \'dead loop\' das estações Backup #.</string>
 	<string name='network_lost'>Rede perdida</string>
 	<string name='network_restore'>Rede restaurada</string>
 	<string name='paid'>Pago</string>
@@ -606,11 +606,11 @@
 	<string name='cleaning_enable_alerts_summary'>Habilita alertas recorrentes lembrando ao usuário a limpeza dos dispositivos</string>
 	<string name='cleaning_alert_type'>Tipo de alerta</string>
 	<string name='cleaning_alert_type_summary'>Define o comportamento do alerta</string>
-	<string name='cleaning_set_reminder_interval'>Define o intervalo do &#x27;Lembrar mais tarde&#x27;</string>
-	<string name='cleaning_enable_dismiss_button'>Habilita o botão &#x27;Ignorar alerta&#x27;</string>
+	<string name='cleaning_set_reminder_interval'>Define o intervalo do \'Lembrar mais tarde\'</string>
+	<string name='cleaning_enable_dismiss_button'>Habilita o botão \'Ignorar alerta\'</string>
 	<string name='cleaning_enable_dismiss_button_summary'>Permite ao usuário ignorar o alerta atual</string>
 	<string name='cleaning_snooze_time'>Lembrar mais tarde</string>
-	<string name='cleaning_snooze_time_summary'>Define o &#x27;lembrar mais tarde&#x27; ou desabilita a opção</string>
+	<string name='cleaning_snooze_time_summary'>Define o \'lembrar mais tarde\' ou desabilita a opção</string>
 	<string name='cleaning_startup_alert'>Alertar ao inicializar</string>
 	<string name='cleaning_startup_alert_summary'>Exibir alerta imediatamente após início do App</string>
 	<string name='hour'>hora</string>

@@ -171,7 +171,7 @@
 	<string name='file_name'>Nome do arquivo:</string>
 	<string name='error_not_expo_or_prep'>Erro: esta estação não é Exp ou Prep</string>
 	<string name='confirm_logout'>Ao sair, todos os dados serão limpos. Deseja mesmo continuar?</string>
-	<string name='only_premium_plan_login'>Apenas lojas com planos &#x27;Premium&#x27; podem ter acesso.</string>
+	<string name='only_premium_plan_login'>Apenas lojas com planos \'Premium\' podem ter acesso.</string>
 	<string name='internal_doing_activation'>Ativação interna em andamento, por favor saia mais tarde.</string>
 	<string name='no_network_detected'>Nenhuma rede detectada.</string>
 	<string name='expo_field_just_accept_expo'>Campo Exp aceita apenas IDs das estações Exp.</string>

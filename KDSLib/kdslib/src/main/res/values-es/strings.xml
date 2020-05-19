@@ -10,7 +10,7 @@
 	<string name='smb_folder_lost'>No se puede acceder a la carpeta remota #</string>
 	<string name='failed_to_open_remote_folder'>Error de inicio de sesión: nombre de usuario desconocido o contraseña incorrecta</string>
 	<string name='new_folder'>Nueva carpeta</string>
-	<string name='fail_to_create_folder'>Fallo al crear &#x27;#&#x27; carpeta</string>
+	<string name='fail_to_create_folder'>Fallo al crear \'#\ carpeta</string>
 	<string name='up'>arriba</string>
 	<string name='find_folders'>Buscar carpetas</string>
 	<string name='error_folder_permission'>Configure el permiso de lectura y escritura de la carpeta remota para el usuario de inicio de sesión.</string>
@@ -140,8 +140,8 @@
 	<string name='error_not_expo_prep_backup'>Error, solo se permitieron expo, preparación y estación de Fila..</string>
 	<string name='tracker_only_one_allowed'>Solo se permite una estación de seguimiento de mesa</string>
 	<string name='tt_authen_press_button'>Presione el botón en la puerta de enlace para que KDS se conecte.</string>
-	<string name='please_input_slave_station'>Por favor ingrese la estación # \ &#x27;s $ estación</string>
-	<string name='error_slave'>Error, cambie a otra estación</string>
+	<string name='please_input_slave_station'>Por favor ingrese la estación # \' $ estación</string>
+	<string name='error_slave'>Error, cambie a otra estación</string>'
 	<string name='error_slave_myself'>Error, usar como estación slave. Por favor cambie a otra estación</string>
 	<string name='relation_error_expo_as_slave'>La estación slave station es un Expo, No permite esta configuración. Por favor cambiar.</string>
 	<string name='error_relations_repeat_backup_mirror'>Estaciones # error de configuración.</string>
