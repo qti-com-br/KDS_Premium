@@ -317,7 +317,8 @@
     <string-array name="pref_kds_language_titles" >
         <item>英语（English）</item>
         <item>中文</item>
-
+		<item>Español</item>
+		<item>Português</item>
     </string-array>
     <!--<string name="empty">空</string>-->
     <!--<string name="find_folders">找到文件夹</string>-->

@@ -320,7 +320,8 @@
     <string-array name="pref_kds_language_titles">
         <item>English</item>
         <item>Chinese</item>
-
+		<item>Español</item>
+		<item>Português</item>
     </string-array>
 
     <!--<string name="empty">Empty</string>-->
