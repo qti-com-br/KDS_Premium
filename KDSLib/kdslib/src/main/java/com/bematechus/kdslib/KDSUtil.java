@@ -1278,6 +1278,12 @@ just 16bits value
             case Chinese:
                 locale = Locale.CHINESE;
                 break;
+			case Spanish:
+				locale = new Locale("es");
+				break;
+			case Portuguese:
+				locale = new Locale("pt");
+				break;
         }
         Resources resources = context.getResources();// 获得res资源对象
         Configuration config = resources.getConfiguration();// 获得设置对象

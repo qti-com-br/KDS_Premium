@@ -56,6 +56,8 @@ public class SettingsBase {
     {
         English,
         Chinese,
+		Spanish,
+		Portuguese
     }
 
     public enum KDSUserMode
@@ -413,6 +415,12 @@ public class SettingsBase {
 
             case Chinese:
                 return KDSApplication.getContext().getString(R.string.chinese);//"Chinese";
+
+			case Spanish:
+				return KDSApplication.getContext().getString(R.string.spanish);
+
+			case Portuguese:
+				return KDSApplication.getContext().getString(R.string.portuguese);
 
             default:
                 return KDSApplication.getContext().getString(R.string.english);//"English";

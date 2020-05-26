@@ -719,11 +719,12 @@
     <string name="can_not_get_file">得不到文件:#</string>
 
     <string name="pref_kds_language" >语言（Language）</string>
-    <string-array name="pref_kds_language_titles" >
-        <item>英语（English）</item>
-        <item>中文</item>
-
-    </string-array>
+	<string-array name="pref_kds_language_titles">
+		<item>English</item>
+		<item>中文 (Chinese)</item>
+		<item>Español</item>
+		<item>Português</item>
+	</string-array>
 
     <!--<string name="error_folder_permission">远程目录必须有读写权限， 请改正</string>-->
     <!--<string name="can_not_remove_smb_file">不能删除远程文件 #</string>-->
