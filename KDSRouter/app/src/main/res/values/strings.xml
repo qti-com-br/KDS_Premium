@@ -336,8 +336,8 @@
 
     <!--<string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>-->
 
-    <string name="english">English</string>
-    <string name="chinese">Chinese</string>
+    <string name="english" translatable="false">English</string>
+    <string name="chinese" translatable="false">中文 (Chinese)</string>
     <!--<string name="downloading">Downloading ...</string>-->
     <!--<string name="str_message">Message</string>-->
     <string name="items_for_category">Items for category #</string>
@@ -375,4 +375,6 @@
     <string name="logout">Logout</string>
     <string name="export">Export</string>
     <string name="str_import">Import</string>
+	<string name="portuguese" translatable="false">Português</string>
+	<string name="spanish" translatable="false">Español</string>
 </resources>

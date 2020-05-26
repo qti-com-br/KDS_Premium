@@ -151,8 +151,6 @@
 	<string name="pref_kds_language">Idioma</string>
 	<string name="categories">Categorias</string>
 	<string name="items">Itens</string>
-	<string name="english">Inglês</string>
-	<string name="chinese">中文</string>
 	<string name="items_for_category">Itens para categoria #</string>
 	<string name="category_name">Nome da Categoria:</string>
 	<string name="no_data">Sem dados</string>
