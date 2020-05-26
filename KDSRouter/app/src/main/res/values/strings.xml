@@ -120,7 +120,7 @@
     <!--<string name="searching_active_stations">Searching for activate stations …</string>-->
     <!--<string name="smb_folder_lost"> Can not access remote folder #</string>-->
     <string name="error_different_relations">The stations relation is different with others, please edit relations first.</string>
-    <string name="error_match_mac">Please run it in bematech device.</string>
+    <string name="error_match_mac">Please run it in LogicControls device.</string>
 
     <string name="find">Find</string>
     <!--<string name="pc_name">PC IP:</string>-->
