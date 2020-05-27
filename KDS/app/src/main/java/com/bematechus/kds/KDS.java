@@ -2220,10 +2220,35 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                     break;
 //                if (this.isQueueExpo() || this.isExpeditorStation() || this.isTrackerView())
 //                    break;
-
-                KDSStationFunc.doSyncCommandOrderNew(this, command, xmlData);
+                ArrayList<Boolean> ordersExisted = new ArrayList<>();
+                ArrayList<KDSDataOrder> ordersChanged = new ArrayList<>();
+                //order is parsed order, that is received order
+                KDSDataOrder order = KDSStationFunc.doSyncCommandOrderNew(this, command, xmlData, ordersExisted, ordersChanged);
                 setFocusAfterReceiveOrder();
                 schedule_process_update_after_receive_new_order();
+                //if order is not null, it is expo station returned.
+                if (order != null)//kpp1-333
+                {
+                    if (getStationFunction() == KDSSettings.StationFunc.Expeditor ||
+                        getStationFunction() == KDSSettings.StationFunc.Queue_Expo) {
+                        if (getSettings().getBoolean(KDSSettings.ID.Printer_Enabled)) {
+                            KDSPrinter.HowToPrintOrder howtoprint = KDSPrinter.HowToPrintOrder.values()[(getSettings().getInt(KDSSettings.ID.Printer_howtoprint))];
+                            if (howtoprint == KDSPrinter.HowToPrintOrder.WhileReceive) {
+                                boolean bExisted = true;
+                                if (ordersExisted.size() > 0)
+                                    bExisted = ordersExisted.get(0);
+                                if ((!bExisted) || (!isSameChangedOrder(order, ordersChanged))) {
+                                    for (int i = 0; i < ordersChanged.size(); i++) {
+                                        if (ordersChanged.get(i) != null)
+                                            getPrinter().printOrder(ordersChanged.get(i));
+                                    }
+
+                                }
+
+                            }
+                        }
+                    }
+                }
                 break;
             case Station_Bump_Order://in thread
                 //Please notice the xmldata just contains the order/item id.
@@ -5229,5 +5254,37 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     {
         fireTcpListenServerErrorEvent(m_arKdsEventsReceiver,nListenPort,  errorMessage);
 
+    }
+
+    /**
+     * It is for expo print "station" order.
+     * If prep get order without router, and expo set printing order when received,
+     *  we will call this function.
+     *
+     *  This function will compare received order and changed order.
+     *  Check if they are same one.
+     *  Same: don't print it.
+     *  No-same, print it.
+     * @param orderReceived
+     * @param ordersChanged
+     * @return
+     */
+    private boolean isSameChangedOrder(KDSDataOrder orderReceived, ArrayList<KDSDataOrder> ordersChanged)
+    {
+        if (orderReceived == null) return true;
+
+        if (ordersChanged.size() ==1)
+        {
+            return (orderReceived.getItems().getCount() == orderReceived.getItems().getCount());
+        }
+        else
+        {
+            int n = 0;
+            for (int i=0; i< ordersChanged.size() ; i++)
+            {
+                n += ordersChanged.get(i).getItems().getCount();
+            }
+            return (n == orderReceived.getItems().getCount());
+        }
     }
 }

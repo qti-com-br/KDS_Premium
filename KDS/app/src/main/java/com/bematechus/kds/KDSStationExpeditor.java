@@ -1408,14 +1408,18 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * receive the sync command, check if I am backup/mirror station,
      * @param command
      */
-    static public KDSDataOrder exp_sync_order_new(KDS kds, KDSXMLParserCommand command)
+    static public KDSDataOrder exp_sync_order_new(KDS kds, KDSXMLParserCommand command, ArrayList<Boolean> ordersExisted, ArrayList<KDSDataOrder> ordersChanged)
     {
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         if (strXml.isEmpty())
             return null;
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
+
         if (order == null)
             return null;
+        ordersExisted.add( (kds.getUsers().getOrderByName(order.getOrderName()) != null));
+
+
         KDSDataOrder  changedOrder = null;
         ArrayList<KDSDataOrder> changedOrders = null;
 
@@ -1424,22 +1428,30 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
 
             { //primary is offline now, svae to current database.
-                if (kds.isSingleUserMode())
-                    changedOrder = func_orderAdd(kds.getUsers().getUserA(), order,strXml, false, false,false, true); //don't check add-on
+                if (kds.isSingleUserMode()) {
+                    changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml, false, false, false, true); //don't check add-on
+                    ordersChanged.add(changedOrder);
+                }
                 else
                 {
                     changedOrders = kds.getUsers().users_orderAdd(order, strXml,false, false, true);
+                    ordersChanged.addAll(changedOrders);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
+
         }
         else if (kds.getStationsConnections().getRelations().isMirrorStation())
         { //I am mirror slave station
 
-            if (kds.isSingleUserMode())
-                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
-            else
-                changedOrders = kds.getUsers().users_orderAdd(order, strXml,false,false, true);
+            if (kds.isSingleUserMode()) {
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml, false, false, false, true);
+                ordersChanged.add(changedOrder);
+            }
+            else {
+                changedOrders = kds.getUsers().users_orderAdd(order, strXml, false, false, true);
+                ordersChanged.addAll(changedOrders);
+            }
 
         }
         else
@@ -1449,10 +1461,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //                return; //in one hour, we don't accept same order name. When auto bump enabled, if expo has bump given order,this station_add_new will cause add a new same name one.
 //                          //I have to fix this bug, in 24 stations "coke" branch.
 
-            if (kds.isSingleUserMode())
-                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
-            else
-                changedOrders = kds.getUsers().users_orderAdd(order,strXml, false, false,true);
+            if (kds.isSingleUserMode()) {
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml, false, false, false, true);
+                ordersChanged.add(changedOrder);
+            }
+            else {
+                changedOrders = kds.getUsers().users_orderAdd(order, strXml, false, false, true);
+                ordersChanged.addAll(changedOrders);
+            }
         }
 
         tt_checkAllItemsBumped(kds, order);
