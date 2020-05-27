@@ -15,8 +15,6 @@
 	<string name='find_folders'>Encontrar pastas</string>
 	<string name='error_folder_permission'>Por favor verifique as permissões da pasta</string>
 	<string name='can_not_remove_smb_file'>Não é possível remover o arquivo remoto #</string>
-	<string name='english'>English</string>
-	<string name='chinese'>中文</string>
 	<string name='downloading'>Baixando...</string>
 	<string name='check_new_version'>Verificar novas versões</string>
 	<string name='current_version'>Versão atual</string>
@@ -154,7 +152,7 @@
 	<string name='slave'>ID secundário</string>
 	<string name='status'>Status</string>
 	<string name='do_not_check_stations_relationship_in_this_station'>Não verificar relações entre estações nesta estação</string>
-	<string name='update_to_all'>Salvar &amp; Atualizar</string>
+	<string name='update_to_all'>Salvar e Atualizar</string>
 	<string name='delete'>Apagar</string>
 	<string name='new_entry'>Nova</string>
 	<string name='show_id'>Exibir ID da estação</string>

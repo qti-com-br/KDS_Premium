@@ -19,10 +19,7 @@
     <string name="error_folder_permission">请设置登录用户在远程文件夹的读写权限.</string>
     <string name="can_not_remove_smb_file">不能删除远程目录 #</string>
 
-    <string name="english">English</string>
-    <string name="chinese">Chinese</string>
-
-    <string name="downloading">下载中 ...</string>
+	<string name="downloading">下载中 ...</string>
     <string name="check_new_version">检查新版本</string>
     <string name="current_version">当前版本</string>
     <string name="it_is_latest_version">当前是最新版本</string>

@@ -197,7 +197,7 @@
     <string name="slave">Slave ID</string>
     <string name="status">Status</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
-    <string name="update_to_all">Save  &amp; Update to all</string>
+    <string name="update_to_all">Save and Update to all</string>
     <string name="delete">Delete</string>
     <string name="new_entry">New</string>
     <string name="show_id">Show Station ID</string>

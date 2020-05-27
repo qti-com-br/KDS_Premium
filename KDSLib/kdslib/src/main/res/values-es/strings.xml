@@ -15,8 +15,6 @@
 	<string name='find_folders'>Buscar carpetas</string>
 	<string name='error_folder_permission'>Configure el permiso de lectura y escritura de la carpeta remota para el usuario de inicio de sesión.</string>
 	<string name='can_not_remove_smb_file'>No se puede eliminar el archivo remoto #</string>
-	<string name='english'>English</string>
-	<string name='chinese'>Chinese</string>
 	<string name='downloading'>Descargando ...</string>
 	<string name='check_new_version'>Verificar nueva versión</string>
 	<string name='current_version'>Versión Actual</string>
@@ -154,7 +152,7 @@
 	<string name='slave'>Slave ID</string>
 	<string name='status'>Estado</string>
 	<string name='do_not_check_stations_relationship_in_this_station'>No verifique la relación de las estaciones en esta estación</string>
-	<string name='update_to_all'>Guardar &amp; Actualizar a todos</string>
+	<string name='update_to_all'>Guardar e Actualizar a todos</string>
 	<string name='delete'>Eliminar</string>
 	<string name='new_entry'>Nuevo</string>
 	<string name='show_id'>Mostrar ID de estación</string>
