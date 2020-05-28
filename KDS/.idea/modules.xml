@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/KDS.iml" filepath="$PROJECT_DIR$/KDS.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../KDSLib/kdslib/kdslib.iml" filepath="$PROJECT_DIR$/../KDSLib/kdslib/kdslib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KDS.iml" filepath="$PROJECT_DIR$/KDS.iml" group="KDS" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="KDS/app" />
+      <module fileurl="file://$PROJECT_DIR$/../KDSLib/kdslib/kdslib.iml" filepath="$PROJECT_DIR$/../KDSLib/kdslib/kdslib.iml" group="KDS/kdslib" />
     </modules>
   </component>
 </project>
