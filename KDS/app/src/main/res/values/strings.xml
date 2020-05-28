@@ -722,8 +722,9 @@
     <string name="pref_kds_language">Language</string>
     <string-array name="pref_kds_language_titles">
         <item>English</item>
-        <item>Chinese</item>
-
+        <item>中文 (Chinese)</item>
+		<item>Español</item>
+		<item>Português</item>
     </string-array>
 
     <!--<string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>-->

@@ -18,8 +18,10 @@
     <string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>
     <string name="can_not_remove_smb_file">Can not remove remote file #</string>
 
-    <string name="english">English</string>
-    <string name="chinese">Chinese</string>
+    <string name="english" translatable="false">English</string>
+    <string name="chinese" translatable="false">中文 (Chinese)</string>
+	<string name="spanish" translatable="false">Español</string>
+	<string name="portuguese" translatable="false">Português</string>
 
     <string name="downloading">Downloading ...</string>
     <string name="check_new_version">Check new version</string>
@@ -195,7 +197,7 @@
     <string name="slave">Slave ID</string>
     <string name="status">Status</string>
     <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
-    <string name="update_to_all">Save  &amp; Update to all</string>
+    <string name="update_to_all">Save and Update to all</string>
     <string name="delete">Delete</string>
     <string name="new_entry">New</string>
     <string name="show_id">Show Station ID</string>

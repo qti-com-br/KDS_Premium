@@ -317,7 +317,8 @@
     <string-array name="pref_kds_language_titles" >
         <item>英语（English）</item>
         <item>中文</item>
-
+		<item>Español</item>
+		<item>Português</item>
     </string-array>
     <!--<string name="empty">空</string>-->
     <!--<string name="find_folders">找到文件夹</string>-->
@@ -330,9 +331,7 @@
     <!--<string name="retrieve_from">提取自</string>-->
 
     <!--<string name="failed_to_open_remote_folder">登录失败：未知用户名或密码错误</string>-->
-    <string name="english">英语</string>
-    <string name="chinese">中文</string>
-    <!--<string name="downloading">下载中 ...</string>-->
+	<!--<string name="downloading">下载中 ...</string>-->
     <!--<string name="str_message">消息</string>-->
     <string name="category_name">类名:</string>
     <!--<string name="background">背景</string>-->

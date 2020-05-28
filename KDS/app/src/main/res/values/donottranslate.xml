@@ -327,7 +327,8 @@ Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\
     <string-array name="pref_kds_language_values" translatable="false">
         <item>0</item>
         <item>1</item>
-
+		<item>2</item>
+		<item>3</item>
     </string-array>
 
 

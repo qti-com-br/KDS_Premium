@@ -293,7 +293,7 @@
 	<string name='focus_down'>Focar abaixo</string>
 	<string name='show_summary'>Exibir/Ocultar resumo</string>
 	<string name='transfer_order'>Transferir pedidos para outra estação</string>
-	<string name='sort_orders'>Ordernar pedidos</string>
+	<string name='sort_orders'>Ordenar pedidos</string>
 	<string name='park'>Estacionar</string>
 	<string name='bumpbar_unpark'>Desestacionar</string>
 	<string name='more'>Mais</string>
