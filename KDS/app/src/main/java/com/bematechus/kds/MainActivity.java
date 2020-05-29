@@ -3348,9 +3348,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //test
         //getKDS().getStatisticDB().outputOrdersTableDataSql(getKDS().getStatisticDB(), "orders", "");
-
-        DlgCleaningPinchout d = new DlgCleaningPinchout(this);
-        d.show();
+        //kpp1-335
+        //DlgCleaningPinchout d = new DlgCleaningPinchout(this);
+        //d.show();
     }
 
 
