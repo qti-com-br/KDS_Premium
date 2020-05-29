@@ -54,8 +54,8 @@
 	<string name='item'>Descripción de artículo</string>
 	<string name='router_disabled'>El enrutador está actualmente deshabilitado, habilítelo si desea usarlo.</string>
 	<string name='router_disabled_warning'>El enrutador está actualmente desactivado, habilítelo primero.</string>
-	<string name='error_relations_mirror_dead_loop'>Estaciones # función espejo \ &#x27;dead loop\&#x27;.</string>
-	<string name='error_relations_backup_dead_loop'>Estaciones # función apoyo \ &#x27;dead loop\&#x27;.</string>
+	<string name='error_relations_mirror_dead_loop'>Estaciones # función espejo \&#x27;dead loop\&#x27;.</string>
+	<string name='error_relations_backup_dead_loop'>Estaciones # función apoyo \&#x27;dead loop\&#x27;.</string>
 	<string name='network_lost'>Red perdida</string>
 	<string name='network_restore'>Red restaurada </string>
 	<string name='input_internet_file'>Entrada de Archivo de Internet</string>
