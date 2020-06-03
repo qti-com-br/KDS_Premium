@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.util.DisplayMetrics;
@@ -1289,8 +1290,16 @@ just 16bits value
         Configuration config = resources.getConfiguration();// 获得设置对象
 
         DisplayMetrics dm = resources.getDisplayMetrics();// 获得屏幕参数：主要是分辨率，像素等。
-        config.locale = locale; // 简体中文
-        resources.updateConfiguration(config, dm);
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            config.setLocale(locale);
+//            Context c = context.createConfigurationContext(config);
+//
+//        }
+//        else {
+            config.locale = locale; // 简体中文
+            resources.updateConfiguration(config, dm);
+//        }
     }
 
     static public String getCurrentTimeForLog()

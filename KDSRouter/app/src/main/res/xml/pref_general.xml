@@ -159,14 +159,14 @@
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
 
-    <com.bematechus.kdslib.KDSListPreference
-        android:key="kds_general_language"
-        android:title="@string/pref_kds_language"
-        android:defaultValue="0"
-        android:entries="@array/pref_kds_language_titles"
-        android:entryValues="@array/pref_kds_language_values"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
+<!--    <com.bematechus.kdslib.KDSListPreference-->
+<!--        android:key="kds_general_language"-->
+<!--        android:title="@string/pref_kds_language"-->
+<!--        android:defaultValue="0"-->
+<!--        android:entries="@array/pref_kds_language_titles"-->
+<!--        android:entryValues="@array/pref_kds_language_values"-->
+<!--        android:negativeButtonText="@null"-->
+<!--        android:positiveButtonText="@null" />-->
 
     <!-- primary router 2015-12-29 -->
     <!--<EditTextPreference-->

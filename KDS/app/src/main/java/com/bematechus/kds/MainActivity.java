@@ -444,9 +444,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         }
         lockAndroidWakeMode(true); //the android device will not sleep while app is running
-
-        KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
-        KDSUtil.setLanguage(this.getApplicationContext(), language);
+        //kpp1-337, remove language settings, just use os language settings.
+        //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
+        //KDSUtil.setLanguage(this.getApplicationContext(), language);
 
 
         setContentView(R.layout.activity_main);
