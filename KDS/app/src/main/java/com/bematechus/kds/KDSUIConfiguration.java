@@ -394,7 +394,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("kds_general_stationsport"));
             bindPreferenceSummaryToValue(findPreference("kds_general_stationfunc"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_users"));
-            bindPreferenceSummaryToValue(findPreference("kds_general_language"));
+            //kpp1-337, remove app language settings
+            //bindPreferenceSummaryToValue(findPreference("kds_general_language"));
 
             bindPreferenceSummaryToValue(findPreference("kds_general_auto_backup_hours"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_users_orientation"));
