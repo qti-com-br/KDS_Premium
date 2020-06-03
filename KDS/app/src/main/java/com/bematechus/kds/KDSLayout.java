@@ -2310,7 +2310,14 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         if (m_orders == null)
             return "";
-//        int nindex = m_orders.getIndex(guid);
+//        int nindex = m_orders.get.getIndex(guid);
+//        //kpp1-338
+//        nindex --;
+//        KDSDataOrder order = m_orders.get(nindex);
+//        if (order == null)
+//            return "";
+//        guid = order.getGUID();
+        //
 //        int nPanelsCount = m_view.getMaxPanelsCount();
 //        nindex-=nPanelsCount;
 //
@@ -2732,7 +2739,15 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (m_orders == null)
             return "";
         int nindex = m_orders.getIndex(guid);
+
+        nindex -- ; //kpp1-338
+        KDSDataOrder prev = m_orders.get(nindex);
+        if (prev == null)
+            return "";
+        orderGuid = prev.getGUID();
+        //
         int nPanelsCount = m_view.getMaxPanelsCount();
+
         nindex-=nPanelsCount;
 
         KDSDataOrder order = null;
