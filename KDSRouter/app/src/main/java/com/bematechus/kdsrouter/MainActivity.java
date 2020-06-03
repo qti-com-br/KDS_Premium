@@ -257,8 +257,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         }
         lockAndroidWakeMode(true);
-        KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
-        KDSUtil.setLanguage(this.getApplicationContext(), language);
+        //kpp1-337
+        //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
+        //KDSUtil.setLanguage(this.getApplicationContext(), language);
 
         setContentView(R.layout.activity_main);
         explicitStartService();
