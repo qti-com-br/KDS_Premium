@@ -177,5 +177,7 @@
 	<string name='quit'>Sair</string>
 	<string name='eula_and_privacy_policy_agreement'>Termos de Uso e Política de Privacidade</string>
 	<string name='agreement_text'>Ao utilizar este App, você confirma que leu e concordou com os Termos de Uso https://kdsgo.com/eula.html e com a Política de Privacidade https://logiccontrols.com/privacy-policy/</string>
+	<string name="domain">Domínio</string>
+	<string name="domain_name_can_be_empty">Domínio, pode ser vazio</string>
 
 </resources>

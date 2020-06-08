@@ -78,7 +78,7 @@
 # sair.</string>
 	<string name='unpark_order_help'>[0]--[9] Toque único para selecionar pedido, duplo para desestacionar.
 # sair.</string>
-	<string name='find'>Encontrar</string>
+	<string name='find'>Buscar</string>
 	<string name='transfer_select_order_warn'>Por favor, selecione um pedido.</string>
 	<string name='transfer_select_station_title'>Por favor, selecione a estação para a qual deseja transferir o pedido:</string>
 	<string name='ip_search_title_id'>ID</string>
@@ -622,4 +622,255 @@
 	<string name='six_hours'>6 horas</string>
 	<string name='custom'>Personalizado ...</string>
 	<string name="move_finished_order_to_front">Mover pedidos concluídos à frente da fila</string>
+
+	<string-array name="pref_kds_general_data_source_titles">
+		<item>TCP/IP</item>
+		<item>Pasta remota</item>
+	</string-array>
+	<string-array name="pref_kds_general_users_titles">
+		<item>Tela única</item>
+		<item>Tela dividida</item>
+	</string-array>
+	<string-array name="pref_kds_panels_mode_titles">
+		<item>Expandir na horizontal</item>
+		<item>Expandir na vertical</item>
+		<!--<item>IOS like</item>-->
+	</string-array>
+	<string-array name="pref_kds_caption_content_titles">
+		<item>N/D</item>
+		<item>ID do Pedido</item>
+		<item>Tempo de Espera</item>
+		<item>Garçom</item>
+		<item>À mesa</item>
+		<item>Estação PDV</item>
+		<item>Tipo de Pedido</item>
+		<item>Destino</item>
+		<item>Mensagem Personalizada</item>
+		<item>Status do Pedido</item>
+		<item>Ícone do Pedido</item>
+	</string-array>
+	<string-array name="pref_kds_item_showing_method_titles">
+		<item>Em tempo real</item>
+		<item>Um item atrás</item>
+		<item>Quando o pedido for pago</item>
+	</string-array>
+	<string-array name="pref_kds_bumping_by_panelnum_title">
+		<item>Desabilitado</item>
+		<item>Clique duplo</item>
+	</string-array>
+	<string-array name="pref_kds_printer_howtoprint_titles">
+		<item>Imprimir manualmente</item>
+		<item>Automático depois de bumpar</item>
+		<item>Automático depois de receber</item>
+		<item>Após transferência do pedido</item>
+	</string-array>
+	<string-array name="pref_kds_smartorder_showing_titles">
+		<item>Acinzentado</item>
+		<item>Oculto</item>
+	</string-array>
+	<string-array name="pref_kds_beeper_type_titles">
+		<item>Com todos os pedidos</item>
+		<item>Apenas prioritários</item>
+	</string-array>
+	<string-array name="pref_kds_sum_type_titles">
+		<item>Item sem condimentos</item>
+		<item>Ítens com condimentos</item>
+	</string-array>
+	<string-array name="pref_sum_position_titles">
+		<item>Ao lado</item>
+		<item>Acima</item>
+	</string-array>
+	<string-array name="pref_sum_order_by_titles">
+		<item>Z-A</item>
+		<item>A-Z</item>
+	</string-array>
+	<string-array name="pref_keyboard_type_titles">
+		<item>Padrão</item>
+		<item>Bump bar Opção-A</item>
+		<item>Bump bar Opção-B</item>
+		<item>Bump bar Opção-C</item>
+		<item>Bump bar Opção-D</item>
+		<item>Bump bar Opção-E</item>
+		<item>Bump bar Opção-G</item>
+	</string-array>
+	<string-array name="pref_kds_printer_port_titles">
+		<item>USB</item>
+		<item>TCP/IP</item>
+		<item>Porta Serial</item>
+	</string-array>
+	<string-array name="pref_kds_language_titles">
+		<item>English</item>
+		<item>中文 (Chinese)</item>
+		<item>Español</item>
+		<item>Português</item>
+	</string-array>
+	<string-array name="pref_kds_general_users_orientation_titles">
+		<item>Esquerda e Direita</item>
+		<item>Acima e Abaixo</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status1_titles">
+		<item>Status 2</item>
+		<item>Status 3</item>
+		<item>Status 4</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status2_titles">
+		<item>Status 1</item>
+		<item>Status 3</item>
+		<item>Status 4</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status3_titles">
+		<item>Status 1</item>
+		<item>Status 2</item>
+		<item>Status 4</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status4_titles">
+		<item>Status 1</item>
+		<item>Status 2</item>
+		<item>Status 3</item>
+	</string-array>
+	<string-array name="pref_kds_lineitems_cols_count_titles">
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+	</string-array>
+	<string-array name="pref_kds_lineitems_cols_content_titles">
+		<item>ID do Pedido</item>
+		<item>Status do Pedido</item>
+		<item>Tipo do Pedido</item>
+		<item>Mesa do Pedido</item>
+		<item>Descrição do Item</item>
+		<item>Condimentos</item>
+		<item>Quantidade</item>
+		<item>Tempo de Espera</item>
+		<item>Modificadores</item>
+		<item>Modificadores e condimentos</item>
+	</string-array>
+	<string-array name="pref_kds_item_mark_method">
+		<item>Ícone interno</item>
+		<item>Caractere</item>
+		<item>Cor</item>
+	</string-array>
+	<string-array name="pref_kds_void_item_showing_method_titles">
+		<item>Alterar quantidade diretamente</item>
+		<item>Inserir CANCELADO com a quantidade de itens abaixo</item>
+	</string-array>
+
+	<string-array name="pref_kds_void_qty_mark_titles">
+		<item>Parênteses ()</item>
+		<item>Sinal de Negativo -</item>
+	</string-array>
+
+	<string-array name="pref_kds_smartorder_mode_titles">
+		<item>Desabilitado</item>
+		<item>Normal</item>
+		<item>Avançado</item>
+	</string-array>
+
+	<string-array name="pref_kds_log_mode_titles">
+		<item>Nenhum</item>
+		<item>Básico</item>
+		<item>Detalhado</item>
+	</string-array>
+
+	<string-array name="pref_queue_order_id_length_titles">
+		<item>Todos</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+	</string-array>
+
+	<string-array name="pref_real_period_titles">
+		<item>1</item>
+		<item>5</item>
+		<item>10</item>
+	</string-array>
+
+	<string-array name="pref_queue_sort_titles">
+		<item>Padrão</item>
+		<item>Tempo de mudança do estado, menor para maior</item>
+		<item>Tempo de mudança do estado, maior para menor</item>
+	</string-array>
+
+	<string-array name="pref_queue_auto_bump_timeout_titles">
+		<item>Padrão</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+		<item>12</item>
+		<item>13</item>
+		<item>14</item>
+		<item>15</item>
+		<item>16</item>
+		<item>17</item>
+		<item>18</item>
+		<item>19</item>
+		<item>20</item>
+		<item>21</item>
+		<item>22</item>
+		<item>23</item>
+		<item>24</item>
+		<item>25</item>
+		<item>26</item>
+		<item>27</item>
+		<item>28</item>
+		<item>29</item>
+		<item>30</item>
+		<item>31</item>
+		<item>32</item>
+		<item>33</item>
+		<item>34</item>
+		<item>35</item>
+		<item>36</item>
+		<item>37</item>
+		<item>38</item>
+		<item>39</item>
+		<item>40</item>
+		<item>41</item>
+		<item>42</item>
+		<item>43</item>
+		<item>44</item>
+		<item>45</item>
+		<item>46</item>
+		<item>47</item>
+		<item>48</item>
+		<item>49</item>
+		<item>50</item>
+	</string-array>
+
+	<string-array name="pref_cleaning_alert_type">
+		<item>Exibir alerta em botão flutuante</item>
+		<item>Exibir diálogo com opções</item>
+		<item>Iniciar limpeza automaticamente</item>
+	</string-array>
+
+	<string-array name="pref_cleaning_interval">
+		<item>1 hora</item>
+		<item>2 horas</item>
+		<item>3 horas</item>
+		<item>4 horas</item>
+		<item>5 horas</item>
+		<item>6 horas</item>
+		<item>Personalizado...</item>
+	</string-array>
+
+	<string-array name="pref_cleaning_snooze_time">
+		<item>Desabilitado</item>
+		<item>5 minutos</item>
+		<item>10 minutos</item>
+		<item>15 minutos</item>
+	</string-array>
 </resources>

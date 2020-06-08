@@ -177,4 +177,6 @@
 	<string name='quit'>Salir</string>
 	<string name='eula_and_privacy_policy_agreement'>EULA y Acuerdo de Política de Privacidad</string>
 	<string name='agreement_text'>Al usar esta aplicación, confirma que ha leído y aceptado el EULA https://kdsgo.com/eula.html y la Política de privacidad https://logiccontrols.com/privacy-policy/</string>
+	<string name="domain">Domain:</string>
+	<string name="domain_name_can_be_empty">El nombre de domain puede estar vacío</string>
 </resources>
