@@ -9,6 +9,7 @@ import android.content.Intent;
 //import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,7 +21,10 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 //import android.util.Log;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +52,7 @@ import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
@@ -69,6 +74,12 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIAboutDlg;
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDialogConfirm;
+import com.bematechus.kdslib.KDSUIDlgAgreement;
+import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.KDSXMLParserCommand;
@@ -100,7 +111,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDBBase.DBEvents,
         TabDisplay.TabDisplayEvents,
         Activation.ActivationEvents,
-        SysTimeChangedReceiver.sysTimeChangedEvent
+        SysTimeChangedReceiver.sysTimeChangedEvent,
+        KDSUIAboutDlg.AboutDlgEvent,
+        KDSContextMenu.OnContextMenuItemClickedReceiver,
+        KDSDlgOrderZoom.ZoomViewEvents
 
 {
     public enum GUI_MODE
@@ -176,7 +190,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Restart_me,
         Load_Old_Data,
         CONFIRM_BUMP,
-
+        Logout,
     }
 
 
@@ -232,6 +246,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     Activation m_activation = new Activation(this);
 
+    CleaningHabitsManager m_cleaning = new CleaningHabitsManager();
     /**
      * the interface of timer
      */
@@ -286,7 +301,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //auto refresh screen, as the indian station hide orders!!!!
         auto_refresh_screen();
         //testException();
-        checkMyAttachedStationsOffline();
+        //checkMyAttachedStationsOffline(); //kpp1-290
+        checkOfflineStations(); //kpp1-290
+
+        m_cleaning.checkCleaningHabits();
 
     }
 
@@ -309,11 +327,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void checkNetworkState() {
         ImageView imgState = (ImageView) this.findViewById(R.id.imgState);
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
-            imgState.setImageResource(R.drawable.online);
+            imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
-            imgState.setImageResource(R.drawable.offline);
+            imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
 
             if (isKDSValid() && getKDS().isNetworkRunning())
                 onNetworkLost();
@@ -378,10 +396,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
         getKDS().setDBEventsReceiver(this);
+        getKDS().setEventReceiver(this); //kpp1-312, move this function to top of getKDS().start();
         getKDS().start();
 
 
-        getKDS().setEventReceiver(this);
+        //
 
         if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         {
@@ -425,9 +444,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         }
         lockAndroidWakeMode(true); //the android device will not sleep while app is running
-
-        KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
-        KDSUtil.setLanguage(this.getApplicationContext(), language);
+        //kpp1-337, remove language settings, just use os language settings.
+        //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
+        //KDSUtil.setLanguage(this.getApplicationContext(), language);
 
 
         setContentView(R.layout.activity_main);
@@ -501,12 +520,21 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             boolean bSilent = Activation.hasDoRegister();//2.1.2
             doActivation(bSilent, false, "");
         }
+        checkRelationshipBuild();
+        //this.registerForContextMenu(getUserUI(KDSUser.USER.USER_A).getLayout().getView());
+
+       // this.registerForContextMenu(getUserUI(KDSUser.USER.USER_B).getLayout().getView());
+
+        // kpp1-325
+        forceAgreementAgreed();
 
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        //initCleaningFloatButton();
+        m_cleaning.init(this, this.findViewById(R.id.fabCleaning), m_activation);
     }
 
     /**
@@ -653,6 +681,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return;
         getKDS().updateSettings(this);
 
+        checkRelationshipBuild();
 
     }
 
@@ -1126,29 +1155,30 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         } else {
             if (id == R.id.action_touchpad) {
-                if (!isKDSValid()) return false;
-                if (getKDS().isSingleUserMode()) {
-                    m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
-                }
-                else {
-                    int n = KDSSettings.getEnumIndexValues(getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
-                    KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
-                    switch (orientation) {
-                        case Left_Right:
-                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
-                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
-
-                            //m_uiUserA.showVerticalTouchPad(!m_uiUserA.isVisibleVerticalTouchPad());
-                            //m_uiUserB.showVerticalTouchPad(!m_uiUserB.isVisibleVerticalTouchPad());
-
-                            break;
-                        case Up_Down:
-                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
-                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
-                            break;
-                    }
-
-                }
+//                if (!isKDSValid()) return false;
+//                if (getKDS().isSingleUserMode()) {
+//                    m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
+//                }
+//                else {
+//                    int n = KDSSettings.getEnumIndexValues(getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
+//                    KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
+//                    switch (orientation) {
+//                        case Left_Right:
+//                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
+//                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
+//
+//                            //m_uiUserA.showVerticalTouchPad(!m_uiUserA.isVisibleVerticalTouchPad());
+//                            //m_uiUserB.showVerticalTouchPad(!m_uiUserB.isVisibleVerticalTouchPad());
+//
+//                            break;
+//                        case Up_Down:
+//                            m_uiUserA.showTouchPad(!m_uiUserA.isVisibleTouchPad());
+//                            m_uiUserB.showTouchPad(!m_uiUserB.isVisibleTouchPad());
+//                            break;
+//                    }
+//
+//                }
+                if (!showTouchButtonsBar(!m_uiUserA.isVisibleTouchPad())) return false;
                 this.m_bSuspendChangedEvent = true;
                 SettingsBase.saveTouchPadVisible(this, m_uiUserA.isVisibleTouchPad());
                 this.m_bSuspendChangedEvent = false;
@@ -1180,7 +1210,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 opShowActiveStations(KDSUser.USER.USER_A);
             } else if (id == R.id.action_about) {
                 if (!isKDSValid()) return false;
-                KDSUIAboutDlg.showAbout(this, getKDS().getUsers().getUserA(), getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+                //KDSUIAboutDlg.showAbout(this, getKDS().getUsers().getUserA(), getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+                Drawable icon = this.getResources().getDrawable(R.mipmap.ic_launcher);
+                String ver = getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")";
+
+                KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_KDS, icon, this);//kpp1-179
             }
 //            else if (id == R.id.action_restore) { //kpp1-1083
 //                startKDSUtility();
@@ -1191,9 +1225,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
             else if (id == R.id.action_logout)
             {
-                Activation.resetUserNamePwd();
-                resetStationID();
-                onDoActivationExplicit();
+                showConfirmLogoutDialog();
+//                Activation.resetUserNamePwd();
+//                resetStationID();
+//                setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+//                onDoActivationExplicit();
                 //m_activation.cancelActivation();
 
             }
@@ -1492,16 +1528,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opSummary(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isKDSValid()) return ;
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
-        if (getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled) &&
-                getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_always_visible))
-        {
-            this.getUserUI(userID).showSum(userID, pos, true);
-        }
-        else
-            this.getUserUI(userID).showSum(userID, pos, !this.getUserUI(userID).isVisibleSum(pos));
+        showSummary(userID,  !this.getUserUI(userID).isVisibleSum(pos));
+//        if (!isKDSValid()) return ;
+//        int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+//        KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+//        if (getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled) &&
+//                getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_always_visible))
+//        {
+//            this.getUserUI(userID).showSum(userID, pos, true);
+//        }
+//        else
+//            this.getUserUI(userID).showSum(userID, pos, !this.getUserUI(userID).isVisibleSum(pos));
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -1682,7 +1721,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void opPrint(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
-
 
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (orderGuid.isEmpty()) return;
@@ -2103,6 +2141,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String guid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (guid.isEmpty()) return;
         bumpOrderOperation(userID, guid, true);
+        refreshSum();//kpp1-320
         getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_bump_order);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -2424,7 +2463,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (order.getItems().getItemByGUID(focusedItemGuid) == null)
             return;
 
-        user.getOrders().isNoOtherActiveItemsBehindMe(focusedItemGuid);
+        //user.getOrders().isNoOtherActiveItemsBehindMe(focusedItemGuid);//kpp1-322
         if (getUserUI(userID).getLayout().focusNext().isEmpty())
             opFocusPrev(userID);
 
@@ -2435,55 +2474,57 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
     }
+
     /**
      * bump selected item
      */
     public void onBumpItem(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isKDSValid()) return ;
-
-        //prevent queue stuck
-        if (suspendBumpWhenQueueRecovering()) {
-            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
-            return;
-        }
-
-        String orderGuid = getSelectedOrderGuid(userID);//
-        if (orderGuid.isEmpty()) return;
-
-        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
-
-        String itemGuid = getSelectedItemGuid(userID);
-        if (itemGuid.isEmpty()) return;
-
-        if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
-            return;
-
-        onRefreshSummary(userID);
-        //this.getSummaryFragment().refreshSummary();
-        //notification
-        notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
-        if (getKDS().isExpeditorStation())
-        {
-            if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
-                getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
-        }
-
-        lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
-        refreshView(userID);
-
-        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
-        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
-        if (order != null) {
-            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
-        }
-        //
-        //https://bematech.atlassian.net/browse/KPP1-62
-        if (order != null) { //if I continue bump order, show crash, KPP1-129
-            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
-            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
-        }
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        itemBump(userID,getSelectedOrderGuid(userID), getSelectedItemGuid(userID) );
+//        if (!isKDSValid()) return ;
+//
+//        //prevent queue stuck
+//        if (suspendBumpWhenQueueRecovering()) {
+//            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+//            return;
+//        }
+//
+//        String orderGuid = getSelectedOrderGuid(userID);//
+//        if (orderGuid.isEmpty()) return;
+//
+//        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
+//
+//        String itemGuid = getSelectedItemGuid(userID);
+//        if (itemGuid.isEmpty()) return;
+//
+//        if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
+//            return;
+//
+//        onRefreshSummary(userID);
+//        //this.getSummaryFragment().refreshSummary();
+//        //notification
+//        notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
+//        if (getKDS().isExpeditorStation())
+//        {
+//            if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
+//                getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
+//        }
+//
+//        lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
+//        refreshView(userID);
+//
+//        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
+//        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
+//        if (order != null) {
+//            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
+//        }
+//        //
+//        //https://bematech.atlassian.net/browse/KPP1-62
+//        if (order != null) { //if I continue bump order, show crash, KPP1-129
+//            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
+//            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
+//        }
+//        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
     private void notifyPOSItemBumpUnbump(KDSUser.USER userID,  String orderGuid, String itemGuid)
@@ -2610,6 +2651,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
         KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Zero, null, "");
+        dlg.setKDSCallback(getKDS());//
         dlg.setKDSUser(getKDS().getUsers().getUser(userID));
         dlg.show();
         dlg.setKDSUser(getKDS().getUsers().getUser(userID));
@@ -2715,19 +2757,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onUnbumpItem(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isKDSValid()) return ;
-        String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
-        if (orderGuid.isEmpty()) return;
-
-        String itemGuid = getSelectedItemGuid(userID);
-
-        unbumpItem(userID, orderGuid, itemGuid);
-
-        getKDS().checkSMS(orderGuid, false); //2.1.10
-        //https://bematech.atlassian.net/browse/KPP1-62
-        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
-        getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        itemUnbump(userID,getSelectedOrderGuid(userID), getSelectedItemGuid(userID) );
+//        if (!isKDSValid()) return ;
+//        String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
+//        if (orderGuid.isEmpty()) return;
+//
+//        String itemGuid = getSelectedItemGuid(userID);
+//
+//        unbumpItem(userID, orderGuid, itemGuid);
+//
+//        getKDS().checkSMS(orderGuid, false); //2.1.10
+//        //https://bematech.atlassian.net/browse/KPP1-62
+//        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+//        getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
+//        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
 
@@ -2789,6 +2832,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case KDSConst.SHOW_LOGIN:
             {
                 if (!isKDSValid()) return ;
+                if (resultCode == ActivityLogin.Login_Result.Agreement_disagree.ordinal())
+                {//kpp1-325
+                   this.setResult(0);
+                   this.finish();
+                }
+                //
                 m_activation.setDoLicensing( false );
                 if (m_activation.isStoreChanged())
                 {
@@ -2798,6 +2847,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
                 if (getKDS().getStationID().isEmpty())
                     inputStationID();
+
+
             }
             default:
                 break;
@@ -2819,7 +2870,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
 
         //refreshWithNewDbDataAndFocusFirst(); //kpp1-251, use below line code
-        this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder();
+        this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder(false);
 
         notifiyPOSOrderUnbump(userID, orderGuid);
         //KPP1-41
@@ -2831,6 +2882,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             getKDS().syncOrderToWebDatabase(order, iosstate, ActivationRequest.SyncDataFromOperation.Unbump);
         }
         refreshPrevNext(userID); //kpp1-251, while bump then unbump last one, "next" count is not correct.
+        this.refreshView();//kpp1-316
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -2865,7 +2917,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * @param dlg
      */
     public void onKDSDialogCancel(KDSUIDialogBase dlg) {
-        if (dlg instanceof KDSUIDialogBase) {
+         if (dlg instanceof KDSUIDlgAgreement)
+        {//kpp1-325
+            KDSUIDlgAgreement.setAgreementAgreed(false);
+            this.finish();
+        }
+        else if (dlg instanceof KDSUIDialogBase) {
             if (dlg.getTag() == null) return;
             Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
             switch (confirm) {
@@ -2915,7 +2972,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (dlg instanceof KDSUIIPSearchDialog) {
             KDSUIIPSearchDialog d = (KDSUIIPSearchDialog) dlg;
 
-            onSearchIpDialogOk(d.getKdsUser(), d.getSelectedStation());//obj);
+            onSearchIpDialogOk((KDSUser)(d.getKdsUser()), d.getSelectedStation());//obj);
         } else if (dlg instanceof KDSUIDialogSort) {
             KDSUIDialogSort d = (KDSUIDialogSort) dlg;
 
@@ -2928,7 +2985,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getUserUI(KDSUser.USER.USER_B).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID("");
             }
             //
-            sortOrders(d.getKdsUser().getUserID(), (KDSSettings.OrdersSort) ((KDSUIDialogSort) dlg).getResult());
+            sortOrders(((KDSUser)(d.getKdsUser())).getUserID(), (KDSSettings.OrdersSort) ((KDSUIDialogSort) dlg).getResult());
             //20171221
             threadrefresh_FocusFirst();
             //refreshView();
@@ -2952,6 +3009,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             getKDS().setStationAnnounceEventsReceiver(null);
             String s = (String) dlg.getResult();
             afterInputStationID(s);
+
         } else if (dlg instanceof KDSUIDialogConfirm) {
             KDSUIDialogConfirm d = (KDSUIDialogConfirm) dlg;
             if ((Confirm_Dialog) d.getTag() ==Confirm_Dialog.CONFIRM_BUMP) {
@@ -2977,7 +3035,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (pwd.isEmpty() || ( !pwd.equals(settingsPwd)) )
             {
                 KDSUIDialogBase errordlg = new KDSUIDialogBase();
-                errordlg.createInformationDialog(this, getString(R.string.error), this.getString(R.string.password_incorrect), false);
+                errordlg.createInformationDialog(this, getString(com.bematechus.kdslib.R.string.error), this.getString(com.bematechus.kdslib.R.string.password_incorrect), false);
                 errordlg.show();
                 //KDSUtil.showErrorMessage(this, this.getString(R.string.password_incorrect));
             }
@@ -3022,6 +3080,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             MainActivity.this.import_settings(path, true);
 
         }
+        else if (dlg instanceof KDSUIDlgAgreement)
+        {
+            KDSUIDlgAgreement.setAgreementAgreed(true);
+        }
         else if (dlg instanceof KDSUIDialogBase) {
             if (dlg.getTag() == null) return;
             Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
@@ -3058,12 +3120,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     }
                 }
                 break;
+                case Logout:
+                {
+                    doLogout();
+                }
+                break;
                 default: {
                     break;
                 }
             }
 
         }
+
+
 
     }
 
@@ -3247,6 +3316,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else {
             KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Single, this, this.getString(R.string.transfer_select_station_title));
+            dlg.setKDSCallback(getKDS());//
             dlg.setSelf(false); //hide self now. //Also on transfer the station you are on shows up. You should not be able to transfer a station to its own station.
             dlg.setShowMultipleUsers(true);
             dlg.setDefaultStationID(stationID);
@@ -3262,6 +3332,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     final static int TEST_COUNT = 1;
     private void opTest(KDSUser.USER userID) {
 
+        //KDSPrintImage prn = new KDSPrintImage();
+        //prn.test();
+
+
         //KDSEmail.sendErrorTo("kds", "kds version 1.02", "error .........err");
         //KDSEmail.sendTo("kds", "kds version 1.02", "error .........err");
 //        String ss = null;
@@ -3274,6 +3348,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //test
         //getKDS().getStatisticDB().outputOrdersTableDataSql(getKDS().getStatisticDB(), "orders", "");
+        //kpp1-335
+        //DlgCleaningPinchout d = new DlgCleaningPinchout(this);
+        //d.show();
     }
 
 
@@ -3589,7 +3666,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().onMyFunctionChanged(oldFunc, newFunc);
             }
         }
-        else if (key.equals("kds_general_language"))
+        else if (key.equals("kds_general_language") ||
+                key.equals("agreement"))
         {
             return;
         }
@@ -3612,7 +3690,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             this.getSettings().set(KDSSettings.ID.Log_mode, s);
 
         }
-
+        else if (key.equals("cleaning_alert_type") || key.equals("cleaning_reminder_interval") || key.equals("cleaning_enable_alerts"))
+        {
+            m_cleaning.resetAll();
+        }
         else {
 
             if (key.equals("isDirtyPrefs")) return;
@@ -3644,7 +3725,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             build_gui_according_to_user_mode(m);
 
 
-            if (oldSumOrderBy != newSumOrderBy)
+            if (oldSumOrderBy != newSumOrderBy ||
+                    key.equals("sum_type") || key.equals("sum_bgfg"))//kpp1-320
             {
                 refreshSum();
             }
@@ -3665,6 +3747,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (getKDS().isMultpleUsersMode())
                     onRefreshSummary(KDSUser.USER.USER_B);
             }
+
+
 
         }
 
@@ -4095,20 +4179,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     Toast m_toast = null;
     public void showToastMessage(String message) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
-        int duration = Toast.LENGTH_SHORT;
-        if (m_toast == null)
-            m_toast = Toast.makeText(this, message, duration);
-        else
-            m_toast.setText(message);
-        m_toast.setDuration(duration);
 
-        m_toast.show();
+        int duration = Toast.LENGTH_SHORT;
+        showToastMessage(message, duration);
+
+//        if (m_toast == null)
+//            m_toast = Toast.makeText(this, message, duration);
+//        else
+//            m_toast.setText(message);
+//        m_toast.setDuration(duration);
+//
+//        m_toast.show();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
-    public void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
+    public void onRefreshView(int  nUserID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
 
-
+        KDSUser.USER userID = KDSUser.USER.values()[nUserID];
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -4250,7 +4337,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (m_queueView == null) return;
-        m_queueView.showOrders(this.getKDS().getUsers().getUserA().getOrders());
+        KDSDataOrders ordersA = this.getKDS().getUsers().getUserA().getOrders();
+
+        KDSDataOrders ordersB = null;
+        if (getKDS().getUsers().getUserB() != null)
+            ordersB = this.getKDS().getUsers().getUserB().getOrders();
+        m_queueView.showOrders(getKDS().getUsers());//ordersA, ordersB);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -5022,6 +5114,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         KDSUser.USER user = getUserFromLayout(layout);// KDSUser.USER.USER_A;
 
+
+
         if (getSettings().getBoolean(KDSSettings.ID.Transfer_by_double_click))
             opTransfer(user);//do transfer
         else
@@ -5029,8 +5123,54 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (layout.getView() != null)
             layout.getView().setNeedDrawOnce();
         //m_bWatingRefreshViewAsDblClick = true;
+
     }
 
+    public boolean onViewSlipLeftRight(KDSLayout layout,MotionEvent e1, MotionEvent e2,  KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    {
+        KDSUser.USER user = getUserFromLayout(layout);
+        if (slipInBorder == KDSView.SlipInBorder.Left ||
+                slipInBorder == KDSView.SlipInBorder.Right) {
+            int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+            KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+            if  (pos== KDSSettings.SumPosition.Side ) {
+
+                if (getKDS().isSingleUserMode()) {
+                        if (slipInBorder == KDSView.SlipInBorder.Right) {
+                            showSummary(user,(slipDirection == KDSView.SlipDirection.Right2Left) );
+                            //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Right2Left) );
+                            return true;
+                        }
+
+                } else {
+                    if (user == KDSUser.USER.USER_A)
+                    {
+                        if (slipInBorder == KDSView.SlipInBorder.Left) {
+                            showSummary(user,(slipDirection == KDSView.SlipDirection.Left2Right) );
+                            //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Left2Right));
+                            return true;
+                        }
+                    }
+                    else if (user == KDSUser.USER.USER_B)
+                    {
+                        if (slipInBorder == KDSView.SlipInBorder.Right) {
+                            showSummary(user,(slipDirection == KDSView.SlipDirection.Right2Left) );
+                            //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Right2Left));
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        if (slipDirection == KDSView.SlipDirection.Right2Left)
+        {
+            return opNextPage(user);
+        }
+        else
+        {
+            return opPrevPage(user);
+        }
+    }
 //    public void onRedrawLayout(KDSLayout layout)
 //    {
 //        getKDS().refreshView();
@@ -5528,7 +5668,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         setupGuiByMode(GUI_MODE.Queue);
 
-        getKDS().getUsers().setSingleUserMode(bSetAllOrdersToUserAInDatabase);
+        //kpp1-288, I start to pass two user orders to queue view, so don't need following function.
+        //getKDS().getUsers().setSingleUserMode(bSetAllOrdersToUserAInDatabase);
         m_queueView.updateSettings(getKDS().getSettings());
 
         m_uiUserA.showSummaryAlways( KDSUser.USER.USER_A);
@@ -5541,6 +5682,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         initStationGeneralSteps();
         reinitQueue(true);
+        //call this function again, as the queue conflict with tab
+        init_common_in_create_and_pref_changed(); //kpp1-288, the screen is not shown when tab enabled and queue enabled
 
     }
 
@@ -5762,7 +5905,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void showSdCardFullDialog()
     {
 
-        String strOK = KDSUIDialogBase.makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strOK = KDSUIDialogBase.makeOKButtonText2(this);// .makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
 
 
         m_sdcardFullDialog = new AlertDialog.Builder(this)
@@ -5807,7 +5950,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void showSdCardLostDialog()
     {
 
-        String strOK = KDSUIDialogBase.makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
+        String strOK = KDSUIDialogBase.makeOKButtonText2(this);// .makeButtonText(this,R.string.ok, KDSSettings.ID.Bumpbar_OK );
         //String strCancel = KDSUIDialogBase.makeButtonText(this,R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
 
         m_sdcardLostDialog = new AlertDialog.Builder(this)
@@ -5992,15 +6135,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                 break;
             case Queue:
-                boolean isMultipleUserMode = getKDS().isMultpleUsersMode();
+                //boolean isMultipleUserMode = getKDS().isMultpleUsersMode();
                 getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Queue);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
                 reinitQueue(false);
-                if (isMultipleUserMode)
-                    getKDS().loadAllActiveOrdersNoMatterUsers();//kpp1-272
+                //if (isMultipleUserMode)
+                //    getKDS().loadAllActiveOrdersNoMatterUsers();//kpp1-272
                 refreshTabSort();
 
                 break;
@@ -6103,15 +6246,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * 2.0.25
      * Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
      * @param userID
+     * @return
+     *  true: do next page.
+     *  false; No more data
      */
-    private void opNextPage(KDSUser.USER userID)
+    private boolean opNextPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isUserLayoutReady(userID)) return;
-
+        if (!isUserLayoutReady(userID)) return false;
+        int ncount = getUserUI(userID).getLayout().getNextCount();
         getUserUI(userID).getLayout().focusNextPage();
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        return (ncount >0);
     }
 
     /**
@@ -6119,15 +6266,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
      * @param userID
      */
-    private void opPrevPage(KDSUser.USER userID)
+    private boolean opPrevPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        if (!isUserLayoutReady(userID)) return;
-
+        if (!isUserLayoutReady(userID)) return false;
+        int ncount = getUserUI(userID).getLayout().getPrevCount();
         getUserUI(userID).getLayout().focusPrevPage();
 
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        return (ncount >0);
     }
 
     TimeDog m_avgTimeDog = new TimeDog();
@@ -6211,8 +6359,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onActivationSuccess()
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
-        updateTitle();
 
+        checkRemovedStationsFromBackofficeAfterRegister();
+        updateTitle();
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
@@ -6269,10 +6418,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activation.isDoLicensing()) return;
+        if (m_activation.isDoLicensing()) {
+            showToastMessage(getString(R.string.internal_doing_activation));// "Internal activation is in process, please logout again later.");
+            return; //kpp1-304, maybe this cause kds can not logout issue.
+        }
         m_activation.setStationID(getKDS().getStationID());
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        if (ar.size()<=0) return;
+        if (ar.size()<=0) {
+            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+            return;//kpp1-304, maybe this cause kds can not logout issue.
+        }
         m_activation.setMacAddress(ar.get(0));
       //  m_activation.setMacAddress("BEMA0000011");//test
         //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
@@ -6319,6 +6474,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
+        Activation.resetOldLoginUser(); //kpp1-299
         onSharedPreferenceChanged(pre, "");
         inputStationID();
         //pre.unregisterOnSharedPreferenceChangeListener(this);
@@ -6379,6 +6535,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void setToDefaultSettings()
     {
         this.getSettings().setToDefault();
+
     }
 
     TimeDog m_tdAutoRefreshScreen = new TimeDog();
@@ -6498,6 +6655,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
             getTextView(R.id.txtTitle).setTextColor(fg);
             getTextView(R.id.txtTitle).setBackgroundColor(bg);
+        }
+        else
+        {
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+            //updateTitle();
         }
 
     }
@@ -6624,5 +6790,578 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         }
     }
+
+    /**
+     * KPP1-200
+     * It will change local relationship table according registered stations in backoffice.
+     * If table changed, send it to all others.
+     */
+    private void checkRemovedStationsFromBackofficeAfterRegister()
+    {
+        ArrayList<KDSStationsRelation> ar = getKDS().getStationsConnections().getRelations().getRelationsSettings();
+        boolean bChanged = false;
+        ArrayList<KDSStationsRelation> arWillRemove = new ArrayList<>();
+
+        for (int i=0; i< ar.size(); i++)
+        {
+            KDSStationsRelation r = ar.get(i);
+            if (Activation.findStation(r.getID()))
+                continue; //this station is existed
+            arWillRemove.add(r);
+        }
+        if (arWillRemove.size() > 0)
+        {
+            bChanged = true;
+            for (int i=0; i< arWillRemove.size(); i++) {
+                KDSStationsRelation r = arWillRemove.get(i);
+                ar.remove(r);
+
+                for (int j=0; j< ar.size(); j++)
+                {
+                    KDSStationsRelation q = ar.get(j);
+                    if (q.getID().equals(r.getID())) continue;
+                    String expo = KDSStationsRelation.removeStation(q.getExpStations(), r.getID());
+                    if (!q.getExpStations().equals(expo)) {
+                        bChanged = true;
+                        q.setExpStations(expo);
+                    }
+                    String slaves = KDSStationsRelation.removeStation(q.getSlaveStations(), r.getID());
+                    if (!q.getSlaveStations().equals(slaves)) {
+                        q.setSlaveStations(slaves);
+                        bChanged = true;
+
+                    }
+                }
+
+            }
+        }
+        if (bChanged)
+        {
+            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), getKDS().getStationID());
+            KDS.broadcastStationsRelations();
+            try {
+                Thread.sleep(200);
+            }
+            catch (Exception e)
+            {
+
+            }
+            //try again, make sure new settings were send to everyone.
+            KDS.broadcastStationsRelations();
+
+        }
+    }
+
+    public void aboutDlgCallActivation()
+    {
+        doActivation(false, true, "");
+    }
+
+    public void onRefreshSummary(int userID){}//KDSUser.USER userID);
+
+    public void onShowStationStateMessage(String stationID, int nState){}
+    public void onShowMessage(String message){}
+
+//    /**
+//     * for kdsview context menu
+//     * @param menu
+//     * @param v
+//     * @param menuInfo
+//     */
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//        int id =  v.getId();
+//        KDSUser.USER user = KDSUser.USER.USER_A;
+//        if (id == R.id.viewOrdersB)
+//            user = KDSUser.USER.USER_B;
+//        String focusedItem = getFocusedItemGUID(user);
+//        if (focusedItem.isEmpty())
+//            getMenuInflater().inflate(R.menu.order_menu,menu);
+//        else
+//            getMenuInflater().inflate(R.menu.item_menu,menu);
+//
+//
+//
+//    }
+
+//    @Override
+//    public boolean  onContextItemSelected(MenuItem item) {
+//
+//        switch(item.getItemId()){
+//            case R.id.order_bump:
+//                opBump(getFocusedUserID());
+//            break;
+//            case R.id.order_unbump:
+//                opUnbump(getFocusedUserID());
+//                break;
+//            case R.id.order_unbump_last:
+//                opUnbumpLast(getFocusedUserID());
+//                break;
+//            case R.id.order_park:
+//                opPark(getFocusedUserID());
+//                break;
+//            case R.id.order_unpark:
+//                opUnpark(getFocusedUserID());
+//                break;
+//            case R.id.order_print:
+//                opPrint(getFocusedUserID());
+//                break;
+//            case R.id.order_transfer:
+//                opTransfer(getFocusedUserID());
+//                break;
+//            case R.id.item_bump:
+//                opBump(getFocusedUserID());
+//                break;
+//            case R.id.item_unbump:
+//                opUnbump(getFocusedUserID());
+//                break;
+//
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//
+//    }
+    KDSContextMenu m_contextMenu = new KDSContextMenu();
+
+    public void onViewLongPressed(KDSLayout layout)
+    {
+        if (getSettings().getStationFunc() == SettingsBase.StationFunc.Queue ||
+                getSettings().getStationFunc() == SettingsBase.StationFunc.Queue_Expo ||
+                getSettings().getStationFunc() == SettingsBase.StationFunc.TableTracker
+        )
+            return;
+
+        KDSUser.USER user = getUserFromLayout(layout);
+        if (getUserUI(user).getLayout().getView().getOrdersViewMode() != KDSView.OrdersViewMode.Normal)
+            return;
+
+        String focusedItem = getFocusedItemGUID(user);
+        int nBG = getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface).getBG();
+        int nFG = getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface).getFG();
+        KDSContextMenu.ContextMenuType menuType = KDSContextMenu.ContextMenuType.Order;
+        if (!focusedItem.isEmpty())
+            menuType = KDSContextMenu.ContextMenuType.Item;
+
+
+        m_contextMenu.showContextMenu(this, this, menuType, getSettings());
+
+    }
+    public void onContextMenuItemClicked(KDSContextMenu.ContextMenuItemID nItemID)
+    {
+        switch(nItemID){
+            case order_bump:
+                opBump(getFocusedUserID());
+                break;
+            case order_unbump:
+                opUnbump(getFocusedUserID());
+                break;
+            case order_unbump_last:
+                opUnbumpLast(getFocusedUserID());
+                break;
+            case order_park:
+                opPark(getFocusedUserID());
+                break;
+            case order_unpark:
+                opUnpark(getFocusedUserID());
+                break;
+            case order_print:
+                opPrint(getFocusedUserID());
+                break;
+            case order_sum:
+                opSummary(getFocusedUserID());
+                break;
+            case order_transfer:
+                opTransfer(getFocusedUserID());
+                break;
+            case order_sort:
+                opSort(getFocusedUserID());
+                break;
+            case order_more:
+                opMore(getFocusedUserID());
+                break;
+            case order_page:
+                opPageOrder(getFocusedUserID());
+                break;
+            case order_test:
+                opTest(getFocusedUserID());
+                break;
+            case item_bump:
+                opBump(getFocusedUserID());
+                break;
+            case item_unbump:
+                opUnbump(getFocusedUserID());
+                break;
+            case item_transfer:
+                opTransfer(getFocusedUserID());
+                break;
+            case item_buildcard:
+                doMoreFunc_BuildCard(getFocusedUserID());
+                break;
+            case item_training:
+                doMoreFunc_Training_Video(getFocusedUserID());
+                break;
+
+        }
+    }
+
+    public boolean onViewSlipUpDown(KDSLayout layout,MotionEvent e1, MotionEvent e2,  KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    {
+        KDSUser.USER user = getUserFromLayout(layout);
+        if (slipInBorder == KDSView.SlipInBorder.Top ) {
+            int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+            KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+            if  (pos== KDSSettings.SumPosition.Top ) {
+                showSummary(user,(slipDirection == KDSView.SlipDirection.Top2Bottom) );
+                //this.getUserUI(user).showSum(user, pos, (slipDirection == KDSView.SlipDirection.Top2Bottom) );
+                return true;
+            }
+        }
+        if (slipInBorder == KDSView.SlipInBorder.Bottom)
+            return showTouchButtonsBar( (slipDirection == KDSView.SlipDirection.Bottom2Top));
+
+        if (slipInBorder == KDSView.SlipInBorder.None)
+        {
+            if (e1==null || layout.getView().findTouchPanel((int)e1.getX(),(int) e1.getY()) != null)
+            {
+                if (slipDirection == KDSView.SlipDirection.Bottom2Top)
+                    showOrderZoom(getSelectedOrderGuid(user));
+            }
+
+        }
+        return false;
+
+
+    }
+
+    private boolean showTouchButtonsBar(boolean bVisible)
+    {
+        if (!isKDSValid()) return false;
+        if (getKDS().isSingleUserMode()) {
+            m_uiUserA.showTouchPad(bVisible);
+        }
+        else {
+            int n = KDSSettings.getEnumIndexValues(getSettings(), KDSSettings.ScreenOrientation.class, KDSSettings.ID.Screens_orientation);
+            KDSSettings.ScreenOrientation orientation = KDSSettings.ScreenOrientation.values()[n];
+            switch (orientation) {
+                case Left_Right:
+                    m_uiUserA.showTouchPad(bVisible);
+                    m_uiUserB.showTouchPad(bVisible);
+                    break;
+                case Up_Down:
+                    m_uiUserA.showTouchPad(bVisible);
+                    m_uiUserB.showTouchPad(bVisible);
+                    break;
+            }
+
+        }
+        return  true;
+    }
+
+    public boolean onViewSlipping(KDSLayout layout,MotionEvent e1, MotionEvent e2, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
+    {
+        switch (slipDirection)
+        {
+
+            case Left2Right:
+            case Right2Left:
+                return onViewSlipLeftRight(layout, e1, e2, slipDirection, slipInBorder);
+
+            case Top2Bottom:
+            case Bottom2Top:
+                return onViewSlipUpDown(layout,e1, e2,  slipDirection, slipInBorder);
+
+        }
+        return false;
+    }
+
+    private void showSummary(KDSUser.USER userID, boolean bVisible) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (!isKDSValid()) return ;
+        int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
+        KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
+        if (getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled) &&
+                getKDS().getSettings().getBoolean(KDSSettings.ID.AdvSum_always_visible))
+        {
+            this.getUserUI(userID).showSum(userID, pos, true);
+        }
+        else
+            this.getUserUI(userID).showSum(userID, pos, bVisible);
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+    private void checkRelationshipBuild()
+    {
+        if (getKDS().getStationsConnections().getRelations().getRelationsSettings().size()==0)
+        {
+            showToastMessage(getString(R.string.build_relationship_first));
+        }
+    }
+
+    private void showOrderZoom(String orderGuid)
+    {
+        if (orderGuid.isEmpty()) return; //kpp1-317
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null) return ; //kpp1-317
+        KDSDlgOrderZoom dlg = KDSDlgOrderZoom.instance();
+        dlg.setReceiver(this);
+        dlg.setUser(getFocusedUserID());
+
+        dlg.showOrder(this, getKDS().getSettings(), order);
+    }
+
+    public boolean zoomViewItemOperations(KDSDlgOrderZoom.ZoomViewItemOperation operation,KDSUser.USER userID, String orderGuid, String itemGuid)
+    {
+        if (operation == KDSDlgOrderZoom.ZoomViewItemOperation.Bump)
+        {
+            itemBump(userID,  orderGuid, itemGuid);
+            //refreshView(userID);
+            return true;
+        }
+        else if (operation == KDSDlgOrderZoom.ZoomViewItemOperation.Unbump)
+        {
+            itemUnbump(userID, orderGuid, itemGuid);
+            //refreshView(userID);
+            return true;
+        }
+        return false;
+
+    }
+
+    private void itemBump(KDSUser.USER userID, String orderGuid, String itemGuid)
+    {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (!isKDSValid()) return ;
+
+        //prevent queue stuck
+        if (suspendBumpWhenQueueRecovering()) {
+            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
+            return;
+        }
+
+        //String orderGuid = getSelectedOrderGuid(userID);//
+        if (orderGuid.isEmpty()) return;
+
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
+
+        //String itemGuid = getSelectedItemGuid(userID);
+        if (itemGuid.isEmpty()) return;
+
+        if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
+            return;
+
+        onRefreshSummary(userID);
+        //this.getSummaryFragment().refreshSummary();
+        //notification
+        notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
+        if (getKDS().isExpeditorStation())
+        {
+            if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
+                getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
+        }
+
+        lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
+        refreshView(userID);
+
+        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
+        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
+        if (order != null) {
+            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
+        }
+        //
+        //https://bematech.atlassian.net/browse/KPP1-62
+        if (order != null) { //if I continue bump order, show crash, KPP1-129
+            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
+            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
+        }
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
+    }
+
+    public void itemUnbump(KDSUser.USER userID, String orderGuid, String itemGuid) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (!isKDSValid()) return ;
+        //String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
+        if (orderGuid.isEmpty()) return;
+
+        //String itemGuid = getSelectedItemGuid(userID);
+
+        unbumpItem(userID, orderGuid, itemGuid);
+
+        getKDS().checkSMS(orderGuid, false); //2.1.10
+        //https://bematech.atlassian.net/browse/KPP1-62
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        getKDS().syncItemBumpUnbumpToWebDatabase(order,order.getItems().getItemByGUID(itemGuid), false );
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
+    }
+
+    /**
+     * KPP1-290,Showing offline status of station
+     * It will  check all offline stations.
+     */
+    public void checkOfflineStations()
+    {
+        ArrayList<KDSStationIP> ar = getKDS().getStationsConnections().getRelations().getAllValidStations();//.getAllAttachedStations();
+        if (ar.size() > 0) {
+            boolean anyOffline = false;
+            ArrayList<String> arOffline = new ArrayList<>();//use it to show offline stations.
+            for (int i = 0; i < ar.size(); i++) {
+                KDSStationActived station = getKDS().getStationsConnections().findActivedStationByID(ar.get(i).getID());
+                if (station == null) {
+                    anyOffline = true;
+                    arOffline.add(ar.get(i).getID());
+                    //break;
+                }
+            }
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            if (anyOffline) {
+                //m_nFlashTitleCounter++;
+                //if ((m_nFlashTitleCounter % 2) == 1) {
+                if (KDSGlobalVariables.getBlinkingStep()) {
+                    bg = ff.getFG();
+                    fg = ff.getBG();
+                }
+            }
+            String text = "";
+            for (int i=0; i< arOffline.size(); i++)
+            {
+                text += "#" + arOffline.get(i);
+                if (i < arOffline.size()-1)
+                    text += ",";
+
+            }
+            if (arOffline.size()>0 ) {
+                text += " " + getString(R.string.offline_warning);
+                getTextView(R.id.txtTitle).setText(text);
+
+            }
+            else
+            {
+                updateTitle();
+            }
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+        }
+        else
+        {
+            KDSViewFontFace ff = this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+            int bg = ff.getBG();
+            int fg = ff.getFG();
+            getTextView(R.id.txtTitle).setTextColor(fg);
+            getTextView(R.id.txtTitle).setBackgroundColor(bg);
+            //updateTitle();
+        }
+
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void showConfirmLogoutDialog()
+    {
+        KDSUIDialogBase d = new KDSUIDialogBase();
+        d.createOkCancelDialog(this,Confirm_Dialog.Logout, getString(R.string.yes), getString(R.string.no),getString(R.string.confirm), getString(R.string.confirm_logout),true, this );
+        d.show();
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void doLogout()
+    {
+        Activation.resetUserNamePwd();
+        resetStationID();
+        setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+        Activation.resetOldLoginUser(); //kpp1-299
+        getKDS().clearAll(); //clear database too.
+        getKDS().clearStatisticData();
+        onDoActivationExplicit();
+    }
+
+    /**
+     * kpp1-299
+     * @return
+     * default value: false;
+     */
+    public boolean isAppContainsOldData()
+    {
+        if (!this.getSettings().isDefaultSettings())
+            return true;
+        if (!this.getKDS().isDbEmpty())
+            return true;
+        return false;
+    }
+
+    /**
+     *  kpp1-310
+     * @param evt
+     * @param arParams
+     * @return
+     */
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams)
+    {
+        switch (evt)
+        {
+            case Received_rush_order:
+            {
+                /* arParams:
+                    The orders added to users. Index 0: userA, index 1: userB order.
+                 */
+                getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+                if (arParams.size() >1)
+                    getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+
+
+            }
+            break;
+            case TCP_listen_port_error: //kp1-312
+            {
+                String s = (String) arParams.get(0);
+                showToastMessage(s, Toast.LENGTH_LONG);
+            }
+            break;
+            default:
+            {
+                break;
+            }
+
+        }
+        return null;
+    }
+
+    public void showToastMessage(String message, int duration) {
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
+        if (m_toast == null)
+            m_toast = Toast.makeText(this, message, duration);
+        else
+            m_toast.setText(message);
+        m_toast.setDuration(duration);
+
+        m_toast.show();
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+    public void forceAgreementAgreed()
+    {
+        KDSUIDlgAgreement.forceAgreementAgreed(this, this);
+//
+//        //debug
+//        KDSUIDlgAgreement.setAgreementAgreed(false);
+//        //
+//        if (KDSUIDlgAgreement.isAgreementAgreed())
+//            return;
+//
+//        //KDSUIDlgAgreement dlg = new KDSUIDlgAgreement(this, this);
+//        KDSUIDlgAgreement dlg =KDSUIDlgAgreement.instance(this, this);
+//        dlg.show();
+    }
+
+
+
 }
 

@@ -25,6 +25,8 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSUIColorPickerDialog;
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDialogConfirm;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;

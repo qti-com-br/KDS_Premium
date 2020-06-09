@@ -41,14 +41,20 @@ import android.widget.ListView;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataArray;
 import com.bematechus.kdslib.KDSEditTextPreference;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.PreferenceFragmentStations;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -144,7 +150,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
         pref.registerOnSharedPreferenceChangeListener(this);
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setupActionBar();
-
+        PreferenceFragmentStations.setKDSCallback(KDSGlobalVariables.getKDS());
 
     }
     private boolean isDirty()
@@ -368,7 +374,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends KDSPreferenceFragment  implements SharedPreferences.OnSharedPreferenceChangeListener, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface {
+    public static class GeneralPreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, KDSUIDialogBase.KDSDialogBaseListener, KDSTimer.KDSTimerInterface {
         KDSTimer m_timer = new KDSTimer();
         boolean m_bDisableChangedEvent = false;
 
@@ -396,7 +402,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             bindPreferenceSummaryToValue(findPreference("general_default_tostation"));
             bindPreferenceSummaryToValue(findPreference("general_router_primary"));
             bindPreferenceSummaryToValue(findPreference("general_router_slave"));
-            bindPreferenceSummaryToValue(findPreference("kds_general_language"));
+            //bindPreferenceSummaryToValue(findPreference("kds_general_language"));
             bindPreferenceSummaryToValue(findPreference("notification_minutes"));
 
             KDSRouterSettings.KDSDataSource dataType =getDataSourceType(pref);
@@ -405,7 +411,9 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 
             m_timer.setReceiver(this);
             m_timer.start(this.getActivity(), this, 2000);
-            boolean m_bDisableChangedEvent = false;
+            //boolean m_bDisableChangedEvent = false;
+            KDSUIRetriveConfig.setKDSCallback(KDSGlobalVariables.getKDS());
+            KDSUIRetriveConfig.setForRouter(true);
 
         }
         @Override
@@ -561,7 +569,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 //        }
 
         public void onKDSDialogCancel(KDSUIDialogBase dialog) {
-            if (dialog instanceof KDSUIDlgInputPassword ) {
+            if (dialog instanceof KDSUIDlgInputPassword) {
 //                m_bDisableChangedEvent = true;
 //                ((CheckBoxPreference) findPreference("kds_general_enable_password")).setChecked(false);
 //                setPassword("");
@@ -749,7 +757,7 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 
 
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());//this.getActivity().getApplicationContext());
-            String routerRelationPort = pref.getString("general_backup_ipport", "4001");
+            String routerRelationPort = pref.getString("general_backup_ipport", KDSUtil.convertIntToString(KDSApplication.getContext().getResources().getInteger(R.integer.default_router_backup_tcpip_port)));//"4001");
             if (stationReceived.getPort().equals(routerRelationPort))
                 return;
 
@@ -757,21 +765,21 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 
         }
     }
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class KDSPreferenceFragment extends PreferenceFragment  {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
-            View v = super.onCreateView(inflater, root, savedInstanceState);
-
-            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
-            v.setPadding(0,0,0,0);
-
-
-            return v;
-        }
-
-
-    }
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//    public static class KDSPreferenceFragment extends PreferenceFragment  {
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
+//            View v = super.onCreateView(inflater, root, savedInstanceState);
+//
+//            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+//            v.setPadding(0,0,0,0);
+//
+//
+//            return v;
+//        }
+//
+//
+//    }
 
 
 }

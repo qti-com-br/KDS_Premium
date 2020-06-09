@@ -1,4 +1,5 @@
 <resources>
+    <string name="main_title">KitchenGo Premium</string>
     <string name="app_name">KDSLib</string>
     <string name="message">Message</string>
     <string name="empty">Empty</string>
@@ -9,7 +10,7 @@
     <string name="smb_folder_lost"> Can not access remote folder #</string>
     <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
     <string name="new_folder">New folder</string>
-    <string name="new_folder_name">New folder name</string>
+    <!--<string name="new_folder_name">New folder name</string>-->
     <string name="fail_to_create_folder">Failed to create \"#\" folder</string>
     <string name="up">Up</string>
     <string name="find_folders">Find folders</string>
@@ -17,8 +18,10 @@
     <string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>
     <string name="can_not_remove_smb_file">Can not remove remote file #</string>
 
-    <string name="english">English</string>
-    <string name="chinese">Chinese</string>
+    <string name="english" translatable="false">English</string>
+    <string name="chinese" translatable="false">中文 (Chinese)</string>
+	<string name="spanish" translatable="false">Español</string>
+	<string name="portuguese" translatable="false">Português</string>
 
     <string name="downloading">Downloading ...</string>
     <string name="check_new_version">Check new version</string>
@@ -83,7 +86,7 @@
     <string name="background">Background</string>
     <string name="foreground">Foreground</string>
     <string name="size">Size</string>
-    <string name="main_title">KitchenGo Premium KDS</string>
+
 
 
     <!-- Strings related to login -->
@@ -118,5 +121,106 @@
     <string name="my_serial_number">Serial number:</string>
     <string name="confirm">Confirm</string>
     <string name="login_other_store">This login does not belong to the current store. The local store data will be deleted. Are you sure you want to continue?</string>
+    <string name="about">About</string>
+    <string name="password">Password</string>
+    <string name="pwd_do_not_match">Passwords do not match.</string>
+    <string name="ignore_and_save">Ignore and save</string>
+    <string name="modify_setting">Modify setting</string>
+    <string name="cancel_setting"> Cancel setting</string>
+    <string name="error">Error</string>
+    <string name="no_rights_to_access">No rights to access!</string>
+    <string name="open_file">Open file</string>
+    <string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="str_refresh">Refresh</string>
+    <string name="searching_active_stations">Searching for activate stations …</string>
+    <string name="no_active_stations">No available station is online</string>
+    <string name="active_stations_list">Stations</string>
+    <string name="select_station">Please choose station first.</string>
+    <string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>
+    <string name="retrieve_config_waiting_data">Waiting for data ...</string>
+    <string name="retrieve_config_done">Done! Please close configuration.</string>
+    <string name="get">Get</string>
+    <string name="information">Information:</string>
+    <string name="str_message">Message</string>
+    <string name="receive_new_relations">It has received new relations setting.</string>
+    <string name="question">Question</string>
+    <string name="confirm_broadcast_relations_changes">Changes have been made in stations relationship, do you want to save and update to all stations?</string>
+    <string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>
+    <string name="confirm_remove_relation_station">Do you want to remove station #</string>
+    <string name="select_retrieve_station">Select station</string>
+    <string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>
+    <string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>
+    <string name="please_input_primary_station">Please input station #\'s primary station</string>
+    <string name="input">Input</string>
+    <string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>
+    <string name="error_not_expo">Error, this station is not expo.</string>
+    <string name="error_not_prep">Error, this station is not prep.</string>
+    <string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>
+    <string name="tracker_only_one_allowed">Only one table tracker station is allowed</string>
+    <string name="tt_authen_press_button">Press the button in gateway for KDS to connect.</string>
+    <string name="please_input_slave_station">Please input station #\'s $ station</string>
+    <string name="error_slave">Error, please change to other station</string>
+    <string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>
+    <string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>
+    <string-array name="station_function">
+        <item>Prep</item>
+        <item>Expeditor</item>
+        <item>Queue</item>
+        <item>Mirror</item>
+        <item>Backup</item>
+        <item>Workload</item>
+        <item>Duplicate</item>
+        <item>Tracker</item>
+        <item>Queue-Expo</item>
+    </string-array>
+    <string-array name="slave_function">
+        <item>No slave</item>
+        <item>Backup</item>
+        <item>Mirror</item>
+        <item>Auto workload distribution</item>
+        <item>Duplicate station</item>
+        <item>Order Queue Display</item>
+    </string-array>
+    <string name="error_relations_repeat_backup_mirror">Stations # settings error.</string>
+    <string-array name="station_status">
+        <item>Enabled</item>
+        <item>Disabled</item>
+    </string-array>
+    <string name="expo_backup">Expo/Backup</string>
+    <string name="prep_backup">Prep/Backup</string>
+    <string name="id">ID</string>
+    <string name="func">Function</string>
+    <string name="expo">Expo</string>
+    <string name="slave_func">Slave Function</string>
+    <string name="slave">Slave ID</string>
+    <string name="status">Status</string>
+    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <string name="update_to_all">Save and Update to all</string>
+    <string name="delete">Delete</string>
+    <string name="new_entry">New</string>
+    <string name="show_id">Show Station ID</string>
+    <string name="retrieve_from">Retrieve from</string>
+    <string name="reset">Reset</string>
+    <string name="pc_name">PC IP:</string>
+    <string name="user_id">User ID:</string>
+    <string name="anonymous">Anonymous</string>
+    <string name="shared_folder">Shared folder:</string>
+    <string name="str_find">Find</string>
+    <string name="password_incorrect">Password is incorrect!</string>
+    <string name="ip">IP</string>
+    <string name="port">Port</string>
+    <string name="file_name">File name:</string>
+    <string name="error_not_expo_or_prep">Error, this station is not expo or prep.</string>
+    <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
+    <string name="only_premium_plan_login">Only allow stores with Premium plan to log into Premium.</string>
+    <string name="internal_doing_activation">Internal activation is in process, please logout again later.</string>
+    <string name="no_network_detected">No network interface detected.</string>
+    <string name="expo_field_just_accept_expo">Expo field just accept expo station number.</string>
+    <string name="agree">Agree</string>
+    <string name="quit">Quit</string>
+    <string name="eula_and_privacy_policy_agreement">EULA and Privacy Policy Agreement</string>
+    <string name="agreement_text">By using this app, you confirm you have read and agreed to EULA https://kdsgo.com/eula.html and Privacy Policy https://logiccontrols.com/privacy-policy/</string>
 
 </resources>

@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 /**
  * For ticket template settings

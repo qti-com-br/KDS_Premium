@@ -7,6 +7,9 @@ import android.preference.PreferenceFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by David.Wong on 2018/10/28.
@@ -24,6 +27,37 @@ public class KDSPreferenceFragment extends PreferenceFragment {
 
         return v;
     }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showScrollbar();
+    }
 
+    public void showScrollbar()
+    {
+        try {
+
+
+//            if (this instanceof PreferenceFragmentStations)
+//                return;
+            Class<PreferenceFragment> c = PreferenceFragment.class;
+            Method method = c.getMethod("getListView");
+            method.setAccessible(true);
+            Object obj = method.invoke(this);
+            if (obj != null) {
+                ListView listView = (ListView) obj;// method.invoke(this);//, null);
+                listView.setScrollBarFadeDuration(0);
+                listView.setScrollbarFadingEnabled(false);
+                //listView.setFastScrollAlwaysVisible(true);
+                //listView.setNestedScrollingEnabled(false);
+            }
+//                }
+        }
+        catch (Exception err)
+        {//don't care this bug.
+            //KDSLog.e(TAG,KDSLog._FUNCLINE_() + err.toString());
+            //KDSLog.e(TAG, KDSUtil.error( err));
+        }
+    }
 
 }

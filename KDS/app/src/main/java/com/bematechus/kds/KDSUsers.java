@@ -9,6 +9,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
@@ -42,11 +43,14 @@ public class KDSUsers {
     {
         if (m_users.size() == 1)
             return;
-        m_users.clear();
-
-        KDSUser user = new KDSUser(KDSUser.USER.USER_A);
-        user.setKDS(m_kds);
-        m_users.add(user);
+        else if (m_users.size() >1)
+            m_users.remove(getUserB());//kpp1-288
+        else {
+            //m_users.clear();//kpp1-288
+            KDSUser user = new KDSUser(KDSUser.USER.USER_A);
+            user.setKDS(m_kds);
+            m_users.add(user);
+        }
         if (bSetAllOrderToUserA) //kpp1-272
             m_kds.getCurrentDB().setAllActiveOrdersToUserA();//KPP1-195
     }
@@ -112,7 +116,9 @@ public class KDSUsers {
         ArrayList<KDSDataOrder> ar = new ArrayList<KDSDataOrder>();
         try {
 
-            if (m_users.size() == 1) {//single users
+            if (m_users.size() == 1) {//||
+//            m_kds.getStationFunction() == SettingsBase.StationFunc.Queue || //kpp1-288
+//                m_kds.getStationFunction() == SettingsBase.StationFunc.Queue_Expo) {//single users, kpp1-288
                 orderOriginal.setScreen(KDSConst.Screen.SCREEN_A.ordinal());
                 ar.add(orderOriginal);
                 return ar;
@@ -204,7 +210,10 @@ public class KDSUsers {
         ArrayList<KDSDataOrder> usersOrder = filterOrderToUsers(orderOriginal);
         //t.debug_print_Duration("orderAdd1");
         ArrayList<KDSDataOrder> ordersReturn = new  ArrayList<>();
-        if (usersOrder.size() == 1) {
+        if (usersOrder.size() == 1) { //kpp1-288
+//        if (usersOrder.size() == 1 ||
+//            m_kds.getStationFunction() == SettingsBase.StationFunc.Queue ||
+//                m_kds.getStationFunction() == SettingsBase.StationFunc.Queue_Expo) {
             KDSDataOrder order =  getUserA().user_orderAdd(usersOrder.get(0),xmlData, bAutoSyncWithOthers,bAutoSyncWithExpo, bRefreshView);
             if (order != null)
                 ordersReturn.add(order);

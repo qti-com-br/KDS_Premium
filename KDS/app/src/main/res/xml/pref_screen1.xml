@@ -52,7 +52,7 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="kds_general_subtitle_font"
         android:defaultValue="default_font,@color/subtitle_bg,@color/subtitle_fg,normal_size"
         android:title="@string/pref_kds_general_subtitle_font"

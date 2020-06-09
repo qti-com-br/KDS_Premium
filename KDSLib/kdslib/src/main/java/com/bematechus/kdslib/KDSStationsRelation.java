@@ -831,4 +831,36 @@ public class KDSStationsRelation extends KDSStationIP {
             return strStations;
 
     }
+
+    /**
+     *
+     * @param strStations
+     * @param stationID
+     * @return
+     */
+    public static String removeStation(String strStations, String stationID)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(strStations, ",");
+        boolean bchanged = false;
+        int ncount = ar.size();
+
+        for (int i=ncount-1; i>=0; i--)
+        {
+            String s = ar.get(i);
+            s = s.trim();
+            if (s.equals(stationID))
+            {
+                bchanged = true;
+                ar.remove(i);
+            }
+
+        }
+        if (bchanged)
+        {
+            return makeStationsString(ar);
+        }
+        else
+            return strStations;
+
+    }
 }

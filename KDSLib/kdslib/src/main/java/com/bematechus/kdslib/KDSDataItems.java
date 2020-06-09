@@ -387,4 +387,28 @@ public class KDSDataItems extends KDSDataArray {
         }
     }
 
+    /**
+     * kpp1-322
+     * @param itemGUID
+     * @return
+     */
+    public KDSDataItem getItemByGUIDNoLocker(String itemGUID)
+    {
+        try {
+            Vector ar = this.getComponents();
+            for (int i = 0; i < ar.size(); i++) {
+                KDSDataItem item = (KDSDataItem) ar.get(i);
+                if (item.getGUID().equals(itemGUID))
+                    return item;
+
+            }
+            return null;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+    }
+
 }

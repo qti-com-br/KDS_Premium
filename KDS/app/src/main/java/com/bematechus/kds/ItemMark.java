@@ -266,10 +266,10 @@ public class ItemMark {
                 return R.drawable.others_bumped;
 
             case Delete_by_xml:
-                return R.drawable.delete_24px_32;
+                return com.bematechus.kdslib.R.drawable.delete_24px_32;
 
             case Qty_changed:
-                return R.drawable.edit_24px_16;
+                return com.bematechus.kdslib.R.drawable.edit_24px_16;
             case Partial_bumped_in_expo:
                 return R.drawable.partial_bumped;
 

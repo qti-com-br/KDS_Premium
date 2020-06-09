@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 /**
  * Table tracker map

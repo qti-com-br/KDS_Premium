@@ -4,12 +4,14 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2017/4/24.
  */
-public class KDSUIDialogTrackerBump extends  KDSUIDialogBase {
+public class KDSUIDialogTrackerBump extends KDSUIDialogBase {
 
 
     public enum TrackerBumpMethod {

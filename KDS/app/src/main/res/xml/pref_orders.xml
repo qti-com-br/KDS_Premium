@@ -384,7 +384,7 @@
             android:positiveButtonText="@string/ok"
             android:negativeButtonText="@string/cancel"
             />
-        <com.bematechus.kds.KDSPreferenceFontPicker
+        <com.bematechus.kdslib.KDSPreferenceFontPicker
             android:key="from_primary_font"
             android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
             android:title="@string/pref_from_primary_font"

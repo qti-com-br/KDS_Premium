@@ -262,6 +262,8 @@ public class PrepSorts {
     public Date item_start_cook_time( String itemName, Date dtOrderStart, float orderDelay)
     {
         int secs = item_start_cooking_time_seconds(itemName, dtOrderStart, orderDelay);
+        if (secs <=0) //kpp1-322
+            return new Date(dtOrderStart.getTime());
         Calendar c = Calendar.getInstance();
         c.setTime(dtOrderStart);
         c.add(Calendar.SECOND, secs);

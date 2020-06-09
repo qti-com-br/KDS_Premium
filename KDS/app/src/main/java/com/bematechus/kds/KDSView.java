@@ -1,6 +1,7 @@
 package com.bematechus.kds;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,17 +11,25 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.GestureDetectorCompat;
+//import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewParent;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
 
 import com.bematechus.kdslib.CanvasDC;
 import com.bematechus.kdslib.KDSConst;
@@ -44,12 +53,32 @@ import java.util.Vector;
 public class KDSView extends View {
 
     public static final String TAG = "KDSView";
-
+    public enum SlipDirection
+    {
+        Left2Right,
+        Right2Left,
+        Top2Bottom,
+        Bottom2Top,
+    }
+    public enum SlipInBorder
+    {
+        None,
+        Left,
+        Right,
+        Top,
+        Bottom,
+    }
     public interface KDSViewEventsInterface {
         public  void onViewPanelClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public  void onViewPanelDoubleClicked(KDSView view, KDSViewPanel panel, KDSViewBlock block, KDSViewBlockCell cell);
         public void onSizeChanged();
         public void onViewDrawFinished();
+        //public boolean onViewSlipLeftRight(boolean bSlipToLeft, boolean bInBorder);
+        public void onViewLongPressed();
+        //public boolean onViewSlipUpDown(boolean bSlipToUp, boolean bInBorder);
+        //Please notice: e1, e2 maybe null value.
+        public boolean onViewSlipping(MotionEvent e1, MotionEvent e2,SlipDirection slipDirection, SlipInBorder slipInBorder);
+
     }
 
     public enum OrdersViewMode
@@ -156,6 +185,47 @@ public class KDSView extends View {
 
             return true;
         }
+//        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+//                                float distanceX, float distanceY) {
+//            return false;
+//            //KDSView.this.onScroll(e1, e2, distanceX, distanceY);
+////
+////            View v =(View) KDSView.this.getParent();
+////            v.setBackground(new BitmapDrawable( m_bitmapBuffer));
+////
+////            TranslateAnimation slide = new TranslateAnimation(KDSView.this.getX(), KDSView.this.getX()  + KDSView.this.getWidth(), KDSView.this.getY(), KDSView.this.getY()  );
+////            slide.setDuration(1000);
+////            KDSView.this.startAnimation(slide);
+//            //return true;
+//        }
+        final int SLIP_MIN_DISTANCE = 20;
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                               float velocityY) {
+            float xDistance = Math.abs(e1.getX() - e2.getX());
+            float yDistance = Math.abs(e1.getY() - e2.getY());
+
+            boolean bLeftRight = false;
+            if (xDistance > yDistance)
+                bLeftRight = true;
+
+            if (bLeftRight) {
+                if (xDistance < SLIP_MIN_DISTANCE) return false;
+                KDSView.this.onSlipLeftRight(e1, e2, velocityX, velocityY);
+                return  true;
+            }
+            else
+            {
+                if (yDistance < SLIP_MIN_DISTANCE) return false;
+                KDSView.this.onSlipUpDown(e1, e2, velocityX, velocityY);
+                return  true;
+            }
+
+        }
+        public void onLongPress(MotionEvent e) {
+            //KDSView.this.showContextMenu();
+            if (m_eventsReceiver != null)
+                m_eventsReceiver.onViewLongPressed();
+        }
     }
 
     public boolean dispatchTouchEvent(MotionEvent event)
@@ -165,11 +235,17 @@ public class KDSView extends View {
         {
             event.setAction(MotionEvent.ACTION_CANCEL);
         }
+
+        if (m_scaleGesture.onTouchEvent(event))
+            event.setAction(MotionEvent.ACTION_CANCEL);
+
         return super.dispatchTouchEvent(event);
     }
     private void init_gesture()
     {
         m_gesture = new GestureDetector (this.getContext(), new MyGestureListener());
+
+        m_scaleGesture = new ScaleGestureDetector(this.getContext(), new MyScaleGestureListener());
 
 
     }
@@ -388,7 +464,11 @@ public class KDSView extends View {
      */
     public int getBlockAverageHeight()
     {
-        return (this.getValidRect().height() ) /getEnv().getSettingsRows();// getSettings().getInt(KDSSettings.ID.Panels_Blocks_Rows);// - getEnv().getPanelsRowsGap();
+        KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
+        int nrows = getEnv().getSettingsRows();
+        if (layoutFormat == KDSSettings.LayoutFormat.Vertical)
+            nrows = 1;//kpp1-324
+        return (this.getValidRect().height() ) / nrows;//getEnv().getSettingsRows();// getSettings().getInt(KDSSettings.ID.Panels_Blocks_Rows);// - getEnv().getPanelsRowsGap();
     }
 
     /**
@@ -932,7 +1012,195 @@ public class KDSView extends View {
         }
     }
 
+    //boolean m_bSliping = false;
+    final int SLIPPING_DURATION = 800;
+    final int SLIPPING_GAP = 10;
+    final int SLIPPING_BORDER_SIZE = 50;
+    private void onSlipLeftRight(MotionEvent e1, MotionEvent e2 , float velocityX, float velocityY)
+    {
+        if (getOrdersViewMode() != OrdersViewMode.Normal)
+            return;
+        //if (m_bSliping) return;
+        View viewParent =(View) KDSView.this.getParent();
+        Bitmap bmpBG =  m_bitmapBuffer.copy(m_bitmapBuffer.getConfig(),m_bitmapBuffer.isMutable() );
+        viewParent.setBackground(new BitmapDrawable( bmpBG));
+
+        SlipDirection slipDirect = SlipDirection.Right2Left;
+        float n = e2.getX() - e1.getX();
+        if (n == 0) return;
+        if (n >0)
+            slipDirect = SlipDirection.Left2Right;
+            //bSlipToLeft = false;
+
+//        Rect rt = new Rect( this.getBounds());
+//        rt.inset(SLIPPING_BORDER_SIZE, SLIPPING_BORDER_SIZE);
+//        boolean bSlipInBorder = false;
+        SlipInBorder slipInBorder = checkPointBorderPosition(e1);// SlipInBorder.None;
+        if (slipInBorder == SlipInBorder.None)
+            slipInBorder = checkPointBorderPosition(e2);
+//        if (!rt.contains((int)e1.getX(), (int)e1.getY()) ||
+//                !rt.contains((int)e2.getX(), (int)e2.getY()))
+//        {
+//            if (e1.getY() > SLIPPING_BORDER_SIZE && e1.getY() < (rt.width()-SLIPPING_BORDER_SIZE) &&
+//                    e2.getY() > SLIPPING_BORDER_SIZE && e2.getY() < (rt.width()-SLIPPING_BORDER_SIZE))
+//                bSlipInBorder = true;
+//        }
 
 
+
+        boolean bSlipWorked = false;
+        if (m_eventsReceiver != null)
+            bSlipWorked = m_eventsReceiver.onViewSlipping(e1, e2, slipDirect, slipInBorder);
+            //bSlipWorked = m_eventsReceiver.onViewSlipLeftRight(bSlipToLeft, bSlipInBorder);
+        if (slipInBorder!= SlipInBorder.None)
+        {
+            if (bSlipWorked) return ; //it slip the summary.
+        }
+
+        float fromX = 0;
+        float toX = 0;
+        if (slipDirect == SlipDirection.Right2Left) {
+            if (bSlipWorked) {
+                fromX = this.getX() + this.getWidth();
+                toX = this.getX();
+            }
+            else
+            {
+                fromX = this.getX();
+                toX = this.getX() - SLIPPING_GAP;
+                viewParent.setBackground(null);
+            }
+
+        }
+        else
+        { //to right
+            if (bSlipWorked) {
+                fromX = this.getX() - this.getWidth();
+                toX = this.getX();
+            }
+            else
+            {
+                fromX = this.getX();
+                toX = this.getX() + SLIPPING_GAP;
+                viewParent.setBackground(null);
+            }
+        }
+        playAnimation(bSlipWorked,fromX, toX);
+    }
+
+    private void playAnimation(boolean bSlippingWorked, float fromX, float toX)
+    {
+        TranslateAnimation slide = new TranslateAnimation(fromX, toX ,
+                this.getY(), this.getY());
+        if (bSlippingWorked)
+            slide.setDuration(SLIPPING_DURATION);
+        else
+            slide.setDuration(SLIPPING_DURATION/2);
+//        if (bSlippingWorked) {
+//            AnimationSet as = new AnimationSet(false);
+//            as.addAnimation(slide);
+//
+//            // 创建透明度动画，第一个参数是开始的透明度，第二个参数是要转换到的透明度
+//            AlphaAnimation alphaAni = new AlphaAnimation(0.5f, 1);
+//            alphaAni.setDuration(SLIPPING_DURATION);
+//
+//            as.addAnimation(alphaAni);
+//            this.startAnimation(as);
+//        }
+//        else
+        {
+            this.startAnimation(slide);
+        }
+    }
+
+    private void onSlipUpDown(MotionEvent e1, MotionEvent e2 , float velocityX, float velocityY)
+    {
+        //boolean bSlipToUP = true;
+        SlipDirection slipDirection = SlipDirection.Bottom2Top;
+        float n = e2.getY() - e1.getY();
+        if (n == 0) return;
+        if (n >0)
+            slipDirection = SlipDirection.Top2Bottom;
+            //bSlipToUP = false;
+        SlipInBorder slipInBorder = checkPointBorderPosition(e1);// SlipInBorder.None;
+        if (slipInBorder == SlipInBorder.None)
+            slipInBorder = checkPointBorderPosition(e2);
+
+        if (m_eventsReceiver != null)
+            m_eventsReceiver.onViewSlipping(e1, e2, slipDirection, slipInBorder);
+    }
+
+    private SlipInBorder checkPointBorderPosition(MotionEvent e)
+    {
+        Rect rt = new Rect( this.getBounds());
+        rt.inset(SLIPPING_BORDER_SIZE, SLIPPING_BORDER_SIZE);
+        if (rt.contains((int)e.getX(), (int)e.getY()))
+            return SlipInBorder.None;
+
+        rt = new Rect( this.getBounds());
+        int x = (int)e.getX();
+        int y = (int)e.getY();
+        if (x < SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Left;
+        if (x > rt.width() - SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Right;
+        if (y < SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Top;
+        if ( y>rt.height() - SLIPPING_BORDER_SIZE)
+            return SlipInBorder.Bottom;
+
+//        rt.right = rt.left + SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Left;
+//
+//        rt = new Rect( this.getBounds());
+//        rt.left = rt.right - SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Right;
+//
+//        rt = new Rect( this.getBounds());
+//        rt.bottom = rt.top + SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Top;
+//
+//        rt = new Rect( this.getBounds());
+//        rt.top = rt.bottom - SLIPPING_BORDER_SIZE;
+//        if (rt.contains((int)e.getX(), (int)e.getY()))
+//            return SlipInBorder.Bottom;
+        return SlipInBorder.None;
+    }
+
+    public KDSViewPanel findTouchPanel(int x, int y)
+    {
+        int ncount = m_arPanels.size();
+        for (int i = 0; i < ncount; i++) {
+            KDSViewPanel panel = m_arPanels.get(i);
+            if (panel.pointInMe(x, y))
+                return panel;
+        }
+        return null;
+
+    }
+
+    ScaleGestureDetector m_scaleGesture = null;//new GestureDetector(this);
+    class MyScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector)
+        {
+
+            //一定要返回true才会进入onScale()这个函数
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector)
+        {
+
+            Log.i(TAG, "scale end");
+
+            if (m_eventsReceiver != null)
+                m_eventsReceiver.onViewSlipping(null, null, SlipDirection.Bottom2Top, SlipInBorder.None);
+        }
+    }
 }
 

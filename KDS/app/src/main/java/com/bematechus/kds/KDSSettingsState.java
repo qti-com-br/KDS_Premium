@@ -1,6 +1,7 @@
 package com.bematechus.kds;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 /**
  * Record current KDS focus state.
@@ -15,6 +16,10 @@ public class KDSSettingsState {
 
     public void setFirstItemGuid(String guid)
     {
+//        if (!guid.isEmpty())
+//        {
+//            Log.i("state", "first item");
+//        }
         m_strFirstItemGUID = guid;
     }
     public String getFirstItemGuid()
@@ -44,6 +49,10 @@ public class KDSSettingsState {
 
     public void setFirstShowingOrderGUID(String guid)
     {
+//        if (!guid.isEmpty())
+//        {
+//            Log.i("state", "first");
+//        }
         m_strFirstOrderGUID = guid;
     }
     public String getFirstShowingOrderGUID()

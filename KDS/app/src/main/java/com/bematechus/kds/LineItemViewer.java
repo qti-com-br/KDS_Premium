@@ -24,6 +24,7 @@ import com.bematechus.kdslib.KDSDataCondiments;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 
@@ -34,7 +35,7 @@ import java.util.Date;
  * For show Line items view
  */
 public class LineItemViewer {
-
+    final String TAG = "LineItemViewer";
     /**
      * 2.0.27
      */
@@ -144,8 +145,18 @@ public class LineItemViewer {
         String focusOrderGuid = getEnv().getStateValues().getFocusedOrderGUID();
         String focusItemGuid = getEnv().getStateValues().getFocusedItemGUID();
 
-        int ndistance = m_orders.getLineItemsDistance(fromOrderGuid, fromItemGuid, focusOrderGuid, focusItemGuid);
-
+        //int ndistance = m_orders.getLineItemsDistance(fromOrderGuid, fromItemGuid, focusOrderGuid, focusItemGuid);
+        int ndistance = 0;
+        //kpp1-322
+        if (smartSortEnabled())
+        {
+            ndistance = m_smartItemsRows.getLineItemsDistance(fromItemGuid, focusItemGuid);
+        }//
+        else
+        {
+            ndistance = m_orders.getLineItemsDistance(fromOrderGuid, fromItemGuid, focusOrderGuid, focusItemGuid);
+        }
+        //
         int nShowingRows = grid.getDataActualShowingRows();
 
         if (ndistance >0) {
@@ -304,6 +315,7 @@ public class LineItemViewer {
         for (int i=fromOrderIndex; i< nOrdersCount; i++)
         {
             KDSDataOrder order =  m_orders.get(i);
+            if (order == null) continue;
             int fromItemIndex  =0;
             if (order.getGUID().equals(fromOrderGuid))
             {
@@ -344,6 +356,26 @@ public class LineItemViewer {
             return;
             //buildGrids();
         m_orders = orders;
+
+        checkFirstAndFocusOrderValid();
+
+//        String fromOrderGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
+//        String fromItemGuid = getEnv().getStateValues().getFirstItemGuid();
+//        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
+//        if (m_orders.getOrderByGUID(fromOrderGuid) == null) //this order has been bumped by expo and so on
+//        {
+//            fromOrderGuid = "";
+//            fromItemGuid = "";
+//            if (m_orders.getCount()>0) {
+//                KDSDataOrder order = m_orders.get(0);
+//                fromOrderGuid = order.getGUID();
+//                if (order.getItems().getCount()>0)
+//                    fromItemGuid = order.getItems().getItem(0).getGUID();
+//            }
+//            getEnv().getStateValues().setFirstShowingOrderGUID(fromOrderGuid);
+//            getEnv().getStateValues().setFirstItemGuid(fromItemGuid);
+//        }
+
         adjustFirstItemForShowingFocus(m_gridTop);
         m_gridTop.clear();
         buildGridTitles(m_gridTop.getRow(0));
@@ -351,17 +383,21 @@ public class LineItemViewer {
         String fromOrderGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
         String fromItemGuid = getEnv().getStateValues().getFirstItemGuid();
 
-
         if (m_bShowBottomGrid)
         {
 
         }
         else
         {
-            if (smartSortEnabled())
-                showOrdersSmart(m_orders, fromOrderGuid, fromItemGuid);
-            else
-                showOrdersNormal(m_orders, fromOrderGuid, fromItemGuid);
+            try {
+                if (smartSortEnabled())
+                    showOrdersSmart2(m_orders, fromOrderGuid, fromItemGuid);
+                else
+                    showOrdersNormal(m_orders, fromOrderGuid, fromItemGuid);
+            }catch (Exception e)
+            {
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(), e );
+            }
 
 //
 //            int nRows = m_gridTop.getRows();
@@ -457,6 +493,12 @@ public class LineItemViewer {
     {
         String orderGuid = grid.getFirstOrderGuid();
         String itemGuid = grid.getFirstItemGuid();
+        //kpp1-322
+        if (this.smartSortEnabled())
+        {
+            return m_smartItemsRows.getPrevCount(itemGuid);
+        }
+        //
         int nindex =m_orders.getIndex(orderGuid);
 
 //        if (grid.getFirstEmptyRow()>=0) //2.0.27
@@ -521,6 +563,12 @@ public class LineItemViewer {
     {
         String orderGuid = grid.getLastOrderGuid();
         String itemGuid = grid.getLastItemGuid();
+        //kpp1-322
+        if (this.smartSortEnabled())
+        {
+            return m_smartItemsRows.getNextCount(itemGuid);
+        }
+        //
         int nindex =m_orders.getIndex(orderGuid);
         if (grid.getFirstEmptyRow()>=0)
             return 0;
@@ -1841,7 +1889,7 @@ public class LineItemViewer {
 
         public void onDraw(Canvas g)
         {
-            if (smartSortEnabled())
+            if (smartSortEnabled()) //debug kpp1-322
                 smartSetColor();
             for (int i=0; i< m_arCells.size(); i++)
                 m_arCells.get(i).onDraw(g, isCondimentOrModifierCol(i));
@@ -1856,9 +1904,9 @@ public class LineItemViewer {
             if (m_strOrderGuid.isEmpty()) return;
             if (getOrders() == null) return;
 
-            KDSDataOrder order =  getOrders().getOrderByGUID(m_strOrderGuid);
+            KDSDataOrder order =  getOrders().getOrderByGUIDNoLocker(m_strOrderGuid);//kpp1-322, there is one conflicts here.
             if (order == null) return;
-            KDSDataItem item = order.getItems().getItemByGUID(m_strItemGuid);
+            KDSDataItem item = order.getItems().getItemByGUIDNoLocker(m_strItemGuid);//kpp1-322, Maybe, there is one conflicts here.
             if (item == null) return;
             if (order.prep_get_sorts().is_cooking_time( item.getItemName(), order.getStartTime(), order.getOrderDelay()))
             {
@@ -2279,6 +2327,216 @@ public class LineItemViewer {
 
             this.refresh();
         }
+    }
+
+    private void checkFirstAndFocusOrderValid()
+    {
+        String focusedOrderGuid = getEnv().getStateValues().getFocusedOrderGUID();
+        String forcusedItemGuid = getEnv().getStateValues().getFocusedItemGUID();
+        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
+        if (m_orders.getOrderByGUID(focusedOrderGuid) == null) //this order has been bumped by expo and so on
+        { //set focused to first one.
+            focusedOrderGuid = "";
+            forcusedItemGuid = "";
+            if (m_orders.getCount()>0) {
+                //kpp1-322
+                if (smartSortEnabled())
+                {
+                    KDSDataItem item = smartSortGetFirstItem();
+                    if (item != null)
+                    {
+                        focusedOrderGuid = item.getOrderGUID();
+                        forcusedItemGuid = item.getGUID();
+                    }
+                }
+                else {
+                    KDSDataOrder order = m_orders.get(0);
+                    focusedOrderGuid = order.getGUID();
+                    if (order.getItems().getCount() > 0)
+                        forcusedItemGuid = order.getItems().getItem(0).getGUID();
+                }
+            }
+            getEnv().getStateValues().setFocusedOrderGUID(focusedOrderGuid);
+            getEnv().getStateValues().setFocusedItemGUID(forcusedItemGuid);
+        }
+        else
+        { //kpp1-322
+            //if focus first order and first item, change it if smart sort enabled.
+            if (smartSortEnabled()) {
+                if (m_orders.getOrderIndexByGUID(focusedOrderGuid) == 0) {
+                    KDSDataOrder order = m_orders.get(0);
+                    if (order.getItems().getItemIndexByGUID(forcusedItemGuid) ==0 ||
+                    forcusedItemGuid.isEmpty())
+                    {
+                        KDSDataItem item = smartSortGetFirstItem();
+                        if (item != null)
+                        {
+                            focusedOrderGuid = item.getOrderGUID();
+                            forcusedItemGuid = item.getGUID();
+                            getEnv().getStateValues().setFocusedOrderGUID(focusedOrderGuid);
+                            getEnv().getStateValues().setFocusedItemGUID(forcusedItemGuid);
+                        }
+                    }
+                }
+            }
+        }
+
+        String fromOrderGuid = getEnv().getStateValues().getFirstShowingOrderGUID();
+        String fromItemGuid = getEnv().getStateValues().getFirstItemGuid();
+        //kpp1-285 Orders that were not bumped on expo should still be visible like in allee.
+        if (m_orders.getOrderByGUID(fromOrderGuid) == null) //this order has been bumped by expo and so on
+        { //show start first one.
+            fromOrderGuid = "";
+            fromItemGuid = "";
+            if (m_orders.getCount()>0) {
+                if (smartSortEnabled()) //kpp1-322
+                {
+                    KDSDataItem item = smartSortGetFirstItem();
+                    if (item != null)
+                    {
+                        fromOrderGuid = item.getOrderGUID();
+                        fromItemGuid = item.getGUID();
+                    }
+                }
+                else {
+                    KDSDataOrder order = m_orders.get(0);
+                    fromOrderGuid = order.getGUID();
+                    if (order.getItems().getCount() > 0)
+                        fromItemGuid = order.getItems().getItem(0).getGUID();
+                }
+            }
+            getEnv().getStateValues().setFirstShowingOrderGUID(fromOrderGuid);
+            getEnv().getStateValues().setFirstItemGuid(fromItemGuid);
+        }
+        else
+        { //kpp1-322
+            //if focus first order and first item, change it if smart sort enabled.
+            if (smartSortEnabled()) {
+                if (m_orders.getOrderIndexByGUID(fromOrderGuid) == 0) {
+                    KDSDataOrder order = m_orders.get(0);
+                    if (order.getItems().getItemIndexByGUID(fromItemGuid) ==0)
+                    {
+                        KDSDataItem item = smartSortGetFirstItem();
+                        if (item != null)
+                        {
+                            fromOrderGuid = item.getOrderGUID();
+                            fromItemGuid = item.getGUID();
+                            getEnv().getStateValues().setFirstShowingOrderGUID(fromOrderGuid);
+                            getEnv().getStateValues().setFirstItemGuid(fromItemGuid);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * kpp1-322
+     * @param fromOrderGuid
+     * @param fromItemGuid
+     * @return
+     */
+    public KDSDataItem smartSortGetNext(String fromOrderGuid, String fromItemGuid)
+    {
+        return m_smartItemsRows.getNext(fromOrderGuid, fromItemGuid);
+    }
+
+    /**
+     * kpp1-322
+     * @param fromOrderGuid
+     * @param fromItemGuid
+     * @return
+     */
+    public KDSDataItem smartSortGetPrev(String fromOrderGuid, String fromItemGuid)
+    {
+        return m_smartItemsRows.getPrev(fromOrderGuid, fromItemGuid);
+    }
+
+    /**
+     * kpp1-322
+     * @param fromOrderGuid
+     * @param fromItemGuid
+     * @param nDistance
+     * @return
+     */
+    public KDSDataItem smartSortGetPrev(String fromOrderGuid, String fromItemGuid, int nDistance)
+    {
+        return m_smartItemsRows.getPrev(fromOrderGuid, fromItemGuid, nDistance);
+    }
+
+    /**
+     * show order in smart mode.
+     * @param orders
+     * @param fromOrderGuid
+     * @param fromItemGuid
+     */
+    public void showOrdersSmart2(KDSDataOrders orders, String fromOrderGuid, String fromItemGuid)
+    {
+        int nRows = m_gridTop.getRows();
+        m_smartItemsRows.sortAllOrdersForSmart(getEnv(), m_orders);
+        int nRowCounter = 1;
+        boolean bEachLineCondiment = getSettings().getBoolean(KDSSettings.ID.Lineitems_modifier_condiment_each_line);
+        int startIndex = m_smartItemsRows.findItemIndex(fromItemGuid);
+        if (startIndex <0) {
+
+            startIndex = 0;
+            if (m_smartItemsRows.m_arSort.size() >0) {
+                KDSDataOrder order = m_smartItemsRows.getSortedItems().get(0).m_order;
+                KDSDataItem item = m_smartItemsRows.getSortedItems().get(0).m_item;
+                getEnv().getStateValues().setFirstShowingOrderGUID(order.getGUID());
+                getEnv().getStateValues().setFirstItemGuid(item.getGUID());
+            }
+        }
+        for (int i=startIndex; i< startIndex + nRows; i++)
+        {
+            if (i >= m_smartItemsRows.m_arSort.size())
+                break;
+
+            KDSDataOrder order = m_smartItemsRows.getSortedItems().get(i).m_order;
+            KDSDataItem item  = m_smartItemsRows.getSortedItems().get(i).m_item;
+//            if (startIndex == 0)
+//            {
+//                getEnv().getStateValues().setFirstShowingOrderGUID(order.getGUID());
+//                getEnv().getStateValues().setFirstItemGuid(item.getGUID());
+//            }
+            int nNeedRows = setGridRowItem(m_gridTop, m_gridTop.getRow(nRowCounter), order, item);
+            if ((bEachLineCondiment || isTextWrap()) && nNeedRows >1)
+            {//make the same rows
+                for (int r = nRowCounter+ 1; r < nRowCounter + nNeedRows; r ++)
+                {
+                    if (r >= nRows) break;
+                    setGridRowItem(m_gridTop, m_gridTop.getRow(r), order, item);
+
+                }
+            }
+            nRowCounter += nNeedRows;
+            if (nRowCounter >= nRows) break;
+        }
+
+        for (int i=nRowCounter; i< nRows ; i++)
+        {
+            m_gridTop.getRow(i).m_bDrawMorIcon = false;
+        }
+
+        // draw more icon
+        if (smartSortEnabled() && m_smartItemsRows.m_bHiddenExisted) {
+            int n = getEnv().getSettings().getInt(KDSSettings.ID.Smart_Order_Showing);
+            KDSSettings.SmartOrderShowing showingMethod = KDSSettings.SmartOrderShowing.values()[n];
+            if (showingMethod == KDSSettings.SmartOrderShowing.Hide) {
+                if (nRowCounter < nRows)
+                {
+                    LineItemGridRow row = m_gridTop.getRow(nRowCounter);
+                    row.m_bDrawMorIcon = true;
+                }
+            }
+
+        }
+        showPrevNextCountInSingleGridMode();
+    }
+
+    public KDSDataItem smartSortGetFirstItem()
+    {
+        return m_smartItemsRows.getFirstItem();
     }
 
 }

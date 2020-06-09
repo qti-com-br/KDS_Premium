@@ -3,12 +3,13 @@ package com.bematechus.kdsrouter;
 import android.content.Context;
 import android.widget.EditText;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 /**
  * Created by Administrator on 2018/1/29.
  */
-public class KDSUIDlgModifier extends KDSUIDialogBase  {
+public class KDSUIDlgModifier extends KDSUIDialogBase {
 
     EditText m_txtDescription = null;
     EditText m_txtMinutes = null;

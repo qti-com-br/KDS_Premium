@@ -20,7 +20,7 @@
             android:textStyle="bold"
             android:clickable="false"
             android:enabled="true"
-            android:background="@drawable/lci" />
+            android:background="@mipmap/ic_launcher" />
         <!--<ImageView-->
         <!--android:layout_width="30dp"-->
         <!--android:layout_height="30dp"-->
@@ -146,10 +146,11 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/imgState"
-            android:src="@drawable/online"
+
             android:clickable="false"
             android:layout_toLeftOf="@+id/imgMenu"
             />
+        <!--android:src="@drawable/online"-->
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"

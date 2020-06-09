@@ -1,3 +1,0 @@
-include ':app'
-include ':kdslib'
-project(':kdslib').projectDir= new File("../KDSLib", 'kdslib')

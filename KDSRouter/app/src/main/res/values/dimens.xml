@@ -4,7 +4,7 @@
     <dimen name="activity_vertical_margin">6dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
-    <dimen name="relations_headers_separator">2dp</dimen>
+    <!--<dimen name="relations_headers_separator">2dp</dimen>-->
     <dimen name="header_textsize">12dp</dimen>
     <dimen name="text_indentation">12dp</dimen>
 </resources>

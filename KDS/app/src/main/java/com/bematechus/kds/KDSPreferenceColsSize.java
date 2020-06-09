@@ -8,6 +8,8 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 /**
  * Created by Administrator on 2016/3/14 0014.
  */

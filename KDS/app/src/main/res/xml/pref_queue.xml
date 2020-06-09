@@ -102,7 +102,7 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_id_font"
         android:defaultValue="default_font,@color/queue_order_id_bg,@color/queue_order_id_fg,large_size"
         android:title="@string/queue_order_id_font"
@@ -113,7 +113,7 @@
         android:key="queue_show_customer_name"
         android:title="@string/pref_queue_show_customer_name"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_customer_name_font"
         android:defaultValue="default_font,@color/queue_cusomer_name_bg,@color/queue_cusomer_name_fg,middle_size"
         android:title="@string/queue_customer_name_font"
@@ -124,7 +124,7 @@
         android:key="queue_show_order_timer"
         android:title="@string/pref_queue_show_order_timer"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_timer_font"
         android:defaultValue="default_font,@color/queue_order_timer_bg,@color/queue_order_timer_fg,middle_size"
         android:title="@string/queue_order_timer_font"
@@ -135,7 +135,7 @@
         android:key="queue_show_custom_message"
         android:title="@string/pref_queue_show_custom_message"
         android:defaultValue="false" />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_custome_message_font"
         android:defaultValue="default_font,@color/queue_cusom_message_bg,@color/queue_cusom_message_fg,middle_size"
         android:title="@string/queue_custom_message_font"
@@ -155,7 +155,7 @@
         android:negativeButtonText="@string/cancel"
         />
 
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_received_font"
         android:defaultValue="default_font,@color/queue_order_status_received_bg,@color/queue_order_status_received_fg,large_size"
         android:title="@string/queue_order_received_font"
@@ -172,7 +172,7 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_preparation_font"
         android:defaultValue="default_font,@color/queue_order_status_preparation_bg,@color/queue_order_status_preparation_fg,large_size"
         android:title="@string/queue_order_preparation_font"
@@ -189,7 +189,7 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_ready_font"
         android:defaultValue="default_font,@color/queue_order_status_ready_bg,@color/queue_order_status_ready_fg,large_size"
         android:title="@string/queue_order_ready_font"
@@ -206,7 +206,7 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         />
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_pickup_font"
         android:defaultValue="default_font,@color/queue_order_status_pickup_bg,@color/queue_order_status_pickup_fg,large_size"
         android:title="@string/queue_order_pickup_font"
