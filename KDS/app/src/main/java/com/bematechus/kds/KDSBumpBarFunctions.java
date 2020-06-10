@@ -30,34 +30,33 @@ public class KDSBumpBarFunctions {
 
         KDSSettings.ID[] ids = new KDSSettings.ID[]{
                 //bump bar
-                KDSSettings.ID.Bumpbar_OK,
+                KDSSettings.ID.Bumpbar_OK,//0
                 KDSSettings.ID.Bumpbar_Cancel,
                 KDSSettings.ID.Bumpbar_Next,
                 KDSSettings.ID.Bumpbar_Prev,
-                KDSSettings.ID.Bumpbar_Up,
+                KDSSettings.ID.Bumpbar_Up,//4
                 KDSSettings.ID.Bumpbar_Down,
                 KDSSettings.ID.Bumpbar_Bump,
                 KDSSettings.ID.Bumpbar_Unbump,
                 KDSSettings.ID.Bumpbar_Unbump_Last,
-                KDSSettings.ID.Bumpbar_Sum,
-                KDSSettings.ID.Bumpbar_Transfer,
+                KDSSettings.ID.Bumpbar_Sum,//
+                KDSSettings.ID.Bumpbar_Transfer,//10
                 KDSSettings.ID.Bumpbar_Sort,
                 KDSSettings.ID.Bumpbar_Park,
                 KDSSettings.ID.Bumpbar_Unpark,
                 KDSSettings.ID.Bumpbar_Print,
-                KDSSettings.ID.Bumpbar_More,
+                KDSSettings.ID.Bumpbar_More,//15
                 KDSSettings.ID.Bumpbar_BuildCard,
                 KDSSettings.ID.Bumpbar_Training,
                 KDSSettings.ID.Bumpbar_Page,
                 KDSSettings.ID.Bumpbar_Menu,
-
-                KDSSettings.ID.Bumpbar_QExpo_Pickup,
+                KDSSettings.ID.Bumpbar_QExpo_Pickup,//20
                 KDSSettings.ID.Bumpbar_QExpo_Unpickup,
                 KDSSettings.ID.Bumpbar_tab_next,
+                KDSSettings.ID.Bumpbar_Clean, //kpp1-339
+                //Add new function here !!!!!!!
+
                 KDSSettings.ID.Bumpbar_Switch_User, //must keep this at last position
-
-
-
         };
 
 

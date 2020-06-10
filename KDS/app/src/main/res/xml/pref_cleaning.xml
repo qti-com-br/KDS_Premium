@@ -57,4 +57,30 @@
         android:summary="@string/cleaning_startup_alert_summary"
         android:dependency="cleaning_enable_alerts"
         android:defaultValue="true" />
+    <PreferenceCategory android:title="Bump bar assignment">
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="Clean"
+            android:key="bumpbar_func_clean"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="29,0,0,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="Snooze"
+            android:key="bumpbar_func_snooze"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="12,0,0,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="Dismiss"
+            android:key="bumpbar_func_dismiss"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="16,0,0,0"
+            android:positiveButtonText="ok"
+            android:negativeButtonText="cancel"
+            />
+    </PreferenceCategory>
 </PreferenceScreen>

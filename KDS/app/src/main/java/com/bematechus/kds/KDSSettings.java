@@ -565,12 +565,15 @@ public class KDSSettings extends SettingsBase {
 
        Printer_logo,
        //cleaning habits
-        cleaning_enable_alert,
-        cleaning_alert_type,
-        cleaning_reminder_interval,
-        cleaning_enable_dismiss_button,
-        cleaning_snooze_time,
-        cleaning_startup_alert,
+       cleaning_enable_alert,
+       cleaning_alert_type,
+       cleaning_reminder_interval,
+       cleaning_enable_dismiss_button,
+       cleaning_snooze_time,
+       cleaning_startup_alert,
+       Bumpbar_Clean,
+       Bumpbar_Snooze,
+       Bumpbar_Dismiss,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1323,6 +1326,9 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","5");
         init_option(ID.cleaning_startup_alert,"bool_cleaning_startup_alert",true);
 
+       init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
+       init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
+       init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
 
 
     }
