@@ -161,8 +161,8 @@
 	<string name='pc_name'>IP do PC:</string>
 	<string name='user_id'>ID do usuário:</string>
 	<string name='anonymous'>Anônimo</string>
-	<string name='shared_folder'>Pasta compartilhada:</string>
-	<string name='str_find'>Encontrar</string>
+	<string name='shared_folder'>Pasta:</string>
+	<string name='str_find'>Buscar</string>
 	<string name='password_incorrect'>Senha incorreta!</string>
 	<string name='ip'>IP</string>
 	<string name='port'>Porta</string>
