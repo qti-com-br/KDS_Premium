@@ -107,7 +107,17 @@ public class KDSBumpBarFunctions {
 
     }
 
-    public KDSSettings.ID getKDSKeyboardEvent(KeyEvent ev, KDSKbdRecorder kbd)
+    /**
+     *
+     * @param ev
+     * @param kbd
+     * @param bCleanFeatureEnabled
+     *  Unused now!
+     *  True: clean habits feature enabled.
+     *  false:
+     * @return
+     */
+    public KDSSettings.ID getKDSKeyboardEvent(KeyEvent ev, KDSKbdRecorder kbd, boolean bCleanFeatureEnabled)
     {
         int ncount = m_arKeyFunc.size();
 
