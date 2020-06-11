@@ -10,6 +10,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
+
 import java.util.ArrayList;
 
 /**
@@ -28,6 +30,8 @@ public class DlgCleaningAlarm extends Dialog {
         Bumpbar_Timeout,
 
     }
+
+
     public interface  CleaningHabitsEvents
     {
         public void onCleaningHabitsEvent(CleaningEventType evt, ArrayList<Object> arParams);
@@ -37,6 +41,12 @@ public class DlgCleaningAlarm extends Dialog {
     Context context = null;
     float m_fltSnoozeTime = 0;
     CleaningHabitsEvents m_receiver = null;
+
+    KDSBumpBarKeyFunc m_bumpbarClean = null;
+    KDSBumpBarKeyFunc m_bumpbarSnooze = null;
+    KDSBumpBarKeyFunc m_bumpbarDismiss = null;
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    //
 
     public void setEventReceiver(CleaningHabitsEvents r)
     {
@@ -73,6 +83,15 @@ public class DlgCleaningAlarm extends Dialog {
         super(context);
         this.context = context;
         m_fltSnoozeTime = fltSnoozeTime;
+
+        String strKey = KDSGlobalVariables.getKDS().getSettings().getString(KDSSettings.ID.Bumpbar_Clean);
+        m_bumpbarClean = KDSBumpBarKeyFunc.parseString(strKey);
+
+        strKey = KDSGlobalVariables.getKDS().getSettings().getString(KDSSettings.ID.Bumpbar_Snooze);
+        m_bumpbarSnooze = KDSBumpBarKeyFunc.parseString(strKey);
+
+        strKey = KDSGlobalVariables.getKDS().getSettings().getString(KDSSettings.ID.Bumpbar_Dismiss);
+        m_bumpbarDismiss = KDSBumpBarKeyFunc.parseString(strKey);
     }
 
     @Override
@@ -85,6 +104,9 @@ public class DlgCleaningAlarm extends Dialog {
         this.setCancelable(false);
         this.setCanceledOnTouchOutside(false);
 
+        int ntype = KDSGlobalVariables.getKDS().getSettings().getInt(KDSSettings.ID.Bumpbar_Kbd_Type);
+        KDSBumpBarKeyFunc.KeyboardType kbdType = KDSBumpBarKeyFunc.KeyboardType.values()[ntype];
+
         TextView t = v.findViewById(R.id.btnFreeze);
         t.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,10 +114,17 @@ public class DlgCleaningAlarm extends Dialog {
                 onClickCleaningNow();
             }
         });
+
+        String ss =  this.getContext().getString(R.string.clean_freeze_screen_now);
+        ss = ss.replace("[0]", m_bumpbarClean.getSummaryString(kbdType));
+        t.setText(ss);
+
         if (m_fltSnoozeTime >0) {
             t = v.findViewById(R.id.btnRemindMe);
             String s = this.getContext().getString(R.string.remind_me_in_minutes);
             s = s.replace("#", Integer.toString(Math.round(m_fltSnoozeTime)));
+            s = s.replace("[1]", m_bumpbarSnooze.getSummaryString(kbdType));
+
             t.setText(s);
             t.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -109,8 +138,14 @@ public class DlgCleaningAlarm extends Dialog {
             t = v.findViewById(R.id.btnRemindMe);
             t.setVisibility(View.GONE);
         }
-
+        //////////
         t = v.findViewById(R.id.btnDismiss);
+
+        ss =  this.getContext().getString(R.string.dismiss_clert);
+        ss = ss.replace("[9]", m_bumpbarDismiss.getSummaryString(kbdType));
+        t.setText(ss);
+
+
         t.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,15 +159,15 @@ public class DlgCleaningAlarm extends Dialog {
         this.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_0)
+                if (m_bumpbarClean.getKeyCode() == keyCode)
                 {
                     onKeycodeCleaningNow();
                 }
-                else if (keyCode == KeyEvent.KEYCODE_1)
+                else if (keyCode == m_bumpbarSnooze.getKeyCode())
                 {
                     onClickRemindLater();
                 }
-                else if (keyCode == KeyEvent.KEYCODE_9)
+                else if (keyCode == m_bumpbarDismiss.getKeyCode())
                 {
                     onClickDismiss();
                 }

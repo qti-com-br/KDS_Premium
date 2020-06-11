@@ -4947,6 +4947,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case Bumpbar_tab_next:
                 opTabNextDisplayMode();
                 break;
+            case Bumpbar_Clean: //kpp1-339
+                opCleanByBumpbar();
+                break;
             default:
                 break;
 
@@ -5189,7 +5192,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void lockAndroidWakeMode(boolean bLock) {
         if (m_wakeLock == null) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "kds:MyWakeLock");
         }
         if (bLock) {
             m_wakeLock.acquire();
@@ -7361,7 +7364,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        dlg.show();
     }
 
-
+    /**
+     * while press [clean] key in bumpbar,
+     * kds will lock screen. And start count down.
+     */
+    public void opCleanByBumpbar()
+    {
+        m_cleaning.onCleaningHabitsEvent(DlgCleaningAlarm.CleaningEventType.Alarm_Freeze_Screen_Now_By_BumpBar, null);
+    }
 
 }
 
