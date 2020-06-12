@@ -2281,4 +2281,17 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (m_receiver != null)
             m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Cleaning, str, SyncDataResult.OK);
     }
+
+    /**
+     * check if this station has been registered
+     * kpp1-340
+     * @return
+     */
+    static public String findMyRegisteredID()
+    {
+        StoreDevice dev =  findMyLicense();
+        if (dev == null)
+            return "";
+        return dev.getID();
+    }
 }
