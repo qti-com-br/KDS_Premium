@@ -2281,7 +2281,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (m_receiver != null)
             m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Cleaning, str, SyncDataResult.OK);
     }
-
+    public static final int NEW_STATION_ID = 9999;
     /**
      * check if this station has been registered
      * kpp1-340
@@ -2292,6 +2292,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         StoreDevice dev =  findMyLicense();
         if (dev == null)
             return "";
+        String id = dev.getID();
+        if (id.equals(KDSUtil.convertIntToString(NEW_STATION_ID)))
+            return "";
+
         return dev.getID();
     }
 }
