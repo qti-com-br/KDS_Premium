@@ -19,6 +19,7 @@ public class KDSApplication extends Application {
     public final String TAG = "KDSApplication";
     private static Context instance;
     private static Thread.UncaughtExceptionHandler m_osUncaughtExceptionHandler = null;
+    static public boolean m_bCleanedAfterAppStarted = false;
     @Override
     public void onCreate() {
         super.onCreate();

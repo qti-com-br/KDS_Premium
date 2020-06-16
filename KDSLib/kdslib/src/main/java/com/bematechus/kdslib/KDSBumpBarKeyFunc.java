@@ -443,9 +443,13 @@ public class KDSBumpBarKeyFunc {
             "9",    "Redraw",
 
     };
+    /**
+     * Pleae use following keycodes;
+     *  1,2,3,4,5,6,7,8,9,10,Ctrl, -, Down, left, right,space,Enter.
+     */
     static public int[] BUMPBAR_CH_KEY_VALUE = new int[] {
             0,
-            KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.KEYCODE_NUMPAD_SUBTRACT, KeyEvent.KEYCODE_TAB, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_A,//((KeyEvent.KEYCODE_A<<16)|0x10000000)|(0x1000|KeyEvent.KEYCODE_B)/*shift+A + shift+B*/,
+            KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.KEYCODE_NUMPAD_SUBTRACT, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_A,//((KeyEvent.KEYCODE_A<<16)|0x10000000)|(0x1000|KeyEvent.KEYCODE_B)/*shift+A + shift+B*/,
             KeyEvent.KEYCODE_DPAD_RIGHT,KeyEvent.KEYCODE_SPACE,           KeyEvent.KEYCODE_1,	KeyEvent.KEYCODE_2,		    KeyEvent.KEYCODE_3,
             KeyEvent.KEYCODE_4,		    KeyEvent.KEYCODE_5,               KeyEvent.KEYCODE_6,	KeyEvent.KEYCODE_7,		    KeyEvent.KEYCODE_8,
             KeyEvent.KEYCODE_9,		    KeyEvent.KEYCODE_ENTER,

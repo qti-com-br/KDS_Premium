@@ -56,7 +56,17 @@ public class DlgCleaningBumpbar  extends Dialog implements KDSTimer.KDSTimerInte
     {
         if (m_instance == null)
             return ;
-        m_instance.dismiss();
+        try
+        {
+            m_instance.dismiss();
+        }
+        catch ( Exception e)
+        {
+
+        }
+        finally {
+            m_instance = null;
+        }
     }
 
     public DlgCleaningBumpbar(Context context, int nCountDownSeconds) {

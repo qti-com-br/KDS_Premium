@@ -4435,6 +4435,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //in android, if unplug/plug usb port device, this function will been fired.
         m_timer.stop();
         this.getKDS().stop();
+        m_cleaning.resetAll(); //kpp1-344
         //stopService();
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
     }
