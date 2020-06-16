@@ -1484,7 +1484,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             //for router id
             if (stationFunc.equals(Activation.KDSROUTER))
                 n = 1000;
-            if (n == 0) n =1; //kpp1-298, Do not allow id 0
+            if (n == 0) n =Activation.NEW_STATION_ID; //kpp1-298, Do not allow id 0
             json.put("id", KDSUtil.convertIntToString(n));
             json.put("store_guid","'" + store_guid + "'" );
             json.put("serial", "'"+mac+"'"); //mac address

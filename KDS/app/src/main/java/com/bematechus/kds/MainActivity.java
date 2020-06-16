@@ -2845,8 +2845,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     doClearDB();
 
                 }
-                if (getKDS().getStationID().isEmpty())
-                    inputStationID();
+                String registeredStationID = m_activation.findMyRegisteredID(); //kpp1-340
+                if (registeredStationID.isEmpty()) {
+                    if (getKDS().getStationID().isEmpty())
+                        inputStationID();
+                }
+                else
+                    afterInputStationID(registeredStationID);
 
 
             }
