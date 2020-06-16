@@ -41,12 +41,12 @@
                 android:layout_toEndOf="@+id/chkCtrl" />
 
             <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/spinnerKeys"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/chkAlt"
-                android:layout_alignRight="@+id/chkShift"
-                android:layout_alignEnd="@+id/chkShift" />
+                android:layout_alignEnd="@+id/chkShift"
+                android:layout_alignRight="@+id/chkShift" />
         </LinearLayout>
     <!--</RelativeLayout>-->
 </FrameLayout>
