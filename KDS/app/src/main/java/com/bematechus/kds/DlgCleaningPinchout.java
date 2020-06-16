@@ -55,7 +55,17 @@ public class DlgCleaningPinchout extends Dialog {
     {
         if (m_instance == null)
             return ;
+        try
+        {
         m_instance.dismiss();
+        }
+        catch ( Exception e)
+        {
+
+        }
+        finally {
+            m_instance = null;
+        }
     }
 
     public DlgCleaningPinchout(Context context) {

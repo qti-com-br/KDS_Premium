@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSTimer;
 
 import java.util.ArrayList;
@@ -100,9 +101,10 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
         if (!getSettings().getBoolean(KDSSettings.ID.cleaning_enable_alert))
             return;
         if (getSettings().getBoolean(KDSSettings.ID.cleaning_startup_alert)) {
-            if (!m_bAppInitializingAlertShown) {
+            if (!KDSApplication.m_bCleanedAfterAppStarted){//m_bAppInitializingAlertShown) {
                 cleaningShowAlert();
-                m_bAppInitializingAlertShown = true;
+                //m_bAppInitializingAlertShown = true;
+                KDSApplication.m_bCleanedAfterAppStarted = true;
                 return;
             }
         }

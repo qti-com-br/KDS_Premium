@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by David.Wong on 2020/5/6.
@@ -76,7 +77,16 @@ public class DlgCleaningAlarm extends Dialog {
     {
         if (m_instance == null)
             return ;
-        m_instance.dismiss();
+        try {
+            m_instance.dismiss();
+        }
+        catch ( Exception e)
+        {
+
+        }
+        finally {
+            m_instance = null;
+        }
     }
 
     public DlgCleaningAlarm(Context context, float fltSnoozeTime) {
