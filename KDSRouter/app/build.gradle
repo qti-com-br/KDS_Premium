@@ -25,8 +25,8 @@ android {
         applicationId "com.bematechus.kdsrouter"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 3
-        versionName '2.3.0.0'
+        versionCode 24
+        versionName '2.4.0.0'
     }
     buildTypes {
         release {
