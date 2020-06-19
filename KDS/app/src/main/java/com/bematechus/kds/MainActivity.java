@@ -2845,8 +2845,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     doClearDB();
 
                 }
-                if (getKDS().getStationID().isEmpty())
-                    inputStationID();
+                String registeredStationID = m_activation.findMyRegisteredID(); //kpp1-340
+                if (registeredStationID.isEmpty()) {
+                    if (getKDS().getStationID().isEmpty())
+                        inputStationID();
+                }
+                else
+                    afterInputStationID(registeredStationID);
 
 
             }
@@ -4430,6 +4435,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //in android, if unplug/plug usb port device, this function will been fired.
         m_timer.stop();
         this.getKDS().stop();
+        m_cleaning.resetAll(); //kpp1-344
         //stopService();
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
     }
@@ -4947,6 +4953,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case Bumpbar_tab_next:
                 opTabNextDisplayMode();
                 break;
+            case Bumpbar_Clean: //kpp1-339
+                opCleanByBumpbar();
+                break;
             default:
                 break;
 
@@ -5189,7 +5198,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void lockAndroidWakeMode(boolean bLock) {
         if (m_wakeLock == null) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "kds:MyWakeLock");
         }
         if (bLock) {
             m_wakeLock.acquire();
@@ -7361,7 +7370,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        dlg.show();
     }
 
-
+    /**
+     * while press [clean] key in bumpbar,
+     * kds will lock screen. And start count down.
+     */
+    public void opCleanByBumpbar()
+    {
+        m_cleaning.onCleaningHabitsEvent(DlgCleaningAlarm.CleaningEventType.Alarm_Freeze_Screen_Now_By_BumpBar, null);
+    }
 
 }
 

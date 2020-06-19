@@ -18,8 +18,8 @@ public class KDSBumpBarKeyFunc {
         BumpBar_C,
         BumpBar_D,
         BumpBar_E,
-
         BumpBar_G,
+        BumpBar_CH, //Clean habits kbd
     }
     int m_keyCodes = 0;
     boolean m_bCtrl = false;
@@ -291,6 +291,9 @@ public class KDSBumpBarKeyFunc {
             case BumpBar_G:
                 names = KDSBumpBarKeyFunc.BUMPBAR_G_KEY_NAME;
                 break;
+            case BumpBar_CH:
+                names = BUMPBAR_CH_KEY_NAME;
+                break;
         }
        return names;
 
@@ -312,6 +315,9 @@ public class KDSBumpBarKeyFunc {
                 case BumpBar_E:
                 case BumpBar_G:
                     values = KDSBumpBarKeyFunc.BUMPBAR_KEY_VALUE;
+                    break;
+                case BumpBar_CH:
+                    values = BUMPBAR_CH_KEY_VALUE;
                     break;
             }
         return values;
@@ -424,6 +430,29 @@ public class KDSBumpBarKeyFunc {
             KeyEvent.KEYCODE_SPACE,	   KeyEvent.KEYCODE_0,                                 	KeyEvent.KEYCODE_1,		KeyEvent.KEYCODE_2,		KeyEvent.KEYCODE_3,
             KeyEvent.KEYCODE_4,		   KeyEvent.KEYCODE_5,                                    KeyEvent.KEYCODE_6,		KeyEvent.KEYCODE_7,		KeyEvent.KEYCODE_8,
             KeyEvent.KEYCODE_9,		   KeyEvent.KEYCODE_ENTER,
+    };
+
+    /**
+     * clearing habits keyboard
+     */
+    static final public String[] BUMPBAR_CH_KEY_NAME = new String[] {
+            "",
+            "Bump",	"Recall",	"Sum",	"Page", "Clean",
+            "Up",   "Down",	    "1",	"2",	"3",
+            "4",    "5",		"6",	"7",	"8",
+            "9",    "Redraw",
+
+    };
+    /**
+     * Pleae use following keycodes;
+     *  1,2,3,4,5,6,7,8,9,10,Ctrl, -, Down, left, right,space,Enter.
+     */
+    static public int[] BUMPBAR_CH_KEY_VALUE = new int[] {
+            0,
+            KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.KEYCODE_NUMPAD_SUBTRACT, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_A,//((KeyEvent.KEYCODE_A<<16)|0x10000000)|(0x1000|KeyEvent.KEYCODE_B)/*shift+A + shift+B*/,
+            KeyEvent.KEYCODE_DPAD_RIGHT,KeyEvent.KEYCODE_SPACE,           KeyEvent.KEYCODE_1,	KeyEvent.KEYCODE_2,		    KeyEvent.KEYCODE_3,
+            KeyEvent.KEYCODE_4,		    KeyEvent.KEYCODE_5,               KeyEvent.KEYCODE_6,	KeyEvent.KEYCODE_7,		    KeyEvent.KEYCODE_8,
+            KeyEvent.KEYCODE_9,		    KeyEvent.KEYCODE_ENTER,
     };
 
 

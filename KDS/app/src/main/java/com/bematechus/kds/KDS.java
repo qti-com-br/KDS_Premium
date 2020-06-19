@@ -3693,7 +3693,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     public KDSSettings.ID checkKDSKbdEvent(KeyEvent ev, KDSKbdRecorder kbd)
     {
-        return m_bumpbarFunctions.getKDSKeyboardEvent(ev, kbd);
+        boolean bCleanEnabled = getSettings().getBoolean(KDSSettings.ID.cleaning_enable_alert);
+        return m_bumpbarFunctions.getKDSKeyboardEvent(ev, kbd, bCleanEnabled);
     }
 
     public KDSSettings.ID checkQExpoKbdEvent(KeyEvent ev, KDSKbdRecorder kbd)

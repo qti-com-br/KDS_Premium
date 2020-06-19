@@ -702,6 +702,7 @@
         <item>Bump bar Option-D</item>
         <item>Bump bar Option-E</item>
         <item>Bump bar Option-G</item>
+        <item>Bump bar Option-CH</item>
     </string-array>
 
     <string-array name="pref_kds_printer_port_titles" >

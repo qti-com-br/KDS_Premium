@@ -3,6 +3,10 @@ package com.bematechus.kds;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -52,7 +56,17 @@ public class DlgCleaningBumpbar  extends Dialog implements KDSTimer.KDSTimerInte
     {
         if (m_instance == null)
             return ;
-        m_instance.dismiss();
+        try
+        {
+            m_instance.dismiss();
+        }
+        catch ( Exception e)
+        {
+
+        }
+        finally {
+            m_instance = null;
+        }
     }
 
     public DlgCleaningBumpbar(Context context, int nCountDownSeconds) {
@@ -72,9 +86,10 @@ public class DlgCleaningBumpbar  extends Dialog implements KDSTimer.KDSTimerInte
         View v = View.inflate(this.context, R.layout.dlg_cleaning_bumpbar, null);
         setContentView(v);
         m_txtCountDown = v.findViewById(R.id.txtCountDown);
-        String s = getContext().getString(R.string.will_return_in_seconds);
-        s = s.replace("#", Long.toString(m_nCountDownSeconds));
-        m_txtCountDown.setText(s);
+//        String s = getContext().getString(R.string.will_return_in_seconds);
+//        s = s.replace("#", Long.toString(m_nCountDownSeconds));
+//        m_txtCountDown.setText(s);
+        updateCountDown(m_nCountDownSeconds);
         getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
         KDSUtil.enableSystemVirtualBar(getWindow().getDecorView(), false);
         m_dtStart = new Date();
@@ -100,9 +115,32 @@ public class DlgCleaningBumpbar  extends Dialog implements KDSTimer.KDSTimerInte
         }
         else
         {
-            String s = getContext().getString(R.string.will_return_in_seconds);
-            s = s.replace("#", Long.toString(c));
-            m_txtCountDown.setText(s);
+            updateCountDown(c);
+
+//            String s = getContext().getString(R.string.will_return_in_seconds);
+//            int nStart = s.indexOf("#");
+//            s = s.replace("#", Long.toString(c));
+//            int nLen = Long.toString(c).length();
+//
+//            SpannableString spannableString = new SpannableString(s);
+//            RelativeSizeSpan sizeSpan04 = new RelativeSizeSpan(1.8f);
+//            spannableString.setSpan(sizeSpan04, nStart, nStart + nLen, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//
+//            m_txtCountDown.setText(spannableString);
         }
+    }
+
+    private void updateCountDown(long c)
+    {
+        String s = getContext().getString(R.string.will_return_in_seconds);
+        int nStart = s.indexOf("#");
+        s = s.replace("#", Long.toString(c));
+        int nLen = Long.toString(c).length();
+
+        SpannableString spannableString = new SpannableString(s);
+        RelativeSizeSpan sizeSpan04 = new RelativeSizeSpan(1.8f);
+        spannableString.setSpan(sizeSpan04, nStart, nStart + nLen, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+        m_txtCountDown.setText(spannableString);
     }
 }
