@@ -68,8 +68,8 @@
 	<string name='day_of_month'>Dia do mês</string>
 	<string name='statistic_report'>Relatório estatístico</string>
 	<string name='waiting'>Aguardando...</string>
-	<string name='background'>Ao fundo</string>
-	<string name='foreground'>À frente</string>
+	<string name='background'>Fundo</string>
+	<string name='foreground'>Texto</string>
 	<string name='size'>Tamanho</string>
 	<string name='prompt_email'>Usuário</string>
 	<string name='prompt_password'>Senha</string>
@@ -122,10 +122,10 @@
 	<string name='get'>Obter</string>
 	<string name='information'>Informação:</string>
 	<string name='str_message'>Mensagem</string>
-	<string name='receive_new_relations'>Novas relações entre estações recebidas.</string>
+	<string name='receive_new_relations'>Novos relacionamentos recebidas.</string>
 	<string name='question'>Pergunta</string>
-	<string name='confirm_broadcast_relations_changes'>Mudanças foram feitas nas relações entre as estações. Deseja salvar e atualizar as estações?</string>
-	<string name='confirm_fix_errors'>Existem erros nas relações entre as estações. Por favor, corrija-os.</string>
+	<string name='confirm_broadcast_relations_changes'>Mudanças foram feitas no relacionamento. Deseja salvar e atualizar as estações?</string>
+	<string name='confirm_fix_errors'>Existem erros no relacionamento. Por favor, corrija-os.</string>
 	<string name='confirm_remove_relation_station'>Deseja remover a estação # </string>
 	<string name='select_retrieve_station'>Escolha a estação</string>
 	<string name='confirm_broadcast_relations'>Deseja enviar a atualização para as demais estações?</string>
@@ -149,9 +149,9 @@
 	<string name='func'>Função</string>
 	<string name='expo'>Exp</string>
 	<string name='slave_func'>Função secundária</string>
-	<string name='slave'>ID secundário</string>
+	<string name='slave'>ID sec.</string>
 	<string name='status'>Status</string>
-	<string name='do_not_check_stations_relationship_in_this_station'>Não verificar relações entre estações nesta estação</string>
+	<string name='do_not_check_stations_relationship_in_this_station'>Não verificar relacionamento nesta estação</string>
 	<string name='update_to_all'>Salvar e Atualizar</string>
 	<string name='delete'>Apagar</string>
 	<string name='new_entry'>Nova</string>
@@ -161,8 +161,8 @@
 	<string name='pc_name'>IP do PC:</string>
 	<string name='user_id'>ID do usuário:</string>
 	<string name='anonymous'>Anônimo</string>
-	<string name='shared_folder'>Pasta compartilhada:</string>
-	<string name='str_find'>Encontrar</string>
+	<string name='shared_folder'>Pasta:</string>
+	<string name='str_find'>Buscar</string>
 	<string name='password_incorrect'>Senha incorreta!</string>
 	<string name='ip'>IP</string>
 	<string name='port'>Porta</string>
@@ -177,5 +177,29 @@
 	<string name='quit'>Sair</string>
 	<string name='eula_and_privacy_policy_agreement'>Termos de Uso e Política de Privacidade</string>
 	<string name='agreement_text'>Ao utilizar este App, você confirma que leu e concordou com os Termos de Uso https://kdsgo.com/eula.html e com a Política de Privacidade https://logiccontrols.com/privacy-policy/</string>
-
+	<string name="domain">Domínio</string>
+	<string name="domain_name_can_be_empty">Domínio, pode ser vazio</string>
+	<string-array name="station_status">
+		<item>Ativada</item>
+		<item>Desativada</item>
+	</string-array>
+	<string-array name="station_function">
+		<item>Preparo</item>
+		<item>Expedidor</item>
+		<item>Fila</item>
+		<item>Espelho</item>
+		<item>Reserva</item>
+		<item>Gerenciamento</item>
+		<item>Duplicado</item>
+		<item>Rastreador</item>
+		<item>Fila-Expedidor</item>
+	</string-array>
+	<string-array name="slave_function">
+		<item>Sem função secundária</item>
+		<item>Reserva</item>
+		<item>Espelho</item>
+		<item>Gerenciamento</item>
+		<item>Duplicado</item>
+		<item>Exibir fila de pedidos</item>
+	</string-array>
 </resources>

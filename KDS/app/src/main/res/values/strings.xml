@@ -919,7 +919,6 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
-
     </string-array>
     <string-array name="pref_kds_lineitems_cols_content_titles">
         <item>Order ID</item>
@@ -932,7 +931,6 @@
         <item>Waiting time</item>
         <item>Modifiers</item>
         <item>Modifiers and condiments</item>
-
     </string-array>
 
     <string name="no_more_unbump_item">No more unbumped items</string>
@@ -1032,8 +1030,6 @@
         <item>7</item>
         <item>8</item>
         <item>9</item>
-
-
     </string-array>
 
 
@@ -1058,8 +1054,6 @@
         <item>1</item>
         <item>5</item>
         <item>10</item>
-
-
     </string-array>
 
     <!--<string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>-->
@@ -1072,7 +1066,6 @@
         <item>Default</item>
         <item>State change time, ascend</item>
         <item>State change time, descend</item>
-
     </string-array>
 
     <string name="confirm_bump_unpaid_text">The order # is unpaid. Do you want to bump it?</string>
@@ -1170,8 +1163,19 @@
     <string name="five_hours">5 hours</string>
     <string name="six_hours">6 hours</string>
     <string name="custom">Custom ...</string>
+	<string name="icon_settings">Icon settings</string>
+	<string name="col_size">Col Size</string>
+	<string name="background_color">Background color</string>
+	<string name="destination">Destination</string>
+	<string name="display_text">Display text</string>
+	<string name="void_item_showing_method">Void item showing method</string>
+	<string name="add_message_below_item">Add message below item</string>
+	<string name="the_message">The message</string>
+	<string name="void_qty_line_color_enabled">Void quantity line color enabled</string>
+	<string name="void_qty_line_color">Void qty line color</string>
+	<string name="void_item_qty_mark_with">Void item quantity mark with</string>
 
-    <string-array name="pref_queue_auto_bump_timeout_titles">
+	<string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
         <item>1</item>
         <item>2</item>
@@ -1223,9 +1227,6 @@
         <item>48</item>
         <item>49</item>
         <item>50</item>
-
-
-
     </string-array>
 
     <string-array name="pref_cleaning_alert_type">
@@ -1233,7 +1234,6 @@
         <item>Show dialog with options</item>
         <item>Start cleaning screen</item>
     </string-array>
-
 
     <string-array name="pref_cleaning_interval">
         <item>1 hour</item>
@@ -1245,13 +1245,11 @@
         <item>Custom ...</item>
     </string-array>
 
-
     <string-array name="pref_cleaning_snooze_time">
         <item>Disabled</item>
         <item>5 minutes</item>
         <item>10 minutes</item>
         <item>15 minutes</item>
-
     </string-array>
 
 </resources>

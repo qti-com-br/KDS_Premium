@@ -64,7 +64,7 @@
         <!--android:negativeButtonText="@null"-->
         <!--android:positiveButtonText="@null" />-->
 
-    <PreferenceCategory android:title="Col Size">
+    <PreferenceCategory android:title="@string/col_size">
         <com.bematechus.kds.KDSPreferenceColsSize
             android:key="lineitems_cols_size"
             android:title=""

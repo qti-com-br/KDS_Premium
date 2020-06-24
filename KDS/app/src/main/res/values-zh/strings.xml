@@ -1237,4 +1237,13 @@
         <item>15 minutes</item>
 
     </string-array>
+	<string name="icon_settings">Icon settings</string>
+	<string name="col_size">Col Size</string>
+	<string name="background_color">Background color</string>
+	<string name="destination">Destination</string>
+	<string name="display_text">Display text</string>
+	<string name="void_item_showing_method">Void item showing methods</string>
+	<string name="add_message_below_item">Add message below item</string>
+	<string name="the_message">The message</string>
+	<string name="void_qty_line_color_enabled">Void quantity line color enabled</string>
 </resources>
