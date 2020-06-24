@@ -37,7 +37,7 @@
         android:key="text_wrap"
         android:title="@string/text_wrap"
         android:defaultValue="false" />
-    <PreferenceScreen android:title="Icon setting  >">
+    <PreferenceScreen android:title="@string/icon_settings">
         <!--<CheckBoxPreference-->
         <!--android:key="icon_enabled"-->
         <!--android:title="@string/icon_display_enabled"-->

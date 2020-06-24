@@ -620,4 +620,11 @@
 	<string name='five_hours'>5 horas</string>
 	<string name='six_hours'>6 horas</string>
 	<string name='custom'>Personalizado ...</string>
+	<string name="icon_settings">Ajustes de iconos</string>
+	<string name="col_size">Tamaño de las columnas</string>
+	<string name="background_color">Color de fondo</string>
+	<string name="destination">Destino</string>
+	<string name="display_text">Texto</string>
+	<string name="void_item_showing_method">"Método para mostrar articulos nulos "</string>
+	<string name="add_message_below_item">Anadir mensaje abajo del articulo</string>
 </resources>
