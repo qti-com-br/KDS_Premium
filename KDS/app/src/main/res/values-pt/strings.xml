@@ -881,4 +881,7 @@
 	<string name="void_item_showing_method">Exibição de itens cancelados</string>
 	<string name="add_message_below_item">Adicionar mensagem abaixo dos itens</string>
 	<string name="the_message">Editar a mensagem</string>
+	<string name="void_qty_line_color_enabled">Ativar linha de itens cancelados</string>
+	<string name="void_qty_line_color">Cor da linha de itens cancelados</string>
+	<string name="void_item_qty_mark_with">Marcar linha de itens cancelados com</string>
 </resources>

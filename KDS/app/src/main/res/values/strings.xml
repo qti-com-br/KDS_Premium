@@ -534,7 +534,7 @@
     <string name="pref_kds_touch_page_enabled">Enable [page] touch button</string>
 
     <string name="pref_kds_screen_title_font">KDS Station name font</string>
-    <string name="pref_kds_screen_show_time">Show date &amp; time in title in KDS Station</string>
+    <string name="pref_kds_screen_show_time">Show date and time in title in KDS Station</string>
 
     <string name="pref_kds_bump_confirm_enabled">Show confirmation dialog after bumping an order</string>
 

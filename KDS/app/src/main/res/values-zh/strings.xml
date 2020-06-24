@@ -1245,4 +1245,6 @@
 	<string name="add_message_below_item">Add message below item</string>
 	<string name="the_message">The message</string>
 	<string name="void_qty_line_color_enabled">Void quantity line color enabled</string>
+	<string name="void_qty_line_color">Void qty line color</string>
+	<string name="void_item_qty_mark_with">Void item quantity mark with</string>
 </resources>
