@@ -1162,8 +1162,19 @@
     <string name="five_hours">5 hours</string>
     <string name="six_hours">6 hours</string>
     <string name="custom">Custom ...</string>
+	<string name="icon_settings">Icon settings</string>
+	<string name="col_size">Col Size</string>
+	<string name="background_color">Background color</string>
+	<string name="destination">Destination</string>
+	<string name="display_text">Display text</string>
+	<string name="void_item_showing_method">Void item showing method</string>
+	<string name="add_message_below_item">Add message below item</string>
+	<string name="the_message">The message</string>
+	<string name="void_qty_line_color_enabled">Void quantity line color enabled</string>
+	<string name="void_qty_line_color">Void qty line color</string>
+	<string name="void_item_qty_mark_with">Void item quantity mark with</string>
 
-    <string-array name="pref_queue_auto_bump_timeout_titles">
+	<string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
         <item>1</item>
         <item>2</item>
