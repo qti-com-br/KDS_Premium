@@ -20,14 +20,14 @@ android {
         abortOnError false
         ignoreWarnings true       // false by default
     }
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.bematechus.kdsrouter"
         minSdkVersion 19
-        targetSdkVersion 22
-        versionCode 3
-        versionName '2.3.0.0'
+        targetSdkVersion 29
+        versionCode 2401
+        versionName '2.4.0.1'
     }
     buildTypes {
         release {
@@ -74,24 +74,24 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2403
-            versionName '2.4.0.3'
+            versionCode 2404
+            versionName '2.4.0.4'
             dimension "default"
         }
         stage {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2403
-            versionName '2.4.0.3'
+            versionCode 2404
+            versionName '2.4.0.4'
             dimension "default"
         }
         prod {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2403
-            versionName '2.4.0.3'
+            versionCode 2404
+            versionName '2.4.0.4'
             dimension "default"
         }
     }

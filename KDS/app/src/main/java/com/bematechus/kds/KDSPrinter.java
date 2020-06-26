@@ -145,6 +145,7 @@ public class KDSPrinter {
     public enum PrinterType{
         LR2000,
         MP4200,
+        TML90
     }
 
     public enum HowToPrintOrder
@@ -1783,7 +1784,7 @@ print order data to  buffer, socket will send this buffer to serial port
     private boolean isUsbPrinterValid()
     {
         try {
-            return UsbPort.findPrinter(m_usbManager, UsbPort.LR2000_VID, UsbPort.LR2000_PID);
+            return UsbPort.findPrinter(m_usbManager);
         }
         catch (Exception e)
         {

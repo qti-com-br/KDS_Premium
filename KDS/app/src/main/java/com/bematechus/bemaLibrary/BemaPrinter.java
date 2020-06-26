@@ -23,6 +23,7 @@ import com.bematechus.bemaUtils.NetworkPort;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
 import com.bematechus.bemaUtils.WatchDog;
+import com.bematechus.kds.KDSSettings;
 
 import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
@@ -79,6 +80,8 @@ public class BemaPrinter {
 
         //each printer should be ultimately checked and only those CP supported added
         map.put(PrinterInfo.PrinterModel.MP200, copyList(list) );
+
+        map.put(PrinterInfo.PrinterModel.TML90, copyList(list) );
 
         return map;
 
@@ -576,9 +579,9 @@ public class BemaPrinter {
 
                 UsbPort port = new UsbPort();
 
-                //search for LR2000
-                info.setUSB_PID(UsbPort.LR2000_PID);
+                // Search for LR2000
                 info.setUSB_VID(UsbPort.LR2000_VID);
+                info.setUSB_PID(UsbPort.LR2000_PID);
 
                 if (port.open(info)) {
                     PrinterInfo pInfo = new PrinterInfo(PrinterInfo.PrinterType.USB,
@@ -586,7 +589,21 @@ public class BemaPrinter {
                     list.add(pInfo);
                     port.close();
 
+                } else {
+
+                    // Search for TML90
+                    info.setUSB_VID(UsbPort.TML90_VID);
+                    info.setUSB_PID(UsbPort.TML90_PID);
+
+                    if (port.open(info)) {
+                        PrinterInfo pInfo = new PrinterInfo(PrinterInfo.PrinterType.USB,
+                                PrinterInfo.PrinterModel.TML90, "USB", port.getUsbDeviceId());
+                        list.add(pInfo);
+                        port.close();
+
+                    }
                 }
+
 
                 //TODO: search for new future printers here
 
