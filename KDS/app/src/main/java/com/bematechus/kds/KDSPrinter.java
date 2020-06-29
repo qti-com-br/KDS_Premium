@@ -1870,6 +1870,7 @@ print order data to  buffer, socket will send this buffer to serial port
      */
     private void writeToPrinter()
     {
+        //DEBUG kpp1-348
         if (!isPrinterValid())
             return;
 
