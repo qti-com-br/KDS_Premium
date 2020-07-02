@@ -104,6 +104,9 @@ public class KDSStationNormal extends KDSStationFunc {
         KDSDataOrder order = orders.getOrderByName(orderReceived.getOrderName());
         if (order != null)
         {
+            //kpp1-286
+            kds.fireOrderBumpedInOther(order.getGUID());
+            //
             orders.removeComponent(order);
             db.orderSetBumped(order.getGUID(), true);
             kds.refreshView();

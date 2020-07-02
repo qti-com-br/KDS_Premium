@@ -7334,6 +7334,24 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 showToastMessage(s, Toast.LENGTH_LONG);
             }
             break;
+            case Order_Bumped_By_Other_Expo_Or_Station:
+            {//check if it is the focused order. if so, focus next.
+
+                String orderGuid = (String) arParams.get(0);
+                if (getSelectedOrderGuid(KDSUser.USER.USER_A) == orderGuid)
+                {
+                    getUserUI(KDSUser.USER.USER_A).getLayout().focusNext();
+                }
+                if (getKDS().isMultpleUsersMode())
+                {
+                    if (getSelectedOrderGuid(KDSUser.USER.USER_B) == orderGuid)
+                    {
+                        getUserUI(KDSUser.USER.USER_B).getLayout().focusNext();
+                    }
+                }
+
+            }
+            break;
             default:
             {
                 break;
