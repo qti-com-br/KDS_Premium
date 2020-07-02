@@ -589,4 +589,20 @@ public class KDSMyStationRelations {
         }
         return false;
     }
+
+    private boolean existedInStationsArray(ArrayList<KDSStationIP> ar, String stationID)
+    {
+        for (int i=0; i< ar.size(); i++)
+        {
+            if (ar.get(i).getID().equals(stationID))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isMyMirrorStation(String stationID)
+    {
+        ArrayList<KDSStationIP> ar = getMirrorStations();
+        return existedInStationsArray(ar,stationID);
+    }
 }

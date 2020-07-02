@@ -5239,7 +5239,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                     arOrders.addAll(arOrdersAdded);
                     for (int j = 0; j< m_arKdsEventsReceiver.size(); j++)
                     {
-                        m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Received_rush_order, arOrders);
+                        m_arKdsEventsReceiver.get(j).onKDSEvent(KDSEventType.Received_rush_order, arOrders);
                     }
                 }
             }
@@ -5286,6 +5286,16 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 n += ordersChanged.get(i).getItems().getCount();
             }
             return (n == orderReceived.getItems().getCount());
+        }
+    }
+
+    public void fireOrderBumpedInOther(String orderGuid)
+    {
+        ArrayList<Object> arOrders = new ArrayList<>();
+        arOrders.add(orderGuid);
+        for (int i = 0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Order_Bumped_By_Other_Expo_Or_Station, arOrders);
         }
     }
 }

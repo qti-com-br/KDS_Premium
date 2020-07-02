@@ -7,6 +7,9 @@ import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSStationsRelation;
+import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.TimeDog;
@@ -476,6 +479,25 @@ public class KDSStationExpeditor extends KDSStationNormal {
                     return false;
             }
         }
+
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                if (itemA != null) {
+                    if (!exp_item_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
+                        return false;
+                }
+                if (itemB != null)
+                {
+                    if (!exp_item_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
+                        return false;
+                }
+            }
+
+        }
+
         else
         { //I am common station
 
@@ -864,10 +886,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (orderExisted == null) {
             return "";
         }
+        //kpp1-286
+        kds.fireOrderBumpedInOther(orderExisted.getGUID());
+
         orders.removeComponent(orderExisted);
         db.orderSetBumped(orderExisted.getGUID(), true);
         //update the statistic database
         tt_checkAllItemsBumped(kds, orderExisted);
+
         kds.refreshView();
         return orderExisted.getGUID();
 
@@ -951,6 +977,19 @@ public class KDSStationExpeditor extends KDSStationNormal {
         {
             tt_receive_exp_order_bumped_notification(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
         }
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                exp_order_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                if (kds.isMultpleUsersMode())
+                    exp_order_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+
+            }
+
+        }
+
         else
         { //I am common expo, it is impossible geting this message.
 
@@ -1034,6 +1073,20 @@ public class KDSStationExpeditor extends KDSStationNormal {
         {
             exp_order_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order, true);
         }
+
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                exp_order_unbumped_in_other_expo_station(kds, kds.getCurrentDB(),kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order, true);
+                if (kds.isMultpleUsersMode())
+                    exp_order_unbumped_in_other_expo_station(kds, kds.getCurrentDB(),kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order, true);
+
+            }
+
+        }
+
         else
         { //I am common station
 
@@ -1261,6 +1314,21 @@ public class KDSStationExpeditor extends KDSStationNormal {
             if (itemB != null)
                 exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB);
         }
+
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                if (itemA != null)
+                    exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA);
+                if (itemB != null)
+                    exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB);
+
+            }
+
+        }
+
         else
         { //I am common station
 
