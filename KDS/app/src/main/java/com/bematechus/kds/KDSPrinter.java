@@ -1676,7 +1676,7 @@ print order data to  buffer, socket will send this buffer to serial port
         {
             m_logoData.clear();
         }
-
+        m_strLogoFile = s; //kpp1-271-1
 
         updateCodepage(settings);
         if (m_bemaPrinter!= null) {
@@ -1871,8 +1871,8 @@ print order data to  buffer, socket will send this buffer to serial port
     private void writeToPrinter()
     {
         //DEBUG kpp1-348
-        if (!isPrinterValid())
-            return;
+       // if (!isPrinterValid())
+       //     return;
 
         int ncount = m_printerData.size();
         //if (BuildVer.isDebug())
