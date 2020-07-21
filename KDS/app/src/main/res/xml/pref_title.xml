@@ -14,7 +14,7 @@
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
     <!--android:defaultValue="/system/fonts/DroidSans.ttf,-3090381,-16777216,14"-->
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="screen_title_font"
         android:defaultValue="default_font,@color/kds_title_bg,@color/kds_title_fg,middle_size"
         android:title="@string/pref_kds_screen_title_font"

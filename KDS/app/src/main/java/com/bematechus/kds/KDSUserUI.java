@@ -350,6 +350,8 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
                 new String[]{"qty","name"},new int[]{R.id.text1,R.id.text2});
         gv.setAdapter(adapter);
 
+        //kpp1-320
+
 
 
     }

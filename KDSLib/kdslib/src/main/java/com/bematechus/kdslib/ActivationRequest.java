@@ -44,6 +44,15 @@ import java.util.UUID;
 public class ActivationRequest extends HttpBase.HttpRequestBase {
 
     static final String TAG = "ActivationRequest";
+    static final String TOK = "tok";
+    static final String REQ = "req";
+    static final String REQ_LOGIN = "LOGIN";
+    static final String REQ_GET_SETTINGS =  "GET_SETTINGS";
+    static final String REQ_GET_DEVICES =  "GET_DEVICES";
+    static final String REQ_DEVICE_REPLACE =  "DEVICE_REPLACE";
+    static final String REQ_SMS_ORDER =  "SMS_ORDER";
+    static final String REQ_SYNC =  "SYNC";
+    static final String REQ_CLEANING_RESPONSE =  "STORE_CLEAN_RESPONSE";
     /**
      *
      * Management
@@ -57,21 +66,16 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      pwd: 123456
      */
 
-    //test server api
-    static final String API_URL_TEST = "http://kitchengous.com/api/apiKDS";// "http://kdsgo.com/api/apiKDS";//http://kdsgo.com/login"; //fixed
-    //production server api
-    static final String API_URL_PRODUCTION = "https://kdsgo.com/api/apiKDS";
 
-    //test db url
-    static final String DB_URL_TEST = "http://54.70.214.221/api/apiKDS/Premium";
 
-    static String API_URL = API_URL_TEST;
+
+    static String API_URL;
 
     //Web database sync feature.
     //DEV:http://54.70.214.221/api/apiKDS/Premium
     //STAGE: http://kitchengous.com/api/apiKDS/Premium
     //PROD: https://kdsgo.com/api/apiKDS/Premium
-    static String DB_URL = DB_URL_TEST;
+    static String DB_URL;
     //
     public static final String TOKEN = "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"; //fixed
 
@@ -110,7 +114,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Sync_item_bumps,
         Sync_item_bump,
         Sync_customer,
-
+        Cleaning,
     }
 
     public enum ErrorType
@@ -127,6 +131,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         No_selected_license_to_replace,
         Cancel_license_options,
         Replace_error,
+        App_type_error, //kpp1-211 just premium app can login
     }
 
     COMMAND m_command = COMMAND.Unknown;
@@ -184,12 +189,14 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         String pwd = password;//PASSWORD;
 
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "LOGIN");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_LOGIN);//"LOGIN");
         try {
 
             json.put("username", userName);
             json.put("password", pwd);
+            //kpp1-55,+
+            json.put("appVersionCode", KDSUtil.getVersionCodeString(KDSApplication.getContext()));
         }
         catch (Exception e)
         {
@@ -213,8 +220,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "GET_SETTINGS");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_SETTINGS);//"GET_SETTINGS");
         try {
 
             json.put("store_guid",store_guid );
@@ -239,8 +246,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     {
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "GET_DEVICES");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_DEVICES);//"GET_DEVICES");
         try {
 
             json.put("store_guid",store_guid );
@@ -267,6 +274,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         JSONObject jsonobj = new JSONObject(new LinkedHashMap());
         try {
             jsonobj.put(name, value);
+
+//            //kpp1-306 Send device's language code in every API request
+            if (name.equals(REQ) && isNeedLanguageReq(value))
+                jsonobj.put("language",  KDSUtil.getLanguageString() );
             return jsonobj;
         }catch (Exception e)
         {
@@ -396,8 +407,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "DEVICE_REPLACE");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_DEVICE_REPLACE);//"DEVICE_REPLACE");
 
         try {
             json.put("store_guid", store_guid );
@@ -744,8 +755,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "SMS_ORDER");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_SMS_ORDER);//"SMS_ORDER");
 
         try {
             json.put("store_guid", store_guid);
@@ -791,8 +802,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         String auth = TOKEN;
         JSONArray arJson = new JSONArray();
-        arJson.put(getJsonObj("tok", auth) );
-        JSONObject json = getJsonObj("req", "SYNC");
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_SYNC);//"SYNC");
         try {
 
             json.put("entity",tblName );
@@ -955,7 +966,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
             long utcNow = getUTCTimeSeconds();// dt.getTime()/1000;
 
-            json.put("kdsguid","'" + order.getKDSGuid() + "'" );
+            //json.put("kdsguid","'" + order.getKDSGuid() + "'" ); //in kpp1-296, remove it. As this field was not created.
             json.put("guid", "'" + order.getGUID() + "'");
             json.put("store_guid","'" + store_guid + "'" );
             json.put("destination", "'" + order.getDestination()+"'");
@@ -978,7 +989,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296  //https://bematech.atlassian.net/browse/KPP1-63
             json.put("phone", "'" + order.getCustomer().getPhone()+"'");
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             json.put("is_hidden", "0");
@@ -1028,7 +1040,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() +"'");
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() +"'");
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("printed_status", "0");
             json.put("item_bump_guid", "'" + item.getItemBumpGuid() +"'" ); //https://bematech.atlassian.net/browse/KPP1-64
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
@@ -1093,7 +1106,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() + "'");//KPP1-58
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("create_local_time", Long.toString( getLocalTimeSeconds(order.getStartTime()))); //seconds
             String prepTime = "0";
             if (item != null)
@@ -1384,7 +1398,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
             json.put("is_deleted" , "0");
-            json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
+            //json.put("update_device" , "'"+Activation.getMySerialNumber() +"'"); //2.1.2
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("create_local_time", Long.toString(create_local_time));// localNow));
             if (bExpoStation)
             {
@@ -1469,6 +1484,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             //for router id
             if (stationFunc.equals(Activation.KDSROUTER))
                 n = 1000;
+            if (n == 0) n =Activation.NEW_STATION_ID; //kpp1-298, Do not allow id 0
             json.put("id", KDSUtil.convertIntToString(n));
             json.put("store_guid","'" + store_guid + "'" );
             json.put("serial", "'"+mac+"'"); //mac address
@@ -1493,8 +1509,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("split_screen_parent_device_id" , "0");
             json.put("xml_order" , "2");
             //KPP1-55//https://bematech.atlassian.net/browse/KPP1-55
-            //json.put("app_version" , "'" + KDSUtil.getVersionName(KDSApplication.getContext()) + "'");
-            //json.put("app_version_code" , KDSUtil.convertIntToString(KDSUtil.getVersionCode(KDSApplication.getContext())));
+            json.put("app_version" , "'" + KDSUtil.getVersionName(KDSApplication.getContext()) + "'");
+            json.put("app_version_code" , KDSUtil.getVersionCodeString(KDSApplication.getContext()));
         }
         catch (Exception e)
         {
@@ -1645,7 +1661,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("update_time", Long.toString( utcNow)); //seconds
             json.put("upload_time", Long.toString( utcNow)); //seconds
             json.put("is_deleted", "0");
-            json.put("update_device", "'"+Activation.getMySerialNumber() + "'");//
+            //json.put("update_device", "'"+Activation.getMySerialNumber() + "'");//
+            json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296
             json.put("create_local_time",Long.toString( localNow)); //seconds
 
         }
@@ -1671,5 +1688,73 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
 
         ar.put(jsonCustomer(storeGuid,order, customer) );
         return ar;
+    }
+
+    /**
+     * kpp1-306 Send device's language code in every API request
+     * @param reqValue
+     * @return
+     */
+    static boolean isNeedLanguageReq(String reqValue)
+    {
+        switch (reqValue.toUpperCase())
+        {
+            case REQ_LOGIN://"LOGIN":
+            case REQ_GET_SETTINGS://"GET_SETTINGS":
+            case REQ_GET_DEVICES://"GET_DEVICES":
+            case REQ_DEVICE_REPLACE://"DEVICE_REPLACE":
+            case REQ_SMS_ORDER://"SMS_ORDER":
+            case REQ_SYNC: //SYNC
+            case REQ_CLEANING_RESPONSE:
+                return true;
+            default:
+                return false;
+
+        }
+
+    }
+
+    /**
+     * {   
+     *   "0": {           
+     *     "tok": "c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706"   
+     *   },
+     *   "1": {
+     *     "req": "STORE_CLEAN_RESPONSE",
+     *     "language": "en",
+     *     "store_guid": "cf541647-9a87-4698-baf3-aca801b4e095",
+     *     "device_guid": "0068f197-d823-4097-a2b1-990250446d73",
+     *     "response": "SNOOZE"
+     *   }
+     * }
+      * @param store_guid
+     * @return
+     */
+    static public ActivationRequest requestCleaningResponse( String store_guid, String licenseGuid, String strResponse)
+    {
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_CLEANING_RESPONSE);
+        try {
+
+            json.put("store_guid",store_guid );
+            json.put("device_guid", licenseGuid );
+            json.put("response", strResponse);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Get_devices );
+        return r;
+
+
     }
 }

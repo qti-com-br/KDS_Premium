@@ -1,19 +1,17 @@
 package com.bematechus.kds;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
@@ -27,10 +25,7 @@ import com.bematechus.kdslib.TimeDog;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Administrator on 2015/8/24 0024.
@@ -64,9 +59,9 @@ public class KDSSettings extends SettingsBase {
 
 
 
-    static final public int UDP_ANNOUNCER_PORT = 5000;
-    static final public int UDP_ROUTER_ANNOUNCER_PORT = 5001; //write data to router. Use two port is for KDS and KDSRouter running in same station.
-    static final public int UDP_STATISTIC_ANNOUNCER_PORT = 5002; //write data to statistic app.
+    static final public int UDP_STATION_ANNOUNCER_UDP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_stations_announce_udp_port);// 5000;
+    static final public int UDP_ROUTER_ANNOUNCER_UDP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_router_announce_udp_port);// 5001; //write data to router. Use two port is for KDS and KDSRouter running in same station.
+    //static final public int UDP_STATISTIC_ANNOUNCER_PORT = 5002; //write data to statistic app.//don't support statistic anymore
     static final public int COMDIMENT_LEADING_POSITION  = 10;
 
     static final public int DEFAULT_BLOCK_BORDER_INSET = 7;
@@ -559,14 +554,26 @@ public class KDSSettings extends SettingsBase {
        Transfer_default_station, //KPP1-42
        Transfer_auto_to_default,
 
-     //
-     Deliver_new_order_to_slave_expo,
-     //Josie need this feature
-     Transfer_by_double_click,
+       //
+       Deliver_new_order_to_slave_expo,
+       //Josie need this feature
+       Transfer_by_double_click,
 
-     LineItems_view_bg, //kpp1-183
-     Log_orders,
-     LineItems_line_height, //kpp1-229
+       LineItems_view_bg, //kpp1-183
+       Log_orders,
+       LineItems_line_height, //kpp1-229
+
+       Printer_logo,
+       //cleaning habits
+       cleaning_enable_alert,
+       cleaning_alert_type,
+       cleaning_reminder_interval,
+       cleaning_enable_dismiss_button,
+       cleaning_snooze_time,
+       cleaning_startup_alert,
+       Bumpbar_Clean,
+       Bumpbar_Snooze,
+       Bumpbar_Dismiss,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -630,11 +637,11 @@ public class KDSSettings extends SettingsBase {
     }
 
 
-    public enum KDSUserMode
-    {
-        Single,
-        Multiple,
-    }
+//    public enum KDSUserMode
+//    {
+//        Single,
+//        Multiple,
+//    }
 
     public enum SmartOrderShowing //how to show delay item/order.
     {
@@ -781,6 +788,12 @@ public class KDSSettings extends SettingsBase {
         Negative_sign,
     }
 
+    public enum CleaningAlertType
+    {
+        FloatButton,
+        ShowDialog,
+        CleanScreen,
+    }
 //    public enum SmartMode
 //    {
 //        Disabled,
@@ -1302,10 +1315,20 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.Transfer_by_double_click,"bool_transfer_by_double_click",false);//
         init_option(ID.LineItems_view_bg,"int_lineitems_viewer_bg",getResColor( R.color.lineitems_viewer_bg));
-       init_option(ID.Log_orders,"bool_log_orders",false);
-       init_option(ID.LineItems_line_height,"string_lineitems_line_height","30");
+        init_option(ID.Log_orders,"bool_log_orders",false);
+        init_option(ID.LineItems_line_height,"string_lineitems_line_height","30");
+        init_option(ID.Printer_logo,"string_printer_logo","");
+        //cleaning habits
+        init_option(ID.cleaning_enable_alert,"bool_cleaning_enable_alerts",false);
+        init_option(ID.cleaning_alert_type,"string_cleaning_alert_type","1");
+        init_option(ID.cleaning_reminder_interval,"string_cleaning_reminder_interval","2h");
+        init_option(ID.cleaning_enable_dismiss_button,"bool_cleaning_enable_dismiss_button",false);
+        init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","5");
+        init_option(ID.cleaning_startup_alert,"bool_cleaning_startup_alert",true);
 
-
+       init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
+       init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
+       init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
 
 
     }
@@ -1357,9 +1380,9 @@ public class KDSSettings extends SettingsBase {
         set(ID.KDS_ID, "");
         set(ID.KDS_Function, 0);
         set(ID.KDS_Data_Source, KDSDataSource.TCPIP.ordinal());
-        set(ID.KDS_Data_TCP_Port, 3000);
+        set(ID.KDS_Data_TCP_Port, m_contextTmp.getResources().getInteger(R.integer.default_stations_datasource_tcpip_port));// 3000);
         set(ID.KDS_Data_Folder, "");
-        set(ID.KDS_Station_Port, 3001);
+        set(ID.KDS_Station_Port,m_contextTmp.getResources().getInteger(R.integer.default_stations_internal_tcpip_port));// 3001);
         set(ID.Users_Mode, "0"); //default single user
 
         set(ID.View_Margin, 5);
@@ -1846,8 +1869,8 @@ public class KDSSettings extends SettingsBase {
         m_itemBumpedImage = appContext.getResources().getDrawable(R.drawable.item_bumped);
         m_itemBumpedInOthersImage = appContext.getResources().getDrawable(R.drawable.others_bumped);
         m_itemMoreImage = appContext.getResources().getDrawable(R.drawable.down18px);
-        m_itemVoidByXmlCommand = appContext.getResources().getDrawable(R.drawable.delete_24px_32);
-        m_itemChangedImage  = appContext.getResources().getDrawable(R.drawable.edit_24px_16);
+        m_itemVoidByXmlCommand = appContext.getResources().getDrawable(com.bematechus.kdslib.R.drawable.delete_24px_32);
+        m_itemChangedImage  = appContext.getResources().getDrawable(com.bematechus.kdslib.R.drawable.edit_24px_16);
         m_orderCookStartedImage = appContext.getResources().getDrawable(R.drawable.chef);
 
         //2.0.14
@@ -2796,4 +2819,80 @@ public class KDSSettings extends SettingsBase {
      editor.apply();
      editor.commit();
    }
+
+    /**
+    * convert int to settings ID value.
+    * @param n
+    * @return
+    */
+    static public ID intToID(int n)
+    {
+      if (n <0 || n>=ID.values().length) return ID.NULL;
+      return ID.values()[n];
+
+    }
+
+    public KDSSettings clone()
+    {
+        KDSSettings settings = new KDSSettings(KDSApplication.getContext());
+       try {
+        for (Map.Entry<ID, String> entry : m_mapPrefID.entrySet()) {
+
+         ID id = entry.getKey();
+         String tag = entry.getValue();
+         if (tag == null) continue;
+         Object obj = this.get(id);
+         if (tag.isEmpty()) continue;//fixed value
+
+         if (obj != null) {
+           if (obj instanceof KDSViewFontFace)
+           {
+             KDSViewFontFace ft = new KDSViewFontFace();
+             ft.copyFrom((KDSViewFontFace) obj);
+              settings.set(id, ft);
+           }
+           else
+            settings.set(id, obj);
+         }
+        }
+        settings.m_itemFocusImage = m_itemFocusImage;
+        settings.m_itemBumpedImage = m_itemBumpedImage;
+        settings.m_itemBumpedInOthersImage = m_itemBumpedInOthersImage;
+        settings.m_itemMoreImage = m_itemMoreImage;
+        settings.m_itemVoidByXmlCommand =m_itemVoidByXmlCommand;
+        settings.m_itemChangedImage  = m_itemChangedImage;
+        settings.m_orderCookStartedImage = m_orderCookStartedImage;
+        settings.m_itemExpoPartialImage = m_itemExpoPartialImage;
+       }
+       catch (Exception e)
+       {
+
+       }
+       return settings;
+
+    }
+
+   /**
+   * check if the settings are default values
+   * @return
+   */
+   public boolean isDefaultSettings()
+   {
+       if (!loadStationsRelationString(KDSApplication.getContext(), true).isEmpty())
+         return false;
+       KDSSettings settings = new KDSSettings(KDSApplication.getContext()); //default one.
+       for (Map.Entry<ID, Object> entry : settings.m_mapSettings.entrySet())
+       {
+          ID id = entry.getKey();
+          Object obj = entry.getValue();
+          String defaultVal = convertConfigValToString(obj);
+          String myVal = convertConfigValToString(this.get(id));
+          if (!defaultVal.equals(myVal))
+             return false;
+
+       }
+       return true;
+   }
+
+
 }

@@ -1502,8 +1502,10 @@ public class KDSStationFunc {
      * receive sync command, do it.
      * @param command
      * @return
+     * expo: return changed order
+     * prep: null;
      */
-    static public void doSyncCommandOrderNew(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    static public KDSDataOrder doSyncCommandOrderNew(KDS kds, KDSXMLParserCommand command, String strOrinalData, ArrayList<Boolean> ordersExisted, ArrayList<KDSDataOrder> ordersChanged)
     {
         switch (kds.getStationFunction())
         {
@@ -1516,9 +1518,10 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
-                KDSStationExpeditor.exp_sync_order_new(kds, command);
+                KDSDataOrder order = KDSStationExpeditor.exp_sync_order_new(kds, command, ordersExisted, ordersChanged);
                 kds.refreshView();
-                break;
+                return order;
+                //break;
 
             case Mirror:
                 break;
@@ -1529,7 +1532,7 @@ public class KDSStationFunc {
             case Duplicate:
                 break;
         }
-        return ;
+        return null;
 
     }
 

@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -63,6 +64,8 @@ public class KDSPrinter {
     static final private char CMD_START_DBLWH = 0x10;//"<dblwh>";
     static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
 
+    static final private char CMD_PRINT_LOGO = 0x380;//"</dblwh>";
+
     static final private String TAG_CR = "<CR>";
     static final private String TAG_ITEMS = "<ITEMS>";
     static final private String TAG_CONDIMENTS = "<CONDIMENTS>";
@@ -79,6 +82,13 @@ public class KDSPrinter {
     static final private String TAG_START_DBLWH = "<DBLWH>";
     static final private String TAG_END_DBLWH = "</DBLWH>";
 
+    static final private String TAG_START_FOREACH = "<FOREACH>";
+    static final private String TAG_END_FOREACH = "</FOREACH>";
+    static final private String TAG_EACH_ITEM = "<ITEM>";
+    static final private String TAG_EACH_CONDIMENT = "<CONDIMENT>";
+    static final private String TAG_EACH_MODIFIER = "<MODIFIER>";
+
+    static final private String TAG_LOGO = "<LOGO>";
 
     final byte ESC = 0x1b;
     final byte GS = 0x1d;
@@ -108,6 +118,12 @@ public class KDSPrinter {
         TAGS_LINE_ITEM ,
         TAGS_LINE_CONDIMENT  ,
         TAGS_LINE_MODIFIER,
+        TAGS_LINE_FOREACH,
+        TAGS_LINE_END_FOREACH,
+        TAGS_LINE_EACH_ITEM,
+        TAGS_LINE_EACH_CONDIMENT,
+        TAGS_LINE_EACH_MODIFIER,
+        TAGS_LINE_LOGO,
     }
 
     public enum TextAlign
@@ -172,6 +188,9 @@ public class KDSPrinter {
     HowToPrintOrder m_howtoPrint = HowToPrintOrder.Manual;
 
     boolean m_bGroupCategory = false; //2.0.48
+
+    String m_strLogoFile = "";
+
     /**********************************************************************************************/
     /**
      *
@@ -425,6 +444,8 @@ return given CR in which index of tag array
         return -1;
     }
 
+
+
     private CRTagsLineType getCRLineType(ArrayList<String> arTags)
     {
         int count = arTags.size();
@@ -441,6 +462,18 @@ return given CR in which index of tag array
                 return CRTagsLineType.TAGS_LINE_CONDIMENT;
             if (s.equals(TAG_MODIFIERS))
                 return CRTagsLineType.TAGS_LINE_MODIFIER;
+            if (s.equals(TAG_START_FOREACH))
+                return CRTagsLineType.TAGS_LINE_FOREACH;
+            if (s.equals(TAG_END_FOREACH))
+                return CRTagsLineType.TAGS_LINE_END_FOREACH;
+            if (s.equals(TAG_EACH_ITEM))
+                return  CRTagsLineType.TAGS_LINE_EACH_ITEM;
+            if (s.equals(TAG_EACH_CONDIMENT))
+                return CRTagsLineType.TAGS_LINE_EACH_CONDIMENT;
+            if (s.equals(TAG_EACH_MODIFIER))
+                return CRTagsLineType.TAGS_LINE_EACH_MODIFIER;
+            if (s.equals(TAG_LOGO))
+                return CRTagsLineType.TAGS_LINE_LOGO;
 
         }
 
@@ -472,6 +505,33 @@ return whole line tags
         {
             arTags.add(m_arLinesTags.get(i));
 
+        }
+        return arTags;
+    }
+
+    private ArrayList<String> getCRLineTagsFromIndex(int nFromTagIndex, int nMaxIndex)
+    {
+        ArrayList<String> arTags = new ArrayList<>();
+
+        int sindex=0, eindex = nMaxIndex;
+        //arTags->RemoveAll();
+        if (nFromTagIndex <0) return arTags;
+        sindex =nFromTagIndex;
+        String s = "";
+        for (int i=sindex; i<=nMaxIndex; i++)
+        {
+            s = m_arLinesTags.get(i);
+            s = s.trim();
+            s = s.toUpperCase();
+            if (s.equals(TAG_CR) || i == nMaxIndex) {
+                eindex = i;
+                break;
+            }
+        }
+
+        for (int i= sindex; i<=eindex; i++)
+        {
+            arTags.add(m_arLinesTags.get(i));
         }
         return arTags;
     }
@@ -584,6 +644,9 @@ return whole line tags
                 break;
             case TAG_END_REVERSE:
                 ch = CMD_END_REVERSE;
+                break;
+            case TAG_LOGO:
+                ch = CMD_PRINT_LOGO;
                 break;
             default:
                 break;
@@ -869,7 +932,24 @@ return whole line tags
             if (pModifier == null) return ("");
             return pModifier.getDescription();
         }
+        //for each
+        if (t.equals(TAG_EACH_ITEM))
+        {
+            if (pItem == null) return ("");
 
+            return pItem.getDescription();// ->GetText();
+        }
+
+        if (t.equals(TAG_EACH_CONDIMENT))
+        {
+            if (pCondiment == null) return ("");
+            return pCondiment.getDescription();
+        }
+        if (t.equals(TAG_EACH_MODIFIER))
+        {
+            if (pModifier == null) return ("");
+            return pModifier.getDescription();
+        }
         return tag;
 
     }
@@ -941,12 +1021,15 @@ return whole line tags
     }
     private boolean isUnicode(char ch)
     {
+        if (ch == CMD_PRINT_LOGO) return false;
         if ((((ch & 0xff00)>>8) & 0x00ff) > 0)
             return true;
         return false;
     }
     private boolean isPrintable(char ch)
     {
+        if (ch == CMD_PRINT_LOGO)
+            return false;
         return (ch >=0x20);
 
 
@@ -958,6 +1041,7 @@ return the ascii string len, it is unicode len
                                                                      */
     /************************************************************************/
     /**
+     * the actually printed length. Include double width, and unicode.
      *
      * @param s
      * @return
@@ -1250,17 +1334,18 @@ return the ascii string len, it is unicode len
         {
             KDSDataItem pItem = pOrder.getItems().getItem(i);
             s = ("");
-            if (pItem instanceof KDSDataCategoryIndicator)
-            {//2.0.48
-                s = KDSDataCategoryIndicator.makeDisplayString ( (KDSDataCategoryIndicator)pItem);
-                String ch;//2.0.49
-                ch = ("\r\n");
-                s += ch;
-
-            }
-            else {
-                s = makeTagsString(parItemTags, pOrder, pItem, null, null);
-            }
+            s = makeItemPrintString(pOrder, pItem, parItemTags);
+//            if (pItem instanceof KDSDataCategoryIndicator)
+//            {//2.0.48
+//                s = KDSDataCategoryIndicator.makeDisplayString ( (KDSDataCategoryIndicator)pItem);
+//                String ch;//2.0.49
+//                ch = ("\r\n");
+//                s += ch;
+//
+//            }
+//            else {
+//                s = makeTagsString(parItemTags, pOrder, pItem, null, null);
+//            }
             addPrintLines(parPrint, s);
             //check if print condiment first
             if (nCondimentLineIndex >=0) {
@@ -1313,7 +1398,7 @@ print order data to  buffer, socket will send this buffer to serial port
 @pOrder: the COrderDisplay, the all data is in this order. We can change its data in this function.
 
 */
-    public void printToBuffer(KDSDataOrder order)
+    public void printToBuffer1(KDSDataOrder order)
     {
         if (order == null) return;
         if (!isEnabled()) return;
@@ -1586,6 +1671,12 @@ print order data to  buffer, socket will send this buffer to serial port
 
         m_bGroupCategory = settings.getBoolean(KDSSettings.ID.Item_group_category);//2.0.48
 
+        s  = settings.getString(KDSSettings.ID.Printer_logo);
+        if (!s.equals(m_strLogoFile))
+        {
+            m_logoData.clear();
+        }
+        m_strLogoFile = s; //kpp1-271-1
 
         updateCodepage(settings);
         if (m_bemaPrinter!= null) {
@@ -1709,23 +1800,22 @@ print order data to  buffer, socket will send this buffer to serial port
         PortInfo portInfo = this.getPortInfo(settings);
         switch (portInfo.getType())
         {
-
-            case SERIAL:
+            case SERIAL: {
                 return m_bSerialPrinterValid;
-
-
+            }
             case USB:
             {
               return isUsbPrinterValid();
             }
-
             case TCP: //ping it
+            {
                 return m_bNetworkPrinterValid;
-
+            }
             case UNDEFINED:
                 break;
         }
         return false;
+
 
     }
     public boolean isOpened()
@@ -1780,8 +1870,9 @@ print order data to  buffer, socket will send this buffer to serial port
      */
     private void writeToPrinter()
     {
-        if (!isPrinterValid())
-            return;
+        //DEBUG kpp1-348
+       // if (!isPrinterValid())
+       //     return;
 
         int ncount = m_printerData.size();
         //if (BuildVer.isDebug())
@@ -1817,87 +1908,6 @@ print order data to  buffer, socket will send this buffer to serial port
             {
                 willPrint += ch;
             }
-//            switch (ch) {
-//                case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_BOLD);
-//
-//                }
-//                break;
-//                case CMD_END_BOLD:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_END_BOLD);
-//                }
-//                case CMD_PAPER_CUT:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_PAPER_CUT);
-//                }
-//                break;
-//                case CMD_START_DBLW:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_DBLW);
-//                }
-//                break;
-//                case CMD_START_DBLH:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_DBLH);
-//                }
-//                break;
-//                case CMD_START_DBLWH:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_DBLWH);
-//                }
-//                break;
-//                case CMD_END_DBLW:
-//                case CMD_END_DBLH:
-//                case CMD_END_DBLWH:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_END_DBLWH);
-//                }
-//                break;
-//                case CMD_START_REVERSE:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_START_REVERSE);
-//                }
-//                break;
-//                case CMD_END_REVERSE:
-//                {
-//                    if (!willPrint.isEmpty())
-//                        m_bemaPrinter.printText(willPrint);
-//                    willPrint = "";
-//                    m_bemaPrinter.write(LR2000_END_REVERSE);
-//                }
-//                break;
-//                default:
-//                {
-//                    willPrint += ch;
-//                }
-//                break;
-//            }
         }
 
         if (!willPrint.isEmpty())
@@ -1974,6 +1984,7 @@ print order data to  buffer, socket will send this buffer to serial port
             case CMD_END_DBLWH:
             case CMD_START_REVERSE:
             case CMD_END_REVERSE:
+            case CMD_PRINT_LOGO:
                 return true;
 
         }
@@ -2030,6 +2041,11 @@ print order data to  buffer, socket will send this buffer to serial port
                 m_bemaPrinter.write(LR2000_END_REVERSE);
             }
             break;
+            case CMD_PRINT_LOGO:
+            {
+                sendLogoDataToPrinter();
+            }
+            break;
             default:
             {
             }
@@ -2055,6 +2071,7 @@ print order data to  buffer, socket will send this buffer to serial port
             case TAG_END_DBLH:
             case TAG_START_DBLWH:
             case TAG_END_DBLWH:
+            case TAG_LOGO:
                 return true;
             default:
                 return false;
@@ -2069,6 +2086,559 @@ print order data to  buffer, socket will send this buffer to serial port
     }
     private boolean isDoubleWidthEndCommand(char ch)
     {
-        return (ch  == CMD_END_DBLWH);
+        return (ch  == CMD_END_DBLWH ||
+                ch ==  CMD_END_DBLW);//kpp1-215
+    }
+
+
+    public void printToBuffer(KDSDataOrder order)
+    {
+        if (order == null) return;
+        if (!isEnabled()) return;
+        int len = m_printerData.size();
+        int msz = MAX_PRINT_LINES;
+
+        if (len >= msz) return;
+
+        if (m_bGroupCategory)
+        {
+            KDSDataOrder printOrder = new KDSDataOrder();
+            order.copyTo(printOrder);
+            KDSLayoutOrder.buildGroupCategory(printOrder);
+            order = printOrder;
+        }
+
+        rebuild_order_for_printable_options(order);
+        KDSDataItems items  = order.getItems();
+        if (items.getCount() <=0) return; //don't print empty order
+
+        ArrayList<String> arPrint = new ArrayList<String>();
+
+        //return how many physical printing lines
+        int lines = getLines();
+        PrintOrderState state = new PrintOrderState();
+
+        printerOrderWithTemplete(state ,order, 0, lines, arPrint);
+
+//        String s = "";
+//        //String tag = "";
+//
+//        int i = 0;
+//        for ( i=0; i< lines; i++)
+//        {
+//
+//            ArrayList<String> arLineTags = new ArrayList<String>();
+//            //get all tags in given physcal printing line
+//            arLineTags =getCRLineTags(i);
+//            switch (getCRLineType(arLineTags))
+//            {
+//                case TAGS_LINE_NORMAL: {
+//                    s = makeTagsString(arLineTags, order,null, null, null);
+//                    addPrintLines(arPrint, s);
+//                    //arPrint.Add(s);
+//                }
+//                break;
+//                case TAGS_LINE_ITEM: { //<items> tag
+//                    ArrayList<String> arItemTags = new ArrayList<>();
+//                    ArrayList<String> arCondimentTags = new ArrayList<>();
+//                    ArrayList<String> arModifierTags = new ArrayList<>();
+//
+//                    arItemTags.addAll(arLineTags);
+//                    int nCondimentLineIndex = getCondimentTagsLineNumber();
+//                    if (nCondimentLineIndex >=0)
+//                    {
+//                        arCondimentTags = getCRLineTags(nCondimentLineIndex);
+//                    }
+//                    int nModifierLineIndex = getModifierTagsLineNumber();
+//                    if (nModifierLineIndex >=0)
+//                    {
+//                        arModifierTags = getCRLineTags(nModifierLineIndex);
+//                    }
+//
+//                    makeItemsStrings(arPrint, arItemTags, arCondimentTags, order, arModifierTags, nCondimentLineIndex, nModifierLineIndex);
+//                }
+//                break;
+//                case TAGS_LINE_CONDIMENT: //condiments
+//                case TAGS_LINE_MODIFIER: //modifiers
+//                {
+//                    continue;
+//                }
+//
+//                //break;
+//                default:
+//                {
+//                }
+//                break;
+//            }
+//
+//
+//        }
+        //synchronized (m_locker)
+        {
+            String s = "";
+            s += (CHAR_Start_Order);
+
+            m_printerData.add(s);
+            for (int i = 0; i < m_nCopies; i++) {
+                m_printerData.addAll(arPrint);
+            }
+            s = "";
+            s += (CHAR_End_Order);
+            m_printerData.add(s);
+        }
+        //output for debug
+//        for (int i=0;i < arPrint.size(); i++)
+//            Log.i(TAG, arPrint.get(i));
+        ////////////////////////////////////////
+        arPrint.clear();
+        //arrangeBuffer();
+
+    }
+
+    protected void printerOrderWithTemplete( PrintOrderState state, KDSDataOrder order,int nStartLineNumber,int nTempleteLines, ArrayList<String> arPrint )
+    {
+        for ( int i=nStartLineNumber; i< nTempleteLines; i++)
+        {
+            //get all tags in given physcal printing line
+            ArrayList<String> arLineTags =getCRLineTags(i);
+            int tagStartIndex = getCRIndexInTagsArray(i-1)+1;
+            if (i == 0) tagStartIndex = 0;
+            int tagEndIndex = getCRIndexInTagsArray(i);
+
+            int foreachStart = findForeachStart(arLineTags, 0);
+            int foreachEnd = findForeachEnd(arLineTags, 0);
+            //if there is the foreach, print <foreach> left, and </foreach> right part data.
+            if (foreachStart>0)
+            {
+                ArrayList<String> arForeachLeft = new ArrayList<>();
+                for (int j=0; j<foreachStart; j++) {
+                    arForeachLeft.add(arLineTags.get(j));
+                }
+                for (int j=0; j<foreachStart; j++)
+                    arLineTags.remove(0);
+                tagEndIndex = tagStartIndex + arForeachLeft.size()-1;
+                printerLineTemplete(state, order, tagStartIndex,tagEndIndex, arForeachLeft, arPrint);
+            }
+            if (foreachEnd>=0)
+            {
+                ArrayList<String> arForeachEndRight = new ArrayList<>();
+                int count = 0;
+                for (int j=foreachEnd; j<arLineTags.size(); j++) {
+                    arForeachEndRight.add(arLineTags.get(j));
+                    count ++;
+                }
+                for (int j=0; j<count; j++)
+                    arLineTags.remove(foreachEnd);
+                tagStartIndex = tagEndIndex - arForeachEndRight.size();
+                printerLineTemplete(state, order, tagStartIndex,tagEndIndex, arForeachEndRight, arPrint);
+            }
+
+            int nindex = printerLineTemplete(state, order, tagStartIndex,tagEndIndex, arLineTags, arPrint);
+            i = convertTagIndexToCRLineNumber(nindex);
+
+        }
+    }
+
+
+    /**
+     *
+     * @param state
+     * @param order
+     * @param nStartTagIndex
+     * @param nEndTagIndex
+     *  Include this end index.
+     * @param arLineTags
+     * @param arPrint
+     * @return
+     *  printed last tags index
+     */
+    protected int printerLineTemplete(PrintOrderState state,KDSDataOrder order,int nStartTagIndex, int nEndTagIndex, ArrayList<String> arLineTags, ArrayList<String> arPrint )
+    {
+
+        switch (getCRLineType(arLineTags))
+        {
+            case TAGS_LINE_NORMAL: {
+                String s = makeTagsString(arLineTags, order,null, null, null);
+                addPrintLines(arPrint, s);
+                //arPrint.Add(s);
+            }
+            break;
+            case TAGS_LINE_ITEM: { //<items> tag
+                ArrayList<String> arItemTags = new ArrayList<>();
+                ArrayList<String> arCondimentTags = new ArrayList<>();
+                ArrayList<String> arModifierTags = new ArrayList<>();
+
+                arItemTags.addAll(arLineTags);
+                int nCondimentLineIndex = getCondimentTagsLineNumber();
+                if (nCondimentLineIndex >=0)
+                {
+                    arCondimentTags = getCRLineTags(nCondimentLineIndex);
+                }
+                int nModifierLineIndex = getModifierTagsLineNumber();
+                if (nModifierLineIndex >=0)
+                {
+                    arModifierTags = getCRLineTags(nModifierLineIndex);
+                }
+
+                makeItemsStrings(arPrint, arItemTags, arCondimentTags, order, arModifierTags, nCondimentLineIndex, nModifierLineIndex);
+            }
+            break;
+            case TAGS_LINE_CONDIMENT: //condiments
+            case TAGS_LINE_MODIFIER: //modifiers
+            {
+                break;
+            }
+
+            case TAGS_LINE_FOREACH:
+            {
+                int nEndForeach = findForeachEnd(m_arLinesTags, nStartTagIndex);
+                if (nEndForeach >=0) {
+                    printForeach(state, order, nStartTagIndex, nEndForeach, arPrint);
+                    return nEndForeach;
+                }
+                else
+                {//remove first tag, print others
+                    if (arLineTags.size()>0)
+                        arLineTags.remove(0);
+                    printerLineTemplete(state, order, nStartTagIndex +1, nEndTagIndex, arLineTags, arPrint );
+                }
+                //return convertTagIndexToCRLineNumber(nEndForeach);//return last end foreach. Print the last foreach again, as </foreach>-------------<cr> case.
+
+            }
+            //break;
+            case TAGS_LINE_END_FOREACH:
+            {
+                //printerLineTemplete(PrintOrderState state,KDSDataOrder order,int nStartLineNumber,int nTempleteLines,  ArrayList<String> arLineTags, ArrayList<String> arPrint )
+            }
+            break;
+            case TAGS_LINE_EACH_ITEM: //<item>
+            {
+                printItem(state, order,arLineTags , arPrint);
+            }
+            break;
+            case  TAGS_LINE_EACH_CONDIMENT: //<condiment>
+            {
+                printCondiment(state, order,arLineTags , arPrint);
+            }
+            break;
+            case  TAGS_LINE_EACH_MODIFIER: //<modifier>
+            {
+                printModifier(state, order,arLineTags , arPrint);
+            }
+            break;
+            case TAGS_LINE_LOGO:
+            {
+                printLogo(state, order,arLineTags , arPrint);
+            }
+            break;
+            default:
+            {
+            }
+            break;
+        }
+        //return convertTagIndexToCRLineNumber(nStartTagIndex);
+        return nEndTagIndex;
+
+    }
+
+    /**
+     *   <foreach>
+     *     <qty><item><cr>
+     *     -----------
+     *     <foreach>
+     *       <condiment>
+     *     </foreach>
+     *     -------------
+     *      <condiments>
+     *    ---------------
+     *  </foreach>
+     * @param order
+     * @param nForeachStart
+     *
+     * @param arPrint
+     * @return
+     *  last printed line number
+     */
+    private int printForeach(PrintOrderState state,KDSDataOrder order,int nForeachStart, int nForeachEnd,  ArrayList<String> arPrint )
+    {
+
+        ForeachPrint foreachPrint = findForeachPrintWhat(nForeachStart, nForeachEnd);
+        int ncount = 0;
+        switch (foreachPrint)
+        {
+
+            case Normal:
+                ncount = 1; //one loop
+                break;
+            case Item:
+                ncount = order.getItems().getCount();
+                break;
+            case Condiment:
+                if (state.m_nItemsIndex <0)
+                    ncount = 0;
+                else
+                    ncount = order.getItems().getItem(state.m_nItemsIndex).getCondiments().getCount();
+                break;
+            case Modifier:
+                if (state.m_nItemsIndex <0)
+                    ncount = 0;
+                else
+                    ncount = order.getItems().getItem(state.m_nItemsIndex).getModifiers().getCount();
+                break;
+        }
+        for (int foreach = 0; foreach< ncount; foreach++)
+        {
+            int nstart = nForeachStart + 1;
+            for (int i=nstart ; i<= nForeachEnd; i++)
+            {
+                ArrayList<String> arLineTags =getCRLineTagsFromIndex(i, nForeachEnd);
+                //i += arLineTags.size()-1;
+                if (arLineTags.size() >0)
+                    i = printerLineTemplete(state ,order, i,i + arLineTags.size()-1, arLineTags, arPrint);
+            }
+           // state.afterPrint(foreachPrint);
+        }
+        return convertTagIndexToCRLineNumber(nForeachEnd);
+
+    }
+    private int convertTagIndexToCRLineNumber(int nTagIndex)
+    {
+        String s = "";
+        int count = 0;
+
+        for (int i=0; i< m_arLinesTags.size(); i++)
+        {
+            s = m_arLinesTags.get(i);
+            s = s.trim();
+            s = s.toUpperCase();
+
+            if (i >= nTagIndex)
+                return count;
+            if (s.equals(TAG_CR))
+                count++;
+
+
+        }
+
+        return count;
+    }
+    /**
+     * find which line is the </foreach> tag.
+     * @param nStartForeach
+     *  The <foreach> tag line number
+     * @return
+     */
+    private int findForeachEnd(List<String> ar, int nStartForeach)
+    {
+        if (nStartForeach <0) return -1;
+        int nStart = 1;
+        for (int i=nStartForeach+1;i< ar.size(); i++ )
+        {
+            String s = ar.get(i);
+            s = s.toUpperCase();
+            if (s.equals(TAG_START_FOREACH))
+                nStart ++;
+            else if (s.equals(TAG_END_FOREACH))
+                nStart --;
+            if (nStart == 0)
+                return i;
+        }
+        return -1;
+    }
+
+    /**
+     * this foreach print item/condiment/modifiers.
+     *
+     * @param nStartForeach
+     * @param nEndForeach
+     * @return
+     */
+    private ForeachPrint findForeachPrintWhat(int nStartForeach, int nEndForeach)
+    {
+
+        List<String> ar = new ArrayList<>();
+        for (int i=nStartForeach; i<= nEndForeach; i++)
+            ar.add(m_arLinesTags.get(i));
+
+        //remove all other foreach
+        for (int n=0; n< 100; n++) {
+            int nInsideForeachStart = findForeachStart(ar, 1);
+            int nInsizeForeachEnd = findForeachEnd(ar, nInsideForeachStart);
+            if (nInsideForeachStart > 0 && nInsizeForeachEnd > 0) {
+                for (int i = nInsizeForeachEnd; i >= nInsideForeachStart; i--) {
+                    ar.remove(nInsideForeachStart);
+                }
+            }
+            else
+                break;
+        }
+        //Now, just one foreach.
+        for (int i=0; i< ar.size(); i++)
+        {
+            String s = ar.get(i);
+            s = s.toUpperCase();
+            if ( s.equals(TAG_EACH_ITEM))
+                return ForeachPrint.Item;
+            if ( s.equals(TAG_EACH_CONDIMENT))
+                return ForeachPrint.Condiment;
+            if ( s.equals( TAG_EACH_MODIFIER ))
+                return ForeachPrint.Modifier;
+        }
+        return ForeachPrint.Normal;
+    }
+
+    private int findForeachStart(List<String> ar, int nStart)
+    {
+        for (int i=nStart ; i< ar.size(); i++)
+        {
+            String s = ar.get(i);
+            s = s.toUpperCase();
+            if (s.equals(TAG_START_FOREACH))
+                return i;
+        }
+        return -1;
+    }
+    private String makeItemPrintString(KDSDataOrder order,KDSDataItem item, ArrayList<String> arLineTags)
+    {
+        String s = ("");
+        if (item instanceof KDSDataCategoryIndicator)
+        {//2.0.48
+            s = KDSDataCategoryIndicator.makeDisplayString ( (KDSDataCategoryIndicator)item);
+            String ch;//2.0.49
+            ch = ("\r\n");
+            s += ch;
+
+        }
+        else {
+            s = makeTagsString(arLineTags, order, item, null, null);
+        }
+        return s;
+    }
+    private void printItem(PrintOrderState state, KDSDataOrder order,ArrayList<String> arLineTags, ArrayList<String> arPrint)
+    {
+        state.afterPrint(ForeachPrint.Item);
+        int nItem = state.m_nItemsIndex;
+        KDSDataItem item = order.getItems().getItem(nItem);
+        String s = makeItemPrintString(order, item, arLineTags);
+        addPrintLines(arPrint, s);
+
+    }
+
+    private void printCondiment(PrintOrderState state, KDSDataOrder order,ArrayList<String> arLineTags, ArrayList<String> arPrint )
+    {
+        state.afterPrint(ForeachPrint.Condiment);
+        int nItem = state.m_nItemsIndex;
+        KDSDataItem item = order.getItems().getItem(nItem);
+        KDSDataCondiment condiment = item.getCondiments().getCondiment(state.m_nCondimentsIndex);
+        String s = makeTagsString(arLineTags, order, item, condiment, null);
+        addPrintLines(arPrint, s);
+
+    }
+
+    private void printModifier(PrintOrderState state, KDSDataOrder order,ArrayList<String> arLineTags, ArrayList<String> arPrint )
+    {
+        state.afterPrint(ForeachPrint.Modifier);
+        int nItem = state.m_nItemsIndex;
+        KDSDataItem item = order.getItems().getItem(nItem);
+        KDSDataModifier modifier = item.getModifiers().getModifier(state.m_nModifiersIndex);
+        String s = makeTagsString(arLineTags, order, item, null, modifier);
+        addPrintLines(arPrint, s);
+
+    }
+    enum ForeachPrint
+    {
+        Normal,
+        Item,
+        Condiment,
+        Modifier
+    }
+    class PrintOrderState
+    {
+        int m_nItemsIndex = -1;
+        int m_nCondimentsIndex = -1;
+        int m_nModifiersIndex = -1;
+        public void reset()
+        {
+            m_nItemsIndex = -1;
+            m_nCondimentsIndex = -1;
+            m_nModifiersIndex = -1;
+        }
+        public void startNewItem()
+        {
+            m_nCondimentsIndex = -1;
+            m_nModifiersIndex = -1;
+        }
+        public  void afterPrint(ForeachPrint foreachPrint)
+        {
+            switch (foreachPrint)
+            {
+
+                case Normal:
+                    break;
+                case Item:
+                    m_nItemsIndex ++;
+                    startNewItem();
+                    break;
+                case Condiment:
+                    m_nCondimentsIndex ++;
+                    break;
+                case Modifier:
+                    m_nModifiersIndex ++;
+                    break;
+            }
+        }
+    }
+
+    private void printLogo(PrintOrderState state, KDSDataOrder order,ArrayList<String> arLineTags, ArrayList<String> arPrint )
+    {
+        String s = makeTagString(TAG_LOGO, null, null, null, null);
+        addPrintLines(arPrint, s);
+
+    }
+
+    KDSPrintImage m_logoData = new KDSPrintImage();
+    private boolean isLogoDataReady()
+    {
+        return (m_logoData.getDataSize() >0);
+    }
+
+    final int IMAGE_EACH_SIZE = 2048; //2k
+    /**
+     * send real command here.
+     */
+    private void sendLogoDataToPrinter()
+    {
+
+        if (!isLogoDataReady()) {
+            if (!m_strLogoFile.isEmpty())
+                m_logoData.printPicture(m_strLogoFile, -1, KDSPrintImage.Image_Align_Center);
+        }
+        if (isLogoDataReady())
+        {
+            int nlen = m_logoData.getDataSize();
+            byte[] buffer = new byte[nlen];
+            m_logoData.getData(buffer);
+            int nloop = nlen / IMAGE_EACH_SIZE;
+            if ((nlen % IMAGE_EACH_SIZE) >0)
+                nloop ++;
+            int offset = 0;
+            int nsize = 0;
+            //slow down printing speed
+            for (int i=0; i< nloop; i++) {
+                offset = i * IMAGE_EACH_SIZE;
+                nsize = IMAGE_EACH_SIZE;
+                if (offset + nsize > nlen)
+                    nsize = nlen - offset;
+                m_bemaPrinter.write(buffer, offset, nsize);
+                try {
+                    Thread.sleep(10);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+        Log.i(TAG, "Print logo command here");
     }
 }

@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name='app_name'>KitchenGo Premium</string>
+	<string name='main_title'>KitchenGo Premium KDS</string>
+	<string name='order_queue_display_title'>Exibição da Fila de Pedidos</string>
+	<string name='action_settings'>Configurações</string>
+	<string name='title_activity_kdsuistations'>Relacionamento</string>
+	<string name='title_activity_kdsactivity_unbump'>Unbumpar pedido</string>
+	<string name='title_activity_kdsuistations_config'>Configurações</string>
+	<string name='title_activity_kdsuiretrive_config'>Replicar configurações de outra estação</string>
+	<string name='menu_activity_cleardb'>Limpar banco de dados</string>
+	<string name='menu_activity_showip'>Ver meu IP</string>
+	<string name='menu_activity_touchpad'>Ligar/desligar Touchpad</string>
+	<string name='menu_activity_export'>Exportar configurações</string>
+	<string name='menu_activity_import'>Importar configurações</string>
+	<string name='menu_activity_stations'>Mostrar estações ativas</string>
+	<string name='touchpad_next'>Próx.</string>
+	<string name='touchpad_prev'>Ant.</string>
+	<string name='touchpad_up'>Acima</string>
+	<string name='touchpad_down'>Abaixo</string>
+	<string name='touchpad_bump'>Bumpar</string>
+	<string name='touchpad_unbump'>Unbumpar</string>
+	<string name='touchpad_unbump_last'>Unbump Últ.</string>
+	<string name='touchpad_sum'>Somar</string>
+	<string name='touchpad_transfer'>Transferir</string>
+	<string name='touchpad_sort'>Ordenar</string>
+	<string name='touchpad_test'>Testar</string>
+	<string name='touchpad_more'>Mais</string>
+	<string name='touchpad_active'>Estações Ativas</string>
+	<string name='touchpad_exit'>Sair</string>
+	<string name='touchpad_park'>Estacionar</string>
+	<string name='touchpad_unpark'>Desestacionar</string>
+	<string name='touchpad_print'>Imprimir</string>
+	<string name='touchpad_buildcard'>Cartão</string>
+	<string name='touchpad_training'>Treinamento</string>
+	<string name='touchpad_page'>Página</string>
+	<string name='sort_time_ascend'>Tempo de espera menor p/ maior</string>
+	<string name='sort_time_descen'>Tempo de espera maior p/ menor</string>
+	<string name='sort_name_ascend'>Número do pedido menor p/ maior</string>
+	<string name='sort_name_descend'>Número do pedido maior p/ menor</string>
+	<string name='sort_count_ascend'>Quantidade de itens menor p/ maior</string>
+	<string name='sort_count_descend'>Quantidade de itens maior p/ menor</string>
+	<string name='sort_preptime_ascend'>Tempo de preparo menor p/ maior</string>
+	<string name='sort_preptime_descend'>Tempo de preparo maior p/ menor</string>
+	<string name='restore'>Restaurar</string>
+	<string name='unpark'>Desestacionar</string>
+	<string name='addon'>Complemento</string>
+	<string name='str_default'>Padrão</string>
+	<string name='order_state_waiting'>Aguardando</string>
+	<string name='order_state_processing'>Processando</string>
+	<string name='order_state_delivering'>Entregando no balcão</string>
+	<string name='order_state_sold_out'>Esgotado</string>
+	<string name='order_state_others'>Outros</string>
+	<string name='info_first_message'>Mensagens do KDS da Logic Controls</string>
+	<string name='confirm_remove_relations_expo'>Estação Expedidora # será removida da coluna Exp, tem certeza que deseja continuar?</string>
+	<string name='confirm_clear_db'>Deseja limpar o banco de dados?</string>
+	<string name='clear_db'>Limpar banco de dados</string>
+	<string name='confirm_export_db'>Deseja exportar as configurações para</string>
+	<string name='confirm_import_db'>Deseja importar as configurações de</string>
+	<string name='data_backup_to'>Os dados foram copiados para</string>
+	<string name='save'>Salvar</string>
+	<string name='input_station_id'>Esta estação não tem um ID ainda. Você não poderá usá-la enquanto não configurar seu ID!</string>
+	<string name='input_id_title'>Por favor, entre com o ID da estação (0-99)</string>
+	<string name='confirm_bump_normal'>Deseja bumpar o pedido # ?</string>
+	<string name='confirm_bump_expo_outstanding'>Pedido # contém itens pendentes. Deseja bumpar ainda assim?</string>
+	<string name='error_isnot_unique_id'>O ID # já está sendo usado. Por favor, altere.</string>
+	<string name='error_id_out_range'>Por favor, digite um ID entre 0 e 99.</string>
+	<string name='error_id_is_empty'>Por favor, digite um ID</string>
+	<string name='error_different_relations'>A relação entra as estações está diferente das demais. Por favor, edite-a primeiramente.</string>
+	<string name='error_match_mac'>Por favor, execute em um dispositivo da Logic Controls</string>
+	<string name='back'>Voltar</string>
+	<string name='clear_messages'>Limpar registros</string>
+	<string name='cook_started'>Preparo iniciado</string>
+	<string name='build_card'>Cartões</string>
+	<string name='training_video'>Vídeo de treinamento</string>
+	<string name='settings'>Configurações</string>
+	<string name='unbump_order_help'>[0]--[9] Toque único para selecionar pedido, duplo para restaurar.
+# sair.</string>
+	<string name='unpark_order_help'>[0]--[9] Toque único para selecionar pedido, duplo para desestacionar.
+# sair.</string>
+	<string name='find'>Buscar</string>
+	<string name='transfer_select_order_warn'>Por favor, selecione um pedido.</string>
+	<string name='transfer_select_station_title'>Por favor, selecione a estação para a qual deseja transferir o pedido:</string>
+	<string name='ip_search_title_id'>ID</string>
+	<string name='ip_search_title_ip'>Endereço IP</string>
+	<string name='ip_search_title_port'>Porta</string>
+	<string name='park_count'>Estacionar:</string>
+	<string name='error_relations_mirror_dead_loop'>Erro \'dead loop\' das estações Espelho #.</string>
+	<string name='error_relations_backup_dead_loop'>Erro \'dead loop\' das estações Backup #.</string>
+	<string name='network_lost'>Rede perdida</string>
+	<string name='network_restore'>Rede restaurada</string>
+	<string name='paid'>Pago</string>
+	<string name='unpaid'>Não pago</string>
+	<string name='inprogress'>Em andamento</string>
+	<string name='no_build_card'>Não há cartões para o item escolhido</string>
+	<string name='no_training_video'>Não há video de treinamento para o item escolhido</string>
+	<string name='must_select_item'>Por favor, selecione um item</string>
+	<string name='invalid_image_file'>Arquivo de imagem inválido:</string>
+	<string name='unknown_file_format'>Formato desconhecido:</string>
+	<string name='no_more_unbump_order'>Sem mais pedidos unbumpados</string>
+	<string name='backup_of'>Backup de</string>
+	<string name='mirror_of'>Espelho de</string>
+	<string name='duplicated_of'>Duplicado de</string>
+	<string name='workloan_of'>Carga de trabalho de</string>
+	<string name='input_ready_qty'>Digite a quantidade pronta</string>
+	<string name='queue_status_received'>Pedido Recebido</string>
+	<string name='queue_status_preparation'>Em Preparação</string>
+	<string name='queue_status_ready'>Pedido pronto</string>
+	<string name='queue_status_pickup'>Pronto para Retirada</string>
+	<string name='queue_mode_panel'>Modo Painel</string>
+	<string name='queue_mode_simple'>Modo ID</string>
+	<string name='tracker_caption_order_name'>Nome do Pedido</string>
+	<string name='tracker_caption_table_name'>Local</string>
+	<string name='confirm_reset_tt_authen'>Gostaria de redefinir os valores salvos de autenticação?</string>
+	<string name='reset_authen'>Redefinir valores salvos de autenticação</string>
+	<string name='tt_bump_clear'>Limpar todos os pedidos ativos</string>
+	<string name='tt_bump_page'>Chamar Pager</string>
+	<string name='tt_tracker_id'>ID do Rastreador</string>
+	<string name='tt_bump_current'>Remover</string>
+	<string name='tt_authen_press_button'>Pressione o botão no Gateway para conectar o KDS.</string>
+	<string name='tt_connect_error'>Não foi possível conectar ao rastreador</string>
+	<string name='tt_unassigned'>Não atribuído</string>
+	<string name='tt_trackerid_error'>ID não atribuído</string>
+	<string name='tracker_id'>Atribuir um ID ao rasteador</string>
+	<string name='tt_connect_successful'>Conexão com o Gateway bem sucedida.</string>
+	<string name='station_id'>ID da estação</string>
+	<string name='str_new'>Novo</string>
+	<string name='remove'>Remover</string>
+	<string name='add'>Adicionar</string>
+	<string name='edit'>Editar</string>
+	<string name='del'>Apagar</string>
+	<string name='active_stations'>Estações ativas</string>
+	<string name='holder_id'>ID do Suporte</string>
+	<string name='table_name'>Nome da tabela</string>
+	<string name='station_number'>Número da estação</string>
+	<string name='ip_address'>Endereço IP</string>
+	<string name='ip_port'>Porta</string>
+	<string name='title_activity_kdsactivity_settings'>Configurações do KDS</string>
+	<string name='pref_header_general'>Geral</string>
+	<string name='pref_kds_general_title_number'>Número da estação</string>
+	<string name='pref_kds_general_title_data_source'>Origem dos pedidos</string>
+	<string name='pref_kds_general_title_tcp_port'>Porta TCP da origem dos pedidos</string>
+	<string name='pref_kds_general_title_remote_folder'>Pasta remota da origem dos pedidos</string>
+	<string name='pref_kds_general_title_stations_port'>Porta TCP de comunicação entre estações</string>
+	<string name='pref_kds_stations_title_relations'>Relacionamento</string>
+	<string name='pref_kds_general_users'>Modo de tela</string>
+	<string name='pref_kds_panels_font'>Propriedades do Painel</string>
+	<string name='pref_kds_panels_bg'>Cor de fundo do Painel</string>
+	<string name='pref_kds_panels_row_height'>Altura da linha do texto</string>
+	<string name='pref_kds_panels_viewer_bg'>Cor de fundo da tela</string>
+	<string name='pref_kds_panels_title_mode'>Modo do Painel</string>
+	<string name='pref_kds_panels_title_rows'>Número de linhas do painel</string>
+	<string name='pref_kds_panels_title_cols'>Número de colunas do painel</string>
+	<string name='pref_kds_panels_show_number'>Exibir número do painel</string>
+	<string name='pref_kds_panels_number_font'>Número da fonte do painel</string>
+	<string name='pref_kds_panelnum_base'>Número do painel inicial</string>
+	<string name='pref_kds_panelnum_bgfg'>Cor de fundo do número do painel</string>
+	<string name='pref_kds_caption_color_according_to_time'>Colorir de acordo com o tempo decorrido</string>
+	<string name='pref_kds_caption_title'>Cabeçalho do pedido</string>
+	<string name='pref_kds_caption_stage0_enabled'>Alterar cor de acordo com o tempo decorrido</string>
+	<string name='pref_kds_caption_stage1_enabled'>Alterar cor de acordo com o tempo decorrido</string>
+	<string name='pref_kds_caption_stage2_enabled'>Alterar cor de acordo com o tempo decorrido</string>
+	<string name='pref_kds_caption_time'>Tempo (Minutos)</string>
+	<string name='pref_kds_caption_color'>Cor</string>
+	<string name='pref_kds_caption_contents'>Conteúdo do cabeçalho</string>
+	<string name='pref_kds_caption_left'>Informação à esquerda</string>
+	<string name='pref_kds_caption_center'>Informação ao centro</string>
+	<string name='pref_kds_caption_right'>Informação à direita</string>
+	<string name='pref_kds_caption_2_contents'>Segunda linha do cabeçalho</string>
+	<string name='pref_kds_caption_2_left'>Conteúdo da segunda linha do cabeçalho (esquerda)</string>
+	<string name='pref_kds_caption_2_center'>Conteúdo da segunda linha do cabeçalho (centro)</string>
+	<string name='pref_kds_caption_2_right'>Conteúdo da segunda linha do cabeçalho (direita)</string>
+	<string name='pref_kds_caption_enable_cap2'>Ativar segunda linha do cabeçalho</string>
+	<string name='pref_kds_item_title'>Itens dos pedidos</string>
+	<string name='pref_kds_item_enable_consolidate'>Consolidar itens do pedido</string>
+	<string name='pref_kds_item_highlight_mark'>Item selecionado</string>
+	<string name='pref_kds_item_bumped_mark'>Marcar itens finalizados com</string>
+	<string name='pref_kds_item_bumped_mark_in_exp'>Marcar na estação expedidora um item que foi finalizado em outra com</string>
+	<string name='pref_kds_item_mark_with_char'>Marcar item com caractere</string>
+	<string name='pref_kds_item_void'>Marcar item cancelado com</string>
+	<string name='pref_kds_item_changed'>Marcar item alterado com</string>
+	<string name='pref_kds_item_showing_method'>Método de exibição do item</string>
+	<string name='pref_kds_condiment_title'>Condimentos</string>
+	<string name='pref_kds_condiment_default_font'>Fonte do condimento</string>
+	<string name='pref_kds_condiment_start_position'>Posição do condimento</string>
+	<string name='pref_kds_condiment_start_position_title'>Coluna inicial do condimento</string>
+	<string name='pref_kds_premsg_title'>Pré-mensagem</string>
+	<string name='pref_premsg_font'>Fonte da Pré-mensagem</string>
+	<string name='pref_kds_footer_title'>Rodapé do pedido</string>
+	<string name='pref_kds_footer_enabled'>Rodapé ativado</string>
+	<string name='pref_kds_footer_left'>Informação à esquerda</string>
+	<string name='pref_kds_footer_right'>Informação à direita</string>
+	<string name='pref_kds_footer_center'>Informação ao centro</string>
+	<string name='pref_kds_footer_font'>Fonte do rodapé</string>
+	<string name='pref_kds_information_enabled'>Mostrar registros</string>
+	<string name='pref_kds_password_enabled'>Requisitar senha para acessar as configurações</string>
+	<string name='pref_kds_password_text'>Senha</string>
+	<string name='pref_kds_notification_enabled'>Ativar notificações de bump</string>
+	<string name='pref_kds_bumping_title'>Finalização de pedidos</string>
+	<string name='pref_kds_bumping_reserve_days'>Guardar pedidos bumpados por X dias</string>
+	<string name='pref_kds_bumping_by_panelnumber'>Finalizar utilizando número do painel</string>
+	<string name='pref_kds_bumpbar_title'>Atribuição de Bumpbar</string>
+	<string name='pref_kds_bumpbar_types'>Tipo de teclado</string>
+	<string name='pref_bumpbar_func_bump'>Bumpar</string>
+	<string name='pref_bumpbar_func_unbump'>Unbumpar</string>
+	<string name='pref_bumpbar_func_unbumplast'>Unbumpar último</string>
+	<string name='pref_kds_printer_title'>Impressora</string>
+	<string name='pref_kds_printer_enabled'>Impressora habilitada</string>
+	<string name='pref_kds_printer_port'>Tipo de porta da impressora</string>
+	<string name='pref_kds_printer_type'>Tipo de impressora</string>
+	<string name='pref_kds_printer_ip'>Endereço IP</string>
+	<string name='pref_kds_printer_ipport'>Número da porta IP</string>
+	<string name='pref_kds_printer_serial'>Número da porta serial</string>
+	<string name='pref_kds_printer_copies'>Cópias</string>
+	<string name='pref_kds_printer_chars_width'>Caracteres por linha</string>
+	<string name='pref_kds_printer_codepage'>Pág. de Código</string>
+	<string name='pref_kds_printer_howtoprint'>Como imprimir um pedido</string>
+	<string name='pref_kds_printer_baudrate'>Taxa de transmissão</string>
+	<string name='pref_kds_orders_sort'>Ordenar pedidos</string>
+	<string name='pref_kds_orders_sort_rush_front'>Mover os pedidos urgentes para o início da fila</string>
+	<string name='pref_kds_printer_template'>Definição do modelo do Ticket</string>
+	<string name='pref_kds_smartorder_title'>Pedido inteligente</string>
+	<string name='pref_kds_smartorder_enabled'>Pedido inteligente ativado</string>
+	<string name='pref_kds_smartorder_showing'>Modo de exibição dos pedidos</string>
+	<string name='pref_kds_beeper_title'>Sinalizador (Beep)</string>
+	<string name='pref_kds_beeper_enabled'>Ativar sinalizador</string>
+	<string name='pref_kds_beeper_type'>Quando deve sinalizar?</string>
+	<string name='pref_kds_highlight_title'>Pedidos especiais</string>
+	<string name='pref_kds_highlight_rush_enabled'>Destacar pedidos urgentes (RUSH)</string>
+	<string name='pref_kds_rush_bg'>Cor de fundo de pedidos urgentes (RUSH)</string>
+	<string name='pref_kds_rush_fg'>Cor do texto de pedidos urgentes (RUSH)</string>
+	<string name='pref_kds_rush_bgfg'>Cor de fundo de pedidos urgentes (RUSH)</string>
+	<string name='pref_kds_highlight_fire_enabled'>Destacar pedidos que devem ser entregues assim que preparados (FIRE)</string>
+	<string name='pref_kds_fire_bg'>Cor de fundo de pedidos que devem ser entregues assim que preparados (FIRE)</string>
+	<string name='pref_kds_fire_fg'>Cor do texto de pedidos que devem ser entregues assim que preparados (FIRE)</string>
+	<string name='pref_kds_fire_bgfg'>Cor de fundo de pedidos que devem ser entregues assim que preparados (FIRE)</string>
+	<string name='pref_kds_highlight_dest_enabled'>Destacar destino</string>
+	<string name='pref_kds_dest_bg'>Cor de fundo do Destino</string>
+	<string name='pref_kds_dest_fg'>Cor do texto do Destino</string>
+	<string name='pref_kds_dest_bgfg'>Cores de fundo e fonte para pedidos com destino</string>
+	<string name='pref_kds_expalert_title'>Alerta do Expedidor</string>
+	<string name='pref_kds_panelnum_focus_enabled'>Usar número do painel para selecionar</string>
+	<string name='pref_kds_exp_alert_enabled'>Ativar alerta do Expedidor</string>
+	<string name='pref_kds_exp_alert_color'>Alterar cor do painel para</string>
+	<string name='pref_kds_exp_alert_change_panel'>Alterar toda a cor do painel</string>
+	<string name='pref_kds_sum_title'>Resumo</string>
+	<string name='pref_kds_sum_type'>Método de resumo</string>
+	<string name='pref_kds_sum_position'>Posição do resumo</string>
+	<string name='pref_kds_sum_order_by'>Resumir pedido por</string>
+	<string name='id'>ID</string>
+	<string name='mirror'>Espelho</string>
+	<string name='backup'>Backup</string>
+	<string name='pref_kds_touch_font'>Fonte dos botões Touch</string>
+	<string name='pref_kds_touch_title'>Botões Touch</string>
+	<string name='pref_kds_touch_next_enabled'>Habilitar botão touch [próx.]</string>
+	<string name='pref_kds_touch_prev_enabled'>Habilitar botão touch [ant.]</string>
+	<string name='pref_kds_touch_up_enabled'>Habilitar botão touch [acima]</string>
+	<string name='pref_kds_touch_down_enabled'>Habilitar botão touch [abaixo]</string>
+	<string name='pref_kds_touch_bump_enabled'>Habilitar botão touch [bump]</string>
+	<string name='pref_kds_touch_unbump_enabled'>Habilitar botão touch [unbump]</string>
+	<string name='pref_kds_touch_unbumplast_enabled'>Habilitar botão touch [unbump últ.]</string>
+	<string name='pref_kds_touch_sum_enabled'>Habilitar botão touch [soma]</string>
+	<string name='pref_kds_touch_transfer_enabled'>Habilitar botão touch [transferir]</string>
+	<string name='pref_kds_touch_sort_enabled'>Habilitar botão touch [ordenar]</string>
+	<string name='pref_kds_touch_park_enabled'>Habilitar botão touch [estaciona]</string>
+	<string name='pref_kds_touch_unpark_enabled'>Habilitar botão touch [desest.]</string>
+	<string name='pref_kds_touch_print_enabled'>Habilitar botão touch [imprimir]</string>
+	<string name='pref_kds_touch_more_enabled'>Habilitar botão touch [mais]</string>
+	<string name='pref_kds_touch_test_enabled'>Habilitar botão touch [teste]</string>
+	<string name='pref_kds_touch_buildcard_enabled'>Habilitar botão touch [cartão]</string>
+	<string name='pref_kds_touch_training_enabled'>Habilitar botão touch [treinamento]</string>
+	<string name='pref_kds_touch_page_enabled'>Habilitar botão touch [página]</string>
+	<string name='pref_kds_screen_title_font'>Fonte do nome da Estação</string>
+	<string name='pref_kds_screen_show_time'>Exibir data e hora</string>
+	<string name='pref_kds_bump_confirm_enabled'>Exibir mensagem de confirmação após finalizar um pedido</string>
+	<string name='pref_kds_orders_display'>Exibição dos pedidos</string>
+	<string name='pref_kds_category_orders'>Pedidos</string>
+	<string name='pref_kds_category_ordercontent'>Conteúdo dos pedidos</string>
+	<string name='pref_kds_category_footer'>Rodapé dos pedidos</string>
+	<string name='pref_kds_category_operations'>Operações dos pedidos</string>
+	<string name='pref_kds_category_others'>Outros</string>
+	<string name='pref_kds_category_accessories'>Acessórios</string>
+	<string name='pref_kds_category_extra_func'>Funcionalidade extra</string>
+	<string name='pref_order_focus_color'>Escolher cor do contorno do pedido</string>
+	<string name='pref_order_border_color'>Cor do contorno do pedido</string>
+	<string name='pref_order_caption_normal_font'>Fonte do cabeçalho</string>
+	<string name='pref_kds_item_premsg_above'>Exibir mensagem acima do item.</string>
+	<string name='pref_kds_order_premsg_bottom'>Exibir mensagem abaixo do item.</string>
+	<string name='item_font'>Fonte do item</string>
+	<string name='focus_next'>Focar no próximo</string>
+	<string name='focus_prev'>Focar no anterior</string>
+	<string name='focus_up'>Focar acima</string>
+	<string name='focus_down'>Focar abaixo</string>
+	<string name='show_summary'>Exibir/Ocultar resumo</string>
+	<string name='transfer_order'>Transferir pedidos para outra estação</string>
+	<string name='sort_orders'>Ordenar pedidos</string>
+	<string name='park'>Estacionar</string>
+	<string name='bumpbar_unpark'>Desestacionar</string>
+	<string name='more'>Mais</string>
+	<string name='page'>Página</string>
+	<string name='print'>Imprimir</string>
+	<string name='buildcard'>Cartão</string>
+	<string name='training'>Treinamento</string>
+	<string name='enable_userb_bumpbar'>Habilitar Bumpbar de usuário B</string>
+	<string name='switch_user'>Trocar foco do usuário</string>
+	<string name='pref_message_from_primary'>Mensagem para estação Backup de pedidos transferidos da estação Primária</string>
+	<string name='pref_from_primary_text'>Mensagem</string>
+	<string name='pref_from_primary_font'>Fonte</string>
+	<string name='from_primary_default_text'>----Transferido do principal----</string>
+	<string name='pref_kds_hide_navigation_bar'>Ocultar barra de navegação</string>
+	<string name='pref_kds_media_title'>Cartão/Treinamento</string>
+	<string name='pref_kds_media_auto_delay'>Intervalo para virar imagens (seg)</string>
+	<string name='pref_kds_media_default_vol'>Volume padrão (0-15)</string>
+	<string name='pref_kds_panel_border_width'>Espessura do contorno do pedido</string>
+	<string name='pref_kds_bumping_auto_enabled'>Habilitar finalização automática dos pedidos</string>
+	<string name='pref_kds_bumping_auto_minutes'>Finalização automática (minutos)</string>
+	<string name='pref_kds_bumping_double_queue_enabled'>Bumpar fila do pedido pelo Expedidor</string>
+	<string name='pref_kds_bumping_double_queue_enabled_sum'>Pressionar Bump no Expedidor para exibir status de pedido pronto na estação Fila. Pressionar Bump novamente para bumpar os pedidos nas duas estações.</string>
+	<string name='pref_queue_show_order_id'>Exibir ID do pedido</string>
+	<string name='queue_order_id_font'>Fonte do ID do pedido</string>
+	<string name='pref_queue_show_customer_name'>Exibir nome do consumidor</string>
+	<string name='queue_customer_name_font'>Fonte do nome do consumidor</string>
+	<string name='pref_queue_show_order_timer'>Exibir tempo decorrido do pedido</string>
+	<string name='queue_order_timer_font'>Fonte do tempo decorrido do pedido</string>
+	<string name='pref_queue_show_custom_message'>Exibir mensagem personalizada na visualização de Fila</string>
+	<string name='queue_custom_message_font'>Fonte da mensagem personalizada da visualização de Fila</string>
+	<string name='pref_queue_move_ready_to_front'>Mover pedidos prontos para a frente</string>
+	<string name='pref_queue_simple_show_received_col'>Mostrar colunas status 1</string>
+	<string name='pref_queue_simple_show_preparation_col'>Mostrar colunas status 2</string>
+	<string name='pref_queue_simple_show_ready_col'>Mostrar colunas status 3</string>
+	<string name='pref_queue_simple_show_pickup_col'>Mostrar colunas status 4</string>
+	<string name='pref_queue_flash_ready_order'>Piscar pedido pronto</string>
+	<string name='pref_queue_flash_ready_customer_name'>Piscar nome do cliente de pedido pronto</string>
+	<string name='pref_queue_flash_ready_order_status'>Piscar status de pedido pronto</string>
+	<string name='queue_order_received_message'>Mensagem do Status 1</string>
+	<string name='queue_order_received_font'>Fonte da mensagem do pedido Status 1</string>
+	<string name='queue_order_preparation_message'>Mensagem do Status 2</string>
+	<string name='queue_order_preparation_font'>Fonte da mensagem do pedido Status 2</string>
+	<string name='queue_order_ready_message'>Mensagem do Status 3</string>
+	<string name='queue_order_ready_font'>Fonte da mensagem do pedido Status 3</string>
+	<string name='queue_order_pickup_message'>Mensagem do Status 4</string>
+	<string name='queue_order_pickup_font'>Fonte da mensagem do pedido Status 4</string>
+	<string name='pref_queue_cols'>Mostrar colunas de exibição (1-4)</string>
+	<string name='pref_queue_mode'>Modo de espectador</string>
+	<string name='pref_queue_cell_height'>Altura do painel do pedido</string>
+	<string name='pref_queue_panel_ratio'>Propriedades do painel da Fila ocupam % (propriedades:status)</string>
+	<string name='pref_queue_more_orders_message'>Mensagem de mais pedidos</string>
+	<string name='more_orders'>Mais pedidos</string>
+	<string name='pref_kds_queue_title'>Exibição de Fila</string>
+	<string name='pref_queue_bg'>Cor de fundo</string>
+	<string name='pref_queue_simple_line_color'>Cor de fundo da linha de separação das colunas</string>
+	<string name='pref_queue_show_finished_orders_at_right'>Exibir ordens finalizadas ao lado direito</string>
+	<string name='queue_title_message'>Mensagem do título do cabeçalho</string>
+	<string name='queue_default_title'>Verifique o status do pedido aqui</string>
+	<string name='pref_kds_sound_title'>Som</string>
+	<string name='pref_kds_sound_enabled'>Som ativado</string>
+	<string name='pref_kds_sound_bump_order'>Som ao Bumpar pedido</string>
+	<string name='pref_kds_sound_unbump_order'>Som ao Unbumpar pedido</string>
+	<string name='pref_kds_sound_new_order'>Som ao novo pedido</string>
+	<string name='pref_kds_sound_order_changed'>Som ao modificar pedido</string>
+	<string name='pref_kds_sound_duration'>Duração do som (segundos)</string>
+	<string name='pref_kds_sound_transfer_order'>Transferir pedidos</string>
+	<string name='pref_kds_sound_backup_activation'>Ativação de estação de backup</string>
+	<string name='pref_kds_sound_backup_station_orders_received'>Pedidos recebidos da estação de backup</string>
+	<string name='pref_kds_sound_order_timer_alert1'>Alerta 1 do tempo do pedido</string>
+	<string name='pref_kds_sound_order_timer_alert2'>Alerta 2 do tempo do pedido</string>
+	<string name='pref_kds_sound_order_timer_alert3'>Alerta 3 do tempo do pedido</string>
+	<string name='pref_kds_sound_expo_order_complete'>Pedido concluído pelo Expedidor</string>
+	<string name='pref_queue_auto_pages_switch_duration'>Duração da mudança automática (segundos)</string>
+	<string name='pref_tracker_title'>Rastreador de mesa</string>
+	<string name='pref_tracker_enabled'>Rastreador de mesa ativado</string>
+	<string name='pref_tracker_enabled_summary'>Usar rastreador de mesa para localizar o consumidor</string>
+	<string name='pref_tracker_ip'>IP do servidor do Rastreador de mesa</string>
+	<string name='pref_tracker_number_from_userinfo'>O número do rastreador vem de \</string>
+	<string name='pref_tracker_number_from_userinfo_summary'>O programa PDV pode usar \</string>
+	<string name='pref_kds_tracker_map'>ID e mapa do local</string>
+	<string name='tracker_title_message'>Mensagem do título do cabeçalho</string>
+	<string name='tracker_default_title'>Local do rastreador</string>
+	<string name='pref_tracker_cols'>Exibir colunas do rastreador (1-4)</string>
+	<string name='pref_tracker_cell_height'>Altura do painel do rastreador</string>
+	<string name='pref_tracker_auto_pages_switch_duration'>Duração da mudança automática (segundos)</string>
+	<string name='tracker_order_name_font'>Fonte do nome do pedido do rastreador</string>
+	<string name='tracker_table_name_font'>Fonte do nome do local do rastreador</string>
+	<string name='pref_tracker_more_orders_message'>Mais mensagens do pedido</string>
+	<string name='pref_tracker_auto_assign_timeout'>Atribuir automaticamente tempo limite do ID do rastreador (segundos)</string>
+	<string name='pref_tracker_auto_remove_after_expo_bump_timeout'>Tempo limite de auto bumpar depois que o Expedidor bumpou o pedido (minutos)</string>
+	<string name='pref_tracker_alert_order_not_bump_timeout'>Tempo limite para pedido que não foi bumpado depois de um longo tempo (minutos)</string>
+	<string name='pref_tracker_alert_font'>Fonte de alerta</string>
+	<string name='pref_tracker_enable_auto_bump'>Ativar bump automático</string>
+	<string name='pref_pager_id_from_userinfo'>O número do pager vem de \</string>
+	<string name='pref_pager_id_from_userinfo_summary'>O programa PDV pode usar \</string>
+	<string name='pref_pager_enabled'>Ativar pager</string>
+	<string name='pref_pager_delay'>Tempo para chamar o pager depois que o Expedidor bumpar o pedido</string>
+	<string name='pref_pager_title'>Pager</string>
+	<string name='restart_kds_as_language'>É necessário reiniciar para mudar o idioma para #. Deseja mudar o idioma e reiniciar agora?</string>
+	<string name='retrieve_remote_settings'>Replicar configurações de outra estação</string>
+	<string name='select_order_status'>Selecione o status de [</string>
+	<string name='manually'>Manualmente</string>
+	<string name='choose_sound'>Escolha o som</string>
+	<string name='waiting_for_config_data'>Aguardando dados de configuração...</string>
+	<string name='waiting_for_new_connection'>Aguardando nova conexão...</string>
+	<string name='station_is_not_active'>Estação não está ativa...</string>
+	<string name='waiting_for_connecting'>Aguardando conexão...</string>
+	<string name='can_not_get_file'>Não foi possível obter: #</string>
+	<string name='pref_kds_language'>Idioma</string>
+	<string name='data_restored'>Os dados foram recuperados de #</string>
+	<string name='pref_kds_bumping_reserve_max'>Quantidade de pedidos finalizados no backup</string>
+	<string name='pref_kds_auto_backup_enabled'>Ativar backup automático do banco de dados</string>
+	<string name='pref_kds_auto_backup_hours'>Frequência do backup automático (horas)</string>
+	<string name='restore_customer_backup_db'>Restaurar banco de dados de backup feito pelo usuário</string>
+	<string name='restore_auto_backup_db'>Restaurar banco de dados de backup automático feito pelo KDS</string>
+	<string name='restore_db_successfully'>Banco de dados restaurado com sucesso</string>
+	<string name='restore_db_failed'>Recuperação do banco de dados falhou</string>
+	<string name='menu_activity_restore'>Recuperar banco de dados</string>
+	<string name='confirm_restore_db'>Gostaria de recuperar o banco de dados e as configurações?</string>
+	<string name='restore_database'>Recuperar banco de dados</string>
+	<string name='run_database_utility'>Rodar utilitário do banco de dados</string>
+	<string name='ignore'>Ignorar</string>
+	<string name='reset_database'>Redefinir banco de dados</string>
+	<string name='abort'>Abortar</string>
+	<string name='db_error_detected'>Erro no banco de dados detectado.</string>
+	<string name='db_will_clear'>Banco de dados será limpo!</string>
+	<string name='data_will_lost'>Dados podem ser perdidos!</string>
+	<string name='browse'>Procurar</string>
+	<string name='data_restore_failed'>Restauração de dados de # falhou</string>
+	<string name='load'>Carregar</string>
+	<string name='load_old_db_or_not'>Existem configurações e dados antigos, deseja carregá-los?</string>
+	<string name='queue_expo_title'>Estação Fila-Exp</string>
+	<string name='qexpo_bumpbar_pickup'>Tecla - Pronto para retirada</string>
+	<string name='qexpo_bumpbar_unpickup'>Tecla - Não está pronto para retirada</string>
+	<string name='pref_kds_qexpo_title'>Fila-Exp</string>
+	<string name='pref_tracker_id_from_userinfo_or_guesttable'>O número do rastreador é de \</string>
+	<string name='pref_pager_id_from_userinfo_guesttable'>O número do pager é de \</string>
+	<string name='tracker_reverse_color_ttid_empty'>Reverter cor se o ID do rastreador estiver vazio</string>
+	<string name='pref_tracker_show_assigned_tracker_id'>Exibir ID do Rastreador associado</string>
+	<string name='pref_tracker_id_font'>Fonte do ID do rastreador</string>
+	<string name='pref_tracker_auto_assign_id'>Habilitar associar automaticamente ID do Rastreador</string>
+	<string name='tt_extra_id_location'>Localização</string>
+	<string name='tracker_can_not_find'>Não foi possível encontrar o Rastreador</string>
+	<string name='tt_discorvery_failed'>Falha ao Parar a Descoberta</string>
+	<string name='tt_start_discovery_failed'>Falha ao Iniciar a Descoberta</string>
+	<string name='tt_service_lost'>Serviço perdido</string>
+	<string name='tt_gateway_find'>Gateway do rastreador encontrado</string>
+	<string name='tt_discovery_stop'>Descoberta parou</string>
+	<string name='tt_discovery_started'>Descoberta iniciada</string>
+	<string name='tt_need_reset'>Conexão ao gateway não está ativa, pressione o botão no gateway para conectar.</string>
+	<string name='pref_kds_general_users_orientation'>Divisão de tela</string>
+	<string name='pref_kds_general_title'>Personalizar nome da estação</string>
+	<string name='pref_kds_general_users_ratio'>Proporção da tela</string>
+	<string name='pref_kds_general_subtitle_font'>Fonte do subtítulo da tela</string>
+	<string name='pref_kds_general_subtitle_a_text'>Título da tela 0</string>
+	<string name='pref_kds_general_subtitle_b_text'>Título da tela 1</string>
+	<string name='screen_a'>Tela 0</string>
+	<string name='screen_b'>Tela 1</string>
+	<string name='summary_for'>Resumo para</string>
+	<string name='summary'>Resumo</string>
+	<string name='pref_kds_screenb_orders_display'>Exibição da tela dividida</string>
+	<string name='pref_queue_simple_combine_status1'>Combinar status 1 com</string>
+	<string name='pref_queue_simple_combine_status2'>Combinar status 2 com</string>
+	<string name='pref_queue_simple_combine_status3'>Combinar status 3 com</string>
+	<string name='pref_queue_simple_combine_status4'>Combinar status 4 com</string>
+	<string name='pref_queue_id_mode_line_bg'>Cor de fundo da quebra de linha do modo ID</string>
+	<string name='line_items_display'>Exibição em tabela</string>
+	<string name='lineitems_caption_font'>Configurações do título da tabela</string>
+	<string name='col_content'>Contagem de Colunas</string>
+	<string name='col_0_text'>Nome da Coluna 0</string>
+	<string name='col_0_size'>Tamanho da Coluna 0</string>
+	<string name='col_0_content'>Conteúdo da Coluna 0</string>
+	<string name='str_id'>ID</string>
+	<string name='lineitems_col1_text'>Nome da Coluna 1</string>
+	<string name='description'>Descrição</string>
+	<string name='lineitems_col1_size'>Tamanho da Coluna 1</string>
+	<string name='lineitems_col1_content'>Conteúdo da Coluna 1</string>
+	<string name='lineitems_col2_text'>Nome da Coluna 2</string>
+	<string name='lineitems_col2_size'>Tamanho da Coluna 2</string>
+	<string name='lineitems_col2_content'>Conteúdo da Coluna 2</string>
+	<string name='lineitems_col3_text'>Nome da Coluna 3</string>
+	<string name='lineitems_col3_size'>Tamanho da Coluna 3</string>
+	<string name='lineitems_col3_content'>Conteúdo da Coluna 3</string>
+	<string name='lineitems_col4_text'>Nome da Coluna 4</string>
+	<string name='lineitems_col4_size'>Tamanho da Coluna 4</string>
+	<string name='lineitems_col4_content'>Conteúdo da Coluna 4</string>
+	<string name='lineitems_col5_text'>Nome da Coluna 5</string>
+	<string name='lineitems_col5_size'>Tamanho da Coluna 5</string>
+	<string name='lineitems_col5_content'>Conteúdo da Coluna 5</string>
+	<string name='condiments'>Condimentos</string>
+	<string name='timer'>Temporizador</string>
+	<string name='lineitems_caption_text'>Título da tabela</string>
+	<string name='no_more_unbump_item'>Sem mais itens unbumpados</string>
+	<string name='advanced_summary'>Resumo avançado</string>
+	<string name='input_item_description'>Entre com o item</string>
+	<string name='enable_advanced_summary'>Habilitar resumo avançado</string>
+	<string name='enable_smart_items_summary_format'>Habilitar formato de resumo de itens inteligentes</string>
+	<string name='add_item'>Acrescentar item</string>
+	<string name='browse_in_item_database'>Procurar no banco de dados de itens</string>
+	<string name='sum_bgfg_color'>Cor de fundo do resumo</string>
+	<string name='screen_default_font'>Fonte padrão da tela</string>
+	<string name='rows'>Linhas:</string>
+	<string name='cols'>Colunas</string>
+	<string name='summary_items'>Itens do resumo</string>
+	<string name='move_up'>Mover para cima</string>
+	<string name='move_down'>Move para baixo</string>
+	<string name='summary_panel_always_visible'>Painel de resumo sempre visível</string>
+	<string name='warning'>Atenção</string>
+	<string name='no_data_in_db'>Banco de dados vazio.</string>
+	<string name='tab_display'>Exibição de guia</string>
+	<string name='input_destination'>Digite o destino</string>
+	<string name='tab_display_next'>Próxima aba</string>
+	<string name='enable_tab_display'>Habilitar exibição de guia</string>
+	<string name='enabled_disply_mode'>Modo de exibição habilitado</string>
+	<string name='down'>Abaixo</string>
+	<string name='pref_title_database_keep_days'>Período de armazenamento das informações</string>
+	<string name='move_to_adjust_column_size'>Mova para ajustar o tamanho da coluna</string>
+	<string name='click_anywhere_to_add_new_column'>Toque em qualquer lugar da linha abaixo para adicionar uma nova coluna</string>
+	<string name='click_and_drag_the_arrow_up_down_to_remove_column'>Toque e arraste a seta acima/abaixo para remover a coluna</string>
+	<string name='icon_display'>Exibição de ícone</string>
+	<string name='icon_display_enabled'>Exibição de ícone habilitada</string>
+	<string name='use_local_folder_to_load_icon'>Usar pasta local para carregar ícone (png/bmp/jpg)</string>
+	<string name='setup_local_icon_folder'>Definir pasta local de ícones</string>
+	<string name='item_mark_setting'>Configuração de marcação de item</string>
+	<string name='icon_folder_name_rule'>Por favor use número.extensão para nomear o arquivo na pasta. Ex.: 1.png, 2.jpg, 5.bmp</string>
+	<string name='auto_bump_park_order_mins'>Finalizar automaticamente pedidos estacionados (minutos)</string>
+	<string name='void_item_showing'>Cancelar exibição de pedido</string>
+	<string name='qty_changed'>Qtde. alterada</string>
+	<string name='enable_order_status_notify'>Habilitar notificação de mudança de status de um pedido</string>
+	<string name='enable_item_qty_notify'>Habilitar notificação de mudança de quantidade de um item</string>
+	<string name='notification'>Notificação</string>
+	<string name='tab_display_text'>Texto da exibição de guia</string>
+	<string name='remote_support'>Suporte remoto</string>
+	<string name='sorted_orders'>Pedidos ordenados</string>
+	<string name='prep_mode_enabled'>Avançar pedido inteligente habilitado</string>
+	<string name='smart_order_mode'>Modo pedido inteligente</string>
+	<string name='log_mode'>Modo registro</string>
+	<string name='log_reserved_days'>Preservar arquivo de registro por X dias</string>
+	<string name='log'>Registro</string>
+	<string name='input_condiment_description'>Entre com o condimento</string>
+	<string name='text_wrap'>Quebra de linha</string>
+	<string name='focus_blink'>Piscar contorno de pedido selecionado</string>
+	<string name='enable_line_items_display_mode'>Habilitar modo de exibição dos pedidos em tabela</string>
+	<string name='sorting_in_smart'>Ordenar os pedidos por tempo de preparo</string>
+	<string name='smart_timer_from_item_visible'>Temporizador dos pedidos se inicia quando o item ficar visível</string>
+	<string name='each_condiment_go_to_next_line'>Condimentos e modificadores em linhas diferentes</string>
+	<string name='show_last_n_of_order_id'>Mostrar últimos N dígitos do ID do pedido</string>
+	<string name='alert_disable_double_bump_queue'>Se desabilitar esta opção na estação Fila, será necessário utilizar um Bumpbar para bumpar o pedido da estação Fila.</string>
+	<string name='pwd_do_not_match'>Senhas não coincidem.</string>
+	<string name='nand_lost'>Não foi possível acessar NAND FLASH para salvar/carregar os dados. Vá para Configurações do Sistema - Armazenamento - NAND FLASH e toque em “Montar cartão SD&quot; move_finished_order_to_front,</string>
+	<string name='sd_disk_full'>Banco de dados e/ou disco SD cheios.</string>
+	<string name='pref_kds_item_partial_bumped_mark_in_expo'>Pedido apareceu em uma estação mas não foi finalizado em todas </string>
+	<string name='expo_confirmation_bump'>Confirmação de finalização pelo Expedidor</string>
+	<string name='expo_cannot_bump_unless_prep_bump_all'>Expedidor não pode bumpar o pedido a menos que todas as estações de preparo bumpem os itens</string>
+	<string name='pref_kds_touch_prev_page_enabled'>Habilitar botão touch [Pág. anterior]</string>
+	<string name='pref_kds_touch_next_page_enabled'>Habilitar botão touch [Próx. página]</string>
+	<string name='touchpad_next_page'>Próx. Pagina</string>
+	<string name='touchpad_prev_page'>Pág. Anterior</string>
+	<string name='avg_prep_time'>Média:</string>
+	<string name='real_time_period'>Período de relatório em tempo real (mins)</string>
+	<string name='title'>Título</string>
+	<string name='screen_title'>Estação</string>
+	<string name='show_avg_prep_time'>Exibir tempo médio de preparação dos pedidos</string>
+	<string name='confirm_bump_unpaid'>Solicitar confirmação antes de finalizar um pedido ainda não pago</string>
+	<string name='confirm_bump_outstanding'>Solicitar confirmação antes de finalizar um pedido com itens pendentes</string>
+	<string name='confirm_bump_unpaid_text'>O pedido # não está pago. Deseja mesmo bumpá-lo?</string>
+	<string name='confirm_bump_outstanding_text'>O pedido # contém itens pendentes. Deseja mesmo bumpá-lo</string>
+	<string name='queue_status1_sort'>Modo de ordenação do Status 1</string>
+	<string name='queue_status2_sort'>Modo de ordenação do Status 2</string>
+	<string name='queue_status3_sort'>Modo de ordenação do Status 3</string>
+	<string name='queue_status4_sort'>Modo de ordenação do Status 4</string>
+	<string name='title_activity_activity_login'>Entrar</string>
+	<string name='enable_order_ack'>Ativar reconhecimento dos pedidos</string>
+	<string name='use_smb_v2_open_folder'>Usar SMB v2 para abrir pasta remota</string>
+	<string name='sms_feature_enabled'>Recurso de SMS</string>
+	<string name='transfer_default_station'>Transferir pedido para estação principal</string>
+	<string name='transfer_to_default_automaticlly'>Transferir pedido para estação principal quando transferência estiver ativada</string>
+	<string name='pref_kds_transfer_title'>Transferir</string>
+	<string name='transfer_default_station_offline'>Estação de transferência # está offline</string>
+	<string name='deliver_new_order_to_slave_expo'>Entregar novo pedido para meu Expedidor e Atribuído</string>
+	<string name='router_running_no_deliver_new_order'>Se o app Roteador estiver rodando ou é necessário enviar um pedido para Expedidor/Atribuído, por favor desabilite.</string>
+	<string name='auto_refresh_screen'>Atualizar automaticamente a cada X segundos (0 desabilita esta opção)</string>
+	<string name='logout'>Sair</string>
+	<string name='transfer_by_double_click'>Habilitar toque duplo para transferir pedido</string>
+	<string name='transfer_by_double_disable_bump'>Ao habilitar este recurso, a função "Finalizar com toque duplo" será desativada</string>
+	<string name='suspend_bump_while_queue_recover'>A estação Fila está recuperado dados. Bumpar está suspenso.</string>
+	<string name='offline_warning'>Sem conexão, por favor, verifique!</string>
+	<string name='for_lineitems_display'>Apenas para exibição em tabela</string>
+	<string name='log_orders'>Registrar recebimento de XML de pedido</string>
+	<string name='lineitems_line_height'>Altura da linha</string>
+	<string name='build_relationship_first'>Por favor, primeiramente defina a relação entre as estações</string>
+	<string name='logo_file'>Arquivo do logotipo</string>
+	<string name='internal_icon'>Ícone interno</string>
+	<string name='character'>Caractere</string>
+	<string name='color'>Cor</string>
+	<string name='cleaning'>Limpeza</string>
+	<string name='cleaning_alarm'>Alerta de Limpeza</string>
+	<string name='you_should_clean_your_devics_s_the_screen_will_be_frozon_while_you_clean_them'>Você deve limpar seus dispositivo(s). A tela ficará congelada enquanto você limpa.</string>
+	<string name='clean_freeze_screen_now'>[0] LIMPAR AGORA</string>
+	<string name='remind_me_in_minutes'>[1] LEMBRAR-ME EM # MINUTOS</string>
+	<string name='dismiss_clert'>[9] IGNORAR ALERTA</string>
+	<string name='cleaning_mode_started_by_bump_bar'>Modo de limpeza inicializado pelo Bump Bar</string>
+	<string name='will_return_in_seconds'>Retornará em # segundos</string>
+	<string name='cleaning_mode'>Modo de limpeza</string>
+	<string name='pinch_out_when_finished'>Fazer Gesto de Aproximar ao finalizar</string>
+	<string name='custom_interval'>Intervalo personalizado</string>
+	<string name='minutes'>minutos</string>
+	<string name='hours'>horas</string>
+	<string name='cleaning_enable_alerts'>Habilitar alertas</string>
+	<string name='cleaning_enable_alerts_summary'>Habilita alertas recorrentes lembrando ao usuário a limpeza dos dispositivos</string>
+	<string name='cleaning_alert_type'>Tipo de alerta</string>
+	<string name='cleaning_alert_type_summary'>Define o comportamento do alerta</string>
+	<string name='cleaning_set_reminder_interval'>Define o intervalo do \'Lembrar mais tarde\'</string>
+	<string name='cleaning_enable_dismiss_button'>Habilita o botão \'Ignorar alerta\'</string>
+	<string name='cleaning_enable_dismiss_button_summary'>Permite ao usuário ignorar o alerta atual</string>
+	<string name='cleaning_snooze_time'>Lembrar mais tarde</string>
+	<string name='cleaning_snooze_time_summary'>Define o \'lembrar mais tarde\' ou desabilita a opção</string>
+	<string name='cleaning_startup_alert'>Alertar ao inicializar</string>
+	<string name='cleaning_startup_alert_summary'>Exibir alerta imediatamente após início do App</string>
+	<string name='hour'>hora</string>
+	<string name='one_hour'>1 hora</string>
+	<string name='two_hours'>2 horas</string>
+	<string name='three_hours'>3 horas</string>
+	<string name='four_hours'>4 horas</string>
+	<string name='five_hours'>5 horas</string>
+	<string name='six_hours'>6 horas</string>
+	<string name='custom'>Personalizado ...</string>
+	<string name="move_finished_order_to_front">Mover pedidos concluídos à frente da fila</string>
+
+	<string-array name="pref_kds_general_data_source_titles">
+		<item>TCP/IP</item>
+		<item>Pasta remota</item>
+	</string-array>
+	<string-array name="pref_kds_general_users_titles">
+		<item>Tela única</item>
+		<item>Tela dividida</item>
+	</string-array>
+	<string-array name="pref_kds_panels_mode_titles">
+		<item>Horizontal</item>
+		<item>Vertical</item>
+		<!--<item>IOS like</item>-->
+	</string-array>
+	<string-array name="pref_kds_caption_content_titles">
+		<item>N/D</item>
+		<item>ID do Pedido</item>
+		<item>Tempo de Espera</item>
+		<item>Nome do(a) funcionário(a)</item>
+		<item>Número da mesa</item>
+		<item>Estação PDV</item>
+		<item>Tipo de Pedido</item>
+		<item>Destino</item>
+		<item>Mensagem do Cliente</item>
+		<item>Status do Pedido</item>
+		<item>Ícone do Pedido</item>
+	</string-array>
+	<string-array name="pref_kds_item_showing_method_titles">
+		<item>Em tempo real</item>
+		<item>Um item atrás</item>
+		<item>Quando o pedido for pago</item>
+	</string-array>
+	<string-array name="pref_kds_bumping_by_panelnum_title">
+		<item>Inativo</item>
+		<item>Clique duplo</item>
+	</string-array>
+	<string-array name="pref_kds_printer_howtoprint_titles">
+		<item>Imprimir manualmente</item>
+		<item>Automático depois de bumpar</item>
+		<item>Automático depois de receber</item>
+		<item>Após transferência do pedido</item>
+	</string-array>
+	<string-array name="pref_kds_smartorder_showing_titles">
+		<item>Cinza</item>
+		<item>Oculto</item>
+	</string-array>
+	<string-array name="pref_kds_beeper_type_titles">
+		<item>Com todos os pedidos</item>
+		<item>Apenas prioritários</item>
+	</string-array>
+	<string-array name="pref_kds_sum_type_titles">
+		<item>Item sem condimentos</item>
+		<item>Ítens com condimentos</item>
+	</string-array>
+	<string-array name="pref_sum_position_titles">
+		<item>Ao lado</item>
+		<item>Em cima</item>
+	</string-array>
+	<string-array name="pref_sum_order_by_titles">
+		<item>Z-A</item>
+		<item>A-Z</item>
+	</string-array>
+	<string-array name="pref_keyboard_type_titles">
+		<item>Padrão</item>
+		<item>Bump bar Opção-A</item>
+		<item>Bump bar Opção-B</item>
+		<item>Bump bar Opção-C</item>
+		<item>Bump bar Opção-D</item>
+		<item>Bump bar Opção-E</item>
+		<item>Bump bar Opção-G</item>
+	</string-array>
+	<string-array name="pref_kds_printer_port_titles">
+		<item>USB</item>
+		<item>TCP/IP</item>
+		<item>Porta Serial</item>
+	</string-array>
+	<string-array name="pref_kds_language_titles">
+		<item>English</item>
+		<item>中文 (Chinese)</item>
+		<item>Español</item>
+		<item>Português</item>
+	</string-array>
+	<string-array name="pref_kds_general_users_orientation_titles">
+		<item>Direita/Esquerda</item>
+		<item>Em cima/Embaixo</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status1_titles">
+		<item>Status 2</item>
+		<item>Status 3</item>
+		<item>Status 4</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status2_titles">
+		<item>Status 1</item>
+		<item>Status 3</item>
+		<item>Status 4</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status3_titles">
+		<item>Status 1</item>
+		<item>Status 2</item>
+		<item>Status 4</item>
+	</string-array>
+	<string-array name="pref_queue_combine_status4_titles">
+		<item>Status 1</item>
+		<item>Status 2</item>
+		<item>Status 3</item>
+	</string-array>
+	<string-array name="pref_kds_lineitems_cols_count_titles">
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+	</string-array>
+	<string-array name="pref_kds_lineitems_cols_content_titles">
+		<item>ID do Pedido</item>
+		<item>Status do Pedido</item>
+		<item>Tipo de Pedido</item>
+		<item>Número da Mesa</item>
+		<item>Descrição dos Ítens</item>
+		<item>Condimentos</item>
+		<item>Quantidade</item>
+		<item>Tempo de Espera</item>
+		<item>Modificadores</item>
+		<item>Modificadores e condimentos</item>
+	</string-array>
+	<string-array name="pref_kds_item_mark_method">
+		<item>Ícone interno</item>
+		<item>Caractere</item>
+		<item>Cor</item>
+	</string-array>
+	<string-array name="pref_kds_void_item_showing_method_titles">
+		<item>Alteração direta da quantidade</item>
+		<item>Inserir linha de quantidade nula abaixo do item</item>
+	</string-array>
+
+	<string-array name="pref_kds_void_qty_mark_titles">
+		<item>Parênteses ()</item>
+		<item>Sinal de Negativo -</item>
+	</string-array>
+
+	<string-array name="pref_kds_smartorder_mode_titles">
+		<item>Desabilitado</item>
+		<item>Normal</item>
+		<item>Avançado</item>
+	</string-array>
+
+	<string-array name="pref_kds_log_mode_titles">
+		<item>Nenhum</item>
+		<item>Básico</item>
+		<item>Detalhado</item>
+	</string-array>
+
+	<string-array name="pref_queue_order_id_length_titles">
+		<item>Todos</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+	</string-array>
+
+	<string-array name="pref_real_period_titles">
+		<item>1</item>
+		<item>5</item>
+		<item>10</item>
+	</string-array>
+
+	<string-array name="pref_queue_sort_titles">
+		<item>Padrão</item>
+		<item>Tempo de mudança do estado, menor para maior</item>
+		<item>Tempo de mudança do estado, maior para menor</item>
+	</string-array>
+
+	<string-array name="pref_queue_auto_bump_timeout_titles">
+		<item>Padrão</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+		<item>12</item>
+		<item>13</item>
+		<item>14</item>
+		<item>15</item>
+		<item>16</item>
+		<item>17</item>
+		<item>18</item>
+		<item>19</item>
+		<item>20</item>
+		<item>21</item>
+		<item>22</item>
+		<item>23</item>
+		<item>24</item>
+		<item>25</item>
+		<item>26</item>
+		<item>27</item>
+		<item>28</item>
+		<item>29</item>
+		<item>30</item>
+		<item>31</item>
+		<item>32</item>
+		<item>33</item>
+		<item>34</item>
+		<item>35</item>
+		<item>36</item>
+		<item>37</item>
+		<item>38</item>
+		<item>39</item>
+		<item>40</item>
+		<item>41</item>
+		<item>42</item>
+		<item>43</item>
+		<item>44</item>
+		<item>45</item>
+		<item>46</item>
+		<item>47</item>
+		<item>48</item>
+		<item>49</item>
+		<item>50</item>
+	</string-array>
+
+	<string-array name="pref_cleaning_alert_type">
+		<item>Exibir alerta em botão flutuante</item>
+		<item>Exibir diálogo com opções</item>
+		<item>Iniciar limpeza automaticamente</item>
+	</string-array>
+
+	<string-array name="pref_cleaning_interval">
+		<item>1 hora</item>
+		<item>2 horas</item>
+		<item>3 horas</item>
+		<item>4 horas</item>
+		<item>5 horas</item>
+		<item>6 horas</item>
+		<item>Personalizado...</item>
+	</string-array>
+
+	<string-array name="pref_cleaning_snooze_time">
+		<item>Desabilitado</item>
+		<item>5 minutos</item>
+		<item>10 minutos</item>
+		<item>15 minutos</item>
+	</string-array>
+	<string name="icon_settings">Configurações de ícones</string>
+	<string name="col_size">Largura das Colunas</string>
+	<string name="background_color">Cor de fundo</string>
+	<string name="destination">Destino</string>
+	<string name="display_text">Exibir texto</string>
+	<string name="void_item_showing_method">Exibição de itens cancelados</string>
+	<string name="add_message_below_item">Adicionar mensagem abaixo dos itens</string>
+	<string name="the_message">Editar a mensagem</string>
+	<string name="void_qty_line_color_enabled">Ativar linha de itens cancelados</string>
+	<string name="void_qty_line_color">Cor da linha de itens cancelados</string>
+	<string name="void_item_qty_mark_with">Marcar linha de itens cancelados com</string>
+</resources>

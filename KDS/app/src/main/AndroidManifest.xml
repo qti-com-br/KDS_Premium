@@ -86,7 +86,7 @@
         <!-- android:label="@string/title_activity_kdsuistations_config" > -->
         <!-- </activity> -->
         <activity
-            android:name=".KDSUIRetriveConfig"
+            android:name="com.bematechus.kdslib.KDSUIRetriveConfig"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:label="@string/title_activity_kdsuiretrive_config" />
         <!--

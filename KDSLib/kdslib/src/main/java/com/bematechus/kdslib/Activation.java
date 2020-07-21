@@ -78,10 +78,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 //    static int MAX_LOST_COUNT = 120;
 
     public static final int HOUR_MS = 3600000;
-    public static int MAX_LOST_COUNT = 120;
+    public static int MAX_LOST_COUNT = 120; //kpp1-301,
     public static final int INACTIVE_TIMEOUT = 300000; //5 minutes
 //
     public static long LOST_COUNT_INTERVAL =Activation.HOUR_MS;// 3600000L; //1 hour
+    public static String PREMIUM_APP = "bc68f95c-1af5-47b1-a76b-e469f151ec3f";
 
     public enum SyncDataResult
     {
@@ -111,6 +112,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public void onSyncWebReturnResult(ActivationRequest.COMMAND stage, String orderGuid, SyncDataResult result);
         public void onDoActivationExplicit();
         public void onForceClearDataBeforeLogin();
+        public boolean isAppContainsOldData();
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -152,6 +154,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean isDoLicensing()
     {
+
         return m_bDoLicensing;
     }
     public void setDoLicensing(boolean bDoing)
@@ -193,15 +196,15 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     static public String getMySerialNumber()
     {
-        //return m_myMacAddress;
-        String s = Build.SERIAL;
-        s = s.toUpperCase();
-        if (s.isEmpty() || s.equals("UNKNOWN"))
-        {
-            return m_myMacAddress;
+        // >= Android 5.0 (API 21): try using Serial Number
+        // Otherwise: use MAC Address
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String device_serial = Build.SERIAL;
+            if (!device_serial.isEmpty() && !device_serial.equals(Build.UNKNOWN)) {
+                return device_serial;
+            }
         }
-        else
-            return Build.SERIAL;
+        return m_myMacAddress;
     }
     public void setEventsReceiver(ActivationEvents receiver)
     {
@@ -258,6 +261,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                     break;
                 case Sync_customer:
                     onSyncCustomerResponse(http, request);
+                    break;
+                case Cleaning:
+                    onCleaningHttpResponse(http, request);
+                    break;
 
             }
         }
@@ -481,12 +488,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             JSONObject json = (JSONObject) ar.get(0);
             int ncount = json.getInt("licenses_quantity");
             m_timeZone = json.getString("timezone");
-
+            String app = json.getString("store_app");
+            if (!app.equals(PREMIUM_APP))
+            {//kpp1-211 Only allow stores with Premium plan to log into Premium.
+                fireActivationFailEvent(ActivationRequest.COMMAND.Get_settings, ActivationRequest.ErrorType.App_type_error, m_context.getString(R.string.only_premium_plan_login));
+                return;
+            }
             m_nMaxLicenseCount = ncount;
 
             //System.out.println(ar.toString());
-
-            postGetDevicesRequest();
+            if (KDSApplication.isRouterApp()) //kpp1-305, Remove license restriction from Router
+                fireSuccessEvent();
+            else
+                postGetDevicesRequest();
         }
         catch (Exception e)
         {
@@ -577,11 +591,12 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
     }
 
-    private StoreDevice findMyLicense()
+    static private StoreDevice findMyLicense()
     {
         for (int i=0; i< m_devices.size(); i++)
         {
             if (m_devices.get(i).isDeleted()) continue;
+            if (!m_devices.get(i).getEnabled()) continue;
             StoreDevice dev =m_devices.get(i);
             String serial = dev.getSerial();
             serial = serial.toUpperCase();
@@ -1206,6 +1221,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putString(PREF_KEY_STORE_GUID, m_storeGuid);
         editor.putString(PREF_KEY_STORE_NAME, m_storeName);
 
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, userName); //kpp1-299, save current as old one.
+
         editor.apply();
         editor.commit();
 
@@ -1304,7 +1321,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         editor.putInt(PREF_KEY_ACTIVATION_LOST_COUNT, 0);
         editor.putLong(PREF_KEY_ACTIVATION_FAILED_DATE, 0);
 
-        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+        //editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");//kpp1-299, remove it. Keep old one always.
 
         editor.apply();
         editor.commit();
@@ -1932,7 +1949,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         StoreDevice devLicense = findMyLicense();
         if (devLicense == null)
             return false;
-
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         ActivationRequest r = ActivationRequest.requestDeviceSync(m_storeGuid,stationID, stationFunc,devLicense);
         m_http.request(r);
         showProgressDialog(true, m_context.getString(R.string.updating_license_data));
@@ -2032,6 +2049,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public boolean postNewStationInfo2Web(String licenseGuid, String stationID, String stationFunc)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice dev = new StoreDevice();
         dev.setGuid(licenseGuid);
         dev.m_serial = getMySerialNumber();
@@ -2094,6 +2112,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean postNewStationName2Web(String stationID, String stationName)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice dev = findMyLicense();
         if (dev == null)
             return false;
@@ -2106,6 +2125,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public boolean postNewStationInfoToWeb(String stationID, String stationFunc, String stationName)
     {
+        if (stationID.isEmpty()) return false; //kpp1-309 Expeditor and Queue deleted at logout on premium
         StoreDevice devLicense = findMyLicense();
         if (devLicense == null)
             return false;
@@ -2156,6 +2176,20 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     }
 
+    static public boolean findStation(String stationID)
+    {
+        for (int i=0; i< m_devices.size(); i++)
+        {
+            if (m_devices.get(i).isDeleted()) continue;
+            StoreDevice dev =m_devices.get(i);
+            if (dev.getID().equals(stationID)) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
     /**
      * KPP1-248
      * The router should not occupy licences
@@ -2182,4 +2216,86 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         return s;
     }
 
+    /**
+     * KPP1-296
+     * 1) Syncing error while bumping/unbumping orders
+     * 2) App is sending serial number instead of device guid in Sync json
+     *
+     * Root cause for (1) is found: app is sending an unknown column called 'kdsguid'.
+     * Please remove it from the json.
+     *
+     * For (2), wrong data may cause reporting issues.
+     * @return
+     */
+    static String getMyDeviceGuid()
+    {
+
+        StoreDevice dev = findMyLicense();
+        if (dev == null) return "";
+        return dev.getGuid();
+
+    }
+
+    static public void resetOldLoginUser()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString(PREF_KEY_ACTIVATION_OLD_USER_NAME, "");
+
+        editor.apply();
+        editor.commit();
+
+    }
+
+    public enum CleaningResponse
+    {
+        CLEAN,
+        SNOOZE,
+        DISMISS,
+    }
+    /**
+
+     * @param nResponse
+     *      0: cleaning
+     *      1: snooze
+     *      2: dismiss
+     */
+    public void postCleaningResultResponse(CleaningResponse nResponse)
+    {
+
+        String s = nResponse.toString();
+
+        ActivationRequest r = ActivationRequest.requestCleaningResponse(m_storeGuid,getMyDeviceGuid(), s);
+        r.setCommand(ActivationRequest.COMMAND.Cleaning);
+        r.setTag(s);
+        m_http.request(r);
+
+    }
+
+    private void onCleaningHttpResponse(ActivationHttp http, ActivationRequest request)
+    {
+        Object obj = request.getTag();
+        if (obj == null) return;
+       String str = (String)obj;
+        if (m_receiver != null)
+            m_receiver.onSyncWebReturnResult(ActivationRequest.COMMAND.Cleaning, str, SyncDataResult.OK);
+    }
+    public static final int NEW_STATION_ID = 9999;
+    /**
+     * check if this station has been registered
+     * kpp1-340
+     * @return
+     */
+    static public String findMyRegisteredID()
+    {
+        StoreDevice dev =  findMyLicense();
+        if (dev == null)
+            return "";
+        String id = dev.getID();
+        if (id.equals(KDSUtil.convertIntToString(NEW_STATION_ID)))
+            return "";
+
+        return dev.getID();
+    }
 }

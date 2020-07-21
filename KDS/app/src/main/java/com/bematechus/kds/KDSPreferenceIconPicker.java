@@ -11,6 +11,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.OpenFileDialog;
+
 /**
  * Created by Administrator on 2017/11/22.
  */
@@ -54,7 +57,7 @@ public class KDSPreferenceIconPicker extends Preference {
                 // nothing to do
                 m_openFileDlg = null;
             }
-        }, false);
+        }, OpenFileDialog.Mode.Choose_File);
         m_openFileDlg.show();
     }
 

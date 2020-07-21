@@ -10,6 +10,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 /**
  * Created by Administrator on 2016/4/8 0008.
  */

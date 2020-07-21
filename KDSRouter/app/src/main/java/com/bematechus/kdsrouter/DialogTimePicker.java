@@ -3,13 +3,15 @@ package com.bematechus.kdsrouter;
 import android.content.Context;
 import android.widget.TimePicker;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by Administrator on 2016/8/9.
  */
-public class DialogTimePicker extends KDSUIDialogBase{
+public class DialogTimePicker extends KDSUIDialogBase {
 
     TimePicker m_tpTime = null;
     Date m_dtSelected = null;

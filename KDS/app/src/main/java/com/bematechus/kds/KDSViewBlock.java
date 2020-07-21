@@ -575,6 +575,13 @@ public class KDSViewBlock {
                 cell = getCell(i);
                 if (cell == null) break;
                 if (cell.getData() == c.getData()) {
+                    //kpp1-307 Text Wrap cuts off header text
+                    if ((cell instanceof KDSLayoutCell) && (c instanceof KDSLayoutCell) )
+                    {
+                        if (((KDSLayoutCell) cell).getCellSubType() !=((KDSLayoutCell) c).getCellSubType())
+                            break;
+                    }
+                    //
                     Rect rc = getCellAbsoluteRect(i);
                     rcAbsoluteCell.bottom = rc.bottom;
                 }

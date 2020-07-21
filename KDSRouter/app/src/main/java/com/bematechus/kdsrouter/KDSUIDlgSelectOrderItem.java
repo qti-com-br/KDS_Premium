@@ -9,6 +9,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class KDSUIDlgSelectOrderItem extends KDSUIDialogBase {
 
         ((ArrayAdapter)lv.getAdapter()).notifyDataSetChanged();
     }
-    public KDSUIDlgSelectOrderItem(final Context context, KDSDialogBaseListener listener, KDSDBRouter db) {
+    public KDSUIDlgSelectOrderItem(final Context context, KDSUIDialogBase.KDSDialogBaseListener listener, KDSDBRouter db) {
         this.int_dialog(context, listener, R.layout.kdsui_dlg_select_orderitem, "");
         this.setTitle(context.getString(R.string.select_item));//"Select item");
         m_db = db;

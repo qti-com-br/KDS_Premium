@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 
 /**
  * A simple {@link Fragment} subclass.

@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="touch_font"
         android:defaultValue="default_font,@color/touch_button_bg,@color/touch_button_fg,small_size"
         android:title="@string/pref_kds_touch_font"

@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.widget.Button;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.OpenFileDialog;
+
 /**
  * Created by Administrator on 2017/7/7.
  */
@@ -21,8 +24,8 @@ public class KDSUIDialogImportSettings extends KDSUIDialogBase implements KDSUID
         this.listener = listener;
         setTag(objTag);
 
-        String strOK = makeButtonText2(context, R.string.ok, KDSSettings.ID.Bumpbar_OK);
-        String strCancel = makeButtonText2(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
+        String strOK = makeOKButtonText(context);// makeButtonText2(context, R.string.ok, KDSSettings.ID.Bumpbar_OK);
+        String strCancel = makeCancelButtonText(context);// makeButtonText2(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
         dialog = new AlertDialog.Builder(context)
                 .setTitle(strTitle)
                 .setMessage(strInfo)//this.getString(R.string.confirm_import_db))
@@ -88,7 +91,7 @@ public class KDSUIDialogImportSettings extends KDSUIDialogBase implements KDSUID
     protected void onBrowseImportFolder()
     {
         //OpenFileDialog dlg = new OpenFileDialog(m_view.getContext(), "*.xml", this);
-        OpenFileDialog dlg = new OpenFileDialog(dialog.getContext(), ".xml;", this, true);
+        OpenFileDialog dlg = new OpenFileDialog(dialog.getContext(), ".xml;", this, OpenFileDialog.Mode.Choose_Folder);
         dlg.show();
 
     }

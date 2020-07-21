@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name='app_name'>Enrutador KitchenGo</string>
+	<string name='main_title'>KitchenGo Premium Enrutador</string>
+	<string name='pref_header_general'>General</string>
+	<string name='pref_general_title_name'>ID de Estación</string>
+	<string name='pref_general_router_backup_title'>Trabajar  como Apoyo</string>
+	<string name='pref_general_router_sum_backup'>El modo de copia de apoyo permite múltiples enrutadores. Ingrese el enrutador primario en [Mi enrutador primario]</string>
+	<string name='pref_general_sum_router_enabled'>Habilitar enrutador o no</string>
+	<string name='pref_general_router_enabled'>Habilitar enrutador </string>
+	<string name='pref_general_data_source'>Origen de Pedido</string>
+	<string name='pref_general_title_tcp_port'>Origen de datos POS Puerto IP</string>
+	<string name='pref_general_title_remote_folder'>Carpeta compartida de origen de datos</string>
+	<string name='pref_general_title_notification_folder'>Guardar archivo de notificación en la carpeta</string>
+	<string name='pref_router_database_title'>Configuración de base de datos</string>
+	<string name='pref_router_relations_title'>Relación de estaciones</string>
+	<string name='pref_general_title_backup_port'>Puerto IP para apoyo</string>
+	<string name='pref_general_connection_station_ipport'>Conéctese al puerto IP de la estación KDS</string>
+	<string name='pref_general_title_default_station'>Estación predeterminada artículo irá</string>
+	<string name='pref_header_database'>Configuración del filtro de elementos</string>
+	<string name='pref_header_relations'>Relación de estaciones</string>
+	<string name='title_activity_stations_relation'>Relación de estaciones</string>
+	<string name='title_activity_retrieve_config'>Recuperar configuración</string>
+	<string name='menu_activity_settings'>Configuraciones</string>
+	<string name='menu_activity_cleardb'>Borrar base de datos</string>
+	<string name='menu_activity_showip'>Mostrar mi dirección IP</string>
+	<string name='menu_activity_stations'>Mostrar estaciones activas</string>
+	<string name='menu_activity_schedule'>Horario</string>
+	<string name='menu_activity_clearlog'>Borrar registro</string>
+	<string name='confirm_remove_relations_expo'>La estación de Expeditor # será removida de la columna Expo, ¿está seguro de que desea cambiar esto?</string>
+	<string name='confirm_clear_db'>¿Desea borrar la base de datos?</string>
+	<string name='save'>Guardar</string>
+	<string name='confirm_remove_category'>¿Quieres remover la categoría:</string>
+	<string name='confirm_remove_fooditem'>¿Quieres eliminar la artículo:</string>
+	<string name='ip'>IP</string>
+	<string name='port'>Puerto</string>
+	<string name='mirror'>Espejo</string>
+	<string name='backup'>Apoyo</string>
+	<string name='new_item'>Nuevo artículo</string>
+	<string name='new_category'>Nueva categoria</string>
+	<string name='description'>Descripción</string>
+	<string name='delay'>Retraso/Prep(mins)</string>
+	<string name='printable'>Imprimible</string>
+	<string name='add_new'>Nuevo</string>
+	<string name='preptime'>Retraso/Prep(mins)</string>
+	<string name='delayprep'>Retraso/Prep(mins)</string>
+	<string name='error_isnot_unique_id'>El # ID ha sido utilizado por otra estación. Por favor realizar el cambio.</string>
+	<string name='error_id_out_range'>Ingrese el valor de ID entre 1 y 99.</string>
+	<string name='error_id_is_empty'>Por favor ingrese el ID</string>
+	<string name='error_different_relations'>La relación de las estaciones es diferente con otras, modificar las relaciones primero.</string>
+	<string name='error_match_mac'>Ejecútelo en el dispositivo LogicControls.</string>
+	<string name='find'>Encontrar </string>
+	<string name='category'>Descripción de categoría</string>
+	<string name='item'>Descripción de artículo</string>
+	<string name='router_disabled'>El enrutador está actualmente deshabilitado, habilítelo si desea usarlo.</string>
+	<string name='router_disabled_warning'>El enrutador está actualmente desactivado, habilítelo primero.</string>
+	<string name='error_relations_mirror_dead_loop'>Estaciones # función espejo \&#x27;dead loop\&#x27;.</string>
+	<string name='error_relations_backup_dead_loop'>Estaciones # función apoyo \&#x27;dead loop\&#x27;.</string>
+	<string name='network_lost'>Red perdida</string>
+	<string name='network_restore'>Red restaurada </string>
+	<string name='input_internet_file'>Entrada de Archivo de Internet</string>
+	<string name='remove'>Eliminar</string>
+	<string name='local'>Local</string>
+	<string name='ethernet'>Red</string>
+	<string name='internet'>Archivo de internet</string>
+	<string name='down'>Abajo</string>
+	<string name='bg'>Fondo</string>
+	<string name='fg'>Texto</string>
+	<string name='add'>Añadir</string>
+	<string name='edit'>Editar</string>
+	<string name='clear'>Borrar Todo</string>
+	<string name='sun'>Domingo</string>
+	<string name='mon'>Lunes</string>
+	<string name='tue'>Martes</string>
+	<string name='wed'>Miercoles</string>
+	<string name='thu'>Jueves</string>
+	<string name='fri'>Viernes</string>
+	<string name='sat'>Sabado</string>
+	<string name='schedule_help'>Haga clic en cualquier intervalo de tiempo para agregar un horario</string>
+	<string name='event_help_for_description'>Añadir descripción aquí</string>
+	<string name='event_help_for_orderid'>Agregar ID de pedido aquí</string>
+	<string name='fill_description'>Rellene la descripción antes de guardar</string>
+	<string name='fill_order_id'>Rellene el ID del pedido antes de guardar</string>
+	<string name='pref_kds_password_enabled'>Habilite la contraseña cuando ingrese la configuración</string>
+	<string name='pref_kds_password_text'>Contraseña</string>
+	<string name='add_item'>Añadir artículo</string>
+	<string name='qty_increase'>Cant +</string>
+	<string name='qty_decrease'>Cant -</string>
+	<string name='qty'>Cant</string>
+	<string name='to_station'>Para estaciones</string>
+	<string name='order_id'>ID de pedido</string>
+	<string name='duration_mins'>Duración(mins)</string>
+	<string name='start_time'>Inicio</string>
+	<string name='week_day'>Dia</string>
+	<string name='schedule'>Horario</string>
+	<string name='clear_log'>Borrar</string>
+	<string name='station'>Estación</string>
+	<string name='screen'>Pantalla</string>
+	<string name='summary_translate'>Traducción de resumen</string>
+	<string name='build_cards'>Construir Recetas</string>
+	<string name='training_video'>Video de Entrenamieto</string>
+	<string name='local_file'>Archivo Local</string>
+	<string name='ethernet_file'>Archivo de Red</string>
+	<string name='internet_file'>Archivo de internet</string>
+	<string name='move_up'>Arriba</string>
+	<string name='move_down'>Abajo</string>
+	<string name='menu_schedule_add'>Añadir nuevo horario</string>
+	<string name='menu_schedule_edit'>Editar</string>
+	<string name='menu_schedule_clear_all'>Borrar Todo</string>
+	<string name='menu_schedule_remove'>Remover</string>
+	<string name='new_schedule'>Nuevo horario</string>
+	<string name='dialog_time_picker'>Tiempo</string>
+	<string name='error_other_router_enabled'>Error, solo se permite un enrutador por tienda. Hay otro enrutador habilitado. ¡Por favor, compruebe!</string>
+	<string name='primary_router'>Enrutador Principal</string>
+	<string name='slave_router'>Enrutador de Apoyo</string>
+	<string name='retrieve_settings'>Obtener la configuración del enrutador remoto.</string>
+	<string name='backup_of'>(Apoyo de #)</string>
+	<string name='wait_for_config_data'>Esperando datos de configuración ...</string>
+	<string name='wait_for_connection'>Esperando una nueva conexión ...</string>
+	<string name='station_is_inactive'>La estación no está activa ...</string>
+	<string name='waiting_for_connecting'>Esperando la conexión ...</string>
+	<string name='pref_tracker_title'>Rastreador de mesa</string>
+	<string name='pref_tracker_enabled'>Rastreador de mesa habilitado</string>
+	<string name='pref_tracker_enabled_summary'>Usar rastreador de mesa para obter localizar consumidor</string>
+	<string name='pref_tracker_number_from_userinfo'>El número del rastreador de mesa es de la etiqueta \ </string>
+	<string name='pref_tracker_number_from_userinfo_summary'>El programa POS puede usar la etiqueta \ </string>
+	<string name='tt_connect_error'>No se puede conectar al servidor TT.</string>
+	<string name='restart_kds_as_language'>Es necesario reiniciar para cambiar el idioma a #, ¿desea cambiar el idioma y reiniciar ahora?</string>
+	<string name='station_connected'>Estación [#] conectada.</string>
+	<string name='station_disconnected'>Estación [#] desconectada.</string>
+	<string name='pos_connected'>PDV [#] conectado.</string>
+	<string name='receive_order'>Obtener pedido #</string>
+	<string name='receive_order_from_folder'>Obtener pedido # de carpeta remota</string>
+	<string name='receive_order_from_ip'>Obtener pedido # de ip = $</string>
+	<string name='select_order_status'>Seleccione status [ # ]</string>
+	<string name='select_item'>Seleccione un articulo </string>
+	<string name='backup_station_restored'>Mi estación de apoyo # restaurada</string>
+	<string name='primary_station_restored'>Mi estación primaria # restaurada</string>
+	<string name='station_restored'>Estación # restaurada</string>
+	<string name='backup_router_lost'>Mi estación de apoyo # perdida</string>
+	<string name='primary_router_lost'>Mi estación primaria # perdida</string>
+	<string name='write_buffer_to'>Escribir datos del búfer en</string>
+	<string name='transfering_db_to_other_router'>Transferencia de base de datos a otro enrutador.</string>
+	<string name='updating_db_from_other_router'>Actualización de mi base de datos desde otro enrutador.</string>
+	<string name='get_order'>Obtener pedido #</string>
+	<string name='get_order_from_client_ip'>Obtener pedido # del cliente ip = $</string>
+	<string name='get_order_from_server_ip'>Obtenga el número de pedido del servidor ip = $</string>
+	<string name='get_order_from_remote_folder'>Obtenga el número de pedido de la carpeta remota</string>
+	<string name='pref_kds_language'>Idioma</string>
+	<string name='categories'>Categorías</string>
+	<string name='items'>Articulos</string>
+	<string name='items_for_category'>Artículos para la categoría #</string>
+	<string name='category_name'>Nombre de la categoría:</string>
+	<string name='no_data'>No datos</string>
+	<string name='export_csv'>Exportar base de datos a archivo csv</string>
+	<string name='import_csv'>Importar archivo csv a la base de datos</string>
+	<string name='file_name'>Nombre del archivo:</string>
+	<string name='export_db_done'>La base de datos ha sido exportada a</string>
+	<string name='import_csv_done'>Archivo importado</string>
+	<string name='auto_add_modifier'>Agregar modificador recibido a la base de datos automáticamente</string>
+	<string name='item_auto_add'>Agregar elemento recibido a la base de datos automáticamente</string>
+	<string name='log_mode'>Modo de Registro</string>
+	<string name='log_reserved_days'>Reserve archivos de registro para X días</string>
+	<string name='log'>Regitros</string>
+	<string name='log_orders'>Registro recibido pedidos XML</string>
+	<string name='station_lost'>Estación # perdida</string>
+	<string name='enable_order_ack'>Habilitar confirmación de pedido</string>
+	<string name='use_smb_v2_open_folder'>Use SMB v2 para abrir la carpeta remota</string>
+	<string name='keep_notification_minutes'>Reserve archivos de notificación por X minutos</string>
+	<string name='title_activity_activity_login'>Entrar</string>
+	<string name='logout'>Salir</string>
+	<string name='export'>Exportar</string>
+	<string name='str_import'>Importar</string>
+	<string-array name="pref_kds_log_mode_titles">
+		<item>Ninguno</item>
+		<item>Básico</item>
+		<item>Detallado</item>
+	</string-array>
+	<string-array name="pref_kds_language_titles">
+		<item>English</item>
+		<item>中文 (Chinese)</item>
+		<item>Español</item>
+		<item>Português</item>
+	</string-array>
+	<string-array name="pref_general_data_source_titles">
+		<item>TCP/IP</item>
+		<item>Carpeta Remota</item>
+	</string-array>
+	<string name="title_activity_filter">FilterActivity</string>
+	<string name="title_activity_main">MainActivity</string>
+</resources>

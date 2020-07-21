@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class KDSUIDlgInputDest  extends KDSUIDialogBase {
 
 
     public KDSUIDlgInputDest(final Context context, KDSUIDialogBase.KDSDialogBaseListener listener, String strInit) {
+        this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_input_dest, "");
         this.setTitle(context.getString(R.string.input_destination));
 
@@ -189,17 +191,26 @@ public class KDSUIDlgInputDest  extends KDSUIDialogBase {
         Toast.makeText(this.getDialog().getContext(), s, Toast.LENGTH_SHORT).show();
 
     }
+//    public String makeOKButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.OK);
+//
+//    }
+//    public String makeCancelButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
+//
+//    }
+//    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey )
+//    {
+//        return makeButtonText(context, nResID, funcKey);
+//
+//    }
 
-    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey )
-    {
-        return makeButtonText(context, nResID, funcKey);
-
-    }
-
-    protected void init_dialog_events(final AlertDialog dlg)
-    {
-        init_dialog_ctrl_enter_events(dlg);
-
-    }
+//    protected void init_dialog_events(final AlertDialog dlg)
+//    {
+//        init_dialog_ctrl_enter_events(dlg);
+//
+//    }
 
 }

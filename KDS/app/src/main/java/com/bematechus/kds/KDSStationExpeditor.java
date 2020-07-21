@@ -7,6 +7,9 @@ import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSStationsRelation;
+import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.TimeDog;
@@ -476,6 +479,25 @@ public class KDSStationExpeditor extends KDSStationNormal {
                     return false;
             }
         }
+
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                if (itemA != null) {
+                    if (!exp_item_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
+                        return false;
+                }
+                if (itemB != null)
+                {
+                    if (!exp_item_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB))
+                        return false;
+                }
+            }
+
+        }
+
         else
         { //I am common station
 
@@ -864,10 +886,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (orderExisted == null) {
             return "";
         }
+        //kpp1-286
+        kds.fireOrderBumpedInOther(orderExisted.getGUID());
+
         orders.removeComponent(orderExisted);
         db.orderSetBumped(orderExisted.getGUID(), true);
         //update the statistic database
         tt_checkAllItemsBumped(kds, orderExisted);
+
         kds.refreshView();
         return orderExisted.getGUID();
 
@@ -951,6 +977,19 @@ public class KDSStationExpeditor extends KDSStationNormal {
         {
             tt_receive_exp_order_bumped_notification(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
         }
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                exp_order_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
+                if (kds.isMultpleUsersMode())
+                    exp_order_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order);
+
+            }
+
+        }
+
         else
         { //I am common expo, it is impossible geting this message.
 
@@ -1034,6 +1073,20 @@ public class KDSStationExpeditor extends KDSStationNormal {
         {
             exp_order_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order, true);
         }
+
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                exp_order_unbumped_in_other_expo_station(kds, kds.getCurrentDB(),kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order, true);
+                if (kds.isMultpleUsersMode())
+                    exp_order_unbumped_in_other_expo_station(kds, kds.getCurrentDB(),kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, order, true);
+
+            }
+
+        }
+
         else
         { //I am common station
 
@@ -1261,6 +1314,21 @@ public class KDSStationExpeditor extends KDSStationNormal {
             if (itemB != null)
                 exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB);
         }
+
+        else if (kds.isExpeditorStation()  ) //kpp1-286
+        {
+            //mirror do same work, kpp1-286
+            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            {
+                if (itemA != null)
+                    exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA);
+                if (itemB != null)
+                    exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB);
+
+            }
+
+        }
+
         else
         { //I am common station
 
@@ -1408,14 +1476,18 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * receive the sync command, check if I am backup/mirror station,
      * @param command
      */
-    static public KDSDataOrder exp_sync_order_new(KDS kds, KDSXMLParserCommand command)
+    static public KDSDataOrder exp_sync_order_new(KDS kds, KDSXMLParserCommand command, ArrayList<Boolean> ordersExisted, ArrayList<KDSDataOrder> ordersChanged)
     {
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         if (strXml.isEmpty())
             return null;
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
+
         if (order == null)
             return null;
+        ordersExisted.add( (kds.getUsers().getOrderByName(order.getOrderName()) != null));
+
+
         KDSDataOrder  changedOrder = null;
         ArrayList<KDSDataOrder> changedOrders = null;
 
@@ -1424,22 +1496,30 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
 
             { //primary is offline now, svae to current database.
-                if (kds.isSingleUserMode())
-                    changedOrder = func_orderAdd(kds.getUsers().getUserA(), order,strXml, false, false,false, true); //don't check add-on
+                if (kds.isSingleUserMode()) {
+                    changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml, false, false, false, true); //don't check add-on
+                    ordersChanged.add(changedOrder);
+                }
                 else
                 {
                     changedOrders = kds.getUsers().users_orderAdd(order, strXml,false, false, true);
+                    ordersChanged.addAll(changedOrders);
                 }
                 kds.getCurrentDB().orderSetAllFromPrimaryOfBackup(true);
             }
+
         }
         else if (kds.getStationsConnections().getRelations().isMirrorStation())
         { //I am mirror slave station
 
-            if (kds.isSingleUserMode())
-                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
-            else
-                changedOrders = kds.getUsers().users_orderAdd(order, strXml,false,false, true);
+            if (kds.isSingleUserMode()) {
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml, false, false, false, true);
+                ordersChanged.add(changedOrder);
+            }
+            else {
+                changedOrders = kds.getUsers().users_orderAdd(order, strXml, false, false, true);
+                ordersChanged.addAll(changedOrders);
+            }
 
         }
         else
@@ -1449,10 +1529,14 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //                return; //in one hour, we don't accept same order name. When auto bump enabled, if expo has bump given order,this station_add_new will cause add a new same name one.
 //                          //I have to fix this bug, in 24 stations "coke" branch.
 
-            if (kds.isSingleUserMode())
-                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml,false, false,false, true);
-            else
-                changedOrders = kds.getUsers().users_orderAdd(order,strXml, false, false,true);
+            if (kds.isSingleUserMode()) {
+                changedOrder = func_orderAdd(kds.getUsers().getUserA(), order, strXml, false, false, false, true);
+                ordersChanged.add(changedOrder);
+            }
+            else {
+                changedOrders = kds.getUsers().users_orderAdd(order, strXml, false, false, true);
+                ordersChanged.addAll(changedOrders);
+            }
         }
 
         tt_checkAllItemsBumped(kds, order);

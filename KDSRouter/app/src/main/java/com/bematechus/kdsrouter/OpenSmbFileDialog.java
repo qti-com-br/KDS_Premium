@@ -1,12 +1,8 @@
 package com.bematechus.kdsrouter;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,8 +20,9 @@ import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSmbFile1;
 import com.bematechus.kdslib.KDSSmbFile2;
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.OpenFileDialog;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +33,7 @@ import java.util.Map;
 /**
  * Created by Administrator on 2016/9/19.
  */
-public class OpenSmbFileDialog extends KDSUIDialogBase  implements AdapterView.OnItemClickListener, KDSSmbExplorerHandler.interfaceSmbGotAllFiles{
+public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.OnItemClickListener, KDSSmbExplorerHandler.interfaceSmbGotAllFiles{
 
     public static String TAG = "OpenSmbFileDialog";
 

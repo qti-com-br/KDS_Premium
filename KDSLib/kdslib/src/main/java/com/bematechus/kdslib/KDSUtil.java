@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.util.DisplayMetrics;
@@ -1278,13 +1279,27 @@ just 16bits value
             case Chinese:
                 locale = Locale.CHINESE;
                 break;
+			case Spanish:
+				locale = new Locale("es");
+				break;
+			case Portuguese:
+				locale = new Locale("pt");
+				break;
         }
         Resources resources = context.getResources();// 获得res资源对象
         Configuration config = resources.getConfiguration();// 获得设置对象
 
         DisplayMetrics dm = resources.getDisplayMetrics();// 获得屏幕参数：主要是分辨率，像素等。
-        config.locale = locale; // 简体中文
-        resources.updateConfiguration(config, dm);
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            config.setLocale(locale);
+//            Context c = context.createConfigurationContext(config);
+//
+//        }
+//        else {
+            config.locale = locale; // 简体中文
+            resources.updateConfiguration(config, dm);
+//        }
     }
 
     static public String getCurrentTimeForLog()
@@ -1938,5 +1953,37 @@ just 16bits value
         if (n <=0) return s;
         s = s.substring(n +1 );
         return s;
+    }
+
+    /**
+     * KPP1-298
+     * @param id
+     * @return
+     */
+    static public boolean isValidStationID(String id)
+    {
+        //kpp1-298 don't allow station id 0.
+        if ((!KDSUtil.isDigitalString(id)) ||
+                (KDSUtil.convertStringToInt(id, 0) < KDSConst.MIN_STATION_ID )||
+                (KDSUtil.convertStringToInt(id, 0) > KDSConst.MAX_STATION_ID ) )
+        {
+            return false;
+        }
+        int n = KDSUtil.convertStringToInt(id, 0);
+        String str = KDSUtil.convertIntToString(n); //remove 0 in front of string.
+        if (!str.equals(id))
+        {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static String getLanguageString() {
+        Locale locale = KDSApplication.getContext().getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        return language;
+
+
     }
 }

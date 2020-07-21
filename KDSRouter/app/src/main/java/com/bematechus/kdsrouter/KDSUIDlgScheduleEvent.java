@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSUIColorPickerDialog;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.MySpinnerArrayAdapter;
 

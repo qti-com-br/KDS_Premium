@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Roteador KitchenGo Premium</string>
+	<string name="main_title">Roteador KitchenGo Premium</string>
+	<string name="pref_header_general">Geral</string>
+	<string name="pref_general_title_name">ID da estação</string>
+	<string name="pref_general_router_backup_title">Trabalhar como Reserva</string>
+	<string name="pref_general_router_sum_backup">Modo Reserva permite múltiplos roteadores. Entre com o roteador principal em [Roteador Principal].</string>
+	<string name="pref_general_sum_router_enabled">Habilita/Desabilita o Roteador</string>
+	<string name="pref_general_router_enabled">Habilitar o Roteador</string>
+	<string name="pref_general_data_source">Origem dos Pedidos</string>
+	<string name="pref_general_title_tcp_port">Porta do PDV</string>
+	<string name="pref_general_title_remote_folder">Pasta Remota da Origem dos Pedidos</string>
+	<string name="pref_general_title_notification_folder">Salvar arquivo de notificação na pasta</string>
+	<string name="pref_router_database_title">Configurações do Banco de Dados</string>
+	<string name="pref_router_relations_title">Relação entre estações</string>
+	<string name="pref_general_title_backup_port">Porta do Roteador Reserva</string>
+	<string name="pref_general_connection_station_ipport">Porta de conexão com a estação</string>
+	<string name="pref_general_title_default_station">Estação padrão que um item será direcionado</string>
+	<string name="pref_header_database">Configurações de filtro dos itens</string>
+	<string name="pref_header_relations">Relação entre as estações</string>
+	<string name="title_activity_filter">Filtro</string>
+	<string name="title_activity_main">Principal</string>
+	<string name="title_activity_stations_relation">Relação entre as estações</string>
+	<string name="title_activity_retrieve_config">Obter configuração</string>
+	<string name="menu_activity_settings">Configurações</string>
+	<string name="menu_activity_cleardb">Limpar banco de dados</string>
+	<string name="menu_activity_showip">Exibir meu IP</string>
+	<string name="menu_activity_stations">Exibir estações ativas</string>
+	<string name="menu_activity_schedule">Programação</string>
+	<string name="menu_activity_clearlog">Limpar registros</string>
+	<string name="confirm_remove_relations_expo">Estação Expedidora # será removida da coluna Exp. Deseja mesmo fazer isso?</string>
+	<string name="confirm_clear_db">Deseja mesmo limpar o Banco de dados?</string>
+	<string name="save">Salvar</string>
+	<string name="confirm_remove_category">Deseja remover a categoria:</string>
+	<string name="confirm_remove_fooditem">Deseja remover o item:</string>
+	<string name="ip">IP</string>
+	<string name="port">Porta</string>
+	<string name="mirror">Espelho</string>
+	<string name="backup">Reserva</string>
+	<string name="new_item">Novo item</string>
+	<string name="new_category">Nova categoria</string>
+	<string name="description">Descrição</string>
+	<string name="delay">Atraso/Prep(mins)</string>
+	<string name="printable">Imprimível</string>
+	<string name="add_new">Novo</string>
+	<string name="preptime">Atraso/Prep(mins)</string>
+	<string name="delayprep">Atraso/Prep(mins)</string>
+	<string name="error_isnot_unique_id">Este ID # já está sendo usado. Por favor, escolha outro.</string>
+	<string name="error_id_out_range">Por favor, digite um ID entre 0 e 99.</string>
+	<string name="error_id_is_empty">Digite um ID.</string>
+	<string name="error_different_relations">A relação entre as estações está diferente das demais. Por favor, altere.</string>
+	<string name="error_match_mac">Rode em um dispositivo da LogicControls.</string>
+	<string name="find">Encontrar</string>
+	<string name="category">Descrição da Categoria</string>
+	<string name="item">Descrição do Item</string>
+	<string name="router_disabled">O Roteador está atualmente desativado. Ative-o para utilizá-lo.</string>
+	<string name="router_disabled_warning">O Roteador está atualmente desativado. Ative-o para utilizá-lo.</string>
+	<string name="error_relations_mirror_dead_loop">Estações # espelho em \'dead loop\'</string>
+	<string name="error_relations_backup_dead_loop">Estações # reserva em \'dead loop\'</string>
+	<string name="network_lost">Rede perdida</string>
+	<string name="network_restore">Rede restaurada</string>
+	<string name="input_internet_file">Entre com o arquivo da Internet</string>
+	<string name="remove">Remover</string>
+	<string name="local">Local</string>
+	<string name="ethernet">Rede</string>
+	<string name="internet">Arquivo da Internet</string>
+	<string name="down">Abaixo</string>
+	<string name="bg">Fundo</string>
+	<string name="fg">Texto</string>
+	<string name="add">Adicionar</string>
+	<string name="edit">Editar</string>
+	<string name="clear">Limpar Tudo</string>
+	<string name="sun">Domingo</string>
+	<string name="mon">Segunda-feira</string>
+	<string name="tue">Terça-feira</string>
+	<string name="wed">Quarta-feira</string>
+	<string name="thu">Quinta-feira</string>
+	<string name="fri">Sexta-feira</string>
+	<string name="sat">Sábado</string>
+	<string name="schedule_help">Clique em um campo vazio para acrescentar uma nova programação</string>
+	<string name="event_help_for_description">Acrescente a descrição aqui</string>
+	<string name="event_help_for_orderid">Acrescente o ID do Pedido aqui</string>
+	<string name="fill_description">Preencha a Descrição antes de salvar</string>
+	<string name="fill_order_id">Preencha o ID do Pedido antes de salvar</string>
+	<string name="pref_kds_password_enabled">Proteger as configurações com uma senha</string>
+	<string name="pref_kds_password_text">Senha</string>
+	<string name="add_item">Acrescentar um item</string>
+	<string name="qty_increase">Qtde +</string>
+	<string name="qty_decrease">Qtde -</string>
+	<string name="qty">Qtde</string>
+	<string name="to_station">Para as estações</string>
+	<string name="order_id">ID do Pedido</string>
+	<string name="duration_mins">Duração(mins)</string>
+	<string name="start_time">Início</string>
+	<string name="week_day">Dia</string>
+	<string name="schedule">Programação</string>
+	<string name="clear_log">Limpar</string>
+	<string name="station">Estação</string>
+	<string name="screen">Tela</string>
+	<string name="summary_translate">Tradução do Resumo</string>
+	<string name="build_cards">Cartões</string>
+	<string name="training_video">Vídeos de Treinamento</string>
+	<string name="local_file">Arquivo Local</string>
+	<string name="ethernet_file">Arquivo da Rede</string>
+	<string name="internet_file">Arquivo da Internet</string>
+	<string name="move_up">Acima</string>
+	<string name="move_down">Abaixo</string>
+	<string name="menu_schedule_add">Nova Programação</string>
+	<string name="menu_schedule_edit">Editar</string>
+	<string name="menu_schedule_clear_all">Limpar Tudo</string>
+	<string name="menu_schedule_remove">Remover</string>
+	<string name="new_schedule">Nova programação</string>
+	<string name="dialog_time_picker">Horário</string>
+	<string name="error_other_router_enabled">Erro, apenas um roteador é permitido por loja</string>
+	<string name="primary_router">Roteador Principal</string>
+	<string name="slave_router">Roteador Reserva</string>
+	<string name="retrieve_settings">Replicar configurações de outro Roteador</string>
+	<string name="backup_of">(Reserva de #)</string>
+	<string name="wait_for_config_data">Aguardando dados de configuração...</string>
+	<string name="wait_for_connection">Aguardando nova conexão...</string>
+	<string name="station_is_inactive">Estação não está ativa...</string>
+	<string name="waiting_for_connecting">Aguardando conexão...</string>
+	<string name="pref_tracker_title">Rastreador de mesa</string>
+	<string name="pref_tracker_enabled">Rastreador de mesa habilitado</string>
+	<string name="pref_tracker_enabled_summary">Usar rastreador de mesa para obter local do consumidor</string>
+	<string name="pref_tracker_number_from_userinfo">O número do rastreador de mesa deve vir do elemento UserInfo</string>
+	<string name="pref_tracker_number_from_userinfo_summary">O PDV pode usar o elemento UserInfo para passar o número do rastreador de mesa</string>
+	<string name="tt_connect_error">Não foi possível conectar ao rastreador de mesa</string>
+	<string name="restart_kds_as_language">É necessário reiniciar para as configurações tenham efeito</string>
+	<string name="station_connected">Estação [#] conectada.</string>
+	<string name="station_disconnected">Estação [#] desconectada.</string>
+	<string name="pos_connected">PDV [#] conectado.</string>
+	<string name="receive_order">Obteve pedido #</string>
+	<string name="receive_order_from_folder">Obteve pedido # da pasta remota</string>
+	<string name="receive_order_from_ip">Obteve pedido # do ip=$</string>
+	<string name="select_order_status">Selecione status [ # ]</string>
+	<string name="select_item">Selecione um item</string>
+	<string name="backup_station_restored">Estação Reserva # restaurada</string>
+	<string name="primary_station_restored">Estação Primária # restaurada</string>
+	<string name="station_restored">Estação # restaurada</string>
+	<string name="backup_router_lost">Roteador Reserva # perdido</string>
+	<string name="primary_router_lost">Roteador Principal # perdido</string>
+	<string name="write_buffer_to">Escrever dados em</string>
+	<string name="transfering_db_to_other_router">Transferindo BD a outro roteador</string>
+	<string name="updating_db_from_other_router">Atualizando BD de outro roteador</string>
+	<string name="get_order">Obteve pedido #</string>
+	<string name="get_order_from_client_ip">Obteve pedido # do cliente ip=$</string>
+	<string name="get_order_from_server_ip">Obteve pedido # do servidor ip=$</string>
+	<string name="get_order_from_remote_folder">Obteve pedido # da pasta remota</string>
+	<string name="pref_kds_language">Idioma</string>
+	<string name="categories">Categorias</string>
+	<string name="items">Itens</string>
+	<string name="items_for_category">Itens para categoria #</string>
+	<string name="category_name">Nome da Categoria:</string>
+	<string name="no_data">Sem dados</string>
+	<string name="export_csv">Exportar BD para CSV</string>
+	<string name="import_csv">Importar CSV para BD</string>
+	<string name="file_name">Nome do arquivo:</string>
+	<string name="export_db_done">Banco de dados foi exportado para</string>
+	<string name="import_csv_done">Arquivo importado</string>
+	<string name="auto_add_modifier">Acrescentar modificar ao BD automaticamente</string>
+	<string name="item_auto_add">Acrescentar item ao BD automaticamente</string>
+	<string name="log_mode">Registros</string>
+	<string name="log_reserved_days">Reservar arquivo de registro por X dias</string>
+	<string name="log">Registros</string>
+	<string name="log_orders">Registrar o recebimento de pedidos XML</string>
+	<string name="station_lost">Estação # perdida</string>
+	<string name="enable_order_ack">Habilitar reconhecimento de pedido</string>
+	<string name="use_smb_v2_open_folder">Utilizar SMBv2 para abrir pasta remota</string>
+	<string name="keep_notification_minutes">Reservar arquivos de notificação por X minutos</string>
+	<string name="title_activity_activity_login">Entrar</string>
+	<string name="logout">Sair</string>
+	<string name="export">Exportar</string>
+	<string name="str_import">Importar</string>
+	<string-array name="pref_kds_log_mode_titles">
+		<item>Nenhum</item>
+		<item>Básico</item>
+		<item>Detalhado</item>
+	</string-array>
+	<string-array name="pref_kds_language_titles">
+		<item>English</item>
+		<item>中文 (Chinese)</item>
+		<item>Español</item>
+		<item>Português</item>
+	</string-array>
+	<string-array name="pref_general_data_source_titles">
+		<item>TCP/IP</item>
+		<item>Pasta Remota</item>
+	</string-array>
+</resources>

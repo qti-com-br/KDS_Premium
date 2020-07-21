@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.ArrayList;
 
 /**
  * Created by Administrator on 2015/12/14 0014.
  */
-public class KDSUIDialogOrderStatus extends  KDSUIDialogBase {
+public class KDSUIDialogOrderStatus extends KDSUIDialogBase {
     public enum OrderState {
         Waiting,
         Processing,
@@ -100,7 +102,7 @@ public class KDSUIDialogOrderStatus extends  KDSUIDialogBase {
         this.listener = listener;
         m_view = LayoutInflater.from(context).inflate(resDlgID, null);
 
-        dialog = create1ButtonsDialog(context);
+        dialog = createCancelButtonsDialog(context);
 
         // kill all padding from the dialog window
         dialog.setView(m_view, 0, 0, 0, 0);

@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 /**
  * Created by Administrator on 2017/5/9.
  */
@@ -40,6 +42,7 @@ public class KDSUIDlgInputTrackerID extends KDSUIDialogBase {
 
 
     public KDSUIDlgInputTrackerID(final Context context,String strTrackerID, KDSUIDialogBase.KDSDialogBaseListener listener) {
+        this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_input_trackerid, "");
         this.setTitle(context.getString(R.string.tracker_id));
 
@@ -50,18 +53,28 @@ public class KDSUIDlgInputTrackerID extends KDSUIDialogBase {
 
     }
 
-    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey )
-    {
-        return makeCtrlEnterButtonText(context, nResID, funcKey);
-
-
-    }
-
-    protected void init_dialog_events(final AlertDialog dlg)
-    {
-        init_dialog_ctrl_enter_events(dlg);
-
-    }
+//    public String makeOKButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.OK);
+//
+//    }
+//    public String makeCancelButtonText(Context context)
+//    {
+//        return makeCtrlEnterButtonText(context, DialogEvent.Cancel);
+//
+//    }
+//    protected String makeButtonText2(Context context, int nResID, KDSSettings.ID funcKey )
+//    {
+//        return makeCtrlEnterButtonText(context, nResID, funcKey);
+//
+//
+//    }
+//
+//    protected void init_dialog_events(final AlertDialog dlg)
+//    {
+//        init_dialog_ctrl_enter_events(dlg);
+//
+//    }
 
 
 }

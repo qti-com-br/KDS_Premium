@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
@@ -37,16 +36,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSEditTextPreference;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
+import com.bematechus.kdslib.KDSToast;
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.PreferenceFragmentStations;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -97,6 +103,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
         ColorDrawable c = new ColorDrawable(color);
         this.getWindow().setBackgroundDrawable(c);
 
+        PreferenceFragmentStations.setKDSCallback(KDSGlobalVariables.getKDS());
 
 //        getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
 //                R.drawable.lci);
@@ -312,51 +319,51 @@ public class KDSUIConfiguration extends PreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class KDSPreferenceFragment extends PreferenceFragment  {
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
-            View v = super.onCreateView(inflater, root, savedInstanceState);
-
-            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
-            v.setPadding(0,0,0,0);
-
-
-            return v;
-        }
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            showScrollbar();
-        }
-
-        public void showScrollbar()
-        {
-            try {
-
-
-                    if (this instanceof PreferenceFragmentStations)
-                        return;
-                    Class<PreferenceFragment> c = PreferenceFragment.class;
-                    Method method = c.getMethod("getListView");
-                    method.setAccessible(true);
-                    Object obj = method.invoke(this);
-                    if (obj != null) {
-                        ListView listView = (ListView) obj;// method.invoke(this);//, null);
-                        listView.setScrollBarFadeDuration(0);
-                        listView.setScrollbarFadingEnabled(false);
-                        //listView.setFastScrollAlwaysVisible(true);
-                        //listView.setNestedScrollingEnabled(false);
-                    }
-//                }
-            }
-            catch (Exception err)
-            {//don't care this bug.
-                //KDSLog.e(TAG,KDSLog._FUNCLINE_() + err.toString());
-                //KDSLog.e(TAG, KDSUtil.error( err));
-            }
-        }
-    }
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//    public static class KDSPreferenceFragment extends PreferenceFragment  {
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
+//            View v = super.onCreateView(inflater, root, savedInstanceState);
+//
+//            v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+//            v.setPadding(0,0,0,0);
+//
+//
+//            return v;
+//        }
+//        @Override
+//        public void onActivityCreated(Bundle savedInstanceState) {
+//            super.onActivityCreated(savedInstanceState);
+//            showScrollbar();
+//        }
+//
+//        public void showScrollbar()
+//        {
+//            try {
+//
+//
+//                    if (this instanceof PreferenceFragmentStations)
+//                        return;
+//                    Class<PreferenceFragment> c = PreferenceFragment.class;
+//                    Method method = c.getMethod("getListView");
+//                    method.setAccessible(true);
+//                    Object obj = method.invoke(this);
+//                    if (obj != null) {
+//                        ListView listView = (ListView) obj;// method.invoke(this);//, null);
+//                        listView.setScrollBarFadeDuration(0);
+//                        listView.setScrollbarFadingEnabled(false);
+//                        //listView.setFastScrollAlwaysVisible(true);
+//                        //listView.setNestedScrollingEnabled(false);
+//                    }
+////                }
+//            }
+//            catch (Exception err)
+//            {//don't care this bug.
+//                //KDSLog.e(TAG,KDSLog._FUNCLINE_() + err.toString());
+//                //KDSLog.e(TAG, KDSUtil.error( err));
+//            }
+//        }
+//    }
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -376,14 +383,19 @@ public class KDSUIConfiguration extends PreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("kds_general_id"));
+//            //kpp1-298 don't allow station id =0;
+//            ((KDSEditTextPreference)findPreference("kds_general_id")).setInputStationID(true);
+            bindPreferenceSummaryToValue(findPreference("kds_general_id"));//kpp1-298 don't allow station id =0;
+            setStationIDPrefChangeListener();//kpp1-298 don't allow station id =0;
+
             bindPreferenceSummaryToValue(findPreference("kds_general_datasrc"));
             bindPreferenceSummaryToValue(findPreference("kds_general_tcpport"));
           //  bindPreferenceSummaryToValue(findPreference("kds_general_remote_folder"));
             bindPreferenceSummaryToValue(findPreference("kds_general_stationsport"));
             bindPreferenceSummaryToValue(findPreference("kds_general_stationfunc"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_users"));
-            bindPreferenceSummaryToValue(findPreference("kds_general_language"));
+            //kpp1-337, remove app language settings
+            //bindPreferenceSummaryToValue(findPreference("kds_general_language"));
 
             bindPreferenceSummaryToValue(findPreference("kds_general_auto_backup_hours"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_users_orientation"));
@@ -400,7 +412,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
             setupGuiByDataSourceType(dataType);
 
             m_bDisableChangedEvent = false;
-
+            //
+            KDSUIRetriveConfig.setKDSCallback(KDSGlobalVariables.getKDS());
 //            KDSSettings.KDSUserMode userMode = getScreenMode(pref);
 //            enableSplitScreenOptions(userMode == KDSSettings.KDSUserMode.Multiple);
 
@@ -439,6 +452,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
                     MainActivity.Confirm_Dialog.Restart_me,
                     this.getString(R.string.confirm),
                     info, false, this);
+            d.setCancelByClickOutside(false);
             d.show();
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
@@ -494,7 +508,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
 
         public void onKDSDialogCancel(KDSUIDialogBase dialog) {
-            if (dialog instanceof KDSUIDlgInputPassword ) {
+            if (dialog instanceof KDSUIDlgInputPassword) {
 //                m_bDisableChangedEvent = true;
 //
 //                if (KDSGlobalVariables.getKDS().getSettings().getBoolean(KDSSettings.ID.Settings_password_enabled))
@@ -643,6 +657,32 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 //findPreference("general_enable_smbv2").setEnabled(true);
             }
 
+        }
+
+        /**
+         * KPP1-298
+         * Don't allow station ID is zero.
+         * Please notice this function has conflicts with bindPreferenceSummaryToValue funciton.
+         * They all set the onPreferenceChange listener.
+         */
+        private void setStationIDPrefChangeListener()
+        {
+            findPreference("kds_general_id").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                    String s = (String)newValue;
+
+                    if (!KDSUtil.isValidStationID(s)){
+                        KDSToast.showMessage(KDSApplication.getContext(), KDSApplication.getContext().getString(R.string.error_id_out_range));
+                        return false;
+                    }
+
+                    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,newValue);
+
+                    return true;
+                }
+            });
         }
     }
 
@@ -1071,8 +1111,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
          */
         private  void showDoubleBumpDisabledAlert()
         {
-            String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-            String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+            String strOK = KDSUIDialogBase.makeOKButtonText2(KDSApplication.getContext());//.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+            //String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
             if (this.getActivity() == null) return;
             AlertDialog d = new AlertDialog.Builder(this.getActivity())
                     .setTitle(this.getString(R.string.confirm))
@@ -1213,7 +1253,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("printer_copies"));
             bindPreferenceSummaryToValue(findPreference("printer_codepage"));
             bindPreferenceSummaryToValue(findPreference("printer_howtoprint"));
-
+            bindPreferenceSummaryToValue(findPreference("printer_logo"));
 
             //bindPreferenceSummaryToValue(findPreference("printer_template"));
             KDSPrinter.PrinterPortType portType =getPortType(pref);
@@ -1757,8 +1797,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
          */
         private  void showDoubleBumpDisabledAlert()
         {
-            String strOK = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
-            String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
+            String strOK = KDSUIDialogBase.makeOKButtonText2(KDSApplication.getContext());// .makeButtonText(KDSApplication.getContext(),R.string.ok, KDSSettings.ID.Bumpbar_OK );
+            //String strCancel = KDSUIDialogBase.makeButtonText(KDSApplication.getContext(),R.string.cancel, KDSSettings.ID.Bumpbar_Cancel );
             if (this.getActivity() == null) return;
             AlertDialog d = new AlertDialog.Builder(this.getActivity())
                     .setTitle(this.getString(R.string.confirm))
@@ -2285,6 +2325,43 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
 
 
+    }
+
+    /**
+     * This fragment shows data and sync preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class CleaningPreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener  {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_cleaning);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+            bindPreferenceSummaryToValue(findPreference("cleaning_alert_type"));
+            //bindPreferenceSummaryToValue(findPreference("cleaning_reminder_interval"));
+            bindPreferenceSummaryToValue(findPreference("cleaning_snooze_time"));
+            KDSPreferenceCleaningInterval p = (KDSPreferenceCleaningInterval) findPreference("cleaning_reminder_interval");
+            p.updateSummary();
+
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.registerOnSharedPreferenceChangeListener(this);
+
+        }
+        @Override
+        public void onDestroy()
+        {
+            super.onDestroy();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.unregisterOnSharedPreferenceChangeListener(this);
+        }
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
+        {
+
+        }
     }
 
 }

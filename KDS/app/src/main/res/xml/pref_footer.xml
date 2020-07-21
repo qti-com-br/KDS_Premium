@@ -36,7 +36,7 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="footer_font"
         android:defaultValue="default_font,@color/footer_bg,@color/footer_fg,normal_size"
         android:title="@string/pref_kds_footer_font"

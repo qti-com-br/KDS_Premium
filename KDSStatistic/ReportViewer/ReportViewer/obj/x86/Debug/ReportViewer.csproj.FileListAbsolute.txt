@@ -1,9 +1,0 @@
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\bin\Debug\ReportViewer.exe
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\bin\Debug\ReportViewer.pdb
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\obj\x86\Debug\ResolveAssemblyReference.cache
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\obj\x86\Debug\ReportViewer.Form1.resources
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\obj\x86\Debug\ReportViewer.Properties.Resources.resources
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\obj\x86\Debug\GenerateResource.read.1.tlog
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\obj\x86\Debug\GenerateResource.write.1.tlog
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\obj\x86\Debug\ReportViewer.exe
-F:\Android\src\KDSStatistic\ReportViewer\ReportViewer\obj\x86\Debug\ReportViewer.pdb

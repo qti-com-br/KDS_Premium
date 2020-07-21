@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 
 import com.bematechus.kdslib.KDSUIColorPickerDialog;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 /**
  * Created by Administrator on 2015/12/17 0017.
  */
-public class KDSUIDlgCategory  extends  KDSUIDialogBase  implements KDSUIColorPickerDialog.OnColorPickerDlgListener{
+public class KDSUIDlgCategory  extends KDSUIDialogBase implements KDSUIColorPickerDialog.OnColorPickerDlgListener{
 
 
 

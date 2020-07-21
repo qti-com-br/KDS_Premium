@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="pwd_length">4</integer>
+    <!--tcp/ip ports used by premium app -->
+    <integer name="default_stations_datasource_tcpip_port">3000</integer>
+    <integer name="default_stations_internal_tcpip_port">3001</integer>
+    <integer name="default_stations_announce_udp_port">5000</integer>
+    <!-- tcp/ip port used by router app  -->
+    <integer name="default_router_datasource_tcpip_port">4000</integer>
+    <integer name="default_router_backup_tcpip_port">4001</integer>
+    <integer name="default_router_announce_udp_port">5001</integer>
+
+    <!-- statistic app used these tcp/ip ports -->
+    <!--<integer name="default_statistic_connect_stations_tcpip_port">6001</integer>-->
+    <!--<integer name="default_statistic_announce_udp_port">5002</integer>-->
+
+</resources>

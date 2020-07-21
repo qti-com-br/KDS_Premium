@@ -16,6 +16,7 @@ import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.ActivationRequest;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
+import com.bematechus.kdslib.KDSCallback;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
@@ -49,6 +50,7 @@ import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSToStation;
 import com.bematechus.kdslib.KDSToStations;
 import com.bematechus.kdslib.KDSToast;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
@@ -56,6 +58,7 @@ import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.StationAnnounceEvents;
 import com.bematechus.kdslib.TimeDog;
 
 import java.nio.ByteBuffer;
@@ -69,44 +72,48 @@ import java.util.Vector;
  * The KDS app main interface.
  *  It charge the network, printer ...
  */
-public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
+public class KDS extends KDSBase implements KDSSocketEventReceiver,
+        Runnable,
+        KDSCallback
+        {
 
     final static String TAG = "KDSMain";
-    public enum RefreshViewParam
-    {
-        None,
-        Focus_First,
-    }
-    public enum MessageType
-    {
-        Normal,
-        Toast,
-    }
+//    public enum RefreshViewParam
+//    {
+//        None,
+//        Focus_First,
+//    }
+//    public enum MessageType
+//    {
+//        Normal,
+//        Toast,
+//    }
 
 
-    public interface KDSEvents
-    {
-        void onStationConnected(String ip, KDSStationConnection conn);
-        void onStationDisconnected(String ip);
-        void onAcceptIP(String ip);
-        void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, RefreshViewParam nParam); //nParam: 1: move focus to first order.
-        void onRetrieveNewConfigFromOtherStation();
-        void onShowMessage(MessageType msgType, String message);
-        void onRefreshSummary(KDSUser.USER userID);
-        void onAskOrderState(Object objSource, String orderName);
-        void onSetFocusToOrder(String orderGuid); //set focus to this order
-        void onXmlCommandBumpOrder(String orderGuid);
-        void onTTBumpOrder(String orderName);
-        void onReceiveNewRelations();
-        void onReceiveRelationsDifferent();
-//        void onItemQtyChanged(KDSDataOrder order, KDSDataItem item);
-//        void onOrderStatusChanged(KDSDataOrder order, int nOldStatus);
-        //void onShowToastMessage(String message);
-    }
+//    public interface KDSEvents
+//    {
+//        void onStationConnected(String ip, KDSStationConnection conn);
+//        void onStationDisconnected(String ip);
+//        void onAcceptIP(String ip);
+//        void onRefreshView(KDSUser.USER userID, KDSDataOrders orders, RefreshViewParam nParam); //nParam: 1: move focus to first order.
+//        void onRetrieveNewConfigFromOtherStation();
+//        void onShowMessage(MessageType msgType, String message);
+//        void onRefreshSummary(KDSUser.USER userID);
+//        void onAskOrderState(Object objSource, String orderName);
+//        void onSetFocusToOrder(String orderGuid); //set focus to this order
+//        void onXmlCommandBumpOrder(String orderGuid);
+//        void onTTBumpOrder(String orderName);
+//        void onReceiveNewRelations();
+//        void onReceiveRelationsDifferent();
+////        void onItemQtyChanged(KDSDataOrder order, KDSDataItem item);
+////        void onOrderStatusChanged(KDSDataOrder order, int nOldStatus);
+//        //void onShowToastMessage(String message);
+//    }
 
-    final int DEFAULT_POS_IP_PORT = 3000;
-    final int DEFAULT_STATION_IP_PORT = 3001;
-    final int DEFAULT_STATISTIC_TCP_PORT = 6001;
+    final int DEFAULT_STATION_DATASOURCE_IP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_stations_datasource_tcpip_port);// 3000;
+    final int DEFAULT_STATION_INTERNAL_IP_PORT =KDSApplication.getContext().getResources().getInteger(R.integer.default_stations_internal_tcpip_port); //3001;
+            //don't support statistic anymore
+    //final int DEFAULT_STATISTIC_TCP_PORT = KDSApplication.getContext().getResources().getInteger(R.integer.default_statistic_connect_stations_tcpip_port); //6001; //unused!
 
 //
 //    public interface StationAnnounceEvents
@@ -117,9 +124,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
 
     String m_strKDSStationID = "";
-    int m_nPOSPort = DEFAULT_POS_IP_PORT;
-    int m_nStationsPort = DEFAULT_STATION_IP_PORT;
-    int m_nStatisticPort = DEFAULT_STATISTIC_TCP_PORT;
+    int m_nDataSourceIpPort = DEFAULT_STATION_DATASOURCE_IP_PORT;
+    int m_nStationsInternalIpPort = DEFAULT_STATION_INTERNAL_IP_PORT;
+    //int m_nStatisticPort = DEFAULT_STATISTIC_TCP_PORT;//don't support statistic anymore
 
 
     KDSDBCurrent m_dbCurrent = null;
@@ -132,7 +139,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     KDSSocketManager m_socksManager = new KDSSocketManager();
     //listen which pos want to connect to me
     KDSSocketTCPListen m_listenPOS;
-    KDSSocketTCPListen m_listenStatistic;
+    //KDSSocketTCPListen m_listenStatistic; //don't support statistic anymore
     //list which normal kds station connect to me.
     KDSSocketTCPListen m_listenStations;
     //use it receive event, and
@@ -270,8 +277,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         m_listenStations = new KDSSocketTCPListen();
         m_listenStations.setEventHandler(m_sockEventsMessageHandler);
 
-        m_listenStatistic = new KDSSocketTCPListen();
-        m_listenStatistic.setEventHandler(m_sockEventsMessageHandler);
+        //don't support statistic anymore
+//        m_listenStatistic = new KDSSocketTCPListen();
+//        m_listenStatistic.setEventHandler(m_sockEventsMessageHandler);
 
     }
 
@@ -340,14 +348,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         }
         int nPort = settings.getInt(KDSSettings.ID.KDS_Data_TCP_Port);
         boolean bPosPortChanged = false;
-        if (nPort != m_nPOSPort)
+        if (nPort != m_nDataSourceIpPort)
             bPosPortChanged = true;
-        m_nPOSPort = nPort;
+        m_nDataSourceIpPort = nPort;
         nPort = settings.getInt(KDSSettings.ID.KDS_Station_Port);
         boolean bStationPortChanged = false;
-        if (nPort != m_nStationsPort)
+        if (nPort != m_nStationsInternalIpPort)
             bStationPortChanged = true;
-        m_nStationsPort = nPort;
+        m_nStationsInternalIpPort = nPort;
 
         updateStationFunction();
 
@@ -358,8 +366,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 m_listenPOS.stop();
 
                 m_stationsConnection.disconnectPOSConnections();
-                m_listenPOS.startServer(m_nPOSPort, m_socksManager, m_sockEventsMessageHandler );
-
+                // kpp1-312, show error message.
+                String error = m_listenPOS.startServer(m_nDataSourceIpPort, m_socksManager, m_sockEventsMessageHandler );
+                fireTcpListenServerErrorEvent(m_nDataSourceIpPort, error);
             }
         }
         startPOSListener();
@@ -373,7 +382,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 m_listenStations.stop();
                 //disconnectStations(m_arConnectMeStations);
                 m_stationsConnection.closeAllStationsConnections();//.disconnectAllStationsConnectedToMe();
-                m_listenStations.startServer(m_nStationsPort, m_socksManager, m_sockEventsMessageHandler );
+                String error = m_listenStations.startServer(m_nStationsInternalIpPort, m_socksManager, m_sockEventsMessageHandler );
+                fireTcpListenServerErrorEvent(m_nStationsInternalIpPort, error);
 
             }
         }
@@ -382,6 +392,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         updateUsers(settings);
 
         m_bumpbarFunctions.updateSettings(this.getSettings());
+        //use new dialog class
+        KDSUIDialogBase.init_kbd_keys(m_bumpbarFunctions.getKbdType(),
+                                        m_bumpbarFunctions.getKeySettings(KDSSettings.ID.Bumpbar_OK),
+                                        m_bumpbarFunctions.getKeySettings(KDSSettings.ID.Bumpbar_Cancel));
+        KDSUIDialogBase.init_navigation_bar_settings(settings.getBoolean(KDSSettings.ID.Hide_navigation_bar));
 
         m_printer.updateSettings(settings);
 
@@ -393,8 +408,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         m_settings.setStationFunc(func);
         if (old != func)
         { //update the activation backoffice
-            if (m_activationHTTP != null)
-                m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+            if (m_activationHTTP != null) {
+                if (!getStationID().isEmpty())//kpp1-309 Expeditor and Queue deleted at logout on premium
+                    m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+            }
         }
 
     }
@@ -469,7 +486,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         if (srcType == KDSSettings.KDSDataSource.TCPIP)
         {
             stopPOSListener();
-            m_listenPOS.startServer(m_nPOSPort, m_socksManager, m_sockEventsMessageHandler);
+            String error = m_listenPOS.startServer(m_nDataSourceIpPort, m_socksManager, m_sockEventsMessageHandler);
+            fireTcpListenServerErrorEvent(m_nDataSourceIpPort, error);
         }
         else
         {
@@ -484,15 +502,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     }
 
 
+            /**
+             * don't support statistic app anymore.
+             * @return
+             */
     public boolean startStatisticListener()
     {
-        stopStatisticListener(); //stop it first.
-        m_listenStatistic.startServer(m_nStatisticPort, m_socksManager, m_sockEventsMessageHandler);
+//        stopStatisticListener(); //stop it first.
+//        m_listenStatistic.startServer(m_nStatisticPort, m_socksManager, m_sockEventsMessageHandler);
         return true;
     }
     public void stopStatisticListener()
     {
-        m_listenStatistic.stop();
+//        m_listenStatistic.stop(); //don't support statistic anymore
     }
 
     public void refreshIPandMAC()
@@ -568,7 +590,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
         m_socksManager.startThread();
 
-        m_udpStationAnnouncer.start(KDSSettings.UDP_ANNOUNCER_PORT, m_sockEventsMessageHandler, m_socksManager);
+        m_udpStationAnnouncer.start(KDSSettings.UDP_STATION_ANNOUNCER_UDP_PORT, m_sockEventsMessageHandler, m_socksManager);
 
         //let others stations know me as soon as possible.
         //this.broadcastStationAnnounceInThread();
@@ -576,9 +598,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         this.getBroadcaster().broadcastRequireStationsUDPInThread();
 
         startPOSListener();
-        startStatisticListener();
+//        startStatisticListener(); //don't support statistic anymore
 
-        m_listenStations.startServer(m_nStationsPort, m_socksManager, m_sockEventsMessageHandler);
+        String error = m_listenStations.startServer(m_nStationsInternalIpPort, m_socksManager, m_sockEventsMessageHandler);
+        //test kpp1-312
+        //String error = m_listenStations.startServer(80, m_socksManager, m_sockEventsMessageHandler);
+        fireTcpListenServerErrorEvent(m_nStationsInternalIpPort, error);
+
 
         this.getBroadcaster().broadcastRequireStationsUDPInThread();
 
@@ -717,7 +743,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public ByteBuffer makeStationAnnounceBuffer()
     {
-        int port = this.m_nStationsPort;
+        int port = this.m_nStationsInternalIpPort;
         String strport = KDSUtil.convertIntToString(port);
         int nItemsCount = getAllItemsCount();
         ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getStationID(),m_strLocalIP, strport, getLocalMacAddress(), nItemsCount, getSettings().getInt(KDSSettings.ID.Users_Mode), Activation.getStoreGuid());
@@ -1143,14 +1169,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public void onStatisticAppRequireStationAnnounceInThread2(byte b0,byte  b1, byte b2, byte b3)
     {
-        String statistic_ip = String.format("%d.%d.%d.%d", KDSUtil.byteToUnsignedInt(b0), KDSUtil.byteToUnsignedInt(b1), KDSUtil.byteToUnsignedInt(b2), KDSUtil.byteToUnsignedInt(b3));
-
-        int port = this.m_nStationsPort;
-        String strport = KDSUtil.convertIntToString(port);
-        int nItemsCount = getAllItemsCount();
-        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getStationID(),m_strLocalIP, strport, getLocalMacAddress(), nItemsCount, getSettings().getInt(KDSSettings.ID.Users_Mode), Activation.getStoreGuid());
-        //send data to statistic station.
-         (new KDSBroadcastThread(m_udpStationAnnouncer, statistic_ip,KDSSettings.UDP_STATISTIC_ANNOUNCER_PORT, buf )).start();
+        //don't support statistic anymore
+//        String statistic_ip = String.format("%d.%d.%d.%d", KDSUtil.byteToUnsignedInt(b0), KDSUtil.byteToUnsignedInt(b1), KDSUtil.byteToUnsignedInt(b2), KDSUtil.byteToUnsignedInt(b3));
+//
+//        int port = this.m_nStationsPort;
+//        String strport = KDSUtil.convertIntToString(port);
+//        int nItemsCount = getAllItemsCount();
+//        ByteBuffer buf = KDSSocketTCPCommandBuffer.buildReturnStationIPCommand2(getStationID(),m_strLocalIP, strport, getLocalMacAddress(), nItemsCount, getSettings().getInt(KDSSettings.ID.Users_Mode), Activation.getStoreGuid());
+//        //send data to statistic station.
+//         (new KDSBroadcastThread(m_udpStationAnnouncer, statistic_ip,KDSSettings.UDP_STATISTIC_ANNOUNCER_PORT, buf )).start();
     }
 
 
@@ -1221,7 +1248,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             String port =KDSUtil.parseRemoteUDPPort(remoteIP);
             if (ip.equals(getLocalIpAddress()))
             {
-                if (port.equals(KDSUtil.convertIntToString(KDSSettings.UDP_ANNOUNCER_PORT)))
+                if (port.equals(KDSUtil.convertIntToString(KDSSettings.UDP_STATION_ANNOUNCER_UDP_PORT)))
                     return;
             }
             String s = xmlCommand;
@@ -1787,10 +1814,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             //ar = m_arPOSStations;//.add(station);
         else if (sock == m_listenStations)
             m_stationsConnection.onAcceptStationConnection(sock, sockClient);
-        else if (sock == m_listenStatistic)
-        {
-            m_stationsConnection.onAcceptStatisticConnection(sock, sockClient);
-        }
+//        else if (sock == m_listenStatistic) ////don't support statistic anymore
+//        {
+//            m_stationsConnection.onAcceptStatisticConnection(sock, sockClient);
+//        }
             //ar = m_arConnectMeStations;//.add(station);
 
         if (!ip.isEmpty()) {
@@ -2193,10 +2220,35 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                     break;
 //                if (this.isQueueExpo() || this.isExpeditorStation() || this.isTrackerView())
 //                    break;
-
-                KDSStationFunc.doSyncCommandOrderNew(this, command, xmlData);
+                ArrayList<Boolean> ordersExisted = new ArrayList<>();
+                ArrayList<KDSDataOrder> ordersChanged = new ArrayList<>();
+                //order is parsed order, that is received order
+                KDSDataOrder order = KDSStationFunc.doSyncCommandOrderNew(this, command, xmlData, ordersExisted, ordersChanged);
                 setFocusAfterReceiveOrder();
                 schedule_process_update_after_receive_new_order();
+                //if order is not null, it is expo station returned.
+                if (order != null)//kpp1-333
+                {
+                    if (getStationFunction() == KDSSettings.StationFunc.Expeditor ||
+                        getStationFunction() == KDSSettings.StationFunc.Queue_Expo) {
+                        if (getSettings().getBoolean(KDSSettings.ID.Printer_Enabled)) {
+                            KDSPrinter.HowToPrintOrder howtoprint = KDSPrinter.HowToPrintOrder.values()[(getSettings().getInt(KDSSettings.ID.Printer_howtoprint))];
+                            if (howtoprint == KDSPrinter.HowToPrintOrder.WhileReceive) {
+                                boolean bExisted = true;
+                                if (ordersExisted.size() > 0)
+                                    bExisted = ordersExisted.get(0);
+                                if ((!bExisted) || (!isSameChangedOrder(order, ordersChanged))) {
+                                    for (int i = 0; i < ordersChanged.size(); i++) {
+                                        if (ordersChanged.get(i) != null)
+                                            getPrinter().printOrder(ordersChanged.get(i));
+                                    }
+
+                                }
+
+                            }
+                        }
+                    }
+                }
                 break;
             case Station_Bump_Order://in thread
                 //Please notice the xmldata just contains the order/item id.
@@ -2882,6 +2934,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
                 if (bForceDeliverToExpo)
                     bDeliverToExpo = true; //for test button
                 ArrayList<KDSDataOrder> ordersAdded = m_users.users_orderAdd(order, xmlData,true, bDeliverToExpo, bRefreshView);//////
+                //kpp1-310 Rush orders creating previous page
+                checkRushOrderReceivedThenChangeFirstShowingOrder(ordersAdded);
                 //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts
                 for (int i = 0; i < ordersAdded.size(); i++) {
@@ -3143,11 +3197,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
         //KDSLog.d(TAG, KDSUtil.getCurrentTimeForLog()+ " refreshView");
         m_refreshHandler.removeMessages(MESSAGE_TO_MAIN.REFRESH_ALL.ordinal());
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++) {
-            m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_A, m_users.getUserA().getOrders(), RefreshViewParam.None);
-            m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_A);
+            m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_A.ordinal(), m_users.getUserA().getOrders(), RefreshViewParam.None);
+            m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_A.ordinal());
             if (isValidUser(KDSUser.USER.USER_B)) {
-                m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_B, m_users.getUserB().getOrders(), RefreshViewParam.None);
-                m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_B);
+                m_arKdsEventsReceiver.get(i).onRefreshView(KDSUser.USER.USER_B.ordinal(), m_users.getUserB().getOrders(), RefreshViewParam.None);
+                m_arKdsEventsReceiver.get(i).onRefreshSummary(KDSUser.USER.USER_B.ordinal());
             }
         }
 
@@ -3180,8 +3234,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
 
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++) {
-            m_arKdsEventsReceiver.get(i).onRefreshView(userID, orders,nParam);// RefreshViewParam.None);
-            m_arKdsEventsReceiver.get(i).onRefreshSummary(userID);
+            m_arKdsEventsReceiver.get(i).onRefreshView(userID.ordinal(), orders,nParam);// RefreshViewParam.None);
+            m_arKdsEventsReceiver.get(i).onRefreshSummary(userID.ordinal());
         }
 
     }
@@ -3639,7 +3693,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public KDSSettings.ID checkKDSKbdEvent(KeyEvent ev, KDSKbdRecorder kbd)
     {
-        return m_bumpbarFunctions.getKDSKeyboardEvent(ev, kbd);
+        boolean bCleanEnabled = getSettings().getBoolean(KDSSettings.ID.cleaning_enable_alert);
+        return m_bumpbarFunctions.getKDSKeyboardEvent(ev, kbd, bCleanEnabled);
     }
 
     public KDSSettings.ID checkQExpoKbdEvent(KeyEvent ev, KDSKbdRecorder kbd)
@@ -4110,7 +4165,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
 
     public int getOpenedOrderSourceIpPort()
     {
-        return m_nPOSPort;
+        return m_nDataSourceIpPort;
     }
 
     public KDSSocketUDP getUDP()
@@ -4119,7 +4174,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     }
     public int getOpenedStationsCommunicatingPort()
     {
-        return m_nStationsPort;
+        return m_nStationsInternalIpPort;
     }
 
     public Broadcaster getBroadcaster()
@@ -5042,6 +5097,77 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
     }
 
     /**
+     * KDSCallback
+     * @param receiver
+     */
+    public void call_setStationAnnounceEventsReceiver(StationAnnounceEvents receiver)
+    {
+        this.setStationAnnounceEventsReceiver(receiver);
+    }
+    public void call_broadcastRequireStationsUDP()
+    {
+        this.getBroadcaster().broadcastRequireStationsUDP();
+    }
+    public String call_getStationID()
+    {
+        return this.getStationID();
+    }
+
+    public void call_removeEventReceiver(KDSBase.KDSEvents receiver)
+    {
+        this.removeEventReceiver(receiver);
+    }
+
+    public void call_setEventReceiver(KDSBase.KDSEvents receiver)
+    {
+        this.setEventReceiver(receiver);
+    }
+
+    public int call_retrieveConfigFromStation(String stationID, TextView txtInfo)
+    {
+        return this.retrieveConfigFromStation(stationID, txtInfo);
+    }
+
+    public String call_getLocalMacAddress()
+    {
+        return this.getLocalMacAddress();
+    }
+    public String call_getBackupRouterPort()
+    {
+        return "";
+    }
+
+    public void call_broadcastShowStationID()
+    {
+        this.getBroadcaster().broadcastShowStationID();
+    }
+    public void call_udpAskRelations(String stationID)
+    {
+        this.udpAskRelations(stationID);
+    }
+    public void call_broadcastRelations(String relationsData)
+    {
+        this.getBroadcaster().broadcastRelations(relationsData);
+    }
+    public KDSStationActived call_findActivedStationByID(String stationID)
+    {
+        return this.getStationsConnections().findActivedStationByID(stationID);
+    }
+    public int call_findActivedStationCountByID(String stationID)
+    {
+        return this.getStationsConnections().findActivedStationCountByID(stationID);
+    }
+    public void call_broadcastStationsRelations()
+    {
+        broadcastStationsRelations();
+    }
+
+    public String call_loadStationsRelationString(boolean bNeedNoCheckOption)
+    {
+        return KDSSettings.loadStationsRelationString(KDSApplication.getContext(), bNeedNoCheckOption);
+    }
+
+    /**
      * //kpp1-62, kpp1-74
      * when expo receive item/order bumped, expo need update its preparation time in item_bumps table.
      * @param arChangedItems
@@ -5089,5 +5215,87 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver, Runnable {
             KDSLog.e(TAG,KDSLog._FUNCLINE_(),e );
         }
 
+    }
+
+    /**
+     * If move rush to front, call this function, and reset the first showing order.
+     *
+     * @param arOrdersAdded
+     *  index 0: order add to user A
+     *  index 1: order add to user B
+     */
+    private void checkRushOrderReceivedThenChangeFirstShowingOrder(ArrayList<KDSDataOrder> arOrdersAdded)
+    {
+        if (!getSettings().getBoolean(KDSSettings.ID.Orders_sort_rush_front))
+            return;
+        for (int i=0; i< arOrdersAdded.size(); i++)
+        {
+            KDSDataOrder order = arOrdersAdded.get(i);
+            if (order.getOrderType().toUpperCase().equals(KDSDataOrder.ORDER_TYPE_RUSH))
+            {
+                if (m_arKdsEventsReceiver != null)
+                {
+                    ArrayList<Object> arOrders = new ArrayList<>();
+                    arOrders.addAll(arOrdersAdded);
+                    for (int j = 0; j< m_arKdsEventsReceiver.size(); j++)
+                    {
+                        m_arKdsEventsReceiver.get(j).onKDSEvent(KDSEventType.Received_rush_order, arOrders);
+                    }
+                }
+            }
+        }
+    }
+
+            /**
+             * kpp1-312 Cannot receive orders on expo
+             * @param nListenPort
+             * @param errorMessage
+             */
+    private void fireTcpListenServerErrorEvent(int nListenPort, String errorMessage)
+    {
+        fireTcpListenServerErrorEvent(m_arKdsEventsReceiver,nListenPort,  errorMessage);
+
+    }
+
+    /**
+     * It is for expo print "station" order.
+     * If prep get order without router, and expo set printing order when received,
+     *  we will call this function.
+     *
+     *  This function will compare received order and changed order.
+     *  Check if they are same one.
+     *  Same: don't print it.
+     *  No-same, print it.
+     * @param orderReceived
+     * @param ordersChanged
+     * @return
+     */
+    private boolean isSameChangedOrder(KDSDataOrder orderReceived, ArrayList<KDSDataOrder> ordersChanged)
+    {
+        if (orderReceived == null) return true;
+
+        if (ordersChanged.size() ==1)
+        {
+            return (orderReceived.getItems().getCount() == orderReceived.getItems().getCount());
+        }
+        else
+        {
+            int n = 0;
+            for (int i=0; i< ordersChanged.size() ; i++)
+            {
+                n += ordersChanged.get(i).getItems().getCount();
+            }
+            return (n == orderReceived.getItems().getCount());
+        }
+    }
+
+    public void fireOrderBumpedInOther(String orderGuid)
+    {
+        ArrayList<Object> arOrders = new ArrayList<>();
+        arOrders.add(orderGuid);
+        for (int i = 0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Order_Bumped_By_Other_Expo_Or_Station, arOrders);
+        }
     }
 }

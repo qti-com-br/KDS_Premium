@@ -1,58 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="main_title">KitchenGo Premium</string>
     <string name="app_name">KDSLib</string>
-    <string name="message">Message</string>
-    <string name="empty">Empty</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
+    <string name="message">消息</string>
+    <string name="empty">空</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
     <!-- kdssmbfile class use this strings -->
-    <string name="folder_not_existed">The folder is not existed.</string>
-    <string name="smb_folder_lost"> Can not access remote folder #</string>
-    <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
-    <string name="new_folder">New folder</string>
-    <string name="new_folder_name">New folder name</string>
-    <string name="fail_to_create_folder">Failed to create \"#\" folder</string>
-    <string name="up">Up</string>
-    <string name="find_folders">Find folders</string>
+    <string name="folder_not_existed">文件夹不存在</string>
+    <string name="smb_folder_lost">不能打开远程文件夹 #</string>
+    <string name="failed_to_open_remote_folder">登录失败：未知用户名或密码错误</string>
+    <string name="new_folder">新文件夹</string>
+    <!--<string name="new_folder_name">新文件夹名称</string>-->
+    <string name="fail_to_create_folder">创建文件夹 \"#\" 失败</string>
+    <string name="up">上层目录</string>
+    <string name="find_folders">查找文件夹</string>
     <!---->
-    <string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>
-    <string name="can_not_remove_smb_file">Can not remove remote file #</string>
+    <string name="error_folder_permission">请设置登录用户在远程文件夹的读写权限.</string>
+    <string name="can_not_remove_smb_file">不能删除远程目录 #</string>
 
-    <string name="english">English</string>
-    <string name="chinese">Chinese</string>
+	<string name="downloading">下载中 ...</string>
+    <string name="check_new_version">检查新版本</string>
+    <string name="current_version">当前版本</string>
+    <string name="it_is_latest_version">当前是最新版本</string>
+    <string name="update_canceled">更新被取消</string>
+    <string name="found_new_version">发现新版本</string>
+    <string name="update_now">立即更新</string>
+    <string name="update_later">以后</string>
+    <string name="update">更新</string>
+    <string name="checking">检查中 ...</string>
+    <string name="update_error_download_error">下载apk文件时遇到错误</string>
+    <string name="update_error_download_apk_error">不能下载apk文件</string>
+    <string name="update_error_apk_error">此apk文件有误</string>
+    <string name="update_error_xml_error">不能下载更新文件</string>
+    <string name="do_you_update">有新版本。你要更新吗?</string>
+    <string name="invalid_update_file">无效的更新文件</string>
+    <string name="update_new_version">新版本: #</string>
 
-    <string name="downloading">Downloading ...</string>
-    <string name="check_new_version">Check new version</string>
-    <string name="current_version">Current version</string>
-    <string name="it_is_latest_version">It is latest version</string>
-    <string name="update_canceled">Updating canceled</string>
-    <string name="found_new_version">Found new version</string>
-    <string name="update_now">Upgrade now</string>
-    <string name="update_later">Later</string>
-    <string name="update">Upgrade</string>
-    <string name="checking">Checking ...</string>
-    <string name="update_error_download_error">Errors while downloading apk file</string>
-    <string name="update_error_download_apk_error">Can not download apk file</string>
-    <string name="update_error_apk_error">The apk file is wrong</string>
-    <string name="update_error_xml_error">Can not download updating file</string>
-    <string name="do_you_update">There is a new version. Would you like to update?</string>
-    <string name="invalid_update_file">Invalid update file</string>
-    <string name="update_new_version">New version: #</string>
+    <string name="mins">分钟</string>
+    <string name="hour_1">1 小时</string>
+    <string name="hours_8">8 小时</string>
+    <string name="hours_12">12 小时</string>
+    <string name="mins_15">15 分钟</string>
+    <string name="mins_30">30 分钟</string>
 
-    <string name="mins">mins</string>
-    <string name="hour_1">1 hr</string>
-    <string name="hours_8">8 hrs</string>
-    <string name="hours_12">12 hrs</string>
-    <string name="mins_15">15 mins</string>
-    <string name="mins_30">30 mins</string>
-
-    <string name="sunday">Sun</string>
-    <string name="monday">Mon</string>
-    <string name="tuesday">Tue</string>
-    <string name="wednesday">Wed</string>
-    <string name="thursday">Thu</string>
-    <string name="friday">Fri</string>
-    <string name="saturday">Sat</string>
+    <string name="sunday">星期日</string>
+    <string name="monday">星期一</string>
+    <string name="tuesday">星期二</string>
+    <string name="wednesday">星期三</string>
+    <string name="thursday">星期四</string>
+    <string name="friday">星期五</string>
+    <string name="saturday">星期六</string>
 
     <string name="jan">Jan.</string>
     <string name="feb">Feb.</string>
@@ -67,9 +65,9 @@
     <string name="nov">Nov.</string>
     <string name="dec">Dec.</string>
 
-    <string name="time">Time</string>
-    <string name="item_description">Item description</string>
-    <string name="total">Total</string>
+    <string name="time">时间</string>
+    <string name="item_description">菜名描述</string>
+    <string name="total">合计</string>
 
     <string name="daily_report">Daily report</string>
     <string name="weekly_report">Weekly report</string>
@@ -79,45 +77,148 @@
     <string name="day_of_week">Day of Week</string>
     <string name="day_of_month">Day of Month</string>
     <string name="statistic_report">Statistic report</string>
-    <string name="waiting">Waiting ...</string>
+    <string name="waiting">等待中 ...</string>
 
-    <string name="background">Background</string>
-    <string name="foreground">Foreground</string>
-    <string name="size">Size</string>
-    <string name="main_title">KitchenGo Premium KDS</string>
+    <string name="background">背景</string>
+    <string name="foreground">前景</string>
+    <string name="size">尺寸</string>
+
 
 
     <!-- Strings related to login -->
-    <string name="prompt_email">User name</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Login</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This user name is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">Username required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
+    <string name="prompt_email">用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_sign_in_short">注册</string>
+    <string name="error_invalid_email">无效用户</string>
+    <string name="error_invalid_password">密码太短</string>
+    <string name="error_incorrect_password">密码不正确</string>
+    <string name="error_field_required">必须填写用户名</string>
+    <string name="permission_rationale">Contacts permissions are needed for providing email
+        completions.
     </string>
 
-    <string name="username_field_required">Username required</string>
-    <string name="password_field_required">Password required</string>
-    <string name="no_license_available">There is no license available</string>
-    <string name="license_deactivated">This KDS Stations’s license is deactivated.</string>
-    <string name="updating_license_data">Updating license data ...</string>
-    <string name="retrieve_licenses_data">Retrieve licenses data ...</string>
-    <string name="retrieve_store_settings">Retrieve store settings ...</string>
-    <string name="logining">Login ...</string>
-    <string name="str_ok">OK</string>
-    <string name="activation">Activation</string>
-    <string name="str_cancel">Cancel</string>
-    <string name="no_selected_license_to_replace">No selected license to replace</string>
-    <string name="item_group_by_category">Group items by its category</string>
-    <string name="inactive">"(Inactive)"</string>
-    <string name="cannot_sync_license_data">Can not sync data with server.</string>
-    <string name="cannot_replace_license_data">Can not replace data with server.</string>
-    <string name="my_serial_number">My serial number:</string>
-    <string name="confirm">Confirm</string>
-    <string name="login_other_store">This login does not belong to the current store. The local store data will be deleted. Are you sure you want to continue?</string>
-
+    <string name="username_field_required">必须填写用户名</string>
+    <string name="password_field_required">必须填写密码</string>
+    <string name="no_license_available">无许可</string>
+    <string name="license_deactivated">此终端的许可被取消.</string>
+    <string name="updating_license_data">更新许可数据 ...</string>
+    <string name="retrieve_licenses_data">获取许可数据 ...</string>
+    <string name="retrieve_store_settings">获取店铺设置 ...</string>
+    <string name="logining">登录 ...</string>
+    <string name="str_ok">确定</string>
+    <string name="activation">激活</string>
+    <string name="str_cancel">取消</string>
+    <string name="no_selected_license_to_replace">未选择要替代的许可</string>
+    <string name="item_group_by_category">按类别分组</string>
+    <string name="inactive">(未激活)</string>
+    <string name="cannot_sync_license_data">不能同步数据.</string>
+    <string name="cannot_replace_license_data">取代服务器数据失败.</string>
+    <string name="my_serial_number">我的序列号:</string>
+    <string name="confirm">确认</string>
+    <string name="login_other_store">登录的不是当前店铺， 本地数据将被清除。是否继续？</string>
+    <string name="about">关于</string>
+    <string name="password">密码</string>
+    <string name="pwd_do_not_match">密码不正确.</string>
+    <string name="ignore_and_save">强制保存</string>
+    <string name="modify_setting">更改设置</string>
+    <string name="cancel_setting"> 取消设置</string>
+    <string name="error">错误</string>
+    <string name="no_rights_to_access">无访问权限</string>
+    <string name="open_file">打开文件</string>
+    <string name="file_existed_overwrite_confirm">文件存在，要覆盖它吗?</string>
+    <string name="no">否</string>
+    <string name="yes">是</string>
+    <string name="str_refresh">更新</string>
+    <string name="searching_active_stations">查询在线终端 …</string>
+    <string name="no_active_stations">无在线终端</string>
+    <string name="active_stations_list">终端</string>
+    <string name="select_station">请先选择终端</string>
+    <string name="confirm_retrieve_config">是否从 # 得到设置 ?</string>
+    <string name="retrieve_config_waiting_data">等待数据 ...</string>
+    <string name="retrieve_config_done">完成! 请关闭设置.</string>
+    <string name="get">获取</string>
+    <string name="information">消息:</string>
+    <string name="str_message">消息</string>
+    <string name="receive_new_relations">已接收到新的关系设置.</string>
+    <string name="question">询问</string>
+    <string name="confirm_broadcast_relations_changes">关系发生了改变， 是否保存并更新所有终端?</string>
+    <string name="confirm_fix_errors">关系设置中有错误, 请改正.</string>
+    <string name="confirm_remove_relation_station">是否要删除终端 #</string>
+    <string name="select_retrieve_station">选择终端</string>
+    <string name="confirm_broadcast_relations">您是否要把新的设置用于所有终端?</string>
+    <string name="remove_relations_expo">总台终端 # 从总台列中删除.</string>
+    <string name="please_input_primary_station">请输入终端 # 的主终端</string>
+    <string name="input">输入</string>
+    <string name="error_primary_myself">错误,用自己作为主终端. 请改正</string>
+    <string name="error_not_expo">错误, 终端不是总台终端.</string>
+    <string name="error_not_prep">错误,终端不是正常终端.</string>
+    <string name="error_not_expo_prep_backup">错误,只允许总台,正常和排序终端.</string>
+    <string name="tracker_only_one_allowed">只允许一个座位跟踪终端</string>
+    <string name="tt_authen_press_button">按跟踪器服务器按钮以便接受KDS连接.</string>
+    <string name="please_input_slave_station">请输入终端 # 的 $ 终端</string>
+    <string name="error_slave">错误, 请改为其它终端</string>
+    <string name="error_slave_myself">错误, 用自己作为副终端. 请改正</string>
+    <string name="relation_error_expo_as_slave">不允许副终端是总台. 请改正.</string>
+    <string-array name="station_function">
+        <item>正常</item>
+        <item>总台</item>
+        <item>排队</item>
+        <item>镜像</item>
+        <item>备份</item>
+        <item>工作量</item>
+        <item>副本</item>
+        <item>跟踪</item>
+        <item>总台与总台</item>
+    </string-array>
+    <string-array name="slave_function">
+        <item>无副终端</item>
+        <item>备份</item>
+        <item>镜像</item>
+        <item>工作量分配</item>
+        <item>副本</item>
+        <item>排队</item>
+    </string-array>
+    <string name="error_relations_repeat_backup_mirror">终端 # 工作为备份和镜像模式</string>
+    <string-array name="station_status">
+        <item>启用</item>
+        <item>停止</item>
+    </string-array>
+    <string name="expo_backup">总台/备份</string>
+    <string name="prep_backup">正常/备份</string>
+    <string name="id">ID</string>
+    <string name="func">功能</string>
+    <string name="expo">总台</string>
+    <string name="slave_func">副终端功能</string>
+    <!--<string name="slave">副终端ID</string>-->
+    <string name="status">状态</string>
+    <string name="do_not_check_stations_relationship_in_this_station">不检查此终端的关系数据</string>
+    <string name="update_to_all">保存和更新所有</string>
+    <string name="delete">删除</string>
+    <string name="new_entry">新的</string>
+    <string name="show_id">显示终端ID</string>
+    <string name="retrieve_from">提取自</string>
+    <string name="reset">重置</string>
+    <string name="pc_name">PC IP:</string>
+    <string name="user_id">用户ID:</string>
+    <string name="anonymous">匿名</string>
+    <string name="shared_folder">共享目录</string>
+    <string name="str_find">查找</string>
+    <string name="password_incorrect">无效的密码</string>
+    <string name="slave">副终端</string>
+    <string name="ip">IP</string>
+    <string name="port">端口</string>
+    <string name="file_name">文件名:</string>
+    <string name="error_not_expo_or_prep">错误,此终端不是expo 或prep.</string>
+    <string name="confirm_logout">Logout will clear all data. Are you sure you want to continue?</string>
+    <string name="only_premium_plan_login">Only allow stores with Premium plan to log into Premium.</string>
+    <string name="internal_doing_activation">Internal activation is in process, please logout again later.</string>
+    <string name="no_network_detected">No network interface detected.</string>
+    <string name="expo_field_just_accept_expo">Expo field just accept expo station number.</string>
+    <string name="agree">Agree</string>
+    <string name="quit">Quit</string>
+    <string name="eula_and_privacy_policy_agreement">EULA and Privacy Policy Agreement</string>
+    <string name="agreement_text">By using this app, you confirm you have read and agreed to EULA https://kdsgo.com/eula.html and Privacy Policy https://logiccontrols.com/privacy-policy/.</string>
+	<string name="domain_name_can_be_empty">Domain name, can be empty</string>
+	<string name="domain">Domain:</string>
 </resources>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name='main_title'>KitchenGo Premium</string>
+	<string name='app_name'>KDSLib</string>
+	<string name='message'>Mensagem</string>
+	<string name='empty'>Vazio</string>
+	<string name='ok'>OK</string>
+	<string name='cancel'>Cancelar</string>
+	<string name='folder_not_existed'>A pasta não existe</string>
+	<string name='smb_folder_lost'>Não é possível acessar a pasta remota #</string>
+	<string name='failed_to_open_remote_folder'>Falha ao entrar: usuário ou senha incorretos</string>
+	<string name='new_folder'>Nova pasta</string>
+	<string name='fail_to_create_folder'>Falha ao criar a pasta #</string>
+	<string name='up'>Acima</string>
+	<string name='find_folders'>Encontrar pastas</string>
+	<string name='error_folder_permission'>Por favor verifique as permissões da pasta</string>
+	<string name='can_not_remove_smb_file'>Não é possível remover o arquivo remoto #</string>
+	<string name='downloading'>Baixando...</string>
+	<string name='check_new_version'>Verificar novas versões</string>
+	<string name='current_version'>Versão atual</string>
+	<string name='it_is_latest_version'>Esta é a última versão</string>
+	<string name='update_canceled'>Atualização cancelada</string>
+	<string name='found_new_version'>Nova versão encontrada</string>
+	<string name='update_now'>Atualizar agora</string>
+	<string name='update_later'>Depois</string>
+	<string name='update'>Atualizar</string>
+	<string name='checking'>Verificando...</string>
+	<string name='update_error_download_error'>Um erro ocorreu ao baixar a atualização</string>
+	<string name='update_error_download_apk_error'>Não foi possível baixar a atualização</string>
+	<string name='update_error_apk_error'>O arquivo de atualização está corrompido</string>
+	<string name='update_error_xml_error'>Não foi possível atualizar</string>
+	<string name='do_you_update'>Nova versão disponível. Deseja atualizar agora?</string>
+	<string name='invalid_update_file'>Atualização inválida</string>
+	<string name='update_new_version'>Nova versão: #</string>
+	<string name='mins'>min</string>
+	<string name='hour_1'>1h</string>
+	<string name='hours_8'>8h</string>
+	<string name='hours_12'>12h</string>
+	<string name='mins_15'>15min</string>
+	<string name='mins_30'>30min</string>
+	<string name='sunday'>Dom</string>
+	<string name='monday'>Seg</string>
+	<string name='tuesday'>Ter</string>
+	<string name='wednesday'>Qua</string>
+	<string name='thursday'>Qui</string>
+	<string name='friday'>Sex</string>
+	<string name='saturday'>Sáb</string>
+	<string name='jan'>Jan</string>
+	<string name='feb'>Fev</string>
+	<string name='mar'>Mar</string>
+	<string name='apr'>Abr</string>
+	<string name='may'>Mai</string>
+	<string name='jun'>Jun</string>
+	<string name='jul'>Jul</string>
+	<string name='aug'>Ago</string>
+	<string name='sep'>Set</string>
+	<string name='oct'>Out</string>
+	<string name='nov'>Nov</string>
+	<string name='dec'>Dez</string>
+	<string name='time'>Hora</string>
+	<string name='item_description'>Descrição do item</string>
+	<string name='total'>Total</string>
+	<string name='daily_report'>Relatório diário</string>
+	<string name='weekly_report'>Relatório semanal</string>
+	<string name='monthly_report'>Relatório mensal</string>
+	<string name='one_time_report'>Relatório única vez</string>
+	<string name='day_of_week'>Dia da semana</string>
+	<string name='day_of_month'>Dia do mês</string>
+	<string name='statistic_report'>Relatório estatístico</string>
+	<string name='waiting'>Aguardando...</string>
+	<string name='background'>Fundo</string>
+	<string name='foreground'>Texto</string>
+	<string name='size'>Tamanho</string>
+	<string name='prompt_email'>Usuário</string>
+	<string name='prompt_password'>Senha</string>
+	<string name='action_sign_in'>Entrar</string>
+	<string name='action_sign_in_short'>Entrar</string>
+	<string name='error_invalid_email'>Usuário inválido</string>
+	<string name='error_invalid_password'>Senha muito curta</string>
+	<string name='error_incorrect_password'>Senha incorreta</string>
+	<string name='error_field_required'>Usuário necessário</string>
+	<string name='permission_rationale'>Permissão de Contatos é necessário para autocompletar e-mails</string>
+	<string name='username_field_required'>Usuário necessário</string>
+	<string name='password_field_required'>Senha necessária</string>
+	<string name='no_license_available'>Não há licenças disponíveis</string>
+	<string name='license_deactivated'>Esta estação está desativada</string>
+	<string name='updating_license_data'>Atualizando dados de licenças...</string>
+	<string name='retrieve_licenses_data'>Obtendo dados de licenças...</string>
+	<string name='retrieve_store_settings'>Obtendo configurações remotas...</string>
+	<string name='logining'>Entrando...</string>
+	<string name='str_ok'>OK</string>
+	<string name='activation'>Ativação</string>
+	<string name='str_cancel'>Cancelar</string>
+	<string name='no_selected_license_to_replace'>Nenhuma licença a substituir</string>
+	<string name='item_group_by_category'>Agrupar itens por categorias</string>
+	<string name='inactive'>(Inativo)</string>
+	<string name='cannot_sync_license_data'>Não foi possível sincronizar com o servidor</string>
+	<string name='cannot_replace_license_data'>Não foi possível substituir os dados com o servidor</string>
+	<string name='my_serial_number'>Número de série:</string>
+	<string name='confirm'>Confirmar</string>
+	<string name='login_other_store'>Este usuário não pertence à loja atual. Os dados da loja atual serão apagados. Deseja mesmo prosseguir?</string>
+	<string name='about'>Sobre</string>
+	<string name='password'>Senha</string>
+	<string name='pwd_do_not_match'>Senhas não coincidem.</string>
+	<string name='ignore_and_save'>Ignorar e salvar</string>
+	<string name='modify_setting'>Modificar configuração</string>
+	<string name='cancel_setting'>Cancelar configuração</string>
+	<string name='error'>Erro</string>
+	<string name='no_rights_to_access'>Sem permissões de acesso!</string>
+	<string name='open_file'>Abrir arquivo</string>
+	<string name='file_existed_overwrite_confirm'>Arquivo já existe. Deseja sobrescrevê-lo?</string>
+	<string name='no'>Não</string>
+	<string name='yes'>Sim</string>
+	<string name='str_refresh'>Atualizar</string>
+	<string name='searching_active_stations'>Buscando estações ativas...</string>
+	<string name='no_active_stations'>Nenhuma estação online</string>
+	<string name='active_stations_list'>Estações</string>
+	<string name='select_station'>Por favor, escolha primeiramente uma estação.</string>
+	<string name='confirm_retrieve_config'>Deseja obter as configurações de # ?</string>
+	<string name='retrieve_config_waiting_data'>Aguardando dados...</string>
+	<string name='retrieve_config_done'>Feito! Por favor, feche as configurações.</string>
+	<string name='get'>Obter</string>
+	<string name='information'>Informação:</string>
+	<string name='str_message'>Mensagem</string>
+	<string name='receive_new_relations'>Novos relacionamentos recebidas.</string>
+	<string name='question'>Pergunta</string>
+	<string name='confirm_broadcast_relations_changes'>Mudanças foram feitas no relacionamento. Deseja salvar e atualizar as estações?</string>
+	<string name='confirm_fix_errors'>Existem erros no relacionamento. Por favor, corrija-os.</string>
+	<string name='confirm_remove_relation_station'>Deseja remover a estação # </string>
+	<string name='select_retrieve_station'>Escolha a estação</string>
+	<string name='confirm_broadcast_relations'>Deseja enviar a atualização para as demais estações?</string>
+	<string name='remove_relations_expo'>Estação # removida da coluna Expo</string>
+	<string name='please_input_primary_station'>Por favor digite a estação primária de #</string>
+	<string name='input'>Entrada</string>
+	<string name='error_primary_myself'>Erro: estação sendo usada como primária</string>
+	<string name='error_not_expo'>Erro: esta estação não é Expedidora</string>
+	<string name='error_not_prep'>Erro: esta estação não é Preparadora</string>
+	<string name='error_not_expo_prep_backup'>Erro: apenas Exp, Prep e Fila são permitidas</string>
+	<string name='tracker_only_one_allowed'>Apenas um rastreador de mesa é permitido</string>
+	<string name='tt_authen_press_button'>Pressione o botão no Gateway para conectar o KDS.</string>
+	<string name='please_input_slave_station'>Por favor digite a estação $ de #</string>
+	<string name='error_slave'>Erro: por favor, escolha outra estação</string>
+	<string name='error_slave_myself'>Erro: estação sendo usada como secundária</string>
+	<string name='relation_error_expo_as_slave'>Erro: estação secundária está como expedidora</string>
+	<string name='error_relations_repeat_backup_mirror'>Erro ao configurar a estação #</string>
+	<string name='expo_backup'>Exp/Reserva</string>
+	<string name='prep_backup'>Prep/Reserva</string>
+	<string name='id'>ID</string>
+	<string name='func'>Função</string>
+	<string name='expo'>Exp</string>
+	<string name='slave_func'>Função secundária</string>
+	<string name='slave'>ID sec.</string>
+	<string name='status'>Status</string>
+	<string name='do_not_check_stations_relationship_in_this_station'>Não verificar relacionamento nesta estação</string>
+	<string name='update_to_all'>Salvar e Atualizar</string>
+	<string name='delete'>Apagar</string>
+	<string name='new_entry'>Nova</string>
+	<string name='show_id'>Exibir ID da estação</string>
+	<string name='retrieve_from'>Obter de</string>
+	<string name='reset'>Redefinir</string>
+	<string name='pc_name'>IP do PC:</string>
+	<string name='user_id'>ID do usuário:</string>
+	<string name='anonymous'>Anônimo</string>
+	<string name='shared_folder'>Pasta:</string>
+	<string name='str_find'>Buscar</string>
+	<string name='password_incorrect'>Senha incorreta!</string>
+	<string name='ip'>IP</string>
+	<string name='port'>Porta</string>
+	<string name='file_name'>Nome do arquivo:</string>
+	<string name='error_not_expo_or_prep'>Erro: esta estação não é Exp ou Prep</string>
+	<string name='confirm_logout'>Ao sair, todos os dados serão limpos. Deseja mesmo continuar?</string>
+	<string name='only_premium_plan_login'>Apenas lojas com planos \'Premium\' podem ter acesso.</string>
+	<string name='internal_doing_activation'>Ativação interna em andamento, por favor saia mais tarde.</string>
+	<string name='no_network_detected'>Nenhuma rede detectada.</string>
+	<string name='expo_field_just_accept_expo'>Campo Exp aceita apenas IDs das estações Exp.</string>
+	<string name='agree'>Concordo</string>
+	<string name='quit'>Sair</string>
+	<string name='eula_and_privacy_policy_agreement'>Termos de Uso e Política de Privacidade</string>
+	<string name='agreement_text'>Ao utilizar este App, você confirma que leu e concordou com os Termos de Uso https://kdsgo.com/eula.html e com a Política de Privacidade https://logiccontrols.com/privacy-policy/</string>
+	<string name="domain">Domínio</string>
+	<string name="domain_name_can_be_empty">Domínio, pode ser vazio</string>
+	<string-array name="station_status">
+		<item>Ativada</item>
+		<item>Desativada</item>
+	</string-array>
+	<string-array name="station_function">
+		<item>Preparo</item>
+		<item>Expedidor</item>
+		<item>Fila</item>
+		<item>Espelho</item>
+		<item>Reserva</item>
+		<item>Gerenciamento</item>
+		<item>Duplicado</item>
+		<item>Rastreador</item>
+		<item>Fila-Expedidor</item>
+	</string-array>
+	<string-array name="slave_function">
+		<item>Sem função secundária</item>
+		<item>Reserva</item>
+		<item>Espelho</item>
+		<item>Gerenciamento</item>
+		<item>Duplicado</item>
+		<item>Exibir fila de pedidos</item>
+	</string-array>
+</resources>

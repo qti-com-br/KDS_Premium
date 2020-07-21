@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -35,9 +36,12 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
+import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.DebugInfo;
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSLogOrderFile;
@@ -47,6 +51,11 @@ import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSUIAboutDlg;
+import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgAgreement;
+import com.bematechus.kdslib.KDSUIDlgInputPassword;
+import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
@@ -60,10 +69,11 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener,
-        KDSRouter.KDSRouterEvents,
+        KDSRouter.KDSEvents,
         KDSTimer.KDSTimerInterface,
         KDSUIDialogBase.KDSDialogBaseListener,
-        Activation.ActivationEvents
+        Activation.ActivationEvents,
+        KDSUIAboutDlg.AboutDlgEvent
         {
 
     final static private String TAG = "MainActivity";
@@ -99,6 +109,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Import_Data,
         Reset_TT_Authen,
         Restart_me,
+        Logout,//kpp1-299
 
     }
 
@@ -106,7 +117,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (m_wakeLock == null) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+            m_wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "KDSRouter:MyWakeLock");
         }
         if (bLock) {
             m_wakeLock.acquire();
@@ -148,14 +159,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void checkNetworkState()
     {
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
-            m_imgState.setImageResource(R.drawable.online);
+            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
             if (m_imgState.getTag() != null &&
                     (int) m_imgState.getTag() == 0)
 
             m_imgState.setTag(1);
         }
         else{
-            m_imgState.setImageResource(R.drawable.offline);
+            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
             if (m_imgState.getTag() == null ||
                     (int) m_imgState.getTag() == 1)
             m_imgState.setTag(0);
@@ -239,14 +250,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         m_activation.setEventsReceiver(this);
+        Activation.setGlobalEventsReceiver(this); //for clear db after logout,KW-155
 
         if (!isMacMatch2()) {
             showErrorMac();
             return;
         }
         lockAndroidWakeMode(true);
-        KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
-        KDSUtil.setLanguage(this.getApplicationContext(), language);
+        //kpp1-337
+        //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
+        //KDSUtil.setLanguage(this.getApplicationContext(), language);
 
         setContentView(R.layout.activity_main);
         explicitStartService();
@@ -276,6 +289,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         updateTitle();
 
 
+        KDSUIDlgAgreement.forceAgreementAgreed(this, this);
 
 
     }
@@ -377,6 +391,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_bShowingSettingsActivity = false;
 
         }
+        else if (requestCode == KDSConst.SHOW_LOGIN)
+        {
+            if (resultCode == ActivityLogin.Login_Result.Agreement_disagree.ordinal())
+            {//kpp1-325
+                this.setResult(0);
+                this.finish();
+            }
+            //
+        }
+
     }
     public boolean showSettingsDialog()
     {
@@ -434,14 +458,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (m_service != null)
                     KDSGlobalVariables.setKDSRouter(m_service.getKDSRouter());
                 KDSUIIPSearchDialog dlg = new KDSUIIPSearchDialog(this, KDSUIIPSearchDialog.IPSelectionMode.Zero, null, "");
-
+                dlg.setKDSCallback(m_service.getKDSRouter());
                 dlg.show();
             }
 
         }
         else if (id == R.id.action_about)
         {
-            KDSUIAboutDlg.showAbout(this, getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+            //KDSUIAboutDlg.showAbout(this, getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")");//kpp1-179
+            Drawable icon = this.getResources().getDrawable(R.mipmap.ic_launcher);
+            String ver = getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")";
+
+            KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_KDS, icon, this);//kpp1-179
         }
         else if (id == R.id.action_clear_log)
         {
@@ -449,8 +477,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else if (id == R.id.action_logout) //add this new. KPP1-185
         {
-            Activation.resetUserNamePwd();
-            onDoActivationExplicit();
+            showConfirmLogoutDialog();
+
+//            Activation.resetUserNamePwd();
+//            setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+//            onDoActivationExplicit();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -961,7 +992,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onKDSDialogCancel(KDSUIDialogBase dialog)
     {
-
+        if (dialog instanceof KDSUIDlgAgreement)
+        {//kpp1-325
+            KDSUIDlgAgreement.setAgreementAgreed(false);
+            this.finish();
+        }
     }
 
     // static final String DEFAULT_PASSWORD = "123";
@@ -982,7 +1017,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 settingsPwd = KDSConst.DEFAULT_PASSWORD;// "123";
             if (pwd.isEmpty() || (!pwd.equals(settingsPwd))) {
                 KDSUIDialogBase errordlg = new KDSUIDialogBase();
-                errordlg.createInformationDialog(this, getString(R.string.error), this.getString(R.string.password_incorrect), false);
+                errordlg.createInformationDialog(this, getString(com.bematechus.kdslib.R.string.error), this.getString(com.bematechus.kdslib.R.string.password_incorrect), false);
                 errordlg.show();
                 //KDSUtil.showErrorMessage(this, this.getString(R.string.password_incorrect));
             }
@@ -991,6 +1026,25 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 showSettingsDialog();
             }
 
+        }
+        else if (dlg instanceof KDSUIDlgAgreement)
+        {//kpp1-325
+            KDSUIDlgAgreement.setAgreementAgreed(true);
+        }
+        else if (dlg instanceof  KDSUIDialogBase)
+        {
+            if (dlg.getTag() == null) return;
+            Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
+            switch (confirm) {
+                case Logout:
+                {
+                    doLogout();
+                }
+                break;
+                default: {
+                    break;
+                }
+            }
         }
     }
 
@@ -1050,7 +1104,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onForceClearDataBeforeLogin()
-    {
+    { //kw-155
+        this.getKDSRouter().clearAll();
+        this.getKDSRouter().getRouterDB().clear();
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        this.getSettings().setToDefault();
+
+        onSharedPreferenceChanged(pre, "");
 
     }
 
@@ -1091,17 +1151,31 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
-        if (m_activation.isDoLicensing()) return;
+        if (m_activation.isDoLicensing()) {
+            showToastMessage(getString(R.string.internal_doing_activation));//"Internal activation is in process, please logout again later.");
+            return; //kpp1-304, maybe this cause kds can not logout issue.
+        }
         if (!isKDSValid()) return;
         m_activation.setStationID(getKDSRouter().getStationID());
         m_activation.setStationFunc(Activation.KDSROUTER);
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        if (ar.size()<=0) return;
+        if (ar.size()<=0) {
+            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+            return;//kpp1-304, maybe this cause kds can not logout issue.
+        }
         m_activation.setMacAddress(ar.get(0));
         //  m_activation.setMacAddress("BEMA0000011");//test
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
 
+    /**
+     * KPP1-299,Station Relationship remembered
+     * Clear everything when logout
+     */
+    public void setToDefaultSettings()
+    {
+        this.getSettings().setToDefault();
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1262,5 +1336,87 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             return (m_strInfo.equals(info.getInfo()));
         }
+    }
+
+    public void aboutDlgCallActivation()
+    {
+        doActivation(false, true, "");
+    }
+
+    // KDSRouter does not used KDSEvents function
+    public void onRefreshSummary(int nUserID){}
+    public void onShowMessage(KDSBase.MessageType msgType, String message){}
+    public void onRefreshView(int nUserID, KDSDataOrders orders, KDSBase.RefreshViewParam nParam){}
+    public void onSetFocusToOrder(String orderGuid){}
+
+    /**
+     * KPP1-305.Remove license restriction from Router
+     * While network restored, check activation again.
+     *  Use this function to get network restored event,
+     *  I don't want to add new event function in router app.
+     * @param orderName
+     */
+    public void onTTBumpOrder(String orderName){
+        doActivation(true, false, "");
+    }
+
+    public void onXmlCommandBumpOrder(String orderGuid){}
+
+    /**
+     * check if the settings changed.
+     * @return
+     */
+    public boolean isAppContainsOldData()
+    {
+        if (!this.getSettings().isDefaultSettings())
+            return true;
+        if (!this.getKDSRouter().isDbEmpty())
+            return true;
+        return false;
+
+    }
+
+    /**
+     * kpp1-299
+     */
+    private void showConfirmLogoutDialog()
+    {
+        KDSUIDialogBase d = new KDSUIDialogBase();
+        d.createOkCancelDialog(this,Confirm_Dialog.Logout, getString(R.string.yes), getString(R.string.no),getString(R.string.confirm), getString(R.string.confirm_logout),true, this );
+        d.show();
+    }
+    /**
+     * kpp1-299
+     */
+    private void doLogout()
+    {
+        Activation.resetUserNamePwd();
+        setToDefaultSettings(); //kpp1-299 Station Relationship remembered
+        Activation.resetOldLoginUser(); //kpp1-299
+        getKDSRouter().clearAll(); //clear database too.
+
+        onDoActivationExplicit();
+    }
+
+            /**
+             * In kpp1-312, use it to show tcp/ip port occupied error.
+             * @param evt
+             * @param arParams
+             * @return
+             */
+    public Object onKDSEvent(KDSBase.KDSEventType evt, ArrayList<Object> arParams)
+    {
+        switch (evt)
+        {
+            case Received_rush_order:
+                break;
+            case TCP_listen_port_error:
+            {
+                String s = (String) arParams.get(0);
+                showToastMessage(s);
+            }
+            break;
+        }
+        return null;
     }
 }

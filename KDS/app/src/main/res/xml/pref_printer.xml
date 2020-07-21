@@ -115,6 +115,12 @@
         android:dependency="printer_enabled"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="printer_logo"
+        android:defaultValue=""
+        android:title="@string/logo_file"
+        android:dependency="printer_enabled"
+        />
     <!--<EditTextPreference-->
         <!--android:key="printer_template"-->
         <!--android:title="@string/pref_kds_printer_template"-->

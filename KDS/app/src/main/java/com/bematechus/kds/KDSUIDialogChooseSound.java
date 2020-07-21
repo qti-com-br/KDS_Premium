@@ -17,13 +17,15 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSUIDialogBase;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Administrator on 2017/1/24.
  */
-public class KDSUIDialogChooseSound extends KDSUIDialogBase{
+public class KDSUIDialogChooseSound extends KDSUIDialogBase {
 
 
     ListView m_lstData = null;

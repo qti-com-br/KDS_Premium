@@ -5,7 +5,7 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
 
-    <com.bematechus.kds.KDSPreferenceFontPicker
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="caption_normal"
         android:defaultValue="default_font,@color/caption_bg,@color/caption_fg,normal_size"
         android:title="@string/pref_order_caption_normal_font"

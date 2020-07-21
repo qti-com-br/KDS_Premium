@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,7 +33,12 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     //private UserLoginTask mAuthTask = null;
-
+    public enum Login_Result //kpp1-325
+    {
+        Canceled,
+        Passed,
+        Agreement_disagree,
+    }
     // UI references.
     private AutoCompleteTextView mUserNameView;
     private EditText mPasswordView;
@@ -103,11 +109,22 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                // KPP1-299, comment them, the settings has been reset when logout.
+                //there are two login.
+                //  1. Logout then login
+                //  2. In about, call login. Or, remove license in backoffice, app auto call login.
                 String oldUserName = Activation.loadOldUserName();
                 String newUserName = mUserNameView.getText().toString();
+
                 if (Activation.getGlobalEventsReceiver() != null) {
                     if (!oldUserName.equals(newUserName) && !oldUserName.isEmpty()) {
-                        showClearDataWarning();
+                        if (Activation.getGlobalEventsReceiver().isAppContainsOldData()) {
+                            showClearDataWarning();
+                        }
+                        else
+                        {
+                            attemptLogin();
+                        }
                     } else
                         attemptLogin();
                 }
@@ -115,6 +132,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
                 {
                     attemptLogin();
                 }
+               // attemptLogin();
             }
         });
 
@@ -147,11 +165,12 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 //                onCancelClicked();
 //            }
 //        });
+        forceAgreementAgreed();
     }
 
     public void onCancelClicked()
     {
-        this.setResult(0);
+        this.setResult(Login_Result.Canceled.ordinal());
         this.finish();
     }
 
@@ -333,7 +352,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
     public void onActivationSuccess()
     {
         Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
-        this.setResult(1);
+        this.setResult(Login_Result.Passed.ordinal());
         String email = mUserNameView.getText().toString();
         String password = mPasswordView.getText().toString();
         m_activation.checkStoreChanged();
@@ -394,16 +413,46 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         dlg.show();
     }
 
-    public void onKDSDialogCancel(DialogBaseNoBumpbarSupport dialog)
+    public void onKDSDialogCancel(KDSUIDialogBase dialog)
     {
+        if (dialog instanceof KDSUIDlgAgreement)
+        {//kpp1-325
+            KDSUIDlgAgreement.setAgreementAgreed(false);
+            this.setResult(Login_Result.Agreement_disagree.ordinal());
+            this.finish();
+        }
+    }
+    public void onKDSDialogOK(KDSUIDialogBase dialog, Object obj)
+    {
+        if (dialog instanceof KDSUIDlgAgreement)
+        {
+            KDSUIDlgAgreement.setAgreementAgreed(true);
+        }
+        else {
+             m_activation.fireClearDataEvent();
+             attemptLogin();
+         }
+
 
     }
-    public void onKDSDialogOK(DialogBaseNoBumpbarSupport dialog, Object obj)
+
+    public boolean isAppContainsOldData()
     {
-        m_activation.fireClearDataEvent();
-        attemptLogin();
+        return false;
+    }
 
-
+    public void forceAgreementAgreed()
+    {
+        KDSUIDlgAgreement.forceAgreementAgreed(this, this);
+//        //debug
+//        //KDSUIDlgAgreement.setAgreementAgreed(false);
+//        //
+//        if (KDSUIDlgAgreement.isAgreementAgreed())
+//            return;
+//
+//        //KDSUIDlgAgreement dlg = new KDSUIDlgAgreement(this, this);
+//        KDSUIDlgAgreement dlg =KDSUIDlgAgreement.instance(this, this);
+//        dlg.show();
     }
 }
 

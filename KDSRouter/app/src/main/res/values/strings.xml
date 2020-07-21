@@ -48,51 +48,51 @@
     <string name="menu_activity_schedule">Schedule</string>
     <string name="menu_activity_clearlog">Clear log</string>
 
-    <string name="confirm">Confirm</string>
-    <string name="confirm_broadcast_relations_changes">Changes have been made in relations, do you want to save and update to all stations?</string>
+    <!--<string name="confirm">Confirm</string>-->
+    <!--<string name="confirm_broadcast_relations_changes">Changes have been made in relations, do you want to save and update to all stations?</string>-->
     <string name="confirm_remove_relations_expo">Expeditor station # will be removed from Expo column, are you sure you want to change this?</string>
-    <string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>
+    <!--<string name="confirm_fix_errors">There are errors in relations settings, please fix them first.</string>-->
 
-    <string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>
+    <!--<string name="confirm_broadcast_relations">Do you want to update settings to other stations?</string>-->
     <string name="confirm_clear_db">Do you want to clear database?</string>
-    <string name="update_to_all">Save  &amp; Update to all</string>
-    <string name="delete">Delete</string>
-    <string name="new_entry">New</string>
+    <!--<string name="update_to_all">Save  &amp; Update to all</string>-->
+    <!--<string name="delete">Delete</string>-->
+    <!--<string name="new_entry">New</string>-->
     <string name="save">Save</string>
-    <string name="show_id">Show Station ID</string>
-    <string name="confirm_remove_relation_station">Do you want to remove station #</string>
+    <!--<string name="show_id">Show Station ID</string>-->
+    <!--<string name="confirm_remove_relation_station">Do you want to remove station #</string>-->
     <string name="confirm_remove_category">Do you want to remove category: </string>
     <string name="confirm_remove_fooditem">Do you want to remove item: </string>
 
-    <string name="about">About</string>
+    <!--<string name="about">About</string>-->
 
-    <string-array name="station_function">
-        <item>Prep</item>
-        <item>Expeditor</item>
-        <item>Queue</item>
-        <item>Mirror</item>
-        <item>Backup</item>
-        <item>Workload</item>
-        <item>Duplicate</item>
-        <item>Tracker</item>
-        <item>Queue-Expo</item>
-    </string-array>
-    <string-array name="station_status">
-        <item>Enabled</item>
-        <item>Disabled</item>
-    </string-array>
+    <!--<string-array name="station_function">-->
+        <!--<item>Prep</item>-->
+        <!--<item>Expeditor</item>-->
+        <!--<item>Queue</item>-->
+        <!--<item>Mirror</item>-->
+        <!--<item>Backup</item>-->
+        <!--<item>Workload</item>-->
+        <!--<item>Duplicate</item>-->
+        <!--<item>Tracker</item>-->
+        <!--<item>Queue-Expo</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="station_status">-->
+        <!--<item>Enabled</item>-->
+        <!--<item>Disabled</item>-->
+    <!--</string-array>-->
 
-    <string name="id">ID</string>
+    <!--<string name="id">ID</string>-->
     <string name="ip">IP</string>
     <string name="port">Port</string>
-    <string name="func">Function</string>
+    <!--<string name="func">Function</string>-->
     <string name="mirror">Mirror</string>
     <string name="backup">Bck</string>
-    <string name="status">Status</string>
-    <string name="expo">Expo</string>
+    <!--<string name="status">Status</string>-->
+    <!--<string name="expo">Expo</string>-->
 
-    <string name="error">Error</string>
-    <string name="question">Question</string>
+    <!--<string name="error">Error</string>-->
+    <!--<string name="question">Question</string>-->
 
     <string name="new_item">New item</string>
     <string name="new_category">New category</string>
@@ -104,37 +104,37 @@
     <string name="preptime">Delay/Prep(mins)</string>
     <string name="delayprep">Delay/Prep(mins):</string>
 
-    <string name="retrieve_config_waiting_data">Waiting for data ...</string>
-    <string name="retrieve_config_done">Done! Please close configuration.</string>
+    <!--<string name="retrieve_config_waiting_data">Waiting for data ...</string>-->
+    <!--<string name="retrieve_config_done">Done! Please close configuration.</string>-->
 
-    <string name="select_station">Please choose station first.</string>
-    <string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>
-    <string name="message">Message</string>
-    <string name="receive_new_relations">It has received new relations setting.</string>
-    <string name="select_retrieve_station">Select station</string>
+    <!--<string name="select_station">Please choose station first.</string>-->
+    <!--<string name="confirm_retrieve_config">Do you want to retrieve configuration from # ?</string>-->
+    <!--<string name="message">Message</string>-->
+    <!--<string name="receive_new_relations">It has received new relations setting.</string>-->
+    <!--<string name="select_retrieve_station">Select station</string>-->
     <string name="error_isnot_unique_id">The ID # used by others.Please change it.</string>
     <string name="error_id_out_range">Please input ID value between 0 and 99.</string>
     <string name="error_id_is_empty">Please input ID.</string>
-    <string name="active_stations_list">Stations</string>
-    <string name="no_active_stations">No available station is online</string>
-    <string name="searching_active_stations">Searching for activate stations …</string>
-    <string name="smb_folder_lost"> Can not access remote folder #</string>
+    <!--<string name="active_stations_list">Stations</string>-->
+    <!--<string name="no_active_stations">No available station is online</string>-->
+    <!--<string name="searching_active_stations">Searching for activate stations …</string>-->
+    <!--<string name="smb_folder_lost"> Can not access remote folder #</string>-->
     <string name="error_different_relations">The stations relation is different with others, please edit relations first.</string>
-    <string name="error_match_mac">Please run it in a Logic Controls\' device.</string>
+    <string name="error_match_mac">Please run it in LogicControls device.</string>
 
     <string name="find">Find</string>
-    <string name="pc_name">PC IP:</string>
-    <string name="user_id">User ID:</string>
-    <string name="password">Password:</string>
-    <string name="shared_folder">Shared folder:</string>
+    <!--<string name="pc_name">PC IP:</string>-->
+    <!--<string name="user_id">User ID:</string>-->
+    <!--<string name="password">Password:</string>-->
+    <!--<string name="shared_folder">Shared folder:</string>-->
 
     <string name="category">Category description</string>
     <string name="item">Item description</string>
     <string name="router_disabled">Router is currently disable, please enable the router if you want to use it.</string>
     <string name="router_disabled_warning">Router is currently disable, please enable it first.</string>
-    <string name="anonymous">Anonymous</string>
+    <!--<string name="anonymous">Anonymous</string>-->
 
-    <string name="error_relations_repeat_backup_mirror">Stations # works as backup and mirror function.</string>
+    <!--<string name="error_relations_repeat_backup_mirror">Stations # works as backup and mirror function.</string>-->
     <string name="error_relations_mirror_dead_loop">Stations # mirror function dead loop.</string>
     <string name="error_relations_backup_dead_loop">Stations # backup function dead loop.</string>
     <string name="network_lost">Network lost</string>
@@ -145,42 +145,42 @@
     <string name="local">Local</string>
     <string name="ethernet">Network</string>
     <string name="internet">Internet file</string>
-    <string name="up">Up</string>
+    <!--<string name="up">Up</string>-->
     <string name="down">Down</string>
     <string name="bg">BG</string>
     <string name="fg">FG</string>
 
-    <string name="input">Input</string>
+    <!--<string name="input">Input</string>-->
 
-    <string-array name="slave_function">
-        <item>No slave</item>
-        <item>Backup</item>
-        <item>Mirror</item>
-        <item>Auto workload distribution</item>
-        <item>Duplicate station</item>
-        <item>Order Queue Display</item>
-    </string-array>
+    <!--<string-array name="slave_function">-->
+        <!--<item>No slave</item>-->
+        <!--<item>Backup</item>-->
+        <!--<item>Mirror</item>-->
+        <!--<item>Auto workload distribution</item>-->
+        <!--<item>Duplicate station</item>-->
+        <!--<item>Order Queue Display</item>-->
+    <!--</string-array>-->
 
-    <string name="slave_func">Slave Function</string>
-    <string name="slave">Slave ID</string>
-    <string name="please_input_slave_station">Please input station #\'s $ station</string>
+    <!--<string name="slave_func">Slave Function</string>-->
+    <!--<string name="slave">Slave ID</string>-->
+    <!--<string name="please_input_slave_station">Please input station #\'s $ station</string>-->
 
-    <string name="check_new_version">Check new version</string>
-    <string name="current_version">Current version</string>
-    <string name="it_is_latest_version">It is latest version</string>
-    <string name="update_canceled">Updating canceled</string>
-    <string name="found_new_version">Found new version</string>
-    <string name="update_now">Upgrade now</string>
-    <string name="update_later">Later</string>
-    <string name="update">Upgrade</string>
-    <string name="checking">Checking ...</string>
-    <string name="update_error_download_error">Errors while downloading apk file</string>
-    <string name="update_error_download_apk_error">Can not download apk file</string>
-    <string name="update_error_apk_error">The apk file is wrong</string>
-    <string name="update_error_xml_error">Can not download updating file</string>
+    <!--<string name="check_new_version">Check new version</string>-->
+    <!--<string name="current_version">Current version</string>-->
+    <!--<string name="it_is_latest_version">It is latest version</string>-->
+    <!--<string name="update_canceled">Updating canceled</string>-->
+    <!--<string name="found_new_version">Found new version</string>-->
+    <!--<string name="update_now">Upgrade now</string>-->
+    <!--<string name="update_later">Later</string>-->
+    <!--<string name="update">Upgrade</string>-->
+    <!--<string name="checking">Checking ...</string>-->
+    <!--<string name="update_error_download_error">Errors while downloading apk file</string>-->
+    <!--<string name="update_error_download_apk_error">Can not download apk file</string>-->
+    <!--<string name="update_error_apk_error">The apk file is wrong</string>-->
+    <!--<string name="update_error_xml_error">Can not download updating file</string>-->
     <!--<string name="do_you_update">There is new version. Do you want to upgrade it now?</string>-->
-    <string name="invalid_update_file">Invalid update file</string>
-    <string name="update_new_version">New version: #, recommended rate: $</string>
+    <!--<string name="invalid_update_file">Invalid update file</string>-->
+    <!--<string name="update_new_version">New version: #, recommended rate: $</string>-->
 
     <string name="add">Add</string>
     <string name="edit">Edit</string>
@@ -200,17 +200,17 @@
     <string name="event_help_for_orderid">Add Order ID here</string>
     <string name="fill_description">Fill description before save</string>
     <string name="fill_order_id">Fill order id before save</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
+    <!--<string name="ok">OK</string>-->
+    <!--<string name="cancel">Cancel</string>-->
     <string name="pref_kds_password_enabled">Enable password when enter setting</string>
-    <string name="password_incorrect">Password is incorrect!</string>
+    <!--<string name="password_incorrect">Password is incorrect!</string>-->
     <string name="pref_kds_password_text">Password</string>
 
     <string name="add_item">Add item</string>
     <string name="qty_increase">Qty +</string>
     <string name="qty_decrease">Qty -</string>
     <string name="qty">Qty</string>
-    <string name="item_description">Item description</string>
+    <!--<string name="item_description">Item description</string>-->
     <string name="to_station">To stations</string>
     <string name="order_id">Order ID</string>
     <string name="duration_mins">Duration(mins)</string>
@@ -237,18 +237,18 @@
     <string name="new_schedule">New schedule</string>
     <string name="dialog_time_picker">Time</string>
 
-    <string name="please_input_primary_station">Please input station #\'s primary station</string>
-    <string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>
-    <string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>
+    <!--<string name="please_input_primary_station">Please input station #\'s primary station</string>-->
+    <!--<string name="relation_error_expo_as_slave">The slave station is an Expo, don\'t allow this setting. Please change it.</string>-->
+    <!--<string name="remove_relations_expo">Expeditor station # removed from Expo column.</string>-->
 
-    <string name="expo_backup">Expo/Backup</string>
-    <string name="prep_backup">Prep/Backup</string>
-    <string name="error_slave">Error, please change to other station</string>
-    <string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>
-    <string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>
-    <string name="error_not_expo">Error, this station is not expo.</string>
-    <string name="error_not_prep">Error, this station is not prep.</string>
-    <string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>
+    <!--<string name="expo_backup">Expo/Backup</string>-->
+    <!--<string name="prep_backup">Prep/Backup</string>-->
+    <!--<string name="error_slave">Error, please change to other station</string>-->
+    <!--<string name="error_slave_myself">Error, use myself as slave station. Please change to other station</string>-->
+    <!--<string name="error_primary_myself">Error, use myself as primary station. Please change to other station</string>-->
+    <!--<string name="error_not_expo">Error, this station is not expo.</string>-->
+    <!--<string name="error_not_prep">Error, this station is not prep.</string>-->
+    <!--<string name="error_not_expo_prep_backup">Error,just expo,prep and queue station were allowed.</string>-->
 
     <string name="error_other_router_enabled">Error, only one router is allowed per store. There is other router enabled. Please check!</string>
     <string name="primary_router">My Primary router</string>
@@ -268,8 +268,8 @@
 
     <string name="pref_tracker_number_from_userinfo">The table-tracker number is from \"UserInfo\" tag</string>
     <string name="pref_tracker_number_from_userinfo_summary">POS program can use \"UserInfo\" tag to pass table-tracker number to KDS</string>
-    <string name="tracker_only_one_allowed">Just allow one table tracker station</string>
-    <string name="tt_authen_press_button">Press the button in gateway for KDS to connect.</string>
+    <!--<string name="tracker_only_one_allowed">Just allow one table tracker station</string>-->
+    <!--<string name="tt_authen_press_button">Press the button in gateway for KDS to connect.</string>-->
     <string name="tt_connect_error">Can not connect to TT server.</string>
 
 
@@ -282,23 +282,23 @@
     <string name="receive_order_from_folder">Get order # from remote folder</string>
     <string name="receive_order_from_ip">Get order # from ip=$</string>
 
-    <string name="new_folder">New folder</string>
-    <string name="new_folder_name">New folder name</string>
-    <string name="fail_to_create_folder">Failed to create \"#\" folder</string>
+    <!--<string name="new_folder">New folder</string>-->
+    <!--<string name="new_folder_name">New folder name</string>-->
+    <!--<string name="fail_to_create_folder">Failed to create \"#\" folder</string>-->
 
     <string name="select_order_status">Select [" # "] status.</string>
 
     <string name="select_item">Select item</string>
-    <string name="str_refresh">Refresh</string>
-    <string name="open_file">Open file</string>
+    <!--<string name="str_refresh">Refresh</string>-->
+    <!--<string name="open_file">Open file</string>-->
 
 
-    <string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>
-    <string name="can_not_remove_smb_file">Can not remove remote file #</string>
+    <!--<string name="error_folder_permission">Please set remote folder read and write permission for the logon user.</string>-->
+    <!--<string name="can_not_remove_smb_file">Can not remove remote file #</string>-->
 
-    <string name="ignore_and_save">Ignore and save</string>
-    <string name="modify_setting">Modify setting</string>
-    <string name="cancel_setting"> Cancel setting</string>
+    <!--<string name="ignore_and_save">Ignore and save</string>-->
+    <!--<string name="modify_setting">Modify setting</string>-->
+    <!--<string name="cancel_setting"> Cancel setting</string>-->
 
 
     <string name="backup_station_restored">My backup station # restored</string>
@@ -320,41 +320,42 @@
     <string-array name="pref_kds_language_titles">
         <item>English</item>
         <item>Chinese</item>
-
+		<item>Español</item>
+		<item>Português</item>
     </string-array>
 
-    <string name="empty">Empty</string>
-    <string name="find_folders">Find folders</string>
-    <string name="no_rights_to_access">No rights to access!</string>
+    <!--<string name="empty">Empty</string>-->
+    <!--<string name="find_folders">Find folders</string>-->
+    <!--<string name="no_rights_to_access">No rights to access!</string>-->
 
-    <string name="folder_not_existed">The folder is not existed.</string>
+    <!--<string name="folder_not_existed">The folder is not existed.</string>-->
     <string name="categories">Categories</string>
     <string name="items">Items</string>
-    <string name="reset">Reset</string>
-    <string name="retrieve_from">Retrieve from</string>
+    <!--<string name="reset">Reset</string>-->
+    <!--<string name="retrieve_from">Retrieve from</string>-->
 
-    <string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>
+    <!--<string name="failed_to_open_remote_folder">Logon failure: unknown username or bad password</string>-->
 
-    <string name="english">English</string>
-    <string name="chinese">Chinese</string>
-    <string name="downloading">Downloading ...</string>
-    <string name="str_message">Message</string>
+    <string name="english" translatable="false">English</string>
+    <string name="chinese" translatable="false">中文 (Chinese)</string>
+    <!--<string name="downloading">Downloading ...</string>-->
+    <!--<string name="str_message">Message</string>-->
     <string name="items_for_category">Items for category #</string>
     <string name="category_name">Category Name:</string>
-    <string name="background">Background</string>
-    <string name="foreground">Foreground</string>
+    <!--<string name="background">Background</string>-->
+    <!--<string name="foreground">Foreground</string>-->
     <string name="no_data">No data</string>
     <string name="export_csv">Export database to csv file</string>
     <string name="import_csv">Import csv file to database</string>
     <string name="file_name">File name:</string>
-    <string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>
-    <string name="no">No</string>
-    <string name="yes">Yes</string>
+    <!--<string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>-->
+    <!--<string name="no">No</string>-->
+    <!--<string name="yes">Yes</string>-->
     <string name="export_db_done">Database has been exported to</string>
     <string name="import_csv_done">Imported file</string>
     <string name="auto_add_modifier">Add received modifier to database automatically</string>
     <string name="item_auto_add">Add received item to database automatically</string>
-    <string name="pwd_do_not_match">Passwords do not match.</string>
+    <!--<string name="pwd_do_not_match">Passwords do not match.</string>-->
 
     <string name="log_mode">Log mode</string>
     <string name="log_reserved_days">Reserve log files for X days</string>
@@ -363,7 +364,7 @@
     <string name="station_lost">Station # lost</string>
     <string name="enable_order_ack">Enable order acknowledgement</string>
     <string name="use_smb_v2_open_folder">Use SMB v2 to open remote folder</string>
-    <string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>
+    <!--<string name="do_not_check_stations_relationship_in_this_station">Do not check stations relationship in this station</string>-->
     <string name="keep_notification_minutes">Reserve notification files for X minutes</string>
     <string-array name="pref_kds_log_mode_titles">
         <item>None</item>
@@ -374,4 +375,6 @@
     <string name="logout">Logout</string>
     <string name="export">Export</string>
     <string name="str_import">Import</string>
+	<string name="portuguese" translatable="false">Português</string>
+	<string name="spanish" translatable="false">Español</string>
 </resources>
