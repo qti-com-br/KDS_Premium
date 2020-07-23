@@ -574,6 +574,9 @@ public class KDSSettings extends SettingsBase {
        Bumpbar_Clean,
        Bumpbar_Snooze,
        Bumpbar_Dismiss,
+       //kpp1-293
+       Screen_logo_enabled,
+       Screen_logo_file,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1329,6 +1332,9 @@ public class KDSSettings extends SettingsBase {
        init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
        init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
        init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
+       //kpp1-293
+       init_option(ID.Screen_logo_enabled,"bool_kds_general_enable_bg_logo",false);
+       init_option(ID.Screen_logo_file,"string_kds_general_bg_logo","");
 
 
     }

@@ -3,12 +3,14 @@ package com.bematechus.kds;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.CanvasDC;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
@@ -31,6 +34,8 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.TimeDog;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -500,6 +505,8 @@ public class QueueView  extends View {
         Canvas g = get_double_buffer();
         if (g == null) return;
         drawBackground(g);
+        drawScreenLogo(g); //kpp1-293
+
         //if (m_queueOrders.getOrders() == null) return;
         if (!m_queueOrders.isReady()) return;
 
@@ -645,6 +652,7 @@ public class QueueView  extends View {
             return;
         }
         drawBackground(g);
+        drawScreenLogo(g);//kpp1-293
         //if (m_queueOrders.getOrders() == null) {
         if (!m_queueOrders.isReady()) {
             //System.out.println("onDrawSimpleMode if (m_queueOrders.getOrders() == null)" );
@@ -2506,6 +2514,24 @@ public class QueueView  extends View {
             m_nRedrawRequestCounter++;
         }
         startShowOrdersThread();
+    }
+
+    /**
+     * kpp1-293
+     * @return
+     */
+    private boolean isScreenEmpty()
+    {
+        return (this.m_queueOrders.getOrders().getCount() == 0 );
+    }
+
+    /**
+     * kpp1-293
+     * @param canvas
+     */
+    protected void drawScreenLogo(Canvas canvas)
+    {
+        ScreenLogoDraw.drawScreenLogo(this, this.getBounds(), canvas, getSettings(), isScreenEmpty(), PAGE_NUMBER_ROW_HEIGHT);
     }
 
 }
