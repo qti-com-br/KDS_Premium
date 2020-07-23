@@ -885,4 +885,5 @@
 	<string name="void_qty_line_color_enabled">Habilitar linea de color cuando sea  cantidad nula</string>
 	<string name="void_qty_line_color">Linea de color cuando sea la cantidad nula</string>
 	<string name="void_item_qty_mark_with">Marcar articulo anulado con</string>
+    <string name="powered_by">POWERED BY</string>
 </resources>

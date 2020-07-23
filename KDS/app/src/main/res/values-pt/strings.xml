@@ -884,4 +884,5 @@
 	<string name="void_qty_line_color_enabled">Ativar linha de itens cancelados</string>
 	<string name="void_qty_line_color">Cor da linha de itens cancelados</string>
 	<string name="void_item_qty_mark_with">Marcar linha de itens cancelados com</string>
+    <string name="powered_by">POWERED BY</string>
 </resources>

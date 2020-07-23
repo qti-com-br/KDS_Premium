@@ -1174,8 +1174,9 @@
 	<string name="void_qty_line_color_enabled">Void quantity line color enabled</string>
 	<string name="void_qty_line_color">Void qty line color</string>
 	<string name="void_item_qty_mark_with">Void item quantity mark with</string>
+    <string name="powered_by">POWERED BY</string>
 
-	<string-array name="pref_queue_auto_bump_timeout_titles">
+    <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
         <item>1</item>
         <item>2</item>
