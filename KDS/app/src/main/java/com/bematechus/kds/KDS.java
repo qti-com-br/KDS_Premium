@@ -5298,4 +5298,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Order_Bumped_By_Other_Expo_Or_Station, arOrders);
         }
     }
+
+    public void clearAllBufferedOrders()
+    {
+        m_users.ordersClear();
+    }
 }
