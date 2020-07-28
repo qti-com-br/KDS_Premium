@@ -51,11 +51,13 @@ public class ScreenLogoDraw {
             return;
         }
 
-        drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
+
 
         String fileName = settings.getString(KDSSettings.ID.Screen_logo_file);
-        if (fileName.isEmpty())
+        if (fileName.isEmpty()) {
+            drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
             return;
+        }
         if (!m_logoFileName.equals(fileName))
         {
             m_logoImage = loadLogoImage(fileName);
@@ -63,11 +65,16 @@ public class ScreenLogoDraw {
             {
                 m_logoFileName = fileName;
             }
-            else
+            else {
+                drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
                 return;
+            }
         }
 
-        if (m_logoImage == null) return;
+        if (m_logoImage == null) {
+            drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
+            return;
+        }
 
         Rect rc = rcBounds;
         int imageW = m_logoImage.getWidth();
@@ -79,7 +86,7 @@ public class ScreenLogoDraw {
         pt.setAlpha(getLogoAlpha(bScreenEmpty));
         canvas.drawBitmap(m_logoImage, offsetX, offsetY, pt);
 
-
+        drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
 
 
     }
@@ -119,7 +126,7 @@ public class ScreenLogoDraw {
         m_lciLogo.draw(canvas);
 
         KDSViewFontFace ff = new KDSViewFontFace();
-        ff.setFontSize(18);
+        ff.setFontSize(w/10);
         ff.setFG(Color.rgb(35,31,32));
 
         Rect rtText = new Rect(x, y - h*3/2- nLciLogoBottomOffset, rtBG.width(), rtBG.height());
