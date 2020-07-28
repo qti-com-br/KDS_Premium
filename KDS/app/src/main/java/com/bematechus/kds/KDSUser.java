@@ -248,4 +248,9 @@ public class KDSUser {
 
         getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, false);
     }
+
+    public void clearBufferedOrders()
+    {
+        m_ordersDynamic.clear();
+    }
 }

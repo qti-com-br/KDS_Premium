@@ -6110,8 +6110,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
+                getKDS().getSettings().setLineItemsViewEnabled(false); //kpp1-353
                 if (getKDS().isMultpleUsersMode())
                     getKDS().getUsers().getUser(KDSUser.USER.USER_B).tabDisplayDestinationRestore();
+                getKDS().clearAllBufferedOrders(); //kpp1-353
                 getKDS().loadAllActiveOrders();
                 reinitKDSPrep();
                 refreshTabSort();
@@ -6124,6 +6126,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getKDS().getUsers().setTwoUserMode();
                 getKDS().getSettings().setTabEnableLineItemsView(false);
                 getKDS().getSettings().restoreOrdersSortToDefault();
+                getKDS().getSettings().setLineItemsViewEnabled(false); //kpp1-353
+                getKDS().clearAllBufferedOrders(); //kpp1-353
                 getKDS().loadAllActiveOrders();
                 String strDest = btnData.getStringParam();
 
@@ -6148,6 +6152,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.Queue);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
+                getKDS().getSettings().setLineItemsViewEnabled(false); //kpp1-353
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
                 reinitQueue(false);
@@ -6161,6 +6166,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().getSettings().setTabCurrentFunc(KDSSettings.StationFunc.TableTracker);
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
+                getKDS().getSettings().setLineItemsViewEnabled(false); //kpp1-353
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
                 reinitTT();
@@ -6177,6 +6183,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().getSettings().restoreOrdersSortToDefault();
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();
                 getKDS().getSettings().setLineItemsViewEnabled(true);
+                getKDS().clearAllBufferedOrders(); //kpp1-353
                 getKDS().loadAllActiveOrders();
                 reinitKDSPrep();
                 refreshTabSort();
@@ -6189,10 +6196,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getKDS().getUsers().setTwoUserMode();
                 getKDS().getSettings().setTabDestinationFilter("");
                 getKDS().getSettings().setTabEnableLineItemsView(false);
+                getKDS().getSettings().setLineItemsViewEnabled(false); //kpp1-353
                 String strSort = btnData.getStringParam();
                 int n = KDSUtil.convertStringToInt(strSort, 0);
                 KDSSettings.OrdersSort sort = KDSSettings.OrdersSort.values()[n];
                 getKDS().getSettings().setCurrentOrdersSort(sort);
+                getKDS().clearAllBufferedOrders(); //kpp1-353
                 getKDS().loadAllActiveOrders();
 
                 getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationRestore();

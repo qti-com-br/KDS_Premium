@@ -651,7 +651,7 @@ public class KDSView extends View {
                 } else {
                     Canvas g = get_double_buffer();
                     m_lineItemsViewer.onDraw(g);
-                    redrawAllPanelNumberInReverseSequence(g);
+                    //redrawAllPanelNumberInReverseSequence(g); //remove it. kpp1-353
                     commit_double_buffer(canvas);
                 }
             } catch (Exception err) {
