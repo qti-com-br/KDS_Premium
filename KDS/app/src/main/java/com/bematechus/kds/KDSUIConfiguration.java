@@ -1399,7 +1399,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class TitlePreferenceFragment extends KDSPreferenceFragment{
+    public static class TitlePreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -1409,8 +1409,37 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("real_time_period"));
             bindPreferenceSummaryToValue(findPreference("kds_general_title"));
-
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.registerOnSharedPreferenceChangeListener(this);
         }
+        //kpp1-349
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
+        {
+
+            if (key.equals("hide_navigation_bar"))
+            {
+
+                boolean bhide = prefs.getBoolean(key, false);// (this.getSettings().getBoolean(KDSSettings.ID.Hide_navigation_bar));
+                if (this.getActivity() != null)
+                {
+                    if (this.getActivity().getWindow() != null)
+                    {
+                        if (this.getActivity().getWindow().getDecorView() != null)
+                        {
+                            if (this.getActivity() != null)
+                                ((KDSUIConfiguration) this.getActivity()).hideNavigationBar(bhide);
+                            //hideNavigationBar(!bhide);
+                            //KDSUtil.enableSystemVirtualBar(this.getActivity().getWindow().getDecorView(), !bhide);
+                        }
+                    }
+                }
+
+
+
+            }
+        }
+
+
 
     }
     /**
