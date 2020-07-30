@@ -1426,7 +1426,10 @@ public class KDSUIConfiguration extends PreferenceActivity {
                     {
                         if (this.getActivity().getWindow().getDecorView() != null)
                         {
-                            KDSUtil.enableSystemVirtualBar(this.getActivity().getWindow().getDecorView(), !bhide);
+                            if (this.getActivity() != null)
+                                ((KDSUIConfiguration) this.getActivity()).hideNavigationBar(bhide);
+                            //hideNavigationBar(!bhide);
+                            //KDSUtil.enableSystemVirtualBar(this.getActivity().getWindow().getDecorView(), !bhide);
                         }
                     }
                 }
@@ -1435,6 +1438,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
             }
         }
+
+
 
     }
     /**
