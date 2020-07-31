@@ -197,6 +197,9 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("password", pwd);
             //kpp1-55,+
             json.put("appVersionCode", KDSUtil.getVersionCodeString(KDSApplication.getContext()));
+            //kpp1-362
+            if (!KDSApplication.isRouterApp()) //just premium app need to check duplicated serial.
+                json.put("serial", Activation.getMySerialNumber());
         }
         catch (Exception e)
         {
