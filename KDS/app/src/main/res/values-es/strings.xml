@@ -886,4 +886,6 @@
 	<string name="void_qty_line_color">Linea de color cuando sea la cantidad nula</string>
 	<string name="void_item_qty_mark_with">Marcar articulo anulado con</string>
     <string name="powered_by">POWERED BY</string>
+	<string name="enable_bg_logo">Logotipo de fondo</string>
+	<string name="bg_logo_file">Archivo de logotipo de fondo</string>
 </resources>
