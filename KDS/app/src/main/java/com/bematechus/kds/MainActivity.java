@@ -1097,18 +1097,28 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
-    public void doClearDB() {
+    /**
+     *
+     * bugs:
+     *  kpp1-359, new device login, it will clear all stations data.
+     *  @param bClearAllStations
+     *      true: clear all other stations data.
+     *      false: just clear my data.
+     */
+    public void doClearDB(boolean bClearAllStations) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
         MainActivity.this.getKDS().clearAll();
 
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] params) {
-                KDSGlobalVariables.getKDS().getBroadcaster().broadcastClearDBCommand();
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (bClearAllStations) {
+            AsyncTask task = new AsyncTask() {
+                @Override
+                protected Object doInBackground(Object[] params) {
+                    KDSGlobalVariables.getKDS().getBroadcaster().broadcastClearDBCommand();
+                    return null;
+                }
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -2842,7 +2852,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (m_activation.isStoreChanged())
                 {
                     m_activation.restStoreChangedFlag();
-                    doClearDB();
+                    doClearDB(false);
 
                 }
                 String registeredStationID = m_activation.findMyRegisteredID(); //kpp1-340
@@ -2946,7 +2956,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 break;
                 case Load_Old_Data:
                 { //don't need old data.
-                    MainActivity.this.doClearDB();
+                    MainActivity.this.doClearDB(false);
                     String stationID = getKDS().getSettings().getString(KDSSettings.ID.KDS_ID);
                     if (stationID.isEmpty()) {
                         inputStationID();
@@ -3094,7 +3104,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
             switch (confirm) {
                 case Clear_DB: {
-                    MainActivity.this.doClearDB();
+                    MainActivity.this.doClearDB(true);
                 }
                 break;
                 case Export_Data: {
@@ -6016,7 +6026,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case Ignore:
                 break;
             case Reset:
-                doClearDB();
+                doClearDB(false);
                 break;
             case Abort:
                 this.finish();
