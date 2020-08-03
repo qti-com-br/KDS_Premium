@@ -199,12 +199,12 @@
         android:maxLines="1" />
     <CheckBoxPreference
         android:key="kds_general_enable_bg_logo"
-        android:title="Enable background logo"
+        android:title="@string/enable_bg_logo"
         android:defaultValue="false" />
     <com.bematechus.kds.KDSPreferenceIconPicker
         android:key="kds_general_bg_logo"
         android:defaultValue=""
-        android:title="Background logo file"
+        android:title="@string/bg_logo_file"
         android:dependency="kds_general_enable_bg_logo"
         />
 </PreferenceScreen>

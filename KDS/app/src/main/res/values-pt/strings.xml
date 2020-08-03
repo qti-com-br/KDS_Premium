@@ -33,7 +33,7 @@
 	<string name='touchpad_print'>Imprimir</string>
 	<string name='touchpad_buildcard'>Cartão</string>
 	<string name='touchpad_training'>Treinamento</string>
-	<string name='touchpad_page'>Página</string>
+	<string name='touchpad_page'>Pager</string>
 	<string name='sort_time_ascend'>Tempo de espera menor p/ maior</string>
 	<string name='sort_time_descen'>Tempo de espera maior p/ menor</string>
 	<string name='sort_name_ascend'>Número do pedido menor p/ maior</string>
@@ -885,4 +885,6 @@
 	<string name="void_qty_line_color">Cor da linha de itens cancelados</string>
 	<string name="void_item_qty_mark_with">Marcar linha de itens cancelados com</string>
     <string name="powered_by">POWERED BY</string>
+	<string name="enable_bg_logo">Habilitar Logotipo de Fundo</string>
+	<string name="bg_logo_file">Arquivo do Logotipo</string>
 </resources>
