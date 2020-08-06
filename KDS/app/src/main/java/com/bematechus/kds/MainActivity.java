@@ -1380,20 +1380,22 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
     /**
-     *
+     * Rev:
+     *  Kpp1-358  Only exported settings should be retrieved, not previous orders from when settings were exported.
      * @param fromFolder
      *  without last /
      * @return
      */
     public boolean import_data(String fromFolder, boolean bIsAbsolutePath) {
+        /* //kpp1-358
         String dbCurrentPath = KDSDBBase.getDBFullPath(KDSDBCurrent.DB_NAME);
         String dbSupportPath = KDSDBBase.getDBFullPath(KDSDBSupport.DB_NAME);//this.getApplicationContext().getDatabasePath(KDSDBSupport.DB_NAME).getAbsolutePath();
         String dbStatisticPath = KDSDBBase.getDBFullPath(KDSDBStatistic.DB_NAME);//this.getApplicationContext().getDatabasePath(KDSDBStatistic.DB_NAME).getAbsolutePath();
-
+*/
         String srcFolder = fromFolder;// "/KDSBackup/";
         if (!bIsAbsolutePath)
             srcFolder = getSDFolderFullPathWithLastDivid(fromFolder);// getBackupFolderFullPathName();// this.getApplicationContext().getDir(fromFolder, Context.MODE_PRIVATE).getAbsolutePath()+"/";
-
+/*//kpp1-358
         String srcFile = srcFolder + KDSDBCurrent.DB_NAME;
         if (!isKDSValid()) return false;
         if (KDSUtil.fileExisted(srcFile)) {
@@ -1417,7 +1419,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             KDSUtil.copyFile(srcFile, dbStatisticPath);
             getKDS().reopenStatisticDB(this.getApplicationContext());
         }
-
+        */
+        if (!isKDSValid()) return false;
         return import_kds_setting(srcFolder, true);
     }
 
