@@ -1864,7 +1864,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *     “
      *     Expo cannot bump the order unless all its prep station bump the items ”
      * rev.
-     *  fix kpp1-9 bug
+     *  1. fix kpp1-9 bug
+     *  2. 2020/8/10 fix kpp1-343   should allow for items that were sent to the expo and not prep to be bumped.
+     *                      should also be able to bump items that were already bumped by prep.
+     *  3
      *rev.
      * default return false;
      * @param orderGuid
@@ -1907,8 +1910,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (orderGuid.isEmpty()) return;
 
         //2.0.25
-        if (checkExpoConfirmationBump(userID, orderGuid))
-            return;
+        //kpp1-343, comment it here. Move to below
+       // if (checkExpoConfirmationBump(userID, orderGuid))
+       //     return;
 
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
 
@@ -1920,6 +1924,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             String itemGuid = getSelectedItemGuid(userID);
 
             if (itemGuid.isEmpty()) {//bump order
+                //kpp1-343, allow expo bump itself items . So, move this check here.
+                if (checkExpoConfirmationBump(userID, orderGuid))
+                    return;
+
                 if (getKDS().getSettings().getBoolean(KDSSettings.ID.Bumping_confirm)) {
                     confirmBumpFocusedOrder(userID, orderGuid);
                 }
@@ -7161,6 +7169,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
+    /**
+     * rev.:
+     *  kpp1-343 allow expo bump itself items.
+     * @param userID
+     * @param orderGuid
+     * @param itemGuid
+     */
     private void itemBump(KDSUser.USER userID, String orderGuid, String itemGuid)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
