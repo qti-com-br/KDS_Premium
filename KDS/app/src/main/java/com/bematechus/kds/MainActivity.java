@@ -74,6 +74,7 @@ import com.bematechus.kdslib.KDSStationConnection;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSTimer;
+import com.bematechus.kdslib.KDSToStations;
 import com.bematechus.kdslib.KDSUIAboutDlg;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDialogConfirm;
@@ -1884,7 +1885,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return false;
 
         KDSDataOrder order =  getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
-        if (!order.isAllItemsFinished())
+        //if (!order.isAllItemsFinished())
+        if (!order.isExpoAllItemsFinished(getKDS().getStationID())) //kpp1-343
         {
             AlertDialog d = new AlertDialog.Builder(this)
                     .setTitle(this.getString(R.string.message))
@@ -1942,6 +1944,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 else
                     onBumpOrder(userID);
             } else {
+                if (checkExpoCanBumpItem(userID, orderGuid, itemGuid))
                 onBumpItem(userID);
             }
         }
@@ -7432,6 +7435,43 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void opCleanByBumpbar()
     {
         m_cleaning.onCleaningHabitsEvent(DlgCleaningAlarm.CleaningEventType.Alarm_Freeze_Screen_Now_By_BumpBar, null);
+    }
+
+    private boolean checkExpoCanBumpItem(KDSUser.USER userID,String orderGuid, String itemGuid)
+    {
+
+        if (!getKDS().isExpeditorStation())
+            return true;
+        if (!getSettings().getBoolean(KDSSettings.ID.Bumping_expo_confirmation))
+            return true;
+
+        KDSDataOrder order =  getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
+        if (order == null) return true;
+        KDSDataItem item =  order.getItems().getItemByGUID(itemGuid);
+
+        //if (!order.isAllItemsFinished())
+        //one prep bumped item, and expo itself item can been bumped.
+        if ( item.getToStations().findStation(getKDS().getStationID()) != KDSToStations.PrimarySlaveStation.Unknown)
+            return true;
+        //prep station item
+        if (item.getBumpedStationsString().isEmpty())
+              return false;
+//        {
+////            AlertDialog d = new AlertDialog.Builder(this)
+////                    .setTitle(this.getString(R.string.message))
+////                    .setMessage(this.getString(R.string.expo_cannot_bump_unless_prep_bump_all))
+////                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+////                                @Override
+////                                public void onClick(DialogInterface dialog, int which) {
+////                                }
+////                            }
+////                    )
+////
+////                    .create();
+////            d.show();
+//            return true;
+//        }
+        return true;
     }
 
 }
