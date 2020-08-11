@@ -3024,5 +3024,25 @@ get the total qty of all found items
         return c;
     }
 
+    /**
+     * kpp1-343, expo contains itself items
+     * @return
+     */
+    public boolean isExpoAllItemsFinished(String expoStatonID)
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (item.getLocalBumped() ||
+                    (!item.getBumpedStationsString().isEmpty()) )
+                continue;
+            //kpp1-343, if item send to expo, treat it as finished.
+            if (item.getToStations().findStation(expoStatonID) != KDSToStations.PrimarySlaveStation.Unknown)
+                continue;
+            return false;
+        }
+        return true;
+    }
 
 }
