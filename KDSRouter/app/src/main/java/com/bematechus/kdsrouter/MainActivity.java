@@ -73,7 +73,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSTimer.KDSTimerInterface,
         KDSUIDialogBase.KDSDialogBaseListener,
         Activation.ActivationEvents,
-        KDSUIAboutDlg.AboutDlgEvent
+        KDSUIAboutDlg.AboutDlgEvent,
+        KDSBackofficeNotification.BackofficeNotification_Event
         {
 
     final static private String TAG = "MainActivity";
@@ -100,6 +101,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     KDSKbdRecorder m_kbdRecorder = new KDSKbdRecorder();
 
     Activation m_activation = new Activation(this);
+    KDSBackofficeNotification m_backofficeNotification = new KDSBackofficeNotification(this);
 
 
     public enum Confirm_Dialog {
@@ -142,6 +144,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         startCheckRemoteFolderNotificationThread();
 
         checkAutoActivation();
+
+        connectBackofficeNotification();
 
     }
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -291,6 +295,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         KDSUIDlgAgreement.forceAgreementAgreed(this, this);
 
+        connectBackofficeNotification();
 
     }
 
@@ -715,7 +720,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (m_service != null)
                 m_service.updateSettings();
             updateTitle();
-
+            connectBackofficeNotification();
         }
 
 
@@ -1079,6 +1084,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         updateTitle();
+        m_backofficeNotification.updateStoreGuidToBackOfficeAfterLogin(); //
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
@@ -1419,4 +1425,79 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         return null;
     }
+
+    /**
+     * Send download orders http request to backoffice
+     */
+    private void downloadBackofficeOrders()
+    {
+        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order))
+            return;
+        long l = KDSRouterSettings.loadFCMTime(this);
+        //debug firebase
+//
+//        Calendar c = Calendar.getInstance();
+//        c.set(Calendar.HOUR_OF_DAY,5 );
+//        c.set(Calendar.MINUTE, 0);
+//        c.set(Calendar.SECOND,0);
+//
+//        Date dt = c.getTime();//new Date(2020, 3, 10, 0,0,0);
+//        l = dt.getTime();
+
+        m_activation.postGetOrdersRequest(l);
+
+        //test firebase
+        if (KDSBackofficeNotification.ENABLE_DEBUG) {
+            String s = KDSBackofficeNotification.getFCMTestString2();
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(s);
+            onActivationEvent(Activation.ActivationEvent.Get_orders, ar);
+        }
+
+    }
+
+    /**
+     * Backoffice return FCM orders!
+     * @param evt
+     *
+     * @param arParams
+     *  Get_orders: 0: the string JSON data.
+     * @return
+     */
+    public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
+    {
+        if (evt == Activation.ActivationEvent.Get_orders)
+        {
+            if (arParams.size() >0)
+                receiveBackofficeOrders((String)arParams.get(0));
+        }
+        return null;
+    }
+
+    /**
+     *  I get the orders JSON string.
+     * @param strData
+     */
+    private void receiveBackofficeOrders(String strData)
+    {
+        KDSDataOrders orders =  KDSBackofficeNotification.parseFirebaseJson(strData);
+        if (orders == null) return;
+        getKDSRouter().onFCMReceivedOrders(orders);
+        KDSRouterSettings.saveFCMTime(this, System.currentTimeMillis());
+    }
+
+    private void connectBackofficeNotification()
+    {
+        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order)) {
+            m_backofficeNotification.close();
+            return;
+        }
+        m_backofficeNotification.connectBackOffice();
+    }
+
+    public void onBackofficeNotifyEvent(String evt)
+    {
+        downloadBackofficeOrders();
+    }
 }
+

@@ -104,6 +104,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         Expo_sync_prep_bump_item,
         Expo_sync_prep_unbump_item,
     }
+    public enum ActivationEvent
+    {
+        Get_orders,
+    }
+
     public interface ActivationEvents
     {
         public void onActivationSuccess();
@@ -113,6 +118,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         public void onDoActivationExplicit();
         public void onForceClearDataBeforeLogin();
         public boolean isAppContainsOldData();
+        public Object onActivationEvent(ActivationEvent evt, ArrayList<Object> arParams);
     }
 
     ActivationHttp m_http = new ActivationHttp();
@@ -265,6 +271,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 case Cleaning:
                     onCleaningHttpResponse(http, request);
                     break;
+                case Get_orders:
+                    onActivationResponseGetOrders(http, request);
 
             }
         }
@@ -2298,4 +2306,258 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
         return dev.getID();
     }
+
+    /**
+     * for firebase
+     */
+    public void postGetOrdersRequest(long minFCMTime)
+    {
+        Date dt = new Date();
+        dt.setTime(minFCMTime);
+        ActivationRequest r = ActivationRequest.requestGetOrders(m_storeGuid, dt);
+        m_http.request(r);
+        //showProgressDialog(true, m_context.getString(R.string.retrieve_licenses_data));
+    }
+
+    /**
+     * [
+     *     [
+     *         "guid": 08d2dbc0-20f9-4fa6-9e87-3bd249274dc7,
+     *         "update_device": <null>,
+     *         "items_count": 3,
+     *         "user_info": Carlos,
+     *         "create_time": 1584301854,
+     *         "guest_table": Uber Eats,
+     *         "store_guid": 6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd,
+     *         "pos_terminal": <null>,
+     *         "destination": Delivery,
+     *         "update_time": 1584301855,
+     *         "done": 0,
+     *         "smart_order_start_time": 0,
+     *         "create_local_time": 1584301854,
+     *         "upload_time": 0,
+     *         "order_type": ONLINE,
+     *         "phone": 0,
+     *         "server_name": Logic Controls,
+     *         "is_hidden": 0,
+     *         "preparation_time": 0,
+     *         "items": {
+     *             beeped = 0;
+     *             "build_card" = "<null>";
+     *             category = Hot;
+     *             condiments =     (
+     *                         {
+     *                     "create_local_time" = 1584301854;
+     *                     "create_time" = 1584301854;
+     *                     "external_id" = 1602;
+     *                     guid = "be1f50f4-aa70-44cb-9f4f-95011be091ef";
+     *                     "is_deleted" = 0;
+     *                     "item_guid" = "a6263f24-092c-42e4-8cc6-53faed7e3e1e";
+     *                     name = Sauce;
+     *                     "pre_modifier" = "<null>";
+     *                     "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *                     "update_device" = 0;
+     *                     "update_time" = 1584301855;
+     *                     "upload_time" = 0;
+     *                 },
+     *                         {
+     *                     "create_local_time" = 1584301854;
+     *                     "create_time" = 1584301854;
+     *                     "external_id" = 1603;
+     *                     guid = "f42c7b4a-86b8-4ba1-89c2-1119033e493c";
+     *                     "is_deleted" = 0;
+     *                     "item_guid" = "a6263f24-092c-42e4-8cc6-53faed7e3e1e";
+     *                     name = Mayonnaise;
+     *                     "pre_modifier" = "<null>";
+     *                     "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *                     "update_device" = 0;
+     *                     "update_time" = 1584301855;
+     *                     "upload_time" = 0;
+     *                 }
+     *             );
+     *             "condiments_count" = 2;
+     *             "create_local_time" = 1584301854;
+     *             "create_time" = 1584301854;
+     *             "device_id" = 1;
+     *             "external_id" = 1502;
+     *             guid = "a6263f24-092c-42e4-8cc6-53faed7e3e1e";
+     *             "is_deleted" = 0;
+     *             "is_hidden" = 0;
+     *             "is_priority" = 0;
+     *             "item_bump_guid" = "3de0282a-76e4-4666-be69-43c582c77c9c";
+     *             name = Hotdog;
+     *             "order_guid" = "08d2dbc0-20f9-4fa6-9e87-3bd249274dc7";
+     *             "pre_modifier" = "<null>";
+     *             "preparation_time" = "<null>";
+     *             "printed_status" = 0;
+     *             quantity = 2;
+     *             "ready_since_local_time" = 0;
+     *             "recall_time" = "<null>";
+     *             "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *             "training_video" = "<null>";
+     *             "transfer_from_device_id" = "<null>";
+     *             "transfer_time" = "<null>";
+     *             "untransfer_time" = "<null>";
+     *             "update_device" = "<null>";
+     *             "update_time" = 1584301855;
+     *             "upload_time" = 0;
+     *         },
+     *         {
+     *             beeped = 0;
+     *             "build_card" = "<null>";
+     *             category = Hot;
+     *             condiments =     (
+     *                         {
+     *                     "create_local_time" = 1584301854;
+     *                     "create_time" = 1584301854;
+     *                     "external_id" = 1602;
+     *                     guid = "fb2c7dbe-bfa5-485b-9599-8a25c76e0640";
+     *                     "is_deleted" = 0;
+     *                     "item_guid" = "3c59e7e3-8f1f-4dcf-b85b-3ff034d0ef6e";
+     *                     name = Sauce;
+     *                     "pre_modifier" = "<null>";
+     *                     "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *                     "update_device" = 0;
+     *                     "update_time" = 1584301855;
+     *                     "upload_time" = 0;
+     *                 },
+     *                         {
+     *                     "create_local_time" = 1584301854;
+     *                     "create_time" = 1584301854;
+     *                     "external_id" = 1603;
+     *                     guid = "f8c42c67-7132-479c-afbc-b5b0a2656962";
+     *                     "is_deleted" = 0;
+     *                     "item_guid" = "3c59e7e3-8f1f-4dcf-b85b-3ff034d0ef6e";
+     *                     name = Mayonnaise;
+     *                     "pre_modifier" = "<null>";
+     *                     "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *                     "update_device" = 0;
+     *                     "update_time" = 1584301855;
+     *                     "upload_time" = 0;
+     *                 }
+     *             );
+     *             "condiments_count" = 2;
+     *             "create_local_time" = 1584301854;
+     *             "create_time" = 1584301854;
+     *             "device_id" = 1;
+     *             "external_id" = 1502;
+     *             guid = "3c59e7e3-8f1f-4dcf-b85b-3ff034d0ef6e";
+     *             "is_deleted" = 0;
+     *             "is_hidden" = 0;
+     *             "is_priority" = 0;
+     *             "item_bump_guid" = "3de0282a-76e4-4666-be69-43c582c77c9c";
+     *             name = Hotdog;
+     *             "order_guid" = "08d2dbc0-20f9-4fa6-9e87-3bd249274dc7";
+     *             "pre_modifier" = "<null>";
+     *             "preparation_time" = "<null>";
+     *             "printed_status" = 0;
+     *             quantity = 2;
+     *             "ready_since_local_time" = 0;
+     *             "recall_time" = "<null>";
+     *             "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *             "training_video" = "<null>";
+     *             "transfer_from_device_id" = "<null>";
+     *             "transfer_time" = "<null>";
+     *             "untransfer_time" = "<null>";
+     *             "update_device" = "<null>";
+     *             "update_time" = 1584301855;
+     *             "upload_time" = 0;
+     *         },
+     *         {
+     *             beeped = 0;
+     *             "build_card" = "<null>";
+     *             category = Hot;
+     *             condiments =     (
+     *                         {
+     *                     "create_local_time" = 1584301854;
+     *                     "create_time" = 1584301854;
+     *                     "external_id" = 1601;
+     *                     guid = "7b5bf755-8873-40db-8e70-6294c277fb58";
+     *                     "is_deleted" = 0;
+     *                     "item_guid" = "8706f1ec-c586-4f71-b5bf-fbce11876b04";
+     *                     name = Medium;
+     *                     "pre_modifier" = "<null>";
+     *                     "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *                     "update_device" = 0;
+     *                     "update_time" = 1584301855;
+     *                     "upload_time" = 0;
+     *                 }
+     *             );
+     *             "condiments_count" = 1;
+     *             "create_local_time" = 1584301854;
+     *             "create_time" = 1584301854;
+     *             "device_id" = 1;
+     *             "external_id" = 1501;
+     *             guid = "8706f1ec-c586-4f71-b5bf-fbce11876b04";
+     *             "is_deleted" = 0;
+     *             "is_hidden" = 0;
+     *             "is_priority" = 0;
+     *             "item_bump_guid" = "5bd96b19-bcfb-4f3f-a437-1440fc647ec8";
+     *             name = "French Fries";
+     *             "order_guid" = "08d2dbc0-20f9-4fa6-9e87-3bd249274dc7";
+     *             "pre_modifier" = "<null>";
+     *             "preparation_time" = "<null>";
+     *             "printed_status" = 0;
+     *             quantity = 1;
+     *             "ready_since_local_time" = 0;
+     *             "recall_time" = "<null>";
+     *             "store_guid" = "6f4c0f56-da8b-4008-a7e5-c1b6233b1dcd";
+     *             "training_video" = "<null>";
+     *             "transfer_from_device_id" = "<null>";
+     *             "transfer_time" = "<null>";
+     *             "untransfer_time" = "<null>";
+     *             "update_device" = "<null>";
+     *             "update_time" = 1584301855;
+     *             "upload_time" = 0;
+     *         }
+     *         )
+     *         , "is_deleted": 0,
+     *         "is_priority": 0,
+     *         "external_id": 839,
+     *         "customer_guid": <null>
+     *     ]
+     * ]
+     * @param http
+     * @param request
+     */
+    public void onActivationResponseGetOrders(ActivationHttp http, ActivationRequest request)
+    {
+
+        //showProgressDialog(false, "");
+        if (isResponseError(request.m_result))
+        {
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_Devices_error, getErrorMessage(request.m_result));
+            return;
+        }
+
+        try
+        {
+            if (m_receiver != null) {
+                ArrayList<Object> ar = new ArrayList<>();
+                ar.add(request.m_result);
+                m_receiver.onActivationEvent(ActivationEvent.Get_orders, ar);
+            }
+            //JSONArray ar = new JSONArray(request.m_result);
+            //System.out.println(ar.toString());
+            //m_devices.clear();
+//            for (int i=0; i< ar.length() ; i++)
+//            {
+//                JSONObject json =(JSONObject) ar.get(i);
+//                StoreDevice device =parseJsonDevice(json);
+//                if (device == null) //KPP1-27
+//                    continue;
+//                m_devices.add(device);
+//            }
+//
+//            checkMyActivation();
+
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e);
+            //e.printStackTrace();
+        }
+    }
+
+
 }
