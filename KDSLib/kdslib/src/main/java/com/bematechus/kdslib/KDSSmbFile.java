@@ -216,4 +216,30 @@ public class KDSSmbFile extends Handler {
         else
             return KDSSmbFile1.findAllFiles(remoteUriFolder);
     }
+
+    /**
+     * KPP1-367
+     * @param buffer
+     * @return
+     */
+    static public String getBytesEncodingFormat(byte[] buffer)
+    {
+        if (buffer[0] ==(byte) 0xEF &&  //utf-8: EF, BB, BF
+                buffer[1] == (byte)0xBB &&
+                buffer[2] == (byte)0xBF )
+            return "UTF-8";
+        else if (buffer[0] == (byte)0xFF &&
+                buffer[1] == (byte)0xFE   ) // UCS-2 LE BOM (Little Endian)
+        {
+            return "UTF-16LE";
+        }
+        else if (buffer[0] == (byte)0xFE &&
+            buffer[1] == (byte)0xFF   ) // UCS-2 LE BOM (Big Endian)
+        {
+            return "UTF-16BE";
+        }
+        else
+            return "";
+
+    }
 }

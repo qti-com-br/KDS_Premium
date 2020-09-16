@@ -40,7 +40,7 @@ android {
         }
     }
     compileOptions {
-    buildToolsVersion '28.0.3'
+        buildToolsVersion '28.0.3'
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }

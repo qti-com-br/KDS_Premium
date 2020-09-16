@@ -305,7 +305,7 @@ public class KDSSMBDataSource implements Runnable {
         try {
 
 
-            String text = KDSSmbFile2.readFromUtf8SmbText(smbFileName);
+            String text = KDSSmbFile2.readFromUtf8SmbText2(smbFileName);
             return text;
         }
         catch (Exception e)
