@@ -27,7 +27,6 @@ android {
         targetSdkVersion 22
         versionCode 3
         versionName '2.3.0.0'
-        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -108,6 +107,6 @@ dependencies {
     api 'com.android.support:appcompat-v7:22.2.1'
     api 'com.android.support:support-v4:22.2.1'
     api 'com.android.support:design:22.2.1'
-    implementation project(path: ':kdslib')
     //api 'com.google.android.gms:play-services-appindexing:8.1.0'
+    api project(':kdslib')
 }

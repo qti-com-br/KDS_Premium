@@ -228,13 +228,13 @@ public class KDSSmbFile extends Handler {
                 buffer[1] == (byte)0xBB &&
                 buffer[2] == (byte)0xBF )
             return "UTF-8";
-        else if (buffer[0] == 0xFF &&
-                buffer[1] == 0xFE   ) // UCS-2 LE BOM (Little Endian)
+        else if (buffer[0] == (byte)0xFF &&
+                buffer[1] == (byte)0xFE   ) // UCS-2 LE BOM (Little Endian)
         {
             return "UTF-16LE";
         }
-        else if (buffer[0] == 0xFE &&
-            buffer[1] == 0xFF   ) // UCS-2 LE BOM (Big Endian)
+        else if (buffer[0] == (byte)0xFE &&
+            buffer[1] == (byte)0xFF   ) // UCS-2 LE BOM (Big Endian)
         {
             return "UTF-16BE";
         }
