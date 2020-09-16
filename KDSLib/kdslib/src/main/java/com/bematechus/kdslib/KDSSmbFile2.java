@@ -1395,6 +1395,76 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
         }
         return "";
     }
+
+    public static String readFromUtf8SmbText2(String smbFileName)
+    {
+
+        InputStream bis=null;
+        String text = "";
+        try {
+            SmbFile rmifile = openSmbUri(smbFileName);
+            if (rmifile == null) return "";
+
+            String encodingFormat = "";
+            bis=new BufferedInputStream(new SmbFileInputStream(rmifile));
+
+            int length=rmifile.getContentLength();
+            byte[] buffer=new byte[length];
+            bis.read(buffer); //utf8 bytes
+            int noffset = 0;
+            int ncount = buffer.length;
+            if (buffer.length >3)
+            {
+                //BOM: EF BB BF, start for UTF-8 file.
+                encodingFormat = getBytesEncodingFormat(buffer);
+                if (encodingFormat.equals("UTF-8"))
+                {
+                    noffset = 3;
+                    ncount = length - 3;
+                }
+                else if (encodingFormat.equals("UTF-16LE") || encodingFormat.equals("UTF-16BE"))
+                {
+                    noffset = 2;
+                    ncount = length - 2;
+                }
+
+
+            }
+            text = KDSUtil.convertBytesToString(buffer, noffset, ncount, encodingFormat);// KDSUtil.convertUtf8BytesToString(buffer, noffset, ncount);
+
+            try {
+                buffer = null;
+                rmifile.close();
+                rmifile = null;
+                bis.close();
+            } catch (IOException e) {
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
+            }
+
+
+        } catch (Exception e) {
+
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
+        }
+
+        //BOM: EF BB BF, start for UTF-8 file.
+//
+//        if (text.length() >1) {
+//            if (text.charAt(0) == 0xfeff)
+////            if (text.charAt(0) == 0xEF ||
+////                    text.charAt(1) == 0xBB ||
+////                    text.charAt(2) == 0xBF )
+//            {
+//                text = text.substring(1);
+//            }
+//
+//        }
+
+        return text;
+    }
 }
 
 
