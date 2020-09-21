@@ -57,23 +57,23 @@ android {
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
             versionCode 2404
-            versionName '2.4.0.1'
+            versionName '2.4.0.4'
             dimension "default"
         }
         stage {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2403
-            versionName '2.4.0.3'
+            versionCode 2404
+            versionName '2.4.0.4'
             dimension "default"
         }
         prod {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2403
-            versionName '2.4.0.3'
+            versionCode 2404
+            versionName '2.4.0.4'
             dimension "default"
         }
     }
