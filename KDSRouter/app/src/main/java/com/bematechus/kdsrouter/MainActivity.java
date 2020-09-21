@@ -705,7 +705,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //check stations changes
             m_service.checkStationsSettingChanged();//(this.getApplicationContext()();
         }
-        else if (key.equals("kds_general_language"))
+        else if (key.equals("kds_general_language") ||
+                Activation.isActivationPrefKey(key)) //don't handle it.
         {
             return;
         }
@@ -1131,6 +1132,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
+        //DEBUG
+
         if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
