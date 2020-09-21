@@ -961,7 +961,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     private void updateTitle() {
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         String strCustomized = getSettings().getString(KDSSettings.ID.General_customized_title);
 
         String strTitle = strCustomized;
@@ -991,7 +991,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             s = Activation.getStoreName() + "-" + s;
         //m_imgLogo.setText(s);
         getTextView(R.id.imgLCI).setText(s);
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
     private void setIconEnable(Menu menu, boolean enable) {

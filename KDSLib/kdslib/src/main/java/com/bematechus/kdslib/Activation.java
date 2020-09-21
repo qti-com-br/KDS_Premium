@@ -1677,6 +1677,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             case PREF_KEY_ACTIVATION_FAILED_REASON :
             case PREF_KEY_ACTIVATION_USER_NAME:
             case PREF_KEY_ACTIVATION_PWD:
+            case PREF_KEY_STORE_GUID:// = "store_guid";
+            case PREF_KEY_STORE_NAME:// = "store_name";
+            case PREF_KEY_ACTIVATION_OLD_USER_NAME:// = "activation_old_user_name";
                 return true;
         }
         return false;
@@ -2298,4 +2301,6 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
         return dev.getID();
     }
+
+
 }
