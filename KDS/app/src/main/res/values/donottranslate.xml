@@ -137,11 +137,13 @@
     <string-array name="pref_kds_printer_type_titles" translatable="false">
         <item>LR2000</item>
         <!--<item>MP4200</item>-->
+        <!--<item>TML90</item>-->
 
     </string-array>
     <string-array name="pref_kds_printer_type_values" translatable="false">
         <item>0</item>
         <!--<item>1</item>-->
+        <!--<item>2</item>-->
     </string-array>
 
     <string-array name="pref_kds_printer_codepage_titles" translatable="false">
