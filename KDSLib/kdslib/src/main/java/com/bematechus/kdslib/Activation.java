@@ -683,7 +683,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (!ActivityLogin.isShowing())
             {
                 if (m_receiver != null) {
-                    m_bDoLicensing = false;
+                    setDoLicensing(false);//m_bDoLicensing = false;
                     m_receiver.onDoActivationExplicit();
                     return;
                 }
@@ -901,7 +901,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public void fireSuccessEvent()
     {
-        m_bDoLicensing = false;
+        setDoLicensing(false);//m_bDoLicensing = false;
         StoreDevice dev = findMyLicense();
 
         String guid = "";
@@ -915,7 +915,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     }
     public void fireActivationFailEvent(ActivationRequest.COMMAND stage,ActivationRequest.ErrorType errType, String strMessage)
     {
-        m_bDoLicensing = false;
+        setDoLicensing(false);//m_bDoLicensing = false;
         updateFailedCount();//record failed count
         saveLastFailedReason(errType);
 
@@ -1361,8 +1361,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void startActivation(boolean bSilent,boolean bForceShowNamePwdDlg, Activity caller, String showErrorMessage)
     {
 
-        if (m_bDoLicensing) return;
-        m_bDoLicensing = true;
+        if (isDoLicensing()) return;// (m_bDoLicensing) return;
+        setDoLicensing(true);//m_bDoLicensing = true;
         m_nSyncGetDevicesTries = 0;
         //Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false"));
 
@@ -1376,7 +1376,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         if (userName.isEmpty() || password.isEmpty()) {
             if (m_bSilent) {
                 updateFailedCount();
-                m_bDoLicensing = false;
+                setDoLicensing(false);//m_bDoLicensing = false;
                 fireActivationFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
                 return;
             }
@@ -1395,8 +1395,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 //                    return;
 //                }
 //            }
-            if ( !bForceShowNamePwdDlg)
+            if ( !bForceShowNamePwdDlg) {
                 postLoginRequest(userName, password);
+                setDoLicensing(false); //kpp1-368
+            }
             else
                 showLoginActivity(caller, showErrorMessage);
         }
@@ -1431,7 +1433,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-        m_bDoLicensing = true;
+        setDoLicensing(true);//m_bDoLicensing = true;
         Intent intent = new Intent(caller, ActivityLogin.class);
 
         intent.putExtra("func", KDSConst.SHOW_LOGIN);

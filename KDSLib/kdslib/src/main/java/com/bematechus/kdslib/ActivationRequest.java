@@ -214,6 +214,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
         r.setCommand( COMMAND.Login );
+        r.setHighPriority();//kpp1-368
         return r;
 
 
@@ -241,6 +242,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
         r.setCommand( COMMAND.Get_settings );
+        r.setHighPriority(); //kpp1-368
         return r;
 
 
@@ -267,6 +269,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
         r.setCommand( COMMAND.Get_devices );
+        r.setHighPriority(); //kpp1-368
         return r;
 
 
@@ -325,6 +328,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             stationName = dev.getStationName();
         }
         ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",jsonNewMac(store_guid,stationID,stationFunc, licenseGuid, macAddress,stationName, lastUpdateTime) );
+        r.setHighPriority(); //kpp1-368
         return r;
 //       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
 //
@@ -432,6 +436,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
         r.setCommand( COMMAND.Replace );
+        r.setHighPriority(); //kpp1-368
         return r;
 
 
@@ -1198,6 +1203,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     {
 
         ActivationRequest r = createSyncRequest(COMMAND.Sync_devices,"devices",jsonDevice(store_guid,stationID, stationFunc, dev) );
+        r.setHighPriority(); //kpp1-368
         return r;
 //       // String strJson = "[{\"tok\":\"c0a6r1l1o9sL6t2h4gjhak7hf3uf9h2jnkjdq37qh2jk3fbr1706\"},{ \"entity\":\"devices\",\"req\":\"SYNC\",\"data\":";
 //

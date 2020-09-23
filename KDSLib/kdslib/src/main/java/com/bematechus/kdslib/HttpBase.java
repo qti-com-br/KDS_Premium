@@ -71,7 +71,18 @@ public class HttpBase extends Handler implements Runnable {
             if (m_arRequests.size() >0)
             {
                 HttpRequestBase r = m_arRequests.get(0);
-                m_arRequests.remove(0);
+                int ncount = m_arRequests.size(); //kpp1-368
+                int nRemoveIndex = 0;
+                for (int i=0;i < ncount; i++)
+                {
+                    if (m_arRequests.get(i).getPriority() > r.getPriority())//Now, I just use two level priority. This is OK.
+                    {
+                        nRemoveIndex = i;
+                        r = m_arRequests.get(i);
+                        break;
+                    }
+                }
+                m_arRequests.remove(nRemoveIndex);
                 return r;
             }
             else
@@ -475,7 +486,21 @@ public class HttpBase extends Handler implements Runnable {
         public static final String POST = "POST";
         public String m_method = "";
         public Object m_tag = null;
+        public int m_priority = 0; //0 -- 100. High value will been treat first.
 
+        public void setPriority(int nValue)
+        {
+            m_priority = nValue;
+        }
+        public int getPriority() {return m_priority;}
+        public void setHighPriority()
+        {
+            setPriority(100);
+        }
+        public void setNormalPriority()
+        {
+            setPriority(0);
+        }
         public void setTag(Object obj)
         {
             m_tag = obj;

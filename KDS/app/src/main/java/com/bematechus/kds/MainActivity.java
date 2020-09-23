@@ -6440,7 +6440,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!m_activation.isActivationPassed())
             nTimeout = Activation.INACTIVE_TIMEOUT; //5 minutes
         if (m_activationDog.is_timeout(nTimeout))// * Activation.ACTIVATION_TIMEOUT_HOURS))
-        //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+        //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS)) //DEBUG
         {
 
             doActivation(true, false, "");
