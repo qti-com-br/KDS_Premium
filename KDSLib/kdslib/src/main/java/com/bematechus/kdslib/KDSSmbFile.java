@@ -71,6 +71,12 @@ public class KDSSmbFile extends Handler {
 
     static public boolean smb_isValidPath(String remoteUriFolder)
     {
+        //kpp1-373
+        KDSSMBPath path = KDSSMBPath.parseString(remoteUriFolder);
+        String ip = path.getPCName();
+        if (!KDSSocketTCPSideBase.ping(ip, 2))
+            return false;
+        //
         if (m_bEnableSmbV2)
             return KDSSmbFile2.isValidPath(remoteUriFolder);
         else

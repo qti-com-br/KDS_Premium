@@ -1324,9 +1324,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
 
             Calendar c = Calendar.getInstance();
-            c.setTime(m_dtLog);
+            c.setTimeInMillis(m_dtLog.getTime());
+            //c.setTime(m_dtLog);
             String s = String.format("%02d-%02d %02d:%02d:%02d.%03d",
-                    c.get(Calendar.MONTH),
+                    c.get(Calendar.MONTH)+1,
                     c.get(Calendar.DAY_OF_MONTH),
                     c.get(Calendar.HOUR_OF_DAY),
                     c.get(Calendar.MINUTE),
