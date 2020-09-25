@@ -1246,7 +1246,8 @@ public class KDSSmbFile1 extends KDSSmbFile implements Runnable {
 
             files = file.listFiles();
         } catch (Exception e) {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            if (remoteUriFolder.indexOf(KDSConst.SMB_FOLDER_NOTIFICATION) <0)
+                 KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
         return files;
