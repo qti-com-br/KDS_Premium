@@ -85,9 +85,9 @@ android {
 }
 
 dependencies {
-    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
-    compileOnly files('libs/jcifs-1.3.18.jar')
-    compileOnly files('libs/java_websocket.jar')
+    //compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+    //compileOnly files('libs/jcifs-1.3.18.jar')
+    //compileOnly files('libs/java_websocket.jar')
     api 'com.android.support:appcompat-v7:22.2.1'
     api 'com.android.support:support-v4:22.2.1'
     api 'com.android.support:design:22.2.1'
