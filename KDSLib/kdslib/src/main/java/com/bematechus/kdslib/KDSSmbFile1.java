@@ -43,6 +43,8 @@ import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileInputStream;
 import jcifs.smb.SmbFileOutputStream;
+import jcifs.smb.SmbSession;
+import jcifs.smb.SmbTransport;
 
 import android.app.ProgressDialog;
 
@@ -194,8 +196,11 @@ public class KDSSmbFile1 extends KDSSmbFile implements Runnable {
 
         try {
             SmbFile file = openSmbUri(remoteUriFolder);
-            if (file == null) return false;
 
+            if (file == null) return false;
+            file.setConnectTimeout(2000);
+            //long l = file.createTime();
+            //file.connect();
 //            if (isAnonymous(remoteUriFolder))
 //            {
 //                NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, null, null);
@@ -211,6 +216,17 @@ public class KDSSmbFile1 extends KDSSmbFile implements Runnable {
         catch (Exception e)
         {
             KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            //Must add this delay, otherwise KDSSmbFile-->setSmbV1Config, don't work.
+            try {
+            //    SmbFile f = openSmbUri(remoteUriFolder);
+            //    f.connect();
+                Thread.sleep(3500);
+            }
+            catch (Exception err)
+            {
+                KDSLog.e(TAG,KDSLog._FUNCLINE_() ,err);//+ e.toString());
+            }
+
             //KDSLog.e(TAG, KDSUtil.error( e));
             return false;
         }
