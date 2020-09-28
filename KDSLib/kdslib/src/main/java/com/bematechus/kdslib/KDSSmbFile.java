@@ -36,6 +36,10 @@ public class KDSSmbFile extends Handler {
     protected boolean m_isNewFolderEnabled = true;
     protected String m_dir = "";
 
+    public KDSSmbFile()
+    {
+        setSmbV1Config();
+    }
 
     public interface ChosenDirectoryListener
     {
@@ -79,8 +83,14 @@ public class KDSSmbFile extends Handler {
         //
         if (m_bEnableSmbV2)
             return KDSSmbFile2.isValidPath(remoteUriFolder);
-        else
+        else {
             return KDSSmbFile1.isValidPath(remoteUriFolder);
+
+//            if (!KDSSmbFile1.isValidPath(remoteUriFolder))
+//                return KDSSmbFile2.isValidPath(remoteUriFolder);
+//            else
+//                return true;
+        }
     }
 
     static public int smb_checkFolderWritable(String smbFolder)
@@ -246,6 +256,24 @@ public class KDSSmbFile extends Handler {
         }
         else
             return "";
+
+    }
+
+    /**
+     *  use the jcifs.Config class which is the class that maintains this information internally however, again, properties must be set before jCIFS client classes are referenced:
+     */
+    static public void setSmbV1Config()
+    {
+        //this can been removed.
+        jcifs.Config.setProperty( "jcifs.smb.client.responseTimeout", "3000" );//default 30000
+        //this must set
+        jcifs.Config.setProperty( "jcifs.smb.client.soTimeout", "3500" );// //default 35000
+        //following can been removed. But, just keep them.
+        jcifs.Config.setProperty( "jcifs.netbios.soTimeout", "3000" );//default 5000
+        jcifs.Config.setProperty( "jcifs.netbios.retryTimeout", "2000" );//default 3000
+
+
+
 
     }
 }

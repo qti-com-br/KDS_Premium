@@ -52,6 +52,7 @@ public class KDSSMBDataSource implements Runnable {
     {
         this.setMessageHandler(handler);
         this.setBufferStateChecker(checker);
+        KDSSmbFile.setSmbV1Config();
     }
 
     public void setMessageHandler(KDSSocketMessageHandler handler)
@@ -72,6 +73,8 @@ public class KDSSMBDataSource implements Runnable {
 
         m_thread = new Thread(this, "SMBSrc");
         m_thread.start();
+
+        //startWatchDogThread();
 
         return true;
     }
@@ -106,6 +109,8 @@ public class KDSSMBDataSource implements Runnable {
         }
 
         m_uploadRunnable = null;
+
+
     }
 
     private void sleep(int ms)
@@ -193,10 +198,12 @@ public class KDSSMBDataSource implements Runnable {
         List<String> ar = new ArrayList<>();
         while(m_bThreadRunning)
         {
+            //m_timeDog.reset();
             if (m_thread != Thread.currentThread())
                 return;
             if (m_strRemoteFolder.isEmpty()) {
                 sleep(1000);
+                //m_timeDog.reset();
                 continue;
             }
             try
@@ -207,11 +214,13 @@ public class KDSSMBDataSource implements Runnable {
                     if (m_bufferStateChecker.bufferCheckerIsTooManyDataBuffered())
                     {
                         sleep(100);
+                        //m_timeDog.reset();
                         continue;
                     }
                 }
                 if (!m_bThreadRunning) return;
                 if (KDSSmbFile.smb_isValidPath(m_strRemoteFolder)) {
+                    //m_timeDog.reset();
                     if (isRemoteFolderPermissionError()) {
                         continue;
                     }
@@ -221,6 +230,7 @@ public class KDSSMBDataSource implements Runnable {
                     sleep(500);
                     continue;
                 }
+                //m_timeDog.reset();
                 if (!m_bThreadRunning) return;
 
                 //read data
@@ -231,6 +241,7 @@ public class KDSSMBDataSource implements Runnable {
 
                     m_arExistedFiles = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder, BUFFER_FILES_COUNT, m_arExistedFiles);
                 }
+                //m_timeDog.reset();
                 if (!m_bThreadRunning) return;
                 if (m_arExistedFiles.size() >0)
                 {
@@ -243,16 +254,20 @@ public class KDSSMBDataSource implements Runnable {
 //                    }
 //                    m_arExistedFiles.removeAll(ar);
                 }
+                //m_timeDog.reset();
                 if (!m_bThreadRunning) return;
 
                 if (ar.size() <= 0) {
+                    //m_timeDog.reset();
                     sleep(500);
                     continue;
                 }
                 //if (!KDSConst._DEBUG)
                 checkXmlFiles(ar);
+                //m_timeDog.reset();
                 if (!m_bThreadRunning) return;
                 ar.clear();
+                //m_timeDog.reset();
                 if (!m_bThreadRunning) return;
                 sleep(500); //slow down.
             }
@@ -570,6 +585,58 @@ public class KDSSMBDataSource implements Runnable {
         return ncounter;
     }
 
+//    Thread m_threadWatchDog = null;
+//    boolean m_bWatchDogThreadRunning = true;
+//    TimeDog m_timeDog = new TimeDog();
+//    final int THREAD_DEAD_TIMEOUT = 10000;
+//
+//    private void startWatchDogThread()
+//    {
+//        if (m_threadWatchDog != null) return;
+//        m_threadWatchDog = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (m_bWatchDogThreadRunning)
+//                {
+//                    if (m_timeDog.is_timeout(THREAD_DEAD_TIMEOUT)) //10seconds
+//                    {
+//                        restartDataSourceThread();
+//                        m_timeDog.reset();
+//                    }
+//                    sleep(5000);
+//                }
+//            }
+//        }, "SmbWatchDog");
+//        m_threadWatchDog.start();
+//    }
+//
+//    private void stopWatchDogThread()
+//    {
+//        m_bWatchDogThreadRunning = false;
+//        if (m_threadWatchDog == null) return;
+//        try {
+//            m_threadWatchDog.join(1000);
+//        } catch (Exception e) {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+//        }
+//
+//    }
+//
+//    private void restartDataSourceThread()
+//    {
+//        //stop();
+//
+//        try {
+//            m_thread.join(1000);
+//        } catch (Exception e) {
+//            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+//        }
+//
+//        m_bThreadRunning = true;
+//
+//        m_thread = new Thread(this, "SMBSrc");
+//        m_thread.start();
+//    }
 
 }
 
