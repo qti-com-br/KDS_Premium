@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.bematechus.kds",
+  "variantName": "stageRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "properties": [],
+      "versionCode": 3,
+      "versionName": "3",
+      "enabled": true,
+      "outputFile": "KDS-stage-release-2.3.0.0(3).apk"
+    }
+  ]
+}
