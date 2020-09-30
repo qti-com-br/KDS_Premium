@@ -14,6 +14,7 @@ import android.hardware.usb.UsbManager;
 //import android.net.Uri;
 import android.os.AsyncTask;
 //import android.os.Environment;
+import android.os.Build;
 import android.os.Handler;
 //import android.os.IBinder;
 import android.os.Message;
@@ -7401,16 +7402,26 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return null;
     }
 
-    public void showToastMessage(String message, int duration) {
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
-        if (m_toast == null)
-            m_toast = Toast.makeText(this, message, duration);
-        else
-            m_toast.setText(message);
-        m_toast.setDuration(duration);
+    /**
+     *
+     *     *  see https://stackoverflow.com/questions/51956971/illegalstateexception-of-toast-view-on-android-p-preview
+     *      *      *  It will show IllegalStateException of toast View on Android P
+     * @param message
+     * @param duration
+     */
 
-        m_toast.show();
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    public void showToastMessage(String message, int duration) {
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
+        KDSBase.showToastMessage(message, duration);
+
+//        if (m_toast == null)
+//            m_toast = Toast.makeText(this, message, duration);
+//        else
+//            m_toast.setText(message);
+//        m_toast.setDuration(duration);
+//
+//        m_toast.show();
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
     public void forceAgreementAgreed()

@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -520,22 +521,29 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *
      * I doubt above bug is not created at this function, as I don't see log show code of this function.
      * I just add try... catch to this function.
+     *
+     *      *  see https://stackoverflow.com/questions/51956971/illegalstateexception-of-toast-view-on-android-p-preview
+     *      *  It will show IllegalStateException of toast View on Android P
      * @param message
      */
     public void showToastMessage(String message) {
-        try {
-            int duration = Toast.LENGTH_SHORT;
-            if (m_toast == null)
-                m_toast = Toast.makeText(this, message, duration);
-            else
-                m_toast.setText(message);
-            m_toast.show();
-        }
-        catch (Exception e)
-        {
-            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
-            m_toast = null; //reset it.
-        }
+
+        int duration = Toast.LENGTH_SHORT;
+        KDSBase.showToastMessage(message, duration);
+
+//        try {
+//            int duration = Toast.LENGTH_SHORT;
+//            if (m_toast == null)
+//                m_toast = Toast.makeText(this, message, duration);
+//            else
+//                m_toast.setText(message);
+//            m_toast.show();
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+//            m_toast = null; //reset it.
+//        }
     }
     public boolean isRouterEnabled()
     {
