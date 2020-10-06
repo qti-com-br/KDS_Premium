@@ -47,8 +47,8 @@ public class UsbPort extends CommunicationPort {
     public static final String USB_DESC = "USB";
     public static final String USB_MODELS = "LR2000";
 
-    private UsbEndpoint epIn = null;
-    private UsbEndpoint epOut = null;
+    public static UsbEndpoint epIn = null;
+    public static UsbEndpoint epOut = null;
 
     private int pid = 0;
     private int vid = 0;
@@ -140,49 +140,49 @@ public class UsbPort extends CommunicationPort {
 
 
     public boolean findPrinter( boolean forceOpen) throws CommunicationException {
-        if ( manager == null)
-        {
-            throw new CommunicationException(ERR_USB_SERVICE, CommunicationException.ErrorCode.ServiceNotInitialized );
-        }
-        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+//        if ( manager == null)
+//        {
+//            throw new CommunicationException(ERR_USB_SERVICE, CommunicationException.ErrorCode.ServiceNotInitialized );
+//        }
+//        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+//
+//
+//        for (UsbDevice device : deviceList.values()) {
+//            if (device.getVendorId() == LR2000_VID && device.getProductId() == LR2000_PID) {
+//                this.vid = LR2000_VID;
+//                this.pid = LR2000_PID;
+//                mUsbDevice = device;
+//                break;
+//
+//            } else if (device.getVendorId() == TML90_VID && device.getProductId() == TML90_PID) {
+//                this.vid = TML90_VID;
+//                this.pid = TML90_PID;
+//                mUsbDevice = device;
+//                break;
+//            }
+//
+//            //  TODO: support different USB printers int the future
+//
+//        }
+//        if ( mUsbDevice == null) {
+//            return false;
+//        }
+//        if (forceOpen )
+//        {
+//            try {
+//                openConnection();
+//            }
+//            catch (Exception ex) {
+//                ex = ex;
+//
+//            }
+//            finally {
+//                closeConnection();
+//            }
+//
+//        }
 
-
-        for (UsbDevice device : deviceList.values()) {
-            if (device.getVendorId() == LR2000_VID && device.getProductId() == LR2000_PID) {
-                this.vid = LR2000_VID;
-                this.pid = LR2000_PID;
-                mUsbDevice = device;
-                break;
-
-            } else if (device.getVendorId() == TML90_VID && device.getProductId() == TML90_PID) {
-                this.vid = TML90_VID;
-                this.pid = TML90_PID;
-                mUsbDevice = device;
-                break;
-            }
-
-            //  TODO: support different USB printers int the future
-
-        }
-        if ( mUsbDevice == null) {
-            return false;
-        }
-        if (forceOpen )
-        {
-            try {
-                openConnection();
-            }
-            catch (Exception ex) {
-                ex = ex;
-
-            }
-            finally {
-                closeConnection();
-            }
-
-        }
-
-        return true;
+        return false;
     }
 
 
@@ -279,10 +279,6 @@ public class UsbPort extends CommunicationPort {
         if ( (input & 0x20) >0) //no paper
             status |= 0x10;
         return status;
-
-
-
-
     }
 
     @Override
@@ -305,21 +301,21 @@ public class UsbPort extends CommunicationPort {
 
     //david
     static public boolean findPrinter(UsbManager manager) throws CommunicationException {
-        if ( manager == null) {
-            throw new CommunicationException(ERR_USB_SERVICE, CommunicationException.ErrorCode.ServiceNotInitialized );
-        }
-
-        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-
-        for (UsbDevice device : deviceList.values()) {
-            if (device.getVendorId() == LR2000_VID && device.getProductId() == LR2000_PID) {
-                return true;
-
-            } else if (device.getVendorId() == TML90_VID && device.getProductId() == TML90_PID) {
-                return true;
-            }
-        }
-
+//        if ( manager == null) {
+//            throw new CommunicationException(ERR_USB_SERVICE, CommunicationException.ErrorCode.ServiceNotInitialized );
+//        }
+//
+//        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+//
+//        for (UsbDevice device : deviceList.values()) {
+//            if (device.getVendorId() == LR2000_VID && device.getProductId() == LR2000_PID) {
+//                return true;
+//
+//            } else if (device.getVendorId() == TML90_VID && device.getProductId() == TML90_PID) {
+//                return true;
+//            }
+//        }
+//
         return false;
     }
 

@@ -3,10 +3,12 @@ package com.bematechus.kds;
 import android.app.Activity;
 import android.app.AlertDialog;
 //import android.content.ComponentName;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 //import android.content.ServiceConnection;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.Drawable;
@@ -97,6 +99,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+
+import static com.bematechus.kdslib.KDSApplication.getContext;
+import static com.bematechus.kdslib.KDSUtil.showMsg;
 //import java.util.concurrent.ExecutorService;
 //import java.util.concurrent.Executors;
 
@@ -536,7 +541,67 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         //initCleaningFloatButton();
         m_cleaning.init(this, this.findViewById(R.id.fabCleaning), m_activation);
+
+
+        // Using action USB Device to detect printers attached/detached
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        registerReceiver(mUsbReceiver, filter);
+
+        // Using USB Device to detect user permission action
+        IntentFilter filterPerm = new IntentFilter();
+        filterPerm.addAction(ACTION_USB_PERMISSION);
+        registerReceiver(mUsbPermissionReceiver, filterPerm);
+
+        // Find connected printer with the new class "Printer"
+        configurePrinter();
     }
+
+    public static final String ACTION_USB_PERMISSION = "com.bematechus.kds.USB_PERMISSION";
+    public static UsbManager usbManager = null;
+    public static Printer printer = null;
+
+    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
+                Log.d("##Printer", "USB Connected");
+                configurePrinter();
+
+            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                Log.d("##Printer", "USB Disconnected");
+                configurePrinter();
+            }
+        }
+    };
+
+
+    private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                    try {
+                        configurePrinter();
+                    } catch (Exception e) {
+                        Log.d("##Printer", e.getMessage());
+                    }
+                } else {
+                    Log.d("##Printer", "USB Permission Denied");
+                }
+            }
+        }
+    };
+
+
+    private void configurePrinter() {
+        usbManager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
+        printer = new Printer(getContext(), usbManager);
+    }
+
 
     /**
      *
@@ -643,7 +708,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         KDSUIDialogBase dlg = new KDSUIDialogBase();
-        dlg.createInformationDialog(this, KDSApplication.getContext().getString(R.string.error), KDSApplication.getContext().getString(R.string.error_folder_permission), true).show();
+        dlg.createInformationDialog(this, getContext().getString(R.string.error), getContext().getString(R.string.error_folder_permission), true).show();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
@@ -1061,7 +1126,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
     private String getVersionName() {
-        return KDSUtil.getVersionName(KDSApplication.getContext());
+        return KDSUtil.getVersionName(getContext());
 
 //        String appVersion = "";
 //        PackageManager manager = this.getPackageManager();
@@ -1464,18 +1529,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (KDSGlobalVariables.getKDS() == null) return false;
         KDSGlobalVariables.getKDS().getCurrentDB().close();
         KDSUtil.copyFile(srcFile, dbCurrentPath);
-        KDSGlobalVariables.getKDS().reopenCurrentDB(KDSApplication.getContext());
+        KDSGlobalVariables.getKDS().reopenCurrentDB(getContext());
 
 
        KDSGlobalVariables.getKDS().getSupportDB().close();
         srcFile = srcFolder + KDSDBSupport.DB_NAME;
         KDSUtil.copyFile(srcFile, dbSupportPath);
-       KDSGlobalVariables.getKDS().reopenSupportDB(KDSApplication.getContext());
+       KDSGlobalVariables.getKDS().reopenSupportDB(getContext());
 
        KDSGlobalVariables.getKDS().getStatisticDB().close();
        srcFile = srcFolder + KDSDBStatistic.DB_NAME;
        KDSUtil.copyFile(srcFile, dbStatisticPath);
-       KDSGlobalVariables.getKDS().reopenStatisticDB(KDSApplication.getContext());
+       KDSGlobalVariables.getKDS().reopenStatisticDB(getContext());
 
 
         //String settings = getKDS().getSettings().outputXmlText(this.getApplicationContext());
@@ -1490,7 +1555,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
        KDSGlobalVariables.getKDS().stopWithoutDBClose();
        // UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-       KDSGlobalVariables.getKDS().getPrinter().initBemaPrinter(KDSApplication.getContext(), usbManager);
+       KDSGlobalVariables.getKDS().getPrinter().initBemaPrinter(getContext(), usbManager);
        KDSGlobalVariables.getKDS().start();
         //refreshWithNewDbData();
         return true;
@@ -6513,7 +6578,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         MainActivity.this.getKDS().clearAll();
         getKDS().clearStatisticData();
-        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(getContext());
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
         Activation.resetOldLoginUser(); //kpp1-299
@@ -6817,8 +6882,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         if (bChanged)
         {
-            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
-            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), newStationID);
+            KDSSettings.saveStationsRelation(getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(getContext(), newStationID);
             KDS.broadcastStationsRelations();
             try {
                 Thread.sleep(200);
@@ -6879,8 +6944,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         if (bChanged)
         {
-            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
-            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), getKDS().getStationID());
+            KDSSettings.saveStationsRelation(getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(getContext(), getKDS().getStationID());
             KDS.broadcastStationsRelations();
             try {
                 Thread.sleep(200);
