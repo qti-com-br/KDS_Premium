@@ -1831,7 +1831,7 @@ print order data to  buffer, socket will send this buffer to serial port
         if (!isEnabled()) return;
 
         if(m_nPortType == PrinterPortType.USB) {
-
+            
             if(Printer.status == Printer.PRINTER_STATUS.OK) {
                 Thread thread = new Thread() {
                     @Override
@@ -1847,7 +1847,11 @@ print order data to  buffer, socket will send this buffer to serial port
                         }
                         sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
 
-                        Printer.printOrder(sOrder.getBytes());
+                        try {
+                            Printer.printOrder(sOrder.getBytes());
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
 
                         m_printerData.clear();
                     }

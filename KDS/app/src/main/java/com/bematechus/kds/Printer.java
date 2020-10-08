@@ -38,6 +38,7 @@ public class Printer extends Activity {
 
     private static final int TIMEOUT = 3000;
 
+    // LR1100 and LR2000 has the same Vendor Id and Product ID
     public static final int LR2000_VID = 0x0fe6;
     public static final int LR2000_PID = 0x811e;
 
@@ -63,12 +64,19 @@ public class Printer extends Activity {
             HashMap<String, UsbDevice> deviceList = mManager.getDeviceList();
             Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
 
+            Log.d("##Printer", "deviceList count: " + deviceList.size());
+
             while (deviceIterator.hasNext()) {
 
                 UsbDevice device = deviceIterator.next();
 
+//                String manufac = device.getManufacturerName();
+                String model = device.getProductName();
                 int vendorId = device.getVendorId();
                 int productId = device.getProductId();
+
+                Log.d("##Printer", "model:" + model + " | vendorId:" + vendorId +
+                        " | productId:" + productId);
 
                 if ((vendorId == LR2000_VID && productId == LR2000_PID) ||
                         (vendorId == TML90_VID && productId == TML90_PID)) {
@@ -149,7 +157,7 @@ public class Printer extends Activity {
         status = PRINTER_STATUS.NOT_FOUND;
         try {
             byte[] data = {27, 64};
-            if(write(data)) {
+            if(write(data, "open")) {
                 status = PRINTER_STATUS.OK;
             } else {
                 status = PRINTER_STATUS.NO_COMM;
@@ -162,19 +170,22 @@ public class Printer extends Activity {
 
     public static boolean partialCut() {
         byte[] data = {27, 105};
-        return write(data);
+        return write(data, "partialCut");
     }
 
     public static boolean printOrder(byte[] data) {
-        if(write(data)) {
+        if(write(data, "printOrder")) {
             return partialCut();
         }
         return false;
     }
 
-    private static boolean write(byte[] data) {
-        int result = mConnection.bulkTransfer(mEndpoint, data, data.length, TIMEOUT);
-        Log.d("##Printer", "result: " + result);
+    private static boolean write(byte[] data, String fun) {
+        int result = -999;
+        if(mConnection != null) {
+            result = mConnection.bulkTransfer(mEndpoint, data, data.length, TIMEOUT);
+        }
+        Log.d("##Printer",fun + " -> data: " + data.length + "result: " + result);
         return result == data.length;
     }
 

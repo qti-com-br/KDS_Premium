@@ -597,7 +597,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     };
 
 
-    private void configurePrinter() {
+    static void configurePrinter() {
         usbManager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
         printer = new Printer(getContext(), usbManager);
     }
