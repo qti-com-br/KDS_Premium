@@ -5,15 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.bematechus.bemaLibrary.BemaPrinter;
-import com.bematechus.bemaLibrary.PrinterInfo;
 import com.bematechus.bemaLibrary.PrinterStatus;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
-import com.bematechus.kdslib.BuildVer;
-import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
@@ -31,6 +27,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+
+import static com.bematechus.kdslib.KDSApplication.getContext;
 
 /**
  *
@@ -1619,7 +1617,7 @@ print order data to  buffer, socket will send this buffer to serial port
         if (bOpen)
         {
             if (!bFromThread)
-                showMsg("Printer open successfully");
+                //showMsg("Printer open successfully");
             init_printer_after_open();
             //m_bemaPrinter.setCodePage(m_codepage);
 
@@ -1627,7 +1625,7 @@ print order data to  buffer, socket will send this buffer to serial port
         else
         {
             if (!bFromThread) {
-                showMsg("Printer open failed err=" + KDSUtil.convertIntToString(nResult));
+                //showMsg("Printer open failed err=" + KDSUtil.convertIntToString(nResult));
             }
         }
         return bOpen;
@@ -1785,14 +1783,11 @@ print order data to  buffer, socket will send this buffer to serial port
     {
         try {
             return UsbPort.findPrinter(m_usbManager);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
             //KDSLog.e(TAG, KDSUtil.error( e));
             return false;
         }
-
     }
     public boolean isPrinterValid()
     {
@@ -1830,32 +1825,62 @@ print order data to  buffer, socket will send this buffer to serial port
         return bEnabled;
     }
 
+
     public void printOrder(KDSDataOrder order)
     {
         if (!isEnabled()) return;
-        //debug
-        //String strDebug = m_bemaPrinter.debug_searchForUsbPrinters();
-        if ((m_bemaPrinter.getCommunicationPort()!= null) && m_bemaPrinter.getCommunicationPort().isOpen())
-            showMsg("Printer is opened");
-        else
-            showMsg("Printer is not opened");
 
-        if (isPrinterValid())
-            showMsg("Printer valid");
-        else
-            showMsg("Printer invalid");
+        if(m_nPortType == PrinterPortType.USB) {
+            
+            if(Printer.status == Printer.PRINTER_STATUS.OK) {
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        m_printerData.clear();
 
-        this.printOrderToBuffer(order);
-        if (!isOpened())
-        {
-            this.open(false);
+                        // Format order to print
+                        printOrderToBuffer(order);
+
+                        String sOrder = "";
+                        for (int i = 0; i < m_printerData.size() - 2; i++) {
+                            sOrder += m_printerData.get(i);
+                        }
+                        sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
+
+                        try {
+                            Printer.printOrder(sOrder.getBytes());
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        m_printerData.clear();
+                    }
+                };
+                thread.start();
+            }
+
+        } else {
+
+            if ((m_bemaPrinter.getCommunicationPort() != null) && m_bemaPrinter.getCommunicationPort().isOpen())
+                showMsg("Printer is opened");
+            else
+                showMsg("Printer is not opened");
+
+            if (isPrinterValid())
+                showMsg("Printer valid");
+            else
+                showMsg("Printer invalid");
+
+            this.printOrderToBuffer(order);
+            if (!isOpened()) {
+                this.open(false);
+            }
+            startPrintingThread();
+            if (isOpened()) {
+                showMsg("Write data to printer");
+                writeToPrinter();
+            }
         }
-        startPrintingThread();
-//        if (isOpened())
-//        {
-//            showMsg("Write data to printer");
-//            writeToPrinter();
-//        }
     }
 
 

@@ -47,8 +47,8 @@ public class UsbPort extends CommunicationPort {
     public static final String USB_DESC = "USB";
     public static final String USB_MODELS = "LR2000";
 
-    private UsbEndpoint epIn = null;
-    private UsbEndpoint epOut = null;
+    public static UsbEndpoint epIn = null;
+    public static UsbEndpoint epOut = null;
 
     private int pid = 0;
     private int vid = 0;
