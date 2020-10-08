@@ -720,8 +720,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     public String getLocalIpAddress()
     {
+    	if (m_strLocalIP.isEmpty()) {
+    		KDSLog.e("KDS", "IP not found! Trying to refresh IP and Mac...");
+			refreshIPandMAC();
+		}
         return m_strLocalIP;
     }
+
     public String getLocalMacAddress()
     {
         return m_strLocalMAC;
