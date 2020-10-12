@@ -558,9 +558,11 @@ public class KDSSMBDataSource implements Runnable {
                         ncounter ++;
                     }
                 }
-                else if (obj instanceof jcifsng.smb.SmbFile)
+                //else if (obj instanceof jcifsng.smb.SmbFile)//kpp1-376
+                else if (obj instanceof jcifs.smb.SmbFile)//kpp1-376
                 {
-                    jcifsng.smb.SmbFile file = (jcifsng.smb.SmbFile) obj;
+                    //jcifsng.smb.SmbFile file = (jcifsng.smb.SmbFile) obj;//kpp1-376
+                    jcifs.smb.SmbFile file = (jcifs.smb.SmbFile) obj;
                     creatTime =  file.lastModified();
                     long now = System.currentTimeMillis();
                     long d = now - creatTime;
