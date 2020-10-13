@@ -475,11 +475,11 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 doLanguageChanged(prefs, key);
                 return;
             }
-            else if (key.equals("general_enable_smbv2"))
-            {
-                boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
-                KDSSmbFile2.smb_setEnableSmbV2(bEnableSmbV2);
-            }
+//            else if (key.equals("general_enable_smbv2"))//kpp1-376
+//            {
+//                boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
+//                KDSSmbFile2.smb_setEnableSmbV2(bEnableSmbV2);
+//            }
 
 //            else if (key.equals("kds_general_enable_password"))
 //            {

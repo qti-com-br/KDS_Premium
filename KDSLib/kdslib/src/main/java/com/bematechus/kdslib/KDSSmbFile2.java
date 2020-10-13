@@ -41,16 +41,28 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import jcifsng.ACE;
-import jcifsng.CIFSContext;
-import jcifsng.Configuration;
-import jcifsng.config.PropertyConfiguration;
-import jcifsng.context.BaseContext;
-import jcifsng.smb.NtlmPasswordAuthentication;
-import jcifsng.smb.NtlmPasswordAuthenticator;
-import jcifsng.smb.SmbFile;
-import jcifsng.smb.SmbFileInputStream;
-import jcifsng.smb.SmbFileOutputStream;
+import jcifs.ACE;
+import jcifs.CIFSContext;
+import jcifs.Configuration;
+import jcifs.config.PropertyConfiguration;
+import jcifs.context.BaseContext;
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.NtlmPasswordAuthenticator;
+import jcifs.smb.SmbFile;
+import jcifs.smb.SmbFileInputStream;
+import jcifs.smb.SmbFileOutputStream;
+
+
+//import jcifsng.ACE;
+//import jcifsng.CIFSContext;
+//import jcifsng.Configuration;
+//import jcifsng.config.PropertyConfiguration;
+//import jcifsng.context.BaseContext;
+//import jcifsng.smb.NtlmPasswordAuthentication;
+//import jcifsng.smb.NtlmPasswordAuthenticator;
+//import jcifsng.smb.SmbFile;
+//import jcifsng.smb.SmbFileInputStream;
+//import jcifsng.smb.SmbFileOutputStream;
 
 //import jcifs.smb.ACE;
 
@@ -58,6 +70,7 @@ import jcifsng.smb.SmbFileOutputStream;
  *
  *smb://[[[domain;]username[:password]@]server[:port]/[[share/[dir/]file]]][?param=value[param2=value2[...]]]
  * https://jcifs.samba.org/
+ * https://github.com/AgNO3/jcifs-ng
  */
 public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
     //SmbFile smbFile;
@@ -446,7 +459,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
                 }
                 if (bCreateNew) {
                     CIFSContext baseContext = new BaseContext(m_config);
-                    m_contextWithCred = baseContext.withCredentials(new NtlmPasswordAuthenticator( path.getDomain(), path.getUserID(), path.getPwd()));
+                    m_contextWithCred = baseContext.withCredentials( new NtlmPasswordAuthenticator( path.getDomain(), path.getUserID(), path.getPwd()));
                 }
             }
 
@@ -459,7 +472,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
         try
         {
             createContext(uri);
-            SmbFile f = new SmbFile(uri, m_contextWithCred);
+            SmbFile f = new SmbFile( uri, m_contextWithCred);
             return f;
         } catch (Exception e) {
 
