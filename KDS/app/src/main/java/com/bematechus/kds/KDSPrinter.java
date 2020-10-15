@@ -1832,7 +1832,7 @@ print order data to  buffer, socket will send this buffer to serial port
 
         if(m_nPortType == PrinterPortType.USB) {
             
-            if(Printer.status == Printer.PRINTER_STATUS.OK) {
+            if(Printer.status == Printer.PRINTER_STATUS.OK) { //Here, it has bug. If usb printer is offline, order will lost.
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
