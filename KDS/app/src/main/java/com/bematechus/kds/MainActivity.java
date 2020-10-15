@@ -24,6 +24,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 //import android.util.Log;
+import android.support.annotation.MainThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -1923,6 +1924,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return false;
     }
 
+
     /**
      * 2.0.25
      *     Add new option in Bumping setting: Expo confirmation bump.
@@ -1942,7 +1944,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *  true: this order was handled by expo
      *  false: do next work
      */
-    private boolean checkExpoConfirmationBump(KDSUser.USER userID,String orderGuid)
+    private boolean checkExpoConfirmationBump(KDSUser.USER userID,String orderGuid, boolean bForAutoBumping)
     {
 
         if (!getKDS().isExpeditorStation())
@@ -1954,18 +1956,34 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //if (!order.isAllItemsFinished())
         if (!order.isExpoAllItemsFinished(getKDS().getStationID())) //kpp1-343
         {
-            AlertDialog d = new AlertDialog.Builder(this)
-                    .setTitle(this.getString(R.string.message))
-                    .setMessage(this.getString(R.string.expo_cannot_bump_unless_prep_bump_all))
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }
-                    )
-
-                    .create();
-            d.show();
+            if (bForAutoBumping) {
+                String orderName = order.getOrderName();
+                Message m = new Message();
+                m.what = ExpoAutoFrom.AutoBumpingThread.ordinal();
+                m.obj = orderName;
+                m_expoBumpingConfirmHandler.sendMessage(m);//.send.sendEmptyMessage(ExpoAutoFrom.AutoBumpingThread.ordinal()); //kpp1-380, auto expo bumping. As auto bump is in thread, we have to use this handler.
+            }
+            else
+                m_expoBumpingConfirmHandler.sendEmptyMessage(ExpoAutoFrom.MainThread.ordinal()); //kpp1-380, auto expo bumping. As auto bump is in thread, we have to use this handler.
+//            if (m_expoBumpConfirmDlg != null) {
+//                m_expoBumpConfirmDlg.hide();
+//                m_expoBumpConfirmDlg = null;
+//            }
+//            //AlertDialog d = new AlertDialog.Builder(this) //kpp1-380
+//            m_expoBumpConfirmDlg = new AlertDialog.Builder(this)
+//                    .setTitle(this.getString(R.string.message))
+//                    .setMessage(this.getString(R.string.expo_cannot_bump_unless_prep_bump_all))
+//                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    m_expoBumpConfirmDlg = null;
+//                                }
+//                            }
+//                    )
+//
+//                    .create();
+//            //d.show();//kpp1-380
+//            m_expoBumpConfirmDlg.show();
             return true;
         }
         return false;
@@ -1993,7 +2011,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             if (itemGuid.isEmpty()) {//bump order
                 //kpp1-343, allow expo bump itself items . So, move this check here.
-                if (checkExpoConfirmationBump(userID, orderGuid))
+                if (checkExpoConfirmationBump(userID, orderGuid, false))
                     return;
 
                 if (getKDS().getSettings().getBoolean(KDSSettings.ID.Bumping_confirm)) {
@@ -2467,7 +2485,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         //getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
                         return false;
                     }
-                    bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+                    if (checkExpoConfirmationBump(KDSUser.USER.USER_A, ar.get(i), true)) {
+
+                        //break; //kpp1-380, expo confirmation
+                    }
+                    else
+                        bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+
                     //td.debug_print_Duration("bump order time:");
                 }
                 //td.debug_print_Duration("bumpOrderOperation");
@@ -2485,7 +2509,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 //synchronized (getKDS().getUsers().getUserB().getOrders().m_locker) {
                     for (int i = 0; i < ar.size(); i++) {
                         String guid = ar.get(i);
-                        bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
+                        if (checkExpoConfirmationBump(KDSUser.USER.USER_B, guid, true)) {
+                            //break; //kpp1-380, expo confirmation
+                        }
+                        else
+                            bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
                     }
                 //}
                 getKDS().refreshView();
@@ -7550,5 +7578,52 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return true;
     }
 
+    enum ExpoAutoFrom
+    {
+        MainThread,
+        AutoBumpingThread,
+    }
+
+    Handler m_expoBumpingConfirmHandler = new Handler()
+    {
+        public void handleMessage(Message msg) {
+            if (msg.what == ExpoAutoFrom.MainThread.ordinal())
+                showExpoBumpingConfirmationDlg();
+            else if (msg.what == ExpoAutoFrom.AutoBumpingThread.ordinal()) {
+                String orderName = (String)msg.obj;
+                showToastMessage("#"+orderName+":"+ KDSApplication.getContext().getString(R.string.expo_cannot_bump_unless_prep_bump_all), Toast.LENGTH_SHORT);
+            }
+
+        }
+    };
+
+    AlertDialog m_expoBumpConfirmDlg = null;
+    private void showExpoBumpingConfirmationDlg()
+    {
+        if (m_expoBumpConfirmDlg != null) {
+            return;
+        }
+        //AlertDialog d = new AlertDialog.Builder(this) //kpp1-380
+        m_expoBumpConfirmDlg = new AlertDialog.Builder(this)
+                .setTitle(this.getString(R.string.message))
+                .setMessage(this.getString(R.string.expo_cannot_bump_unless_prep_bump_all))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                m_expoBumpConfirmDlg = null;
+                            }
+                        }
+                )
+
+                .create();
+        m_expoBumpConfirmDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                m_expoBumpConfirmDlg = null;
+            }
+        });
+        //d.show();//kpp1-380
+        m_expoBumpConfirmDlg.show();
+    }
 }
 
