@@ -1,5 +1,6 @@
 package com.bematechus.kds;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -71,11 +73,11 @@ public class Printer extends Activity {
                 UsbDevice device = deviceIterator.next();
 
 //                String manufac = device.getManufacturerName();
-                String model = device.getProductName();
+//                String model = device.getProductName();
                 int vendorId = device.getVendorId();
                 int productId = device.getProductId();
 
-                Log.d("##Printer", "model:" + model + " | vendorId:" + vendorId +
+                Log.d("##Printer", "vendorId:" + vendorId +
                         " | productId:" + productId);
 
                 if ((vendorId == LR2000_VID && productId == LR2000_PID) ||
