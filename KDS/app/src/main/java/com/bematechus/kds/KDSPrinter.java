@@ -1832,10 +1832,11 @@ print order data to  buffer, socket will send this buffer to serial port
 
         if(m_nPortType == PrinterPortType.USB) {
             
-            if(Printer.status == Printer.PRINTER_STATUS.OK) { //Here, it has bug. If usb printer is offline, order will lost.
+           // if(Printer.status == Printer.PRINTER_STATUS.OK) { //Here, it has bug. If usb printer is offline, order will lost.
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "--->>>USB Printer start printing thread");
                         m_printerData.clear();
 
                         // Format order to print
@@ -1848,16 +1849,18 @@ print order data to  buffer, socket will send this buffer to serial port
                         sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
 
                         try {
+                            Thread.sleep(200); //For debug
                             Printer.printOrder(sOrder.getBytes());
                         } catch(Exception e) {
                             e.printStackTrace();
                         }
 
                         m_printerData.clear();
+                        Log.d(TAG, "<<<USB Printer exit printing thread");
                     }
                 };
                 thread.start();
-            }
+            //}
 
         } else {
 

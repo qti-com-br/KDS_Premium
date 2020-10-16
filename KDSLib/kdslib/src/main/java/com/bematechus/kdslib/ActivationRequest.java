@@ -199,8 +199,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("appVersionCode", KDSUtil.getVersionCodeString(KDSApplication.getContext()));
             //kpp1-362,
             //kpp1-342 DEBUG, if there are existed serial number error when login, we can comment this for debug.
-            if (!KDSApplication.isRouterApp()) //just premium app need to check duplicated serial.
-                json.put("serial", Activation.getMySerialNumber());
+            //if (!KDSApplication.isRouterApp()) //just premium app need to check duplicated serial.
+            //    json.put("serial", Activation.getMySerialNumber());
         }
         catch (Exception e)
         {
