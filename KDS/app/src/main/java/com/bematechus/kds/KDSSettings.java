@@ -577,6 +577,9 @@ public class KDSSettings extends SettingsBase {
        //kpp1-293
        Screen_logo_enabled,
        Screen_logo_file,
+
+       //kpp1-377
+       Hide_station_title,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1335,6 +1338,9 @@ public class KDSSettings extends SettingsBase {
        //kpp1-293
        init_option(ID.Screen_logo_enabled,"bool_kds_general_enable_bg_logo",false);
        init_option(ID.Screen_logo_file,"string_kds_general_bg_logo","");
+
+       //kpp1-377
+       init_option(ID.Hide_station_title,"bool_hide_station_title",false);
 
 
     }

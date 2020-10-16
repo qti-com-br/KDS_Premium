@@ -1123,6 +1123,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         }
 
+        //kpp1-377
+        if (getSettings().getBoolean(KDSSettings.ID.Hide_station_title))
+        {
+            SetTitleVisible(false);
+        }
     }
 
 
@@ -3816,6 +3821,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (key.equals("cleaning_alert_type") || key.equals("cleaning_reminder_interval") || key.equals("cleaning_enable_alerts"))
         {
             m_cleaning.resetAll();
+        }
+        else if (key.equals("hide_station_title")) //kpp1-377
+        {
+            boolean b = prefs.getBoolean(key, false);
+            SetTitleVisible(!b);
         }
         else {
 
@@ -7145,6 +7155,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public boolean onViewSlipUpDown(KDSLayout layout,MotionEvent e1, MotionEvent e2,  KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
+
+        //kpp1-377
+        if (getSettings().getBoolean(KDSSettings.ID.Hide_station_title))
+        {
+            if (slipDirection == KDSView.SlipDirection.Bottom2Top)
+            {
+                SetTitleVisible(false);
+            }
+            else if (slipDirection == KDSView.SlipDirection.Top2Bottom)
+            {
+                SetTitleVisible(true);
+            }
+        }
+
         KDSUser.USER user = getUserFromLayout(layout);
         if (slipInBorder == KDSView.SlipInBorder.Top ) {
             int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
@@ -7165,6 +7189,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (slipDirection == KDSView.SlipDirection.Bottom2Top)
                     showOrderZoom(getSelectedOrderGuid(user));
             }
+
 
         }
         return false;
@@ -7624,6 +7649,17 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         });
         //d.show();//kpp1-380
         m_expoBumpConfirmDlg.show();
+    }
+
+    private void SetTitleVisible(boolean bShow)
+    {
+        View v = this.findViewById(R.id.layoutTitle);
+        if (v == null) return;
+        if (bShow)
+            v.setVisibility(View.VISIBLE);
+        else
+            v.setVisibility(View.GONE);
+
     }
 }
 

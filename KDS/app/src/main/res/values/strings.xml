@@ -1177,8 +1177,9 @@
     <string name="powered_by">POWERED BY</string>
 	<string name="enable_bg_logo">Enable background logo</string>
 	<string name="bg_logo_file">Background logo file</string>
+    <string name="hide_title">Hide title</string>
 
-	<string-array name="pref_queue_auto_bump_timeout_titles">
+    <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
         <item>1</item>
         <item>2</item>
