@@ -1483,6 +1483,17 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         int nindex = m_orders.getIndex(guid);
         nindex++;
 
+        //kpp1-381
+        boolean bIsLastPanelBroken = isLastShowingOrderBroken();
+        boolean bShowBrokenLastOrder = false;
+        if (getLastShowingOrderGuid() == guid)
+        {
+            if (bIsLastPanelBroken) {
+                bShowBrokenLastOrder = true;
+                nindex--;
+            }
+        }
+
         KDSDataOrder order = null;
         int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
         KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
@@ -1506,7 +1517,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 guid = order.getGUID();
         }
         focusOrder(guid);
-
+        //kpp1-381
+        if (bShowBrokenLastOrder)
+        {
+            this.getEnv().getStateValues().setFirstShowingOrderGUID(guid);
+            refresh();
+        }
 
         return guid;
     }
@@ -2236,7 +2252,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         int nindex = m_orders.getIndex(guid);
         nindex++;
-
+        //kpp1-381 Full order not being shown
+        boolean bLastPanelBroken = isLastShowingOrderBroken();
+        if (bLastPanelBroken)
+            nindex --;
+        //
         KDSDataOrder order = null;
         int n = this.getEnv().getSettings().getInt(KDSSettings.ID.Item_showing_method);
         KDSSettings.ItemShowingMethod itemShowingMethod = KDSSettings.ItemShowingMethod.values()[n];
@@ -2260,7 +2280,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 //            if (order != null)
 //                guid = order.getGUID();
         }
+
+
         focusOrder(guid);
+        if (bLastPanelBroken) { //kpp1-381
+            this.getEnv().getStateValues().setFirstShowingOrderGUID(guid);//.setFocusedOrderGUID(guid);
+            refresh();
+        }
 
         return guid;
     }
@@ -2878,5 +2904,41 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             return order.getGUID();
         }
 
+    }
+
+    /**
+     * kpp1-381 Full order not being shown
+     * @return
+     */
+    public boolean isLastShowingOrderBroken()
+    {
+        try {
+            synchronized (this.getView().m_panelsLocker) {
+                if (this.getView().getPanels().size() <= 0)
+                    return false;
+                if (this.getView().getLastPanel() == null) return false;
+
+                Object obj = this.getView().getLastPanel();//.getFirstBlockFirstRowData();
+                if (obj instanceof KDSViewPanel)
+                {
+                    KDSViewPanel p = (KDSViewPanel)obj;
+                    if (p.getLastBlock() != null)
+                    {
+                        KDSViewBlock.BorderStyle bs = p.getLastBlock().getBorderStyle(KDSViewBlock.BorderSide.Right);
+                        if (bs == KDSViewBlock.BorderStyle.BorderStyle_Break)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+            }
+            return false;
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+            return false;
+        }
     }
 }
