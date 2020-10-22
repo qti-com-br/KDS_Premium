@@ -337,18 +337,25 @@
         android:dependency="panels_show_number"
         android:title="@string/pref_kds_panelnum_bgfg" />
 
-        <com.bematechus.kdslib.KDSEditTextPreference
+<!--        <com.bematechus.kdslib.KDSEditTextPreference-->
+<!--            android:key="panel_border_width"-->
+<!--            android:title="@string/pref_kds_panel_border_width"-->
+<!--            android:defaultValue="7"-->
+<!--            android:selectAllOnFocus="true"-->
+<!--            android:inputType="number"-->
+<!--            android:capitalize="words"-->
+<!--            android:singleLine="true"-->
+<!--            android:positiveButtonText="@string/ok"-->
+<!--            android:negativeButtonText="@string/cancel"-->
+<!--            android:maxLines="1" />-->
+        <com.bematechus.kdslib.KDSListPreference
             android:key="panel_border_width"
             android:title="@string/pref_kds_panel_border_width"
             android:defaultValue="7"
-            android:selectAllOnFocus="true"
-            android:inputType="number"
-            android:capitalize="words"
-            android:singleLine="true"
-            android:positiveButtonText="@string/ok"
-            android:negativeButtonText="@string/cancel"
-            android:maxLines="1" />
-
+            android:entries="@array/pref_kds_panel_border_thickness"
+            android:entryValues="@array/pref_kds_panel_border_thickness"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
 
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_kds_orders_sort">
