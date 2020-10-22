@@ -1,9 +1,13 @@
 package com.bematechus.kds;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 //import android.content.ComponentName;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -99,6 +103,7 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import static com.bematechus.kdslib.KDSApplication.getContext;
@@ -4516,6 +4521,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         super.onPause();
         //showInfo("Paused");
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
+
+        if(isApplicationSentToBackground(getContext())) {
+
+        }
     }
 
     protected void onDestroy() {
@@ -4528,6 +4537,30 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_cleaning.resetAll(); //kpp1-344
         //stopService();
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
+
+        restartApp();
+    }
+
+    public static boolean isApplicationSentToBackground(final Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+        if (!tasks.isEmpty()) {
+            ComponentName topActivity = tasks.get(0).topActivity;
+            if (!topActivity.getPackageName().equals(context.getPackageName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void restartApp() {
+        Intent intent = new Intent(getApplicationContext(), getContext().class);
+        int mPendingIntentId = 191082;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
     }
 
     @Override
