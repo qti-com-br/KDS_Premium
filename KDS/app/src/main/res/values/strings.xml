@@ -1256,4 +1256,6 @@
         <item>15 minutes</item>
     </string-array>
 
+    <string name="sum_font">Summary font</string>
+
 </resources>

@@ -1252,4 +1252,5 @@
 	<string name="enable_bg_logo">Enable background logo</string>
 	<string name="bg_logo_file">Background logo file</string>
     <string name="hide_title">Hide title</string>
+    <string name="sum_font">Summary font</string>
 </resources>
