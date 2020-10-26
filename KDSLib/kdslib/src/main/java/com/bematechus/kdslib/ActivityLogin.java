@@ -428,7 +428,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         {
             KDSUIDlgAgreement.setAgreementAgreed(true);
         }
-        else {
+        else { //clearing warning
              m_activation.fireClearDataEvent();
              attemptLogin();
          }

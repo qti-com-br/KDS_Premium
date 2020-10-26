@@ -2906,5 +2906,13 @@ public class KDSSettings extends SettingsBase {
        return true;
    }
 
+ /**
+  * kpp1-299-1
+  */
+ public void clearRelationshipData()
+   {
+     SettingsBase.saveStationsRelation(KDSApplication.getContext(), "");
+
+   }
 
 }

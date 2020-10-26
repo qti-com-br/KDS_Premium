@@ -5308,4 +5308,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     {
         m_users.ordersClear();
     }
+
+            /**
+             * kpp1-299-1
+             */
+    public void clearRelationshipSettings()
+    {
+
+        this.getSettings().clearRelationshipData();
+        this.updateSettings(m_context);
+    }
 }

@@ -7439,15 +7439,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     /**
      * kpp1-299
+     * rev.:
+     *  kpp1-299-1, change it back. Ask clearing data when login.
+     *
      */
     private void doLogout()
     {
         Activation.resetUserNamePwd();
         resetStationID();
+        /* //kpp1-299-1
         setToDefaultSettings(); //kpp1-299 Station Relationship remembered
         Activation.resetOldLoginUser(); //kpp1-299
         getKDS().clearAll(); //clear database too.
         getKDS().clearStatisticData();
+        */
+
+        getKDS().clearRelationshipSettings(); //kpp1-299-1
+
         onDoActivationExplicit();
     }
 
