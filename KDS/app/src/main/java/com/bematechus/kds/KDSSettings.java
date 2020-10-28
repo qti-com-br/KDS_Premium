@@ -533,53 +533,55 @@ public class KDSSettings extends SettingsBase {
         Queue_status4_sort_mode,
 
         //2.0.39
-        /*
-        -          Add a new order acknowledgement feature;
-        -          It reply back received xml back to the source, if it is shared folder then create a new folder for it; if it is TCP/IP, create a new port(can be change) which POS open and read back received xml;
-        -          Additional to the xml, if the xml format is correct and kds is able to display, just send back the xml;
-        -          But if the received xml is in wrong format which means kds is not able to read and display the order then append string Wrong_Orderxxxx.xml to the file name and for TCP add a new tag <Error> below <Transaction> to indicate this is a wrong format; So it looks like <Transaction><Error>1</Error>…</Transaction>. <Error>n<Error>, n = which type of error, we can put all into 1 right now. When we can identify which error it is, then we can add more types.
-       */
+         /*
+         -          Add a new order acknowledgement feature;
+         -          It reply back received xml back to the source, if it is shared folder then create a new folder for it; if it is TCP/IP, create a new port(can be change) which POS open and read back received xml;
+         -          Additional to the xml, if the xml format is correct and kds is able to display, just send back the xml;
+         -          But if the received xml is in wrong format which means kds is not able to read and display the order then append string Wrong_Orderxxxx.xml to the file name and for TCP add a new tag <Error> below <Transaction> to indicate this is a wrong format; So it looks like <Transaction><Error>1</Error>…</Transaction>. <Error>n<Error>, n = which type of error, we can put all into 1 right now. When we can identify which error it is, then we can add more types.
+        */
         Notification_order_acknowledgement,
 
        //2.0.47
-       Item_group_category,
-       Enable_smbv2, //2.0.51
+        Item_group_category,
+        Enable_smbv2, //2.0.51
 
         SMS_enabled, //SMS feature , KPP1-15
         Queue_auto_bump_timeout, //unused
 
-       Auto_refresh_screen_freq,
+        Auto_refresh_screen_freq,
 
-       //Transfer
-       Transfer_default_station, //KPP1-42
-       Transfer_auto_to_default,
+        //Transfer
+        Transfer_default_station, //KPP1-42
+        Transfer_auto_to_default,
 
-       //
-       Deliver_new_order_to_slave_expo,
-       //Josie need this feature
-       Transfer_by_double_click,
+        //
+        Deliver_new_order_to_slave_expo,
+        //Josie need this feature
+        Transfer_by_double_click,
 
-       LineItems_view_bg, //kpp1-183
-       Log_orders,
-       LineItems_line_height, //kpp1-229
+        LineItems_view_bg, //kpp1-183
+        Log_orders,
+        LineItems_line_height, //kpp1-229
 
-       Printer_logo,
-       //cleaning habits
-       cleaning_enable_alert,
-       cleaning_alert_type,
-       cleaning_reminder_interval,
-       cleaning_enable_dismiss_button,
-       cleaning_snooze_time,
-       cleaning_startup_alert,
-       Bumpbar_Clean,
-       Bumpbar_Snooze,
-       Bumpbar_Dismiss,
-       //kpp1-293
-       Screen_logo_enabled,
-       Screen_logo_file,
+        Printer_logo,
+        //cleaning habits
+        cleaning_enable_alert,
+        cleaning_alert_type,
+        cleaning_reminder_interval,
+        cleaning_enable_dismiss_button,
+        cleaning_snooze_time,
+        cleaning_startup_alert,
+        Bumpbar_Clean,
+        Bumpbar_Snooze,
+        Bumpbar_Dismiss,
+        //kpp1-293
+        Screen_logo_enabled,
+        Screen_logo_file,
 
-       //kpp1-377
-       Hide_station_title,
+        //kpp1-377
+        Hide_station_title,
+        //kpp1-386
+        Clear_db_schedule,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1332,16 +1334,18 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","5");
         init_option(ID.cleaning_startup_alert,"bool_cleaning_startup_alert",true);
 
-       init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
-       init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
-       init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
-       //kpp1-293
-       init_option(ID.Screen_logo_enabled,"bool_kds_general_enable_bg_logo",false);
-       init_option(ID.Screen_logo_file,"string_kds_general_bg_logo","");
+        init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
+        init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
+        init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
+        //kpp1-293
+        init_option(ID.Screen_logo_enabled,"bool_kds_general_enable_bg_logo",false);
+        init_option(ID.Screen_logo_file,"string_kds_general_bg_logo","");
 
-       //kpp1-377
-       init_option(ID.Hide_station_title,"bool_hide_station_title",false);
+        //kpp1-377
+        init_option(ID.Hide_station_title,"bool_hide_station_title",false);
 
+        //kpp1-386
+        init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
 
     }
 

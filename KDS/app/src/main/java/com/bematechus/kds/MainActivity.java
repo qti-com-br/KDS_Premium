@@ -3827,6 +3827,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             boolean b = prefs.getBoolean(key, false);
             SetTitleVisible(!b);
         }
+        else if (key.equals("clear_db_schedule")) //kpp1-386
+        { //
+            return;
+        }
         else {
 
             if (key.equals("isDirtyPrefs")) return;
