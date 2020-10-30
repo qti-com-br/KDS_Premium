@@ -265,14 +265,18 @@ public class KDSUsers {
     public KDSUser.USER orderUnbump(String orderGuid)
     {
         if (getUserA() != null) {
-            if (KDSStationFunc.orderUnbump(getUserA(), orderGuid))
+            if (KDSStationFunc.orderUnbump(getUserA(), orderGuid)) {
+                getUserA().getOrders().sortOrders(); //kpp1-389
                 return KDSUser.USER.USER_A;
+            }
 
         }
         if (getUserB() != null)
         {
-            if (KDSStationFunc.orderUnbump(getUserB(), orderGuid))
+            if (KDSStationFunc.orderUnbump(getUserB(), orderGuid)) {
+                getUserB().getOrders().sortOrders(); //kpp1-389
                 return KDSUser.USER.USER_B;
+            }
 
         }
         return KDSUser.USER.USER_A;
