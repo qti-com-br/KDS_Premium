@@ -2921,7 +2921,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         int ntrans = order.getTransType();
         if (ntrans == KDSDataOrder.TRANSTYPE_MODIFY)
         {//if order don't existed, add it.
-            if (m_users.getOrderByName(order.getOrderName()) == null) {
+            if (m_users.getOrderByNameIncludeParked(order.getOrderName()) == null) { //kpp1-393, check parked orders too.
                 if (!order.isAllItemsNotForNew())//if just single item withe "del/modify", it will cause add a new item ugly
                     ntrans = KDSDataOrder.TRANSTYPE_ADD;
             }
