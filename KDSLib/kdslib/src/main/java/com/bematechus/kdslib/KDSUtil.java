@@ -1986,4 +1986,29 @@ just 16bits value
 
 
     }
+
+    /**
+     *
+     * @param bytesUtf8
+     * @param noffset
+     * @param ncount
+     * @param encodingFormat
+     *  utf-8, utf-16LE, utf-16BE
+     * @return
+     */
+    static public String convertBytesToString(byte[] bytesUtf8, int noffset, int ncount, String encodingFormat)
+    {
+        if (encodingFormat.isEmpty())
+            encodingFormat = "UTF-8";
+        try {
+            String strutf = new String(bytesUtf8,noffset, ncount, encodingFormat);
+            return strutf;
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return "";
+        }
+    }
 }

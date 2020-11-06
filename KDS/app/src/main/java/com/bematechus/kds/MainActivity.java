@@ -3,10 +3,12 @@ package com.bematechus.kds;
 import android.app.Activity;
 import android.app.AlertDialog;
 //import android.content.ComponentName;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 //import android.content.ServiceConnection;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,6 +16,7 @@ import android.hardware.usb.UsbManager;
 //import android.net.Uri;
 import android.os.AsyncTask;
 //import android.os.Environment;
+import android.os.Build;
 import android.os.Handler;
 //import android.os.IBinder;
 import android.os.Message;
@@ -21,6 +24,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 //import android.util.Log;
+import android.support.annotation.MainThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -97,6 +101,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+
+import static com.bematechus.kdslib.KDSApplication.getContext;
+import static com.bematechus.kdslib.KDSUtil.showMsg;
 //import java.util.concurrent.ExecutorService;
 //import java.util.concurrent.Executors;
 
@@ -536,7 +543,67 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         //initCleaningFloatButton();
         m_cleaning.init(this, this.findViewById(R.id.fabCleaning), m_activation);
+
+
+        // Using action USB Device to detect printers attached/detached
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        registerReceiver(mUsbReceiver, filter);
+
+        // Using USB Device to detect user permission action
+        IntentFilter filterPerm = new IntentFilter();
+        filterPerm.addAction(ACTION_USB_PERMISSION);
+        registerReceiver(mUsbPermissionReceiver, filterPerm);
+
+        // Find connected printer with the new class "Printer"
+        configurePrinter();
     }
+
+    public static final String ACTION_USB_PERMISSION = "com.bematechus.kds.USB_PERMISSION";
+    public static UsbManager usbManager = null;
+    public static Printer printer = null;
+
+    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
+                Log.d("##Printer", "USB Connected");
+                configurePrinter();
+
+            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                Log.d("##Printer", "USB Disconnected");
+                configurePrinter();
+            }
+        }
+    };
+
+
+    private final BroadcastReceiver mUsbPermissionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                    try {
+                        configurePrinter();
+                    } catch (Exception e) {
+                        Log.d("##Printer", e.getMessage());
+                    }
+                } else {
+                    Log.d("##Printer", "USB Permission Denied");
+                }
+            }
+        }
+    };
+
+
+    static void configurePrinter() {
+        usbManager = (UsbManager) getContext().getSystemService(Context.USB_SERVICE);
+        printer = new Printer(getContext(), usbManager);
+    }
+
 
     /**
      *
@@ -643,7 +710,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         KDSUIDialogBase dlg = new KDSUIDialogBase();
-        dlg.createInformationDialog(this, KDSApplication.getContext().getString(R.string.error), KDSApplication.getContext().getString(R.string.error_folder_permission), true).show();
+        dlg.createInformationDialog(this, getContext().getString(R.string.error), getContext().getString(R.string.error_folder_permission), true).show();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
@@ -961,7 +1028,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     private void updateTitle() {
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         String strCustomized = getSettings().getString(KDSSettings.ID.General_customized_title);
 
         String strTitle = strCustomized;
@@ -991,7 +1058,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             s = Activation.getStoreName() + "-" + s;
         //m_imgLogo.setText(s);
         getTextView(R.id.imgLCI).setText(s);
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
     private void setIconEnable(Menu menu, boolean enable) {
@@ -1056,12 +1123,17 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         }
 
+        //kpp1-377
+        if (getSettings().getBoolean(KDSSettings.ID.Hide_station_title))
+        {
+            SetTitleVisible(false);
+        }
     }
 
 
 
     private String getVersionName() {
-        return KDSUtil.getVersionName(KDSApplication.getContext());
+        return KDSUtil.getVersionName(getContext());
 
 //        String appVersion = "";
 //        PackageManager manager = this.getPackageManager();
@@ -1464,18 +1536,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (KDSGlobalVariables.getKDS() == null) return false;
         KDSGlobalVariables.getKDS().getCurrentDB().close();
         KDSUtil.copyFile(srcFile, dbCurrentPath);
-        KDSGlobalVariables.getKDS().reopenCurrentDB(KDSApplication.getContext());
+        KDSGlobalVariables.getKDS().reopenCurrentDB(getContext());
 
 
        KDSGlobalVariables.getKDS().getSupportDB().close();
         srcFile = srcFolder + KDSDBSupport.DB_NAME;
         KDSUtil.copyFile(srcFile, dbSupportPath);
-       KDSGlobalVariables.getKDS().reopenSupportDB(KDSApplication.getContext());
+       KDSGlobalVariables.getKDS().reopenSupportDB(getContext());
 
        KDSGlobalVariables.getKDS().getStatisticDB().close();
        srcFile = srcFolder + KDSDBStatistic.DB_NAME;
        KDSUtil.copyFile(srcFile, dbStatisticPath);
-       KDSGlobalVariables.getKDS().reopenStatisticDB(KDSApplication.getContext());
+       KDSGlobalVariables.getKDS().reopenStatisticDB(getContext());
 
 
         //String settings = getKDS().getSettings().outputXmlText(this.getApplicationContext());
@@ -1490,7 +1562,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
        KDSGlobalVariables.getKDS().stopWithoutDBClose();
        // UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-       KDSGlobalVariables.getKDS().getPrinter().initBemaPrinter(KDSApplication.getContext(), usbManager);
+       KDSGlobalVariables.getKDS().getPrinter().initBemaPrinter(getContext(), usbManager);
        KDSGlobalVariables.getKDS().start();
         //refreshWithNewDbData();
         return true;
@@ -1857,6 +1929,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return false;
     }
 
+
     /**
      * 2.0.25
      *     Add new option in Bumping setting: Expo confirmation bump.
@@ -1876,7 +1949,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      *  true: this order was handled by expo
      *  false: do next work
      */
-    private boolean checkExpoConfirmationBump(KDSUser.USER userID,String orderGuid)
+    private boolean checkExpoConfirmationBump(KDSUser.USER userID,String orderGuid, boolean bForAutoBumping)
     {
 
         if (!getKDS().isExpeditorStation())
@@ -1888,18 +1961,34 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //if (!order.isAllItemsFinished())
         if (!order.isExpoAllItemsFinished(getKDS().getStationID())) //kpp1-343
         {
-            AlertDialog d = new AlertDialog.Builder(this)
-                    .setTitle(this.getString(R.string.message))
-                    .setMessage(this.getString(R.string.expo_cannot_bump_unless_prep_bump_all))
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }
-                    )
-
-                    .create();
-            d.show();
+            if (bForAutoBumping) {
+                String orderName = order.getOrderName();
+                Message m = new Message();
+                m.what = ExpoAutoFrom.AutoBumpingThread.ordinal();
+                m.obj = orderName;
+                m_expoBumpingConfirmHandler.sendMessage(m);//.send.sendEmptyMessage(ExpoAutoFrom.AutoBumpingThread.ordinal()); //kpp1-380, auto expo bumping. As auto bump is in thread, we have to use this handler.
+            }
+            else
+                m_expoBumpingConfirmHandler.sendEmptyMessage(ExpoAutoFrom.MainThread.ordinal()); //kpp1-380, auto expo bumping. As auto bump is in thread, we have to use this handler.
+//            if (m_expoBumpConfirmDlg != null) {
+//                m_expoBumpConfirmDlg.hide();
+//                m_expoBumpConfirmDlg = null;
+//            }
+//            //AlertDialog d = new AlertDialog.Builder(this) //kpp1-380
+//            m_expoBumpConfirmDlg = new AlertDialog.Builder(this)
+//                    .setTitle(this.getString(R.string.message))
+//                    .setMessage(this.getString(R.string.expo_cannot_bump_unless_prep_bump_all))
+//                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    m_expoBumpConfirmDlg = null;
+//                                }
+//                            }
+//                    )
+//
+//                    .create();
+//            //d.show();//kpp1-380
+//            m_expoBumpConfirmDlg.show();
             return true;
         }
         return false;
@@ -1927,7 +2016,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             if (itemGuid.isEmpty()) {//bump order
                 //kpp1-343, allow expo bump itself items . So, move this check here.
-                if (checkExpoConfirmationBump(userID, orderGuid))
+                if (checkExpoConfirmationBump(userID, orderGuid, false))
                     return;
 
                 if (getKDS().getSettings().getBoolean(KDSSettings.ID.Bumping_confirm)) {
@@ -2401,7 +2490,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         //getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
                         return false;
                     }
-                    bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+                    if (checkExpoConfirmationBump(KDSUser.USER.USER_A, ar.get(i), true)) {
+
+                        //break; //kpp1-380, expo confirmation
+                    }
+                    else
+                        bumpOrderOperation(KDSUser.USER.USER_A, ar.get(i), false);
+
                     //td.debug_print_Duration("bump order time:");
                 }
                 //td.debug_print_Duration("bumpOrderOperation");
@@ -2419,7 +2514,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 //synchronized (getKDS().getUsers().getUserB().getOrders().m_locker) {
                     for (int i = 0; i < ar.size(); i++) {
                         String guid = ar.get(i);
-                        bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
+                        if (checkExpoConfirmationBump(KDSUser.USER.USER_B, guid, true)) {
+                            //break; //kpp1-380, expo confirmation
+                        }
+                        else
+                            bumpOrderOperation(KDSUser.USER.USER_B, guid, false);
                     }
                 //}
                 getKDS().refreshView();
@@ -3722,6 +3821,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (key.equals("cleaning_alert_type") || key.equals("cleaning_reminder_interval") || key.equals("cleaning_enable_alerts"))
         {
             m_cleaning.resetAll();
+        }
+        else if (key.equals("hide_station_title")) //kpp1-377
+        {
+            boolean b = prefs.getBoolean(key, false);
+            SetTitleVisible(!b);
         }
         else {
 
@@ -6440,7 +6544,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!m_activation.isActivationPassed())
             nTimeout = Activation.INACTIVE_TIMEOUT; //5 minutes
         if (m_activationDog.is_timeout(nTimeout))// * Activation.ACTIVATION_TIMEOUT_HOURS))
-        //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
+        //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS)) //DEBUG
         {
 
             doActivation(true, false, "");
@@ -6513,7 +6617,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         MainActivity.this.getKDS().clearAll();
         getKDS().clearStatisticData();
-        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(getContext());
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
         Activation.resetOldLoginUser(); //kpp1-299
@@ -6817,8 +6921,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         if (bChanged)
         {
-            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
-            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), newStationID);
+            KDSSettings.saveStationsRelation(getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(getContext(), newStationID);
             KDS.broadcastStationsRelations();
             try {
                 Thread.sleep(200);
@@ -6879,8 +6983,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         if (bChanged)
         {
-            KDSSettings.saveStationsRelation(KDSApplication.getContext(), ar);
-            getKDS().getStationsConnections().getRelations().refreshRelations(KDSApplication.getContext(), getKDS().getStationID());
+            KDSSettings.saveStationsRelation(getContext(), ar);
+            getKDS().getStationsConnections().getRelations().refreshRelations(getContext(), getKDS().getStationID());
             KDS.broadcastStationsRelations();
             try {
                 Thread.sleep(200);
@@ -7051,6 +7155,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public boolean onViewSlipUpDown(KDSLayout layout,MotionEvent e1, MotionEvent e2,  KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
+
+        //kpp1-377
+        if (getSettings().getBoolean(KDSSettings.ID.Hide_station_title))
+        {
+            if (slipDirection == KDSView.SlipDirection.Bottom2Top)
+            {
+                SetTitleVisible(false);
+            }
+            else if (slipDirection == KDSView.SlipDirection.Top2Bottom)
+            {
+                SetTitleVisible(true);
+            }
+        }
+
         KDSUser.USER user = getUserFromLayout(layout);
         if (slipInBorder == KDSView.SlipInBorder.Top ) {
             int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
@@ -7071,6 +7189,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (slipDirection == KDSView.SlipDirection.Bottom2Top)
                     showOrderZoom(getSelectedOrderGuid(user));
             }
+
 
         }
         return false;
@@ -7401,16 +7520,26 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return null;
     }
 
-    public void showToastMessage(String message, int duration) {
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
-        if (m_toast == null)
-            m_toast = Toast.makeText(this, message, duration);
-        else
-            m_toast.setText(message);
-        m_toast.setDuration(duration);
+    /**
+     *
+     *     *  see https://stackoverflow.com/questions/51956971/illegalstateexception-of-toast-view-on-android-p-preview
+     *      *      *  It will show IllegalStateException of toast View on Android P
+     * @param message
+     * @param duration
+     */
 
-        m_toast.show();
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    public void showToastMessage(String message, int duration) {
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter,s="+message);
+        KDSBase.showToastMessage(message, duration);
+
+//        if (m_toast == null)
+//            m_toast = Toast.makeText(this, message, duration);
+//        else
+//            m_toast.setText(message);
+//        m_toast.setDuration(duration);
+//
+//        m_toast.show();
+        //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
     public void forceAgreementAgreed()
@@ -7476,6 +7605,64 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
     {
         return null;
+    }
+    enum ExpoAutoFrom
+    {
+        MainThread,
+        AutoBumpingThread,
+    }
+
+    Handler m_expoBumpingConfirmHandler = new Handler()
+    {
+        public void handleMessage(Message msg) {
+            if (msg.what == ExpoAutoFrom.MainThread.ordinal())
+                showExpoBumpingConfirmationDlg();
+            else if (msg.what == ExpoAutoFrom.AutoBumpingThread.ordinal()) {
+                String orderName = (String)msg.obj;
+                showToastMessage("#"+orderName+":"+ KDSApplication.getContext().getString(R.string.expo_cannot_bump_unless_prep_bump_all), Toast.LENGTH_SHORT);
+            }
+
+        }
+    };
+
+    AlertDialog m_expoBumpConfirmDlg = null;
+    private void showExpoBumpingConfirmationDlg()
+    {
+        if (m_expoBumpConfirmDlg != null) {
+            return;
+        }
+        //AlertDialog d = new AlertDialog.Builder(this) //kpp1-380
+        m_expoBumpConfirmDlg = new AlertDialog.Builder(this)
+                .setTitle(this.getString(R.string.message))
+                .setMessage(this.getString(R.string.expo_cannot_bump_unless_prep_bump_all))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                m_expoBumpConfirmDlg = null;
+                            }
+                        }
+                )
+
+                .create();
+        m_expoBumpConfirmDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                m_expoBumpConfirmDlg = null;
+            }
+        });
+        //d.show();//kpp1-380
+        m_expoBumpConfirmDlg.show();
+    }
+
+    private void SetTitleVisible(boolean bShow)
+    {
+        View v = this.findViewById(R.id.layoutTitle);
+        if (v == null) return;
+        if (bShow)
+            v.setVisibility(View.VISIBLE);
+        else
+            v.setVisibility(View.GONE);
+
     }
 }
 

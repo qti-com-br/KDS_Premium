@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -474,7 +475,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             Drawable icon = this.getResources().getDrawable(R.mipmap.ic_launcher);
             String ver = getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")";
 
-            KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_KDS, icon, this);//kpp1-179
+            KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_ROUTER, icon, this);//kpp1-179
         }
         else if (id == R.id.action_clear_log)
         {
@@ -508,13 +509,46 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     Toast m_toast = null;
+
+    /**
+     * 09-28 14:20:24.9 E/KDSApplication:
+     * java.lang.IllegalStateException: View android.widget.LinearLayout{90c8924 V.E...... ......ID 0,0-514,63} has already been added to the window manager.
+     * at android.view.WindowManagerGlobal.addView(WindowManagerGlobal.java:328)
+     * at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:93)
+     * at android.widget.Toast$TN.handleShow(Toast.java:496)
+     * at android.widget.Toast$TN$1.handleMessage(Toast.java:400)
+     * at android.os.Handler.dispatchMessage(Handler.java:106)
+     * at android.os.Looper.loop(Looper.java:164)
+     * at android.app.ActivityThread.main(ActivityThread.java:6494)
+     * at java.lang.reflect.Method.invoke(Native Method)
+     * at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:438)
+     * at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:807)
+     *
+     * I doubt above bug is not created at this function, as I don't see log show code of this function.
+     * I just add try... catch to this function.
+     *
+     *      *  see https://stackoverflow.com/questions/51956971/illegalstateexception-of-toast-view-on-android-p-preview
+     *      *  It will show IllegalStateException of toast View on Android P
+     * @param message
+     */
     public void showToastMessage(String message) {
+
         int duration = Toast.LENGTH_SHORT;
-        if (m_toast == null)
-            m_toast = Toast.makeText(this, message, duration);
-        else
-            m_toast.setText(message);
-        m_toast.show();
+        KDSBase.showToastMessage(message, duration);
+
+//        try {
+//            int duration = Toast.LENGTH_SHORT;
+//            if (m_toast == null)
+//                m_toast = Toast.makeText(this, message, duration);
+//            else
+//                m_toast.setText(message);
+//            m_toast.show();
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+//            m_toast = null; //reset it.
+//        }
     }
     public boolean isRouterEnabled()
     {
@@ -710,7 +744,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //check stations changes
             m_service.checkStationsSettingChanged();//(this.getApplicationContext()();
         }
-        else if (key.equals("kds_general_language"))
+        else if (key.equals("kds_general_language") ||
+                Activation.isActivationPrefKey(key)) //don't handle it.
         {
             return;
         }
@@ -1137,6 +1172,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
+        //DEBUG
+
         if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
@@ -1327,9 +1364,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
 
             Calendar c = Calendar.getInstance();
-            c.setTime(m_dtLog);
+            c.setTimeInMillis(m_dtLog.getTime());
+            //c.setTime(m_dtLog);
             String s = String.format("%02d-%02d %02d:%02d:%02d.%03d",
-                    c.get(Calendar.MONTH),
+                    c.get(Calendar.MONTH)+1,
                     c.get(Calendar.DAY_OF_MONTH),
                     c.get(Calendar.HOUR_OF_DAY),
                     c.get(Calendar.MINUTE),
@@ -1446,7 +1484,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_activation.postGetOrdersRequest(l);
 
-        //test firebase
+//        //test firebase
         if (KDSBackofficeNotification.ENABLE_DEBUG) {
             String s = KDSBackofficeNotification.getFCMTestString2();
             ArrayList<Object> ar = new ArrayList<>();

@@ -19,7 +19,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,7 +57,7 @@ import java.util.TimerTask;
 public class KDSBackofficeNotification extends Handler{
 
     static final String TAG = "BackOfficeNotification";
-    static final String BACKOFFICE_URI = "wss://kdsgo.com";
+    static final String BACKOFFICE_URI = "ws://dev.kdsgo.com:9205";//
 
     public static boolean ENABLE_DEBUG = false; //show debug orders!!
 
@@ -62,7 +65,7 @@ public class KDSBackofficeNotification extends Handler{
     static final int CONNECT_WEBSOCKET = 2;
 
     static final String MSG_KEY_MESSAGE = "message";
-    static final String MSG_KEY_API_EVENT = "api_event";
+    static final String MSG_KEY_SYNC = "sync";
 
     static final String API_EVENT_ORDER_CREATED = "order_created";
     static final String API_EVENT_ORDER_UPDATED = "order_updated";
@@ -124,7 +127,19 @@ public class KDSBackofficeNotification extends Handler{
 
     public boolean connectBackOffice()
     {
+        if (Activation.getStoreGuid().isEmpty()) {
+            m_webSocket.close();
+            return false;
+        }
+
+        if (m_webSocket != null) {
+            if (!Activation.getStoreGuid().equals(m_webSocket.getConnectedStoreGuid()))
+                m_webSocket.close();
+        }
+
         if (isConnected()) return true;
+
+
         this.close();
         return connectNotification();
 
@@ -156,6 +171,7 @@ public class KDSBackofficeNotification extends Handler{
             }
 
             m_webSocket.connect();
+            m_webSocket.setConnectedStoreGuid( Activation.getStoreGuid());
             return true;
         }
         catch (Exception e)
@@ -184,6 +200,16 @@ public class KDSBackofficeNotification extends Handler{
            m_webSocket.sendStoreGuid();
     }
 
+    /**
+     * ["sync", "order_created"]
+     * ["sync", "order_updated"]
+     * ["sync", "order_voided"]
+     * ["sync", "item_created"]
+     * ["sync", "item_updated"]
+     * ["sync", "item_voided"]
+     * @param strNotification
+     * @return
+     */
     public boolean onNotification(String strNotification)
     {
         if (m_receiver == null) return false;
@@ -191,20 +217,19 @@ public class KDSBackofficeNotification extends Handler{
         {
 
         }
-        else
+        else if (strNotification.indexOf(MSG_KEY_SYNC) >=0)
         {
-            if (strNotification.indexOf(API_EVENT_ORDER_CREATED) >=0)
-                m_receiver.onBackofficeNotifyEvent(API_EVENT_ORDER_CREATED);
-            else if (strNotification.indexOf(API_EVENT_ORDER_UPDATED) >=0)
-                m_receiver.onBackofficeNotifyEvent(API_EVENT_ORDER_UPDATED);
-            else if (strNotification.indexOf(API_EVENT_ORDER_VOIDED) >=0)
-                m_receiver.onBackofficeNotifyEvent(API_EVENT_ORDER_VOIDED);
-            else if (strNotification.indexOf(API_EVENT_ITEM_CREATED) >=0)
-                m_receiver.onBackofficeNotifyEvent(API_EVENT_ITEM_CREATED);
-            else if (strNotification.indexOf(API_EVENT_ITEM_UPDATED) >=0)
-                m_receiver.onBackofficeNotifyEvent(API_EVENT_ITEM_UPDATED);
-            else if (strNotification.indexOf(API_EVENT_ITEM_VOIDED) >=0)
-                m_receiver.onBackofficeNotifyEvent(API_EVENT_ITEM_VOIDED);
+            String ar[] = new String[]{API_EVENT_ORDER_CREATED,API_EVENT_ORDER_UPDATED ,API_EVENT_ORDER_VOIDED,
+                                       API_EVENT_ITEM_CREATED, API_EVENT_ITEM_UPDATED, API_EVENT_ITEM_VOIDED};
+
+            for (int i=0; i< ar.length; i++)
+            {
+                if (strNotification.indexOf(ar[i]) >=0) {
+                    m_receiver.onBackofficeNotifyEvent(ar[i]);
+                    break;
+                }
+            }
+
 
 
         }
@@ -950,11 +975,46 @@ public class KDSBackofficeNotification extends Handler{
     }
 
 
+    public static String encryptToSHA(String info) {
+        byte[] digesta = null;
+        try {
+            MessageDigest alga = MessageDigest.getInstance("SHA-1");
+            alga.update(info.getBytes());
+            digesta = alga.digest();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        String rs = byte2hex(digesta);
+        return rs;
+    }
+
+    public static String byte2hex(byte[] b) {
+        String hs = "";
+        String stmp = "";
+        for (int n = 0; n < b.length; n++) {
+            stmp = (Integer.toHexString(b[n] & 0XFF));
+            if (stmp.length() == 1) {
+                hs = hs + "0" + stmp;
+            } else {
+                hs = hs + stmp;
+            }
+        }
+        return hs;
+    }
 
 
     public class BackOfficeWebSocketClient extends WebSocketClient {
-        String m_strStoreGuidSend = ""; //record the what store guid has been send
+        String m_strStoreGuidConnected = ""; //record the what store guid has been send
         boolean m_bStopMe = false;
+
+        public void setConnectedStoreGuid(String storeGuid)
+        {
+            m_strStoreGuidConnected = storeGuid;
+        }
+        public String getConnectedStoreGuid()
+        {
+            return m_strStoreGuidConnected;
+        }
 
         public BackOfficeWebSocketClient(URI serverUri, Draft draft) {
             super(serverUri, draft);
@@ -988,23 +1048,35 @@ public class KDSBackofficeNotification extends Handler{
         @Override
         public void onOpen(ServerHandshake serverHandshake) {
 
-            sendStoreGuid();
-            log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onOpen: " + serverHandshake.toString());
+            //sendStoreGuid();
+            //log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onOpen: " + serverHandshake.toString());
         }
 
         @Override
         public void onMessage(String s) {
-            log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onMessage: \n" + s);
-            Message m = new Message();
-            m.what = RECEIVED_NOTIFY;
-            m.obj = s;
-            m_handler.sendMessage(m);
-            //TableTracker.this.onNotification(s);
+            if (s.indexOf("Connected")>=0)
+                sendStoreGuid();
+            else if (s.indexOf("error")>=0)
+            {
+                this.close();
+            }
+            else {
+                log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onMessage: \n" + s);
+                Message m = new Message();
+                m.what = RECEIVED_NOTIFY;
+                m.obj = s;
+                m_handler.sendMessage(m);
+                //TableTracker.this.onNotification(s);
+            }
+
+
         }
+
 
         @Override
         public void onClose(int i, String s, boolean b) {
             log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onClose:" + s);
+            this.setConnectedStoreGuid("");
             //I use mainactivity timer to check connection.
 //            if (!m_bStopMe) {
 //                log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onClose: start to connect again");
@@ -1026,20 +1098,33 @@ public class KDSBackofficeNotification extends Handler{
             e.printStackTrace();
         }
 
+        /**
+         * Send ["subscribe", data], where data is
+         * {"now":current_timestamp,"sig":sha1(timestamp + store_guid)}
+         *
+         * @param strStoreGuid
+         */
         public void sendStoreGuid(String strStoreGuid) {
-            String s = String.format("{\"store_guid\": \"%s\"}", strStoreGuid);
+            Date dt = new Date();
+            long timeStamp = dt.getTime()/1000;
+            String sha1 = Long.toString(timeStamp) + strStoreGuid;
+            sha1 = encryptToSHA(sha1);
+
+            String s = String.format("[\"subscribe\", " +
+                                            "{\"now\":%d, " +
+                                              "\"sig\":\"%s\"} ]", timeStamp,sha1);
             try {
                 this.send(s);
             }catch (Exception e)
             {
                 return;
             }
-            m_strStoreGuidSend = strStoreGuid;
+            setConnectedStoreGuid(strStoreGuid);
         }
 
         private void sendStoreGuid() {
-            if (m_strStoreGuidSend.equals(Activation.getStoreGuid()))
-                return;
+            //if (m_strStoreGuidSend.equals(Activation.getStoreGuid()))
+            //    return;
             sendStoreGuid(Activation.getStoreGuid());
         }
     }

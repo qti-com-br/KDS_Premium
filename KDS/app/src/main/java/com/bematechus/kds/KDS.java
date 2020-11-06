@@ -683,8 +683,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             m_dbStatistic = null;
         }
         m_arKdsEventsReceiver.clear();
-        if (m_errorToast != null)
-            m_errorToast.cancel();
+//        if (m_errorToast != null)
+//            m_errorToast.cancel();
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
 //        m_users.stop();
     }
@@ -720,8 +720,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     public String getLocalIpAddress()
     {
+    	if (m_strLocalIP.isEmpty()) {
+    		KDSLog.e("KDS", "IP not found! Trying to refresh IP and Mac...");
+			refreshIPandMAC();
+		}
         return m_strLocalIP;
     }
+
     public String getLocalMacAddress()
     {
         return m_strLocalMAC;
@@ -1708,7 +1713,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //Log.d("SMB Text", xmlData);
     }
 
-    public Toast m_errorToast = null;
+    //public Toast m_errorToast = null;
     public void doSmbError(String xmlData)
     {
         String s = xmlData;
