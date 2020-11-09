@@ -3825,7 +3825,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (key.equals("hide_station_title")) //kpp1-377
         {
             boolean b = prefs.getBoolean(key, false);
+            getSettings().set(KDSSettings.ID.Hide_station_title, b);
             SetTitleVisible(!b);
+
         }
         else {
 
@@ -7655,8 +7657,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         View v = this.findViewById(R.id.layoutTitle);
         if (v == null) return;
-        if (bShow)
-            v.setVisibility(View.VISIBLE);
+        if (bShow) {
+            if (v.getVisibility() != View.VISIBLE)
+                v.setVisibility(View.VISIBLE);
+//            v.getParent().requestLayout();
+//            v.requestLayout();
+//            v.forceLayout();
+        }
         else
             v.setVisibility(View.GONE);
 
