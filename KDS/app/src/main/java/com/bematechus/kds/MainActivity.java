@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
+import android.content.pm.PackageInfo;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
@@ -558,6 +560,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         // Find connected printer with the new class "Printer"
         configurePrinter();
+
+        showBuildTypes(); //kpp1-394
     }
 
     public static final String ACTION_USB_PERMISSION = "com.bematechus.kds.USB_PERMISSION";
@@ -7661,5 +7665,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             v.setVisibility(View.GONE);
 
     }
+
+    private void showBuildTypes()
+    {
+        TextView t = this.findViewById(R.id.txtBuildType);
+        KDSUtil.showBuildTypes(this, t);
+    }
+
 }
 
