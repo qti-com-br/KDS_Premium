@@ -3861,7 +3861,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
             if (oldSumOrderBy != newSumOrderBy ||
-                    key.equals("sum_type") || key.equals("sum_bgfg"))//kpp1-320
+                    key.equals("sum_type") || key.equals("sum_bgfg") ||
+                    key.equals("sum_font"))//kpp1-320, kpp1-391
             {
                 refreshSum();
             }
