@@ -2147,6 +2147,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
         }
 
+
+
         return order;
 
     }
@@ -2356,6 +2358,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        else if (getKDS().isTrackerStation())
         {
             setSelectedOrderGuid(KDSUser.USER.USER_A, nextGuid);
+            //kpp1-389
+            this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
+
             if (bRefresView)
                 getKDS().refreshView();
                 //refreshView();//20180314
@@ -2377,6 +2382,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getUserUI(userID).getLayout().focusOrder(KDSConst.RESET_ORDERS_LAYOUT);
 
                 }
+                //kpp1-389
+                this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
 
             }
             if (bRefresView)

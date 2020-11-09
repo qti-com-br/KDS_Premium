@@ -207,7 +207,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             {
                 if (m_orders.getOrderIndexByGUID(currentFirstGuid) >=0) {
                     boolean bIsLayoutFull = true;
-                    if (bForMoveRushFront) //just rush received event needs to check layout full or not.
+                   // if (bForMoveRushFront) //just rush received event needs to check layout full or not.
+                    // //KPP1-389 Rev.: allow it always. If view is not full, move focused order when restoring order
                         bIsLayoutFull = isLayoutFull();
                     if (checkOrdersCanShowFocus(m_orders, currentFirstGuid, focusedGuid) && bIsLayoutFull) {
                         return;
