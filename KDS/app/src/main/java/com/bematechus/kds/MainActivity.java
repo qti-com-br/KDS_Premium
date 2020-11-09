@@ -4375,7 +4375,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshSummary(KDSUser.USER userID) {
         if (!isKDSValid()) return ;
-
+        if (!isSummaryVisible(userID)) return; //kpp1-382, just refresh sum when summary panel visiable.
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
         this.getUserUI(userID).refreshSum(userID, pos);
@@ -7016,7 +7016,22 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         doActivation(false, true, "");
     }
 
-    public void onRefreshSummary(int userID){}//KDSUser.USER userID);
+    /**
+     * The interface of kdsevent.
+     * rev.:
+     *  kpp1-382.
+     * @param userID
+     */
+    public void onRefreshSummary(int userID){
+
+        //kpp1-382
+        if (userID <0) return;
+        if (userID >= KDSUser.USER.values().length) return;
+        KDSUser.USER user =  KDSUser.USER.values()[userID];
+        if (isSummaryVisible(user))
+            this.onRefreshSummary( user );
+        //
+    }
 
     public void onShowStationStateMessage(String stationID, int nState){}
     public void onShowMessage(String message){}
