@@ -431,4 +431,22 @@ public class KDSUsers {
 
     }
 
+    public KDSDataOrder getOrderByNameIncludeParked(String orderName)
+    {
+        if (getUserA() != null) {
+
+            KDSDataOrder order =  getUserA().getOrders().getOrderByName(orderName);
+            if (order != null) return order;
+            order =  getUserA().getParkedOrders().getOrderByName(orderName);
+            if (order != null) return order;
+        }
+        if (getUserB() != null)
+        {
+            KDSDataOrder order =  getUserB().getOrders().getOrderByName(orderName);
+            if (order != null) return order;
+            order =  getUserB().getParkedOrders().getOrderByName(orderName);
+            if (order != null) return order;
+        }
+        return null;
+    }
 }

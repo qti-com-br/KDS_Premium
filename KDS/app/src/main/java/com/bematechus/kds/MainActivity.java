@@ -4363,6 +4363,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 refreshPrevNext(userID); //it also shows the park count, so use this function
                 //this.getUserUI(userID).refreshPrevNext();
                 // t.debug_print_Duration("onRefreshView2");
+                //kpp1-393
+                refreshParkedCount(userID);
             }
         }
     }
