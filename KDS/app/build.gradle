@@ -21,8 +21,8 @@ android {
         applicationId "com.bematechus.kds"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 2411
-        versionName '2.4.1.1'
+        versionCode 2412
+        versionName '2.4.1.2'
         signingConfig signingConfigs.config
     }
     buildTypes {
@@ -56,24 +56,24 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2411
-            versionName '2.4.1.1'
+            versionCode 2412
+            versionName '2.4.1.2'
             dimension "default"
         }
         stage {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2411
-            versionName '2.4.1.1'
+            versionCode 2412
+            versionName '2.4.1.2'
             dimension "default"
         }
         prod {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2411
-            versionName '2.4.1.1'
+            versionCode 2412
+            versionName '2.4.1.2'
             dimension "default"
         }
     }
