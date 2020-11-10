@@ -533,12 +533,6 @@ public class KDSSettings extends SettingsBase {
         Queue_status4_sort_mode,
 
         //2.0.39
-        /*
-        -          Add a new order acknowledgement feature;
-        -          It reply back received xml back to the source, if it is shared folder then create a new folder for it; if it is TCP/IP, create a new port(can be change) which POS open and read back received xml;
-        -          Additional to the xml, if the xml format is correct and kds is able to display, just send back the xml;
-        -          But if the received xml is in wrong format which means kds is not able to read and display the order then append string Wrong_Orderxxxx.xml to the file name and for TCP add a new tag <Error> below <Transaction> to indicate this is a wrong format; So it looks like <Transaction><Error>1</Error>…</Transaction>. <Error>n<Error>, n = which type of error, we can put all into 1 right now. When we can identify which error it is, then we can add more types.
-       */
         Notification_order_acknowledgement,
 
        //2.0.47
@@ -578,8 +572,10 @@ public class KDSSettings extends SettingsBase {
        Screen_logo_enabled,
        Screen_logo_file,
 
-       //kpp1-377
-       Hide_station_title,
+        //kpp1-377
+        Hide_station_title,
+        //kpp1-386
+        Clear_db_schedule,
 
      //kpp1-391
        Sum_font,
@@ -1335,18 +1331,20 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","5");
         init_option(ID.cleaning_startup_alert,"bool_cleaning_startup_alert",true);
 
-       init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
-       init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
-       init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
-       //kpp1-293
-       init_option(ID.Screen_logo_enabled,"bool_kds_general_enable_bg_logo",false);
-       init_option(ID.Screen_logo_file,"string_kds_general_bg_logo","");
+        init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
+        init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
+        init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
+        //kpp1-293
+        init_option(ID.Screen_logo_enabled,"bool_kds_general_enable_bg_logo",false);
+        init_option(ID.Screen_logo_file,"string_kds_general_bg_logo","");
 
-       //kpp1-377
-       init_option(ID.Hide_station_title,"bool_hide_station_title",false);
+        //kpp1-377
+        init_option(ID.Hide_station_title,"bool_hide_station_title",false);
       //kp1-391
       init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
 
+        //kpp1-386
+        init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
 
     }
 
