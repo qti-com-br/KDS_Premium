@@ -4555,7 +4555,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     private void restartApp() {
-        Intent intent = new Intent(getApplicationContext(), getContext().class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         int mPendingIntentId = 191082;
         PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);

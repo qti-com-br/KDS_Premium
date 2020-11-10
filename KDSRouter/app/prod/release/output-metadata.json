@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.bematechus.kdsrouter",
+  "variantName": "prodRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "properties": [],
+      "versionCode": 2411,
+      "versionName": "2.4.1.1",
+      "enabled": true,
+      "outputFile": "KDS-Router-prod-release-2.4.1.1.apk"
+    }
+  ]
+}
