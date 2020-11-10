@@ -542,13 +542,36 @@ public class KDSSettings extends SettingsBase {
         SMS_enabled, //SMS feature , KPP1-15
         Queue_auto_bump_timeout, //unused
 
+       Auto_refresh_screen_freq,
 
+       //Transfer
+       Transfer_default_station, //KPP1-42
+       Transfer_auto_to_default,
 
+       //
+       Deliver_new_order_to_slave_expo,
+       //Josie need this feature
+       Transfer_by_double_click,
 
+       LineItems_view_bg, //kpp1-183
+       Log_orders,
+       LineItems_line_height, //kpp1-229
 
+       Printer_logo,
+       //cleaning habits
+       cleaning_enable_alert,
+       cleaning_alert_type,
+       cleaning_reminder_interval,
+       cleaning_enable_dismiss_button,
+       cleaning_snooze_time,
+       cleaning_startup_alert,
+       Bumpbar_Clean,
+       Bumpbar_Snooze,
+       Bumpbar_Dismiss,
+       //kpp1-293
+       Screen_logo_enabled,
+       Screen_logo_file,
 
-       //kpp1-377
-       Hide_station_title,
         //kpp1-377
         Hide_station_title,
         //kpp1-386
