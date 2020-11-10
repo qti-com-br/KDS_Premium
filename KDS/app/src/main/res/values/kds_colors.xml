@@ -107,4 +107,7 @@
     <color name="cleaning_button_bg">#902625</color>
     <color name="cleaning_pinchout_color">#80000000</color>
 
+    <color name="sum_bg">#A8A6A6</color>
+    <color name="sum_fg">#000000</color>
+
 </resources>

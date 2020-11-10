@@ -533,55 +533,29 @@ public class KDSSettings extends SettingsBase {
         Queue_status4_sort_mode,
 
         //2.0.39
-         /*
-         -          Add a new order acknowledgement feature;
-         -          It reply back received xml back to the source, if it is shared folder then create a new folder for it; if it is TCP/IP, create a new port(can be change) which POS open and read back received xml;
-         -          Additional to the xml, if the xml format is correct and kds is able to display, just send back the xml;
-         -          But if the received xml is in wrong format which means kds is not able to read and display the order then append string Wrong_Orderxxxx.xml to the file name and for TCP add a new tag <Error> below <Transaction> to indicate this is a wrong format; So it looks like <Transaction><Error>1</Error>…</Transaction>. <Error>n<Error>, n = which type of error, we can put all into 1 right now. When we can identify which error it is, then we can add more types.
-        */
         Notification_order_acknowledgement,
 
        //2.0.47
-        Item_group_category,
-        Enable_smbv2, //2.0.51
+       Item_group_category,
+       Enable_smbv2, //2.0.51
 
         SMS_enabled, //SMS feature , KPP1-15
         Queue_auto_bump_timeout, //unused
 
-        Auto_refresh_screen_freq,
 
-        //Transfer
-        Transfer_default_station, //KPP1-42
-        Transfer_auto_to_default,
 
-        //
-        Deliver_new_order_to_slave_expo,
-        //Josie need this feature
-        Transfer_by_double_click,
 
-        LineItems_view_bg, //kpp1-183
-        Log_orders,
-        LineItems_line_height, //kpp1-229
 
-        Printer_logo,
-        //cleaning habits
-        cleaning_enable_alert,
-        cleaning_alert_type,
-        cleaning_reminder_interval,
-        cleaning_enable_dismiss_button,
-        cleaning_snooze_time,
-        cleaning_startup_alert,
-        Bumpbar_Clean,
-        Bumpbar_Snooze,
-        Bumpbar_Dismiss,
-        //kpp1-293
-        Screen_logo_enabled,
-        Screen_logo_file,
 
+       //kpp1-377
+       Hide_station_title,
         //kpp1-377
         Hide_station_title,
         //kpp1-386
         Clear_db_schedule,
+
+     //kpp1-391
+       Sum_font,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1189,7 +1163,7 @@ public class KDSSettings extends SettingsBase {
         m_mapPrefID.put(ID.AdvSum_always_visible,"bool_"+PreferenceFragmentAdvSum.ADVSUM_KEY_SUM_ALWAYS);
         m_mapPrefID.put(ID.AdvSum_items,"string_"+PreferenceFragmentAdvSum.ADVSUM_KEY_ITEMS);
 
-        m_mapPrefID.put(ID.Sum_bgfg,"string_sum_bgfg");
+        //m_mapPrefID.put(ID.Sum_bgfg,"string_sum_bgfg");
         m_mapPrefID.put(ID.AdvSum_rows,"string_advsum_rows");
         m_mapPrefID.put(ID.AdvSum_cols,"string_advsum_cols");
 
@@ -1343,6 +1317,8 @@ public class KDSSettings extends SettingsBase {
 
         //kpp1-377
         init_option(ID.Hide_station_title,"bool_hide_station_title",false);
+      //kp1-391
+      init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
 
         //kpp1-386
         init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
@@ -1747,7 +1723,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.AdvSum_always_visible,false);
         set(ID.AdvSum_items,"");
 
-        set(ID.Sum_bgfg,  "-5724506,-16777216");
+        //set(ID.Sum_bgfg,  "-5724506,-16777216");
         set(ID.AdvSum_rows,"4");
         set(ID.AdvSum_cols,"4");
 
@@ -2910,5 +2886,13 @@ public class KDSSettings extends SettingsBase {
        return true;
    }
 
+ /**
+  * kpp1-299-1
+  */
+ public void clearRelationshipData()
+   {
+     SettingsBase.saveStationsRelation(KDSApplication.getContext(), "");
+
+   }
 
 }

@@ -888,5 +888,6 @@
 	<string name="enable_bg_logo">Habilitar Logotipo de Fundo</string>
 	<string name="bg_logo_file">Arquivo do Logotipo</string>
     <string name="hide_title">Hide title</string>
+	<string name="sum_font">Summary font</string>
 	<string name="any_time">Any time</string>
 </resources>

@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
+import android.content.pm.PackageInfo;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
@@ -558,6 +560,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         // Find connected printer with the new class "Printer"
         configurePrinter();
+
+        showBuildTypes(); //kpp1-394
     }
 
     public static final String ACTION_USB_PERMISSION = "com.bematechus.kds.USB_PERMISSION";
@@ -2147,6 +2151,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             }
         }
 
+
+
         return order;
 
     }
@@ -2356,6 +2362,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        else if (getKDS().isTrackerStation())
         {
             setSelectedOrderGuid(KDSUser.USER.USER_A, nextGuid);
+            //kpp1-389
+            this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
+
             if (bRefresView)
                 getKDS().refreshView();
                 //refreshView();//20180314
@@ -2377,6 +2386,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     getUserUI(userID).getLayout().focusOrder(KDSConst.RESET_ORDERS_LAYOUT);
 
                 }
+                //kpp1-389
+                this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
 
             }
             if (bRefresView)
@@ -3825,7 +3836,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (key.equals("hide_station_title")) //kpp1-377
         {
             boolean b = prefs.getBoolean(key, false);
+            getSettings().set(KDSSettings.ID.Hide_station_title, b);
             SetTitleVisible(!b);
+
         }
         else if (key.equals("clear_db_schedule")) //kpp1-386
         { //
@@ -3863,7 +3876,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
             if (oldSumOrderBy != newSumOrderBy ||
-                    key.equals("sum_type") || key.equals("sum_bgfg"))//kpp1-320
+                    key.equals("sum_type") || key.equals("sum_bgfg") ||
+                    key.equals("sum_font"))//kpp1-320, kpp1-391
             {
                 refreshSum();
             }
@@ -4357,6 +4371,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 refreshPrevNext(userID); //it also shows the park count, so use this function
                 //this.getUserUI(userID).refreshPrevNext();
                 // t.debug_print_Duration("onRefreshView2");
+                //kpp1-393
+                refreshParkedCount(userID);
             }
         }
     }
@@ -4367,7 +4383,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshSummary(KDSUser.USER userID) {
         if (!isKDSValid()) return ;
-
+        if (!isSummaryVisible(userID)) return; //kpp1-382, just refresh sum when summary panel visiable.
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
         this.getUserUI(userID).refreshSum(userID, pos);
@@ -7008,7 +7024,22 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         doActivation(false, true, "");
     }
 
-    public void onRefreshSummary(int userID){}//KDSUser.USER userID);
+    /**
+     * The interface of kdsevent.
+     * rev.:
+     *  kpp1-382.
+     * @param userID
+     */
+    public void onRefreshSummary(int userID){
+
+        //kpp1-382
+        if (userID <0) return;
+        if (userID >= KDSUser.USER.values().length) return;
+        KDSUser.USER user =  KDSUser.USER.values()[userID];
+        if (isSummaryVisible(user))
+            this.onRefreshSummary( user );
+        //
+    }
 
     public void onShowStationStateMessage(String stationID, int nState){}
     public void onShowMessage(String message){}
@@ -7443,15 +7474,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     /**
      * kpp1-299
+     * rev.:
+     *  kpp1-299-1, change it back. Ask clearing data when login.
+     *
      */
     private void doLogout()
     {
         Activation.resetUserNamePwd();
         resetStationID();
+        /* //kpp1-299-1
         setToDefaultSettings(); //kpp1-299 Station Relationship remembered
         Activation.resetOldLoginUser(); //kpp1-299
         getKDS().clearAll(); //clear database too.
         getKDS().clearStatisticData();
+        */
+
+        getKDS().clearRelationshipSettings(); //kpp1-299-1
+
         onDoActivationExplicit();
     }
 
@@ -7659,11 +7698,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         View v = this.findViewById(R.id.layoutTitle);
         if (v == null) return;
-        if (bShow)
-            v.setVisibility(View.VISIBLE);
+        if (bShow) {
+            if (v.getVisibility() != View.VISIBLE)
+                v.setVisibility(View.VISIBLE);
+//            v.getParent().requestLayout();
+//            v.requestLayout();
+//            v.forceLayout();
+        }
         else
             v.setVisibility(View.GONE);
 
     }
+
+    private void showBuildTypes()
+    {
+        TextView t = this.findViewById(R.id.txtBuildType);
+        KDSUtil.showBuildTypes(this, t);
+    }
+
 }
 
