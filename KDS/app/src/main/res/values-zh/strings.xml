@@ -1253,4 +1253,5 @@
 	<string name="bg_logo_file">Background logo file</string>
     <string name="hide_title">Hide title</string>
     <string name="sum_font">Summary font</string>
+    <string name="any_time">Any time</string>
 </resources>
