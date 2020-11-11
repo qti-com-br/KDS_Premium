@@ -1488,7 +1488,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //
 //        Date dt = c.getTime();//new Date(2020, 3, 10, 0,0,0);
 //        l = dt.getTime();
-
+        if (l<=0)
+        {
+            l = System.currentTimeMillis() - 5*60*1000; //5 minutes ago.
+        }
         m_activation.postGetOrdersRequest(l);
 
 //        //test firebase

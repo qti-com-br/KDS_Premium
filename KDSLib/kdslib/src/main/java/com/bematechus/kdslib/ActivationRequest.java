@@ -1793,7 +1793,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         try {
 
             json.put("store_guid",store_guid );
-            long utcTime = getLocalTimeSeconds(lastUpdateTime);
+            long utcTime = getUTCTimeSeconds(lastUpdateTime);// getLocalTimeSeconds(lastUpdateTime);
             if (utcTime != 0)
                 json.put("min_update_time", utcTime);
 
