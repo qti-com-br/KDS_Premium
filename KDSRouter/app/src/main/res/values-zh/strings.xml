@@ -369,4 +369,6 @@
     <string name="logout">登出</string>
     <string name="export">导出</string>
     <string name="str_import">导入</string>
+    <string name="enable_3rd_party_order">Enable 3rd party order</string>
+    <string name="get_fcm_order">Get order # from FCM</string>
 </resources>

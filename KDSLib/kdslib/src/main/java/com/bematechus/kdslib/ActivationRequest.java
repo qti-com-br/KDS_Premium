@@ -53,6 +53,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static final String REQ_SMS_ORDER =  "SMS_ORDER";
     static final String REQ_SYNC =  "SYNC";
     static final String REQ_CLEANING_RESPONSE =  "STORE_CLEAN_RESPONSE";
+    static final String REQ_GET_ORDERS =  "GET_ORDERS";
     /**
      *
      * Management
@@ -115,6 +116,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Sync_item_bump,
         Sync_customer,
         Cleaning,
+        Get_orders,
     }
 
     public enum ErrorType
@@ -1763,6 +1765,50 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
         r.setCommand( COMMAND.Get_devices );
+        return r;
+
+
+    }
+
+    /**
+     *  [{
+     *           "tok" : "CURRENT_TOKEN"
+     *         },{
+     *           "req" : "GET_ORDERS",
+     *           "store_guid" : AppDelegate.store?.guid_ ?? "",
+     *           "min_update_time": lastDownloadTime
+     *         }]
+     *         *** all keys are mandatory.
+     * *** min_update_time = last time (unixtimestamp) that the router downloaded orders.
+     * @param store_guid
+     * @param lastUpdateTime
+     * @return
+     */
+    static public ActivationRequest requestGetOrders( String store_guid, Date lastUpdateTime)
+    {
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_ORDERS);//"GET_DEVICES");
+        try {
+
+            json.put("store_guid",store_guid );
+            long utcTime = getUTCTimeSeconds(lastUpdateTime);// getLocalTimeSeconds(lastUpdateTime);
+            if (utcTime != 0)
+                json.put("min_update_time", utcTime);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Get_orders );
         return r;
 
 

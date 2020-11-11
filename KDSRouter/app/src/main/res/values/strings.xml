@@ -377,4 +377,6 @@
     <string name="str_import">Import</string>
 	<string name="portuguese" translatable="false">Português</string>
 	<string name="spanish" translatable="false">Español</string>
+    <string name="enable_3rd_party_order">Enable 3rd party order</string>
+    <string name="get_fcm_order">Get order # from FCM</string>
 </resources>

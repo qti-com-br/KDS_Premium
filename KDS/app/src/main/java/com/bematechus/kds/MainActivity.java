@@ -7645,7 +7645,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        }
         return true;
     }
-
+    public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
+    {
+        return null;
+    }
     enum ExpoAutoFrom
     {
         MainThread,

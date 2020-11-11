@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
 
+import java.util.ArrayList;
+
 
 /**
  * A login screen that offers login via email/password.
@@ -453,6 +455,11 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 //        //KDSUIDlgAgreement dlg = new KDSUIDlgAgreement(this, this);
 //        KDSUIDlgAgreement dlg =KDSUIDlgAgreement.instance(this, this);
 //        dlg.show();
+    }
+
+    public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
+    {
+        return null;
     }
 }
 

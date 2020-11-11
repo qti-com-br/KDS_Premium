@@ -18,6 +18,7 @@ import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataModifier;
 import com.bematechus.kdslib.KDSDataOrder;
+import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
@@ -1499,7 +1500,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             doSmbError(xmlData);
         }
         else {
-            doOrderXmlInThread(smb,smbFileName, xmlData);//
+            doOrderXmlInThread(smb,smbFileName, xmlData, null);//
         }
 
     }
@@ -1547,7 +1548,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             case Unknown:
                 return;
             case Order:
-                doOrderXmlInThread(sock, "",xmlData);
+                doOrderXmlInThread(sock, "",xmlData, null);
                 break;
 
             case Command:
@@ -3552,15 +3553,21 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     Object m_lockerForOrdersThread = new Object();
     ArrayList<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new ArrayList<>();
 
-    public void doOrderXmlInThread(final Object objSource, final String originalFileName, final String xmlData)
+    /**
+     *
+     * @param objSource
+     * @param originalFileName
+     * @param xmlData
+     * @param ordersFromFCM
+     */
+    public void doOrderXmlInThread(final Object objSource, final String originalFileName, final String xmlData, final KDSDataOrders ordersFromFCM)
     {
-
-
-
         DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
         data.m_objSource = objSource;
         data.m_originalFileName = originalFileName;
         data.m_xmlData = xmlData;
+        data.m_fcmOrders = ordersFromFCM;
+
         synchronized (m_lockerForOrdersThread) {
             m_xmlDataBuffer.add(data);
         }
@@ -3591,8 +3598,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                                         arDone.add(data);
                                         //m_xmlDataBuffer.remove(0);
                                     }
-
-                                    doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                    if (data.m_fcmOrders != null)
+                                        doReceivedFCMOrders(data.m_fcmOrders);
+                                    else
+                                        doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
                                     data.clear();
                                     Thread.sleep(200);
                                 } catch (Exception e) {
@@ -3679,11 +3688,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         Object m_objSource = null;
         String m_originalFileName = "";
         String m_xmlData = "";
+        KDSDataOrders m_fcmOrders = null;
         public void clear()
         {
             m_objSource = null;
             m_originalFileName = "";
             m_xmlData = "";
+            m_fcmOrders = null;
         }
     }
 
@@ -3850,6 +3861,47 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     private void fireTcpListenServerErrorEvent(int nListenPort, String errorMessage)
     {
         fireTcpListenServerErrorEvent(m_arKdsEventsReceiver,nListenPort,  errorMessage);
+
+    }
+
+    /**
+     *
+     * @param orders
+     */
+    public void onFCMReceivedOrders(KDSDataOrders orders)
+    {
+        doOrderXmlInThread(null, "", "", orders);
+
+//        for (int i=0; i< orders.getCount(); i++)
+//        {
+//            doReceivedFCMOrder(orders.get(i));
+//        }
+    }
+
+    public void doReceivedFCMOrders( KDSDataOrders orders)
+    {
+        for (int i=0; i< orders.getCount(); i++)
+        {
+            doReceivedFCMOrder(orders.get(i));
+        }
+    }
+    /**
+     *
+     * @param order
+     */
+    public void doReceivedFCMOrder( KDSDataOrder order)
+    {
+        KDSLogOrderFile.i(TAG,KDSLogOrderFile.formatOrderLog(order.getOrderName()));
+
+        order.setPCKDSNumber(m_strStationID);
+        KDSLog.d(TAG, "Receive order $" + order.getOrderName());
+        String xmlData = order.createXml();
+        doOrderFilter(order, xmlData, "");
+        String msg = "";//Get order #" + order.getOrderName();
+        msg = m_context.getString(R.string.get_fcm_order);//getContext().getString(R.string.get_order);
+        msg = msg.replace("#", order.getOrderName());
+
+        showMessage(msg);
 
     }
 }

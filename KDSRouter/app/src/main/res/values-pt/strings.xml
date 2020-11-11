@@ -188,4 +188,6 @@
 		<item>TCP/IP</item>
 		<item>Pasta Remota</item>
 	</string-array>
+	<string name="enable_3rd_party_order">Enable 3rd party order</string>
+	<string name="get_fcm_order">Get order # from FCM</string>
 </resources>

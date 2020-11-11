@@ -65,4 +65,31 @@ public class KDSDataMessages extends KDSDataArray{
         }
         return s;
     }
+
+    /**
+     * for firebase
+     * @param strMessages
+     * @param forWhat
+     *      static public final int FOR_Order = 0;
+     *     static public final int FOR_Item = 1;
+     *     static public final int FOR_Condiment = 2;
+     * @return
+     */
+    static public KDSDataMessages parseString(String strMessages, String parentGuid, int forWhat)
+    {
+        ArrayList<String> ar =  KDSUtil.spliteString(strMessages, STRINGS_EACH_LINE_SEPARATOR);
+        KDSDataMessages messages = new KDSDataMessages();
+
+        for (int i = 0; i < ar.size(); i++) {
+            String s = ar.get(i);
+            KDSDataMessage m = new KDSDataMessage();
+            m.setComponentGUID(parentGuid);
+            m.setForComponentType(forWhat);
+            m.setMessage(s);
+            messages.addComponent(m);
+
+        }
+
+        return messages;
+    }
 }
