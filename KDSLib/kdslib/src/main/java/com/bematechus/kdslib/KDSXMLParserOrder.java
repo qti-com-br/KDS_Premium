@@ -261,7 +261,14 @@ public class KDSXMLParserOrder {
             break;
             case DBXML_ELEMENT_PARKED:
             {
-                int n = KDSUtil.convertStringToInt(strVal, 0);
+                int n = 0;
+                if (KDSUtil.isDigitalString(strVal)) //kpp1-393
+                    n = KDSUtil.convertStringToInt(strVal, 0);
+                else
+                {//kpp1-393
+                    n = KDSUtil.convertYesNo2Int(strVal);
+                }
+
                 order.setParked( (n==1));
                 order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.Parked);
             }

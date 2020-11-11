@@ -2040,4 +2040,15 @@ just 16bits value
         }
 
     }
+
+    static public int convertYesNo2Int(String str)
+    {
+        String s = str;
+        s = s.toUpperCase();
+        s = s.trim();
+        if (s.equals("YES"))
+            return KDSConst.INT_TRUE;
+        else
+            return KDSConst.INT_FALSE;
+    }
 }
