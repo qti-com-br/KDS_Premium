@@ -580,6 +580,9 @@ public class KDSSettings extends SettingsBase {
 
        //kpp1-377
        Hide_station_title,
+
+     //kpp1-391
+       Sum_font,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1187,7 +1190,7 @@ public class KDSSettings extends SettingsBase {
         m_mapPrefID.put(ID.AdvSum_always_visible,"bool_"+PreferenceFragmentAdvSum.ADVSUM_KEY_SUM_ALWAYS);
         m_mapPrefID.put(ID.AdvSum_items,"string_"+PreferenceFragmentAdvSum.ADVSUM_KEY_ITEMS);
 
-        m_mapPrefID.put(ID.Sum_bgfg,"string_sum_bgfg");
+        //m_mapPrefID.put(ID.Sum_bgfg,"string_sum_bgfg");
         m_mapPrefID.put(ID.AdvSum_rows,"string_advsum_rows");
         m_mapPrefID.put(ID.AdvSum_cols,"string_advsum_cols");
 
@@ -1341,6 +1344,8 @@ public class KDSSettings extends SettingsBase {
 
        //kpp1-377
        init_option(ID.Hide_station_title,"bool_hide_station_title",false);
+      //kp1-391
+      init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
 
 
     }
@@ -1743,7 +1748,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.AdvSum_always_visible,false);
         set(ID.AdvSum_items,"");
 
-        set(ID.Sum_bgfg,  "-5724506,-16777216");
+        //set(ID.Sum_bgfg,  "-5724506,-16777216");
         set(ID.AdvSum_rows,"4");
         set(ID.AdvSum_cols,"4");
 
@@ -2906,5 +2911,13 @@ public class KDSSettings extends SettingsBase {
        return true;
    }
 
+ /**
+  * kpp1-299-1
+  */
+ public void clearRelationshipData()
+   {
+     SettingsBase.saveStationsRelation(KDSApplication.getContext(), "");
+
+   }
 
 }

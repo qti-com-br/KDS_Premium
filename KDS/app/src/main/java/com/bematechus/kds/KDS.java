@@ -2921,7 +2921,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         int ntrans = order.getTransType();
         if (ntrans == KDSDataOrder.TRANSTYPE_MODIFY)
         {//if order don't existed, add it.
-            if (m_users.getOrderByName(order.getOrderName()) == null) {
+            if (m_users.getOrderByNameIncludeParked(order.getOrderName()) == null) { //kpp1-393, check parked orders too.
                 if (!order.isAllItemsNotForNew())//if just single item withe "del/modify", it will cause add a new item ugly
                     ntrans = KDSDataOrder.TRANSTYPE_ADD;
             }
@@ -5307,5 +5307,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     public void clearAllBufferedOrders()
     {
         m_users.ordersClear();
+    }
+
+            /**
+             * kpp1-299-1
+             */
+    public void clearRelationshipSettings()
+    {
+
+        this.getSettings().clearRelationshipData();
+        this.updateSettings(m_context);
     }
 }

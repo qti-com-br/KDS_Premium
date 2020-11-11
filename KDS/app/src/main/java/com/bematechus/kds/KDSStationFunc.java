@@ -1,5 +1,7 @@
 package com.bematechus.kds;
 
+import android.util.Log;
+
 import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
@@ -28,6 +30,7 @@ import java.util.Date;
  */
 public class KDSStationFunc {
 
+    static String TAG = "StationFunc";
     /**
      * sync with mirror, backup stations ..
      * check if mirror, backup ...
@@ -252,11 +255,25 @@ public class KDSStationFunc {
 //        }
 
         KDSDataOrder orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
+        //kpp1-393
+        boolean bInParkedOrdersList = false;
+        if (orderExisted == null) {
+            orderExisted = kdsuser.getParkedOrders().getOrderByName(order.getOrderName());
+            if (orderExisted != null) bInParkedOrdersList = true;
+        }
         //TimeDog t = new TimeDog();
         if (orderExisted == null) {
-
-            kdsuser.getOrders().addComponent(order);
+            //kpp1-393, support parked order
+            if (order.getParked()==KDSConst.INT_TRUE) {
+                //Log.d(TAG, "Add to parked list");
+                kdsuser.getParkedOrders().addComponent(order);
+            }//
+            else {
+                //Log.d(TAG, "Add to orders list");
+                kdsuser.getOrders().addComponent(order);
+            }
             //t.debug_print_Duration("func-orderAdd1");
+            //Log.d(TAG, "Add to database");
             kdsuser.getCurrentDB().orderAdd(order);
             //t.debug_print_Duration("func-orderAdd2");
             if (bRefreshView)
@@ -280,6 +297,23 @@ public class KDSStationFunc {
             if (order.getItems().getCount() >0)
                 kdsuser.getCurrentDB().orderAppendAddon(orderExisted, order);
             orderReturn = orderExisted;
+            //kpp1-393
+            if (order.getParked() == KDSConst.INT_TRUE)
+            {//it is a parked order.
+                if (!bInParkedOrdersList)
+                {//existed order is not in orders list, move it to parked list.
+                    kdsuser.getOrders().removeComponent(orderExisted);
+                    kdsuser.getParkedOrders().addComponent(orderExisted);
+                }
+            }
+            else
+            {//it is a normal order
+                if (bInParkedOrdersList)
+                {//move to orders list.
+                    kdsuser.getParkedOrders().removeComponent(orderExisted);
+                    kdsuser.getOrders().addComponent(orderExisted);
+                }
+            }
         }
         //TimeDog td = new TimeDog();
         //20190403 IMPORTANT
@@ -661,6 +695,14 @@ public class KDSStationFunc {
     static public void orderInfoModify(KDSUser kdsuser, KDSDataOrder order, boolean bSyncWithOthers)
     {
         KDSDataOrder orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
+        //kpp1-393
+        boolean bInParkedList = false;
+        if (orderExisted == null)
+        {
+            orderExisted = kdsuser.getParkedOrders().getOrderByName(order.getOrderName());
+            if (orderExisted == null) return;
+            bInParkedList = true;
+        }
 
         if (orderExisted == null) {
 
@@ -677,6 +719,26 @@ public class KDSStationFunc {
                 kdsuser.getKDS().firePOSNotification_OrderItem(orderExisted, null, KDSPosNotificationFactory.BumpUnbumpType.Order_status_changed);
         }
         itemsModify(kdsuser, orderExisted, order,bSyncWithOthers);
+
+        //kpp1-393
+        if (order.getParked() == KDSConst.INT_TRUE)
+        {//it is a parked order.
+            if (!bInParkedList)
+            {//existed order is not in orders list, move it to parked list.
+                kdsuser.getOrders().removeComponent(orderExisted);
+                kdsuser.getParkedOrders().addComponent(orderExisted);
+                kdsuser.getCurrentDB().orderSetParked(orderExisted.getGUID(), true);
+            }
+        }
+        else
+        {//it is a normal order
+            if (bInParkedList)
+            {//move to orders list.
+                kdsuser.getParkedOrders().removeComponent(orderExisted);
+                kdsuser.getOrders().addComponent(orderExisted);
+                kdsuser.getCurrentDB().orderSetParked(orderExisted.getGUID(), false);
+            }
+        }
     }
 
     static  public void itemModify(KDSUser kdsuser, KDSDataItem itemNew, boolean bAutoSync)

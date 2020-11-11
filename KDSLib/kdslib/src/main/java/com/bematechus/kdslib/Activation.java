@@ -1433,6 +1433,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     public void showLoginActivity(Activity caller, String showErrorMessage)
     {
+        //debug
+        //return;
 
         if (KDSConst._DEBUG) {
             if (KDSConst._DEBUG_HIDE_LOGIN_DLG)

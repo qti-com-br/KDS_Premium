@@ -296,6 +296,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         KDSUIDlgAgreement.forceAgreementAgreed(this, this);
 
+        showBuildTypes();//kpp1-394
         connectBackofficeNotification();
 
     }
@@ -1462,6 +1463,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             break;
         }
         return null;
+    }
+
+    private void showBuildTypes()
+    {
+        TextView t = this.findViewById(R.id.txtBuildType);
+        KDSUtil.showBuildTypes(this, t);
     }
 
     /**

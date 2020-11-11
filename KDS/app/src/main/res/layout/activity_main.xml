@@ -5,8 +5,7 @@
     android:layout_height="match_parent">
 
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -199,6 +198,14 @@
                 android:textColor="@color/kds_title_fg"
                 android:textStyle="bold" />
 
+
+            <TextView
+                android:id="@+id/txtBuildType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/txtPrev"
