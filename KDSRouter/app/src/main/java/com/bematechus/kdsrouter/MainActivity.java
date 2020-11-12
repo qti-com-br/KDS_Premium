@@ -132,7 +132,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
-
+    TimeDog mBackOfficeNotificationTimeDog = new TimeDog();
+    final int BACKOFFICE_CONNECT_TIMEOUT = 5000;
     public void onTime()
     {
         if (m_service != null)
@@ -145,8 +146,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         startCheckRemoteFolderNotificationThread();
 
         checkAutoActivation();
-
-        connectBackofficeNotification();
+        if (mBackOfficeNotificationTimeDog.is_timeout(BACKOFFICE_CONNECT_TIMEOUT)) {
+            mBackOfficeNotificationTimeDog.reset(); //kpp1-397
+            connectBackofficeNotification();
+        }
 
     }
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -1490,7 +1493,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        l = dt.getTime();
         if (l<=0)
         {
-            l = System.currentTimeMillis() - 5*60*1000; //5 minutes ago.
+            //kpp1-397, add time difference.
+            l = Activation.getServerTimeDifference()*1000 +  System.currentTimeMillis() - 5*60*1000; //5 minutes ago.
         }
         m_activation.postGetOrdersRequest(l);
 
@@ -1531,7 +1535,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDataOrders orders =  KDSBackofficeNotification.parseFirebaseJson(strData);
         if (orders == null) return;
         getKDSRouter().onFCMReceivedOrders(orders);
-        KDSRouterSettings.saveFCMTime(this, System.currentTimeMillis());
+        //Rev.: kpp1-397, add time difference.
+        KDSRouterSettings.saveFCMTime(this, System.currentTimeMillis()+Activation.getServerTimeDifference() * 1000);
     }
 
     private void connectBackofficeNotification()
