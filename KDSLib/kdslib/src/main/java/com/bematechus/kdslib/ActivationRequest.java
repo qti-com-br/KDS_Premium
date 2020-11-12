@@ -54,6 +54,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static final String REQ_SYNC =  "SYNC";
     static final String REQ_CLEANING_RESPONSE =  "STORE_CLEAN_RESPONSE";
     static final String REQ_GET_ORDERS =  "GET_ORDERS";
+    static final String REQ_GET_SERVER_TIME =  "GET_SERVER_TIME";
     /**
      *
      * Management
@@ -117,6 +118,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Sync_customer,
         Cleaning,
         Get_orders,
+        Get_server_time,
     }
 
     public enum ErrorType
@@ -134,6 +136,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Cancel_license_options,
         Replace_error,
         App_type_error, //kpp1-211 just premium app can login
+        Get_server_time_error,
     }
 
     COMMAND m_command = COMMAND.Unknown;
@@ -1809,6 +1812,30 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
         r.setCommand( COMMAND.Get_orders );
+        return r;
+
+
+    }
+
+    /**
+     * kpp1-397
+     *
+     * @return
+     */
+    static public ActivationRequest requestGetServerTime( )
+    {
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_SERVER_TIME);
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Get_server_time );
+        r.setHighPriority();
         return r;
 
 

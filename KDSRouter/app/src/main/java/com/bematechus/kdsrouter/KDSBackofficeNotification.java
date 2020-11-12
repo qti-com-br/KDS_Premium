@@ -1049,7 +1049,7 @@ public class KDSBackofficeNotification extends Handler{
         public void onOpen(ServerHandshake serverHandshake) {
 
             //sendStoreGuid();
-            //log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onOpen: " + serverHandshake.toString());
+            log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onOpen: " + serverHandshake.toString());
         }
 
         @Override

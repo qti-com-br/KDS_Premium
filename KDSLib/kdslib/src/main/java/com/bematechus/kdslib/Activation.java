@@ -273,6 +273,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                     break;
                 case Get_orders:
                     onActivationResponseGetOrders(http, request);
+                    break;
+                case Get_server_time:
+                    onActivationResponseServerTime(http, request);
+                    break;
 
             }
         }
@@ -918,6 +922,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         saveActivationGuid(guid);
         resetFailedCount(); //reset this counter!
         saveLastFailedReason(ActivationRequest.ErrorType.OK);
+
+        postGetServerTimeRequest(); //kpp1-397
+
         if (m_receiver != null)
             m_receiver.onActivationSuccess();
     }
@@ -2568,5 +2575,65 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
     }
 
+    static long mServerTimeDifference = 0;
+
+    /**
+     * Unit is seconds!!!!
+     * @return
+     */
+    static public long getServerTimeDifference()
+    {
+        return mServerTimeDifference;
+    }
+    static public void setServerTimeDifference(long secs)
+    {
+        mServerTimeDifference = secs;
+    }
+    /**
+     * kpp1-397
+     */
+    public void postGetServerTimeRequest()
+    {
+
+        ActivationRequest r = ActivationRequest.requestGetServerTime();
+        m_http.request(r);
+
+    }
+
+    /**
+     * [{"server_time":1605103898}]
+     * @param http
+     * @param request
+     */
+    private void onActivationResponseServerTime(ActivationHttp http, ActivationRequest request)
+    {
+        if (isResponseError(request.m_result))
+        {
+            fireActivationFailEvent(request.getCommand(), ActivationRequest.ErrorType.Get_server_time_error, getErrorMessage(request.m_result));
+            return;
+        }
+
+        try
+        {
+            JSONArray ar = new JSONArray(request.m_result);
+
+
+            for (int i=0; i< ar.length() ; i++)
+            {
+                JSONObject json =(JSONObject) ar.get(i);
+                long tm = json.getLong("server_time");
+                Date t = new Date();
+                setServerTimeDifference( tm -(long) (t.getTime()/1000) );
+                break;
+            }
+
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(), e);
+            //e.printStackTrace();
+        }
+
+    }
 
 }
