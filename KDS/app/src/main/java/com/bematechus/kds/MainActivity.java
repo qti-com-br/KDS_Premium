@@ -262,6 +262,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public void onTime() {
 
+
         //record last time.KPP1-192
         m_dtLastUpdateTime.setTime(System.currentTimeMillis());
 
@@ -537,6 +538,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         // kpp1-325
         forceAgreementAgreed();
+
 
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
 
@@ -6588,13 +6590,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             showToastMessage(getString(R.string.internal_doing_activation));// "Internal activation is in process, please logout again later.");
             return; //kpp1-304, maybe this cause kds can not logout issue.
         }
+
         m_activation.setStationID(getKDS().getStationID());
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        if (ar.size()<=0) {
-            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
-            return;//kpp1-304, maybe this cause kds can not logout issue.
-        }
-        m_activation.setMacAddress(ar.get(0));
+        //kpp1-399, allow mac is empty.
+        //if (ar.size()<=0)
+//        {
+//            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+//            return;//kpp1-304, maybe this cause kds can not logout issue.
+//        }
+        if (ar.size() >0)//kpp1-399
+            m_activation.setMacAddress(ar.get(0));
+
       //  m_activation.setMacAddress("BEMA0000011");//test
         //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
