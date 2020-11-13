@@ -128,7 +128,8 @@ public class KDSBackofficeNotification extends Handler{
     public boolean connectBackOffice()
     {
         if (Activation.getStoreGuid().isEmpty()) {
-            m_webSocket.close();
+            if (m_webSocket != null) //kpp1-397
+                m_webSocket.close();
             return false;
         }
 
