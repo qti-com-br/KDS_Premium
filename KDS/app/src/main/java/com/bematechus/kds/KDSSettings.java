@@ -1010,7 +1010,7 @@ public class KDSSettings extends SettingsBase {
 
         m_mapPrefID.put(ID.Settings_password, "string_kds_general_password");
         m_mapPrefID.put(ID.Settings_password_enabled, "bool_kds_general_enable_password");
-        m_mapPrefID.put(ID.Message_item_above, "bool_kds_item_premsg_above");
+        //m_mapPrefID.put(ID.Message_item_above, "bool_kds_item_premsg_above");//kpp1-402
         m_mapPrefID.put(ID.Message_order_bottom, "bool_kds_order_premsg_bottom");
 
         m_mapPrefID.put(ID.POS_notification_enabled, "bool_kds_general_notification_enable");
@@ -1569,7 +1569,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.Hide_navigation_bar, false);
         set(ID.Settings_password_enabled, false);
         set(ID.Settings_password, "");
-        set(ID.Message_item_above, false);
+        //set(ID.Message_item_above, false);//kpp1-402
         set(ID.Message_order_bottom, false);
         set(ID.POS_notification_enabled, false);//2.0.22, default should been true. 20190312, change default to false, as this create too many files in router.
 
