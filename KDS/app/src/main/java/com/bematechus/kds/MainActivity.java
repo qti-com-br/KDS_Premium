@@ -2365,7 +2365,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             setSelectedOrderGuid(KDSUser.USER.USER_A, nextGuid);
             //kpp1-389
-            this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
+            //in kpp1-398, comment this code.
+            //this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
 
             if (bRefresView)
                 getKDS().refreshView();
@@ -2389,7 +2390,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
                 }
                 //kpp1-389
-                this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
+                //In kpp1-398, remove it.
+                //this.getLayout(userID).adjustFocusOrderLayoutFirstShowingOrder(false);
 
             }
             if (bRefresView)
