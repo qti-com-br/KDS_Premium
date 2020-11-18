@@ -404,7 +404,7 @@ public class KDSBackofficeNotification extends Handler{
             order.setGUID(json.getString("guid"));
             order.setOrderName(json.getString("external_id"));
 
-            order.setStartTime(json.getLong("create_time"));
+            order.setStartTime(json.getLong("create_time")*1000);//kpp1-403, backoffice return seconds, we need ms.
             order.setCustomMsg(json.getString("user_info"));
             order.setToTable(json.getString("guest_table"));
             order.setFromPOSNumber(json.getString("pos_terminal"));
