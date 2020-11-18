@@ -957,7 +957,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         }
 
         //items
-        boolean bShowMessageAboveItem = getEnv().getSettings().getBoolean(KDSSettings.ID.Message_item_above);
+        boolean bShowMessageAboveItem = false;//kpp1-402 getEnv().getSettings().getBoolean(KDSSettings.ID.Message_item_above);
 
         int nLastGroupID = -1;
         ncount = dressedOrder.getItems().getCount();

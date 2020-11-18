@@ -6,10 +6,11 @@
         android:defaultValue="default_font,@color/premsg_bg,@color/premsg_fg,normal_size"
         android:title="@string/pref_premsg_font"
         app:supportsColor="true"/>
-    <CheckBoxPreference
-        android:key="kds_item_premsg_above"
-        android:title="@string/pref_kds_item_premsg_above"
-        android:defaultValue="false" />
+<!--   kpp1-402 -->
+<!--    <CheckBoxPreference-->
+<!--        android:key="kds_item_premsg_above"-->
+<!--        android:title="@string/pref_kds_item_premsg_above"-->
+<!--        android:defaultValue="false" />-->
 
     <CheckBoxPreference
         android:key="kds_order_premsg_bottom"
