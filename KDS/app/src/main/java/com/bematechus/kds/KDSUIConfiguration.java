@@ -1518,32 +1518,32 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class TrackerPreferenceFragment extends KDSPreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            suspendOnSharedPreferencesChangedEvent(true);
-            addPreferencesFromResource(R.xml.pref_tracker);
-            suspendOnSharedPreferencesChangedEvent(false); //KPP1-138, change from true to false.
-
-            bindPreferenceSummaryToValue(findPreference("tracker_title"));
-            bindPreferenceSummaryToValue(findPreference("tracker_cols"));
-            bindPreferenceSummaryToValue(findPreference("tracker_cell_height"));
-            bindPreferenceSummaryToValue(findPreference("tracker_auto_switch_duration"));
-            bindPreferenceSummaryToValue(findPreference("tracker_more_orders_message"));
-            bindPreferenceSummaryToValue(findPreference("tracker_alert_not_bump_timeout"));
-            bindPreferenceSummaryToValue(findPreference("tracker_auto_remove_after_expo_bump_timeout"));
-            bindPreferenceSummaryToValue(findPreference("tracker_auto_assign_timeout"));
-            bindPreferenceSummaryToValue(findPreference("tracker_number_from_userinfo_guesttable"));
-
-
-        }
-    }
+//    /**
+//     * This fragment shows data and sync preferences only. It is used when the
+//     * activity is showing a two-pane settings UI.
+//     */
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//    public static class TrackerPreferenceFragment extends KDSPreferenceFragment {
+//        @Override
+//        public void onCreate(Bundle savedInstanceState) {
+//            super.onCreate(savedInstanceState);
+//            suspendOnSharedPreferencesChangedEvent(true);
+//            addPreferencesFromResource(R.xml.pref_tracker);
+//            suspendOnSharedPreferencesChangedEvent(false); //KPP1-138, change from true to false.
+//
+//            bindPreferenceSummaryToValue(findPreference("tracker_title"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_cols"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_cell_height"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_auto_switch_duration"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_more_orders_message"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_alert_not_bump_timeout"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_auto_remove_after_expo_bump_timeout"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_auto_assign_timeout"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_number_from_userinfo_guesttable"));
+//
+//
+//        }
+//    }
 
     /**
      * This fragment shows data and sync preferences only. It is used when the
