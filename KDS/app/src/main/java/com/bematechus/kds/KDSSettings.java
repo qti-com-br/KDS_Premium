@@ -775,7 +775,7 @@ public class KDSSettings extends SettingsBase {
         Orders,
         Destination,
         Queue,//speed of service, or "Order Queue Display"
-        TableTracker,
+        TableTracker, //kpp1-406, remove it.
         LineItems,
         Sort_orders,
         MAX_COUNT,
@@ -1092,27 +1092,28 @@ public class KDSSettings extends SettingsBase {
 
        // m_mapPrefID.put(ID.Tracker_enabled,"bool_tracker_enabled");
 //        m_mapPrefID.put(ID.Tracker_IP,"string_tracker_server_ip");
-        m_mapPrefID.put(ID.Tracker_title,"string_tracker_title");
-        m_mapPrefID.put(ID.Tracker_use_userinfo,"bool_tracker_number_from_userinfo");
-        m_mapPrefID.put(ID.Tracker_holder_map,"string_tracker_holder_map");
-
-        m_mapPrefID.put(ID.Tracker_viewer_bg,"int_tracker_view_bg");
-        m_mapPrefID.put(ID.Tracker_viewer_cols,"string_tracker_cols");
-        m_mapPrefID.put(ID.Tracker_cell_height,"string_tracker_cell_height");
-        m_mapPrefID.put(ID.Tracker_auto_switch_duration,"string_tracker_auto_switch_duration");
-        m_mapPrefID.put(ID.Tracker_order_name_font,"fontface_tracker_order_name_font");
-        m_mapPrefID.put(ID.Tracker_table_name_font,"fontface_tracker_table_name_font");
-        m_mapPrefID.put(ID.Tracker_more_orders_message,"string_tracker_more_orders_message");
-
-        m_mapPrefID.put(ID.Tracker_show_timer,"bool_tracker_show_order_timer");
-        m_mapPrefID.put(ID.Tracker_order_timer_font,"fontface_tracker_order_timer_font");
-
-        m_mapPrefID.put(ID.Tracker_authen,"string_"+TRACKER_AUTHEN_KEY);
-        m_mapPrefID.put(ID.Tracker_auto_assign_timeout, "string_tracker_auto_assign_timeout");
-        m_mapPrefID.put(ID.Tracker_timeout_auto_remove_after_expo, "string_tracker_auto_remove_after_expo_bump_timeout");
-        m_mapPrefID.put(ID.Tracker_timeout_alert_not_bump,"string_tracker_alert_not_bump_timeout");
-        m_mapPrefID.put(ID.Tracker_alert_font,"fontface_tracker_alert_font");
-        m_mapPrefID.put(ID.Tracker_enable_auto_bump,"bool_tracker_enable_auto_bump");
+     //kpp1-406
+//        m_mapPrefID.put(ID.Tracker_title,"string_tracker_title");
+//        m_mapPrefID.put(ID.Tracker_use_userinfo,"bool_tracker_number_from_userinfo");
+//        m_mapPrefID.put(ID.Tracker_holder_map,"string_tracker_holder_map");
+//
+//        m_mapPrefID.put(ID.Tracker_viewer_bg,"int_tracker_view_bg");
+//        m_mapPrefID.put(ID.Tracker_viewer_cols,"string_tracker_cols");
+//        m_mapPrefID.put(ID.Tracker_cell_height,"string_tracker_cell_height");
+//        m_mapPrefID.put(ID.Tracker_auto_switch_duration,"string_tracker_auto_switch_duration");
+//        m_mapPrefID.put(ID.Tracker_order_name_font,"fontface_tracker_order_name_font");
+//        m_mapPrefID.put(ID.Tracker_table_name_font,"fontface_tracker_table_name_font");
+//        m_mapPrefID.put(ID.Tracker_more_orders_message,"string_tracker_more_orders_message");
+//
+//        m_mapPrefID.put(ID.Tracker_show_timer,"bool_tracker_show_order_timer");
+//        m_mapPrefID.put(ID.Tracker_order_timer_font,"fontface_tracker_order_timer_font");
+//
+//        m_mapPrefID.put(ID.Tracker_authen,"string_"+TRACKER_AUTHEN_KEY);
+//        m_mapPrefID.put(ID.Tracker_auto_assign_timeout, "string_tracker_auto_assign_timeout");
+//        m_mapPrefID.put(ID.Tracker_timeout_auto_remove_after_expo, "string_tracker_auto_remove_after_expo_bump_timeout");
+//        m_mapPrefID.put(ID.Tracker_timeout_alert_not_bump,"string_tracker_alert_not_bump_timeout");
+//        m_mapPrefID.put(ID.Tracker_alert_font,"fontface_tracker_alert_font");
+//        m_mapPrefID.put(ID.Tracker_enable_auto_bump,"bool_tracker_enable_auto_bump");
 
 
         m_mapPrefID.put(ID.Pager_enabled,"bool_pager_enabled");
@@ -1647,28 +1648,29 @@ public class KDSSettings extends SettingsBase {
 
         //set(ID.Tracker_enabled,false);
 //        set(ID.Tracker_IP,"");
-        set(ID.Tracker_title,getResString(R.string.tracker_default_title));
-        set(ID.Tracker_use_userinfo,false);
-        set(ID.Tracker_holder_map,"");
-        set(ID.Tracker_viewer_bg,getResColor( R.color.tracker_view_bg));
-        set(ID.Tracker_viewer_cols,"3");
-        set(ID.Tracker_cell_height,"80");
-        set(ID.Tracker_auto_switch_duration,"5");
-        set(ID.Tracker_order_name_font, new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-        set(ID.Tracker_table_name_font,new KDSViewFontFace( getResColor(R.color.tracker_table_name_bg),getResColor( R.color.tracker_table_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-        set(ID.Tracker_more_orders_message,getResString(R.string.more_orders));
-
-        set(ID.Tracker_show_timer,true);
-        set(ID.Tracker_order_timer_font,new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-
-        set(ID.Tracker_authen,"");
-        set(ID.Tracker_auto_assign_timeout, "30");
-        set(ID.Tracker_timeout_auto_remove_after_expo, "1");
-        set(ID.Tracker_timeout_alert_not_bump,"30");
-
-        set(ID.Tracker_alert_font,new KDSViewFontFace( getResColor(R.color.tracker_alert_bg),getResColor( R.color.tracker_alert_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-
-        set(ID.Tracker_enable_auto_bump,true);
+     //kpp1-406
+//        set(ID.Tracker_title,getResString(R.string.tracker_default_title));
+//        set(ID.Tracker_use_userinfo,false);
+//        set(ID.Tracker_holder_map,"");
+//        set(ID.Tracker_viewer_bg,getResColor( R.color.tracker_view_bg));
+//        set(ID.Tracker_viewer_cols,"3");
+//        set(ID.Tracker_cell_height,"80");
+//        set(ID.Tracker_auto_switch_duration,"5");
+//        set(ID.Tracker_order_name_font, new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//        set(ID.Tracker_table_name_font,new KDSViewFontFace( getResColor(R.color.tracker_table_name_bg),getResColor( R.color.tracker_table_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//        set(ID.Tracker_more_orders_message,getResString(R.string.more_orders));
+//
+//        set(ID.Tracker_show_timer,true);
+//        set(ID.Tracker_order_timer_font,new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//
+//        set(ID.Tracker_authen,"");
+//        set(ID.Tracker_auto_assign_timeout, "30");
+//        set(ID.Tracker_timeout_auto_remove_after_expo, "1");
+//        set(ID.Tracker_timeout_alert_not_bump,"30");
+//
+//        set(ID.Tracker_alert_font,new KDSViewFontFace( getResColor(R.color.tracker_alert_bg),getResColor( R.color.tracker_alert_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//
+//        set(ID.Tracker_enable_auto_bump,true);
 
         set(ID.Pager_enabled,false);
         set(ID.Pager_use_userinfo,false);
