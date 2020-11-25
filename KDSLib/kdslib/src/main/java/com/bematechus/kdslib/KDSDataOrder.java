@@ -1441,7 +1441,9 @@ public class KDSDataOrder extends KDSData {
                 String transType = KDSUtil.convertIntToString( this.getTransType());
                 if (this.getItems().getCount()==0)
                 {
-                    transType = KDSConst.KDS_Transaction_Type_Modify;
+                    //kpp1-409
+                    if (this.getTransType() != TRANSTYPE_DELETE)//don't change delete
+                        transType = KDSConst.KDS_Transaction_Type_Modify;
                 }
 
                 pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRANSTYPE, transType , false); //add

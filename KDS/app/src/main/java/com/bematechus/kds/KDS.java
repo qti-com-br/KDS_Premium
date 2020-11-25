@@ -2925,6 +2925,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 if (!order.isAllItemsNotForNew())//if just single item withe "del/modify", it will cause add a new item ugly
                     ntrans = KDSDataOrder.TRANSTYPE_ADD;
             }
+            //kpp1-409, order name is empty, but its guid is not.
+            if (order.getOrderName().isEmpty() && (m_users.getOrderByGUID(order.getGUID()) != null))
+            {//restore old transtype
+
+               ntrans = KDSDataOrder.TRANSTYPE_MODIFY;
+            }
+
+
         }
         switch (ntrans)
         {

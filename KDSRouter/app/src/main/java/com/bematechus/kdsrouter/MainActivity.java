@@ -1520,21 +1520,22 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
     {
-        if (evt == Activation.ActivationEvent.Get_orders)
-        {
-            if (arParams.size() >0)
-                receiveBackofficeOrders((String)arParams.get(0));
-        }
+//        if (evt == Activation.ActivationEvent.Get_orders)
+//        {
+//            if (arParams.size() >0)
+//                receiveBackofficeOrders((String)arParams.get(0));
+//        }
         return null;
     }
 
     /**
      *  I get the orders JSON string.
+     * @param evt
      * @param strData
      */
-    private void receiveBackofficeOrders(String strData)
+    private void receiveBackofficeOrders(String evt, String strData)
     {
-        KDSDataOrders orders =  KDSBackofficeNotification.parseFirebaseJson(strData);
+        KDSDataOrders orders =  KDSBackofficeNotification.parseApiJson(evt, strData);
         if (orders == null) return;
         getKDSRouter().onFCMReceivedOrders(orders);
         //Rev.: kpp1-397, add time difference.
@@ -1550,9 +1551,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_backofficeNotification.connectBackOffice();
     }
 
-    public void onBackofficeNotifyEvent(String evt)
+    public void onBackofficeNotifyEvent(String evt, String data)
     {
-        downloadBackofficeOrders();
+        //downloadBackofficeOrders(); //kpp1-409
+        receiveBackofficeOrders(evt, data);
     }
 }
 
