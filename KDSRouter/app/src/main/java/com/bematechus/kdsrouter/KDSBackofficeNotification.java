@@ -62,7 +62,7 @@ public class KDSBackofficeNotification extends Handler{
     static final String TAG = "BackOfficeNotification";
     static final String BACKOFFICE_URI = "ws://dev.kdsgo.com:9205";//
 
-    public static boolean ENABLE_DEBUG = true; //show debug orders!!
+    public static boolean ENABLE_DEBUG = false; //show debug orders!!
 
     //static final int SHOW_MSG = 1;
     static final int CONNECT_WEBSOCKET = 2;
@@ -168,7 +168,7 @@ public class KDSBackofficeNotification extends Handler{
             else
             {
                 if (m_webSocket.isOpen()) return true;
-                if (m_webSocket.isConnecting()) return true;
+                //if (m_webSocket.isConnecting()) return true;//kpp1-409
                 if (m_webSocket.isClosing()) return false;
 
                 m_webSocket.close();
@@ -191,7 +191,7 @@ public class KDSBackofficeNotification extends Handler{
     {
         if (m_webSocket == null) return false;
         if (m_webSocket.isOpen()) return true;
-        if (m_webSocket.isConnecting()) return true;
+        //if (m_webSocket.isConnecting()) return true; //kp1-409, new websocket version remove this function.
         if (m_webSocket.isClosing()) return false;
         if (m_webSocket.isClosed()) return false;
         if (m_webSocket.isFlushAndClose()) return false;
@@ -628,8 +628,9 @@ public class KDSBackofficeNotification extends Handler{
                 break;
                 case API_EVENT_ITEM_UPDATED:
                 {
-                    String orderGuid = KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES;
+                    String orderGuid = "";//KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES;
                     KDSDataItem item = parseJsonItemUpdated(orderGuid, strData);
+                    orderGuid = item.getOrderGUID();
                     KDSDataOrder order = new KDSDataOrder();
                     order.setGUID(orderGuid);
                     order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
@@ -640,8 +641,9 @@ public class KDSBackofficeNotification extends Handler{
                 break;
                 case API_EVENT_ITEM_VOIDED:
                 {
-                    String orderGuid = KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES;
+                    String orderGuid = "";//KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES;
                     KDSDataItem item = parseJsonItemVoid(orderGuid, strData);
+                    orderGuid = item.getOrderGUID();
                     KDSDataOrder order = new KDSDataOrder();
                     order.setGUID(orderGuid);
                     order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
@@ -891,7 +893,7 @@ public class KDSBackofficeNotification extends Handler{
      *
      * @param orderGuid
      * @param strJson
-     * {"quantity":5,"guid":"194a53c0-eee7-4e82-b681-8dada1e7649b"}
+     * {"quantity":6,"guid":"f0e9b98e-8e8e-4fcb-8965-8d90d9efb91c","order_guid":"62ee4e70-37f9-4c91-81c6-4c650a0e9eec"}
      * @return
      */
     static private KDSDataItem parseJsonItemUpdated(String orderGuid, String strJson)
@@ -901,6 +903,9 @@ public class KDSBackofficeNotification extends Handler{
 
 
             KDSDataItem item = new KDSDataItem();
+            if (orderGuid.isEmpty())
+                orderGuid = jsonItem.getString("order_guid");
+
             item.setOrderGUID(orderGuid);
             item.setLocalBumped(false);
             item.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
@@ -931,14 +936,15 @@ public class KDSBackofficeNotification extends Handler{
      *
      * @param orderGuid
      * @param strJson
-     * {"guid":"194a53c0-eee7-4e82-b681-8dada1e7649b"}
+     * {"guid":"f0e9b98e-8e8e-4fcb-8965-8d90d9efb91c","order_guid":"62ee4e70-37f9-4c91-81c6-4c650a0e9eec"}
      * @return
      */
     static private KDSDataItem parseJsonItemVoid(String orderGuid, String strJson)
     {
         try {
             JSONObject jsonItem = new JSONObject(strJson);
-
+            if (orderGuid.isEmpty())
+                orderGuid = jsonItem.getString("order_guid");
 
             KDSDataItem item = new KDSDataItem();
             item.setOrderGUID(orderGuid);
