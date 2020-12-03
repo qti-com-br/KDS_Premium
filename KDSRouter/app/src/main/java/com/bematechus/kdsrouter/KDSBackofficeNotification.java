@@ -2,8 +2,11 @@ package com.bematechus.kdsrouter;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Base64;
+import android.util.Log;
 
 import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataMessage;
@@ -79,7 +82,7 @@ public class KDSBackofficeNotification extends Handler{
 
     public interface BackofficeNotification_Event
     {
-        void onBackofficeNotifyEvent(String evt);
+        void onBackofficeNotifyEvent(String evt, String data);
     }
 
     BackofficeNotification_Event m_receiver = null;
@@ -165,7 +168,7 @@ public class KDSBackofficeNotification extends Handler{
             else
             {
                 if (m_webSocket.isOpen()) return true;
-                if (m_webSocket.isConnecting()) return true;
+                //if (m_webSocket.isConnecting()) return true;//kpp1-409
                 if (m_webSocket.isClosing()) return false;
 
                 m_webSocket.close();
@@ -188,7 +191,7 @@ public class KDSBackofficeNotification extends Handler{
     {
         if (m_webSocket == null) return false;
         if (m_webSocket.isOpen()) return true;
-        if (m_webSocket.isConnecting()) return true;
+        //if (m_webSocket.isConnecting()) return true; //kp1-409, new websocket version remove this function.
         if (m_webSocket.isClosing()) return false;
         if (m_webSocket.isClosed()) return false;
         if (m_webSocket.isFlushAndClose()) return false;
@@ -208,6 +211,42 @@ public class KDSBackofficeNotification extends Handler{
      * ["sync", "item_created"]
      * ["sync", "item_updated"]
      * ["sync", "item_voided"]
+     *
+     * Create Order:
+     * 42["order_created", "eyJPcmRlciI6eyJJRCI6Ik8tMjAwMTEwLTEyMzQiLCJEZXN0aW5hdGlvbiI6IkRpbmUgSW4iLCJHdWVzdFRhYmxlIjoiMTIiLCJDdXN0b21lciI6eyJVc2VySW5mbyI6IkpvaG4gRG9lIFwvIFNocmltcCBBbGxlcmd5In0sIkl0ZW1zIjpbeyJJRCI6IlAtQ0IiLCJOYW1lIjoiQ2hlZXNlIEJ1cmdlciIsIkNhdGVnb3J5IjoiQnVyZ2VycyIsIktEU1N0YXRpb24iOjEsIlF1YW50aXR5IjoxLCJDb25kaW1lbnRzIjpbXX0seyJJRCI6IlMtRlIiLCJOYW1lIjoiRnJpZXMiLCJDYXRlZ29yeSI6IlNpZGVzIiwiS0RTU3RhdGlvbiI6MSwiUXVhbnRpdHkiOjEsIkNvbmRpbWVudHMiOlt7IklEIjoiQy1OUyIsIk5hbWUiOiJOTyBzYWx0In0seyJJRCI6IkMtRUMiLCJOYW1lIjoiRVhUUkEgQ2hlZGRhciJ9XX1dLCJPcmRlckd1aWQiOiIwMjYyOTE5Mi05YTM3LTRmNGMtYjIzYy0wNTczNjEwMDVhYmYifX0="]
+     *
+     * Base64 decode of message (Order info):
+     * {"Order":{"ID":"O-200110-1234","Destination":"Dine In","GuestTable":"12","Customer":{"UserInfo":"John Doe / Shrimp Allergy"},"Items":[{"ID":"P-CB","Name":"Cheese Burger","Category":"Burgers","KDSStation":1,"Quantity":1,"Condiments":[]},{"ID":"S-FR","Name":"Fries","Category":"Sides","KDSStation":1,"Quantity":1,"Condiments":[{"ID":"C-NS","Name":"NO salt"},{"ID":"C-EC","Name":"EXTRA Cheddar"}]}],"OrderGuid":"02629192-9a37-4f4c-b23c-057361005abf"}}
+     *
+     * Void Order:
+     * 42["order_voided", "eyJPcmRlckd1aWQiOiIwMjYyOTE5Mi05YTM3LTRmNGMtYjIzYy0wNTczNjEwMDVhYmYifQ=="]
+     *
+     * Base64 decode of message (OrderGuid only):
+     * {"OrderGuid":"02629192-9a37-4f4c-b23c-057361005abf"}
+     *
+     * Update Order:
+     * 42["order_updated", "eyJDdXN0b21lciI6eyJVc2VySW5mbyI6IlVJLTExLTEwIn0sIkRlc3RpbmF0aW9uIjoiTmV3IERlc3RpbmF0aW9uIiwiT3JkZXJHdWlkIjoiYjUzNGQ3OTItYmI0MS00YjdmLTkyNmUtYzY5ZTE5MDA1NzJhIn0="]
+     *
+     * Base64 decode of message (OrderGuid + updated elements):
+     * {"Customer":{"UserInfo":"UI-11-10"},"Destination":"New Destination","OrderGuid":"b534d792-bb41-4b7f-926e-c69e1900572a"}
+     *
+     * Create Item:
+     * 42["item_created", "eyJJRCI6Ikl0ZW0tTkVXIiwiTmFtZSI6IkZyaWVzIiwiQ2F0ZWdvcnkiOiJTaWRlcyIsIktEU1N0YXRpb24iOjEsIlF1YW50aXR5IjoxLCJDb25kaW1lbnRzIjpbeyJJRCI6IkNvbmQtMSIsIk5hbWUiOiJOTyBzYWx0In0seyJJRCI6IkNvbmQtMiIsIk5hbWUiOiJFWFRSQSBDaGVkZGFyIn1dLCJJdGVtR3VpZCI6WyIyM2JjNWQxNS02NTU0LTRlYzctOTQ4NC1iOWVkNzhlMjQ3YTQiXX0="]
+     *
+     * Base64 decode of message (Notice that ItemGuid is an array of 1 element for Premium):
+     * {"ID":"Item-NEW","Name":"Fries","Category":"Sides","KDSStation":1,"Quantity":1,"Condiments":[{"ID":"Cond-1","Name":"NO salt"},{"ID":"Cond-2","Name":"EXTRA Cheddar"}],"ItemGuid":["23bc5d15-6554-4ec7-9484-b9ed78e247a4"]}
+     *
+     * Update Item:
+     * 42["item_updated", "eyJLRFNTdGF0aW9uIjoyLCJRdWFudGl0eSI6NSwiSXRlbUd1aWQiOiIyM2JjNWQxNS02NTU0LTRlYzctOTQ4NC1iOWVkNzhlMjQ3YTQifQ=="]
+     *
+     * Base64 decode of message (ItemGuid + updated elements):
+     * {"KDSStation":2,"Quantity":5,"ItemGuid":"23bc5d15-6554-4ec7-9484-b9ed78e247a4"}
+     *
+     * Void Item:
+     * 42["item_voided", "eyJJdGVtR3VpZCI6IjIzYmM1ZDE1LTY1NTQtNGVjNy05NDg0LWI5ZWQ3OGUyNDdhNCJ9"]
+     *
+     * Base64 decode of message (ItemGuid only):
+     * {"ItemGuid":"23bc5d15-6554-4ec7-9484-b9ed78e247a4"}
      * @param strNotification
      * @return
      */
@@ -218,7 +257,7 @@ public class KDSBackofficeNotification extends Handler{
         {
 
         }
-        else if (strNotification.indexOf(MSG_KEY_SYNC) >=0)
+        else //if (strNotification.indexOf(MSG_KEY_SYNC) >=0)
         {
             String ar[] = new String[]{API_EVENT_ORDER_CREATED,API_EVENT_ORDER_UPDATED ,API_EVENT_ORDER_VOIDED,
                                        API_EVENT_ITEM_CREATED, API_EVENT_ITEM_UPDATED, API_EVENT_ITEM_VOIDED};
@@ -226,7 +265,8 @@ public class KDSBackofficeNotification extends Handler{
             for (int i=0; i< ar.length; i++)
             {
                 if (strNotification.indexOf(ar[i]) >=0) {
-                    m_receiver.onBackofficeNotifyEvent(ar[i]);
+                    String data = getNotifyData(strNotification);
+                    m_receiver.onBackofficeNotifyEvent(ar[i], data);
                     break;
                 }
             }
@@ -392,10 +432,100 @@ public class KDSBackofficeNotification extends Handler{
      "external_id": 839,
      "customer_guid": "< null >"
      }]
+     ///////kpp1-409
+     {
+     "Order":{
+     "ID":"O-200110-1234",
+     "Destination":"Dine In",
+     "GuestTable":"12",
+     "Customer":{
+     "UserInfo":"John Doe / Shrimp Allergy"
+     },
+     "Items":[
+     {
+     "ID":"P-CB",
+     "Name":"Cheese Burger",
+     "Category":"Burgers",
+     "KDSStation":1,
+     "Quantity":1,
+     "Condiments":[
+
+     ]
+     },
+     {
+     "ID":"S-FR",
+     "Name":"Fries",
+     "Category":"Sides",
+     "KDSStation":1,
+     "Quantity":1,
+     "Condiments":[
+     {
+     "ID":"C-NS",
+     "Name":"NO salt"
+     },
+     {
+     "ID":"C-EC",
+     "Name":"EXTRA Cheddar"
+     }
+     ]
+     }
+     ],
+     "OrderGuid":"02629192-9a37-4f4c-b23c-057361005abf"
+     }
+     }
+     /////////////////////////////////
+     {
+     "guid":"8f16cd9f-5e9e-4fd5-a4f1-e0662faba329",
+     "store_guid":"ca1646de-3a24-4ce5-a5b5-cbe4c5165422",
+     "destination":"Dine In",
+     "external_id":"8156",
+     "guest_table":"12",
+     "is_priority":0,
+     "items_count":1,
+     "order_type":"ONLINE",
+     "preparation_time":0,
+     "server_name":"Logic Controls",
+     "user_info":"John Doe / Shrimp Allergy",
+     "done":0,
+     "create_time":1606267535,
+     "update_time":1606267536,
+     "upload_time":0,
+     "is_deleted":0,
+     "phone":0,
+     "create_local_time":1606267535,
+     "is_hidden":0,
+     "smart_order_start_time":0,
+     "items":[
+     {
+     "guid":"7ead204a-4505-455e-812d-7605a38ebe3e",
+     "order_guid":"8f16cd9f-5e9e-4fd5-a4f1-e0662faba329",
+     "item_bump_guid":"e191fb4a-d01a-4173-a40e-ad9656fd1d1c",
+     "name":"Cheese Burger",
+     "device_id":5,
+     "external_id":"123",
+     "is_priority":0,
+     "condiments_count":0,
+     "beeped":0,
+     "create_time":1606267535,
+     "update_time":1606267536,
+     "upload_time":0,
+     "is_deleted":0,
+     "printed_status":0,
+     "create_local_time":1606267535,
+     "is_hidden":0,
+     "ready_since_local_time":0,
+     "category":"Burgers",
+     "quantity":1,
+     "condiments":[
+
+     ]
+     }
+     ]
+     }
      * @param json
      * @return
      */
-    static KDSDataOrder parseFirebaseOrderJson(JSONObject json)
+    private static KDSDataOrder parseBackOfficeOrderJson(JSONObject json)
     {
         try {
 
@@ -403,12 +533,14 @@ public class KDSBackofficeNotification extends Handler{
 
             order.setGUID(json.getString("guid"));
             order.setOrderName(json.getString("external_id"));
+            order.setDestination(json.getString("destination"));
+            order.setToTable(json.getString("guest_table"));
 
             order.setStartTime(json.getLong("create_time")*1000);//kpp1-403, backoffice return seconds, we need ms.
             order.setCustomMsg(json.getString("user_info"));
-            order.setToTable(json.getString("guest_table"));
-            order.setFromPOSNumber(json.getString("pos_terminal"));
-            order.setDestination(json.getString("destination"));
+
+            //order.setFromPOSNumber(json.getString("pos_terminal"));
+
             order.setOrderType(json.getString("order_type"));
             order.setWaiterName(json.getString("server_name"));
             //customer
@@ -423,7 +555,7 @@ public class KDSBackofficeNotification extends Handler{
             {
                 JSONObject jsonItem = (JSONObject) arItems.get(i);
 
-                KDSDataItem item = parseItemJson(order.getGUID(), jsonItem);
+                KDSDataItem item = parseJsonItemCreated(order.getGUID(), jsonItem);
                 if (item == null) continue;
                 order.getItems().addComponent(item);
             }
@@ -439,25 +571,96 @@ public class KDSBackofficeNotification extends Handler{
     }
 
     /**
-     *
+     * @param evt
      * @param strData
      *  It can contain multiple orders in it.
      * @return
      */
-    static KDSDataOrders parseFirebaseJson(String strData)
+    public static KDSDataOrders parseApiJson(String evt, String strData)
     {
         try {
             KDSDataOrders orders = new KDSDataOrders();
-            JSONArray ar = new JSONArray(strData);
-            if (ar == null)
-                return null;
-            if (ar.length() <= 0) return null;
-            for (int i=0; i< ar.length(); i++) {
-                JSONObject json = (JSONObject) ar.get(i);//order data.
-                KDSDataOrder order = parseFirebaseOrderJson(json);
-                if (order != null)
+//            JSONArray ar = new JSONArray(strData);
+//            if (ar == null)
+//                return null;
+//            if (ar.length() <= 0) return null;
+            switch (evt)
+            {
+                case API_EVENT_ORDER_CREATED:
+                {
+
+                    KDSDataOrder order = parseJsonOrderCreate(strData);
+                    if (order != null)
+                        orders.addOrderWithoutSort(order);
+                }
+                break;
+                case API_EVENT_ORDER_UPDATED:
+                {
+                    KDSDataOrder order = parseJsonOrderUpdate(strData);
+                    if (order != null)
+                        orders.addOrderWithoutSort(order);
+                }
+                break;
+                case API_EVENT_ORDER_VOIDED:
+                {
+                    KDSDataOrder order = parseJsonOrderVoid(strData);
+                    if (order != null)
+                        orders.addOrderWithoutSort(order);
+                }
+                break;
+                case API_EVENT_ITEM_CREATED:
+                {
+                    JSONArray jsons = new JSONArray(strData);
+                    KDSDataOrder order = new KDSDataOrder();
+                    for (int i=0; i< jsons.length(); i++) {
+                        JSONObject json = jsons.getJSONObject(i);
+                        String orderGuid = json.getString("order_guid");
+                        KDSDataItem item = parseJsonItemCreated(orderGuid, json);
+
+                        order.setGUID(orderGuid);
+                        order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
+                        order.getItems().addComponent(item);
+                    }
+                    if (jsons.length() >0)
+                        orders.addOrderWithoutSort(order);
+
+                }
+                break;
+                case API_EVENT_ITEM_UPDATED:
+                {
+                    String orderGuid = "";//KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES;
+                    KDSDataItem item = parseJsonItemUpdated(orderGuid, strData);
+                    orderGuid = item.getOrderGUID();
+                    KDSDataOrder order = new KDSDataOrder();
+                    order.setGUID(orderGuid);
+                    order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
+
+                    order.getItems().addComponent(item);
                     orders.addOrderWithoutSort(order);
+                }
+                break;
+                case API_EVENT_ITEM_VOIDED:
+                {
+                    String orderGuid = "";//KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES;
+                    KDSDataItem item = parseJsonItemVoid(orderGuid, strData);
+                    orderGuid = item.getOrderGUID();
+                    KDSDataOrder order = new KDSDataOrder();
+                    order.setGUID(orderGuid);
+                    order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
+
+                    order.getItems().addComponent(item);
+                    orders.addOrderWithoutSort(order);
+                }
+                break;
+                default:
+                    break;
             }
+//            for (int i=0; i< ar.length(); i++) {
+//                JSONObject json = (JSONObject) ar.get(i);//order data.
+//                KDSDataOrder order = parseBackOfficeOrderJson(json);
+//                if (order != null)
+//                    orders.addOrderWithoutSort(order);
+//            }
             return orders;
         }
         catch (Exception e)
@@ -467,6 +670,107 @@ public class KDSBackofficeNotification extends Handler{
         return null;
     }
 
+    /**
+     *
+     * @param strData
+     * {"Order":{"ID":"O-200110-1234","Destination":"Dine In","GuestTable":"12","Customer":{"UserInfo":"John Doe / Shrimp Allergy"},"Items":[{"ID":"P-CB","Name":"Cheese Burger","Category":"Burgers","KDSStation":1,"Quantity":1,"Condiments":[]},{"ID":"S-FR","Name":"Fries","Category":"Sides","KDSStation":1,"Quantity":1,"Condiments":[{"ID":"C-NS","Name":"NO salt"},{"ID":"C-EC","Name":"EXTRA Cheddar"}]}],"OrderGuid":"02629192-9a37-4f4c-b23c-057361005abf"}}
+     * @return
+     */
+    static KDSDataOrder parseJsonOrderCreate(String strData)
+    {
+        try {
+
+
+            JSONObject json = new JSONObject(strData);
+            //JSONObject jsonOrder =  json.getJSONObject("Order");
+            KDSDataOrder order = parseBackOfficeOrderJson(json);
+            return order;
+        }
+        catch (Exception e)
+        {
+
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param strData
+     *
+     * {"guid":"6a029c37-7b72-4b89-9277-5c638b9f8bac"}
+     * @return
+     */
+    static KDSDataOrder parseJsonOrderVoid(String strData)
+    {
+        try {
+            JSONObject json = new JSONObject(strData);
+            String orderGuid = json.getString("guid");
+            KDSDataOrder order = new KDSDataOrder();
+            order.setGUID(orderGuid);
+            order.setTransType(KDSDataOrder.TRANSTYPE_DELETE);
+            return order;
+        }
+        catch ( Exception e)
+        {
+            e.printStackTrace();
+
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param strData
+     *
+     *{
+     *     "external_id":"O-200110-1239",
+     *     "guest_table":"GT-10-47",
+     *     "destination":"Dest-10-47",
+     *     "user_info":"UI-10-47",
+     *     "guid":"c6a9d6b2-94a5-4089-8d6d-fba6618bab03"
+     * }
+     *
+     * @return
+     */
+    static KDSDataOrder parseJsonOrderUpdate(String strData)
+    {
+        try {
+            JSONObject json = new JSONObject(strData);
+
+            KDSDataOrder order = new KDSDataOrder();
+
+            order.setGUID(json.getString("guid")); //this must existed.
+            order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
+
+            order.setOrderName(json.getString("external_id"));
+
+            //order.setStartTime(json.getLong("create_time") * 1000);//kpp1-403, backoffice return seconds, we need ms.
+            if (json.has("user_info"))
+                order.setCustomMsg(json.getString("user_info"));
+            if (json.has("guest_table"))
+            order.setToTable(json.getString("guest_table"));
+            if (json.has("pos_terminal"))
+            order.setFromPOSNumber(json.getString("pos_terminal"));
+            if (json.has("destination"))
+            order.setDestination(json.getString("destination"));
+            if (json.has("order_type"))
+            order.setOrderType(json.getString("order_type"));
+            if (json.has("server_name"))
+            order.setWaiterName(json.getString("server_name"));
+            //customer
+            if (json.has("customer")) {
+                JSONObject jsonCustomer = json.getJSONObject("customer");
+                order.getCustomer().setName(jsonCustomer.getString("name"));
+                order.getCustomer().setPhone(jsonCustomer.getString("phone"));
+            }
+            return order;
+        }
+        catch ( Exception e)
+        {
+
+        }
+        return null;
+    }
 //    public boolean isGooglePlayServicesAvailable(Context context)
 //    {
 //        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
@@ -490,34 +794,83 @@ public class KDSBackofficeNotification extends Handler{
 
     /**
      *
+     [
+        {
+             "guid":"819c9124-60a7-45cc-9762-0ba17e30e8fc",
+             "order_guid":"1bb09597-de13-45f1-ad92-d7db34067e42",
+             "item_bump_guid":"3f821cb4-4243-47b7-9700-8ef66b5b51ae",
+             "name":"New Fries",
+             "device_id":1,
+             "external_id":"Item-NEW",
+             "is_priority":0,
+             "condiments_count":2,
+             "beeped":0,
+             "create_time":1606277129,
+             "update_time":1606277130,
+             "upload_time":0,
+             "is_deleted":0,
+             "printed_status":0,
+             "create_local_time":1606277129,
+             "is_hidden":0,
+             "ready_since_local_time":0,
+             "category":"Sides",
+             "quantity":1,
+             "condiments":[
+             {
+                 "guid":"f59c5fb3-2446-4d26-845c-bb6faa20cc68",
+                 "item_guid":"819c9124-60a7-45cc-9762-0ba17e30e8fc",
+                 "external_id":"Cond-1",
+                 "name":"New NO salt",
+                 "create_time":1606277129,
+                 "update_time":1606277130,
+                 "upload_time":0,
+                 "is_deleted":0,
+                 "update_device":0,
+                 "create_local_time":1606277129
+             },
+             {
+                 "guid":"6b5e79ee-7379-4d55-98bf-a8681149c60e",
+                 "item_guid":"819c9124-60a7-45cc-9762-0ba17e30e8fc",
+                 "external_id":"Cond-2",
+                 "name":"New EXTRA Cheddar",
+                 "create_time":1606277129,
+                 "update_time":1606277130,
+                 "upload_time":0,
+                 "is_deleted":0,
+                 "update_device":0,
+                 "create_local_time":1606277129
+             }
+             ]
+        }
+     ]
+
      * @param orderGuid
      * @param jsonItem
      * @return
      */
-    static private KDSDataItem parseItemJson(String orderGuid, JSONObject jsonItem)
+    static private KDSDataItem parseJsonItemCreated(String orderGuid, JSONObject jsonItem)
     {
         try {
             KDSDataItem item = new KDSDataItem();
             item.setOrderGUID(orderGuid);
             item.setLocalBumped(false);
-            item.setBuildCard(jsonItem.getString("build_card"));
-            item.setCategory(jsonItem.getString("category"));
             item.setItemName(jsonItem.getString("external_id"));
-            if (!ENABLE_DEBUG) {
-                if (jsonItem.has("device_id"))
-                    item.setToStationsString(jsonItem.getString("device_id")); //get to stations from "device_id"
-                //item.setToStationsString("4"); //debug firebase
-
-            }
-            item.setGUID(jsonItem.getString("guid"));
             item.setDescription(jsonItem.getString("name"));
-            item.setItemBumpGuid(jsonItem.getString("item_bump_guid"));
+            item.setCategory(jsonItem.getString("category"));
+            //item.setBuildCard(jsonItem.getString("build_card"));
+            if (!ENABLE_DEBUG)
+                item.setToStationsString(jsonItem.getString("device_id")); //get to stations from "device_id"
+
             item.setQty(jsonItem.getInt("quantity"));
-            String preModifiers = jsonItem.getString("pre_modifier");
-            if (!isNullStringValue(preModifiers)) {
-                KDSDataMessages messages = KDSDataMessages.parseString(preModifiers, item.getGUID(), KDSDataMessage.FOR_Item);
-                item.setPreModifiers(messages);
-            }
+            item.setGUID(jsonItem.getString("guid"));
+
+            item.setItemBumpGuid(jsonItem.getString("item_bump_guid"));
+
+//            String preModifiers = jsonItem.getString("pre_modifier");
+//            if (!isNullStringValue(preModifiers)) {
+//                KDSDataMessages messages = KDSDataMessages.parseString(preModifiers, item.getGUID(), KDSDataMessage.FOR_Item);
+//                item.setPreModifiers(messages);
+//            }
             JSONArray arCondiments = jsonItem.getJSONArray("condiments");
             for (int j = 0; j < arCondiments.length(); j++) {
                 JSONObject jsonCondiment = (JSONObject) arCondiments.get(j);
@@ -536,9 +889,108 @@ public class KDSBackofficeNotification extends Handler{
     }
 
     /**
+     * {"KDSStation":2,"Quantity":5,"ItemGuid":"23bc5d15-6554-4ec7-9484-b9ed78e247a4"}
+     *
+     * @param orderGuid
+     * @param strJson
+     * {"quantity":6,"guid":"f0e9b98e-8e8e-4fcb-8965-8d90d9efb91c","order_guid":"62ee4e70-37f9-4c91-81c6-4c650a0e9eec"}
+     * @return
+     */
+    static private KDSDataItem parseJsonItemUpdated(String orderGuid, String strJson)
+    {
+        try {
+            JSONObject jsonItem = new JSONObject(strJson);
+
+
+            KDSDataItem item = new KDSDataItem();
+            if (orderGuid.isEmpty())
+                orderGuid = jsonItem.getString("order_guid");
+
+            item.setOrderGUID(orderGuid);
+            item.setLocalBumped(false);
+            item.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
+            item.setGUID(jsonItem.getString("guid"));
+
+            if (jsonItem.has("external_id"))
+                item.setItemName(jsonItem.getString("external_id"));
+            if (jsonItem.has("name"))
+                item.setDescription(jsonItem.getString("name"));
+            if (jsonItem.has("category"))
+                item.setCategory(jsonItem.getString("category"));
+            //item.setBuildCard(jsonItem.getString("build_card"));
+            if (jsonItem.has("device_id"))
+                item.setToStationsString(jsonItem.getString("device_id")); //get to stations from "device_id"
+            if (jsonItem.has("quantity"))
+                item.setQty(jsonItem.getInt("quantity"));
+            return item;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     *
+     * @param orderGuid
+     * @param strJson
+     * {"guid":"f0e9b98e-8e8e-4fcb-8965-8d90d9efb91c","order_guid":"62ee4e70-37f9-4c91-81c6-4c650a0e9eec"}
+     * @return
+     */
+    static private KDSDataItem parseJsonItemVoid(String orderGuid, String strJson)
+    {
+        try {
+            JSONObject jsonItem = new JSONObject(strJson);
+            if (orderGuid.isEmpty())
+                orderGuid = jsonItem.getString("order_guid");
+
+            KDSDataItem item = new KDSDataItem();
+            item.setOrderGUID(orderGuid);
+            item.setLocalBumped(false);
+            item.setTransType(KDSDataOrder.TRANSTYPE_DELETE);
+            item.setGUID(jsonItem.getString("guid"));
+
+            return item;
+        }
+        catch (Exception e)
+        {
+
+        }
+        return null;
+    }
+
+    /**
      *
      * @param itemGuid
      * @param jsonCondiment
+     *  "condiments":[
+     *                 {
+     *                     "guid":"a1144b56-8dbc-47fd-b3e0-5f038bf09a3c",
+     *                     "item_guid":"533fa8db-6c44-4631-9648-5f3485d3311a",
+     *                     "external_id":"C-NS",
+     *                     "name":"NO salt",
+     *                     "create_time":1606268135,
+     *                     "update_time":1606268136,
+     *                     "upload_time":0,
+     *                     "is_deleted":0,
+     *                     "update_device":0,
+     *                     "create_local_time":1606268135
+     *                 },
+     *                 {
+     *                     "guid":"f500ed3c-e1e6-4892-becc-7cdba477d0e3",
+     *                     "item_guid":"533fa8db-6c44-4631-9648-5f3485d3311a",
+     *                     "external_id":"C-EC",
+     *                     "name":"EXTRA Cheddar",
+     *                     "create_time":1606268135,
+     *                     "update_time":1606268136,
+     *                     "upload_time":0,
+     *                     "is_deleted":0,
+     *                     "update_device":0,
+     *                     "create_local_time":1606268135
+     *                 }
+     *             ]
      * @return
      */
     static private KDSDataCondiment parseCondimentJson(String itemGuid, JSONObject jsonCondiment)
@@ -550,11 +1002,11 @@ public class KDSBackofficeNotification extends Handler{
             c.setCondimentName(jsonCondiment.getString("external_id"));
             c.setGUID(jsonCondiment.getString("guid"));
             c.setDescription(jsonCondiment.getString("name"));
-            String condimentPremodifiers = jsonCondiment.getString("pre_modifier");
-            if (!isNullStringValue(condimentPremodifiers)) {
-                KDSDataMessages messages = KDSDataMessages.parseString(condimentPremodifiers, c.getGUID(), KDSDataMessage.FOR_Condiment);
-                c.setMessages(messages);
-            }
+//            String condimentPremodifiers = jsonCondiment.getString("pre_modifier");
+//            if (!isNullStringValue(condimentPremodifiers)) {
+//                KDSDataMessages messages = KDSDataMessages.parseString(condimentPremodifiers, c.getGUID(), KDSDataMessage.FOR_Condiment);
+//                c.setMessages(messages);
+//            }
 
             return c;
         }
@@ -1003,6 +1455,34 @@ public class KDSBackofficeNotification extends Handler{
         return hs;
     }
 
+
+    /**
+     *
+     * @param strNotification
+     *  format: ##["command", "poiejlksjdfpasoidjpwie"]
+     * @return
+     */
+    public String getNotifyData(String strNotification)
+    {
+        String s = strNotification;
+        int nStart = s.indexOf("[");
+        if (nStart <0) return s;
+        s = s.substring(nStart);
+        try {
+            JSONArray ar = new JSONArray(s);
+            if (ar.length()<=1) return s;
+            String command = ar.getString(0);
+            String base64 = ar.getString(1);
+            String data = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+            return data;
+        }
+        catch (Exception e)
+        {
+
+        }
+        return s;
+
+    }
 
     public class BackOfficeWebSocketClient extends WebSocketClient {
         String m_strStoreGuidConnected = ""; //record the what store guid has been send

@@ -349,7 +349,14 @@ public class KDSUsers {
     {
         String orderName = order.getOrderName();
         if (getUserA() != null) {
-            KDSDataOrder orderExisted = getUserA().getOrders().getOrderByName(orderName);
+            //kpp1-409
+            KDSDataOrder orderExisted = null;
+            if (orderName.isEmpty()) {
+                orderExisted = getUserA().getOrders().getOrderByGUID(order.getGUID());
+            }
+            else {
+                orderExisted = getUserA().getOrders().getOrderByName(orderName);
+            }
 
             if (orderExisted != null) {
 
@@ -358,7 +365,12 @@ public class KDSUsers {
             }
         }
         if (getUserB() != null) {
-            KDSDataOrder orderExisted = getUserB().getOrders().getOrderByName(orderName);
+            //kpp1-409
+            KDSDataOrder orderExisted = null;
+            if (orderName.isEmpty())
+                orderExisted = getUserB().getOrders().getOrderByGUID(order.getGUID());
+            else
+                orderExisted = getUserB().getOrders().getOrderByName(orderName);
 
             if (orderExisted != null) {
                 getUserB().getOrders().removeComponent(orderExisted);

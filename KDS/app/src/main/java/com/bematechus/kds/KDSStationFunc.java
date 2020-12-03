@@ -600,7 +600,11 @@ public class KDSStationFunc {
             KDSDataItem item =  orderReceived.getItems().getItem(i);
             if (item.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY)
             {
-                KDSDataItem itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
+                KDSDataItem itemExisted = null;
+                if (item.getItemName().isEmpty()) //kpp1-409
+                    itemExisted = orderExisted.getItems().getItemByGUID(item.getGUID());
+                else
+                    itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
                 if (itemExisted == null)
                     continue;
                 float nOldQty = itemExisted.getShowingQty();
@@ -662,7 +666,12 @@ public class KDSStationFunc {
             }
             else if (item.getTransType() == KDSDataOrder.TRANSTYPE_DELETE)
             {
-                KDSDataItem itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
+                KDSDataItem itemExisted = null;
+                if (item.getItemName().isEmpty()) //kpp1-409
+                    itemExisted = orderExisted.getItems().getItemByGUID(item.getGUID());
+                else
+                    itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
+                //KDSDataItem itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
                 if (itemExisted == null)
                     continue;
 
@@ -694,7 +703,21 @@ public class KDSStationFunc {
      */
     static public void orderInfoModify(KDSUser kdsuser, KDSDataOrder order, boolean bSyncWithOthers)
     {
-        KDSDataOrder orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
+        //kpp1-409, use the guid to load order.
+        KDSDataOrder orderExisted = null;
+        if (order.getGUID().equals(KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES))
+        {//use item guid to find order. This just happen in api order and void/update event.
+            if (order.getItems().getCount()<=0) return;
+            String itemGuid = order.getItems().getItem(0).getGUID();
+            String orderguid = kdsuser.getOrders().getCurrentDB().itemGetOrderGuid(itemGuid);
+            orderExisted = kdsuser.getOrders().getOrderByGUID(orderguid);
+        }
+        else {
+            if (order.getOrderName().isEmpty())
+                orderExisted = kdsuser.getOrders().getOrderByGUID(order.getGUID());
+            else
+                orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
+        }
         //kpp1-393
         boolean bInParkedList = false;
         if (orderExisted == null)
