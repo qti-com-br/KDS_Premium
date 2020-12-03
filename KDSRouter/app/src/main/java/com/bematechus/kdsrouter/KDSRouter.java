@@ -3050,7 +3050,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             KDSDataItem item = order.getItems().getItem(i);
             if (item.getItemType() == KDSDataItem.ITEM_TYPE.Exp)
                 continue;
-            if (item.getItemDelay() > 0)
+            //if (item.getItemDelay() > 0)//KPP1-410, bug here.
+            if (item.getCategoryDelay() > 0)//KPP1-410, xml data in high priority.
                 continue;
 
             float categoryDelay = this.getRouterDB().categoryGetDelay(item.getCategory());
