@@ -68,12 +68,14 @@ public class KDSActivityUnbump extends Activity  {
         m_kbdType =  KDSBumpBarKeyFunc.KeyboardType.values()[settings.getInt(KDSSettings.ID.Bumpbar_Kbd_Type)];
         m_nIndexBase = settings.getInt(KDSSettings.ID.Panels_Panel_Number_Base);
 
+        m_nMaxReservedOrders = settings.getInt(KDSSettings.ID.Bump_Max_Reserved_Count) * 10; //kpp1-412, move it here, before show dialog.
+
         showByIntent();
 
         boolean bHide = settings.getBoolean(KDSSettings.ID.Hide_navigation_bar);
         hideNavigationBar(bHide);
 
-        m_nMaxReservedOrders = settings.getInt(KDSSettings.ID.Bump_Max_Reserved_Count);
+
 
     }
 

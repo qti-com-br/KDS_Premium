@@ -2877,7 +2877,7 @@ return:
         int nBumped = this.executeOneValue(sql);
         //int nMax = Math.round(nMaxCount * 1.5f);
         int nMax = Math.round(nMaxCount ); //KPP1-207, just bump according to setting value.
-        if (nBumped<nMax ) return 0;
+        if (nBumped<=nMax ) return 0; //kpp1-412
         int nNeedBumped = nBumped - nMaxCount;
         //TimeDog td = new TimeDog();
         sql = "select guid from orders where bumped=1 order by bumpedTime asc limit " + KDSUtil.convertIntToString(nNeedBumped);
