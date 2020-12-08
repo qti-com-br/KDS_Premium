@@ -568,6 +568,10 @@ public class KDSStationFunc {
             }
             else if (condiment.getTransType() == KDSDataOrder.TRANSTYPE_ADD)
             {
+                //check if existed same condiment ID
+                if (itemExisted.getCondiments().getCondimentByName(condiment.getCondimentName())!= null)
+                    continue; //kpp1-414, don't add same id condiment.
+
                 itemExisted.getCondiments().addComponent(condiment);
                 condiment.setItemGUID(itemExisted.getGUID());
                 kdsuser.getCurrentDB().condimentAdd(condiment);

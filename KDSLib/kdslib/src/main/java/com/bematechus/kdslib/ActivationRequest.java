@@ -1130,7 +1130,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("preparation_time",  prepTime);
             //KPP1-71 When the item has multiple quantity, the condiment should ahve multiple quantity on the database. Currently it always shows 1 in the condiments field on the database.
             //EX: If I have an item with 3 quantity and it has 1 condiment, the quantity for the condiments in the "condiments" table on the back office should be 3.
-            json.put("quantity",  KDSUtil.convertIntToString((int) item.getShowingQty()));//just set it to 1.
+            //json.put("quantity",  KDSUtil.convertIntToString((int) item.getShowingQty()));//just set it to 1.
+            json.put("quantity",  KDSUtil.convertIntToString((int) item.getShowingQty() *(int)condiment.getQty()));//just set it to 1.
         }
         catch (Exception e)
         {
