@@ -81,9 +81,9 @@ public class MainActivityFragmentSum extends Fragment {
         {
             Map<String,Object> item = new HashMap<String,Object>();
             if (bSmartEnabled && advSumEnabled)
-                item.put("qty", arSumItems.get(i).getAdvSumQtyString());
+                item.put("qty", arSumItems.get(i).getAdvSumQtyString()+"x");//kpp1-415, add x
             else
-                item.put("qty", arSumItems.get(i).getQtyString());
+                item.put("qty", arSumItems.get(i).getQtyString()+"x");//kpp1-415, add x
             item.put("name", arSumItems.get(i).getDescription(false));
             m_arData.add(item);
         }

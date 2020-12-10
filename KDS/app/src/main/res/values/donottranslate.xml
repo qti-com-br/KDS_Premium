@@ -247,6 +247,7 @@ Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\
     <string-array name="pref_kds_sum_type_values" translatable="false">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="pref_sum_position_values" translatable="false">

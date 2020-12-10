@@ -487,6 +487,7 @@
     <string-array name="pref_kds_sum_type_titles">
         <item>Item without condiments</item>
         <item>Items with condiments</item>
+        <item>Only condiments</item>
     </string-array>
 
     <string name="pref_kds_sum_position">Summary position</string>

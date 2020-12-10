@@ -1679,7 +1679,9 @@ public class KDSDBCurrent extends KDSDBBase {
 
 
         if (bCheckCondiments) {
-            return summaryItemsWithCondiments(stationID, nUser, arValidOrderGUID, bAscend);//bEnableSummaryTranslation);
+            //return summaryItemsWithCondiments(stationID, nUser, arValidOrderGUID, bAscend);//bEnableSummaryTranslation);
+            //kpp1-415
+            return summaryItemsWithCondiments(stationID, nUser, null, bAscend);//bEnableSummaryTranslation);
         }
         String sql = "";
 
@@ -1950,20 +1952,24 @@ public class KDSDBCurrent extends KDSDBBase {
 //        td.debug_print_Duration("sum with condiments 10=");
 //        td.reset();
         //make sql orderguid string
-        String sql = " and (";
-        String s = "";
-        int count = arValidOrderGUID.size();
-        if (count <= 0) sql = "";
-        String str = "";
+        //String sql = " and (";
+        String sql =String.format(" and items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and orders.screen=%d)",
+                                    nUser);
+        //kpp1-415, use new code for orderguid
 
-        for (int i = 0; i < count; i++) {
-            str = arValidOrderGUID.get(i);
-            if (i != count - 1)
-                s = String.format("orderguid='%s' or ", str);
-            else
-                s = String.format("orderguid='%s')", str);
-            sql += s;
-        }
+//        String s = "";
+//        int count = arValidOrderGUID.size();
+//        if (count <= 0) sql = "";
+//        String str = "";
+//
+//        for (int i = 0; i < count; i++) {
+//            str = arValidOrderGUID.get(i);
+//            if (i != count - 1)
+//                s = String.format("orderguid='%s' or ", str);
+//            else
+//                s = String.format("orderguid='%s')", str);
+//            sql += s;
+//        }
 
 
         for (int i = 0; i < arUniqueItems.size(); i++) {
@@ -3790,6 +3796,48 @@ update the schedule item ready qty
         String sql = "";
         sql = String.format("update orders set screen=0 where screen=1 and bumped=0" );
         return this.executeDML(sql);
+    }
+
+
+    /**
+     * KPP1-415
+     * Condiment only summary
+     *
+     * @param nUser
+     *
+     * @param bAscend
+     * @return
+     */
+    public ArrayList<KDSSummaryItem> summaryOnlyCondiments(int nUser, boolean bAscend)//, boolean bEnableSummaryTranslation)
+    {
+
+        String sql = String.format("select condiments.description,sum(ifnull(condiments.qty,1)*(items.qty+ifnull(items.qtychanged,0))) as q,count(condiments.description) as samecount " +
+                "from condiments,items " +
+                "where condiments.itemguid=items.guid and items.localbumped=0 and items.marked=0 and condiments.itemguid in (select items.guid from items where items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and screen=%d)) " +
+                "group by condiments.description " +
+                "order by condiments.description %s ",
+                nUser,  bAscend?"asc":"desc");
+
+
+        ArrayList<KDSSummaryItem> ar = new ArrayList<>();
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        String description = "";
+        int qty = 0;
+        int count = 0;
+        while (c.moveToNext()) {
+            description = c.getString(0);
+            qty = getInt(c, 1, 0);
+            count = getInt(c, 2, 0);
+            KDSSummaryItem item = new KDSSummaryItem();
+            item.setDescription(description);
+            qty = (qty>0?qty:count);
+            item.setQty( qty );
+            ar.add(item);
+        }
+        c.close();
+        return ar;
     }
 
     /***************************************************************************

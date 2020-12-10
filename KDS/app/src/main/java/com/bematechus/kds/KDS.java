@@ -3674,8 +3674,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         if (sumType == KDSSettings.SumType.ItemWithoutCondiments)
             return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),null, false, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
             //return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),orders.getAllOrderGUID(), false);//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
-        else
-            return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),orders.getAllOrderGUID(), true, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+        else if (sumType == KDSSettings.SumType.CondimentsOnly)
+        {
+            return this.getCurrentDB().summaryOnlyCondiments(userID.ordinal(),(sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+        }
+        else //with condiments, kpp1-415
+            return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),null, true, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+            //return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),orders.getAllOrderGUID(), true, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+
 
     }
 
