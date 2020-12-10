@@ -69,7 +69,7 @@ public class KDSXMLParserOrder {
     public final static String DBXML_ELEMENT_COUNT	= ("Count");
     public final static String DBXML_ELEMENT_ICON	= ("IconIndex"); //2.5.4.22 , icon index
     public final static String DBXML_ELEMENT_DELAY = ("Delay");
-    public final static String DBXML_ELEMENT_CATEGORY_DELAY	= ("CateDelay");
+    public final static String DBXML_ELEMENT_CATEGORY_DELAY	= ("CatDelay"); //kpp1-417, from CateDelay to CatDelay
 
 
     public final static String DBXML_ELEMENT_MARKED = ("Marked");
