@@ -324,12 +324,18 @@ public class PrepSorts {
         PrepSorts.PrepItem maxItem = null;
         if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
             if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+                //the interal max item was not changed, so same old cooking state.
+                PrepItem nextMaxItem = order.prep_get_sorts().findMaxPreparationTime(order.prep_get_sorts().m_arItems);
+                boolean nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
+                //change max item to new one.
                 maxItem = order.prep_get_sorts().sort();
                 if (maxItem != null) {
                     int startSeconds = order.getDurationSeconds();
                     int delaySeconds = (int)(maxItem.ItemDelay * 60);
-
-                    maxItem.RealStartTime = (startSeconds>delaySeconds?startSeconds:delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+                    if (!nextMaxItemShouldStarted) {
+                        //if the max order has started, don't update its real start time.
+                        maxItem.RealStartTime = (startSeconds > delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+                    }
                 //    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
                 }
             }
