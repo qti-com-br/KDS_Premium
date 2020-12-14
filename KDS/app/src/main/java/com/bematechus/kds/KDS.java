@@ -2258,6 +2258,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Station_Bump_Order://in thread
                 //Please notice the xmldata just contains the order/item id.
                 checkLostFocusAfterSyncBumpOrderName(command, xmlData);
+                //kpp1-407, save my orginal order
+                KDSDataOrder receivedOrder = parseReceivedOrder(command);
+                KDSDataOrder existedOrder = null;
+                if (receivedOrder != null)
+                {
+                    existedOrder = this.getUsers().getOrderByName(receivedOrder.getOrderName());
+
+                }
+                //
                 ArrayList<KDSDataItem> arChangedItems = new ArrayList<>(); //retrieve changed items.
                 orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData, arChangedItems);
                 if (!orderGuid.isEmpty()) {
@@ -2269,6 +2278,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 {//kpp1-62, kpp1-74
                     syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems, Activation.ItemJobFromOperations.Expo_sync_prep_bump_order);
                 }
+
+                //kpp1-407
+                mirrorStationSyncWebDatabase(code,command, existedOrder, arChangedItems);
+
                 break;
             case Station_Unbump_Order:
                 KDSStationFunc.doSyncCommandOrderUnbumped(this,command, xmlData);
@@ -2283,6 +2296,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSStationFunc. doSyncCommandOrderModified(this,command, xmlData);
                 break;
             case Station_Bump_Item:
+                //kpp1-407, save my orginal order
+                String strOrderName = command.getParam("P0", "");
+                KDSDataOrder orderExisted = this.getUsers().getOrderByName(strOrderName);
+                //
                 ArrayList<KDSDataItem> arChangedItem = new ArrayList<>(); //retrieve changed items.
                 orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData, arChangedItem);
                 sortOrderForMoveFinishedToFront();
@@ -2291,13 +2308,23 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 {//kpp1-62, kpp1-74
                     syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
                 }
+                //kpp1-407
+                mirrorStationSyncWebDatabase(code,command, orderExisted, arChangedItem);
                 break;
             case Station_Unbump_Item:
-                orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData);
+                //kpp1-407, save my orginal order
+                String orderName = command.getParam("P0", "");
+                KDSDataOrder myOrder = this.getUsers().getOrderByName(orderName);;
+
+                //
+                ArrayList<KDSDataItem> arUnbumpItems = new ArrayList<>();
+                orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData, arUnbumpItems);
                 sortOrderForMoveFinishedToFront();
                 schedule_process_update_to_be_prepare_qty(true);
 
                 checkSMS(orderGuid, false); //2.1.10
+                //kpp1-407
+                mirrorStationSyncWebDatabase(code,command, myOrder,  arUnbumpItems);
                 break;
             case Station_Modified_Item:
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
@@ -5325,5 +5352,64 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         this.getSettings().clearRelationshipData();
         this.updateSettings(m_context);
+    }
+
+    /**
+     * kpp1-407
+     * @param command
+     *
+     * @return
+     */
+    private boolean mirrorStationSyncWebDatabase(KDSXMLParserCommand.KDSCommand code ,
+                                                 KDSXMLParserCommand command ,
+                                                 KDSDataOrder existedOrder,
+                                                 ArrayList<KDSDataItem> arChangedItem)
+    {
+
+        if (existedOrder == null)
+            return false;
+
+        String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
+
+        if (this.getStationsConnections().getRelations().isMyMirrorStation(fromStationID) || //station is my mirror.
+                this.getStationsConnections().getRelations().isMirrorOfStation(fromStationID, getStationID()) ) // I am station's mirror
+        {
+
+            switch (code) {
+                case Station_Bump_Order:
+                    syncOrderToWebDatabase(existedOrder, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
+                    break;
+                case Station_Bump_Item:
+                    for (int i=0; i< arChangedItem.size(); i++) {
+                        if (arChangedItem.get(i) != null)
+                            syncItemBumpUnbumpToWebDatabase(existedOrder, arChangedItem.get(i), true);
+                    }
+                    break;
+                case Station_Unbump_Item:
+                    for (int i=0; i< arChangedItem.size(); i++) {
+                        if (arChangedItem.get(i) != null)
+                            syncItemBumpUnbumpToWebDatabase(existedOrder, arChangedItem.get(i), false);
+                    }
+                    break;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * kpp1-407
+     * @param command
+     * @return
+     */
+    private KDSDataOrder parseReceivedOrder(KDSXMLParserCommand command)
+    {
+        String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
+        if (strXml.isEmpty())
+            return null;
+//        String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
+//        String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
+        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), strXml);
+
+        return order;
     }
 }

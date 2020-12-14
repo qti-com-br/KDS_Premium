@@ -1159,7 +1159,7 @@ public class KDSStationFunc {
         {
 
             case Prep:
-                return KDSStationNormal.normal_sync_item_bumped(kds, command);
+                return KDSStationNormal.normal_sync_item_bumped(kds, command, arChangedItems);
 
             case Expeditor:
             case Queue:
@@ -1215,19 +1215,19 @@ public class KDSStationFunc {
      * @param strOrinalData
      * @return
      */
-    static public String doSyncCommandItemUnbumped(KDS kds,  KDSXMLParserCommand command, String strOrinalData)
+    static public String doSyncCommandItemUnbumped(KDS kds,  KDSXMLParserCommand command, String strOrinalData, ArrayList<KDSDataItem> arChangedItems)
     {
         switch (kds.getStationFunction())
         {
 
             case Prep:
-                return KDSStationNormal.normal_sync_item_unbumped(kds, command);
+                return KDSStationNormal.normal_sync_item_unbumped(kds, command, arChangedItems);
 
             case Expeditor:
             case Queue:
             case TableTracker:
             case Queue_Expo:
-                return KDSStationExpeditor.exp_sync_item_unbumped(kds, command);
+                return KDSStationExpeditor.exp_sync_item_unbumped(kds, command, arChangedItems);
 
             case Mirror:
                 break;
