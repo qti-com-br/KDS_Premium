@@ -579,6 +579,8 @@ public class KDSSettings extends SettingsBase {
 
      //kpp1-391
        Sum_font,
+     //kpp1-420
+        Category_group_font,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1341,11 +1343,13 @@ public class KDSSettings extends SettingsBase {
 
         //kpp1-377
         init_option(ID.Hide_station_title,"bool_hide_station_title",false);
-      //kp1-391
-      init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
+       //kp1-391
+        init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
 
         //kpp1-386
         init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
+        //kpp1-420
+        init_option(ID.Category_group_font,"fontface_category_group_font",new KDSViewFontFace(getResColor(R.color.item_bg), getResColor(R.color.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_MIDDLE));
 
     }
 
