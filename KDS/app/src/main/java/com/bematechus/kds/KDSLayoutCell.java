@@ -670,8 +670,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     static public boolean drawCategoryIndicator(Canvas g,Rect rcAbsolute,KDSViewSettings env, KDSDataCategoryIndicator indicator)
     {
         KDSDataCategoryIndicator c =indicator;
-        KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);// env.getSettings().getKDSViewFontFace(KDSSettings.ID.From_primary_font);
-
+        //KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);// env.getSettings().getKDSViewFontFace(KDSSettings.ID.From_primary_font);
+        //kpp1-420, use category font
+        KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Category_group_font);
         int bg = ff.getBG();// Color.WHITE;//c.getBG();
         int fg = ff.getFG();//Color.RED;
 
