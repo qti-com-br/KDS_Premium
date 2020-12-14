@@ -35,11 +35,11 @@
         android:key="general_router_enabled"
         android:summary="@string/pref_general_sum_router_enabled"
         android:title="@string/pref_general_router_enabled" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="general_enable_3rd_order"
-        android:title="@string/enable_3rd_party_order" />
+<!-- kpp1-416 remove this option -->
+<!--    <CheckBoxPreference-->
+<!--        android:defaultValue="true"-->
+<!--        android:key="general_enable_3rd_order"-->
+<!--        android:title="@string/enable_3rd_party_order" />-->
 
     <com.bematechus.kdslib.KDSListPreference
         android:defaultValue="1"

@@ -109,7 +109,8 @@ public class PrepSorts {
                 maxPrepTime = item;
                 continue;
             }
-            if (item.PrepTime> maxPrepTime.PrepTime)
+            //if (item.PrepTime> maxPrepTime.PrepTime)
+            if ( (item.PrepTime-item.ItemDelay)> (maxPrepTime.PrepTime-maxPrepTime.ItemDelay)) //kpp1-417, delay time.
                 maxPrepTime = item;
 
         }
@@ -243,17 +244,32 @@ public class PrepSorts {
         if (maxItem != null) {
             //the real start time has problem. We need to handle case that the max item don't set real start time.
             if (maxItem.RealStartTime <= 0)
-                maxItem.RealStartTime = convertMinutes2Secs(orderDelay) + convertMinutes2Secs(maxItem.ItemDelay);
+                maxItem.RealStartTime = convertMinutes2Secs(orderDelay + maxItem.ItemDelay);
 
             secs = maxItem.RealStartTime;
+            //kpp1-417
+            if (prep != maxItem) // it is not checking max item.
+            {
+
+                //Add the difference of preparation time for max and normal item.
+                // Add the normal item delay time.
+                int nDelay = (int)(convertMinutes2Secs(prep.ItemDelay) - secs);
+                if (nDelay<0) nDelay = 0;
+                float prepWait = maxItem.PrepTime - prep.PrepTime;
+                if (prepWait <0) prepWait = 0;
+                secs += convertMinutes2Secs(prepWait) + nDelay;
+                //secs += convertMinutes2Secs(maxItem.PrepTime - prep.PrepTime) + nDelay;
+                //secs += convertMinutes2Secs(maxItem.PrepTime - prep.PrepTime + prep.ItemDelay - maxItem.ItemDelay);
+            }
         }
         else
         {
-            secs = convertMinutes2Secs(orderDelay);
+            //secs = convertMinutes2Secs(orderDelay);
+            secs = convertMinutes2Secs(orderDelay + prep.ItemDelay); //kpp1-417
         }
         // secs +=  convertMinutes2Secs(itemDelay);
-        if (maxItem != null)
-            secs += convertMinutes2Secs(maxItem.PrepTime -  prep.PrepTime);
+        //if (maxItem != null) //kpp1-417
+        //    secs += convertMinutes2Secs(maxItem.PrepTime -  prep.PrepTime);
         return secs;
 
 
@@ -288,6 +304,70 @@ public class PrepSorts {
         }
         return false;
     }
+
+    /**
+     * Rev.
+     *  If all items preparation time is 0, this function will cause line items display move order up/up automaticly. (Smart sort enabled).
+     *
+     * @param order
+     * @param itemName
+     * @return
+     *  New max item
+     */
+    static public PrepSorts.PrepItem prep_other_station_item_bumped( KDSDataOrder order, String itemName)
+    {
+        //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
+        if (order == null) return null;
+        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+        if (prepItem == null) return null;
+        prepItem.setFinished(true);//, order.getDurationSeconds());
+        PrepSorts.PrepItem maxItem = null;
+        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
+            if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+                //the interal max item was not changed, so same old cooking state.
+                PrepItem nextMaxItem = order.prep_get_sorts().findMaxPreparationTime(order.prep_get_sorts().m_arItems);
+                boolean nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
+                //change max item to new one.
+                maxItem = order.prep_get_sorts().sort();
+                if (maxItem != null) {
+                    int startSeconds = order.getDurationSeconds();
+                    int delaySeconds = (int)(maxItem.ItemDelay * 60);
+                    if (!nextMaxItemShouldStarted) {
+                        //if the max order has started, don't update its real start time.
+                        maxItem.RealStartTime = (startSeconds > delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+                    }
+                //    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
+                }
+            }
+        }
+        //getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
+        return maxItem;
+
+
+    }
+
+    static public ArrayList<PrepSorts.PrepItem> prep_other_station_item_unbumped(KDSDataOrder order,String itemName)
+    {
+        //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
+        if (order == null) return null;
+        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+        if (prepItem == null) return null;
+        prepItem.setFinished(false);//.finished = false;
+        //if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName))
+        PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
+        if (maxItem != null && maxItem == prepItem)
+        {//we just restore old max item
+            ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().reset_real_start_time(maxItem);
+            return ar;
+//            for (int i=0; i< ar.size(); i++)
+//            {
+//                getCurrentDB().prep_set_real_started_time(order.getGUID(), ar.get(i).ItemName, 0);
+//            }
+        }
+        return null;
+        //getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, false);
+    }
+
 
     /********************************************************************************************/
     /********************************************************************************************/

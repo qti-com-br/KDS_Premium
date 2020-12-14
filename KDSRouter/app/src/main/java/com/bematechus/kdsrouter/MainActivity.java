@@ -1481,8 +1481,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     private void downloadBackofficeOrders()
     {
-        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order))
-            return;
+        //kpp1-416, remove 3rd party option
+//        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order))
+//            return;
         long l = KDSRouterSettings.loadFCMTime(this);
         //debug firebase
 //
@@ -1544,10 +1545,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void connectBackofficeNotification()
     {
-        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order)) {
-            m_backofficeNotification.close();
-            return;
-        }
+        //kpp1-416, remove 3rd party option
+//        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order)) {
+//            m_backofficeNotification.close();
+//            return;
+//        }
         m_backofficeNotification.connectBackOffice();
     }
 
