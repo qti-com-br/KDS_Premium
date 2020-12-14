@@ -1633,6 +1633,12 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //        if (nStarting <0)
 //            nStarting = KDSSettings.COMDIMENT_LEADING_POSITION;
         String s = getCondimentPrefix(env);//getSpaces(nStarting);
+        //kpp1-414
+        if (c.getQty() >1)
+        {
+            s += Integer.toString((int) c.getQty());
+            s += "x ";
+        }
         s += strDescription;
         if (c.getFocusTag() != null) { //for hide item, show focus
             Object obj = c.getFocusTag();

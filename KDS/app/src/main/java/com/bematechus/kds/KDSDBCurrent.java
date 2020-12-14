@@ -628,7 +628,7 @@ public class KDSDBCurrent extends KDSDBBase {
     private String getCondimentFieldSql()
     {
 
-        return "GUID,Name,Description,BG, FG ";
+        return "GUID,Name,Description,BG, FG,Qty ";//kpp1-414 add qty
     }
     public KDSDataCondiments condimentsGet(String itemGUID)// int nItemID)
     {
@@ -636,7 +636,9 @@ public class KDSDBCurrent extends KDSDBBase {
         KDSDataCondiments condiments = new KDSDataCondiments();
         if (getDB() == null) return condiments;
 
-        String sql = String.format("select GUID,Name,Description,BG,FG from condiments where itemguid='%s' order by id", itemGUID);
+        //Rev.:
+        // kpp1-414, add qty
+        String sql = String.format("select GUID,Name,Description,BG,FG,Qty from condiments where itemguid='%s' order by id", itemGUID);
         Cursor c = getDB().rawQuery(sql, null);
 
         while (c.moveToNext()) {
@@ -659,6 +661,7 @@ public class KDSDBCurrent extends KDSDBBase {
         c.setDescription(getString(sf,2));
         c.setBG(getInt(sf,3));
         c.setFG(getInt(sf,4));
+        c.setQty(getFloat(sf, 5));//kpp1-414
 
         //<<<<<<IMPORTANT>>>>>> Now don't support messages for condiments.
        // c.setMessages(this.messagesGet(KDSDataMessage.FOR_Condiment, guid));//nID));
@@ -2348,13 +2351,18 @@ public class KDSDBCurrent extends KDSDBBase {
         //ArrayList<String> arCondiments = new ArrayList<String>();
         if (getDB() == null) return arCondiments;
         String sql = "";
-        sql = String.format("select description from condiments where itemguid='%s' order by description", itemGUID);
+        //kpp1-414
+        sql = String.format("select description,qty from condiments where itemguid='%s' order by description", itemGUID);
+        //sql = String.format("select description from condiments where itemguid='%s' order by description", itemGUID);
 
         Cursor c = getDB().rawQuery(sql, null);
         String s = "";
-
+        int qty = 0;
         while (c.moveToNext()) {
             s = getString(c,0);
+            qty = getInt(c, 1); //kpp1-414
+            if (qty >1)
+                s = Integer.toString(qty) + "x " + s;
             arCondiments.add(s);
         }
         c.close();
