@@ -473,6 +473,7 @@
     <string-array name="pref_kds_sum_type_titles">
         <item>不比较佐料</item>
         <item>比较佐料</item>
+        <item>只有佐料</item>
     </string-array>
 
     <string name="pref_kds_sum_position">统计显示位置</string>

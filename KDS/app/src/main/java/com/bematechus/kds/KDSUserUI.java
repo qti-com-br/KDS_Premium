@@ -401,9 +401,9 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
             Map<String,Object> item = new HashMap<String,Object>();
             if (bSmartEnabled && advSumEnabled)
             //if (advSumEnabled)
-                item.put("qty", arSumItems.get(i).getAdvSumQtyString());
+                item.put("qty", "x"+arSumItems.get(i).getAdvSumQtyString()); //kpp1-415, add x
             else
-                item.put("qty", arSumItems.get(i).getQtyString());
+                item.put("qty", "x"+ arSumItems.get(i).getQtyString());//kpp1-415, add x
             item.put("name", arSumItems.get(i).getDescription(true));
             m_arTopSumData.add(item);
         }

@@ -661,6 +661,7 @@ public class KDSSettings extends SettingsBase {
     {
         ItemWithoutCondiments,
         ItemWithCondiments,
+        CondimentsOnly, //kpp1-415
     }
 
     public enum SumOrderBy
