@@ -69,14 +69,14 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
     }
     static final String TAG = "UpdateManager";
     //static final String UPDATE_LOG_URI_FOLDER ="http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/";// "http://www.cnblogs.com/manongxiaojiang/archive/2012/10/13/";
-    static final String UPDATE_LOG_URI_FOLDER ="http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/KDS_Release/";
+    static final String UPDATE_LOG_URI_FOLDER =  "http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/KDS_Release/";
 
 
     private String m_strAppApkName = "";//"2722068.html";
 
     private UpdateEvents m_eventsReceiver = null;
 
-    /* 下载包安装路径 */
+    /* download apk to path */
     private static final String m_saveLocalFolder = "kdsupdate/";
 
     private Context mContext = null;
@@ -185,7 +185,7 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
         {
             nCurrentIndex ++;
             if (nCurrentIndex < m_appUpdateInfo.getAppLinks().size()) {
-                nextAppLink = m_appUpdateInfo.getAppLinks().get(nCurrentIndex);
+                nextAppLink = m_appUpdateInfo.getAppLinks().get(nCurrentIndex).getLink();
                 downloadFile(nextAppLink, buildLocalApkFilePathName(nextAppLink), true);
             }
         }
@@ -239,15 +239,21 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
     }
 
 
-
+    /**
+     * rev.:
+     *  kpp1-395, use api endpoint.
+     * @return
+     */
     private String buildUpdateLogFileUriPathName()
     {
-        String s = m_strAppApkName + ".xml";
-        //for test
-        //s = m_strAppApkName;
-
-        s = UPDATE_LOG_URI_FOLDER + s;
+        String s = KDSApplication.getContext().getString(R.string.apk_url);
         return s;
+//        String s = m_strAppApkName + ".xml";
+//        //for test
+//        //s = m_strAppApkName;
+//
+//        s = UPDATE_LOG_URI_FOLDER + s;
+//        return s;
     }
 
 
@@ -330,8 +336,13 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
     {
         if (m_appUpdateInfo == null) return;
         String strAppLink = "";
-        if (m_appUpdateInfo.getAppLinks().size() >0)
-            strAppLink = m_appUpdateInfo.getAppLinks().get(0);
+        //kpp1-395
+        UpdateAppInfo.AppLink link = m_appUpdateInfo.getAppLink(m_strAppApkName);
+        if (link == null) return ;
+        if (link.getLink().isEmpty()) return;
+        strAppLink = link.getLink();
+//        if (m_appUpdateInfo.getAppLinks().size() >0)
+//            strAppLink = m_appUpdateInfo.getAppLinks().get(0).getLink();
 
         downloadFile(strAppLink, buildLocalApkFilePathName(strAppLink), true);
     }
