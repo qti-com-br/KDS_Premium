@@ -2223,8 +2223,8 @@ public class KDSDBCurrent extends KDSDBBase {
 //
 //        }
         //td.debug_print_Duration("sum with condiments 1=");
-        ArrayList<String> curcondiments = new ArrayList<>();
-        ArrayList<String> checkcondiments = new ArrayList<>();
+        ArrayList<KDSSummaryCondiment> curcondiments = new ArrayList<>(); //kpp1-421
+        ArrayList<KDSSummaryCondiment> checkcondiments = new ArrayList<>(); //kpp1-421
 
         int curindex = 0;
         int checkindex = 1;
@@ -2289,7 +2289,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 //compare each condiments, it has sure the condiments count is same.
                 boolean bsame = true;
                 for (int i = 0; i < checkcondiments.size(); i++) {
-                    if (!sumItem.getCondiments().get(i).equals(checkcondiments.get(i))) {
+                    //if (!sumItem.getCondiments().get(i).equals(checkcondiments.get(i))) {
+                    if (!sumItem.getCondiments().get(i).isEqual(checkcondiments.get(i))) {
                         bsame = false;
                         break;
                     }
@@ -2331,9 +2332,15 @@ public class KDSDBCurrent extends KDSDBBase {
 /*                                                                      */
 
     /************************************************************************/
-    private ArrayList<String> getItemCondimentStrings(String itemGUID) {
+    /**
+     * rev.:
+     *  //kpp1-421
+     * @param itemGUID
+     * @return
+     */
+    private ArrayList<KDSSummaryCondiment> getItemCondimentStrings(String itemGUID) {
 
-        ArrayList<String> arCondiments = new ArrayList<String>();
+        ArrayList<KDSSummaryCondiment> arCondiments = new ArrayList<>();
         return getItemCondimentStrings(itemGUID, arCondiments);
 
 //        if (getDB() == null) return arCondiments;
@@ -2352,7 +2359,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    private ArrayList<String> getItemCondimentStrings(String itemGUID, ArrayList<String> arCondiments) {
+    private ArrayList<KDSSummaryCondiment> getItemCondimentStrings(String itemGUID, ArrayList<KDSSummaryCondiment> arCondiments) {
 
         //ArrayList<String> arCondiments = new ArrayList<String>();
         if (getDB() == null) return arCondiments;
@@ -2367,9 +2374,9 @@ public class KDSDBCurrent extends KDSDBBase {
         while (c.moveToNext()) {
             s = getString(c,0);
             qty = getInt(c, 1); //kpp1-414
-            if (qty >1)
-                s = Integer.toString(qty) + "x " + s;
-            arCondiments.add(s);
+            //if (qty >1) //kpp1-421
+            //    s = Integer.toString(qty) + "x " + s;
+            arCondiments.add(new KDSSummaryCondiment(qty, s));// s); //kpp1-421
         }
         c.close();
         return arCondiments;
