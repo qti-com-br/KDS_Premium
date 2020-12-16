@@ -749,7 +749,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_service.checkStationsSettingChanged();//(this.getApplicationContext()();
         }
         else if (key.equals("kds_general_language") ||
-                Activation.isActivationPrefKey(key)) //don't handle it.
+                Activation.isActivationPrefKey(key) ||//don't handle it.
+                key.equals(KDSRouterSettings.MIN_FCM_TIME)) //kpp1-424, don't reset settings.
         {
             return;
         }
