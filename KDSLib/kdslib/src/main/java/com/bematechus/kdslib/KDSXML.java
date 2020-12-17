@@ -538,15 +538,15 @@ public class KDSXML {
             
             Node node = m_current.getFirstChild();
            // System.out.println( m_current.getNodeName());
-            
-            if (node.getNodeType() != Node.ELEMENT_NODE )
-            {
-                while ( (node != null) && (node.getNodeType() != Node.ELEMENT_NODE ) )
-                {
+            if (node == null) return false;
+
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                while ((node != null) && (node.getNodeType() != Node.ELEMENT_NODE)) {
                     node = node.getNextSibling();
                 }
                 //System.out.println("not node");
             }
+
 //            System.out.println( node.getNodeName());
 //            System.out.println( node.getTextContent());
             

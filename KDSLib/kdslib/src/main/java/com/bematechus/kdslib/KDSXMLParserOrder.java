@@ -979,8 +979,10 @@ public class KDSXMLParserOrder {
     {
 
 
-        if (!xml.moveToFirstChild())
-            return ;
+        if (!xml.moveToFirstChild()) {
+            //xml.back_to_parent(); //kpp1-425
+            return;
+        }
         do
         {
             String name = xml.getCurrentName();
