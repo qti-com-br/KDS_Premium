@@ -1490,15 +1490,20 @@ public class KDSDataOrder extends KDSData {
             //pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PAGERID,this.getPagerID(), false);
 
             //2.0.50 SMS feature
-
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER, true);
-            if (!this.getCustomer().getID().isEmpty())//kpp1-425
-                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getCustomer().getID(), false);
-            if (!this.getCustomer().getPhone().isEmpty())//kpp1-425
-                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PHONE,this.getCustomer().getPhone(), false);
-            if (!this.getCustomer().getName().isEmpty())//kpp1-425
-                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_NAME,this.getCustomer().getName(), false);
-            pxml.back_to_parent(); //kpp1-222
+            //rev.: kpp1-425, just output valid data.
+            if (!this.getCustomer().getID().isEmpty() ||
+                    !this.getCustomer().getPhone().isEmpty() ||
+                    !this.getCustomer().getName().isEmpty())
+            {
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER, true);
+                if (!this.getCustomer().getID().isEmpty())//kpp1-425
+                    pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getCustomer().getID(), false);
+                if (!this.getCustomer().getPhone().isEmpty())//kpp1-425
+                    pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PHONE, this.getCustomer().getPhone(), false);
+                if (!this.getCustomer().getName().isEmpty())//kpp1-425
+                    pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_NAME, this.getCustomer().getName(), false);
+                pxml.back_to_parent(); //kpp1-222
+            }
             //
 
             //2.5.4.19 add received time and restore time
