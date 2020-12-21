@@ -742,32 +742,35 @@ public class KDSBackofficeNotification extends Handler{
             order.setGUID(json.getString("guid")); //this must existed.
             order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
 
-            order.setOrderName(json.getString("external_id"));
+            if (json.has("external_id")) //kpp1-422
+                order.setOrderName(json.getString("external_id"));
 
             //order.setStartTime(json.getLong("create_time") * 1000);//kpp1-403, backoffice return seconds, we need ms.
             if (json.has("user_info"))
                 order.setCustomMsg(json.getString("user_info"));
             if (json.has("guest_table"))
-            order.setToTable(json.getString("guest_table"));
+                order.setToTable(json.getString("guest_table"));
             if (json.has("pos_terminal"))
-            order.setFromPOSNumber(json.getString("pos_terminal"));
+                order.setFromPOSNumber(json.getString("pos_terminal"));
             if (json.has("destination"))
-            order.setDestination(json.getString("destination"));
+                order.setDestination(json.getString("destination"));
             if (json.has("order_type"))
-            order.setOrderType(json.getString("order_type"));
+                order.setOrderType(json.getString("order_type"));
             if (json.has("server_name"))
-            order.setWaiterName(json.getString("server_name"));
+                order.setWaiterName(json.getString("server_name"));
             //customer
             if (json.has("customer")) {
                 JSONObject jsonCustomer = json.getJSONObject("customer");
-                order.getCustomer().setName(jsonCustomer.getString("name"));
-                order.getCustomer().setPhone(jsonCustomer.getString("phone"));
+                if (jsonCustomer.has("name"))
+                    order.getCustomer().setName(jsonCustomer.getString("name"));
+                if (jsonCustomer.has("phone"))
+                    order.getCustomer().setPhone(jsonCustomer.getString("phone"));
             }
             return order;
         }
         catch ( Exception e)
         {
-
+            e.printStackTrace();
         }
         return null;
     }
