@@ -23,7 +23,8 @@ public class KDSSummaryItem {
     String m_description = "";
     String m_category = "";
     String m_originalDescription = ""; //before the translate
-    ArrayList<String> m_arCondiments = new ArrayList<>();
+    //ArrayList<String> m_arCondiments = new ArrayList<>();
+    ArrayList<KDSSummaryCondiment> m_arCondiments = new ArrayList<>(); //kpp1-421
     SumSrcMode m_srcMode = SumSrcMode.Item;
 
     public void setSumSrcType(SumSrcMode mode)
@@ -95,7 +96,9 @@ public class KDSSummaryItem {
                 //s +="\n\t";
                 if (i >0)
                     s += " , ";
-                s += m_arCondiments.get(i);
+                s += makeCondimentSummaryText(m_arCondiments.get(i));
+//                s += (int)(m_arCondiments.get(i).getQty()) + "x "; //kpp1-421
+//                s += m_arCondiments.get(i).getDescription(); //kpp1-421
             }
             return s;
         }
@@ -113,12 +116,24 @@ public class KDSSummaryItem {
             for (int i=0; i< m_arCondiments.size(); i++ )
             {
                 s +="\n\t";
+                s += makeCondimentSummaryText(m_arCondiments.get(i));
 
-                s += m_arCondiments.get(i);
+//                if (m_arCondiments.get(i).getQty()>1)
+//                    s += (int)(m_arCondiments.get(i).getQty()) + "x "; //kpp1-421
+//                s += m_arCondiments.get(i).getDescription(); //kpp1-421
             }
             return s;
         }
 
+    }
+
+    private String makeCondimentSummaryText(KDSSummaryCondiment c)
+    {
+        String s = "";
+        if (c.getQty()>1)
+            s += (int)(c.getQty()) + "x "; //kpp1-421
+        s += c.getDescription(); //kpp1-421
+        return s;
     }
 
     public void setQty(float fltQty)
@@ -162,11 +177,22 @@ public class KDSSummaryItem {
         return m_category;
     }
 
-    public void setCondiments(ArrayList<String> arCondiments)
+    /**
+     * rev.:
+     *  kpp1-421
+     * @param arCondiments
+     */
+    public void setCondiments(ArrayList<KDSSummaryCondiment> arCondiments)
     {
         m_arCondiments.addAll(arCondiments);
     }
-    public ArrayList<String> getCondiments()
+
+    /**
+     * rev.:
+     *  kpp1-421
+     * @return
+     */
+    public ArrayList<KDSSummaryCondiment> getCondiments()
     {
         return m_arCondiments;
     }
