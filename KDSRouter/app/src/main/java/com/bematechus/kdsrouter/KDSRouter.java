@@ -2627,6 +2627,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         for (int i=0; i< ncount; i++)
         {
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
+            //kpp1-426, double qty issue.
+            if (stationRelation.getFunction() == SettingsBase.StationFunc.Backup)
+                continue;
             //write to the expo stations too!!!! 20160222
             //Just let expo receive item through the <kdsstation> tag
             //if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor)
