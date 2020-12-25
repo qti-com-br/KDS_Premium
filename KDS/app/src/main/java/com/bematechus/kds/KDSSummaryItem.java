@@ -131,7 +131,7 @@ public class KDSSummaryItem {
     {
         String s = "";
         if (c.getQty()>1)
-            s += (int)(c.getQty()) + "x "; //kpp1-421
+            s += (int)(c.getQty()*this.getQty()) + "x "; //kpp1-421, kpp1-421 comments
         s += c.getDescription(); //kpp1-421
         return s;
     }
