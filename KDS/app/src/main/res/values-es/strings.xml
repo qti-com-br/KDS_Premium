@@ -894,4 +894,5 @@
 	<string name="any_time">Any time</string>
 	<string name="clear_db_schedule">Clear database schedule</string>
 	<string name="category_font">Category font</string>
+    <string name="hiddenstation_item_hide_all"><![CDATA[<HiddenStation> tag of item will hide whole item]]></string>
 </resources>
