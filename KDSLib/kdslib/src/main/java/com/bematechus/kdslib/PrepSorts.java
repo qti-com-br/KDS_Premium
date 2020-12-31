@@ -229,6 +229,7 @@ public class PrepSorts {
      * @param itemName
      * @param dtOrderStart
      * @param orderDelay
+     *  Unit is minutes
      * @return
      *  How many seconds later, this item can sart to cook (from order start time).
      */
@@ -307,8 +308,8 @@ public class PrepSorts {
 
     /**
      * Rev.
-     *  If all items preparation time is 0, this function will cause line items display move order up/up automaticly. (Smart sort enabled).
-     *
+     *  1. If all items preparation time is 0, this function will cause line items display move order up/up automaticly. (Smart sort enabled).
+     *  2. kpp1-431, Category Delay- When bumping all items in a category the next category's items should show up
      * @param order
      * @param itemName
      * @return
@@ -324,6 +325,8 @@ public class PrepSorts {
         PrepSorts.PrepItem maxItem = null;
         if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
             if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+                boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
+
                 //the interal max item was not changed, so same old cooking state.
                 PrepItem nextMaxItem = order.prep_get_sorts().findMaxPreparationTime(order.prep_get_sorts().m_arItems);
                 boolean nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
@@ -334,7 +337,14 @@ public class PrepSorts {
                     int delaySeconds = (int)(maxItem.ItemDelay * 60);
                     if (!nextMaxItemShouldStarted) {
                         //if the max order has started, don't update its real start time.
-                        maxItem.RealStartTime = (startSeconds > delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+                        if (bAllCategoryFinished)
+                        {
+                            maxItem.RealStartTime = startSeconds;
+                        }
+                        else {
+                            maxItem.RealStartTime = (startSeconds > delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+                        }
+                        //maxItem.RealStartTime = startSeconds;// > delaySeconds ? startSeconds : delaySeconds);
                     }
                 //    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
                 }
@@ -368,6 +378,27 @@ public class PrepSorts {
         //getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, false);
     }
 
+    /**
+     * kpp1-431 Category Delay- When bumping all items in a category the next category's items should show up
+     * @param smartItem
+     * @return
+     */
+    static private boolean isAllMyCategoryItemsFinished(PrepSorts smartItems,  PrepSorts.PrepItem smartItem)
+    {
+        String category = smartItem.Category;
+        for (int i=0; i< smartItems.m_arItems.size(); i++)
+        {
+            PrepItem item = smartItems.m_arItems.get(i);
+            if (item == smartItem) continue;
+            if (item.Category.equals(category))
+            {
+                if (!item.finished)
+                    return false;
+            }
+
+        }
+        return true;
+    }
 
     /********************************************************************************************/
     /********************************************************************************************/
