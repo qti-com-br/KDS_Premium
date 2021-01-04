@@ -361,14 +361,26 @@ public class UpdateAppInfo {
                 m_nVer3 = KDSUtil.convertStringToInt(ar.get(3), 0);
         }
 
+        /**
+         * rev.:
+         *  kpp1-395-1, this function has issue.
+         * @param ver
+         * @return
+         *  True: my version > ver
+         */
         public boolean isOlderThanMine(AppVersion ver)
         {
-            if (m_nVer0 > ver.m_nVer0 ) return true;
-            if ( m_nVer1 > ver.m_nVer1 ) return true;
-            if (m_nVer2 > ver.m_nVer2 ) return true;
-            if (m_nVer3 > ver.m_nVer3 ) return true;
+            String strMine = String.format("%05d%05d%05d%05d", m_nVer0, m_nVer1, m_nVer2, m_nVer3);
+            String strVer =  String.format("%05d%05d%05d%05d", ver.m_nVer0, ver.m_nVer1, ver.m_nVer2, ver.m_nVer3);
+            int n = strMine.compareTo(strVer);
+            return (n==1);
 
-            return false;
+//            if (m_nVer0 > ver.m_nVer0 ) return true;
+//            if ( m_nVer1 > ver.m_nVer1 ) return true;
+//            if (m_nVer2 > ver.m_nVer2 ) return true;
+//            if (m_nVer3 > ver.m_nVer3 ) return true;
+//
+//            return false;
         }
         public boolean isOlderThanMine(String versionName)
         {
