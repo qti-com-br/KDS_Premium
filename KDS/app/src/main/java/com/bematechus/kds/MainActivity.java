@@ -2931,6 +2931,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (resultCode == RESULT_OK) {
                     String guid = data.getStringExtra("guid");
                     String itemguid = "";//data.getStringExtra("itemguid");
+
                     if (isLineItemsMode())
                     {
                         itemguid = data.getStringExtra("itemguid");
