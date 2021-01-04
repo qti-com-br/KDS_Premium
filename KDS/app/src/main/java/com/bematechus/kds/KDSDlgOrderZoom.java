@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -116,7 +117,16 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents,
     }
 
     final float HEIGHT_FACTOR = 1.3F;
+    ViewTreeObserver.OnGlobalLayoutListener mRunOnceListener = null;
 
+    /**
+     * rev.:
+     *  kpp1-429, use layout finished event to show orders.
+     * @param context
+     * @param settings
+     * @param order
+     * @return
+     */
     public boolean showOrder(Context context,KDSSettings settings,  KDSDataOrder order)
     {
         m_order = order;//save it for items operations.
@@ -133,10 +143,13 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents,
 
         m_layout = new KDSLayout(m_viewOrder);
         m_layout.setEventsReceiver(this);
-        KDSLayoutOrder dressedOrder = m_layout.createLayoutOrder(order);
-        //t.debug_print_Duration("showOrder1");
-        if (dressedOrder == null)
-            return false; //"The "showing paid order" items showing method maybe return null
+//        KDSLayoutOrder dressedOrder = m_layout.createLayoutOrder(order);
+//        //t.debug_print_Duration("showOrder1");
+//        if (dressedOrder == null)
+//            return false; //"The "showing paid order" items showing method maybe return null
+        //debug kpp1-429
+        //d.show();
+        /*
         int nRows = m_layout.getOrderNeedRows(dressedOrder);
         int nRowH = Math.round(m_viewOrder.getBestBlockRowHeight()*HEIGHT_FACTOR);//getBlockAverageHeight();
         int nViewHeight = (nRows+2) * (nRowH );
@@ -147,8 +160,8 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents,
         m_viewOrder.setLayoutParams(linearParams);
 
         m_layout.showOrders(m_orders);
+*/
 
-        d.show();
         //d.getWindow().setBackgroundDrawable(null);
 //        Window win = d.getWindow();
 //        win.getDecorView().setPadding(15, 0, 15, 0);
@@ -157,9 +170,48 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents,
 //        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
 //        win.setAttributes(lp);
 
+        mRunOnceListener = new  ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                //refreshView.startRefreshing();
+                m_viewOrder.getViewTreeObserver().removeOnGlobalLayoutListener(mRunOnceListener);
+                showOrderInDialog();
+
+
+            }
+
+
+        };
+
+        m_viewOrder.getViewTreeObserver().addOnGlobalLayoutListener( mRunOnceListener);
+
+
+        d.show();
 
         return true;
 
+    }
+
+    /**
+     * kpp1-429 Order zoom view - order cutoff
+     */
+    private void showOrderInDialog()
+    {
+        KDSLayoutOrder dressedOrder = m_layout.createLayoutOrder(m_order);
+        //t.debug_print_Duration("showOrder1");
+        if (dressedOrder == null)
+            return ;
+        int nRows = m_layout.getOrderNeedRows(dressedOrder);
+        int nRowH = Math.round(m_viewOrder.getBestBlockRowHeight()*HEIGHT_FACTOR);//getBlockAverageHeight();
+        int nViewHeight = (nRows+2) * (nRowH );
+        LinearLayout.LayoutParams linearParams =(LinearLayout.LayoutParams) m_viewOrder.getLayoutParams();
+
+        linearParams.height=((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, nViewHeight, KDSApplication.getContext().getResources().getDisplayMetrics()));
+
+        m_viewOrder.setLayoutParams(linearParams);
+
+        m_layout.showOrders(m_orders);
     }
 
     private boolean refresh()
