@@ -52,7 +52,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
@@ -387,7 +389,10 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
 
 
     /**
-     * 安装apk
+     * install apk
+     * rev.:
+     *  kpp1-395, support android 10,
+     *  
      * @param
      */
     private void installApk(String apkFilePathName){
@@ -397,9 +402,30 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
         if (!apkfile.exists()) {
             return;
         }
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
-        mContext.startActivity(i);
+
+        //https://stackoverflow.com/questions/48262653/android-content-activitynotfoundexception-no-activity-found-to-handle-intent
+        //using ACTION_VIEW does not work on all phones. Some phones will throw an exception android.content.ActivityNotFoundException
+        //
+        //Whereas using ACTION_INSTALL_PACKAGE has reliably worked on the phones I've tested to date.
+//        Intent i = new Intent(Intent.ACTION_VIEW);
+//        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
+//        mContext.startActivity(i);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+
+            Intent i = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            Uri apkUri = Uri.fromFile(apkfile);
+            i.setData(apkUri);
+            i.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            mContext.startActivity(i);
+
+        } else {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
+            mContext.startActivity(i);
+        }
+
 
     }
 
