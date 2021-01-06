@@ -93,6 +93,7 @@ import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
+import com.bematechus.kdslib.UpdateManager;
 //import com.google.android.gms.appindexing.Action;
 //import com.google.android.gms.appindexing.AppIndex;
 //import com.google.android.gms.common.api.GoogleApiClient;
@@ -3495,6 +3496,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //kpp1-335
         //DlgCleaningPinchout d = new DlgCleaningPinchout(this);
         //d.show();
+        //test kpp1-395
+        //UpdateManager m = new UpdateManager(this);
+       // m.installApk("/storage/emulated/0/David/KDS-dev-debug-2.4.1.0(2410).apk");
     }
 
 
