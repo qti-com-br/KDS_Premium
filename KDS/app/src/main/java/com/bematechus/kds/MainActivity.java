@@ -3013,7 +3013,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         if (orderGuid.isEmpty()) return;
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
-
+        //kpp1-389-1,
+        this.getUserUI(userID).getLayout().getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
+        
         //refreshWithNewDbDataAndFocusFirst(); //kpp1-251, use below line code
         this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder(false);
 
