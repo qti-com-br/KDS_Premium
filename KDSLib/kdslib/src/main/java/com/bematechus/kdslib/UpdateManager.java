@@ -125,6 +125,7 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
             if (checkApkValid(uriFileName, localFileName)) {
                 if (m_progressDialog != null) { //kpp1-385-4 hide progressdialog first.
                     m_progressDialog.hide();
+                    m_progressDialog.dismiss();//kpp1-395-5
                     m_progressDialog = null;
                 }
                 afterUpdateApkDownloaded(localFileName);
