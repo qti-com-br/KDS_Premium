@@ -2894,6 +2894,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     }
 
+    /**
+     * Rev.:
+     *      kpp1-437, if focused order is in next page, this function will cause page changed after get new order.
+     *
+     * @param userID
+     */
     public void setFocusAfterReceiveOrder(KDSUser.USER userID)
     {
         KDSUser user = this.getUsers().getUser(userID);
@@ -2908,7 +2914,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         }
         else
         {// > 1
-            setFocusToOrder(KDSConst.RESET_ORDERS_LAYOUT);
+            //kpp1-437, just comment it.
+            //setFocusToOrder(KDSConst.RESET_ORDERS_LAYOUT);
 
         }
 
