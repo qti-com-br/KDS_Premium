@@ -253,7 +253,16 @@ public class PrepSorts {
             //kpp1-417
             if (prep != maxItem) // it is not checking max item.
             {
-
+                //kpp1-431-2, same category should started in same time. This ask us just use "delay", remove preparation time.
+                //
+                if (prep.Category.equals(maxItem.Category))
+                {
+                    if (prep.ItemDelay == maxItem.ItemDelay)
+                    {
+                        return secs;
+                    }
+                }
+                //
                 //Add the difference of preparation time for max and normal item.
                 // Add the normal item delay time.
                 int nDelay = (int)(convertMinutes2Secs(prep.ItemDelay) - secs);
@@ -325,7 +334,9 @@ public class PrepSorts {
         if (prepItem == null) return null;
         prepItem.setFinished(true);//, order.getDurationSeconds());
         PrepSorts.PrepItem maxItem = null;
-        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
+        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0 ||order.prep_get_sorts().areThereDelayItemUnfinished() )
+        { //kpp1-322, add this condition
+            //kpp1-431-2,Smart items:  if there is 0 delay item, and it is bumped, next category items should active.
             if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
                 boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
 
@@ -342,6 +353,7 @@ public class PrepSorts {
                         if (bAllCategoryFinished)
                         {
                             maxItem.RealStartTime = startSeconds;
+                            order.prep_get_sorts().setAllSameCategoryItemsStarted(maxItem);
                         }
                         else {
                             maxItem.RealStartTime = (startSeconds > delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
@@ -367,7 +379,7 @@ public class PrepSorts {
         prepItem.setFinished(false);//.finished = false;
         //if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName))
         PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
-        if (maxItem != null && maxItem == prepItem)
+        if (maxItem != null && maxItem == prepItem && (!order.prep_get_sorts().areAllDifferentCategoryLessDelayTimeItemsFinished(maxItem)) )
         {//we just restore old max item
             ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().reset_real_start_time(maxItem);
             return ar;
@@ -400,6 +412,67 @@ public class PrepSorts {
 
         }
         return true;
+    }
+
+    /**
+     * kpp1-431-2
+     * check all items, if its delay>0, and unfinished, return true;
+     * @return
+     */
+    public boolean areThereDelayItemUnfinished()
+    {
+        for (int i=0; i< m_arItems.size(); i++)
+        {
+            PrepItem item = m_arItems.get(i);
+            if (item.ItemDelay ==0 && item.PrepTime ==0) continue;
+            if (item.finished) continue;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * check if all items which delay time less than maxItem is finished.
+     * This is for unbump operation.
+     * Don't hide/gray current item when unbump, if prev items all bumped.
+     * @param maxItem
+     * @return
+     */
+    public boolean areAllDifferentCategoryLessDelayTimeItemsFinished(PrepItem maxItem)
+    {
+
+        for (int i=0; i< m_arItems.size(); i++)
+        {
+            PrepItem item = m_arItems.get(i);
+            if (item.finished) continue;
+            if (item == maxItem ) continue;
+            if (item.Category.equals(maxItem.Category)) continue;
+            if ( item.ItemDelay<= maxItem.ItemDelay)
+                return false;
+
+        }
+        return true;
+    }
+
+    /**
+     * All same delay/prepitem/category items started
+     * @param maxItem
+     */
+    private void setAllSameCategoryItemsStarted(PrepItem maxItem)
+    {
+        for (int i=0; i< m_arItems.size(); i++)
+        {
+            PrepItem item = m_arItems.get(i);
+            if (item.finished) continue;
+            if (item == maxItem ) continue;
+            if (item.Category.equals(maxItem.Category) &&
+                item.ItemDelay == maxItem.ItemDelay)
+                item.RealStartTime = maxItem.RealStartTime;
+
+
+
+        }
+
     }
 
     /********************************************************************************************/
