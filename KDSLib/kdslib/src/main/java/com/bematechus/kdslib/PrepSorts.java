@@ -237,6 +237,8 @@ public class PrepSorts {
     {
         PrepItem prep = findItem(itemName);
         if (prep == null) return 0;
+        if (prep.finished) return 0; //kpp1-431-1, finished item should cooked.
+
         String maxItemName = prep.MaxItemName;
 
         int secs = 0;
