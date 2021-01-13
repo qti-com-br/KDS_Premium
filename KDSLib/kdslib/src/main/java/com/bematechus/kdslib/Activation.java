@@ -1447,7 +1447,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (KDSConst._DEBUG_HIDE_LOGIN_DLG)
                 return;
         }
-
+        if (ActivityLogin.isShowing()) return; //kpp1-434
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         setDoLicensing(true);//m_bDoLicensing = true;
