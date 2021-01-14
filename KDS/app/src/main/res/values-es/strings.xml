@@ -886,12 +886,12 @@
 	<string name="void_qty_line_color_enabled">Habilitar linea de color cuando sea  cantidad nula</string>
 	<string name="void_qty_line_color">Linea de color cuando sea la cantidad nula</string>
 	<string name="void_item_qty_mark_with">Marcar articulo anulado con</string>
-    <string name="powered_by">POWERED BY</string>
+    <string name="powered_by">DESARROLADO POR</string>
 	<string name="enable_bg_logo">Logotipo de fondo</string>
 	<string name="bg_logo_file">Archivo de logotipo de fondo</string>
-    <string name="hide_title">Hide title</string>
-	<string name="sum_font">Summary font</string>
-	<string name="any_time">Any time</string>
-	<string name="clear_db_schedule">Clear database schedule</string>
-	<string name="category_font">Category font</string>
+    <string name="hide_title">Ocultar título</string>
+	<string name="sum_font">Fuente del Sumario</string>
+	<string name="any_time">Cualquier tiempo</string>
+	<string name="clear_db_schedule">Calendario para borrar base de datos</string>
+	<string name="category_font">Fuente de Categoria</string>
 </resources>
