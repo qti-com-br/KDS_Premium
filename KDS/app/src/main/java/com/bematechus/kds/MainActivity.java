@@ -3013,9 +3013,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         if (orderGuid.isEmpty()) return;
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
-        //kpp1-389-1,
-        this.getUserUI(userID).getLayout().getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
         
+        //kpp1-439, just auto sort enabled, we set focus to unbumped order. Otherwise, keep current focus order.
+        //           This is for preventing page changed issue.
+        KDSSettings.OrdersSort ordersSort = KDSSettings.OrdersSort.values()[  getSettings().getInt(KDSSettings.ID.Order_Sort)];
+        if (ordersSort != KDSSettings.OrdersSort.Manually) {
+            //kpp1-389-1,
+            this.getUserUI(userID).getLayout().getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
+        }
         //refreshWithNewDbDataAndFocusFirst(); //kpp1-251, use below line code
         this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder(false);
 
