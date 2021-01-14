@@ -6583,7 +6583,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS)) //DEBUG
         {
 
-            doActivation(true, false, "");
+            //doActivation(true, false, ""); //kpp1-434, make sure login dialog showing
+            doActivationNoEmptyUserNameAllowed(true, false, "");
             m_activationDog.reset();
         }
     }
@@ -7740,5 +7741,36 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSUtil.showBuildTypes(this, t);
     }
 
+
+    /**
+     * kpp1-434
+     * @param bSilent
+     * @param bForceShowNamePwdDlg
+     * @param showErrorMessage
+     */
+    public void doActivationNoEmptyUserNameAllowed(boolean bSilent,boolean bForceShowNamePwdDlg, String showErrorMessage)
+    {
+        if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
+            return;
+        if (m_activation.isDoLicensing()) {
+            showToastMessage(getString(R.string.internal_doing_activation));// "Internal activation is in process, please logout again later.");
+            return; //kpp1-304, maybe this cause kds can not logout issue.
+        }
+
+        m_activation.setStationID(getKDS().getStationID());
+        ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
+        //kpp1-399, allow mac is empty.
+        //if (ar.size()<=0)
+//        {
+//            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+//            return;//kpp1-304, maybe this cause kds can not logout issue.
+//        }
+        if (ar.size() >0)//kpp1-399
+            m_activation.setMacAddress(ar.get(0));
+
+        //  m_activation.setMacAddress("BEMA0000011");//test
+        //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
+        m_activation.startActivationNoEmptyUserNameAllowed(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
+    }
 }
 

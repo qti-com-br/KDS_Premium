@@ -2636,4 +2636,28 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     }
 
+    public void startActivationNoEmptyUserNameAllowed(boolean bSilent,boolean bForceShowNamePwdDlg, Activity caller, String errMessage)
+    {
+
+        if (isDoLicensing()) return;// (m_bDoLicensing) return;
+        setDoLicensing(true);//m_bDoLicensing = true;
+        m_nSyncGetDevicesTries = 0;
+
+        m_bSilent = bSilent;
+        String userName = loadUserName();
+        String password = loadPassword();
+        if (userName.isEmpty() || password.isEmpty()) {
+            showLoginActivity(caller, errMessage);
+        }
+        else
+        {
+            if ( !bForceShowNamePwdDlg) {
+                postLoginRequest(userName, password);
+                setDoLicensing(false); //kpp1-368
+            }
+            else
+                showLoginActivity(caller, errMessage);
+        }
+    }
+
 }

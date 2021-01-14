@@ -52,10 +52,31 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
     Activation m_activation = new Activation(this);
 
     static ActivityLogin m_instance = null;
+    static boolean m_bVisible = false;
+    static void activityResumed()
+    {
+        m_bVisible = true;
+    }
 
+    static void activityPaused()
+    {
+        m_bVisible = false;
+    }
     static public boolean isShowing()
     {
-        return (m_instance != null);
+        return (m_instance != null && m_bVisible);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityLogin.activityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ActivityLogin.activityPaused();
     }
 
     @Override
