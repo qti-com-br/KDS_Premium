@@ -30,7 +30,7 @@ import java.util.ArrayList;
  */
 public class ActivityLogin extends Activity implements  Activation.ActivationEvents, DialogBaseNoBumpbarSupport.KDSDialogBaseListener {
 
-
+    final String TAG = "ActivityLogin";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -69,27 +69,34 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     @Override
     protected void onResume() {
+        KDSLog.e(TAG, "onResume enter");
         super.onResume();
         ActivityLogin.activityResumed();
+        KDSLog.e(TAG, "onResume exit");
     }
 
     @Override
     protected void onPause() {
+        KDSLog.e(TAG, "onPause enter");
         super.onPause();
         ActivityLogin.activityPaused();
+        KDSLog.e(TAG, "onPause exit");
     }
 
     @Override
     protected void onDestroy()
     {
+        KDSLog.e(TAG, "onDestroy enter");
         super.onDestroy();
         m_instance = null;
+        m_bVisible = false;
+        KDSLog.e(TAG, "onDestroy exit");
 
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        KDSLog.e(TAG, "onCreate enter");
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         m_instance = this;
         Intent intent = this.getIntent();
@@ -189,6 +196,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 //            }
 //        });
         forceAgreementAgreed();
+
+        KDSLog.e(TAG, "onCreate exit");
     }
 
     public void onCancelClicked()
@@ -374,23 +383,26 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     public void onActivationSuccess()
     {
+        KDSLog.e(TAG, "onActivationSuccess enter");
         Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         this.setResult(Login_Result.Passed.ordinal());
         String email = mUserNameView.getText().toString();
         String password = mPasswordView.getText().toString();
         m_activation.checkStoreChanged();
         m_activation.saveUserNamePwd(email, password);
-
+        KDSLog.e(TAG, "onActivationSuccess exit");
         this.finish();
+
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
+        KDSLog.e(TAG, "onActivationFail enter");
         Toast.makeText(this, "Activation failed: " + failMessage, Toast.LENGTH_LONG).show();
         if (ActivationRequest.needResetUsernamePassword(errType))
             m_activation.resetUserNamePassword();
         checkActivationResult();
         showErrorMessage(failMessage);
-
+        KDSLog.e(TAG, "onActivationFail exit");
         //this.setResult(0);
     }
     public void showErrorMessage(String str)

@@ -1384,7 +1384,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         m_bSilent = bSilent;
         String userName = loadUserName();
         String password = loadPassword();
-        //Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
+        KDSLog.e(TAG, "startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
 
 //        userName = USER_NAME;
 //        password = PASSWORD;
@@ -1392,9 +1392,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (m_bSilent) {
                 updateFailedCount();
                 setDoLicensing(false);//m_bDoLicensing = false;
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "fireActivationFailEvent fired");
                 fireActivationFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
                 return;
             }
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "showLoginActivity called");
             showLoginActivity(caller, showErrorMessage);
 
             //showInputNamePasswordDlg(m_context);
@@ -1411,11 +1413,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 //                }
 //            }
             if ( !bForceShowNamePwdDlg) {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "postLoginRequest called");
                 postLoginRequest(userName, password);
                 setDoLicensing(false); //kpp1-368
             }
-            else
+            else {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "showLoginActivity called 2");
                 showLoginActivity(caller, showErrorMessage);
+            }
         }
     }
     ProgressDialog m_progressDlg = null;
@@ -1449,7 +1454,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         if (ActivityLogin.isShowing()) return; //kpp1-434
 
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        KDSLog.e(TAG,KDSLog._FUNCLINE_() + "Enter");
         setDoLicensing(true);//m_bDoLicensing = true;
         Intent intent = new Intent(caller, ActivityLogin.class);
 
@@ -1460,7 +1465,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
         caller.startActivityForResult(intent, KDSConst.SHOW_LOGIN);
 
-        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+        KDSLog.e(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
 
