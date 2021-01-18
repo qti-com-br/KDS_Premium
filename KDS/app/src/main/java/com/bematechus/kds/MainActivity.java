@@ -6543,15 +6543,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onActivationSuccess()
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onActivationSuccess enter");
         checkRemovedStationsFromBackofficeAfterRegister();
         updateTitle();
+
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onActivationSuccess exit");
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
        // Toast.makeText(this, "Activation failed: " +stage.toString()+" - " + failMessage, Toast.LENGTH_LONG).show();
 //        if (ActivationRequest.needResetUsernamePassword(errType))
 //            m_activation.resetUserNamePassword();
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onActivationFail " + errType.name());
 
         checkActivationResult(stage, errType);
         if (Activation.needShowInactiveTitle(errType))
@@ -6561,6 +6564,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (m_activation.isActivationFailedEnoughToLock() || errType == ActivationRequest.ErrorType.License_disabled)
         {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "checkActivationResult " + errType.name());
             //this.finish();
             doActivation(false, true, this.getString(R.string.license_deactivated));
             //m_activation.showLoginActivity(this);
@@ -6655,7 +6659,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public void onDoActivationExplicit()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onDoActivationExplicit enter");
        doActivation(false, true, "");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onDoActivationExplicit exit");
     }
 
     public void onForceClearDataBeforeLogin()
