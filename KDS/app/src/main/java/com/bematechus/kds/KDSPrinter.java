@@ -1829,9 +1829,7 @@ print order data to  buffer, socket will send this buffer to serial port
     public void printOrder(KDSDataOrder order)
     {
         if (!isEnabled()) return;
-        // R U R' U R U2 R'
-        // x R' U R' D2 R U' R' D2 R2 x
-        // R2 U R U R' U' R' U' R' U R'
+
         if(m_nPortType == PrinterPortType.USB) {
             
            // if(Printer.status == Printer.PRINTER_STATUS.OK) { //Here, it has bug. If usb printer is offline, order will lost.
