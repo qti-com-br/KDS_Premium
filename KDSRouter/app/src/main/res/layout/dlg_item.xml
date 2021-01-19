@@ -3,7 +3,6 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.bematechus.kdsrouter.KDSUIDlgFoodItem"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:focusable="true"
@@ -25,39 +24,47 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/description"
-                android:id="@+id/textView14"
                 android:layout_column="0"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:text="@string/description"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <EditText
+                android:id="@+id/txtDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtDescription"
                 android:layout_column="1"
                 android:layout_weight="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="@dimen/dlg_item_text_size" />
             <LinearLayout android:layout_column="2"
                 android:layout_width="wrap_content">
+
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/bg"
                     android:id="@+id/btnBG"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:layout_column="2"
                     android:layout_weight="1"
                     android:focusable="false"
-                    android:focusableInTouchMode="false" />
+                    android:focusableInTouchMode="false"
+                    android:text="@string/bg"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
+
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fg"
                     android:id="@+id/btnFG"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:layout_column="2"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:text="@string/fg"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
             </LinearLayout>
         </TableRow>
 
@@ -72,6 +79,7 @@
                 android:text="@string/station"
                 android:id="@+id/textView10"
                 android:layout_column="0"
+                android:textSize="@dimen/dlg_item_text_size"
                 android:layout_weight="1" />
 
             <LinearLayout
@@ -89,6 +97,7 @@
                     android:layout_column="1"
                     android:layout_weight="1"
                     android:layout_span="2"
+                    android:textSize="@dimen/dlg_item_text_size"
                     android:singleLine="true" />
 
                 <TextView
@@ -98,6 +107,7 @@
                     android:text="@string/screen"
                     android:id="@+id/textView19"
                     android:layout_column="0"
+                    android:textSize="@dimen/dlg_item_text_size"
                     android:layout_marginLeft="50dp" />
 
                 <EditText
@@ -107,6 +117,7 @@
                     android:layout_column="1"
                     android:layout_weight="1"
                     android:layout_span="2"
+                    android:textSize="@dimen/dlg_item_text_size"
                     android:singleLine="true" />
             </LinearLayout>
 
@@ -123,6 +134,7 @@
                 android:text="@string/delayprep"
                 android:id="@+id/textViewScreen"
                 android:layout_column="0"
+                android:textSize="@dimen/dlg_item_text_size"
                 android:layout_weight="1" />
 
             <RelativeLayout
@@ -136,7 +148,7 @@
                     android:id="@+id/txtPrepTime"
                     android:selectAllOnFocus="true"
                     android:inputType="number"
-
+                    android:textSize="@dimen/dlg_item_text_size"
 
                     android:singleLine="true" />
 
@@ -148,7 +160,7 @@
                     android:layout_toRightOf="@id/txtPrepTime"
                     android:layout_toEndOf="@id/txtPrepTime"
                     android:id="@+id/txtDot"
-
+                    android:textSize="@dimen/dlg_item_text_size"
                     />
 
                 <EditText
@@ -161,6 +173,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/txtDot"
                     android:layout_toEndOf="@+id/txtDot"
+                    android:textSize="@dimen/dlg_item_text_size"
                     android:singleLine="true" />
 
                 <CheckBox
@@ -174,6 +187,7 @@
                     android:layout_toRightOf="@+id/txtSecs"
                     android:layout_toEndOf="@+id/txtSecs"
                     android:text="@string/printable"
+                    android:textSize="@dimen/dlg_item_text_size"
                     android:layout_marginLeft="50dp" />
             </RelativeLayout>
             <!--<EditText-->
@@ -220,6 +234,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/summary_translate"
+                        android:textSize="@dimen/dlg_item_text_size"
                         android:id="@+id/chkSumTranslate" />
                 </LinearLayout>
 
@@ -235,25 +250,30 @@
                         android:layout_height="match_parent">
 
                         <Button
-                            style="?android:attr/buttonStyleSmall"
+                            android:id="@+id/btnSumNameNew"
                             android:layout_width="match_parent"
-                            android:layout_height="35dp"
+                            android:layout_height="@dimen/dlg_item_button_height"
                             android:text="@string/add_new"
-                            android:id="@+id/btnSumNameNew" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textSize="@dimen/dlg_item_text_size" />
 
                         <Button
+                            android:id="@+id/btnSumNameEdit"
                             style="?android:attr/buttonStyleSmall"
                             android:layout_width="match_parent"
-                            android:layout_height="35dp"
+                            android:layout_height="@dimen/dlg_item_button_height"
                             android:text="@string/edit"
-                            android:id="@+id/btnSumNameEdit" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textSize="@dimen/dlg_item_text_size" />
 
                         <Button
+                            android:id="@+id/btnSumNameDelete"
                             style="?android:attr/buttonStyleSmall"
                             android:layout_width="match_parent"
-                            android:layout_height="35dp"
+                            android:layout_height="@dimen/dlg_item_button_height"
                             android:text="@string/delete"
-                            android:id="@+id/btnSumNameDelete" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textSize="@dimen/dlg_item_text_size" />
                     </LinearLayout>
 
                     <ListView
@@ -277,7 +297,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Modifers"
+                    android:text="@string/modifers"
+                    android:textSize="@dimen/dlg_item_text_size"
                     android:id="@+id/textView38" />
 
                 <LinearLayout
@@ -300,25 +321,31 @@
                         android:layout_height="match_parent">
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="35dp"
-                            android:text="New"
                             android:id="@+id/btnModifierNew"
-                            style="?android:attr/buttonStyleSmall" />
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dlg_item_button_height"
+                            android:text="@string/add_new"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textSize="@dimen/dlg_item_text_size" />
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="35dp"
-                            android:text="Edit"
                             android:id="@+id/btnModifierEdit"
-                            style="?android:attr/buttonStyleSmall" />
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dlg_item_button_height"
+                            android:text="@string/edit"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textSize="@dimen/dlg_item_text_size" />
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="35dp"
-                            android:text="Delete"
                             android:id="@+id/btnModifierDel"
-                            style="?android:attr/buttonStyleSmall" />
+                            style="?android:attr/buttonStyleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dlg_item_button_height"
+                            android:text="@string/delete"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                            android:textSize="@dimen/dlg_item_text_size" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -337,28 +364,35 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/build_cards"
+                android:textSize="@dimen/dlg_item_text_size"
                 android:id="@+id/textView6" />
 
             <Button
+                android:id="@+id/btnBCLocal"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dlg_item_button_height"
                 android:text="@string/local"
-                android:id="@+id/btnBCLocal" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <Button
+                android:id="@+id/btnBCEthernet"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dlg_item_button_height"
                 android:text="@string/ethernet"
-                android:id="@+id/btnBCEthernet" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <Button
+                android:id="@+id/btnBCInternet"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dlg_item_button_height"
                 android:text="@string/internet"
-                android:id="@+id/btnBCInternet" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textSize="@dimen/dlg_item_text_size" />
 
         </LinearLayout>
 
@@ -374,6 +408,7 @@
                 android:id="@+id/lstBuildCards"
                 android:layout_weight="1"
                 android:background="@drawable/media_listview_border"
+                android:textSize="@dimen/dlg_item_text_size"
                 android:choiceMode="singleChoice" />
 
             <LinearLayout
@@ -382,25 +417,31 @@
                 android:layout_height="match_parent">
 
                 <Button
+                    android:id="@+id/btnBCRemove"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:text="@string/delete"
-                    android:id="@+id/btnBCRemove" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <Button
+                    android:id="@+id/btnBCUp"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:text="@string/up"
-                    android:id="@+id/btnBCUp" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <Button
+                    android:id="@+id/btnBCDown"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:text="@string/down"
-                    android:id="@+id/btnBCDown" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
             </LinearLayout>
         </LinearLayout>
 
@@ -414,6 +455,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/training_video"
+                android:textSize="@dimen/dlg_item_text_size"
                 android:id="@+id/textView8" />
 
             <Button
@@ -421,6 +463,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/local"
+                android:textSize="@dimen/dlg_item_text_size"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/btnTCLocal" />
 
             <Button
@@ -428,6 +472,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ethernet"
+                android:textSize="@dimen/dlg_item_text_size"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/btnTVEthernet" />
 
             <Button
@@ -435,6 +481,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/internet"
+                android:textSize="@dimen/dlg_item_text_size"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:id="@+id/btnTVInternet" />
 
         </LinearLayout>
@@ -451,6 +499,7 @@
                 android:id="@+id/lstTraining"
                 android:layout_weight="1"
                 android:background="@drawable/media_listview_border"
+                android:textSize="@dimen/dlg_item_text_size"
                 android:choiceMode="singleChoice" />
 
             <LinearLayout
@@ -459,25 +508,31 @@
                 android:layout_height="match_parent">
 
                 <Button
+                    android:id="@+id/btnTVRemove"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:text="@string/delete"
-                    android:id="@+id/btnTVRemove" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <Button
+                    android:id="@+id/btnTVUp"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:text="@string/up"
-                    android:id="@+id/btnTVUp" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <Button
+                    android:id="@+id/btnTVDown"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="@dimen/dlg_item_button_height"
                     android:text="@string/down"
-                    android:id="@+id/btnTVDown" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/dlg_item_text_size" />
             </LinearLayout>
         </LinearLayout>
 

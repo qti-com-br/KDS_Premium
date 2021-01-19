@@ -40,8 +40,8 @@ public class KDSPrinter {
 
     static final private String TAG_LEFT = "<";
     static final private String TAG_RIGHT = ">";
-    static final private char CHAR_Start_Order = 0x301; //identify a new order printing start/end
-    static final private char CHAR_End_Order = 0x302;
+    static final public char CHAR_Start_Order = 0x301; //identify a new order printing start/end
+    static final public char CHAR_End_Order = 0x302;
     final private int MAX_PRINT_LINES = 10000;
 
     static final private String TAG_START_BOLD = "<B>";
@@ -1832,32 +1832,52 @@ print order data to  buffer, socket will send this buffer to serial port
 
         if(m_nPortType == PrinterPortType.USB) {
             
-            if(Printer.status == Printer.PRINTER_STATUS.OK) {
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        m_printerData.clear();
-
-                        // Format order to print
-                        printOrderToBuffer(order);
-
-                        String sOrder = "";
-                        for (int i = 0; i < m_printerData.size() - 2; i++) {
-                            sOrder += m_printerData.get(i);
-                        }
-                        sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
-
-                        try {
-                            Printer.printOrder(sOrder.getBytes());
-                        } catch(Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        m_printerData.clear();
-                    }
-                };
-                thread.start();
+           // if(Printer.status == Printer.PRINTER_STATUS.OK) { //Here, it has bug. If usb printer is offline, order will lost.
+            String sOrder = "";
+            synchronized (m_printerData) { //run in main thread
+                m_printerData.clear();
+                // Format order to print
+                printOrderToBuffer(order);
+                for (int i = 0; i < m_printerData.size() - 2; i++) {
+                    sOrder += m_printerData.get(i);
+                }
+                sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
+                m_printerData.clear();
             }
+            UsbPrinterThread.start(sOrder);//use thread to print data.
+
+//            Thread thread = new Thread() {
+//                @Override
+//                public void run() {
+//
+//
+//                    Log.d(TAG, "--->>>USB Printer start printing thread");
+//                    m_printerData.clear();
+//
+//                    // Format order to print
+//                    printOrderToBuffer(order);
+//
+//                    String sOrder = "";
+//                    for (int i = 0; i < m_printerData.size() - 2; i++) {
+//                        sOrder += m_printerData.get(i);
+//                    }
+//                    sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
+//
+//                    try {
+//                        //Thread.sleep(200); //For debug
+//                        Printer.printOrder(sOrder.getBytes());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    m_printerData.clear();
+//                    Log.d(TAG, "<<<USB Printer exit printing thread");
+//                }
+//
+//
+//            };
+//            thread.start();
+            //}
 
         } else {
 

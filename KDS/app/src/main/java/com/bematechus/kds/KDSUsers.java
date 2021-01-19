@@ -265,14 +265,18 @@ public class KDSUsers {
     public KDSUser.USER orderUnbump(String orderGuid)
     {
         if (getUserA() != null) {
-            if (KDSStationFunc.orderUnbump(getUserA(), orderGuid))
+            if (KDSStationFunc.orderUnbump(getUserA(), orderGuid)) {
+                getUserA().getOrders().sortOrders(); //kpp1-389
                 return KDSUser.USER.USER_A;
+            }
 
         }
         if (getUserB() != null)
         {
-            if (KDSStationFunc.orderUnbump(getUserB(), orderGuid))
+            if (KDSStationFunc.orderUnbump(getUserB(), orderGuid)) {
+                getUserB().getOrders().sortOrders(); //kpp1-389
                 return KDSUser.USER.USER_B;
+            }
 
         }
         return KDSUser.USER.USER_A;
@@ -345,7 +349,14 @@ public class KDSUsers {
     {
         String orderName = order.getOrderName();
         if (getUserA() != null) {
-            KDSDataOrder orderExisted = getUserA().getOrders().getOrderByName(orderName);
+            //kpp1-409
+            KDSDataOrder orderExisted = null;
+            if (orderName.isEmpty()) {
+                orderExisted = getUserA().getOrders().getOrderByGUID(order.getGUID());
+            }
+            else {
+                orderExisted = getUserA().getOrders().getOrderByName(orderName);
+            }
 
             if (orderExisted != null) {
 
@@ -354,7 +365,12 @@ public class KDSUsers {
             }
         }
         if (getUserB() != null) {
-            KDSDataOrder orderExisted = getUserB().getOrders().getOrderByName(orderName);
+            //kpp1-409
+            KDSDataOrder orderExisted = null;
+            if (orderName.isEmpty())
+                orderExisted = getUserB().getOrders().getOrderByGUID(order.getGUID());
+            else
+                orderExisted = getUserB().getOrders().getOrderByName(orderName);
 
             if (orderExisted != null) {
                 getUserB().getOrders().removeComponent(orderExisted);
@@ -427,4 +443,22 @@ public class KDSUsers {
 
     }
 
+    public KDSDataOrder getOrderByNameIncludeParked(String orderName)
+    {
+        if (getUserA() != null) {
+
+            KDSDataOrder order =  getUserA().getOrders().getOrderByName(orderName);
+            if (order != null) return order;
+            order =  getUserA().getParkedOrders().getOrderByName(orderName);
+            if (order != null) return order;
+        }
+        if (getUserB() != null)
+        {
+            KDSDataOrder order =  getUserB().getOrders().getOrderByName(orderName);
+            if (order != null) return order;
+            order =  getUserB().getParkedOrders().getOrderByName(orderName);
+            if (order != null) return order;
+        }
+        return null;
+    }
 }

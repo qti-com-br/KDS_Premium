@@ -675,6 +675,7 @@
 	<string-array name="pref_kds_sum_type_titles">
 		<item>Item sem condimentos</item>
 		<item>Ítens com condimentos</item>
+		<item>Only condiments</item>
 	</string-array>
 	<string-array name="pref_sum_position_titles">
 		<item>Ao lado</item>
@@ -887,4 +888,9 @@
     <string name="powered_by">POWERED BY</string>
 	<string name="enable_bg_logo">Habilitar Logotipo de Fundo</string>
 	<string name="bg_logo_file">Arquivo do Logotipo</string>
+    <string name="hide_title">Esconder título</string>
+	<string name="sum_font">Fonte do Resumo</string>
+	<string name="any_time">Qualquer hora</string>
+	<string name="clear_db_schedule">Limpar cronograma do banco de dados</string>
+	<string name="category_font">Fonte de categoria</string>
 </resources>

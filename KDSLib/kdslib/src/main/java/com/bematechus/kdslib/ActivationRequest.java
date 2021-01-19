@@ -53,6 +53,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static final String REQ_SMS_ORDER =  "SMS_ORDER";
     static final String REQ_SYNC =  "SYNC";
     static final String REQ_CLEANING_RESPONSE =  "STORE_CLEAN_RESPONSE";
+    static final String REQ_GET_ORDERS =  "GET_ORDERS";
+    static final String REQ_GET_SERVER_TIME =  "GET_SERVER_TIME";
     /**
      *
      * Management
@@ -115,6 +117,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Sync_item_bump,
         Sync_customer,
         Cleaning,
+        Get_orders,
+        Get_server_time,
     }
 
     public enum ErrorType
@@ -132,6 +136,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Cancel_license_options,
         Replace_error,
         App_type_error, //kpp1-211 just premium app can login
+        Get_server_time_error,
     }
 
     COMMAND m_command = COMMAND.Unknown;
@@ -1125,7 +1130,8 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("preparation_time",  prepTime);
             //KPP1-71 When the item has multiple quantity, the condiment should ahve multiple quantity on the database. Currently it always shows 1 in the condiments field on the database.
             //EX: If I have an item with 3 quantity and it has 1 condiment, the quantity for the condiments in the "condiments" table on the back office should be 3.
-            json.put("quantity",  KDSUtil.convertIntToString((int) item.getShowingQty()));//just set it to 1.
+            //json.put("quantity",  KDSUtil.convertIntToString((int) item.getShowingQty()));//just set it to 1.
+            json.put("quantity",  KDSUtil.convertIntToString((int) item.getShowingQty() *(int)condiment.getQty()));//just set it to 1.
         }
         catch (Exception e)
         {
@@ -1763,6 +1769,74 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         ActivationRequest r = new ActivationRequest();
         r.setParams( str );
         r.setCommand( COMMAND.Get_devices );
+        return r;
+
+
+    }
+
+    /**
+     *  [{
+     *           "tok" : "CURRENT_TOKEN"
+     *         },{
+     *           "req" : "GET_ORDERS",
+     *           "store_guid" : AppDelegate.store?.guid_ ?? "",
+     *           "min_update_time": lastDownloadTime
+     *         }]
+     *         *** all keys are mandatory.
+     * *** min_update_time = last time (unixtimestamp) that the router downloaded orders.
+     * @param store_guid
+     * @param lastUpdateTime
+     * @return
+     */
+    static public ActivationRequest requestGetOrders( String store_guid, Date lastUpdateTime)
+    {
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_ORDERS);//"GET_DEVICES");
+        try {
+
+            json.put("store_guid",store_guid );
+            long utcTime = getUTCTimeSeconds(lastUpdateTime);// getLocalTimeSeconds(lastUpdateTime);
+            if (utcTime != 0)
+                json.put("min_update_time", utcTime);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Get_orders );
+        return r;
+
+
+    }
+
+    /**
+     * kpp1-397
+     *
+     * @return
+     */
+    static public ActivationRequest requestGetServerTime( )
+    {
+        String auth = TOKEN;
+        JSONArray arJson = new JSONArray();
+        arJson.put(getJsonObj(TOK, auth) );
+        JSONObject json = getJsonObj(REQ, REQ_GET_SERVER_TIME);
+
+        arJson.put(json);
+        String str = arJson.toString();
+
+        ActivationRequest r = new ActivationRequest();
+        r.setParams( str );
+        r.setCommand( COMMAND.Get_server_time );
+        r.setHighPriority();
         return r;
 
 

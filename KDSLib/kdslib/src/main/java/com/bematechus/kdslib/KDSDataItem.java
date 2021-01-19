@@ -583,8 +583,10 @@ public class KDSDataItem extends KDSData {
         }
         if (itemReceived.getXmlFieldValid(VALID_ITEM_XML_FIELD.Description))
         {
-            this.setDescription(itemReceived.getDescription());
-            bResult = true;
+            if (!itemReceived.getDescription().isEmpty()) {//kpp1-409
+                this.setDescription(itemReceived.getDescription());
+                bResult = true;
+            }
         }
         if (itemReceived.getXmlFieldValid(VALID_ITEM_XML_FIELD.FG))
         {

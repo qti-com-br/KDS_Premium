@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
+        android:orientation="horizontal"
         android:background="@color/kds_title_bg"
         android:id="@+id/layoutTitle">
         <!--android:background="@drawable/lci"-->
@@ -21,6 +22,30 @@
             android:clickable="false"
             android:enabled="true"
             android:background="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/txtRouterID"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/imgLCI"
+            android:layout_toRightOf="@+id/imgLCI"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:text="KDSRouter"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/txtBuildType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:gravity="center_vertical"
+            tools:visibility="gone" />
         <!--<ImageView-->
         <!--android:layout_width="30dp"-->
         <!--android:layout_height="30dp"-->
@@ -91,19 +116,20 @@
         <!--android:layout_toLeftOf="@+id/txtNextB"-->
         <!--android:textColor="@color/kds_title_fg" />-->
         <TextView
+            android:id="@+id/txtTitle"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/main_title"
-            android:id="@+id/txtTitle"
-            android:gravity="center|center_horizontal"
-            android:textStyle="bold"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/imgLCI"
-            android:layout_toLeftOf="@+id/linearTime"
             android:layout_toStartOf="@+id/linearTime"
+            android:layout_toLeftOf="@+id/linearTime"
+            android:layout_toRightOf="@+id/imgLCI"
+            android:layout_weight="1"
+            android:gravity="center|center_horizontal"
+            android:paddingLeft="80dp"
+            android:text="@string/main_title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/kds_title_fg"
-            android:paddingLeft="80dp" />
+            android:textStyle="bold" />
         <!--android:layout_alignParentTop="true"-->
         <!--android:layout_alignParentRight="true"-->
         <!--android:layout_alignParentEnd="true"-->
@@ -163,20 +189,7 @@
             android:onClick="onBtnLogoClicked"
             android:focusable="false" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="KDSRouter"
-            android:id="@+id/txtRouterID"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imgLCI"
-            android:layout_toEndOf="@+id/imgLCI"
-            android:textColor="#000000"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:paddingLeft="5dp" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"

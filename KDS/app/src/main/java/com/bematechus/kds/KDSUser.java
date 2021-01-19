@@ -202,51 +202,73 @@ public class KDSUser {
 
     /**
      * Rev.
-     *  If all items preparation time is 0, this function will cause line items display move order up/up automaticly. (Smart sort enabled).
-     *
+     *  1. If all items preparation time is 0, this function will cause line items display move order up/up automaticly. (Smart sort enabled).
+     *  2. kpp1-417, move code to prepsorts class
      * @param orderName
      * @param itemName
      */
     public void prep_other_station_item_bumped(String orderName,String itemName)
     {
+
+
         KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return;
-        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
-        if (prepItem == null) return;
-        prepItem.setFinished(true);//, order.getDurationSeconds());
-        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
-            if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
-                PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
-                if (maxItem != null) {
-                    maxItem.RealStartTime = order.getDurationSeconds();
-                    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
-                }
-            }
+        PrepSorts.PrepItem maxItem = PrepSorts.prep_other_station_item_bumped(order, itemName);
+        if (maxItem != null) {
+            getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
         }
         getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
+
+//        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+//        if (prepItem == null) return;
+//        prepItem.setFinished(true);//, order.getDurationSeconds());
+//        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
+//            if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+//                PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
+//                if (maxItem != null) {
+//                    maxItem.RealStartTime = order.getDurationSeconds() + (int)(maxItem.ItemDelay * 60); //kpp1-417, make delay time must been done.
+//                    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
+//                }
+//            }
+//        }
+//        getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
 
 
     }
 
+    /**
+     * rev.:
+     *  kpp1-417, move code to prepsorts class
+     * @param orderName
+     * @param itemName
+     */
     public void prep_other_station_item_unbumped(String orderName,String itemName)
     {
         KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return;
-        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
-        if (prepItem == null) return;
-        prepItem.setFinished(false);//.finished = false;
-        //if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName))
-        PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
-        if (maxItem != null && maxItem == prepItem)
-        {//we just restore old max item
-            ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().reset_real_start_time(maxItem);
-            for (int i=0; i< ar.size(); i++)
-            {
+        ArrayList<PrepSorts.PrepItem> ar = PrepSorts.prep_other_station_item_unbumped(order, itemName);
+        if (ar != null) {
+            for (int i = 0; i < ar.size(); i++) {
                 getCurrentDB().prep_set_real_started_time(order.getGUID(), ar.get(i).ItemName, 0);
             }
         }
-
         getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, false);
+
+//        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+//        if (prepItem == null) return;
+//        prepItem.setFinished(false);//.finished = false;
+//        //if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName))
+//        PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
+//        if (maxItem != null && maxItem == prepItem)
+//        {//we just restore old max item
+//            ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().reset_real_start_time(maxItem);
+//            for (int i=0; i< ar.size(); i++)
+//            {
+//                getCurrentDB().prep_set_real_started_time(order.getGUID(), ar.get(i).ItemName, 0);
+//            }
+//        }
+//
+//        getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, false);
     }
 
     public void clearBufferedOrders()

@@ -77,7 +77,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSTimer.KDSTimerInterface,
         KDSUIDialogBase.KDSDialogBaseListener,
         Activation.ActivationEvents,
-        KDSUIAboutDlg.AboutDlgEvent
+        KDSUIAboutDlg.AboutDlgEvent,
+        KDSBackofficeNotification.BackofficeNotification_Event
         {
 
     final static private String TAG = "MainActivity";
@@ -104,6 +105,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     KDSKbdRecorder m_kbdRecorder = new KDSKbdRecorder();
 
     Activation m_activation = new Activation(this);
+    KDSBackofficeNotification m_backofficeNotification = new KDSBackofficeNotification(this);
 
 
     public enum Confirm_Dialog {
@@ -133,7 +135,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
-
+    TimeDog mBackOfficeNotificationTimeDog = new TimeDog();
+    final int BACKOFFICE_CONNECT_TIMEOUT = 5000;
     public void onTime()
     {
         if (m_service != null)
@@ -146,6 +149,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         startCheckRemoteFolderNotificationThread();
 
         checkAutoActivation();
+        if (mBackOfficeNotificationTimeDog.is_timeout(BACKOFFICE_CONNECT_TIMEOUT)) {
+            mBackOfficeNotificationTimeDog.reset(); //kpp1-397
+            connectBackofficeNotification();
+        }
 
     }
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -293,6 +300,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         updateTitle();
 
         KDSUIDlgAgreement.forceAgreementAgreed(this, this);
+
 
         // Set KDS Router as System App
         try {
@@ -951,7 +959,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_service.checkStationsSettingChanged();//(this.getApplicationContext()();
         }
         else if (key.equals("kds_general_language") ||
-                Activation.isActivationPrefKey(key)) //don't handle it.
+                Activation.isActivationPrefKey(key) ||//don't handle it.
+                key.equals(KDSRouterSettings.MIN_FCM_TIME)) //kpp1-424, don't reset settings.
         {
             return;
         }
@@ -961,7 +970,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (m_service != null)
                 m_service.updateSettings();
             updateTitle();
-
+            connectBackofficeNotification();
         }
 
 
@@ -1325,6 +1334,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         updateTitle();
+        m_backofficeNotification.updateStoreGuidToBackOfficeAfterLogin(); //
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
@@ -1407,11 +1417,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_activation.setStationID(getKDSRouter().getStationID());
         m_activation.setStationFunc(Activation.KDSROUTER);
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        if (ar.size()<=0) {
-            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
-            return;//kpp1-304, maybe this cause kds can not logout issue.
-        }
-        m_activation.setMacAddress(ar.get(0));
+        //kpp1-399
+//        if (ar.size()<=0) {
+//            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+//            return;//kpp1-304, maybe this cause kds can not logout issue.
+//        }
+        if (ar.size() >0) //kpp1-399
+            m_activation.setMacAddress(ar.get(0));
         //  m_activation.setMacAddress("BEMA0000011");//test
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
@@ -1668,4 +1680,94 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         return null;
     }
+
+    private void showBuildTypes()
+    {
+        TextView t = this.findViewById(R.id.txtBuildType);
+        KDSUtil.showBuildTypes(this, t);
+    }
+
+    /**
+     * Send download orders http request to backoffice
+     */
+    private void downloadBackofficeOrders()
+    {
+        //kpp1-416, remove 3rd party option
+//        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order))
+//            return;
+        long l = KDSRouterSettings.loadFCMTime(this);
+        //debug firebase
+//
+//        Calendar c = Calendar.getInstance();
+//        c.set(Calendar.HOUR_OF_DAY,5 );
+//        c.set(Calendar.MINUTE, 0);
+//        c.set(Calendar.SECOND,0);
+//
+//        Date dt = c.getTime();//new Date(2020, 3, 10, 0,0,0);
+//        l = dt.getTime();
+        if (l<=0)
+        {
+            //kpp1-397, add time difference.
+            l = Activation.getServerTimeDifference()*1000 +  System.currentTimeMillis() - 5*60*1000; //5 minutes ago.
+        }
+        m_activation.postGetOrdersRequest(l);
+
+//        //test firebase
+        if (KDSBackofficeNotification.ENABLE_DEBUG) {
+            String s = KDSBackofficeNotification.getFCMTestString2();
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(s);
+            onActivationEvent(Activation.ActivationEvent.Get_orders, ar);
+        }
+
+    }
+
+    /**
+     * Backoffice return FCM orders!
+     * @param evt
+     *
+     * @param arParams
+     *  Get_orders: 0: the string JSON data.
+     * @return
+     */
+    public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
+    {
+//        if (evt == Activation.ActivationEvent.Get_orders)
+//        {
+//            if (arParams.size() >0)
+//                receiveBackofficeOrders((String)arParams.get(0));
+//        }
+        return null;
+    }
+
+    /**
+     *  I get the orders JSON string.
+     * @param evt
+     * @param strData
+     */
+    private void receiveBackofficeOrders(String evt, String strData)
+    {
+        KDSDataOrders orders =  KDSBackofficeNotification.parseApiJson(evt, strData);
+        if (orders == null) return;
+        getKDSRouter().onFCMReceivedOrders(orders);
+        //Rev.: kpp1-397, add time difference.
+        KDSRouterSettings.saveFCMTime(this, System.currentTimeMillis()+Activation.getServerTimeDifference() * 1000);
+    }
+
+    private void connectBackofficeNotification()
+    {
+        //kpp1-416, remove 3rd party option
+//        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order)) {
+//            m_backofficeNotification.close();
+//            return;
+//        }
+        m_backofficeNotification.connectBackOffice();
+    }
+
+    public void onBackofficeNotifyEvent(String evt, String data)
+    {
+        //downloadBackofficeOrders(); //kpp1-409
+        receiveBackofficeOrders(evt, data);
+    }
 }
+

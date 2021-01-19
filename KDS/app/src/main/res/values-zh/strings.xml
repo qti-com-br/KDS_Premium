@@ -473,6 +473,7 @@
     <string-array name="pref_kds_sum_type_titles">
         <item>不比较佐料</item>
         <item>比较佐料</item>
+        <item>只有佐料</item>
     </string-array>
 
     <string name="pref_kds_sum_position">统计显示位置</string>
@@ -1251,4 +1252,9 @@
     <string name="powered_by">POWERED BY</string>
 	<string name="enable_bg_logo">Enable background logo</string>
 	<string name="bg_logo_file">Background logo file</string>
+    <string name="hide_title">Hide title</string>
+    <string name="sum_font">Summary font</string>
+    <string name="any_time">Any time</string>
+    <string name="clear_db_schedule">Clear database schedule</string>
+    <string name="category_font">Category font</string>
 </resources>
