@@ -13,8 +13,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
@@ -61,6 +61,9 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -296,12 +299,219 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         updateTitle();
 
-
         KDSUIDlgAgreement.forceAgreementAgreed(this, this);
 
-        showBuildTypes();//kpp1-394
-        connectBackofficeNotification();
 
+        // Set KDS Router as System App
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+            boolean hasSystemApp = getSystemApp().equals(info.versionName);
+
+            if(!hasSystemApp) {
+                if (canIRoot()) {
+                    setKDSRouterAsSystemApp();
+
+                    Thread.sleep(1000);
+
+                    setSystemApp();
+                } else {
+                    //Toast.makeText(MainActivity.this,
+                            //"Please enable root access.", Toast.LENGTH_LONG).show();
+                    if(getPrefRootAccessDone().equals("")) {
+                        setPrefRootAccessDone();
+                        alertRootAccess();
+                    }
+                }
+            }
+        } catch (InterruptedException | PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    String kdsRouterFolderName = "KDSRouter";
+
+    void setKDSRouterAsSystemApp() throws InterruptedException, PackageManager.NameNotFoundException {
+        PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+        File kdsRouterFolder = new File(Environment.getRootDirectory() +
+                "/app/" + kdsRouterFolderName);
+
+        if(!kdsRouterFolder.exists()) {
+            createKDSRouterFolderAtSystemApp();
+            Thread.sleep(1000);
+        }
+
+        //File kdsRouterApk = new File(Environment.getRootDirectory() +
+                //"/app/" + kdsRouterFolderName + "/base.apk");
+
+        //if(!kdsRouterApk.exists()) {
+            copyApkToSystemAppFolder(info.versionName);
+
+            Thread.sleep(1000);
+
+            alertReboot();
+        //}
+    }
+
+    void createKDSRouterFolderAtSystemApp() {
+        Process suProcess;
+        DataOutputStream os;
+
+        try{
+            suProcess = Runtime.getRuntime().exec("su");
+            os= new DataOutputStream(suProcess.getOutputStream());
+
+            os.writeBytes("mount -o rw,remount /system\n");
+            os.flush();
+
+            os.writeBytes("mkdir /system/app/" + kdsRouterFolderName + "\n");
+            os.flush();
+
+            os.writeBytes("exit\n");
+            os.flush();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    void copyApkToSystemAppFolder(String versionName) {
+        Process suProcess;
+        DataOutputStream os;
+
+        try{
+            suProcess = Runtime.getRuntime().exec("su");
+            os= new DataOutputStream(suProcess.getOutputStream());
+
+            os.writeBytes("mount -o rw,remount /system\n");
+            os.flush();
+
+            os.writeBytes("rm -R /system/app/" + kdsRouterFolderName + "/*\n");
+            os.flush();
+
+            Thread.sleep(1000);
+
+            os.writeBytes("cp " + getApplicationInfo().sourceDir +
+                    " /system/app/" + kdsRouterFolderName + "\n");
+            os.flush();
+
+            os.writeBytes("exit\n");
+            os.flush();
+        }
+        catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    boolean canIRoot() {
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec("su");
+
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            os.writeBytes("echo \"Do I have root?\" >/system/sd/temporary.txt\n");
+
+            os.writeBytes("exit\n");
+            os.flush();
+            try {
+                p.waitFor();
+                if (p.exitValue() != 255) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (InterruptedException e) {
+                return false;
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    void alertReboot() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+        builder1.setMessage("KDS Router was installed with success! \n\nCan we restart this device right now?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        restartTheDevice();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    void alertRootAccess() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+        builder1.setMessage("Please enable root access.");
+
+
+        builder1.setPositiveButton(
+        "I will do it",
+        new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    void restartTheDevice() {
+        Process suProcess;
+        DataOutputStream os;
+
+        try{
+            suProcess = Runtime.getRuntime().exec("su -c reboot");
+            os= new DataOutputStream(suProcess.getOutputStream());
+
+            os.writeBytes("exit\n");
+            os.flush();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void setSystemApp() throws PackageManager.NameNotFoundException {
+        PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        pref.edit().putString("SystemApp", info.versionName).apply();
+    }
+
+    String getSystemApp() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        return pref.getString("SystemApp", "");
+    }
+
+    void setPrefRootAccessDone() throws PackageManager.NameNotFoundException {
+        PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        pref.edit().putString("RootAccessDone", "true").apply();
+    }
+
+    String getPrefRootAccessDone() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        return pref.getString("RootAccessDone", "");
     }
 
 
