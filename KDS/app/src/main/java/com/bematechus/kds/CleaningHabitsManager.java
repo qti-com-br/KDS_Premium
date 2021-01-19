@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSTimer;
 
 import java.util.ArrayList;
@@ -85,9 +86,11 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
     }
 
     public void cleaningShowAlarmDlg() {
+        //KDSLog.e(TAG, "cleaningShowAlarmDlg --> enter");
         DlgCleaningAlarm d = DlgCleaningAlarm.instance(m_context, getSettings().getFloat(KDSSettings.ID.cleaning_snooze_time));
         d.setEventReceiver(this);
         d.show();
+        //KDSLog.e(TAG, "cleaningShowAlarmDlg --> exit");
     }
 
     public void resetTimer() {
@@ -108,9 +111,9 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
                 return;
             }
         }
-        //Log.d(TAG, "------ 1 -----");
+        //KDSLog.e(TAG, "------ 1 -----");
         if (isAlertShowing()) return;
-        //Log.d(TAG, "------ 2 -----");
+        //KDSLog.e(TAG, "------ 2 -----");
         int nms = 0; //ms
 
         if (m_bRemindLaterEnabled) {
@@ -137,18 +140,18 @@ public class CleaningHabitsManager implements DlgCleaningAlarm.CleaningHabitsEve
             nms = Math.round(nInterval * 1000);
             ;//Math.round( nInterval * 60 * 60 * 1000);
         }
-        //Log.d(TAG, "------ 3 ----- " + Long.toString(nms));
+        //KDSLog.e(TAG, "------ 3 ----- " + Long.toString(nms));
         long nNow = System.currentTimeMillis();
         long n = nNow - m_dtLastCleaning.getTime();
-        //Log.d(TAG, "------ 3a ----- " + Long.toString(n));
+        //KDSLog.e(TAG, "------ 3a ----- " + Long.toString(n));
         if (n < nms)
             return;
-        //Log.d(TAG, "------ 4 -----");
+        //KDSLog.e(TAG, "------ 4 -----");
         if (m_bRemindLaterEnabled)
             m_bRemindLaterEnabled = false; //disable it.
 
         cleaningShowAlert();
-        //Log.d(TAG, "------ 5 -----");
+        //KDSLog.e(TAG, "------ 5 -----");
     }
 
     public void cleaningShowAlert() {

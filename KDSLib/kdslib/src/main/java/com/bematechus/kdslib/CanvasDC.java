@@ -615,4 +615,47 @@ public class CanvasDC {
     }
 
 
+    static public  int drawText_without_clear_bg_for_draw_logo(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold, int nAlpha)
+    {
+
+        TextPaint paint = new TextPaint();
+
+        paint.setColor(ff.getFG());
+        paint.setTypeface(ff.getTypeFace());
+        paint.setTextSize(ff.getFontSize());
+        paint.setAntiAlias(true);
+        if (bBold)
+            paint.setFakeBoldText(bBold);
+        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+
+        int baseline = rect.top + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+        g.save();
+        g.clipRect(rect);
+        //
+        //fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
+        //
+        paint.setColor(ff.getFG());
+        paint.setAlpha(nAlpha);
+        //
+        if (align == Paint.Align.CENTER)
+        { //horizontal center
+            paint.setTextAlign(Paint.Align.CENTER);
+            g.drawText(text, rect.centerX(), baseline, paint);
+        }
+        else if (align == Paint.Align.LEFT)
+        {
+            paint.setTextAlign(Paint.Align.LEFT);
+            g.drawText(text, rect.left, baseline, paint);
+        }
+        else if (align == Paint.Align.RIGHT)
+        {
+            paint.setTextAlign(Paint.Align.RIGHT);
+            g.drawText(text, rect.right, baseline, paint);
+        }
+
+        g.restore();
+        return getTextPixelsWidth(paint, text);
+    }
+
+
 }

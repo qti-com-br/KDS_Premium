@@ -38,6 +38,8 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -649,7 +651,7 @@ public class KDSView extends View {
                 } else {
                     Canvas g = get_double_buffer();
                     m_lineItemsViewer.onDraw(g);
-                    redrawAllPanelNumberInReverseSequence(g);
+                    //redrawAllPanelNumberInReverseSequence(g); //remove it. kpp1-353
                     commit_double_buffer(canvas);
                 }
             } catch (Exception err) {
@@ -707,6 +709,8 @@ public class KDSView extends View {
             if (getSettings() == null) return;
             int bg = getSettings().getInt(KDSSettings.ID.Panels_View_BG);
             g.drawColor(bg);
+            //kpp1-293
+            drawScreenLogo(g);
 
             int ncount = panelsGetCount();
             for (int i = 0; i < ncount; i++) {
@@ -1202,5 +1206,24 @@ public class KDSView extends View {
                 m_eventsReceiver.onViewSlipping(null, null, SlipDirection.Bottom2Top, SlipInBorder.None);
         }
     }
+
+    /**
+     * kpp1-293
+     * @return
+     */
+    private boolean isScreenEmpty()
+    {
+        return  (this.getPanels().size() == 0 );
+    }
+
+    /**
+     * kpp1-293
+     * @param canvas
+     */
+    protected void drawScreenLogo(Canvas canvas)
+    {
+        ScreenLogoDraw.drawScreenLogo(this, this.getBounds(), canvas, getSettings(), isScreenEmpty(), 0);
+    }
+
 }
 

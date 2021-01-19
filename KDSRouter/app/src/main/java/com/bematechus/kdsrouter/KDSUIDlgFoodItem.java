@@ -191,11 +191,11 @@ public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPick
 
 
         m_lstBuildCards = (ListView) getView().findViewById(R.id.lstBuildCards);
-        m_lstBuildCards.setAdapter(new MyAdapter(context,android.R.layout.simple_list_item_single_choice, m_arBuildCards));
+        m_lstBuildCards.setAdapter(new MyAdapter(context,R.layout.my_list_item_single_choice, m_arBuildCards));
         setListViewData(m_lstBuildCards, m_arBuildCards, m_item.getBuildCard().getArray());
         showScrollBar(m_lstBuildCards);
         m_lstTrainingVideo = (ListView) getView().findViewById(R.id.lstTraining);
-        m_lstTrainingVideo.setAdapter(new MyAdapter(context,android.R.layout.simple_list_item_single_choice, m_arTrainingVideo));
+        m_lstTrainingVideo.setAdapter(new MyAdapter(context,R.layout.my_list_item_single_choice, m_arTrainingVideo));
         setListViewData(m_lstTrainingVideo, m_arTrainingVideo, m_item.getTrainingVideo().getArray());
         showScrollBar(m_lstTrainingVideo);
 
@@ -203,12 +203,12 @@ public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPick
 
 
         m_lstSumNames= (ListView) getView().findViewById(R.id.lstSumNames);
-        m_lstSumNames.setAdapter(new ArrayAdapter(context,android.R.layout.simple_list_item_single_choice, m_arSumNames));
+        m_lstSumNames.setAdapter(new ArrayAdapter(context,R.layout.my_list_item_single_choice, m_arSumNames));
         setListViewData(m_lstSumNames, m_arSumNames, m_item.getSumNames());
         showScrollBar(m_lstSumNames);
 
         m_lstModifiers= (ListView) getView().findViewById(R.id.lstModifiers);
-        m_lstModifiers.setAdapter(new ArrayAdapter(context,android.R.layout.simple_list_item_single_choice, m_arModifiers));
+        m_lstModifiers.setAdapter(new ArrayAdapter(context,R.layout.my_list_item_single_choice, m_arModifiers));
         setModifiersListViewData(m_lstModifiers, m_arModifiers, m_item.getModifiers());
         showScrollBar(m_lstModifiers);
 

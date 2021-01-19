@@ -40,11 +40,15 @@ public class UsbPort extends CommunicationPort {
 
     public static final int LR2000_PID = 0x811e;
     public static final int LR2000_VID = 0x0fe6;
+
+    public static final int TML90_PID = 0x0202;
+    public static final int TML90_VID = 0x04B8;
+
     public static final String USB_DESC = "USB";
     public static final String USB_MODELS = "LR2000";
 
-    private UsbEndpoint epIn = null;
-    private UsbEndpoint epOut = null;
+    public static UsbEndpoint epIn = null;
+    public static UsbEndpoint epOut = null;
 
     private int pid = 0;
     private int vid = 0;
@@ -54,10 +58,6 @@ public class UsbPort extends CommunicationPort {
 
     @Override
     public boolean open(PortInfo info) throws CommunicationException {
-
-
-        this.pid = info.getUSB_PID();
-        this.vid = info.getUSB_VID();
         this.deviceId = info.getPortNumber();
         this.manager = info.getUsbManager();
 
@@ -66,10 +66,9 @@ public class UsbPort extends CommunicationPort {
         writeTimeout = info.getWriteTimeout();
         readTimeout = info.getReadTimeout();
 
-
         return findPrinter(true);
-
     }
+
 
     @Override
     public void close() throws CommunicationException {
@@ -149,13 +148,21 @@ public class UsbPort extends CommunicationPort {
 
 
         for (UsbDevice device : deviceList.values()) {
-            if (device.getVendorId() == this.vid && device.getProductId() == this.pid) {
-               //  TODO: support different USB printers int the future
-               mUsbDevice = device;
+            if (device.getVendorId() == LR2000_VID && device.getProductId() == LR2000_PID) {
+                this.vid = LR2000_VID;
+                this.pid = LR2000_PID;
+                mUsbDevice = device;
+                break;
 
-               break;
-
+            } else if (device.getVendorId() == TML90_VID && device.getProductId() == TML90_PID) {
+                this.vid = TML90_VID;
+                this.pid = TML90_PID;
+                mUsbDevice = device;
+                break;
             }
+
+            //  TODO: support different USB printers int the future
+
         }
         if ( mUsbDevice == null) {
             return false;
@@ -297,20 +304,21 @@ public class UsbPort extends CommunicationPort {
     }
 
     //david
-    static public boolean findPrinter(UsbManager manager, int vid, int pid) throws CommunicationException {
-        if ( manager == null)
-        {
+    static public boolean findPrinter(UsbManager manager) throws CommunicationException {
+        if ( manager == null) {
             throw new CommunicationException(ERR_USB_SERVICE, CommunicationException.ErrorCode.ServiceNotInitialized );
         }
+
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
 
-
         for (UsbDevice device : deviceList.values()) {
-            if (device.getVendorId() == vid && device.getProductId() == pid) {
+            if (device.getVendorId() == LR2000_VID && device.getProductId() == LR2000_PID) {
+                return true;
+
+            } else if (device.getVendorId() == TML90_VID && device.getProductId() == TML90_PID) {
                 return true;
             }
         }
-
 
         return false;
     }

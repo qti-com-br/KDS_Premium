@@ -141,10 +141,10 @@ public class KDSUIDlgInputSMBFolder   {
             @Override
             public void onClick(View v) {
                 saveToSmb();
-                if (KDSSmbFile.getEnabledSmbV2())
+//                if (KDSSmbFile.getEnabledSmbV2())//kpp1-376
                     findSmbFile2();
-                else
-                    findSmbFile1();
+//                else//kpp1-376
+//                    findSmbFile1();
 
             }
         });
@@ -198,49 +198,49 @@ public class KDSUIDlgInputSMBFolder   {
     }
 
     private void findSmbFile1()
-    {
-        // Create DirectoryChooserDialog and register a callback
-        KDSSmbFile1 directoryChooserDialog =
-                new KDSSmbFile1(dialog.getContext(),
-                        new KDSSmbFile1.ChosenDirectoryListener()
-                        {
-                            @Override
-                            public void onChosenDir(String chosenDir)
-                            {
-
-                                KDSSMBPath smb = KDSSMBPath.parseString(chosenDir);
-                                m_txtPath.setText(smb.getFolder());
-                                m_smbPath = smb;
-                                AsyncTask t = new AsyncTask() {
-                                    @Override
-                                    protected Object doInBackground(Object[] params) {
-                                        if (KDSSmbFile1.checkFolderWritable(m_smbPath.toString())!=0)
-                                        {
-                                            showPermissionErrorDialog();
-
-                                        }
-                                        return null;
-                                    }
-                                };
-                                t.execute();
-//                                if (KDSSmbFile1.checkFolderWritable(m_smbPath.toString())!=0)
-//                                {
-//                                    showPermissionErrorDialog();
+    { ////kpp1-376, remove this function
+//        // Create DirectoryChooserDialog and register a callback
+//        KDSSmbFile1 directoryChooserDialog =
+//                new KDSSmbFile1(dialog.getContext(),
+//                        new KDSSmbFile1.ChosenDirectoryListener()
+//                        {
+//                            @Override
+//                            public void onChosenDir(String chosenDir)
+//                            {
 //
-//                                }
-                            }
-                        });
-        // Toggle new folder button enabling
-        directoryChooserDialog.setNewFolderEnabled(false);
-        // Load directory chooser dialog for initial 'm_chosenDir' directory.
-        // The registered callback will be called upon final directory selection.
-        //smb://Administrator:zwt1314521zw@192.168.6.138/
-        // String str = "smb://Administrator:13188223394@192.168.1.197/";
-        //String str = "smb://workgroup/";
-        String str = m_smbPath.toString();
-
-        directoryChooserDialog.chooseDirectory(str);
-        //m_newFolderEnabled = ! m_newFolderEnabled;
+//                                KDSSMBPath smb = KDSSMBPath.parseString(chosenDir);
+//                                m_txtPath.setText(smb.getFolder());
+//                                m_smbPath = smb;
+//                                AsyncTask t = new AsyncTask() {
+//                                    @Override
+//                                    protected Object doInBackground(Object[] params) {
+//                                        if (KDSSmbFile1.checkFolderWritable(m_smbPath.toString())!=0)
+//                                        {
+//                                            showPermissionErrorDialog();
+//
+//                                        }
+//                                        return null;
+//                                    }
+//                                };
+//                                t.execute();
+////                                if (KDSSmbFile1.checkFolderWritable(m_smbPath.toString())!=0)
+////                                {
+////                                    showPermissionErrorDialog();
+////
+////                                }
+//                            }
+//                        });
+//        // Toggle new folder button enabling
+//        directoryChooserDialog.setNewFolderEnabled(false);
+//        // Load directory chooser dialog for initial 'm_chosenDir' directory.
+//        // The registered callback will be called upon final directory selection.
+//        //smb://Administrator:zwt1314521zw@192.168.6.138/
+//        // String str = "smb://Administrator:13188223394@192.168.1.197/";
+//        //String str = "smb://workgroup/";
+//        String str = m_smbPath.toString();
+//
+//        directoryChooserDialog.chooseDirectory(str);
+//        //m_newFolderEnabled = ! m_newFolderEnabled;
     }
 
     private void onPermissionIgnoreAndSave()

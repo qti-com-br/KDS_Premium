@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KDS.iml" filepath="$PROJECT_DIR$/.idea/modules/KDS.iml" group="KDS" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-725231277/KDS-kdslib.iml" filepath="$PROJECT_DIR$/.idea/modules/-725231277/KDS-kdslib.iml" group="KDS/kdslib" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/KDS.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/KDS.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1171265012/KDS.kdslib.iml" filepath="$PROJECT_DIR$/.idea/modules/-1171265012/KDS.kdslib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KDS_Premium-KDS.iml" filepath="$PROJECT_DIR$/.idea/modules/KDS_Premium-KDS.iml" group="KDS" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="KDS/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/715315689/kdslib.iml" filepath="$PROJECT_DIR$/.idea/modules/715315689/kdslib.iml" group="KDS/kdslib" />
+    </modules>
+  </component>
+</project>

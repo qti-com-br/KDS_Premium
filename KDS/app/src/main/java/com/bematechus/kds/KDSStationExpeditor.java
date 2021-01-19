@@ -529,7 +529,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * @return
      *  order guid
      */
-    static public  String exp_sync_item_unbumped(KDS kds, KDSXMLParserCommand command)
+    static public  String exp_sync_item_unbumped(KDS kds, KDSXMLParserCommand command, ArrayList<KDSDataItem> arChangedItems)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
@@ -613,6 +613,8 @@ public class KDSStationExpeditor extends KDSStationNormal {
             sync_with_backup(kds, command.getCode(), orderA, itemA);
             sync_with_queue(kds, command.getCode(), orderA, itemA, "");
 
+            arChangedItems.add(itemA);//kpp1-407
+
             return orderA.getGUID();
         }
         else if (itemB != null)
@@ -621,6 +623,9 @@ public class KDSStationExpeditor extends KDSStationNormal {
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
             sync_with_queue(kds, command.getCode(), orderB, itemB, "");
+
+            arChangedItems.add(itemB); //kpp1-407
+
             return orderB.getGUID();
         }
 

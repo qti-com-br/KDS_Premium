@@ -68,12 +68,14 @@ public class KDSActivityUnbump extends Activity  {
         m_kbdType =  KDSBumpBarKeyFunc.KeyboardType.values()[settings.getInt(KDSSettings.ID.Bumpbar_Kbd_Type)];
         m_nIndexBase = settings.getInt(KDSSettings.ID.Panels_Panel_Number_Base);
 
+        m_nMaxReservedOrders = settings.getInt(KDSSettings.ID.Bump_Max_Reserved_Count) * 10; //kpp1-412, move it here, before show dialog.
+
         showByIntent();
 
         boolean bHide = settings.getBoolean(KDSSettings.ID.Hide_navigation_bar);
         hideNavigationBar(bHide);
 
-        m_nMaxReservedOrders = settings.getInt(KDSSettings.ID.Bump_Max_Reserved_Count);
+
 
     }
 
@@ -108,6 +110,7 @@ public class KDSActivityUnbump extends Activity  {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.putExtra("guid", m_selectedOrderGuid);
         intent.putExtra("screen", m_nScreen);
+
         if (isLineItemsMode())
         {
             String itemGuid = m_viewOrder.getEnv().getStateValues().getFocusedItemGUID();
@@ -299,8 +302,11 @@ public class KDSActivityUnbump extends Activity  {
         KDSDataOrder order = m_db.orderGet(guid);
         if (isLineItemsMode())
         {
+            String firstVisibleItemGuid = "";
             if (m_db.orderGetBumped(guid)) {
                 for (int i = 0; i < order.getItems().getCount(); i++) {
+                    if (i ==0)
+                        firstVisibleItemGuid =order.getItems().getItem(i).getGUID();
                     order.getItems().getItem(i).setLocalBumped(false);
                 }
             }
@@ -311,10 +317,16 @@ public class KDSActivityUnbump extends Activity  {
                     boolean b = item.getLocalBumped();
                     boolean bb = b?false:true;
                     item.setLocalBumped(bb);
+                    if (!bb)
+                    {
+                        if (firstVisibleItemGuid.isEmpty())
+                            firstVisibleItemGuid =item.getGUID();
+                    }
                 }
             }
-            m_viewOrder.getEnv().getStateValues().setFirstShowingOrderGUID("");
-            m_viewOrder.getEnv().getStateValues().setFirstItemGuid("");
+            m_viewOrder.getEnv().getStateValues().setFirstShowingOrderGUID(guid);//kpp1-432,
+            //
+            m_viewOrder.getEnv().getStateValues().setFirstItemGuid(firstVisibleItemGuid);//kpp1-432
             m_viewOrder.getEnv().getStateValues().setFocusedOrderGUID("");
             m_viewOrder.getEnv().getStateValues().setFocusedItemGUID("");
 

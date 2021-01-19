@@ -89,9 +89,9 @@
         android:title="@string/pref_kds_queue_title" />
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$QExpoPreferenceFragment"
         android:title="@string/pref_kds_qexpo_title" />
-
-    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TrackerPreferenceFragment"
-        android:title="@string/pref_tracker_title" />
+<!-- kpp1-406 -->
+<!--    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$TrackerPreferenceFragment"-->
+<!--        android:title="@string/pref_tracker_title" />-->
 
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PagerPreferenceFragment"
         android:title="@string/pref_pager_title" />
