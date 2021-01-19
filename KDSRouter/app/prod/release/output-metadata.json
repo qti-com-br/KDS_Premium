@@ -11,10 +11,10 @@
       "type": "SINGLE",
       "filters": [],
       "properties": [],
-      "versionCode": 2411,
-      "versionName": "2.4.1.1",
+      "versionCode": 2412,
+      "versionName": "2.4.1.2",
       "enabled": true,
-      "outputFile": "KDS-Router-prod-release-2.4.1.1.apk"
+      "outputFile": "KDS-Router-prod-release-2.4.1.2.apk"
     }
   ]
 }

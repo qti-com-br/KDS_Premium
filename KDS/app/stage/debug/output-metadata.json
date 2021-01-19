@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.bematechus.kds",
+  "variantName": "processStageDebugResources",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "versionCode": 2420,
+      "versionName": "2.4.2.0",
+      "outputFile": "KDS-stage-debug-2.4.2.0.apk"
+    }
+  ]
+}
