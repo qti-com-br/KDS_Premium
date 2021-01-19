@@ -4522,9 +4522,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //showInfo("Paused");
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
 
-        if(isApplicationSentToBackground(getContext())) {
+        //if(isApplicationSentToBackground(getContext())) {
 
-        }
+        //}
     }
 
     protected void onDestroy() {
@@ -4541,6 +4541,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         restartApp();
     }
 
+    /*
     public static boolean isApplicationSentToBackground(final Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
@@ -4552,7 +4553,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
         return false;
-    }
+    }/**/
 
     private void restartApp() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
