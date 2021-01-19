@@ -69,7 +69,7 @@ public class KDSRouterSettings extends SettingsBase {
         Order_ack, //2.0.14
         notification_minutes,
         Enable_smbv2, //2.0.20
-
+        Enable_3rd_party_order,
     }
 
 
@@ -165,6 +165,7 @@ public class KDSRouterSettings extends SettingsBase {
         init_option(ID.notification_minutes,"string_notification_minutes","10");
 
         init_option(ID.Enable_smbv2,"bool_general_enable_smbv2",false);
+        init_option(ID.Enable_3rd_party_order,"bool_general_enable_3rd_order",true);
 
     }
 
@@ -681,5 +682,30 @@ public class KDSRouterSettings extends SettingsBase {
 
         }
         return true;
+    }
+
+    public static boolean loadEnable3rdOrder(Context c)
+    {
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(c);
+        boolean bEnable = pre.getBoolean("general_enable_3rd_order", true);
+
+        return bEnable;
+
+    }
+    static public String MIN_FCM_TIME = "min_fcm_time";
+    public static void saveFCMTime(Context c, long tm)
+    {
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor editor = pre.edit();
+        editor.putLong(MIN_FCM_TIME, tm);
+        editor.commit();
+    }
+
+    static public long loadFCMTime(Context c)
+    {
+        SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(c);
+        long l = pre.getLong(MIN_FCM_TIME, 0);
+
+        return l;
     }
 }

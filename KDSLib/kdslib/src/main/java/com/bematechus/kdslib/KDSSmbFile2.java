@@ -41,16 +41,28 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
-import jcifsng.ACE;
-import jcifsng.CIFSContext;
-import jcifsng.Configuration;
-import jcifsng.config.PropertyConfiguration;
-import jcifsng.context.BaseContext;
-import jcifsng.smb.NtlmPasswordAuthentication;
-import jcifsng.smb.NtlmPasswordAuthenticator;
-import jcifsng.smb.SmbFile;
-import jcifsng.smb.SmbFileInputStream;
-import jcifsng.smb.SmbFileOutputStream;
+import jcifs.ACE;
+import jcifs.CIFSContext;
+import jcifs.Configuration;
+import jcifs.config.PropertyConfiguration;
+import jcifs.context.BaseContext;
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.NtlmPasswordAuthenticator;
+import jcifs.smb.SmbFile;
+import jcifs.smb.SmbFileInputStream;
+import jcifs.smb.SmbFileOutputStream;
+
+
+//import jcifsng.ACE;
+//import jcifsng.CIFSContext;
+//import jcifsng.Configuration;
+//import jcifsng.config.PropertyConfiguration;
+//import jcifsng.context.BaseContext;
+//import jcifsng.smb.NtlmPasswordAuthentication;
+//import jcifsng.smb.NtlmPasswordAuthenticator;
+//import jcifsng.smb.SmbFile;
+//import jcifsng.smb.SmbFileInputStream;
+//import jcifsng.smb.SmbFileOutputStream;
 
 //import jcifs.smb.ACE;
 
@@ -58,6 +70,7 @@ import jcifsng.smb.SmbFileOutputStream;
  *
  *smb://[[[domain;]username[:password]@]server[:port]/[[share/[dir/]file]]][?param=value[param2=value2[...]]]
  * https://jcifs.samba.org/
+ * https://github.com/AgNO3/jcifs-ng
  */
 public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
     //SmbFile smbFile;
@@ -446,7 +459,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
                 }
                 if (bCreateNew) {
                     CIFSContext baseContext = new BaseContext(m_config);
-                    m_contextWithCred = baseContext.withCredentials(new NtlmPasswordAuthenticator( path.getDomain(), path.getUserID(), path.getPwd()));
+                    m_contextWithCred = baseContext.withCredentials( new NtlmPasswordAuthenticator( path.getDomain(), path.getUserID(), path.getPwd()));
                 }
             }
 
@@ -459,7 +472,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
         try
         {
             createContext(uri);
-            SmbFile f = new SmbFile(uri, m_contextWithCred);
+            SmbFile f = new SmbFile( uri, m_contextWithCred);
             return f;
         } catch (Exception e) {
 
@@ -1369,7 +1382,8 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
 
             files = file.listFiles();
         } catch (Exception e) {
-            KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
+            if (remoteUriFolder.indexOf(KDSConst.SMB_FOLDER_NOTIFICATION) <0)
+                KDSLog.e(TAG,KDSLog._FUNCLINE_() ,e);//+ e.toString());
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
         return files;
@@ -1394,6 +1408,76 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
             return e.getMessage();
         }
         return "";
+    }
+
+    public static String readFromUtf8SmbText2(String smbFileName)
+    {
+
+        InputStream bis=null;
+        String text = "";
+        try {
+            SmbFile rmifile = openSmbUri(smbFileName);
+            if (rmifile == null) return "";
+
+            String encodingFormat = "";
+            bis=new BufferedInputStream(new SmbFileInputStream(rmifile));
+
+            int length=rmifile.getContentLength();
+            byte[] buffer=new byte[length];
+            bis.read(buffer); //utf8 bytes
+            int noffset = 0;
+            int ncount = buffer.length;
+            if (buffer.length >3)
+            {
+                //BOM: EF BB BF, start for UTF-8 file.
+                encodingFormat = getBytesEncodingFormat(buffer);
+                if (encodingFormat.equals("UTF-8"))
+                {
+                    noffset = 3;
+                    ncount = length - 3;
+                }
+                else if (encodingFormat.equals("UTF-16LE") || encodingFormat.equals("UTF-16BE"))
+                {
+                    noffset = 2;
+                    ncount = length - 2;
+                }
+
+
+            }
+            text = KDSUtil.convertBytesToString(buffer, noffset, ncount, encodingFormat);// KDSUtil.convertUtf8BytesToString(buffer, noffset, ncount);
+
+            try {
+                buffer = null;
+                rmifile.close();
+                rmifile = null;
+                bis.close();
+            } catch (IOException e) {
+                KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
+            }
+
+
+        } catch (Exception e) {
+
+
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+
+        }
+
+        //BOM: EF BB BF, start for UTF-8 file.
+//
+//        if (text.length() >1) {
+//            if (text.charAt(0) == 0xfeff)
+////            if (text.charAt(0) == 0xEF ||
+////                    text.charAt(1) == 0xBB ||
+////                    text.charAt(2) == 0xBF )
+//            {
+//                text = text.substring(1);
+//            }
+//
+//        }
+
+        return text;
     }
 }
 

@@ -35,8 +35,11 @@
         android:key="general_router_enabled"
         android:summary="@string/pref_general_sum_router_enabled"
         android:title="@string/pref_general_router_enabled" />
-
-
+<!-- kpp1-416 remove this option -->
+<!--    <CheckBoxPreference-->
+<!--        android:defaultValue="true"-->
+<!--        android:key="general_enable_3rd_order"-->
+<!--        android:title="@string/enable_3rd_party_order" />-->
 
     <com.bematechus.kdslib.KDSListPreference
         android:defaultValue="1"
@@ -73,10 +76,10 @@
         android:dependency="general_router_enabled"
         android:negativeButtonText="cancel"
         />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="general_enable_smbv2"
-        android:title="@string/use_smb_v2_open_folder" />
+<!--    <CheckBoxPreference-->
+<!--        android:defaultValue="false"-->
+<!--        android:key="general_enable_smbv2"-->
+<!--        android:title="@string/use_smb_v2_open_folder" />-->
 
 
     <!--<com.bematechus.kdsrouter.KDSPreferenceSmbFolder-->

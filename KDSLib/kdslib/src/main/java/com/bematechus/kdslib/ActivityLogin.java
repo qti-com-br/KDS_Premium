@@ -22,13 +22,15 @@ import android.widget.Toast;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.ActivationRequest;
 
+import java.util.ArrayList;
+
 
 /**
  * A login screen that offers login via email/password.
  */
 public class ActivityLogin extends Activity implements  Activation.ActivationEvents, DialogBaseNoBumpbarSupport.KDSDialogBaseListener {
 
-
+    final String TAG = "ActivityLogin";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -49,24 +51,52 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     Activation m_activation = new Activation(this);
 
-    static ActivityLogin m_instance = null;
+    public static ActivityLogin m_instance = null;
+    static boolean m_bVisible = false;
+    static void activityResumed()
+    {
+        m_bVisible = true;
+    }
 
+    static void activityPaused()
+    {
+        m_bVisible = false;
+    }
     static public boolean isShowing()
     {
-        return (m_instance != null);
+        return (m_instance != null && m_bVisible);
+    }
+
+    @Override
+    protected void onResume() {
+        KDSLog.i(TAG, "onResume enter");
+        super.onResume();
+        ActivityLogin.activityResumed();
+        KDSLog.i(TAG, "onResume exit");
+    }
+
+    @Override
+    protected void onPause() {
+        KDSLog.i(TAG, "onPause enter");
+        super.onPause();
+        ActivityLogin.activityPaused();
+        KDSLog.i(TAG, "onPause exit");
     }
 
     @Override
     protected void onDestroy()
     {
+        KDSLog.i(TAG, "onDestroy enter");
         super.onDestroy();
         m_instance = null;
+        m_bVisible = false;
+        KDSLog.i(TAG, "onDestroy exit");
 
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        KDSLog.i(TAG, "onCreate enter");
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         m_instance = this;
         Intent intent = this.getIntent();
@@ -166,6 +196,8 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 //            }
 //        });
         forceAgreementAgreed();
+
+        KDSLog.i(TAG, "onCreate exit");
     }
 
     public void onCancelClicked()
@@ -351,23 +383,26 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 
     public void onActivationSuccess()
     {
+        KDSLog.i(TAG, "onActivationSuccess enter");
         Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         this.setResult(Login_Result.Passed.ordinal());
         String email = mUserNameView.getText().toString();
         String password = mPasswordView.getText().toString();
         m_activation.checkStoreChanged();
         m_activation.saveUserNamePwd(email, password);
-
+        KDSLog.i(TAG, "onActivationSuccess exit");
         this.finish();
+
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
+        KDSLog.i(TAG, "onActivationFail enter");
         Toast.makeText(this, "Activation failed: " + failMessage, Toast.LENGTH_LONG).show();
         if (ActivationRequest.needResetUsernamePassword(errType))
             m_activation.resetUserNamePassword();
         checkActivationResult();
         showErrorMessage(failMessage);
-
+        KDSLog.i(TAG, "onActivationFail exit");
         //this.setResult(0);
     }
     public void showErrorMessage(String str)
@@ -428,7 +463,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
         {
             KDSUIDlgAgreement.setAgreementAgreed(true);
         }
-        else {
+        else { //clearing warning
              m_activation.fireClearDataEvent();
              attemptLogin();
          }
@@ -453,6 +488,11 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
 //        //KDSUIDlgAgreement dlg = new KDSUIDlgAgreement(this, this);
 //        KDSUIDlgAgreement dlg =KDSUIDlgAgreement.instance(this, this);
 //        dlg.show();
+    }
+
+    public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
+    {
+        return null;
     }
 }
 

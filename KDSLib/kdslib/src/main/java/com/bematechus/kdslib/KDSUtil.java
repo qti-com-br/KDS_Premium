@@ -13,6 +13,7 @@ import android.os.storage.StorageManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1985,5 +1986,69 @@ just 16bits value
         return language;
 
 
+    }
+
+    /**
+     *
+     * @param bytesUtf8
+     * @param noffset
+     * @param ncount
+     * @param encodingFormat
+     *  utf-8, utf-16LE, utf-16BE
+     * @return
+     */
+    static public String convertBytesToString(byte[] bytesUtf8, int noffset, int ncount, String encodingFormat)
+    {
+        if (encodingFormat.isEmpty())
+            encodingFormat = "UTF-8";
+        try {
+            String strutf = new String(bytesUtf8,noffset, ncount, encodingFormat);
+            return strutf;
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return "";
+        }
+    }
+
+
+    /**
+     * kpp1-394
+     *  Use the web site to identify building type, as just the web site is different in dev,stage and prod.
+     */
+    static public void showBuildTypes(Context context, TextView t)
+    {
+        //TextView t = this.findViewById(R.id.txtBuildType);
+        String s = context.getString(R.string.api_url);
+
+        if (s.indexOf("dev.kdsgo.com") >=0) {
+            t.setBackgroundColor(Color.YELLOW);
+            t.setVisibility(View.VISIBLE);
+            t.setText("   DEV   ");
+        }
+        else if (s.indexOf("stage.kdsgo.com")>=0)
+        {
+            t.setBackgroundColor(Color.YELLOW);
+            t.setVisibility(View.VISIBLE);
+            t.setText("  STAGE  ");
+        }
+        else
+        {
+            t.setVisibility(View.GONE);
+        }
+
+    }
+
+    static public int convertYesNo2Int(String str)
+    {
+        String s = str;
+        s = s.toUpperCase();
+        s = s.trim();
+        if (s.equals("YES"))
+            return KDSConst.INT_TRUE;
+        else
+            return KDSConst.INT_FALSE;
     }
 }

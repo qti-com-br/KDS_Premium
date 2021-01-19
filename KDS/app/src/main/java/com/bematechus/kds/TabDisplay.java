@@ -203,8 +203,8 @@ public class TabDisplay {
             case Queue:
                 return "Queue";
 
-            case TableTracker:
-                return "Table Tracker";
+//            case TableTracker://kpp1-406, remove it.
+//                return "Table Tracker";
 
             case LineItems:
                 return "Line items";
@@ -251,7 +251,7 @@ public class TabDisplay {
 
             ar.add(new TabButtonData( KDSSettings.TabFunction.Destination, false));
             ar.add(new TabButtonData( KDSSettings.TabFunction.Queue,false));
-            ar.add(new TabButtonData( KDSSettings.TabFunction.TableTracker,false));
+            //ar.add(new TabButtonData( KDSSettings.TabFunction.TableTracker,false)); //kpp1-406, remove it.
             ar.add(new TabButtonData( KDSSettings.TabFunction.LineItems,false));
             ar.add(new TabButtonData( KDSSettings.TabFunction.Sort_orders,false));
         }
@@ -337,6 +337,7 @@ public class TabDisplay {
             TabDisplay t = new TabDisplay();
             TabDisplay.TabButtonData btn = new TabButtonData("", KDSSettings.TabFunction.Orders);
             btn.parseSaveString(ar.get(i));
+            if (btn.getFunc() == KDSSettings.TabFunction.TableTracker) continue; //kpp1-406, remove table tracker
             arButtons.add(btn);
 
         }

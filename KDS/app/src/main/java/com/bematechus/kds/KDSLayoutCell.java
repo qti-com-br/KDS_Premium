@@ -670,8 +670,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     static public boolean drawCategoryIndicator(Canvas g,Rect rcAbsolute,KDSViewSettings env, KDSDataCategoryIndicator indicator)
     {
         KDSDataCategoryIndicator c =indicator;
-        KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);// env.getSettings().getKDSViewFontFace(KDSSettings.ID.From_primary_font);
-
+        //KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);// env.getSettings().getKDSViewFontFace(KDSSettings.ID.From_primary_font);
+        //kpp1-420, use category font
+        KDSViewFontFace ff = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Category_group_font);
         int bg = ff.getBG();// Color.WHITE;//c.getBG();
         int fg = ff.getFG();//Color.RED;
 
@@ -1632,6 +1633,12 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //        if (nStarting <0)
 //            nStarting = KDSSettings.COMDIMENT_LEADING_POSITION;
         String s = getCondimentPrefix(env);//getSpaces(nStarting);
+        //kpp1-414
+        if (c.getQty() >1)
+        {
+            s += Integer.toString((int) c.getQty());
+            s += "x ";
+        }
         s += strDescription;
         if (c.getFocusTag() != null) { //for hide item, show focus
             Object obj = c.getFocusTag();

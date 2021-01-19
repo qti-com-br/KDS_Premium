@@ -683,8 +683,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             m_dbStatistic = null;
         }
         m_arKdsEventsReceiver.clear();
-        if (m_errorToast != null)
-            m_errorToast.cancel();
+//        if (m_errorToast != null)
+//            m_errorToast.cancel();
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
 //        m_users.stop();
     }
@@ -720,8 +720,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     public String getLocalIpAddress()
     {
+    	if (m_strLocalIP.isEmpty()) {
+    		KDSLog.e("KDS", "IP not found! Trying to refresh IP and Mac...");
+			refreshIPandMAC();
+		}
         return m_strLocalIP;
     }
+
     public String getLocalMacAddress()
     {
         return m_strLocalMAC;
@@ -1708,7 +1713,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //Log.d("SMB Text", xmlData);
     }
 
-    public Toast m_errorToast = null;
+    //public Toast m_errorToast = null;
     public void doSmbError(String xmlData)
     {
         String s = xmlData;
@@ -2253,6 +2258,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Station_Bump_Order://in thread
                 //Please notice the xmldata just contains the order/item id.
                 checkLostFocusAfterSyncBumpOrderName(command, xmlData);
+                //kpp1-407, save my orginal order
+                KDSDataOrder receivedOrder = parseReceivedOrder(command);
+                KDSDataOrder existedOrder = null;
+                if (receivedOrder != null)
+                {
+                    existedOrder = this.getUsers().getOrderByName(receivedOrder.getOrderName());
+
+                }
+                //
                 ArrayList<KDSDataItem> arChangedItems = new ArrayList<>(); //retrieve changed items.
                 orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData, arChangedItems);
                 if (!orderGuid.isEmpty()) {
@@ -2264,6 +2278,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 {//kpp1-62, kpp1-74
                     syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems, Activation.ItemJobFromOperations.Expo_sync_prep_bump_order);
                 }
+
+                //kpp1-407
+                mirrorStationSyncWebDatabase(code,command, existedOrder, arChangedItems);
+
                 break;
             case Station_Unbump_Order:
                 KDSStationFunc.doSyncCommandOrderUnbumped(this,command, xmlData);
@@ -2278,6 +2296,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSStationFunc. doSyncCommandOrderModified(this,command, xmlData);
                 break;
             case Station_Bump_Item:
+                //kpp1-407, save my orginal order
+                String strOrderName = command.getParam("P0", "");
+                KDSDataOrder orderExisted = this.getUsers().getOrderByName(strOrderName);
+                //
                 ArrayList<KDSDataItem> arChangedItem = new ArrayList<>(); //retrieve changed items.
                 orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData, arChangedItem);
                 sortOrderForMoveFinishedToFront();
@@ -2286,13 +2308,23 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 {//kpp1-62, kpp1-74
                     syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
                 }
+                //kpp1-407
+                mirrorStationSyncWebDatabase(code,command, orderExisted, arChangedItem);
                 break;
             case Station_Unbump_Item:
-                orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData);
+                //kpp1-407, save my orginal order
+                String orderName = command.getParam("P0", "");
+                KDSDataOrder myOrder = this.getUsers().getOrderByName(orderName);;
+
+                //
+                ArrayList<KDSDataItem> arUnbumpItems = new ArrayList<>();
+                orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData, arUnbumpItems);
                 sortOrderForMoveFinishedToFront();
                 schedule_process_update_to_be_prepare_qty(true);
 
                 checkSMS(orderGuid, false); //2.1.10
+                //kpp1-407
+                mirrorStationSyncWebDatabase(code,command, myOrder,  arUnbumpItems);
                 break;
             case Station_Modified_Item:
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
@@ -2862,6 +2894,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     }
 
+    /**
+     * Rev.:
+     *      kpp1-437, if focused order is in next page, this function will cause page changed after get new order.
+     *
+     * @param userID
+     */
     public void setFocusAfterReceiveOrder(KDSUser.USER userID)
     {
         KDSUser user = this.getUsers().getUser(userID);
@@ -2876,7 +2914,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         }
         else
         {// > 1
-            setFocusToOrder(KDSConst.RESET_ORDERS_LAYOUT);
+            //kpp1-437, just comment it.
+            //setFocusToOrder(KDSConst.RESET_ORDERS_LAYOUT);
 
         }
 
@@ -2916,10 +2955,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         int ntrans = order.getTransType();
         if (ntrans == KDSDataOrder.TRANSTYPE_MODIFY)
         {//if order don't existed, add it.
-            if (m_users.getOrderByName(order.getOrderName()) == null) {
+            if (m_users.getOrderByNameIncludeParked(order.getOrderName()) == null) { //kpp1-393, check parked orders too.
                 if (!order.isAllItemsNotForNew())//if just single item withe "del/modify", it will cause add a new item ugly
                     ntrans = KDSDataOrder.TRANSTYPE_ADD;
             }
+            //kpp1-409, order name is empty, but its guid is not.
+            if (order.getOrderName().isEmpty() && (m_users.getOrderByGUID(order.getGUID()) != null))
+            {//restore old transtype
+
+               ntrans = KDSDataOrder.TRANSTYPE_MODIFY;
+            }
+
+
         }
         switch (ntrans)
         {
@@ -3661,8 +3708,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         if (sumType == KDSSettings.SumType.ItemWithoutCondiments)
             return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),null, false, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
             //return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),orders.getAllOrderGUID(), false);//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
-        else
-            return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),orders.getAllOrderGUID(), true, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+        else if (sumType == KDSSettings.SumType.CondimentsOnly)
+        {
+            return this.getCurrentDB().summaryOnlyCondiments(userID.ordinal(),(sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+        }
+        else //with condiments, kpp1-415
+            return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),null, true, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+            //return this.getCurrentDB().summaryItems(this.getStationID(),userID.ordinal(),orders.getAllOrderGUID(), true, (sumOrderBy == KDSSettings.SumOrderBy.Ascend));//  KDSConst.Screen.SCREEN_A.ordinal(),orders.getAllOrderGUID(), false );
+
 
     }
 
@@ -5239,7 +5292,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                     arOrders.addAll(arOrdersAdded);
                     for (int j = 0; j< m_arKdsEventsReceiver.size(); j++)
                     {
-                        m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Received_rush_order, arOrders);
+                        m_arKdsEventsReceiver.get(j).onKDSEvent(KDSEventType.Received_rush_order, arOrders);
                     }
                 }
             }
@@ -5287,5 +5340,89 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             }
             return (n == orderReceived.getItems().getCount());
         }
+    }
+
+    public void fireOrderBumpedInOther(String orderGuid)
+    {
+        ArrayList<Object> arOrders = new ArrayList<>();
+        arOrders.add(orderGuid);
+        for (int i = 0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Order_Bumped_By_Other_Expo_Or_Station, arOrders);
+        }
+    }
+
+    public void clearAllBufferedOrders()
+    {
+        m_users.ordersClear();
+    }
+
+            /**
+             * kpp1-299-1
+             */
+    public void clearRelationshipSettings()
+    {
+
+        this.getSettings().clearRelationshipData();
+        this.updateSettings(m_context);
+    }
+
+    /**
+     * kpp1-407
+     * @param command
+     *
+     * @return
+     */
+    private boolean mirrorStationSyncWebDatabase(KDSXMLParserCommand.KDSCommand code ,
+                                                 KDSXMLParserCommand command ,
+                                                 KDSDataOrder existedOrder,
+                                                 ArrayList<KDSDataItem> arChangedItem)
+    {
+
+        if (existedOrder == null)
+            return false;
+
+        String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
+
+        if (this.getStationsConnections().getRelations().isMyMirrorStation(fromStationID) || //station is my mirror.
+                this.getStationsConnections().getRelations().isMirrorOfStation(fromStationID, getStationID()) ) // I am station's mirror
+        {
+
+            switch (code) {
+                case Station_Bump_Order:
+                    syncOrderToWebDatabase(existedOrder, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
+                    break;
+                case Station_Bump_Item:
+                    for (int i=0; i< arChangedItem.size(); i++) {
+                        if (arChangedItem.get(i) != null)
+                            syncItemBumpUnbumpToWebDatabase(existedOrder, arChangedItem.get(i), true);
+                    }
+                    break;
+                case Station_Unbump_Item:
+                    for (int i=0; i< arChangedItem.size(); i++) {
+                        if (arChangedItem.get(i) != null)
+                            syncItemBumpUnbumpToWebDatabase(existedOrder, arChangedItem.get(i), false);
+                    }
+                    break;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * kpp1-407
+     * @param command
+     * @return
+     */
+    private KDSDataOrder parseReceivedOrder(KDSXMLParserCommand command)
+    {
+        String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
+        if (strXml.isEmpty())
+            return null;
+//        String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
+//        String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
+        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), strXml);
+
+        return order;
     }
 }

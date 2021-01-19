@@ -1,5 +1,6 @@
 package com.bematechus.kdslib;
 
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class KDSBase {
     {
         Received_rush_order, //params: 0: useA new order. 1: userB new order.
         TCP_listen_port_error, //params: 0: error message.
+        Order_Bumped_By_Other_Expo_Or_Station, //kpp1-286
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);
@@ -252,25 +254,54 @@ public class KDSBase {
         }
         else
         { //if no receiver, just show error, as this messaga is urgent.
-            showToastMessage(s);
+            showToastMessage(s, Toast.LENGTH_LONG);
 
         }
 
     }
 
-    Toast m_toast = null;
-    protected void showToastMessage(String message) {
-        int duration = Toast.LENGTH_LONG;
+    static Toast m_toast = null;
+
+    /**
+     *  see https://stackoverflow.com/questions/51956971/illegalstateexception-of-toast-view-on-android-p-preview
+     *  It will show IllegalStateException of toast View on Android P
+     * @param message
+     */
+    static public void showToastMessage(String message, int duration) {
+        //int duration = Toast.LENGTH_LONG;
+
+        // cancel previous toast
         try {
             if (m_toast == null)
                 m_toast = Toast.makeText(KDSApplication.getContext(), message, duration);
-            else
+            else {
+                // cancel same toast only on Android P and above, to avoid IllegalStateException on addView
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && m_toast.getView().isShown()) {
+                    m_toast.cancel();
+                }
+                m_toast.setDuration(duration);
                 m_toast.setText(message);
-            if (m_toast != null)
-                m_toast.show();
-        }catch (Exception e)
-        {
-
+            }
+            m_toast.show();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            m_toast = null;
         }
+
+//        try {
+//            if (m_toast == null)
+//                m_toast = Toast.makeText(KDSApplication.getContext(), message, duration);
+//            else
+//                m_toast.setText(message);
+//            if (m_toast != null)
+//                m_toast.show();
+//        }catch (Exception e)
+//        {
+//
+//        }
+
+
     }
+
+
 }

@@ -17,7 +17,7 @@
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Domain:"
+                android:text="@string/domain"
                 android:id="@+id/textView40"
                 android:gravity="right" />
 
@@ -25,7 +25,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtDomain"
-                android:hint="Domain name, can be empty" />
+                android:hint="@string/domain_name_can_be_empty" />
         </LinearLayout>
 
         <LinearLayout

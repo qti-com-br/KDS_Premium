@@ -620,4 +620,278 @@
 	<string name='five_hours'>5 horas</string>
 	<string name='six_hours'>6 horas</string>
 	<string name='custom'>Personalizado ...</string>
+	<string name="icon_settings">Ajustes de iconos</string>
+	<string name="col_size">Tamaño de las columnas</string>
+	<string name="background_color">Color de fondo</string>
+	<string name="destination">Destino</string>
+	<string name="display_text">Texto</string>
+	<string name="void_item_showing_method">"Método para mostrar articulos nulos "</string>
+	<string name="add_message_below_item">Anadir mensaje abajo del articulo</string>
+
+<!-- Added 2020-06-24-->
+	<string-array name='station_function'>
+		<item>Prep</item>
+		<item>Expedidor</item>
+		<item>Fila</item>
+		<item>Espejo</item>
+		<item>Apoyo</item>
+		<item>Distribuidor</item>
+		<item>Duplicado</item>
+		<item>Rastreador</item>
+		<item>Fila-Expo</item>
+	</string-array>
+	<string-array name='station_status'>
+		<item>Habilitar</item>
+		<item>Inhabilitar</item>
+	</string-array>
+	<string-array name='slave_function'>
+		<item>No Propiedad</item>
+		<item>Apoyo</item>
+		<item>Espejo</item>
+		<item>Distribución automática de la carga de trabajo</item>
+		<item>Estación Duplicado</item>
+		<item>Visualización de fila de pedidos</item>
+	</string-array>
+
+	<string-array name='pref_kds_general_data_source_titles'>
+		<item>TCP/IP</item>
+		<item>Carpeta Remota</item>
+	</string-array>
+	<string-array name='pref_kds_general_users_titles'>
+		<item>Pantalla individual</item>
+		<item>Pantalla compartida</item>
+	</string-array>
+	<string-array name='pref_kds_panels_mode_titles'>
+		<item>Expandir Horizontal</item>
+		<item>Expandir Vertical</item>
+	</string-array>
+	<string-array name='pref_kds_caption_content_titles'>
+		<item>n/a</item>
+		<item>ID de pedido</item>
+		<item>Tiempo de espera</item>
+		<item>Camarero</item>
+		<item>Para la mesa</item>
+		<item>Estación POS</item>
+		<item>Tipo de Pedido</item>
+		<item>Destino</item>
+		<item>Mensaje Personalizado</item>
+		<item>Estado del Pedido</item>
+		<item>Icono de Orden</item>
+	</string-array>
+	<string-array name='pref_kds_item_showing_method_titles'>
+		<item>inmediatamente</item>
+		<item>Un artículo falta</item>
+		<item>Cuando el pedido es paagado</item>
+	</string-array>
+	<string-array name='pref_kds_bumping_by_panelnum_title'>
+		<item>Discapacitado</item>
+		<item>Doble click</item>
+	</string-array>
+	<string-array name='pref_kds_printer_howtoprint_titles'>
+		<item>Impresion Manual</item>
+		<item>Auto Impresión después de bump</item>
+		<item>Auto Impresión después de recivir</item>
+		<item>Impresión despues de transferir</item>
+	</string-array>
+	<string-array name='pref_kds_smartorder_showing_titles'>
+		<item>Nublado</item>
+		<item>Oculto</item>
+	</string-array>
+	<string-array name='pref_kds_beeper_type_titles'>
+		<item>Al recibir cualquier pedido</item>
+		<item>Solo pedidos urgentes</item>
+	</string-array>
+	<string-array name='pref_kds_sum_type_titles'>
+		<item>Artículo sin condimentos</item>
+		<item>Artículo con condimentos</item>
+		<item>Only condiments</item>
+	</string-array>
+	<string-array name='pref_sum_position_titles'>
+		<item>al lado</item>
+		<item>arriba</item>
+	</string-array>
+	<string-array name='pref_sum_order_by_titles'>
+		<item>Descender</item>
+		<item>Ascender</item>
+	</string-array>
+
+	<string-array name='pref_keyboard_type_titles'>
+		<item>Estándar</item>
+		<item>Bump bar Opción-A</item>
+		<item>Bump bar Opción-B</item>
+		<item>Bump bar Opción-C</item>
+		<item>Bump bar Opción-D</item>
+		<item>Bump bar Opción-E</item>
+		<item>Bump bar Opción-G</item>
+	</string-array>
+	<string-array name='pref_kds_printer_port_titles'>
+		<item>USB</item>
+		<item>TCP/IP</item>
+		<item>Puerto/Serial</item>
+	</string-array>
+	<string-array name='pref_kds_language_titles'>
+		<item>English</item>
+		<item>Chinese</item>
+		<item>Spanish</item>
+	</string-array>
+
+	<string-array name='pref_trackerpager_userinfo_guesttable_titles'>
+		<item>None</item>
+		<item>UserInfo</item>
+		<item>GuestTable</item>
+	</string-array>
+	<string-array name='pref_kds_general_users_orientation_titles'>
+		<item>Izquierda y derecha</item>
+		<item>arriba y abajo</item>
+	</string-array>
+	<string-array name='pref_queue_combine_status1_titles'>
+		<item>Estado 2</item>
+		<item>Estado 3</item>
+		<item>Estado 4</item>
+	</string-array>
+	<string-array name='pref_queue_combine_status2_titles'>
+		<item>Estado 1</item>
+		<item>Estado 3</item>
+		<item>Estado 4</item>
+	</string-array>
+	<string-array name='pref_queue_combine_status3_titles'>
+		<item>Estado 1</item>
+		<item>Estado 2</item>
+		<item>Estado 4</item>
+	</string-array>
+	<string-array name='pref_queue_combine_status4_titles'>
+		<item>Estado 1</item>
+		<item>Estado 2</item>
+		<item>Estado 3</item>
+	</string-array>
+	<string-array name='pref_kds_lineitems_cols_count_titles'>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+	</string-array>
+	<string-array name='pref_kds_lineitems_cols_content_titles'>
+		<item>ID de Pedido</item>
+		<item>Estado de Pedido</item>
+		<item>Tipo de Pedido</item>
+		<item>Mesa del Pedido</item>
+		<item>Descripción de artículo</item>
+		<item>Condimentoss</item>
+		<item>Cantidad</item>
+		<item>Tiempo de espera</item>
+		<item>Modificadores</item>
+		<item>Modificadores y condimentos</item>
+	</string-array>
+
+	<string-array name='pref_kds_item_mark_method'>
+		<item>Icono interno</item>
+		<item>Char</item>
+		<item>Color</item>
+	</string-array>
+	<string-array name='pref_kds_void_item_showing_method_titles'>
+		<item>Cambio directo de cantidad</item>
+		<item>Inserte cantidad de linea ANULADA debajo del artículo</item>
+	</string-array>
+	<string-array name='pref_kds_void_qty_mark_titles'>
+		<item>Brackets ()</item>
+		<item>Signo Neg -</item>
+	</string-array>
+	<string-array name='pref_kds_smartorder_mode_titles'>
+		<item>Discapacitado</item>
+		<item>Normal</item>
+		<item>avanzado</item>
+	</string-array>
+	<string-array name='pref_kds_log_mode_titles'>
+		<item>None</item>
+		<item>Basico</item>
+		<item>Detallado</item>
+	</string-array>
+	<string-array name='pref_queue_order_id_length_titles'>
+		<item>Todos</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+	</string-array>
+	<string-array name='pref_real_period_titles'>
+		<item>1</item>
+		<item>5</item>
+		<item>10</item>
+	</string-array>
+
+	<string-array name='pref_queue_sort_titles'>
+		<item>estándar</item>
+		<item>Tiempo de cambio de estado, ascender</item>
+		<item>Tiempo de cambio de estado, descender</item>
+	</string-array>
+	<!-- Strings related to login -->
+	<string-array name='pref_queue_auto_bump_timeout_titles'>
+		<item>Discapacitado</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+		<item>12</item>
+		<item>13</item>
+		<item>14</item>
+		<item>15</item>
+		<item>16</item>
+		<item>17</item>
+		<item>18</item>
+		<item>19</item>
+		<item>20</item>
+		<item>21</item>
+		<item>22</item>
+		<item>23</item>
+		<item>24</item>
+		<item>25</item>
+		<item>26</item>
+		<item>27</item>
+		<item>28</item>
+		<item>29</item>
+		<item>30</item>
+		<item>31</item>
+		<item>32</item>
+		<item>33</item>
+		<item>34</item>
+		<item>35</item>
+		<item>36</item>
+		<item>37</item>
+		<item>38</item>
+		<item>39</item>
+		<item>40</item>
+		<item>41</item>
+		<item>42</item>
+		<item>43</item>
+		<item>44</item>
+		<item>45</item>
+		<item>46</item>
+		<item>47</item>
+		<item>48</item>
+		<item>49</item>
+		<item>50</item>
+	</string-array>
+	<string name="the_message">El mensaje</string>
+	<string name="void_qty_line_color_enabled">Habilitar linea de color cuando sea  cantidad nula</string>
+	<string name="void_qty_line_color">Linea de color cuando sea la cantidad nula</string>
+	<string name="void_item_qty_mark_with">Marcar articulo anulado con</string>
+    <string name="powered_by">DESARROLADO POR</string>
+	<string name="enable_bg_logo">Logotipo de fondo</string>
+	<string name="bg_logo_file">Archivo de logotipo de fondo</string>
+    <string name="hide_title">Ocultar título</string>
+	<string name="sum_font">Fuente del Sumario</string>
+	<string name="any_time">Cualquier tiempo</string>
+	<string name="clear_db_schedule">Calendario para borrar base de datos</string>
+	<string name="category_font">Fuente de Categoria</string>
 </resources>

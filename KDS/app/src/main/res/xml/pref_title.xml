@@ -2,6 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <CheckBoxPreference
+        android:key="hide_station_title"
+        android:title="@string/hide_title"
+        android:defaultValue="false" />
+
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="kds_general_title"
         android:title="@string/pref_kds_general_title"

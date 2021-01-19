@@ -25,6 +25,14 @@
         android:title="@string/item_group_by_category"
         android:defaultValue="false" />
 
+<!--  kpp1-420, add category font  -->
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
+        android:key="category_group_font"
+        android:defaultValue="default_font,@color/item_bg,@color/item_fg,middle_size"
+        android:title="@string/category_font"
+        android:dependency = "item_group_category"
+        app:supportsColor="true"/>
+
 <!--         -->
     <PreferenceCategory android:title="@string/item_mark_setting">
         <com.bematechus.kds.KDSPreferenceItemMark
@@ -82,7 +90,7 @@
     <PreferenceCategory android:title="@string/void_item_showing">
         <com.bematechus.kdslib.KDSListPreference
             android:key="void_showing_method"
-            android:title="Void item showing method"
+            android:title="@string/void_item_showing_method"
             android:defaultValue="0"
             android:entries="@array/pref_kds_void_item_showing_method_titles"
             android:entryValues="@array/pref_kds_void_item_showing_method__values"
@@ -102,12 +110,12 @@
 
         <CheckBoxPreference
             android:key="void_dcq_add_message_enabled"
-            android:title="Add message below item"
+            android:title="@string/add_message_below_item"
             android:defaultValue="false" />
 
         <com.bematechus.kdslib.KDSEditTextPreference
             android:key="void_dcq_message"
-            android:title="The message"
+            android:title="@string/the_message"
             android:defaultValue="@string/qty_changed"
             android:selectAllOnFocus="true"
             android:inputType= "number"
@@ -120,18 +128,18 @@
         <!-- addline= add VOID message below item -->
         <CheckBoxPreference
             android:key="void_addline_line_color_enabled"
-            android:title="Void quantity line color enabled"
+            android:title="@string/void_qty_line_color_enabled"
             android:defaultValue="false" />
 
         <com.bematechus.kdslib.KDSPreferenceBGFGPicker
             android:key="void_addline_line_bgfg"
             android:defaultValue="-39424,0"
             android:dependency="void_addline_line_color_enabled"
-            android:title="Void qty line color" />
+            android:title="@string/void_qty_line_color" />
 
         <com.bematechus.kdslib.KDSListPreference
             android:key="void_addline_qty_mark"
-            android:title="Void item quantity mark with"
+            android:title="@string/void_item_qty_mark_with"
             android:defaultValue="0"
             android:entries="@array/pref_kds_void_qty_mark_titles"
             android:entryValues="@array/pref_kds_void_qty_mark_values"

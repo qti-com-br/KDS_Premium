@@ -70,10 +70,10 @@
         android:negativeButtonText="cancel"
         />
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="general_enable_smbv2"
-        android:title="@string/use_smb_v2_open_folder" />
+<!--    <CheckBoxPreference-->
+<!--        android:defaultValue="false"-->
+<!--        android:key="general_enable_smbv2"-->
+<!--        android:title="@string/use_smb_v2_open_folder" />-->
     <!-- Stations TCP/IP port number -->
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="kds_general_stationsport"
@@ -117,6 +117,15 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         android:title="@string/pref_title_database_keep_days" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="clear_db_schedule"
+        android:title="@string/clear_db_schedule"
+        android:defaultValue="-1"
+        android:entries="@array/pref_clear_db_schedule_names"
+        android:entryValues="@array/pref_clear_db_schedule_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
 
     <com.bematechus.kds.KDSPreferenceClearDB
         android:key="clear_db"
@@ -197,4 +206,16 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
+    <CheckBoxPreference
+        android:key="kds_general_enable_bg_logo"
+        android:title="@string/enable_bg_logo"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="kds_general_bg_logo"
+        android:defaultValue=""
+        android:title="@string/bg_logo_file"
+        android:dependency="kds_general_enable_bg_logo"
+        />
+
+
 </PreferenceScreen>

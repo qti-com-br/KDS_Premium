@@ -339,7 +339,7 @@
         <item>POS station</item>
         <item>Order type</item>
         <item>Destination</item>
-        <item>Custom Message</item>
+        <item>User information</item>
         <item>Order status</item>
         <item>Order icon</item>
 
@@ -487,6 +487,7 @@
     <string-array name="pref_kds_sum_type_titles">
         <item>Item without condiments</item>
         <item>Items with condiments</item>
+        <item>Only condiments</item>
     </string-array>
 
     <string name="pref_kds_sum_position">Summary position</string>
@@ -534,7 +535,7 @@
     <string name="pref_kds_touch_page_enabled">Enable [page] touch button</string>
 
     <string name="pref_kds_screen_title_font">KDS Station name font</string>
-    <string name="pref_kds_screen_show_time">Show date &amp; time in title in KDS Station</string>
+    <string name="pref_kds_screen_show_time">Show date and time in title in KDS Station</string>
 
     <string name="pref_kds_bump_confirm_enabled">Show confirmation dialog after bumping an order</string>
 
@@ -919,7 +920,6 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
-
     </string-array>
     <string-array name="pref_kds_lineitems_cols_content_titles">
         <item>Order ID</item>
@@ -932,7 +932,6 @@
         <item>Waiting time</item>
         <item>Modifiers</item>
         <item>Modifiers and condiments</item>
-
     </string-array>
 
     <string name="no_more_unbump_item">No more unbumped items</string>
@@ -1032,8 +1031,6 @@
         <item>7</item>
         <item>8</item>
         <item>9</item>
-
-
     </string-array>
 
 
@@ -1058,8 +1055,6 @@
         <item>1</item>
         <item>5</item>
         <item>10</item>
-
-
     </string-array>
 
     <!--<string name="file_existed_overwrite_confirm">File is existed. Do you want to overwrite it?</string>-->
@@ -1072,7 +1067,6 @@
         <item>Default</item>
         <item>State change time, ascend</item>
         <item>State change time, descend</item>
-
     </string-array>
 
     <string name="confirm_bump_unpaid_text">The order # is unpaid. Do you want to bump it?</string>
@@ -1170,6 +1164,21 @@
     <string name="five_hours">5 hours</string>
     <string name="six_hours">6 hours</string>
     <string name="custom">Custom ...</string>
+	<string name="icon_settings">Icon settings</string>
+	<string name="col_size">Col Size</string>
+	<string name="background_color">Background color</string>
+	<string name="destination">Destination</string>
+	<string name="display_text">Display text</string>
+	<string name="void_item_showing_method">Void item showing method</string>
+	<string name="add_message_below_item">Add message below item</string>
+	<string name="the_message">The message</string>
+	<string name="void_qty_line_color_enabled">Void quantity line color enabled</string>
+	<string name="void_qty_line_color">Void qty line color</string>
+	<string name="void_item_qty_mark_with">Void item quantity mark with</string>
+    <string name="powered_by">POWERED BY</string>
+	<string name="enable_bg_logo">Enable background logo</string>
+	<string name="bg_logo_file">Background logo file</string>
+    <string name="hide_title">Hide title</string>
 
     <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
@@ -1223,9 +1232,6 @@
         <item>48</item>
         <item>49</item>
         <item>50</item>
-
-
-
     </string-array>
 
     <string-array name="pref_cleaning_alert_type">
@@ -1233,7 +1239,6 @@
         <item>Show dialog with options</item>
         <item>Start cleaning screen</item>
     </string-array>
-
 
     <string-array name="pref_cleaning_interval">
         <item>1 hour</item>
@@ -1245,13 +1250,16 @@
         <item>Custom ...</item>
     </string-array>
 
-
     <string-array name="pref_cleaning_snooze_time">
         <item>Disabled</item>
         <item>5 minutes</item>
         <item>10 minutes</item>
         <item>15 minutes</item>
-
     </string-array>
 
+    <string name="sum_font">Summary font</string>
+
+    <string name="any_time">Any time</string>
+    <string name="clear_db_schedule">Clear database schedule</string>
+    <string name="category_font">Category font</string>
 </resources>

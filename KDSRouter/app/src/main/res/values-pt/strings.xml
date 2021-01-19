@@ -7,7 +7,7 @@
 	<string name="pref_general_router_backup_title">Trabalhar como Reserva</string>
 	<string name="pref_general_router_sum_backup">Modo Reserva permite múltiplos roteadores. Entre com o roteador principal em [Roteador Principal].</string>
 	<string name="pref_general_sum_router_enabled">Habilita/Desabilita o Roteador</string>
-	<string name="pref_general_router_enabled">Habilita o Roteador</string>
+	<string name="pref_general_router_enabled">Habilitar o Roteador</string>
 	<string name="pref_general_data_source">Origem dos Pedidos</string>
 	<string name="pref_general_title_tcp_port">Porta do PDV</string>
 	<string name="pref_general_title_remote_folder">Pasta Remota da Origem dos Pedidos</string>
@@ -83,7 +83,7 @@
 	<string name="event_help_for_orderid">Acrescente o ID do Pedido aqui</string>
 	<string name="fill_description">Preencha a Descrição antes de salvar</string>
 	<string name="fill_order_id">Preencha o ID do Pedido antes de salvar</string>
-	<string name="pref_kds_password_enabled">Protege as configurações com uma senha</string>
+	<string name="pref_kds_password_enabled">Proteger as configurações com uma senha</string>
 	<string name="pref_kds_password_text">Senha</string>
 	<string name="add_item">Acrescentar um item</string>
 	<string name="qty_increase">Qtde +</string>
@@ -115,7 +115,7 @@
 	<string name="error_other_router_enabled">Erro, apenas um roteador é permitido por loja</string>
 	<string name="primary_router">Roteador Principal</string>
 	<string name="slave_router">Roteador Reserva</string>
-	<string name="retrieve_settings">Obter configurações de outro Roteador</string>
+	<string name="retrieve_settings">Replicar configurações de outro Roteador</string>
 	<string name="backup_of">(Reserva de #)</string>
 	<string name="wait_for_config_data">Aguardando dados de configuração...</string>
 	<string name="wait_for_connection">Aguardando nova conexão...</string>
@@ -154,17 +154,17 @@
 	<string name="items_for_category">Itens para categoria #</string>
 	<string name="category_name">Nome da Categoria:</string>
 	<string name="no_data">Sem dados</string>
-	<string name="export_csv">Exportar DB para CSV</string>
-	<string name="import_csv">Importar CSV para DB</string>
+	<string name="export_csv">Exportar BD para CSV</string>
+	<string name="import_csv">Importar CSV para BD</string>
 	<string name="file_name">Nome do arquivo:</string>
 	<string name="export_db_done">Banco de dados foi exportado para</string>
 	<string name="import_csv_done">Arquivo importado</string>
 	<string name="auto_add_modifier">Acrescentar modificar ao BD automaticamente</string>
 	<string name="item_auto_add">Acrescentar item ao BD automaticamente</string>
-	<string name="log_mode">Modo Log (Registro)</string>
+	<string name="log_mode">Registros</string>
 	<string name="log_reserved_days">Reservar arquivo de registro por X dias</string>
 	<string name="log">Registros</string>
-	<string name="log_orders">Registro recebido pedidos XML</string>
+	<string name="log_orders">Registrar o recebimento de pedidos XML</string>
 	<string name="station_lost">Estação # perdida</string>
 	<string name="enable_order_ack">Habilitar reconhecimento de pedido</string>
 	<string name="use_smb_v2_open_folder">Utilizar SMBv2 para abrir pasta remota</string>
@@ -188,4 +188,7 @@
 		<item>TCP/IP</item>
 		<item>Pasta Remota</item>
 	</string-array>
+	<string name="enable_3rd_party_order">Enable 3rd party order</string>
+	<string name="get_fcm_order">Get order # from FCM</string>
+    <string name="modifers">Modificadores</string>
 </resources>

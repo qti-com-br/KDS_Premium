@@ -628,7 +628,7 @@ public class KDSDBCurrent extends KDSDBBase {
     private String getCondimentFieldSql()
     {
 
-        return "GUID,Name,Description,BG, FG ";
+        return "GUID,Name,Description,BG, FG,Qty ";//kpp1-414 add qty
     }
     public KDSDataCondiments condimentsGet(String itemGUID)// int nItemID)
     {
@@ -636,7 +636,9 @@ public class KDSDBCurrent extends KDSDBBase {
         KDSDataCondiments condiments = new KDSDataCondiments();
         if (getDB() == null) return condiments;
 
-        String sql = String.format("select GUID,Name,Description,BG,FG from condiments where itemguid='%s' order by id", itemGUID);
+        //Rev.:
+        // kpp1-414, add qty
+        String sql = String.format("select GUID,Name,Description,BG,FG,Qty from condiments where itemguid='%s' order by id", itemGUID);
         Cursor c = getDB().rawQuery(sql, null);
 
         while (c.moveToNext()) {
@@ -659,6 +661,7 @@ public class KDSDBCurrent extends KDSDBBase {
         c.setDescription(getString(sf,2));
         c.setBG(getInt(sf,3));
         c.setFG(getInt(sf,4));
+        c.setQty(getFloat(sf, 5));//kpp1-414
 
         //<<<<<<IMPORTANT>>>>>> Now don't support messages for condiments.
        // c.setMessages(this.messagesGet(KDSDataMessage.FOR_Condiment, guid));//nID));
@@ -1679,7 +1682,9 @@ public class KDSDBCurrent extends KDSDBBase {
 
 
         if (bCheckCondiments) {
-            return summaryItemsWithCondiments(stationID, nUser, arValidOrderGUID, bAscend);//bEnableSummaryTranslation);
+            //return summaryItemsWithCondiments(stationID, nUser, arValidOrderGUID, bAscend);//bEnableSummaryTranslation);
+            //kpp1-415
+            return summaryItemsWithCondiments(stationID, nUser, null, bAscend);//bEnableSummaryTranslation);
         }
         String sql = "";
 
@@ -1950,20 +1955,24 @@ public class KDSDBCurrent extends KDSDBBase {
 //        td.debug_print_Duration("sum with condiments 10=");
 //        td.reset();
         //make sql orderguid string
-        String sql = " and (";
-        String s = "";
-        int count = arValidOrderGUID.size();
-        if (count <= 0) sql = "";
-        String str = "";
+        //String sql = " and (";
+        String sql =String.format(" and items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and orders.screen=%d)",
+                                    nUser);
+        //kpp1-415, use new code for orderguid
 
-        for (int i = 0; i < count; i++) {
-            str = arValidOrderGUID.get(i);
-            if (i != count - 1)
-                s = String.format("orderguid='%s' or ", str);
-            else
-                s = String.format("orderguid='%s')", str);
-            sql += s;
-        }
+//        String s = "";
+//        int count = arValidOrderGUID.size();
+//        if (count <= 0) sql = "";
+//        String str = "";
+//
+//        for (int i = 0; i < count; i++) {
+//            str = arValidOrderGUID.get(i);
+//            if (i != count - 1)
+//                s = String.format("orderguid='%s' or ", str);
+//            else
+//                s = String.format("orderguid='%s')", str);
+//            sql += s;
+//        }
 
 
         for (int i = 0; i < arUniqueItems.size(); i++) {
@@ -2214,8 +2223,8 @@ public class KDSDBCurrent extends KDSDBBase {
 //
 //        }
         //td.debug_print_Duration("sum with condiments 1=");
-        ArrayList<String> curcondiments = new ArrayList<>();
-        ArrayList<String> checkcondiments = new ArrayList<>();
+        ArrayList<KDSSummaryCondiment> curcondiments = new ArrayList<>(); //kpp1-421
+        ArrayList<KDSSummaryCondiment> checkcondiments = new ArrayList<>(); //kpp1-421
 
         int curindex = 0;
         int checkindex = 1;
@@ -2280,7 +2289,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 //compare each condiments, it has sure the condiments count is same.
                 boolean bsame = true;
                 for (int i = 0; i < checkcondiments.size(); i++) {
-                    if (!sumItem.getCondiments().get(i).equals(checkcondiments.get(i))) {
+                    //if (!sumItem.getCondiments().get(i).equals(checkcondiments.get(i))) {
+                    if (!sumItem.getCondiments().get(i).isEqual(checkcondiments.get(i))) {
                         bsame = false;
                         break;
                     }
@@ -2322,9 +2332,15 @@ public class KDSDBCurrent extends KDSDBBase {
 /*                                                                      */
 
     /************************************************************************/
-    private ArrayList<String> getItemCondimentStrings(String itemGUID) {
+    /**
+     * rev.:
+     *  //kpp1-421
+     * @param itemGUID
+     * @return
+     */
+    private ArrayList<KDSSummaryCondiment> getItemCondimentStrings(String itemGUID) {
 
-        ArrayList<String> arCondiments = new ArrayList<String>();
+        ArrayList<KDSSummaryCondiment> arCondiments = new ArrayList<>();
         return getItemCondimentStrings(itemGUID, arCondiments);
 
 //        if (getDB() == null) return arCondiments;
@@ -2343,19 +2359,24 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    private ArrayList<String> getItemCondimentStrings(String itemGUID, ArrayList<String> arCondiments) {
+    private ArrayList<KDSSummaryCondiment> getItemCondimentStrings(String itemGUID, ArrayList<KDSSummaryCondiment> arCondiments) {
 
         //ArrayList<String> arCondiments = new ArrayList<String>();
         if (getDB() == null) return arCondiments;
         String sql = "";
-        sql = String.format("select description from condiments where itemguid='%s' order by description", itemGUID);
+        //kpp1-414
+        sql = String.format("select description,qty from condiments where itemguid='%s' order by description", itemGUID);
+        //sql = String.format("select description from condiments where itemguid='%s' order by description", itemGUID);
 
         Cursor c = getDB().rawQuery(sql, null);
         String s = "";
-
+        int qty = 0;
         while (c.moveToNext()) {
             s = getString(c,0);
-            arCondiments.add(s);
+            qty = getInt(c, 1); //kpp1-414
+            //if (qty >1) //kpp1-421
+            //    s = Integer.toString(qty) + "x " + s;
+            arCondiments.add(new KDSSummaryCondiment(qty, s));// s); //kpp1-421
         }
         c.close();
         return arCondiments;
@@ -2877,7 +2898,7 @@ return:
         int nBumped = this.executeOneValue(sql);
         //int nMax = Math.round(nMaxCount * 1.5f);
         int nMax = Math.round(nMaxCount ); //KPP1-207, just bump according to setting value.
-        if (nBumped<nMax ) return 0;
+        if (nBumped<=nMax ) return 0; //kpp1-412
         int nNeedBumped = nBumped - nMaxCount;
         //TimeDog td = new TimeDog();
         sql = "select guid from orders where bumped=1 order by bumpedTime asc limit " + KDSUtil.convertIntToString(nNeedBumped);
@@ -3790,6 +3811,48 @@ update the schedule item ready qty
         String sql = "";
         sql = String.format("update orders set screen=0 where screen=1 and bumped=0" );
         return this.executeDML(sql);
+    }
+
+
+    /**
+     * KPP1-415
+     * Condiment only summary
+     *
+     * @param nUser
+     *
+     * @param bAscend
+     * @return
+     */
+    public ArrayList<KDSSummaryItem> summaryOnlyCondiments(int nUser, boolean bAscend)//, boolean bEnableSummaryTranslation)
+    {
+
+        String sql = String.format("select condiments.description,sum(ifnull(condiments.qty,1)*(items.qty+ifnull(items.qtychanged,0))) as q,count(condiments.description) as samecount " +
+                "from condiments,items " +
+                "where condiments.itemguid=items.guid and items.localbumped=0 and items.marked=0 and condiments.itemguid in (select items.guid from items where items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and screen=%d)) " +
+                "group by condiments.description " +
+                "order by condiments.description %s ",
+                nUser,  bAscend?"asc":"desc");
+
+
+        ArrayList<KDSSummaryItem> ar = new ArrayList<>();
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        String description = "";
+        int qty = 0;
+        int count = 0;
+        while (c.moveToNext()) {
+            description = c.getString(0);
+            qty = getInt(c, 1, 0);
+            count = getInt(c, 2, 0);
+            KDSSummaryItem item = new KDSSummaryItem();
+            item.setDescription(description);
+            qty = (qty>0?qty:count);
+            item.setQty( qty );
+            ar.add(item);
+        }
+        c.close();
+        return ar;
     }
 
     /***************************************************************************
