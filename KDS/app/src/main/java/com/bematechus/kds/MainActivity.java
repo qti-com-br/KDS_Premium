@@ -172,7 +172,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onStop() {
         super.onStop();
 
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Enter");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         /*
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -189,7 +189,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
 */
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Exit");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
     }
 
     public enum Confirm_Dialog {
@@ -442,7 +442,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         super.onCreate(savedInstanceState);
         KDSLog.setLogLevel(KDSSettings.loadLogLevel(this.getApplicationContext()));
 
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Enter");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         //test. Create an unhandled exception.
 //        KDSDataOrder wrongOrder = null;
 //        String s = wrongOrder.getOrderName();
@@ -527,18 +527,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         init_next_prev_view_events(); //2.0.26
 
-        m_activation.setStationID(getKDS().getStationID());
-        if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
-            boolean bSilent = Activation.hasDoRegister();//2.1.2
-            doActivation(bSilent, false, "");
-        }
+//        m_activation.setStationID(getKDS().getStationID());
+//        if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
+//            boolean bSilent = Activation.hasDoRegister();//2.1.2
+//            doActivation(bSilent, false, "");
+//        }
         checkRelationshipBuild();
         //this.registerForContextMenu(getUserUI(KDSUser.USER.USER_A).getLayout().getView());
 
        // this.registerForContextMenu(getUserUI(KDSUser.USER.USER_B).getLayout().getView());
 
         // kpp1-325
-        forceAgreementAgreed();
+        //forceAgreementAgreed();
 
 
 
@@ -565,7 +565,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         configurePrinter();
 
         showBuildTypes(); //kpp1-394
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Exit");
+
+        ///// Move login activity showing to end of this function.
+        //Prevent login was overlapped by main activity.
+        m_activation.setStationID(getKDS().getStationID());
+        if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
+            boolean bSilent = Activation.hasDoRegister();//2.1.2
+            doActivation(bSilent, false, "");
+        }
+        forceAgreementAgreed();
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
     }
 
     public static final String ACTION_USB_PERMISSION = "com.bematechus.kds.USB_PERMISSION";
@@ -4411,7 +4420,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     @Override
     public void onResume() {
 
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Enter");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         m_bPaused = false;
         super.onResume();
         if (!isKDSValid()) return ;
@@ -4423,7 +4432,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //showInfo("onResume");
         hideNavigationBar();
 
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Exit");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
     }
 
     private void hideNavigationBar() {
@@ -4587,23 +4596,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     public void onPause() {
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Enter");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         m_bPaused = true;
         super.onPause();
         //showInfo("Paused");
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Exit");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
     }
 
     protected void onDestroy() {
         super.onDestroy();
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Enter");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         if (!isKDSValid()) return ;
         //in android, if unplug/plug usb port device, this function will been fired.
         m_timer.stop();
         this.getKDS().stop();
         m_cleaning.resetAll(); //kpp1-344
         //stopService();
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"Exit");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
     }
 
     @Override
@@ -6543,18 +6552,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onActivationSuccess()
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
-        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onActivationSuccess enter");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "onActivationSuccess enter");
         checkRemovedStationsFromBackofficeAfterRegister();
         updateTitle();
 
-        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onActivationSuccess exit");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "onActivationSuccess exit");
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
        // Toast.makeText(this, "Activation failed: " +stage.toString()+" - " + failMessage, Toast.LENGTH_LONG).show();
 //        if (ActivationRequest.needResetUsernamePassword(errType))
 //            m_activation.resetUserNamePassword();
-        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onActivationFail " + errType.name());
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "onActivationFail " + errType.name());
 
         checkActivationResult(stage, errType);
         if (Activation.needShowInactiveTitle(errType))
@@ -6564,7 +6573,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (m_activation.isActivationFailedEnoughToLock() || errType == ActivationRequest.ErrorType.License_disabled)
         {
-            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "checkActivationResult " + errType.name());
+            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "checkActivationResult " + errType.name());
             //this.finish();
             doActivation(false, true, this.getString(R.string.license_deactivated));
             //m_activation.showLoginActivity(this);
@@ -6589,7 +6598,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS)) //DEBUG
         {
 
-            KDSLog.e(TAG, "checkAutoActivation forword, nTimeout=" + nTimeout);
+            KDSLog.i(TAG, "checkAutoActivation forword, nTimeout=" + nTimeout);
             //doActivation(true, false, ""); //kpp1-434, make sure login dialog showing
             doActivationNoEmptyUserNameAllowed(true, false, "");
             m_activationDog.reset();
@@ -6606,10 +6615,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public void doActivation(boolean bSilent,boolean bForceShowNamePwdDlg, String showErrorMessage)
     {
-        if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "doActivation enter");
+        if (!KDSConst.ENABLE_FEATURE_ACTIVATION) {
+            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "doActivation disable return");
             return;
+        }
         if (m_activation.isDoLicensing()) {
             showToastMessage(getString(R.string.internal_doing_activation));// "Internal activation is in process, please logout again later.");
+            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "isDoLicensing return");
             return; //kpp1-304, maybe this cause kds can not logout issue.
         }
 
@@ -6625,8 +6638,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_activation.setMacAddress(ar.get(0));
 
       //  m_activation.setMacAddress("BEMA0000011");//test
-        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "doActivation,bSlient="+ (bSilent?"true":"false"));
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "doActivation,bSlient="+ (bSilent?"true":"false"));
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "doActivation exit");
     }
 
     public void onSMSSendSuccess(String orderGuid, int smsState)
@@ -6659,9 +6673,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public void onDoActivationExplicit()
     {
-        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onDoActivationExplicit enter");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "onDoActivationExplicit enter");
        doActivation(false, true, "");
-        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "onDoActivationExplicit exit");
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "onDoActivationExplicit exit");
     }
 
     public void onForceClearDataBeforeLogin()
