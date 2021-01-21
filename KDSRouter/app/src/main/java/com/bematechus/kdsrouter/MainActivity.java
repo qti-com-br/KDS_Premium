@@ -324,7 +324,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     }
                 }
             }
-        } catch (InterruptedException | PackageManager.NameNotFoundException e) {
+        }
+        //catch (InterruptedException | PackageManager.NameNotFoundException e) {//kpp1-442, just make app silence.
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -457,21 +459,25 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         alert11.show();
     }
 
+            /**
+             * Rev.
+             *  1. kpp1-442, remove this alert dialog.
+             */
     void alertRootAccess() {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-        builder1.setMessage("Please enable root access.");
-
-
-        builder1.setPositiveButton(
-        "I will do it",
-        new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+//        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+//        builder1.setMessage("Please enable root access.");
+//
+//
+//        builder1.setPositiveButton(
+//        "I will do it",
+//        new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int id) {
+//                dialog.cancel();
+//            }
+//        });
+//
+//        AlertDialog alert11 = builder1.create();
+//        alert11.show();
     }
 
     void restartTheDevice() {

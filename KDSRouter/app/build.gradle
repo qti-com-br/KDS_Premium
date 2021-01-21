@@ -7,10 +7,14 @@ def releaseTime() {
 android {
     signingConfigs {
         config {
-            keyAlias 'premium_router_key'
-            keyPassword 'Logic@32809'
-            storeFile file('/Volumes/inatek/projects/premium_key/kdsPremium.keystore')
-            storePassword 'Logic@32809'
+            keyAlias 'kds-router'
+            keyPassword 'bematechus'
+            storeFile file('keystore/kds-router.jks')
+            storePassword 'bematechus'
+//            keyAlias 'premium_router_key'
+//            keyPassword 'Logic@32809'
+//            storeFile file('/Volumes/inatek/projects/premium_key/kdsPremium.keystore')
+//            storePassword 'Logic@32809'
         }
     }
     lintOptions {
