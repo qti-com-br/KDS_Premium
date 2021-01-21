@@ -68,7 +68,7 @@
         <com.bematechus.kds.KDSPreferenceColsSize
             android:key="lineitems_cols_size"
             android:title=""
-            android:defaultValue="25,25,25,25"
+            android:defaultValue="20,10,30,30,10"
             android:dependency="lineitems_enabled"
             />
 
@@ -117,7 +117,7 @@
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="lineitems_col1_text"
         android:title="@string/lineitems_col1_text"
-        android:defaultValue="@string/description"
+        android:defaultValue="@string/quantity"
         android:selectAllOnFocus="true"
         android:inputType= "text"
         android:capitalize="words"
@@ -141,7 +141,7 @@
     <com.bematechus.kdslib.KDSListPreference
         android:key="lineitems_col1_content"
         android:title="@string/lineitems_col1_content"
-        android:defaultValue="4"
+        android:defaultValue="6"
         android:dependency="lineitems_enabled"
         android:entries="@array/pref_kds_lineitems_cols_content_titles"
         android:entryValues="@array/pref_kds_lineitems_cols_content_values"
@@ -154,7 +154,7 @@
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="lineitems_col2_text"
         android:title="@string/lineitems_col2_text"
-        android:defaultValue="@string/condiments"
+        android:defaultValue="@string/description"
         android:selectAllOnFocus="true"
         android:inputType= "text"
         android:capitalize="words"
@@ -178,7 +178,7 @@
     <com.bematechus.kdslib.KDSListPreference
         android:key="lineitems_col2_content"
         android:title="@string/lineitems_col2_content"
-        android:defaultValue="5"
+        android:defaultValue="4"
         android:dependency="lineitems_enabled"
         android:entries="@array/pref_kds_lineitems_cols_content_titles"
         android:entryValues="@array/pref_kds_lineitems_cols_content_values"
@@ -190,7 +190,7 @@
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="lineitems_col3_text"
         android:title="@string/lineitems_col3_text"
-        android:defaultValue="@string/timer"
+        android:defaultValue="@string/condiments"
         android:selectAllOnFocus="true"
         android:inputType= "text"
         android:capitalize="words"
@@ -214,7 +214,7 @@
     <com.bematechus.kdslib.KDSListPreference
         android:key="lineitems_col3_content"
         android:title="@string/lineitems_col3_content"
-        android:defaultValue="7"
+        android:defaultValue="5"
         android:dependency="lineitems_enabled"
         android:entries="@array/pref_kds_lineitems_cols_content_titles"
         android:entryValues="@array/pref_kds_lineitems_cols_content_values"
@@ -226,7 +226,7 @@
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="lineitems_col4_text"
         android:title="@string/lineitems_col4_text"
-        android:defaultValue=""
+        android:defaultValue="@string/timer"
         android:selectAllOnFocus="true"
         android:inputType= "text"
         android:capitalize="words"
@@ -250,7 +250,7 @@
     <com.bematechus.kdslib.KDSListPreference
         android:key="lineitems_col4_content"
         android:title="@string/lineitems_col4_content"
-        android:defaultValue="4"
+        android:defaultValue="7"
         android:dependency="lineitems_enabled"
         android:entries="@array/pref_kds_lineitems_cols_content_titles"
         android:entryValues="@array/pref_kds_lineitems_cols_content_values"
