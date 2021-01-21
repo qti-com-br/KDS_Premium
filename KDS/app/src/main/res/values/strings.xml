@@ -291,7 +291,7 @@
 
     <string name="pref_kds_panels_font">Panel properties</string>
     <string name="pref_kds_panels_bg">Panel background color</string>
-    <string name="pref_kds_panels_row_height">Text line height</string>
+    <string name="pref_kds_panels_row_height">Space between items</string>
     <string name="pref_kds_panels_viewer_bg">Screen background color</string>
     <string name="pref_kds_panels_title_mode">Panel mode</string>
     <string-array name="pref_kds_panels_mode_titles">
