@@ -1723,7 +1723,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.LineItems_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
         set(ID.LineItems_caption_text,getResString(R.string.line_items_display));
         set(ID.LineItems_caption_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
-        set(ID.LineItems_cols,"25,25,25,25");
+        set(ID.LineItems_cols,KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");
 
         set(ID.LineItems_col0_text,getResString(R.string.str_id));
         //set(ID.LineItems_col0_size,10);
