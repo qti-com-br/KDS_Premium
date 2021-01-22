@@ -298,7 +298,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_timer.start(this, this, 1000);
 
         updateTitle();
-
+        showBuildTypes(); //kpp1-394
         KDSUIDlgAgreement.forceAgreementAgreed(this, this);
 
 
