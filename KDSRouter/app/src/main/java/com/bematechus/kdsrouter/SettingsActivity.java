@@ -181,11 +181,11 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
         else if (key.equals("general_remote_folder"))
         {
         }
-        else if (key.equals("general_enable_smbv2"))
-        {
-            boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
-            KDSSmbFile.smb_setEnableSmbV2(bEnableSmbV2);
-        }
+//        else if (key.equals("general_enable_smbv2"))////kpp1-376
+//        {
+//            boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
+//            KDSSmbFile.smb_setEnableSmbV2(bEnableSmbV2);
+//        }
 
     }
 
@@ -656,14 +656,14 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
             if (srcType ==  KDSRouterSettings.KDSDataSource.TCPIP) {
                 findPreference("general_pos_ipport").setEnabled(true);
                 findPreference("general_remote_folder").setEnabled(false);
-                findPreference("general_enable_smbv2").setEnabled(false);
+                //findPreference("general_enable_smbv2").setEnabled(false); //kpp1-376
 
             }
             else if (srcType ==  KDSRouterSettings.KDSDataSource.Folder)
             {
                 findPreference("general_pos_ipport").setEnabled(false);
                 findPreference("general_remote_folder").setEnabled(true);
-                findPreference("general_enable_smbv2").setEnabled(true);
+                //findPreference("general_enable_smbv2").setEnabled(true);//kpp1-376
             }
 
         }

@@ -50,12 +50,16 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
+import java.io.OutputStream;
 
 public class UpdateManager implements URIDownload.URIDownloadEvent {
 
@@ -69,14 +73,14 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
     }
     static final String TAG = "UpdateManager";
     //static final String UPDATE_LOG_URI_FOLDER ="http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/";// "http://www.cnblogs.com/manongxiaojiang/archive/2012/10/13/";
-    static final String UPDATE_LOG_URI_FOLDER ="http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/KDS_Release/";
+    static final String UPDATE_LOG_URI_FOLDER =  "http://www.bematechus.com/Logic_FTP/KDS/KitchenGo/KDS_Release/";
 
 
     private String m_strAppApkName = "";//"2722068.html";
 
     private UpdateEvents m_eventsReceiver = null;
 
-    /* 下载包安装路径 */
+    /* download apk to path */
     private static final String m_saveLocalFolder = "kdsupdate/";
 
     private Context mContext = null;
@@ -119,11 +123,13 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
         else if (s.indexOf(".APK")>=0)
         {
             if (checkApkValid(uriFileName, localFileName)) {
-                afterUpdateApkDownloaded(localFileName);
-                if (m_progressDialog != null) {
+                if (m_progressDialog != null) { //kpp1-385-4 hide progressdialog first.
                     m_progressDialog.hide();
+                    m_progressDialog.dismiss();//kpp1-395-5
                     m_progressDialog = null;
                 }
+                afterUpdateApkDownloaded(localFileName);
+
             }
             else
             {
@@ -185,7 +191,7 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
         {
             nCurrentIndex ++;
             if (nCurrentIndex < m_appUpdateInfo.getAppLinks().size()) {
-                nextAppLink = m_appUpdateInfo.getAppLinks().get(nCurrentIndex);
+                nextAppLink = m_appUpdateInfo.getAppLinks().get(nCurrentIndex).getLink();
                 downloadFile(nextAppLink, buildLocalApkFilePathName(nextAppLink), true);
             }
         }
@@ -239,15 +245,21 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
     }
 
 
-
+    /**
+     * rev.:
+     *  kpp1-395, use api endpoint.
+     * @return
+     */
     private String buildUpdateLogFileUriPathName()
     {
-        String s = m_strAppApkName + ".xml";
-        //for test
-        //s = m_strAppApkName;
-
-        s = UPDATE_LOG_URI_FOLDER + s;
+        String s = KDSApplication.getContext().getString(R.string.apk_url);
         return s;
+//        String s = m_strAppApkName + ".xml";
+//        //for test
+//        //s = m_strAppApkName;
+//
+//        s = UPDATE_LOG_URI_FOLDER + s;
+//        return s;
     }
 
 
@@ -330,8 +342,13 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
     {
         if (m_appUpdateInfo == null) return;
         String strAppLink = "";
-        if (m_appUpdateInfo.getAppLinks().size() >0)
-            strAppLink = m_appUpdateInfo.getAppLinks().get(0);
+        //kpp1-395
+        UpdateAppInfo.AppLink link = m_appUpdateInfo.getAppLink(m_strAppApkName);
+        if (link == null) return ;
+        if (link.getLink().isEmpty()) return;
+        strAppLink = link.getLink();
+//        if (m_appUpdateInfo.getAppLinks().size() >0)
+//            strAppLink = m_appUpdateInfo.getAppLinks().get(0).getLink();
 
         downloadFile(strAppLink, buildLocalApkFilePathName(strAppLink), true);
     }
@@ -376,7 +393,10 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
 
 
     /**
-     * 安装apk
+     * install apk
+     * rev.:
+     *  kpp1-395, support android 10,
+     *
      * @param
      */
     private void installApk(String apkFilePathName){
@@ -386,11 +406,39 @@ public class UpdateManager implements URIDownload.URIDownloadEvent {
         if (!apkfile.exists()) {
             return;
         }
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
-        mContext.startActivity(i);
+
+		PackageManager pm = mContext.getPackageManager();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            Intent i = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            Uri apkUri = uriFromFile(apkfile);
+            i.setData(apkUri);
+            i.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+			i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (i.resolveActivity(pm) != null) {
+				mContext.startActivity(i);
+				return;
+			}
+        }
+
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setDataAndType(Uri.parse("file://" + apkfile.toString()), "application/vnd.android.package-archive");
+		if (i.resolveActivity(pm) != null) {
+			mContext.startActivity(i);
+			return;
+		} else {
+			Log.e("UpdateManager", "Can't install");
+		}
+
 
     }
+
+	Uri uriFromFile(File file) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			return FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+		} else {
+			return Uri.fromFile(file);
+		}
+	}
 
     private String getVersionName() {
         String appVersion = "";

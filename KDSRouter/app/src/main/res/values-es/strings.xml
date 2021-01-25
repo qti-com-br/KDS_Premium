@@ -188,4 +188,7 @@
 	</string-array>
 	<string name="title_activity_filter">FilterActivity</string>
 	<string name="title_activity_main">MainActivity</string>
+	<string name="enable_3rd_party_order">Enable 3rd party order</string>
+	<string name="get_fcm_order">Get order # from FCM</string>
+    <string name="modifers">Modificadores</string>
 </resources>

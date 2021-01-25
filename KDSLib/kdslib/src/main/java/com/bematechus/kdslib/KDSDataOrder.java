@@ -63,7 +63,7 @@ public class KDSDataOrder extends KDSData {
     protected int m_nIconIdx = -1;
     protected int m_nOrderEvtFired = VALUE_FALSE;
     protected Date m_dtPreparationStartTime = KDSUtil.createInvalidDate();// new Date(99,9,9, 0,0,0);//UNUSED !!!
-    protected int m_nStatus = ORDER_STATUS_PAID;
+    protected int m_nStatus = ORDER_STATUS_UNKNOWN;//kpp1-425, use this as default;   ORDER_STATUS_PAID;
     protected int m_nSortIdx = -1;
     protected float m_fltOrderDelay = 0; //smart order
     protected  boolean m_bFromPrimaryOfBackup = false;
@@ -1415,6 +1415,13 @@ public class KDSDataOrder extends KDSData {
             In bump notification, we don't need the transtype tag.
                                                                          */
     /************************************************************************/
+    /**
+     * rev.:
+     *  kpp1-425, don't output empty values. If so, it will modify existed data when transtype is "modify"
+     * @param pxml
+     * @param bHasTransType
+     * @return
+     */
     public boolean outputOrderInformationToXML(KDSXML pxml, boolean bHasTransType)
     {
             if (pxml == null) return false;
@@ -1434,14 +1441,16 @@ public class KDSDataOrder extends KDSData {
             String s;
             
             s =this.getFromPOSNumber();
-            
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TERMINAL,s, false);
+            if (!s.isEmpty()) //kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TERMINAL,s, false);
             if (bHasTransType)
             {
                 String transType = KDSUtil.convertIntToString( this.getTransType());
                 if (this.getItems().getCount()==0)
                 {
-                    transType = KDSConst.KDS_Transaction_Type_Modify;
+                    //kpp1-409
+                    if (this.getTransType() != TRANSTYPE_DELETE)//don't change delete
+                        transType = KDSConst.KDS_Transaction_Type_Modify;
                 }
 
                 pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRANSTYPE, transType , false); //add
@@ -1456,29 +1465,45 @@ public class KDSDataOrder extends KDSData {
 //                }
 
             }
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDERSTATUS, KDSUtil.convertIntToString(this.getStatus() ), false);
+            if (this.getStatus() != ORDER_STATUS_UNKNOWN)//kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDERSTATUS, KDSUtil.convertIntToString(this.getStatus() ), false);
+            if (!this.getOrderType().isEmpty())//kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDERTYPE, this.getOrderType() , false);
+            if (!this.getWaiterName().isEmpty())//kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_OPERATOR, this.getWaiterName(), false);
 
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ORDERTYPE, this.getOrderType() , false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_OPERATOR, this.getWaiterName(), false);
-            
-            
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_DESTINATION,this.getDestination(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TABLE,this.getToTable(), false);
+            if (!this.getDestination().isEmpty())//kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_DESTINATION,this.getDestination(), false);
+            if (!this.getToTable().isEmpty())//kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TABLE,this.getToTable(), false);
+
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TOSCREEN,KDSUtil.convertIntToString(this.getScreen()), false);
 
            // pxml.newGroup("UserInfo",this.getCustomMsg(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_USERINFO,this.getCustomMsg(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_QUEUEMSG,this.getQueueMessage(), false);
+            if (!this.getCustomMsg().isEmpty())//kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_USERINFO,this.getCustomMsg(), false);
+            if (!this.getQueueMessage().isEmpty())//kpp1-425
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_QUEUEMSG,this.getQueueMessage(), false);
 
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRACKERID,this.getTrackerID(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PAGERID,this.getPagerID(), false);
+            //remove these feature.
+            //pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRACKERID,this.getTrackerID(), false);
+            //pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PAGERID,this.getPagerID(), false);
 
             //2.0.50 SMS feature
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER, true);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getCustomer().getID(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PHONE,this.getCustomer().getPhone(), false);
-            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_NAME,this.getCustomer().getName(), false);
-            pxml.back_to_parent(); //kpp1-222
+            //rev.: kpp1-425, just output valid data.
+            if (!this.getCustomer().getID().isEmpty() ||
+                    !this.getCustomer().getPhone().isEmpty() ||
+                    !this.getCustomer().getName().isEmpty())
+            {
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CUSTOMER, true);
+                if (!this.getCustomer().getID().isEmpty())//kpp1-425
+                    pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID, this.getCustomer().getID(), false);
+                if (!this.getCustomer().getPhone().isEmpty())//kpp1-425
+                    pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PHONE, this.getCustomer().getPhone(), false);
+                if (!this.getCustomer().getName().isEmpty())//kpp1-425
+                    pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_NAME, this.getCustomer().getName(), false);
+                pxml.back_to_parent(); //kpp1-222
+            }
             //
 
             //2.5.4.19 add received time and restore time
@@ -1492,7 +1517,8 @@ public class KDSDataOrder extends KDSData {
             //2.0.51
 
             //////
-            outputKDSMessages(pxml, this.getOrderMessages(), KDSXMLParserOrder.DBXML_ELEMENT_ORDER_MESSAGES);
+            if (this.getOrderMessages().getCount()>0) //kpp1-425
+                outputKDSMessages(pxml, this.getOrderMessages(), KDSXMLParserOrder.DBXML_ELEMENT_ORDER_MESSAGES);
 
             return true;
     }
@@ -3024,5 +3050,25 @@ get the total qty of all found items
         return c;
     }
 
+    /**
+     * kpp1-343, expo contains itself items
+     * @return
+     */
+    public boolean isExpoAllItemsFinished(String expoStatonID)
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (item.getLocalBumped() ||
+                    (!item.getBumpedStationsString().isEmpty()) )
+                continue;
+            //kpp1-343, if item send to expo, treat it as finished.
+            if (item.getToStations().findStation(expoStatonID) != KDSToStations.PrimarySlaveStation.Unknown)
+                continue;
+            return false;
+        }
+        return true;
+    }
 
 }

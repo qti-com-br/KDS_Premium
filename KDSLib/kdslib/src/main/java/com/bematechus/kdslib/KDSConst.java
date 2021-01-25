@@ -111,4 +111,7 @@ public class KDSConst {
 
     static public int MIN_STATION_ID = 1;
     static public int MAX_STATION_ID = 99;
+
+    //kpp1-409
+    static public String ORDER_GUID_FOR_API_ITEM_CHANGES = "9e09b816-2502-42bd-bfee-a69a1cce1cd6";
 }

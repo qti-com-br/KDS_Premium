@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSSmbFile;
-import com.bematechus.kdslib.KDSSmbFile1;
+//import com.bematechus.kdslib.KDSSmbFile1;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.OpenFileDialog;
@@ -228,8 +228,9 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         }
     }
 
-    List<jcifs.smb.SmbFile> m_smb1Files = null;
-    List<jcifsng.smb.SmbFile> m_smb2Files = null;
+    //List<jcifs.smb.SmbFile> m_smb1Files = null; //kpp1-376
+    //List<jcifsng.smb.SmbFile> m_smb2Files = null;//kpp1-376
+    List<jcifs.smb.SmbFile> m_smb2Files = null;
 
     public void getAllFiles(String smbFolder)
     {
@@ -253,7 +254,8 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
                     {
                         isRoot = true;
                     }
-                    if (KDSSmbFile.getEnabledSmbV2()) {
+//                    if (KDSSmbFile.getEnabledSmbV2())//kpp1-376
+                    {
                         if (isRoot)
                         {
                             String s = KDSSmbFile2.isValidLoginParameters(folder);
@@ -264,17 +266,17 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
                         }
                         m_smb2Files = KDSSmbFile2.getFiles(folder);
                     }
-                    else {
-                        if (isRoot)
-                        { //check if the login paramter is correct.
-                            String s = KDSSmbFile1.isValidLoginParameters(folder);
-                            if (!s.isEmpty()){
-                                m_handler.sendLoginError(s);
-                                return null;
-                            }
-                        }
-                        m_smb1Files = KDSSmbFile1.getFiles(folder);
-                    }
+//                    else { //kpp1-376
+//                        if (isRoot)
+//                        { //check if the login paramter is correct.
+//                            String s = KDSSmbFile1.isValidLoginParameters(folder);
+//                            if (!s.isEmpty()){
+//                                m_handler.sendLoginError(s);
+//                                return null;
+//                            }
+//                        }
+//                        m_smb1Files = KDSSmbFile1.getFiles(folder);
+//                    }
                     m_handler.sendRefreshMessage();
 
                 } catch(Exception e) {
@@ -290,7 +292,8 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
 
     }
 
-    private int addFilesToList(List<jcifs.smb.SmbFile> arSmb1Files,List<jcifsng.smb.SmbFile> arSmb2Files )
+    //private int addFilesToList(List<jcifs.smb.SmbFile> arSmb1Files,List<jcifsng.smb.SmbFile> arSmb2Files ) //kpp1-376
+    private int addFilesToList(List<jcifs.smb.SmbFile> arSmb2Files )
     {
 
         if (m_listData != null) {
@@ -298,13 +301,14 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         } else {
             m_listData = new ArrayList<Map<String, Object>>();
         }
-        if (KDSSmbFile.getEnabledSmbV2()) {
+//        if (KDSSmbFile.getEnabledSmbV2()) //kpp1-376
+        {
             if (arSmb2Files == null) return 0;
         }
-        else
-        {
-            if (arSmb1Files == null) return 0;
-        }
+//        else //kpp1-376
+//        {
+//            if (arSmb1Files == null) return 0;
+//        }
 
 
         // 用来先保存文件夹和文件夹的两个列表
@@ -327,37 +331,14 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         }
 
         try {
-            if (KDSSmbFile.getEnabledSmbV2()) {
-                for (int i = 0; i < arSmb2Files.size(); i++) {
-                    jcifsng.smb.SmbFile file = arSmb2Files.get(i);
-                    addToList(lfolders, lfiles, file.getName(), file.getPath(), file.isDirectory(), file.isFile());
-
-//                    if (file.isDirectory()) {
-//                        // 添加文件夹
-//                        Map<String, Object> map = new HashMap<String, Object>();
-//                        map.put("name", file.getName());
-//                        map.put("path", file.getPath());
-//                        map.put("img", getImageId(STRING_FOLDER));
-//                        lfolders.add(map);
-//                    } else if (file.isFile()) {
-//                        // 添加文件
-//                        String extension = getSuffix(file.getName()).toLowerCase();
-//                        if (m_strExtension == null || m_strExtension.length() == 0 || (extension.length() > 0 && m_strExtension.indexOf("." + extension + ";") >= 0)) {
-//                            Map<String, Object> map = new HashMap<String, Object>();
-//                            map.put("name", file.getName());
-//                            map.put("path", file.getPath());
-//                            map.put("img", getImageId(extension));
-//                            lfiles.add(map);
-//                        }
-//                    }
-                }
-            }
-            else
+            //if (KDSSmbFile.getEnabledSmbV2())//kpp1-376
             {
-                for (int i = 0; i < arSmb1Files.size(); i++) {
-                    jcifs.smb.SmbFile file = arSmb1Files.get(i);
-                    addToList(lfolders, lfiles, file.getName(), file.getPath(), file.isDirectory(), file.isFile());
+                for (int i = 0; i < arSmb2Files.size(); i++) {
+                    //jcifsng.smb.SmbFile file = arSmb2Files.get(i); //kpp1-376
+                    //addToList(lfolders, lfiles, file.getName(), file.getPath(), file.isDirectory(), file.isFile());
 
+                    jcifs.smb.SmbFile file = arSmb2Files.get(i);
+                    addToList(lfolders, lfiles, file.getName(), file.getPath(), file.isDirectory(), file.isFile());
 //                    if (file.isDirectory()) {
 //                        // 添加文件夹
 //                        Map<String, Object> map = new HashMap<String, Object>();
@@ -378,6 +359,32 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
 //                    }
                 }
             }
+//            else //kpp1-376
+//            {
+//                for (int i = 0; i < arSmb1Files.size(); i++) {
+//                    jcifs.smb.SmbFile file = arSmb1Files.get(i);
+//                    addToList(lfolders, lfiles, file.getName(), file.getPath(), file.isDirectory(), file.isFile());
+//
+////                    if (file.isDirectory()) {
+////                        // 添加文件夹
+////                        Map<String, Object> map = new HashMap<String, Object>();
+////                        map.put("name", file.getName());
+////                        map.put("path", file.getPath());
+////                        map.put("img", getImageId(STRING_FOLDER));
+////                        lfolders.add(map);
+////                    } else if (file.isFile()) {
+////                        // 添加文件
+////                        String extension = getSuffix(file.getName()).toLowerCase();
+////                        if (m_strExtension == null || m_strExtension.length() == 0 || (extension.length() > 0 && m_strExtension.indexOf("." + extension + ";") >= 0)) {
+////                            Map<String, Object> map = new HashMap<String, Object>();
+////                            map.put("name", file.getName());
+////                            map.put("path", file.getPath());
+////                            map.put("img", getImageId(extension));
+////                            lfiles.add(map);
+////                        }
+////                    }
+//                }
+//            }
         }
         catch (Exception err)
         {
@@ -387,10 +394,10 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         m_listData.addAll(lfiles);    //再添加文件
 
         ((SimpleAdapter)m_lstFiles.getAdapter()).notifyDataSetChanged();
-        if (KDSSmbFile.getEnabledSmbV2())
+        //if (KDSSmbFile.getEnabledSmbV2())//kpp1-376
             return arSmb2Files.size();
-        else
-            return arSmb1Files.size();
+//        else //kpp1-376
+//            return arSmb1Files.size();
 
     }
 
@@ -438,16 +445,18 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
             else if ( filename.equals(STRING_PARENT)) {
                 // 如果是更目录或者上一层
                 String ppt = "";
-                if (KDSSmbFile.getEnabledSmbV2())
+                //if (KDSSmbFile.getEnabledSmbV2())//kpp1-376
                 {
-                    jcifsng.smb.SmbFile fl = new jcifsng.smb.SmbFile(filepath);
-                    ppt = fl.getParent();
-                }
-                else
-                {
+                    //jcifsng.smb.SmbFile fl = new jcifsng.smb.SmbFile(filepath); //kpp1-376
                     jcifs.smb.SmbFile fl = new jcifs.smb.SmbFile(filepath);
                     ppt = fl.getParent();
                 }
+//                else //kpp1-376
+//                {
+//                    jcifs.smb.SmbFile fl = new jcifs.smb.SmbFile(filepath);
+//                    ppt = fl.getParent();
+//                }
+
 //                SmbFile fl = new SmbFile(filepath);
 //                String ppt = fl.getParent();
 
@@ -511,7 +520,8 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
     }
     public void onSmbGetAllFiles()
     {
-        addFilesToList(m_smb1Files, m_smb2Files);
+        //addFilesToList(m_smb1Files, m_smb2Files); //kpp1-376
+        addFilesToList( m_smb2Files);
         m_txtSelected.setText(removeUserIDPasswordForShowing(m_path));
     }
 

@@ -7,4 +7,6 @@
     <!--<dimen name="relations_headers_separator">2dp</dimen>-->
     <dimen name="header_textsize">12dp</dimen>
     <dimen name="text_indentation">12dp</dimen>
+    <dimen name="dlg_item_text_size">10sp</dimen>
+    <dimen name="dlg_item_button_height">33dp</dimen>
 </resources>

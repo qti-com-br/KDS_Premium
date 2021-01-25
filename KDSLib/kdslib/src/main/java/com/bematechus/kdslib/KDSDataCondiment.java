@@ -24,6 +24,8 @@ public class KDSDataCondiment extends KDSData {
     protected int m_nFG = 0; //foreground color;
     protected boolean m_bHiden = false;
     protected boolean m_bBumped = false;
+    protected float m_fltQty = 1; //kpp1-414.
+
     //messages
     protected KDSDataMessages m_condimentMesseges = new KDSDataMessages();
 
@@ -35,7 +37,7 @@ public class KDSDataCondiment extends KDSData {
     /***************************************************************************/
     
     protected int m_nTransactionType = KDSDataOrder.TRANSTYPE_ADD;
-        public enum VALID_CONDIMENT_XML_FIELD
+    public enum VALID_CONDIMENT_XML_FIELD
     {
         Name,
         Description,
@@ -43,6 +45,7 @@ public class KDSDataCondiment extends KDSData {
         FG,
         Messages,
         PrepTime,
+        Qty, //kpp1-414
         Count
     };
     protected boolean[] m_arValidFields; 
@@ -214,6 +217,7 @@ public class KDSDataCondiment extends KDSData {
         c.m_nFG = m_nFG;
         c.m_bHiden = m_bHiden;
         c.m_bBumped = m_bBumped;
+        c.m_fltQty = m_fltQty; //kpp1-414
         m_condimentMesseges.copyTo(c.m_condimentMesseges); 
         
         
@@ -230,15 +234,17 @@ public class KDSDataCondiment extends KDSData {
         String sql = "insert into "
                 + tblName
                 + " ("
-                + "GUID,ItemGUID,Name,Description,BG,FG,Hiden,Bumped) values ("
-                + "'" + getGUID() + "',"
-                + "'" + getItemGUID() + "',"
-                + "'" +fixSqliteSingleQuotationIssue(  getCondimentName()) + "',"
-                + "'" +fixSqliteSingleQuotationIssue(  getDescription()) + "',"
-                + KDSUtil.convertIntToString(getBG()) + ","
-                + KDSUtil.convertIntToString(getFG()) + ","
-                + KDSUtil.convertBoolToString(getHiden())+ ","
-                + KDSUtil.convertBoolToString(getBumped())+ ")";
+                + "GUID,ItemGUID,Name,Description,BG,FG,Hiden,Bumped,Qty) values (" //kpp1-414 add qty
+                + "'" + getGUID() + "'"
+                + ",'" + getItemGUID() + "'"
+                + ",'" +fixSqliteSingleQuotationIssue(  getCondimentName()) + "'"
+                + ",'" +fixSqliteSingleQuotationIssue(  getDescription()) + "'"
+                + "," + KDSUtil.convertIntToString(getBG())
+                + "," + KDSUtil.convertIntToString(getFG())
+                + "," + KDSUtil.convertBoolToString(getHiden())
+                + "," + KDSUtil.convertBoolToString(getBumped())
+                + "," + KDSUtil.convertFloatToString(getQty()) //kpp1-414
+                + ")";
         
                 
         return sql;
@@ -248,16 +254,17 @@ public class KDSDataCondiment extends KDSData {
     public String sqlUpdate()
     {
          String sql = "update condiments set "
-                 + "ItemGUID='"+ getItemGUID() + "',"
-                + "Name='"+ getCondimentName() + "',"
-                + "Description='" + getDescription() + "',"
-                + "BG=" + KDSUtil.convertIntToString(getBG()) + ","
-                + "FG="+ KDSUtil.convertIntToString(getFG()) + ","
-                 + "Hiden="+ KDSUtil.convertBoolToString(getHiden()) + ","
-                 + "Bumped="+ KDSUtil.convertBoolToString(getBumped()) + ","
-                + "DBTimeStamp='"+ KDSUtil.convertDateToString(getNow())//TimeStamp())
+                + "ItemGUID='"+ getItemGUID() + "'"
+                + ",Name='"+ getCondimentName() + "'"
+                + ",Description='" + getDescription() + "'"
+                + ",BG=" + KDSUtil.convertIntToString(getBG())
+                + ",FG="+ KDSUtil.convertIntToString(getFG())
+                + ",Hiden="+ KDSUtil.convertBoolToString(getHiden())
+                + ",Bumped="+ KDSUtil.convertBoolToString(getBumped())
+                + ",qty=" + KDSUtil.convertFloatToString(getQty()) //kpp1-414
+                + ",DBTimeStamp='"+ KDSUtil.convertDateToString(getNow()) + "'"//TimeStamp())
                 //+"' where id=" + Common.KDSUtil.ConvertIntToString(getID());
-                 +"' where guid='" + getGUID() + "'";
+                +" where guid='" + getGUID() + "'";
 
          return sql;
 
@@ -291,10 +298,20 @@ public class KDSDataCondiment extends KDSData {
             return false;
         if (this.getFG() != condiment.getFG())
             return false;
+
+        //kpp1-414, add qty
+        if (this.getQty() != condiment.getQty())
+            return false;
         return true;
             
     }
 
+    /**
+     * Rev:
+     *  Add qty support.
+     * @param condimentReceived
+     * @return
+     */
     public boolean modifyCondiment(KDSDataCondiment condimentReceived)
     {
         boolean bResult = false;
@@ -313,6 +330,14 @@ public class KDSDataCondiment extends KDSData {
             this.setFG(condimentReceived.getFG());
             bResult = true;
         }
+
+        //kpp1-414 add qty
+        if (condimentReceived.getXmlFieldValid(VALID_CONDIMENT_XML_FIELD.Qty))
+        {
+            this.setQty(condimentReceived.getQty());
+            bResult = true;
+        }
+
         if (condimentReceived.getXmlFieldValid(VALID_CONDIMENT_XML_FIELD.Messages))
         {
             condimentReceived.getMessages().copyTo(this.getMessages());
@@ -342,6 +367,24 @@ public class KDSDataCondiment extends KDSData {
     public void setHiddenAccordingToHiddenStations(String stationID)
     {
         setHiden(isHiddenStation(stationID));
+    }
+
+    /**
+     * kpp1-414
+     * @return
+     */
+    public float getQty()
+    {
+        return m_fltQty;
+    }
+
+    /**
+     * KPP1-414
+     * @param nQty
+     */
+    public void setQty(float nQty)
+    {
+        m_fltQty = nQty;
     }
 
 

@@ -14,6 +14,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSBGFG;
+import com.bematechus.kdslib.KDSViewFontFace;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,9 +64,12 @@ public class MainActivityFragmentSum extends Fragment {
         m_arData.clear();
         KDS kds = KDSGlobalVariables.getKDS();
 
-        String bgfg = kds.getSettings().getString(KDSSettings.ID.Sum_bgfg);
-        KDSBGFG bf = KDSBGFG.parseString(bgfg);
+        //kpp1-391
+        //String bgfg = kds.getSettings().getString(KDSSettings.ID.Sum_bgfg);
+        //KDSBGFG bf = KDSBGFG.parseString(bgfg);
+        KDSViewFontFace bf = kds.getSettings().getKDSViewFontFace(KDSSettings.ID.Sum_font);
         m_lstSum.setBackgroundColor(bf.getBG());
+
 
         boolean advSumEnabled = kds.getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled);
         boolean bSmartEnabled = kds.getSettings().getBoolean(KDSSettings.ID.Smart_Order_Enabled);
@@ -77,9 +81,9 @@ public class MainActivityFragmentSum extends Fragment {
         {
             Map<String,Object> item = new HashMap<String,Object>();
             if (bSmartEnabled && advSumEnabled)
-                item.put("qty", arSumItems.get(i).getAdvSumQtyString());
+                item.put("qty", arSumItems.get(i).getAdvSumQtyString()+"x");//kpp1-415, add x
             else
-                item.put("qty", arSumItems.get(i).getQtyString());
+                item.put("qty", arSumItems.get(i).getQtyString()+"x");//kpp1-415, add x
             item.put("name", arSumItems.get(i).getDescription(false));
             m_arData.add(item);
         }
@@ -118,11 +122,21 @@ public class MainActivityFragmentSum extends Fragment {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = super.getView(position, convertView, parent);
-            String bgfg = KDSGlobalVariables.getKDS().getSettings().getString(KDSSettings.ID.Sum_bgfg);
-            KDSBGFG bf = KDSBGFG.parseString(bgfg);
+            //String bgfg = KDSGlobalVariables.getKDS().getSettings().getString(KDSSettings.ID.Sum_bgfg);
+            //KDSBGFG bf = KDSBGFG.parseString(bgfg);
+            KDSViewFontFace bf =  KDSGlobalVariables.getKDS().getSettings().getKDSViewFontFace(KDSSettings.ID.Sum_font);
             //m_viewTopSum.setBackgroundColor(bf.getBG());
-            ((TextView)v.findViewById(android.R.id.text1)).setTextColor(bf.getFG());
-            ((TextView)v.findViewById(android.R.id.text2)).setTextColor(bf.getFG());
+            TextView t = ((TextView)v.findViewById(android.R.id.text1));
+            t.setTextColor(bf.getFG());
+            //kpp1-391
+            t.setTextSize(bf.getFontSize());
+            t.setTypeface(bf.getTypeFace());
+
+            t = ((TextView)v.findViewById(android.R.id.text2));
+            t.setTextColor(bf.getFG());
+            //kpp1-391
+            t.setTextSize(bf.getFontSize());
+            t.setTypeface(bf.getTypeFace());
             return v;
         }
 

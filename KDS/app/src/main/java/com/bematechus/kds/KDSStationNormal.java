@@ -428,7 +428,7 @@ public class KDSStationNormal extends KDSStationFunc {
      * @return
      *  order guid
      */
-    static public String normal_sync_item_bumped(KDS kds,  KDSXMLParserCommand command)
+    static public String normal_sync_item_bumped(KDS kds,  KDSXMLParserCommand command,  ArrayList<KDSDataItem> arChangedItems)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
@@ -532,12 +532,14 @@ public class KDSStationNormal extends KDSStationFunc {
         if (itemA != null) {
             sync_with_mirror(kds, command.getCode(), orderA, itemA);
             sync_with_backup(kds, command.getCode(), orderA, itemA);
+            arChangedItems.add(itemA); //kpp1-407
             return orderA.getGUID();
         }
         else if (itemB != null)
         {
             sync_with_mirror(kds, command.getCode(), orderB, itemB);
             sync_with_backup(kds, command.getCode(), orderB, itemB);
+            arChangedItems.add(itemB); //kpp1-407
             return orderB.getGUID();
         }
 
@@ -551,7 +553,7 @@ public class KDSStationNormal extends KDSStationFunc {
      * @return
      *  order guid
      */
-    static public String normal_sync_item_unbumped(KDS kds,  KDSXMLParserCommand command)
+    static public String normal_sync_item_unbumped(KDS kds,  KDSXMLParserCommand command, ArrayList<KDSDataItem> arChangedItems)
     {
         String strOrderName = command.getParam("P0", "");
         String strItemName = command.getParam("P1", "");
@@ -632,6 +634,8 @@ public class KDSStationNormal extends KDSStationFunc {
             normal_item_unbumped_in_other_station(kds, kds.getCurrentDB(), orders, fromStationID, fromIP, order, item);
         }
 
+        //kpp1-407
+        arChangedItems.add(item);
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, item);
         sync_with_backup(kds, command.getCode(), order, item);

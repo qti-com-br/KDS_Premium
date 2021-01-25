@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
@@ -60,6 +61,9 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -73,7 +77,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSTimer.KDSTimerInterface,
         KDSUIDialogBase.KDSDialogBaseListener,
         Activation.ActivationEvents,
-        KDSUIAboutDlg.AboutDlgEvent
+        KDSUIAboutDlg.AboutDlgEvent,
+        KDSBackofficeNotification.BackofficeNotification_Event
         {
 
     final static private String TAG = "MainActivity";
@@ -100,6 +105,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     KDSKbdRecorder m_kbdRecorder = new KDSKbdRecorder();
 
     Activation m_activation = new Activation(this);
+    KDSBackofficeNotification m_backofficeNotification = new KDSBackofficeNotification(this);
 
 
     public enum Confirm_Dialog {
@@ -129,7 +135,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
-
+    TimeDog mBackOfficeNotificationTimeDog = new TimeDog();
+    final int BACKOFFICE_CONNECT_TIMEOUT = 5000;
     public void onTime()
     {
         if (m_service != null)
@@ -142,6 +149,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         startCheckRemoteFolderNotificationThread();
 
         checkAutoActivation();
+        if (mBackOfficeNotificationTimeDog.is_timeout(BACKOFFICE_CONNECT_TIMEOUT)) {
+            mBackOfficeNotificationTimeDog.reset(); //kpp1-397
+            connectBackofficeNotification();
+        }
 
     }
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -288,10 +299,219 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         updateTitle();
 
-
         KDSUIDlgAgreement.forceAgreementAgreed(this, this);
 
 
+        // Set KDS Router as System App
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+            boolean hasSystemApp = getSystemApp().equals(info.versionName);
+
+            if(!hasSystemApp) {
+                if (canIRoot()) {
+                    setKDSRouterAsSystemApp();
+
+                    Thread.sleep(1000);
+
+                    setSystemApp();
+                } else {
+                    //Toast.makeText(MainActivity.this,
+                            //"Please enable root access.", Toast.LENGTH_LONG).show();
+                    if(getPrefRootAccessDone().equals("")) {
+                        setPrefRootAccessDone();
+                        alertRootAccess();
+                    }
+                }
+            }
+        } catch (InterruptedException | PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    String kdsRouterFolderName = "KDSRouter";
+
+    void setKDSRouterAsSystemApp() throws InterruptedException, PackageManager.NameNotFoundException {
+        PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+        File kdsRouterFolder = new File(Environment.getRootDirectory() +
+                "/app/" + kdsRouterFolderName);
+
+        if(!kdsRouterFolder.exists()) {
+            createKDSRouterFolderAtSystemApp();
+            Thread.sleep(1000);
+        }
+
+        //File kdsRouterApk = new File(Environment.getRootDirectory() +
+                //"/app/" + kdsRouterFolderName + "/base.apk");
+
+        //if(!kdsRouterApk.exists()) {
+            copyApkToSystemAppFolder(info.versionName);
+
+            Thread.sleep(1000);
+
+            alertReboot();
+        //}
+    }
+
+    void createKDSRouterFolderAtSystemApp() {
+        Process suProcess;
+        DataOutputStream os;
+
+        try{
+            suProcess = Runtime.getRuntime().exec("su");
+            os= new DataOutputStream(suProcess.getOutputStream());
+
+            os.writeBytes("mount -o rw,remount /system\n");
+            os.flush();
+
+            os.writeBytes("mkdir /system/app/" + kdsRouterFolderName + "\n");
+            os.flush();
+
+            os.writeBytes("exit\n");
+            os.flush();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    void copyApkToSystemAppFolder(String versionName) {
+        Process suProcess;
+        DataOutputStream os;
+
+        try{
+            suProcess = Runtime.getRuntime().exec("su");
+            os= new DataOutputStream(suProcess.getOutputStream());
+
+            os.writeBytes("mount -o rw,remount /system\n");
+            os.flush();
+
+            os.writeBytes("rm -R /system/app/" + kdsRouterFolderName + "/*\n");
+            os.flush();
+
+            Thread.sleep(1000);
+
+            os.writeBytes("cp " + getApplicationInfo().sourceDir +
+                    " /system/app/" + kdsRouterFolderName + "\n");
+            os.flush();
+
+            os.writeBytes("exit\n");
+            os.flush();
+        }
+        catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    boolean canIRoot() {
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec("su");
+
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            os.writeBytes("echo \"Do I have root?\" >/system/sd/temporary.txt\n");
+
+            os.writeBytes("exit\n");
+            os.flush();
+            try {
+                p.waitFor();
+                if (p.exitValue() != 255) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (InterruptedException e) {
+                return false;
+            }
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    void alertReboot() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+        builder1.setMessage("KDS Router was installed with success! \n\nCan we restart this device right now?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        restartTheDevice();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    void alertRootAccess() {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+        builder1.setMessage("Please enable root access.");
+
+
+        builder1.setPositiveButton(
+        "I will do it",
+        new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    void restartTheDevice() {
+        Process suProcess;
+        DataOutputStream os;
+
+        try{
+            suProcess = Runtime.getRuntime().exec("su -c reboot");
+            os= new DataOutputStream(suProcess.getOutputStream());
+
+            os.writeBytes("exit\n");
+            os.flush();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void setSystemApp() throws PackageManager.NameNotFoundException {
+        PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        pref.edit().putString("SystemApp", info.versionName).apply();
+    }
+
+    String getSystemApp() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        return pref.getString("SystemApp", "");
+    }
+
+    void setPrefRootAccessDone() throws PackageManager.NameNotFoundException {
+        PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        pref.edit().putString("RootAccessDone", "true").apply();
+    }
+
+    String getPrefRootAccessDone() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences( KDSApplication.getContext());
+        return pref.getString("RootAccessDone", "");
     }
 
 
@@ -469,7 +689,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             Drawable icon = this.getResources().getDrawable(R.mipmap.ic_launcher);
             String ver = getVersionName() + "(" + KDSUtil.getVersionCodeString(this) + ")";
 
-            KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_KDS, icon, this);//kpp1-179
+            KDSUIAboutDlg.showAbout(this, ver, KDSConst.APP_NAME_ROUTER, icon, this);//kpp1-179
         }
         else if (id == R.id.action_clear_log)
         {
@@ -503,13 +723,46 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     }
 
     Toast m_toast = null;
+
+    /**
+     * 09-28 14:20:24.9 E/KDSApplication:
+     * java.lang.IllegalStateException: View android.widget.LinearLayout{90c8924 V.E...... ......ID 0,0-514,63} has already been added to the window manager.
+     * at android.view.WindowManagerGlobal.addView(WindowManagerGlobal.java:328)
+     * at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:93)
+     * at android.widget.Toast$TN.handleShow(Toast.java:496)
+     * at android.widget.Toast$TN$1.handleMessage(Toast.java:400)
+     * at android.os.Handler.dispatchMessage(Handler.java:106)
+     * at android.os.Looper.loop(Looper.java:164)
+     * at android.app.ActivityThread.main(ActivityThread.java:6494)
+     * at java.lang.reflect.Method.invoke(Native Method)
+     * at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:438)
+     * at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:807)
+     *
+     * I doubt above bug is not created at this function, as I don't see log show code of this function.
+     * I just add try... catch to this function.
+     *
+     *      *  see https://stackoverflow.com/questions/51956971/illegalstateexception-of-toast-view-on-android-p-preview
+     *      *  It will show IllegalStateException of toast View on Android P
+     * @param message
+     */
     public void showToastMessage(String message) {
+
         int duration = Toast.LENGTH_SHORT;
-        if (m_toast == null)
-            m_toast = Toast.makeText(this, message, duration);
-        else
-            m_toast.setText(message);
-        m_toast.show();
+        KDSBase.showToastMessage(message, duration);
+
+//        try {
+//            int duration = Toast.LENGTH_SHORT;
+//            if (m_toast == null)
+//                m_toast = Toast.makeText(this, message, duration);
+//            else
+//                m_toast.setText(message);
+//            m_toast.show();
+//        }
+//        catch (Exception e)
+//        {
+//            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+//            m_toast = null; //reset it.
+//        }
     }
     public boolean isRouterEnabled()
     {
@@ -705,7 +958,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //check stations changes
             m_service.checkStationsSettingChanged();//(this.getApplicationContext()();
         }
-        else if (key.equals("kds_general_language"))
+        else if (key.equals("kds_general_language") ||
+                Activation.isActivationPrefKey(key) ||//don't handle it.
+                key.equals(KDSRouterSettings.MIN_FCM_TIME)) //kpp1-424, don't reset settings.
         {
             return;
         }
@@ -715,7 +970,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (m_service != null)
                 m_service.updateSettings();
             updateTitle();
-
+            connectBackofficeNotification();
         }
 
 
@@ -1079,6 +1334,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         //Toast.makeText(this, "Activation is done", Toast.LENGTH_LONG).show();
         updateTitle();
+        m_backofficeNotification.updateStoreGuidToBackOfficeAfterLogin(); //
     }
     public void onActivationFail(ActivationRequest.COMMAND stage, ActivationRequest.ErrorType errType, String failMessage)
     {
@@ -1131,6 +1387,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!KDSConst.ENABLE_FEATURE_ACTIVATION)
             return;
+        //DEBUG
+
         if (m_activationDog.is_timeout(Activation.HOUR_MS))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         //if (m_activationDog.is_timeout(5000))// * Activation.ACTIVATION_TIMEOUT_HOURS))
         {
@@ -1159,11 +1417,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_activation.setStationID(getKDSRouter().getStationID());
         m_activation.setStationFunc(Activation.KDSROUTER);
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
-        if (ar.size()<=0) {
-            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
-            return;//kpp1-304, maybe this cause kds can not logout issue.
-        }
-        m_activation.setMacAddress(ar.get(0));
+        //kpp1-399
+//        if (ar.size()<=0) {
+//            showToastMessage(getString(R.string.no_network_detected));//"No network interface detected");
+//            return;//kpp1-304, maybe this cause kds can not logout issue.
+//        }
+        if (ar.size() >0) //kpp1-399
+            m_activation.setMacAddress(ar.get(0));
         //  m_activation.setMacAddress("BEMA0000011");//test
         m_activation.startActivation(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
     }
@@ -1321,9 +1581,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
 
             Calendar c = Calendar.getInstance();
-            c.setTime(m_dtLog);
+            c.setTimeInMillis(m_dtLog.getTime());
+            //c.setTime(m_dtLog);
             String s = String.format("%02d-%02d %02d:%02d:%02d.%03d",
-                    c.get(Calendar.MONTH),
+                    c.get(Calendar.MONTH)+1,
                     c.get(Calendar.DAY_OF_MONTH),
                     c.get(Calendar.HOUR_OF_DAY),
                     c.get(Calendar.MINUTE),
@@ -1419,4 +1680,94 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         return null;
     }
+
+    private void showBuildTypes()
+    {
+        TextView t = this.findViewById(R.id.txtBuildType);
+        KDSUtil.showBuildTypes(this, t);
+    }
+
+    /**
+     * Send download orders http request to backoffice
+     */
+    private void downloadBackofficeOrders()
+    {
+        //kpp1-416, remove 3rd party option
+//        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order))
+//            return;
+        long l = KDSRouterSettings.loadFCMTime(this);
+        //debug firebase
+//
+//        Calendar c = Calendar.getInstance();
+//        c.set(Calendar.HOUR_OF_DAY,5 );
+//        c.set(Calendar.MINUTE, 0);
+//        c.set(Calendar.SECOND,0);
+//
+//        Date dt = c.getTime();//new Date(2020, 3, 10, 0,0,0);
+//        l = dt.getTime();
+        if (l<=0)
+        {
+            //kpp1-397, add time difference.
+            l = Activation.getServerTimeDifference()*1000 +  System.currentTimeMillis() - 5*60*1000; //5 minutes ago.
+        }
+        m_activation.postGetOrdersRequest(l);
+
+//        //test firebase
+        if (KDSBackofficeNotification.ENABLE_DEBUG) {
+            String s = KDSBackofficeNotification.getFCMTestString2();
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(s);
+            onActivationEvent(Activation.ActivationEvent.Get_orders, ar);
+        }
+
+    }
+
+    /**
+     * Backoffice return FCM orders!
+     * @param evt
+     *
+     * @param arParams
+     *  Get_orders: 0: the string JSON data.
+     * @return
+     */
+    public Object onActivationEvent(Activation.ActivationEvent evt, ArrayList<Object> arParams)
+    {
+//        if (evt == Activation.ActivationEvent.Get_orders)
+//        {
+//            if (arParams.size() >0)
+//                receiveBackofficeOrders((String)arParams.get(0));
+//        }
+        return null;
+    }
+
+    /**
+     *  I get the orders JSON string.
+     * @param evt
+     * @param strData
+     */
+    private void receiveBackofficeOrders(String evt, String strData)
+    {
+        KDSDataOrders orders =  KDSBackofficeNotification.parseApiJson(evt, strData);
+        if (orders == null) return;
+        getKDSRouter().onFCMReceivedOrders(orders);
+        //Rev.: kpp1-397, add time difference.
+        KDSRouterSettings.saveFCMTime(this, System.currentTimeMillis()+Activation.getServerTimeDifference() * 1000);
+    }
+
+    private void connectBackofficeNotification()
+    {
+        //kpp1-416, remove 3rd party option
+//        if (!getSettings().getBoolean(KDSRouterSettings.ID.Enable_3rd_party_order)) {
+//            m_backofficeNotification.close();
+//            return;
+//        }
+        m_backofficeNotification.connectBackOffice();
+    }
+
+    public void onBackofficeNotifyEvent(String evt, String data)
+    {
+        //downloadBackofficeOrders(); //kpp1-409
+        receiveBackofficeOrders(evt, data);
+    }
 }
+

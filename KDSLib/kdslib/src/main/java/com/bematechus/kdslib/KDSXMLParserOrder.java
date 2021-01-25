@@ -69,7 +69,7 @@ public class KDSXMLParserOrder {
     public final static String DBXML_ELEMENT_COUNT	= ("Count");
     public final static String DBXML_ELEMENT_ICON	= ("IconIndex"); //2.5.4.22 , icon index
     public final static String DBXML_ELEMENT_DELAY = ("Delay");
-    public final static String DBXML_ELEMENT_CATEGORY_DELAY	= ("CateDelay");
+    public final static String DBXML_ELEMENT_CATEGORY_DELAY	= ("CatDelay"); //kpp1-417, from CateDelay to CatDelay
 
 
     public final static String DBXML_ELEMENT_MARKED = ("Marked");
@@ -261,7 +261,14 @@ public class KDSXMLParserOrder {
             break;
             case DBXML_ELEMENT_PARKED:
             {
-                int n = KDSUtil.convertStringToInt(strVal, 0);
+                int n = 0;
+                if (KDSUtil.isDigitalString(strVal)) //kpp1-393
+                    n = KDSUtil.convertStringToInt(strVal, 0);
+                else
+                {//kpp1-393
+                    n = KDSUtil.convertYesNo2Int(strVal);
+                }
+
                 order.setParked( (n==1));
                 order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.Parked);
             }
@@ -808,103 +815,91 @@ public class KDSXMLParserOrder {
     {
         String strVal = xml.getCurrentGroupValue();
 
-        switch (grpName)
-        {
-            case  DBXML_ELEMENT_ID:
-            {
+        switch (grpName) {
+            case DBXML_ELEMENT_ID: {
                 condiment.setCondimentName(strVal);
                 condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.Name);
             }
             break;
-            case  DBXML_ELEMENT_NAME:
-            {
+            case DBXML_ELEMENT_NAME: {
                 condiment.setDescription(strVal);
                 condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.Description);
 
 
             }
             break;
-            case  DBXML_ELEMENT_TRANSTYPE:
-            {
+            case DBXML_ELEMENT_TRANSTYPE: {
                 int n = KDSUtil.convertStringToInt(strVal, -1);
                 condiment.setTransType(n);
             }
             break;
 
-            case  DBXML_ELEMENT_COLOR:
-            {
+            case DBXML_ELEMENT_COLOR: {
                 strVal = "";
                 strVal = xml.getAttribute(DBXML_ELEMENT_COLOR_BG, strVal);
-                if (!strVal.isEmpty())
-                {
-                    int nBG = (int)KDSUtil.convertStringToLong(strVal, 0);
+                if (!strVal.isEmpty()) {
+                    int nBG = (int) KDSUtil.convertStringToLong(strVal, 0);
                     int c = KDSUtil.convertWebColor2RGB(nBG);
                     condiment.setBG(c);
 
                     condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.BG);
-                }
-                else
-                {
+                } else {
                     condiment.setBG(0);
                 }
 
                 strVal = "";
                 strVal = xml.getAttribute(DBXML_ELEMENT_COLOR_FG, strVal);
-                if (!strVal.isEmpty())
-                {
-                    int nFG = (int)KDSUtil.convertStringToLong(strVal, 0);
+                if (!strVal.isEmpty()) {
+                    int nFG = (int) KDSUtil.convertStringToLong(strVal, 0);
                     int c = KDSUtil.convertWebColor2RGB(nFG);
                     condiment.setFG(c);
                     //condiment.setFG(nFG);
                     condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.FG);
-                }
-                else
-                {
+                } else {
                     condiment.setFG(0);
                 }
 
             }
             break;
-            case DBXML_ELEMENT_RGBCOLOR:
-            {
+            case DBXML_ELEMENT_RGBCOLOR: {
                 strVal = "";
                 strVal = xml.getAttribute(DBXML_ELEMENT_COLOR_BG, strVal);
-                if (!strVal.isEmpty())
-                {
+                if (!strVal.isEmpty()) {
                     //int nBG = (int)KDSUtil.convertStringToLong(strVal, 0);
                     int nBG = KDSUtil.convertHtmlString2Color(strVal);
                     condiment.setBG(nBG);
                     condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.BG);
-                }
-                else
-                {
+                } else {
                     condiment.setBG(0);
                 }
                 strVal = "";
                 strVal = xml.getAttribute(DBXML_ELEMENT_COLOR_FG, strVal);
-                if (!strVal.isEmpty())
-                {
+                if (!strVal.isEmpty()) {
                     //int nFG = (int)KDSUtil.convertStringToLong(strVal, 0);
                     int nFG = KDSUtil.convertHtmlString2Color(strVal);
                     condiment.setFG(nFG);
                     condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.FG);
-                }
-                else
-                {
+                } else {
                     condiment.setFG(0);
                 }
             }
             break;
-            case  DBXML_ELEMENT_PREMOIDIFIER:
-            {
-                doCondimentPremodifier( xml, grpName,  order,  item, condiment);
+            case DBXML_ELEMENT_PREMOIDIFIER: {
+                doCondimentPremodifier(xml, grpName, order, item, condiment);
                 condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.Messages);
 
             }
             break;
-            case DBXML_ELEMENT_HIDDEN_STATIONS:
+            case DBXML_ELEMENT_HIDDEN_STATIONS: {
+                doCondimentHiddenStations(order, item, condiment, strVal);
+            }
+            break;
+            case DBXML_ELEMENT_QTY: //kpp1-414 add quantity
             {
-                doCondimentHiddenStations(order,  item,condiment, strVal);
+                float n = KDSUtil.convertStringToFloat(strVal, 1);
+                if (n <0) n=0;
+                condiment.setQty(n);
+                condiment.setXmlFieldValid(KDSDataCondiment.VALID_CONDIMENT_XML_FIELD.Qty);
             }
             break;
 
@@ -984,8 +979,10 @@ public class KDSXMLParserOrder {
     {
 
 
-        if (!xml.moveToFirstChild())
-            return ;
+        if (!xml.moveToFirstChild()) {
+            //xml.back_to_parent(); //kpp1-425
+            return;
+        }
         do
         {
             String name = xml.getCurrentName();

@@ -10,14 +10,17 @@ import android.os.Message;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.WindowManager;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import jcifsng.Configuration;
-import jcifsng.smb.SmbFile;
+//import jcifs.Configuration;
+//import jcifs.smb.SmbFile;
+//import jcifsng.Configuration;
+//import jcifsng.smb.SmbFile;
+
 
 /**
  * Created by David.Wong on 2018/9/4.
@@ -36,6 +39,10 @@ public class KDSSmbFile extends Handler {
     protected boolean m_isNewFolderEnabled = true;
     protected String m_dir = "";
 
+    public KDSSmbFile()
+    {
+        setSmbV1Config();
+    }
 
     public interface ChosenDirectoryListener
     {
@@ -43,7 +50,7 @@ public class KDSSmbFile extends Handler {
     }
 
 
-    static private boolean m_bEnableSmbV2 = false; //default is false
+    static private boolean m_bEnableSmbV2 = true ;//false; //default is false //kpp1-376
     static public void smb_setEnableSmbV2(boolean bEnabled)
     {
         m_bEnableSmbV2 = bEnabled;
@@ -62,27 +69,39 @@ public class KDSSmbFile extends Handler {
 
     public static String smb_readFromSmbToLocal(String smbFileName, String localFolderWithoutLastSep)
     {
-        if (m_bEnableSmbV2)
+//        if (m_bEnableSmbV2) //kpp1-376, we will just use smbv2
             return KDSSmbFile2.readFromSmbToLocal(smbFileName, localFolderWithoutLastSep);
-        else
-            return KDSSmbFile1.readFromSmbToLocal(smbFileName, localFolderWithoutLastSep);
+//        else //kpp1-376, we will just use smbv2
+//            return KDSSmbFile1.readFromSmbToLocal(smbFileName, localFolderWithoutLastSep);
 
     }
 
     static public boolean smb_isValidPath(String remoteUriFolder)
     {
-        if (m_bEnableSmbV2)
+        //kpp1-373
+        KDSSMBPath path = KDSSMBPath.parseString(remoteUriFolder);
+        String ip = path.getPCName();
+        if (!KDSSocketTCPSideBase.ping(ip, 2))
+            return false;
+        //
+//        if (m_bEnableSmbV2) //kpp1-376, we will just use smbv2
             return KDSSmbFile2.isValidPath(remoteUriFolder);
-        else
-            return KDSSmbFile1.isValidPath(remoteUriFolder);
+//        else { //kpp1-376, we will just use smbv2
+//            return KDSSmbFile1.isValidPath(remoteUriFolder);
+//
+////            if (!KDSSmbFile1.isValidPath(remoteUriFolder))
+////                return KDSSmbFile2.isValidPath(remoteUriFolder);
+////            else
+////                return true;
+//        }
     }
 
     static public int smb_checkFolderWritable(String smbFolder)
     {
-        if (m_bEnableSmbV2)
+//        if (m_bEnableSmbV2) //kpp1-376, we will just use smbv2
             return KDSSmbFile2.checkFolderWritable(smbFolder);
-        else
-            return KDSSmbFile1.checkFolderWritable(smbFolder);
+//        else ////kpp1-376, we will just use smbv2
+//            return KDSSmbFile1.checkFolderWritable(smbFolder);
     }
 
     public void setNewFolderEnabled(boolean isNewFolderEnabled)
@@ -186,34 +205,79 @@ public class KDSSmbFile extends Handler {
 
     static public ArrayList<String> findAllXmlFiles(String remoteUriFolder, int nMaxFiles, ArrayList<String> ar)
     {
-        if (m_bEnableSmbV2)
+//        if (m_bEnableSmbV2)//kpp1-376, we will just use smbv2
             return KDSSmbFile2.findAllXmlFiles(remoteUriFolder, nMaxFiles, ar);
-        else
-            return KDSSmbFile1.findAllXmlFiles(remoteUriFolder, nMaxFiles, ar);
+//        else//kpp1-376, we will just use smbv2
+//            return KDSSmbFile1.findAllXmlFiles(remoteUriFolder, nMaxFiles, ar);
     }
 
     static public boolean isExistedSubFolder(String strRootFolder, String strSubFolder)
     {
-        if (m_bEnableSmbV2)
+        //if (m_bEnableSmbV2)//kpp1-376, we will just use smbv2
             return KDSSmbFile2.isExistedSubFolder(strRootFolder, strSubFolder);
-        else
-            return KDSSmbFile1.isExistedSubFolder(strRootFolder, strSubFolder);
+//        else
+//            return KDSSmbFile1.isExistedSubFolder(strRootFolder, strSubFolder);
     }
 
     static public boolean createSubDir(String newDir)
     {
-        if (m_bEnableSmbV2)
+        //if (m_bEnableSmbV2)//kpp1-376, we will just use smbv2
             return KDSSmbFile2.createSubDir(newDir);
-        else
-            return KDSSmbFile1.createSubDir(newDir);
+//        else
+//            return KDSSmbFile1.createSubDir(newDir);
     }
 
     static public Object[] findAllFiles(String remoteUriFolder)
     {
 
-        if (m_bEnableSmbV2)
+        //if (m_bEnableSmbV2)//kpp1-376, we will just use smbv2
             return KDSSmbFile2.findAllFiles(remoteUriFolder);
+//        else
+//            return KDSSmbFile1.findAllFiles(remoteUriFolder);
+    }
+
+    /**
+     * KPP1-367
+     * @param buffer
+     * @return
+     */
+    static public String getBytesEncodingFormat(byte[] buffer)
+    {
+        if (buffer[0] ==(byte) 0xEF &&  //utf-8: EF, BB, BF
+                buffer[1] == (byte)0xBB &&
+                buffer[2] == (byte)0xBF )
+            return "UTF-8";
+        else if (buffer[0] == (byte)0xFF &&
+                buffer[1] == (byte)0xFE   ) // UCS-2 LE BOM (Little Endian)
+        {
+            return "UTF-16LE";
+        }
+        else if (buffer[0] == (byte)0xFE &&
+            buffer[1] == (byte)0xFF   ) // UCS-2 LE BOM (Big Endian)
+        {
+            return "UTF-16BE";
+        }
         else
-            return KDSSmbFile1.findAllFiles(remoteUriFolder);
+            return "";
+
+    }
+
+    /**
+     *  use the jcifs.Config class which is the class that maintains this information internally however, again, properties must be set before jCIFS client classes are referenced:
+     */
+    static public void setSmbV1Config()
+    {
+        //kpp1-376, we will just use smbv2
+//        //this can been removed.
+//        jcifs.Config.setProperty( "jcifs.smb.client.responseTimeout", "3000" );//default 30000
+//        //this must set
+//        jcifs.Config.setProperty( "jcifs.smb.client.soTimeout", "3500" );// //default 35000
+//        //following can been removed. But, just keep them.
+//        jcifs.Config.setProperty( "jcifs.netbios.soTimeout", "3000" );//default 5000
+//        jcifs.Config.setProperty( "jcifs.netbios.retryTimeout", "2000" );//default 3000
+
+
+
+
     }
 }

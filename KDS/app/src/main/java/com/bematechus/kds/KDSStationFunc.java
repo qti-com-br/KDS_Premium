@@ -1,5 +1,7 @@
 package com.bematechus.kds;
 
+import android.util.Log;
+
 import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
@@ -28,6 +30,7 @@ import java.util.Date;
  */
 public class KDSStationFunc {
 
+    static String TAG = "StationFunc";
     /**
      * sync with mirror, backup stations ..
      * check if mirror, backup ...
@@ -252,11 +255,25 @@ public class KDSStationFunc {
 //        }
 
         KDSDataOrder orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
+        //kpp1-393
+        boolean bInParkedOrdersList = false;
+        if (orderExisted == null) {
+            orderExisted = kdsuser.getParkedOrders().getOrderByName(order.getOrderName());
+            if (orderExisted != null) bInParkedOrdersList = true;
+        }
         //TimeDog t = new TimeDog();
         if (orderExisted == null) {
-
-            kdsuser.getOrders().addComponent(order);
+            //kpp1-393, support parked order
+            if (order.getParked()==KDSConst.INT_TRUE) {
+                //Log.d(TAG, "Add to parked list");
+                kdsuser.getParkedOrders().addComponent(order);
+            }//
+            else {
+                //Log.d(TAG, "Add to orders list");
+                kdsuser.getOrders().addComponent(order);
+            }
             //t.debug_print_Duration("func-orderAdd1");
+            //Log.d(TAG, "Add to database");
             kdsuser.getCurrentDB().orderAdd(order);
             //t.debug_print_Duration("func-orderAdd2");
             if (bRefreshView)
@@ -280,6 +297,23 @@ public class KDSStationFunc {
             if (order.getItems().getCount() >0)
                 kdsuser.getCurrentDB().orderAppendAddon(orderExisted, order);
             orderReturn = orderExisted;
+            //kpp1-393
+            if (order.getParked() == KDSConst.INT_TRUE)
+            {//it is a parked order.
+                if (!bInParkedOrdersList)
+                {//existed order is not in orders list, move it to parked list.
+                    kdsuser.getOrders().removeComponent(orderExisted);
+                    kdsuser.getParkedOrders().addComponent(orderExisted);
+                }
+            }
+            else
+            {//it is a normal order
+                if (bInParkedOrdersList)
+                {//move to orders list.
+                    kdsuser.getParkedOrders().removeComponent(orderExisted);
+                    kdsuser.getOrders().addComponent(orderExisted);
+                }
+            }
         }
         //TimeDog td = new TimeDog();
         //20190403 IMPORTANT
@@ -534,6 +568,10 @@ public class KDSStationFunc {
             }
             else if (condiment.getTransType() == KDSDataOrder.TRANSTYPE_ADD)
             {
+                //check if existed same condiment ID
+                if (itemExisted.getCondiments().getCondimentByName(condiment.getCondimentName())!= null)
+                    continue; //kpp1-414, don't add same id condiment.
+
                 itemExisted.getCondiments().addComponent(condiment);
                 condiment.setItemGUID(itemExisted.getGUID());
                 kdsuser.getCurrentDB().condimentAdd(condiment);
@@ -566,7 +604,11 @@ public class KDSStationFunc {
             KDSDataItem item =  orderReceived.getItems().getItem(i);
             if (item.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY)
             {
-                KDSDataItem itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
+                KDSDataItem itemExisted = null;
+                if (item.getItemName().isEmpty()) //kpp1-409
+                    itemExisted = orderExisted.getItems().getItemByGUID(item.getGUID());
+                else
+                    itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
                 if (itemExisted == null)
                     continue;
                 float nOldQty = itemExisted.getShowingQty();
@@ -628,7 +670,12 @@ public class KDSStationFunc {
             }
             else if (item.getTransType() == KDSDataOrder.TRANSTYPE_DELETE)
             {
-                KDSDataItem itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
+                KDSDataItem itemExisted = null;
+                if (item.getItemName().isEmpty()) //kpp1-409
+                    itemExisted = orderExisted.getItems().getItemByGUID(item.getGUID());
+                else
+                    itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
+                //KDSDataItem itemExisted = orderExisted.getItems().getItemByName(item.getItemName());
                 if (itemExisted == null)
                     continue;
 
@@ -660,7 +707,29 @@ public class KDSStationFunc {
      */
     static public void orderInfoModify(KDSUser kdsuser, KDSDataOrder order, boolean bSyncWithOthers)
     {
-        KDSDataOrder orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
+        //kpp1-409, use the guid to load order.
+        KDSDataOrder orderExisted = null;
+        if (order.getGUID().equals(KDSConst.ORDER_GUID_FOR_API_ITEM_CHANGES))
+        {//use item guid to find order. This just happen in api order and void/update event.
+            if (order.getItems().getCount()<=0) return;
+            String itemGuid = order.getItems().getItem(0).getGUID();
+            String orderguid = kdsuser.getOrders().getCurrentDB().itemGetOrderGuid(itemGuid);
+            orderExisted = kdsuser.getOrders().getOrderByGUID(orderguid);
+        }
+        else {
+            if (order.getOrderName().isEmpty())
+                orderExisted = kdsuser.getOrders().getOrderByGUID(order.getGUID());
+            else
+                orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
+        }
+        //kpp1-393
+        boolean bInParkedList = false;
+        if (orderExisted == null)
+        {
+            orderExisted = kdsuser.getParkedOrders().getOrderByName(order.getOrderName());
+            if (orderExisted == null) return;
+            bInParkedList = true;
+        }
 
         if (orderExisted == null) {
 
@@ -677,6 +746,26 @@ public class KDSStationFunc {
                 kdsuser.getKDS().firePOSNotification_OrderItem(orderExisted, null, KDSPosNotificationFactory.BumpUnbumpType.Order_status_changed);
         }
         itemsModify(kdsuser, orderExisted, order,bSyncWithOthers);
+
+        //kpp1-393
+        if (order.getParked() == KDSConst.INT_TRUE)
+        {//it is a parked order.
+            if (!bInParkedList)
+            {//existed order is not in orders list, move it to parked list.
+                kdsuser.getOrders().removeComponent(orderExisted);
+                kdsuser.getParkedOrders().addComponent(orderExisted);
+                kdsuser.getCurrentDB().orderSetParked(orderExisted.getGUID(), true);
+            }
+        }
+        else
+        {//it is a normal order
+            if (bInParkedList)
+            {//move to orders list.
+                kdsuser.getParkedOrders().removeComponent(orderExisted);
+                kdsuser.getOrders().addComponent(orderExisted);
+                kdsuser.getCurrentDB().orderSetParked(orderExisted.getGUID(), false);
+            }
+        }
     }
 
     static  public void itemModify(KDSUser kdsuser, KDSDataItem itemNew, boolean bAutoSync)
@@ -1070,7 +1159,7 @@ public class KDSStationFunc {
         {
 
             case Prep:
-                return KDSStationNormal.normal_sync_item_bumped(kds, command);
+                return KDSStationNormal.normal_sync_item_bumped(kds, command, arChangedItems);
 
             case Expeditor:
             case Queue:
@@ -1126,19 +1215,19 @@ public class KDSStationFunc {
      * @param strOrinalData
      * @return
      */
-    static public String doSyncCommandItemUnbumped(KDS kds,  KDSXMLParserCommand command, String strOrinalData)
+    static public String doSyncCommandItemUnbumped(KDS kds,  KDSXMLParserCommand command, String strOrinalData, ArrayList<KDSDataItem> arChangedItems)
     {
         switch (kds.getStationFunction())
         {
 
             case Prep:
-                return KDSStationNormal.normal_sync_item_unbumped(kds, command);
+                return KDSStationNormal.normal_sync_item_unbumped(kds, command, arChangedItems);
 
             case Expeditor:
             case Queue:
             case TableTracker:
             case Queue_Expo:
-                return KDSStationExpeditor.exp_sync_item_unbumped(kds, command);
+                return KDSStationExpeditor.exp_sync_item_unbumped(kds, command, arChangedItems);
 
             case Mirror:
                 break;
