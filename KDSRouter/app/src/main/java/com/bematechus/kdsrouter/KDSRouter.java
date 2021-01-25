@@ -1090,6 +1090,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             msg.obj = station;
             m_announceHander.sendMessage(msg);
             //announce_restore_pulse(id, ip);
+
         }
 
     }
@@ -1332,9 +1333,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      */
     private void connectRestoredStation(String stationID, String ip)
     {
-
-        if (!m_stationsConnection.getRelations().isValidNormalStationID(stationID))
-            return;
+        //kpp1-387, don't check validation.
+        if (!m_stationsConnection.getRelations().isValidNormalStationID(stationID)) {
+            if (!m_stationsConnection.dataIsWaitingConnection(stationID)) //kpp1-387, just offline data valid, connect to station.
+                return;
+        }
         KDSStationConnection conn = m_stationsConnection.findConnectionByID(stationID);
 
         if (conn != null) {//2.0.8
@@ -2656,7 +2659,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * @param xmlData
      * @param toStations
      */
-    public void writeToAllStations(String xmlData, ArrayList<String> toStations)
+    public void writeToAllStations2(String xmlData, ArrayList<String> toStations)
     {
         int ncount = m_stationsConnection.getRelations().getRelationsSettings().size();
 
@@ -2703,6 +2706,42 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         {
             KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
         }
+    }
+
+    /**
+     * kpp1-387, write data even if the station is not existed.
+     *              If relationship is not set, and station is offline, router still need to backup its orders.
+     * @param xmlData
+     * @param toStations
+     */
+    public void writeToAllStations(String xmlData, ArrayList<String> toStations)
+    {
+        int ncount = toStations.size();// m_stationsConnection.getRelations().getRelationsSettings().size();
+
+        for (int i=0; i< ncount; i++)
+        {
+            String stationID = toStations.get(i);//stationRelation.getID();
+            KDSStationIP station  = null;
+            station = m_stationsConnection.getRelations().findStationInRelationshipByID(stationID);
+            if (station == null)
+            {
+                station = m_stationsConnection.findActivedStationByID(stationID);
+            }
+            if (station == null)
+            {
+                //kpp1-387
+                //save it. Station is not existed in table, and it is not online.
+                // Just save its data, maybe this station will come back soon.
+                m_stationsConnection.writeGhostStionDataToBuffer(stationID, xmlData, MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
+            }
+            else {
+                station.setPort(getSettings().getString(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort));
+                KDSLog.d(TAG, "Write to KDSStation #" + station.getID() + ",ip=" + station.getIP() + ", port=" + station.getPort() + ",length=" + xmlData.length());
+                m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData, MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
+
+            }
+        }
+
     }
 
     /**
