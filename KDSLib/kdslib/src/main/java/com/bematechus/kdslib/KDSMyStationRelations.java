@@ -618,4 +618,19 @@ public class KDSMyStationRelations {
 
         return existedInStationsArray(ar,myStationID);
     }
+
+    /**
+     * kpp1-387
+     * @param stationID
+     * @return
+     */
+    public KDSStationIP findStationInRelationshipByID(String stationID)
+    {
+        for (int i=0; i<m_arStationsRelations.size(); i++)
+        {
+            if (m_arStationsRelations.get(i).getID().equals(stationID))
+                return m_arStationsRelations.get(i);
+        }
+        return null;
+    }
 }

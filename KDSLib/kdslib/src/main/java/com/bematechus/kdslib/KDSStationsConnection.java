@@ -2328,6 +2328,17 @@ public class KDSStationsConnection {
         }
         return true;
     }
+
+    public boolean writeGhostStionDataToBuffer(String toStationID, String xmlData, int nMaxBufferCount)
+    {
+        m_buffersForWaitingConnection.add(toStationID, xmlData, nMaxBufferCount);
+        return true;
+    }
+
+    public boolean dataIsWaitingConnection(String stationID)
+    {
+        return m_buffersForWaitingConnection.stationHasOfflineData(stationID);
+    }
 }
 
 
