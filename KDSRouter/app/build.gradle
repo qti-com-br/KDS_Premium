@@ -7,14 +7,10 @@ def releaseTime() {
 android {
     signingConfigs {
         config {
-            keyAlias 'kds-router'
-            keyPassword 'bematechus'
-            storeFile file('keystore/kds-router.jks')
-            storePassword 'bematechus'
-//            keyAlias 'premium_router_key'
-//            keyPassword 'Logic@32809'
-//            storeFile file('/Volumes/inatek/projects/premium_key/kdsPremium.keystore')
-//            storePassword 'Logic@32809'
+            keyAlias 'premium_router_key'
+            keyPassword 'Logic@32809'
+            storeFile file('../../../kdsPremium.keystore')
+            storePassword 'Logic@32809'
         }
     }
     lintOptions {
@@ -81,6 +77,7 @@ android {
             versionCode 2420
             versionName '2.4.2.0'
             dimension "default"
+			buildConfigField "String", "WEBSOCKET_URL", "\"ws://dev.kdsgo.com:9205\""
         }
         stage {
             minSdkVersion 19
@@ -89,6 +86,7 @@ android {
             versionCode 2420
             versionName '2.4.2.0'
             dimension "default"
+			buildConfigField "String", "WEBSOCKET_URL", "\"ws://stage.kdsgo.com:9205\""
         }
         prod {
             minSdkVersion 19
@@ -97,6 +95,7 @@ android {
             versionCode 2420
             versionName '2.4.2.0'
             dimension "default"
+			buildConfigField "String", "WEBSOCKET_URL", "\"ws://kdsgo.com:9205\""
         }
     }
     compileOptions {
