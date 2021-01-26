@@ -373,7 +373,7 @@ public class UpdateAppInfo {
             String strMine = String.format("%05d%05d%05d%05d", m_nVer0, m_nVer1, m_nVer2, m_nVer3);
             String strVer =  String.format("%05d%05d%05d%05d", ver.m_nVer0, ver.m_nVer1, ver.m_nVer2, ver.m_nVer3);
             int n = strMine.compareTo(strVer);
-            return (n==1);
+            return (n>0);
 
 //            if (m_nVer0 > ver.m_nVer0 ) return true;
 //            if ( m_nVer1 > ver.m_nVer1 ) return true;
