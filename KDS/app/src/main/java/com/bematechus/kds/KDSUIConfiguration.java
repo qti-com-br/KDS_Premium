@@ -2061,7 +2061,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
 
             String key = ("lineitems_cols_size");
-            String strColsSize = pref.getString(key, "");//.getInt(key, 0);
+            String strColsSize = pref.getString(key, KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");//.getInt(key, 0);
             ArrayList<String> ar = KDSUtil.spliteString(strColsSize, ",");
             return ar.size();
 

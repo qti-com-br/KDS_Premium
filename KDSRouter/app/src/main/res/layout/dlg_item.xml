@@ -26,9 +26,10 @@
             <TextView
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_column="0"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="@string/description"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="@dimen/dlg_item_text_size" />
@@ -41,8 +42,10 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:textSize="@dimen/dlg_item_text_size" />
-            <LinearLayout android:layout_column="2"
-                android:layout_width="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_column="2">
 
                 <Button
                     android:id="@+id/btnBG"
@@ -73,14 +76,16 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/station"
                 android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_column="0"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:layout_weight="1" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/station"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -101,14 +106,15 @@
                     android:singleLine="true" />
 
                 <TextView
+                    android:id="@+id/textView19"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/screen"
-                    android:id="@+id/textView19"
                     android:layout_column="0"
-                    android:textSize="@dimen/dlg_item_text_size"
-                    android:layout_marginLeft="50dp" />
+                    android:layout_marginLeft="50dp"
+                    android:gravity="center"
+                    android:text="@string/screen"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -128,14 +134,15 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/delayprep"
                 android:id="@+id/textViewScreen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_column="0"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/delayprep"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -277,11 +284,11 @@
                     </LinearLayout>
 
                     <ListView
+                        android:id="@+id/lstSumNames"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/lstSumNames"
-                        android:background="@drawable/media_listview_border"
                         android:layout_weight="1"
+                        android:background="@drawable/media_listview_border"
                         android:choiceMode="singleChoice" />
 
                 </LinearLayout>
@@ -294,12 +301,13 @@
                 android:layout_weight="1">
 
                 <TextView
+                    android:id="@+id/textView38"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:gravity="center_vertical"
                     android:text="@string/modifers"
-                    android:textSize="@dimen/dlg_item_text_size"
-                    android:id="@+id/textView38" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -360,12 +368,13 @@
             android:layout_height="35dp">
 
             <TextView
+                android:id="@+id/textView6"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="@string/build_cards"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:id="@+id/textView6" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <Button
                 android:id="@+id/btnBCLocal"
@@ -451,12 +460,13 @@
             android:layout_height="35dp">
 
             <TextView
+                android:id="@+id/textView8"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="@string/training_video"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:id="@+id/textView8" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"

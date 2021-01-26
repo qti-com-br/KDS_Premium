@@ -114,4 +114,7 @@ public class KDSConst {
 
     //kpp1-409
     static public String ORDER_GUID_FOR_API_ITEM_CHANGES = "9e09b816-2502-42bd-bfee-a69a1cce1cd6";
+
+    static public String LINE_ITEMS_DEFAULT_COLS = "20,10,30,30,10";
+    static public String LINE_ITEMS_OLD_COLS = "25,25,25,25";
 }

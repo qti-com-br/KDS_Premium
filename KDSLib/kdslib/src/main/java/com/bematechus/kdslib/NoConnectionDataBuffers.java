@@ -81,4 +81,9 @@ public class NoConnectionDataBuffers {
         m_offlineDB.clearOffline();
 
     }
+
+    public boolean stationHasOfflineData(String stationID)
+    {
+        return m_offlineDB.offlineContains(stationID);
+    }
 }
