@@ -2,4 +2,5 @@
 <resources>
     <string name="api_url" translatable="false">http://stage.kdsgo.com/api/apiKDS/Premium</string>
     <string name="db_url" translatable="false">http://stage.kdsgo.com/api/apiKDS/Premium</string>
+    <string name="apk_url" translatable="false">http://dev.kdsgo.com/api/update/premium/0</string>
 </resources>

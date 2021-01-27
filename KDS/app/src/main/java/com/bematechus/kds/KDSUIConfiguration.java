@@ -47,6 +47,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSStationsRelation;
+import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSToast;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDlgInputPassword;
@@ -56,6 +57,8 @@ import com.bematechus.kdslib.PreferenceFragmentStations;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -369,8 +372,12 @@ public class KDSUIConfiguration extends PreferenceActivity {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener , KDSUIDialogBase.KDSDialogBaseListener {
+    public static class GeneralPreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener ,
+            KDSUIDialogBase.KDSDialogBaseListener,
+            KDSTimer.KDSTimerInterface { //kpp1-386
         boolean m_bDisableChangedEvent = false;
+        KDSTimer m_clearDbTime = new KDSTimer();//kpp1-386
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -402,7 +409,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
 //            bindPreferenceSummaryToValue(findPreference("kds_general_title"));
             bindPreferenceSummaryToValue(findPreference("statistic_db_keep")); //2.0.25
             bindPreferenceSummaryToValue(findPreference("kds_general_auto_refresh_screen")); //2.0.25
-            //            bindPreferenceSummaryToValue(findPreference("kds_general_users_ratio"));
+            bindPreferenceSummaryToValue(findPreference("clear_db_schedule")); //kp1-386
 //
 //            bindPreferenceSummaryToValue(findPreference("kds_general_subtitle_a_title"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_subtitle_b_title"));
@@ -418,8 +425,37 @@ public class KDSUIConfiguration extends PreferenceActivity {
 //            enableSplitScreenOptions(userMode == KDSSettings.KDSUserMode.Multiple);
 
 
+            //kpp1-386
+            this.onTime();
+            m_clearDbTime.start(this.getActivity(), this, 2000);
+
 
         }
+        //kpp1-386
+        public void onTime()
+        {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            String s = prefs.getString("clear_db_schedule", "-1");
+            int nScheduleHour = KDSUtil.convertStringToInt(s, -1);
+            if (nScheduleHour <0) {
+                enableClearDbPreference(true);
+                return; //any time
+            }
+            Calendar c = Calendar.getInstance();
+            int nHour = c.get(Calendar.HOUR_OF_DAY);
+            if (nHour - nScheduleHour == 0)
+                enableClearDbPreference(true);
+            else
+                enableClearDbPreference(false);
+
+        }
+
+        private void enableClearDbPreference(boolean bEnable)
+        {
+            Preference p = this.findPreference("clear_db");
+            p.setEnabled(bEnable);
+        }
+
         @Override
         public void onDestroy()
         {
@@ -475,11 +511,15 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 doLanguageChanged(prefs, key);
                 return;
             }
-            else if (key.equals("general_enable_smbv2"))
-            {
-                boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
-                KDSSmbFile2.smb_setEnableSmbV2(bEnableSmbV2);
+            else if (key.equals("clear_db_schedule")) //kpp1-386
+            { //
+                onTime();
             }
+//            else if (key.equals("general_enable_smbv2"))//kpp1-376
+//            {
+//                boolean bEnableSmbV2 =  prefs.getBoolean(key, false);
+//                KDSSmbFile2.smb_setEnableSmbV2(bEnableSmbV2);
+//            }
 
 //            else if (key.equals("kds_general_enable_password"))
 //            {
@@ -1399,7 +1439,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class TitlePreferenceFragment extends KDSPreferenceFragment{
+    public static class TitlePreferenceFragment extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -1409,8 +1449,37 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("real_time_period"));
             bindPreferenceSummaryToValue(findPreference("kds_general_title"));
-
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.registerOnSharedPreferenceChangeListener(this);
         }
+        //kpp1-349
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
+        {
+
+            if (key.equals("hide_navigation_bar"))
+            {
+
+                boolean bhide = prefs.getBoolean(key, false);// (this.getSettings().getBoolean(KDSSettings.ID.Hide_navigation_bar));
+                if (this.getActivity() != null)
+                {
+                    if (this.getActivity().getWindow() != null)
+                    {
+                        if (this.getActivity().getWindow().getDecorView() != null)
+                        {
+                            if (this.getActivity() != null)
+                                ((KDSUIConfiguration) this.getActivity()).hideNavigationBar(bhide);
+                            //hideNavigationBar(!bhide);
+                            //KDSUtil.enableSystemVirtualBar(this.getActivity().getWindow().getDecorView(), !bhide);
+                        }
+                    }
+                }
+
+
+
+            }
+        }
+
+
 
     }
     /**
@@ -1449,32 +1518,32 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class TrackerPreferenceFragment extends KDSPreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            suspendOnSharedPreferencesChangedEvent(true);
-            addPreferencesFromResource(R.xml.pref_tracker);
-            suspendOnSharedPreferencesChangedEvent(false); //KPP1-138, change from true to false.
-
-            bindPreferenceSummaryToValue(findPreference("tracker_title"));
-            bindPreferenceSummaryToValue(findPreference("tracker_cols"));
-            bindPreferenceSummaryToValue(findPreference("tracker_cell_height"));
-            bindPreferenceSummaryToValue(findPreference("tracker_auto_switch_duration"));
-            bindPreferenceSummaryToValue(findPreference("tracker_more_orders_message"));
-            bindPreferenceSummaryToValue(findPreference("tracker_alert_not_bump_timeout"));
-            bindPreferenceSummaryToValue(findPreference("tracker_auto_remove_after_expo_bump_timeout"));
-            bindPreferenceSummaryToValue(findPreference("tracker_auto_assign_timeout"));
-            bindPreferenceSummaryToValue(findPreference("tracker_number_from_userinfo_guesttable"));
-
-
-        }
-    }
+//    /**
+//     * This fragment shows data and sync preferences only. It is used when the
+//     * activity is showing a two-pane settings UI.
+//     */
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+//    public static class TrackerPreferenceFragment extends KDSPreferenceFragment {
+//        @Override
+//        public void onCreate(Bundle savedInstanceState) {
+//            super.onCreate(savedInstanceState);
+//            suspendOnSharedPreferencesChangedEvent(true);
+//            addPreferencesFromResource(R.xml.pref_tracker);
+//            suspendOnSharedPreferencesChangedEvent(false); //KPP1-138, change from true to false.
+//
+//            bindPreferenceSummaryToValue(findPreference("tracker_title"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_cols"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_cell_height"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_auto_switch_duration"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_more_orders_message"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_alert_not_bump_timeout"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_auto_remove_after_expo_bump_timeout"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_auto_assign_timeout"));
+//            bindPreferenceSummaryToValue(findPreference("tracker_number_from_userinfo_guesttable"));
+//
+//
+//        }
+//    }
 
     /**
      * This fragment shows data and sync preferences only. It is used when the
@@ -1992,7 +2061,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
 
             String key = ("lineitems_cols_size");
-            String strColsSize = pref.getString(key, "");//.getInt(key, 0);
+            String strColsSize = pref.getString(key, KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");//.getInt(key, 0);
             ArrayList<String> ar = KDSUtil.spliteString(strColsSize, ",");
             return ar.size();
 

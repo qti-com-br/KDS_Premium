@@ -47,7 +47,8 @@ public class PortInfo {
     private static final int DEFAULT_SERIAL_DATA_BITS = 8 ;
     private static final int DEFAULT_STOP_BITS = 1;
 
-    private Integer USB_PID = UsbPort.LR2000_PID;
+    private Integer USB_VID = null;
+    private Integer USB_PID = null;
 
     public Integer getUSB_VID() {
         return USB_VID;
@@ -64,8 +65,6 @@ public class PortInfo {
     public void setUSB_PID(Integer USB_PID) {
         this.USB_PID = USB_PID;
     }
-
-    private Integer USB_VID = UsbPort.LR2000_VID;
 
     private String portName = null;
 

@@ -605,4 +605,32 @@ public class KDSMyStationRelations {
         ArrayList<KDSStationIP> ar = getMirrorStations();
         return existedInStationsArray(ar,stationID);
     }
+
+    /**
+     * kpp1-407
+     * check if give station is my primary station of mirror.
+     * @param stationID
+     * @return
+     */
+    public boolean isMirrorOfStation(String stationID, String myStationID)
+    {
+        ArrayList<KDSStationIP> ar = getItsMirrorStation(stationID);
+
+        return existedInStationsArray(ar,myStationID);
+    }
+
+    /**
+     * kpp1-387
+     * @param stationID
+     * @return
+     */
+    public KDSStationIP findStationInRelationshipByID(String stationID)
+    {
+        for (int i=0; i<m_arStationsRelations.size(); i++)
+        {
+            if (m_arStationsRelations.get(i).getID().equals(stationID))
+                return m_arStationsRelations.get(i);
+        }
+        return null;
+    }
 }

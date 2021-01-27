@@ -583,8 +583,10 @@ public class KDSDataItem extends KDSData {
         }
         if (itemReceived.getXmlFieldValid(VALID_ITEM_XML_FIELD.Description))
         {
-            this.setDescription(itemReceived.getDescription());
-            bResult = true;
+            if (!itemReceived.getDescription().isEmpty()) {//kpp1-409
+                this.setDescription(itemReceived.getDescription());
+                bResult = true;
+            }
         }
         if (itemReceived.getXmlFieldValid(VALID_ITEM_XML_FIELD.FG))
         {
@@ -598,7 +600,8 @@ public class KDSDataItem extends KDSData {
         }
         if (itemReceived.getXmlFieldValid(VALID_ITEM_XML_FIELD.Qty))
         {
-            if (this.getQty() != itemReceived.getQty()) {
+            //if (this.getQty() != itemReceived.getQty()) //KPP1-369, comment this "if". make sure "void" item can been restore.
+            {
                 this.setChangedQty(itemReceived.getQty() - this.getQty());
                 //this.setQty(itemReceived.getQty()); //20171206, use the changed qty to identify qty modification.
                 bResult = true;

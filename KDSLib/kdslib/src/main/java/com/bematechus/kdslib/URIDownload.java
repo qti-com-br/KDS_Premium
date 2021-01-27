@@ -86,7 +86,7 @@ public class URIDownload {
         };
     };
 
-    static final int READ_TIMEOUT = 5000;
+    static final int READ_TIMEOUT = 30000; //kpp1-395, old value is 5s, I change it to 30s
 
     private Runnable m_downFileRunnable = new Runnable() {
         @Override
@@ -109,7 +109,7 @@ public class URIDownload {
                 FileOutputStream fos = new FileOutputStream(localFile);
 
                 int count = 0;
-                byte buf[] = new byte[10240];
+                byte buf[] = new byte[102400];
 
                 do{
                     int numread = is.read(buf);

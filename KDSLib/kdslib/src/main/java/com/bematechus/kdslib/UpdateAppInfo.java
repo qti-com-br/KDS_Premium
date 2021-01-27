@@ -37,7 +37,8 @@ public class UpdateAppInfo {
     String m_appName = "";
     AppVersion m_version = new AppVersion();
     int m_nRate = 5;
-    ArrayList<String> m_appLinks = new ArrayList<>();
+    //ArrayList<String> m_appLinks = new ArrayList<>();
+    ArrayList<AppLink> m_appLinks = new ArrayList<>(); //kpp1-395
     ArrayList<UpdateFeature> m_newFeatures = new ArrayList<>();
 
     public void setAppName(String name)
@@ -67,11 +68,11 @@ public class UpdateAppInfo {
         return m_nRate;
     }
 
-    public void addAppLink(String strLink)
+    public void addAppLink(String appName, String strLink)
     {
-        m_appLinks.add(strLink);
+        m_appLinks.add(new AppLink(appName, strLink));
     }
-    public ArrayList<String> getAppLinks()
+    public ArrayList<AppLink> getAppLinks()
     {
         return m_appLinks;
     }
@@ -80,7 +81,7 @@ public class UpdateAppInfo {
     {
         if (m_appLinks.size() <=0) return false;
         if (m_version.toString().isEmpty()) return false;
-        if (m_appName.isEmpty()) return false;
+        //if (m_appName.isEmpty()) return false; //kpp1-395
         return true;
     }
 
@@ -94,6 +95,25 @@ public class UpdateAppInfo {
     }
 
 
+    /**
+     * rev.:
+     * <?xml version="1.0" encoding="utf-8"?>
+     *
+     * <app ver="2.4.1.1">
+     *   <applink app="premium">https://logic-controls.s3-us-west-2.amazonaws.com/FTP/KDS/Android/2.4.1.1/KDS-prod-release-2.4.1.1.apk</applink>
+     *   <applink app="router">https://logic-controls.s3-us-west-2.amazonaws.com/FTP/KDS/Android/2.4.1.1/KDS-Router-prod-release-2.4.1.1.apk</applink>
+     *   <features>
+     *     <feature brief="System App">KDS Router as System App</feature>
+     *     <feature brief="Translation">Translation to Spanish and Portuguese</feature>
+     *     <feature brief="Cleaning Habits">Integration with Bump Bars type CH (Cleaning Habits)</feature>
+     *     <feature brief="Alerts">Customizable device alerts reminding regular device sanitization</feature>
+     *     <feature brief="Improvements">Bug fixes and performance improvements</feature>
+     *   </features>
+     * </app>
+     *
+     * @param fileName
+     * @return
+     */
     static public UpdateAppInfo parseFile(String fileName)
     {
 
@@ -113,9 +133,93 @@ public class UpdateAppInfo {
 //            " </app>";
     /**
      *
+     * Rev.:
+     *  kpp1-395
+     *      <?xml version="1.0" encoding="utf-8"?>
+     *
+     * <app ver="2.4.1.1">
+     *   <applink app="premium">https://logic-controls.s3-us-west-2.amazonaws.com/FTP/KDS/Android/2.4.1.1/KDS-prod-release-2.4.1.1.apk</applink>
+     *   <applink app="router">https://logic-controls.s3-us-west-2.amazonaws.com/FTP/KDS/Android/2.4.1.1/KDS-Router-prod-release-2.4.1.1.apk</applink>
+     *   <features>
+     *     <feature brief="System App">KDS Router as System App</feature>
+     *     <feature brief="Translation">Translation to Spanish and Portuguese</feature>
+     *     <feature brief="Cleaning Habits">Integration with Bump Bars type CH (Cleaning Habits)</feature>
+     *     <feature brief="Alerts">Customizable device alerts reminding regular device sanitization</feature>
+     *     <feature brief="Improvements">Bug fixes and performance improvements</feature>
+     *   </features>
+     * </app>
+     *
      * @param str
      * @return
      */
+//    static public UpdateAppInfo parseString1(String str)
+//    {
+//        //str = sample;
+//        KDSXML xml = new KDSXML();
+//        UpdateAppInfo info = new UpdateAppInfo();
+//        if (!xml.loadString(str))
+//            return info;
+//        xml.back_to_root();
+//        String s = xml.getAttribute("name", "");
+//        info.setAppName(s);
+//        s = xml.getAttribute("ver", "");
+//        info.setVersion(s);
+//
+//        s = xml.getAttribute("rate", "");
+//        info.setRate(s);
+//        if (xml.getFirstGroup("applink"))
+//        {
+//            s = xml.getCurrentGroupValue();
+//            info.addAppLink(s);
+//            while (xml.getNextGroup("applink"))
+//            {
+//                s = xml.getCurrentGroupValue();
+//                info.addAppLink(s);
+//            }
+//
+//        }
+//        xml.back_to_root();
+//        if (xml.getFirstGroup("features"))
+//        {
+//            if (xml.getFirstGroup("feature"))
+//            {
+//
+//                UpdateFeature f = new UpdateFeature();
+//
+//                f.m_description = xml.getCurrentGroupValue();
+//                f.m_brief = xml.getAttribute("brief", "");
+//                info.addFeature(f);
+//                while (xml.getNextGroup("feature"))
+//                {
+//                    f = new UpdateFeature();
+//                    f.m_description = xml.getCurrentGroupValue();
+//                    f.m_brief = xml.getAttribute("brief", "");
+//                    info.addFeature(f);
+//                }
+//            }
+//        }
+//        return info;
+//    }
+
+    /*
+     *  kpp1-395
+            *      <?xml version="1.0" encoding="utf-8"?>
+            *
+            * <app ver="2.4.1.1">
+            *   <applink app="premium">https://logic-controls.s3-us-west-2.amazonaws.com/FTP/KDS/Android/2.4.1.1/KDS-prod-release-2.4.1.1.apk</applink>
+            *   <applink app="router">https://logic-controls.s3-us-west-2.amazonaws.com/FTP/KDS/Android/2.4.1.1/KDS-Router-prod-release-2.4.1.1.apk</applink>
+            *   <features>
+     *     <feature brief="System App">KDS Router as System App</feature>
+            *     <feature brief="Translation">Translation to Spanish and Portuguese</feature>
+            *     <feature brief="Cleaning Habits">Integration with Bump Bars type CH (Cleaning Habits)</feature>
+            *     <feature brief="Alerts">Customizable device alerts reminding regular device sanitization</feature>
+            *     <feature brief="Improvements">Bug fixes and performance improvements</feature>
+            *   </features>
+            * </app>
+            *
+            * @param str
+     * @return
+             */
     static public UpdateAppInfo parseString(String str)
     {
         //str = sample;
@@ -124,21 +228,23 @@ public class UpdateAppInfo {
         if (!xml.loadString(str))
             return info;
         xml.back_to_root();
-        String s = xml.getAttribute("name", "");
+        String s = "";//xml.getAttribute("name", "");
         info.setAppName(s);
         s = xml.getAttribute("ver", "");
         info.setVersion(s);
 
-        s = xml.getAttribute("rate", "");
-        info.setRate(s);
+        //s = xml.getAttribute("rate", "");
+        //info.setRate(s);
         if (xml.getFirstGroup("applink"))
         {
             s = xml.getCurrentGroupValue();
-            info.addAppLink(s);
+            String name = xml.getAttribute("app", "");
+            info.addAppLink(name, s);
             while (xml.getNextGroup("applink"))
             {
                 s = xml.getCurrentGroupValue();
-                info.addAppLink(s);
+                name = xml.getAttribute("app", "");
+                info.addAppLink(name, s);
             }
 
         }
@@ -165,16 +271,18 @@ public class UpdateAppInfo {
         return info;
     }
 
+
+
     public String toString()
     {
         KDSXML xml = new KDSXML();
         xml.new_doc_with_root("app");
-        xml.setAttribute("name", this.getAppName());
+        //xml.setAttribute("name", this.getAppName());
         xml.setAttribute("ver", this.getVersion().toString());
-        xml.setAttribute("rate",KDSUtil.convertIntToString( this.getRate()));
+        //xml.setAttribute("rate",KDSUtil.convertIntToString( this.getRate()));
         for (int i=0; i< m_appLinks.size(); i++)
         {
-            xml.newGroup("applink", m_appLinks.get(i), false);
+            xml.newGroup("applink", m_appLinks.get(i).mLink, false);
         }
         xml.newGroup("features", true);
 
@@ -253,14 +361,26 @@ public class UpdateAppInfo {
                 m_nVer3 = KDSUtil.convertStringToInt(ar.get(3), 0);
         }
 
+        /**
+         * rev.:
+         *  kpp1-395-1, this function has issue.
+         * @param ver
+         * @return
+         *  True: my version > ver
+         */
         public boolean isOlderThanMine(AppVersion ver)
         {
-            if (m_nVer0 > ver.m_nVer0 ) return true;
-            if ( m_nVer1 > ver.m_nVer1 ) return true;
-            if (m_nVer2 > ver.m_nVer2 ) return true;
-            if (m_nVer3 > ver.m_nVer3 ) return true;
+            String strMine = String.format("%05d%05d%05d%05d", m_nVer0, m_nVer1, m_nVer2, m_nVer3);
+            String strVer =  String.format("%05d%05d%05d%05d", ver.m_nVer0, ver.m_nVer1, ver.m_nVer2, ver.m_nVer3);
+            int n = strMine.compareTo(strVer);
+            return (n>0);
 
-            return false;
+//            if (m_nVer0 > ver.m_nVer0 ) return true;
+//            if ( m_nVer1 > ver.m_nVer1 ) return true;
+//            if (m_nVer2 > ver.m_nVer2 ) return true;
+//            if (m_nVer3 > ver.m_nVer3 ) return true;
+//
+//            return false;
         }
         public boolean isOlderThanMine(String versionName)
         {
@@ -278,5 +398,67 @@ public class UpdateAppInfo {
 
         }
 
+    }
+
+    /**
+     * kpp1-395
+     */
+    public class AppLink
+    {
+        String mAppName = "";
+        String mLink = "";
+
+        public AppLink(String appName, String strLink)
+        {
+            mAppName = appName;
+            mLink = strLink;
+        }
+        public String getLink()
+        {
+            return mLink;
+        }
+        public String getAppName()
+        {
+            return mAppName;
+        }
+    }
+
+    public AppLink getPremiumAppLink()
+    {
+        return getAppLink("PREMIUM");
+
+    }
+    public AppLink getRouterAppLink()
+    {
+        return getAppLink("ROUTER");
+
+    }
+
+    private String convertAppNameFromPrivateToPublic(String appName)
+    {
+        appName = appName.toUpperCase();
+        if (appName.equals(KDSConst.APP_NAME_ROUTER.toUpperCase()))
+            appName = "ROUTER";
+        else if (appName.equals(KDSConst.APP_NAME_KDS.toUpperCase()))
+            appName = "PREMIUM";
+        return appName;
+
+    }
+    public AppLink getAppLink(String appName)
+    {
+
+
+        appName = appName.toUpperCase();
+        appName = convertAppNameFromPrivateToPublic(appName);
+
+        for (int i=0; i< m_appLinks.size(); i++)
+        {
+            String name = m_appLinks.get(i).getAppName();
+            name = name.toUpperCase();
+
+            if (name.equals(appName))
+                return m_appLinks.get(i);
+        }
+        return null;
     }
 }

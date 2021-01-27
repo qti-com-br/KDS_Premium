@@ -202,4 +202,5 @@
 		<item>Duplicado</item>
 		<item>Exibir fila de pedidos</item>
 	</string-array>
+	<string name="quantity">Quantity</string>
 </resources>

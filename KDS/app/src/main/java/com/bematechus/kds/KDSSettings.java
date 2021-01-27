@@ -533,12 +533,6 @@ public class KDSSettings extends SettingsBase {
         Queue_status4_sort_mode,
 
         //2.0.39
-        /*
-        -          Add a new order acknowledgement feature;
-        -          It reply back received xml back to the source, if it is shared folder then create a new folder for it; if it is TCP/IP, create a new port(can be change) which POS open and read back received xml;
-        -          Additional to the xml, if the xml format is correct and kds is able to display, just send back the xml;
-        -          But if the received xml is in wrong format which means kds is not able to read and display the order then append string Wrong_Orderxxxx.xml to the file name and for TCP add a new tag <Error> below <Transaction> to indicate this is a wrong format; So it looks like <Transaction><Error>1</Error>…</Transaction>. <Error>n<Error>, n = which type of error, we can put all into 1 right now. When we can identify which error it is, then we can add more types.
-       */
         Notification_order_acknowledgement,
 
        //2.0.47
@@ -574,6 +568,19 @@ public class KDSSettings extends SettingsBase {
        Bumpbar_Clean,
        Bumpbar_Snooze,
        Bumpbar_Dismiss,
+       //kpp1-293
+       Screen_logo_enabled,
+       Screen_logo_file,
+
+        //kpp1-377
+        Hide_station_title,
+        //kpp1-386
+        Clear_db_schedule,
+
+     //kpp1-391
+       Sum_font,
+     //kpp1-420
+        Category_group_font,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -654,6 +661,7 @@ public class KDSSettings extends SettingsBase {
     {
         ItemWithoutCondiments,
         ItemWithCondiments,
+        CondimentsOnly, //kpp1-415
     }
 
     public enum SumOrderBy
@@ -770,7 +778,7 @@ public class KDSSettings extends SettingsBase {
         Orders,
         Destination,
         Queue,//speed of service, or "Order Queue Display"
-        TableTracker,
+        TableTracker, //kpp1-406, remove it.
         LineItems,
         Sort_orders,
         MAX_COUNT,
@@ -1005,7 +1013,7 @@ public class KDSSettings extends SettingsBase {
 
         m_mapPrefID.put(ID.Settings_password, "string_kds_general_password");
         m_mapPrefID.put(ID.Settings_password_enabled, "bool_kds_general_enable_password");
-        m_mapPrefID.put(ID.Message_item_above, "bool_kds_item_premsg_above");
+        //m_mapPrefID.put(ID.Message_item_above, "bool_kds_item_premsg_above");//kpp1-402
         m_mapPrefID.put(ID.Message_order_bottom, "bool_kds_order_premsg_bottom");
 
         m_mapPrefID.put(ID.POS_notification_enabled, "bool_kds_general_notification_enable");
@@ -1087,27 +1095,28 @@ public class KDSSettings extends SettingsBase {
 
        // m_mapPrefID.put(ID.Tracker_enabled,"bool_tracker_enabled");
 //        m_mapPrefID.put(ID.Tracker_IP,"string_tracker_server_ip");
-        m_mapPrefID.put(ID.Tracker_title,"string_tracker_title");
-        m_mapPrefID.put(ID.Tracker_use_userinfo,"bool_tracker_number_from_userinfo");
-        m_mapPrefID.put(ID.Tracker_holder_map,"string_tracker_holder_map");
-
-        m_mapPrefID.put(ID.Tracker_viewer_bg,"int_tracker_view_bg");
-        m_mapPrefID.put(ID.Tracker_viewer_cols,"string_tracker_cols");
-        m_mapPrefID.put(ID.Tracker_cell_height,"string_tracker_cell_height");
-        m_mapPrefID.put(ID.Tracker_auto_switch_duration,"string_tracker_auto_switch_duration");
-        m_mapPrefID.put(ID.Tracker_order_name_font,"fontface_tracker_order_name_font");
-        m_mapPrefID.put(ID.Tracker_table_name_font,"fontface_tracker_table_name_font");
-        m_mapPrefID.put(ID.Tracker_more_orders_message,"string_tracker_more_orders_message");
-
-        m_mapPrefID.put(ID.Tracker_show_timer,"bool_tracker_show_order_timer");
-        m_mapPrefID.put(ID.Tracker_order_timer_font,"fontface_tracker_order_timer_font");
-
-        m_mapPrefID.put(ID.Tracker_authen,"string_"+TRACKER_AUTHEN_KEY);
-        m_mapPrefID.put(ID.Tracker_auto_assign_timeout, "string_tracker_auto_assign_timeout");
-        m_mapPrefID.put(ID.Tracker_timeout_auto_remove_after_expo, "string_tracker_auto_remove_after_expo_bump_timeout");
-        m_mapPrefID.put(ID.Tracker_timeout_alert_not_bump,"string_tracker_alert_not_bump_timeout");
-        m_mapPrefID.put(ID.Tracker_alert_font,"fontface_tracker_alert_font");
-        m_mapPrefID.put(ID.Tracker_enable_auto_bump,"bool_tracker_enable_auto_bump");
+     //kpp1-406
+//        m_mapPrefID.put(ID.Tracker_title,"string_tracker_title");
+//        m_mapPrefID.put(ID.Tracker_use_userinfo,"bool_tracker_number_from_userinfo");
+//        m_mapPrefID.put(ID.Tracker_holder_map,"string_tracker_holder_map");
+//
+//        m_mapPrefID.put(ID.Tracker_viewer_bg,"int_tracker_view_bg");
+//        m_mapPrefID.put(ID.Tracker_viewer_cols,"string_tracker_cols");
+//        m_mapPrefID.put(ID.Tracker_cell_height,"string_tracker_cell_height");
+//        m_mapPrefID.put(ID.Tracker_auto_switch_duration,"string_tracker_auto_switch_duration");
+//        m_mapPrefID.put(ID.Tracker_order_name_font,"fontface_tracker_order_name_font");
+//        m_mapPrefID.put(ID.Tracker_table_name_font,"fontface_tracker_table_name_font");
+//        m_mapPrefID.put(ID.Tracker_more_orders_message,"string_tracker_more_orders_message");
+//
+//        m_mapPrefID.put(ID.Tracker_show_timer,"bool_tracker_show_order_timer");
+//        m_mapPrefID.put(ID.Tracker_order_timer_font,"fontface_tracker_order_timer_font");
+//
+//        m_mapPrefID.put(ID.Tracker_authen,"string_"+TRACKER_AUTHEN_KEY);
+//        m_mapPrefID.put(ID.Tracker_auto_assign_timeout, "string_tracker_auto_assign_timeout");
+//        m_mapPrefID.put(ID.Tracker_timeout_auto_remove_after_expo, "string_tracker_auto_remove_after_expo_bump_timeout");
+//        m_mapPrefID.put(ID.Tracker_timeout_alert_not_bump,"string_tracker_alert_not_bump_timeout");
+//        m_mapPrefID.put(ID.Tracker_alert_font,"fontface_tracker_alert_font");
+//        m_mapPrefID.put(ID.Tracker_enable_auto_bump,"bool_tracker_enable_auto_bump");
 
 
         m_mapPrefID.put(ID.Pager_enabled,"bool_pager_enabled");
@@ -1181,7 +1190,7 @@ public class KDSSettings extends SettingsBase {
         m_mapPrefID.put(ID.AdvSum_always_visible,"bool_"+PreferenceFragmentAdvSum.ADVSUM_KEY_SUM_ALWAYS);
         m_mapPrefID.put(ID.AdvSum_items,"string_"+PreferenceFragmentAdvSum.ADVSUM_KEY_ITEMS);
 
-        m_mapPrefID.put(ID.Sum_bgfg,"string_sum_bgfg");
+        //m_mapPrefID.put(ID.Sum_bgfg,"string_sum_bgfg");
         m_mapPrefID.put(ID.AdvSum_rows,"string_advsum_rows");
         m_mapPrefID.put(ID.AdvSum_cols,"string_advsum_cols");
 
@@ -1326,10 +1335,22 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.cleaning_snooze_time,"string_cleaning_snooze_time","5");
         init_option(ID.cleaning_startup_alert,"bool_cleaning_startup_alert",true);
 
-       init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
-       init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
-       init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
+        init_option(ID.Bumpbar_Clean,"string_bumpbar_func_clean",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_A, false, false, false));
+        init_option(ID.Bumpbar_Snooze,"string_bumpbar_func_snooze",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_5, false, false, false));
+        init_option(ID.Bumpbar_Dismiss,"string_bumpbar_func_dismiss",KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_9, false, false, false));
+        //kpp1-293
+        init_option(ID.Screen_logo_enabled,"bool_kds_general_enable_bg_logo",false);
+        init_option(ID.Screen_logo_file,"string_kds_general_bg_logo","");
 
+        //kpp1-377
+        init_option(ID.Hide_station_title,"bool_hide_station_title",false);
+       //kp1-391
+        init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
+
+        //kpp1-386
+        init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
+        //kpp1-420
+        init_option(ID.Category_group_font,"fontface_category_group_font",new KDSViewFontFace(getResColor(R.color.item_bg), getResColor(R.color.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_MIDDLE));
 
     }
 
@@ -1554,7 +1575,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.Hide_navigation_bar, false);
         set(ID.Settings_password_enabled, false);
         set(ID.Settings_password, "");
-        set(ID.Message_item_above, false);
+        //set(ID.Message_item_above, false);//kpp1-402
         set(ID.Message_order_bottom, false);
         set(ID.POS_notification_enabled, false);//2.0.22, default should been true. 20190312, change default to false, as this create too many files in router.
 
@@ -1632,28 +1653,29 @@ public class KDSSettings extends SettingsBase {
 
         //set(ID.Tracker_enabled,false);
 //        set(ID.Tracker_IP,"");
-        set(ID.Tracker_title,getResString(R.string.tracker_default_title));
-        set(ID.Tracker_use_userinfo,false);
-        set(ID.Tracker_holder_map,"");
-        set(ID.Tracker_viewer_bg,getResColor( R.color.tracker_view_bg));
-        set(ID.Tracker_viewer_cols,"3");
-        set(ID.Tracker_cell_height,"80");
-        set(ID.Tracker_auto_switch_duration,"5");
-        set(ID.Tracker_order_name_font, new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-        set(ID.Tracker_table_name_font,new KDSViewFontFace( getResColor(R.color.tracker_table_name_bg),getResColor( R.color.tracker_table_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-        set(ID.Tracker_more_orders_message,getResString(R.string.more_orders));
-
-        set(ID.Tracker_show_timer,true);
-        set(ID.Tracker_order_timer_font,new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-
-        set(ID.Tracker_authen,"");
-        set(ID.Tracker_auto_assign_timeout, "30");
-        set(ID.Tracker_timeout_auto_remove_after_expo, "1");
-        set(ID.Tracker_timeout_alert_not_bump,"30");
-
-        set(ID.Tracker_alert_font,new KDSViewFontFace( getResColor(R.color.tracker_alert_bg),getResColor( R.color.tracker_alert_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-
-        set(ID.Tracker_enable_auto_bump,true);
+     //kpp1-406
+//        set(ID.Tracker_title,getResString(R.string.tracker_default_title));
+//        set(ID.Tracker_use_userinfo,false);
+//        set(ID.Tracker_holder_map,"");
+//        set(ID.Tracker_viewer_bg,getResColor( R.color.tracker_view_bg));
+//        set(ID.Tracker_viewer_cols,"3");
+//        set(ID.Tracker_cell_height,"80");
+//        set(ID.Tracker_auto_switch_duration,"5");
+//        set(ID.Tracker_order_name_font, new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//        set(ID.Tracker_table_name_font,new KDSViewFontFace( getResColor(R.color.tracker_table_name_bg),getResColor( R.color.tracker_table_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//        set(ID.Tracker_more_orders_message,getResString(R.string.more_orders));
+//
+//        set(ID.Tracker_show_timer,true);
+//        set(ID.Tracker_order_timer_font,new KDSViewFontFace( getResColor(R.color.tracker_order_name_bg),getResColor( R.color.tracker_order_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//
+//        set(ID.Tracker_authen,"");
+//        set(ID.Tracker_auto_assign_timeout, "30");
+//        set(ID.Tracker_timeout_auto_remove_after_expo, "1");
+//        set(ID.Tracker_timeout_alert_not_bump,"30");
+//
+//        set(ID.Tracker_alert_font,new KDSViewFontFace( getResColor(R.color.tracker_alert_bg),getResColor( R.color.tracker_alert_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+//
+//        set(ID.Tracker_enable_auto_bump,true);
 
         set(ID.Pager_enabled,false);
         set(ID.Pager_use_userinfo,false);
@@ -1701,7 +1723,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.LineItems_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
         set(ID.LineItems_caption_text,getResString(R.string.line_items_display));
         set(ID.LineItems_caption_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
-        set(ID.LineItems_cols,"25,25,25,25");
+        set(ID.LineItems_cols,KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");
 
         set(ID.LineItems_col0_text,getResString(R.string.str_id));
         //set(ID.LineItems_col0_size,10);
@@ -1731,7 +1753,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.AdvSum_always_visible,false);
         set(ID.AdvSum_items,"");
 
-        set(ID.Sum_bgfg,  "-5724506,-16777216");
+        //set(ID.Sum_bgfg,  "-5724506,-16777216");
         set(ID.AdvSum_rows,"4");
         set(ID.AdvSum_cols,"4");
 
@@ -2894,5 +2916,13 @@ public class KDSSettings extends SettingsBase {
        return true;
    }
 
+ /**
+  * kpp1-299-1
+  */
+ public void clearRelationshipData()
+   {
+     SettingsBase.saveStationsRelation(KDSApplication.getContext(), "");
+
+   }
 
 }

@@ -463,7 +463,7 @@ public class TableTracker extends Handler implements HttpBase.HttpEvent {
     /**
      * see return code: https://table-tracker.readme.io/docs/api-code-glossary
      * @param httpBase
-     * @param request
+     * @param r
      */
     public void onHttpResponse(HttpBase httpBase, HttpBase.HttpRequestBase r)
     {
@@ -625,7 +625,7 @@ public class TableTracker extends Handler implements HttpBase.HttpEvent {
             else
             {
                 if (m_webSocket.isOpen()) return true;
-                if (m_webSocket.isConnecting()) return true;
+                //if (m_webSocket.isConnecting()) return true;
                 if (m_webSocket.isClosing()) return false;
 
                 m_webSocket.close();

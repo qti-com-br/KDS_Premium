@@ -1938,8 +1938,8 @@ public class PreferenceFragmentStations
                     m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Workload.ordinal()), SettingsBase.StationFunc.Workload));
                     m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Duplicate.ordinal()), SettingsBase.StationFunc.Duplicate));
 
-
-                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.TableTracker.ordinal()), SettingsBase.StationFunc.TableTracker));
+                    //kpp1-406, remove tracker
+                    //m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.TableTracker.ordinal()), SettingsBase.StationFunc.TableTracker));
                     m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Queue_Expo.ordinal()), SettingsBase.StationFunc.Queue_Expo));
                 }
                 list = m_stationFuncSpinnerListHaveExpo;
@@ -1957,7 +1957,8 @@ public class PreferenceFragmentStations
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Workload.ordinal()), SettingsBase.StationFunc.Workload));
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Duplicate.ordinal()), SettingsBase.StationFunc.Duplicate));
 
-                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.TableTracker.ordinal()), SettingsBase.StationFunc.TableTracker));
+                    //kpp1-406, remove tracker
+                    //m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.TableTracker.ordinal()), SettingsBase.StationFunc.TableTracker));
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Queue_Expo.ordinal()), SettingsBase.StationFunc.Queue_Expo));
                 }
                 list = m_stationFuncSpinnerListNoExpo;

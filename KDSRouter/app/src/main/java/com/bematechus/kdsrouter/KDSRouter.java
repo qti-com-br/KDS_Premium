@@ -18,6 +18,7 @@ import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataModifier;
 import com.bematechus.kdslib.KDSDataOrder;
+import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
@@ -1089,6 +1090,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             msg.obj = station;
             m_announceHander.sendMessage(msg);
             //announce_restore_pulse(id, ip);
+
         }
 
     }
@@ -1331,9 +1333,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      */
     private void connectRestoredStation(String stationID, String ip)
     {
-
-        if (!m_stationsConnection.getRelations().isValidNormalStationID(stationID))
-            return;
+        //kpp1-387, don't check validation.
+        if (!m_stationsConnection.getRelations().isValidNormalStationID(stationID)) {
+            if (!m_stationsConnection.dataIsWaitingConnection(stationID)) //kpp1-387, just offline data valid, connect to station.
+                return;
+        }
         KDSStationConnection conn = m_stationsConnection.findConnectionByID(stationID);
 
         if (conn != null) {//2.0.8
@@ -1499,7 +1503,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             doSmbError(xmlData);
         }
         else {
-            doOrderXmlInThread(smb,smbFileName, xmlData);//
+            doOrderXmlInThread(smb,smbFileName, xmlData, null);//
         }
 
     }
@@ -1547,7 +1551,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             case Unknown:
                 return;
             case Order:
-                doOrderXmlInThread(sock, "",xmlData);
+                doOrderXmlInThread(sock, "",xmlData, null);
                 break;
 
             case Command:
@@ -2626,6 +2630,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         for (int i=0; i< ncount; i++)
         {
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
+            //kpp1-426, double qty issue.
+            if (stationRelation.getFunction() == SettingsBase.StationFunc.Backup)
+                continue;
             //write to the expo stations too!!!! 20160222
             //Just let expo receive item through the <kdsstation> tag
             //if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor)
@@ -2652,7 +2659,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * @param xmlData
      * @param toStations
      */
-    public void writeToAllStations(String xmlData, ArrayList<String> toStations)
+    public void writeToAllStations2(String xmlData, ArrayList<String> toStations)
     {
         int ncount = m_stationsConnection.getRelations().getRelationsSettings().size();
 
@@ -2699,6 +2706,42 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         {
             KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
         }
+    }
+
+    /**
+     * kpp1-387, write data even if the station is not existed.
+     *              If relationship is not set, and station is offline, router still need to backup its orders.
+     * @param xmlData
+     * @param toStations
+     */
+    public void writeToAllStations(String xmlData, ArrayList<String> toStations)
+    {
+        int ncount = toStations.size();// m_stationsConnection.getRelations().getRelationsSettings().size();
+
+        for (int i=0; i< ncount; i++)
+        {
+            String stationID = toStations.get(i);//stationRelation.getID();
+            KDSStationIP station  = null;
+            station = m_stationsConnection.getRelations().findStationInRelationshipByID(stationID);
+            if (station == null)
+            {
+                station = m_stationsConnection.findActivedStationByID(stationID);
+            }
+            if (station == null)
+            {
+                //kpp1-387
+                //save it. Station is not existed in table, and it is not online.
+                // Just save its data, maybe this station will come back soon.
+                m_stationsConnection.writeGhostStionDataToBuffer(stationID, xmlData, MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
+            }
+            else {
+                station.setPort(getSettings().getString(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort));
+                KDSLog.d(TAG, "Write to KDSStation #" + station.getID() + ",ip=" + station.getIP() + ", port=" + station.getPort() + ",length=" + xmlData.length());
+                m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData, MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
+
+            }
+        }
+
     }
 
     /**
@@ -3049,7 +3092,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             KDSDataItem item = order.getItems().getItem(i);
             if (item.getItemType() == KDSDataItem.ITEM_TYPE.Exp)
                 continue;
-            if (item.getItemDelay() > 0)
+            //if (item.getItemDelay() > 0)//KPP1-410, bug here.
+            if (item.getCategoryDelay() > 0)//KPP1-410, xml data in high priority.
                 continue;
 
             float categoryDelay = this.getRouterDB().categoryGetDelay(item.getCategory());
@@ -3552,15 +3596,21 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     Object m_lockerForOrdersThread = new Object();
     ArrayList<DoOrdersXmlThreadBuffer> m_xmlDataBuffer = new ArrayList<>();
 
-    public void doOrderXmlInThread(final Object objSource, final String originalFileName, final String xmlData)
+    /**
+     *
+     * @param objSource
+     * @param originalFileName
+     * @param xmlData
+     * @param ordersFromFCM
+     */
+    public void doOrderXmlInThread(final Object objSource, final String originalFileName, final String xmlData, final KDSDataOrders ordersFromFCM)
     {
-
-
-
         DoOrdersXmlThreadBuffer data = new DoOrdersXmlThreadBuffer();
         data.m_objSource = objSource;
         data.m_originalFileName = originalFileName;
         data.m_xmlData = xmlData;
+        data.m_fcmOrders = ordersFromFCM;
+
         synchronized (m_lockerForOrdersThread) {
             m_xmlDataBuffer.add(data);
         }
@@ -3591,8 +3641,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                                         arDone.add(data);
                                         //m_xmlDataBuffer.remove(0);
                                     }
-
-                                    doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                    if (data.m_fcmOrders != null)
+                                        doReceivedFCMOrders(data.m_fcmOrders);
+                                    else
+                                        doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
                                     data.clear();
                                     Thread.sleep(200);
                                 } catch (Exception e) {
@@ -3679,11 +3731,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         Object m_objSource = null;
         String m_originalFileName = "";
         String m_xmlData = "";
+        KDSDataOrders m_fcmOrders = null;
         public void clear()
         {
             m_objSource = null;
             m_originalFileName = "";
             m_xmlData = "";
+            m_fcmOrders = null;
         }
     }
 
@@ -3850,6 +3904,47 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     private void fireTcpListenServerErrorEvent(int nListenPort, String errorMessage)
     {
         fireTcpListenServerErrorEvent(m_arKdsEventsReceiver,nListenPort,  errorMessage);
+
+    }
+
+    /**
+     *
+     * @param orders
+     */
+    public void onFCMReceivedOrders(KDSDataOrders orders)
+    {
+        doOrderXmlInThread(null, "", "", orders);
+
+//        for (int i=0; i< orders.getCount(); i++)
+//        {
+//            doReceivedFCMOrder(orders.get(i));
+//        }
+    }
+
+    public void doReceivedFCMOrders( KDSDataOrders orders)
+    {
+        for (int i=0; i< orders.getCount(); i++)
+        {
+            doReceivedFCMOrder(orders.get(i));
+        }
+    }
+    /**
+     *
+     * @param order
+     */
+    public void doReceivedFCMOrder( KDSDataOrder order)
+    {
+        KDSLogOrderFile.i(TAG,KDSLogOrderFile.formatOrderLog(order.getOrderName()));
+
+        order.setPCKDSNumber(m_strStationID);
+        KDSLog.d(TAG, "Receive order $" + order.getOrderName());
+        String xmlData = order.createXml();
+        doOrderFilter(order, xmlData, "");
+        String msg = "";//Get order #" + order.getOrderName();
+        msg = m_context.getString(R.string.get_fcm_order);//getContext().getString(R.string.get_order);
+        msg = msg.replace("#", order.getOrderName());
+
+        showMessage(msg);
 
     }
 }

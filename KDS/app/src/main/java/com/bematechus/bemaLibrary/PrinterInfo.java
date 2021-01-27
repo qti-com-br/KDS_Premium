@@ -11,7 +11,7 @@ public class PrinterInfo {
         USB, TCPIP, SERIAL, NONE;
     }
     public enum PrinterModel {
-        LR2000, LR2000E, LR1000, MP200, NONE
+        LR2000, LR2000E, LR1000, MP200, TML90, NONE
     }
 
     private PrinterType printerType = PrinterType.NONE;

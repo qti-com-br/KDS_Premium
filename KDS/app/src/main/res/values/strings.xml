@@ -291,7 +291,7 @@
 
     <string name="pref_kds_panels_font">Panel properties</string>
     <string name="pref_kds_panels_bg">Panel background color</string>
-    <string name="pref_kds_panels_row_height">Text line height</string>
+    <string name="pref_kds_panels_row_height">Space between items</string>
     <string name="pref_kds_panels_viewer_bg">Screen background color</string>
     <string name="pref_kds_panels_title_mode">Panel mode</string>
     <string-array name="pref_kds_panels_mode_titles">
@@ -339,7 +339,7 @@
         <item>POS station</item>
         <item>Order type</item>
         <item>Destination</item>
-        <item>Custom Message</item>
+        <item>User information</item>
         <item>Order status</item>
         <item>Order icon</item>
 
@@ -487,6 +487,7 @@
     <string-array name="pref_kds_sum_type_titles">
         <item>Item without condiments</item>
         <item>Items with condiments</item>
+        <item>Only condiments</item>
     </string-array>
 
     <string name="pref_kds_sum_position">Summary position</string>
@@ -1174,8 +1175,12 @@
 	<string name="void_qty_line_color_enabled">Void quantity line color enabled</string>
 	<string name="void_qty_line_color">Void qty line color</string>
 	<string name="void_item_qty_mark_with">Void item quantity mark with</string>
+    <string name="powered_by">POWERED BY</string>
+	<string name="enable_bg_logo">Enable background logo</string>
+	<string name="bg_logo_file">Background logo file</string>
+    <string name="hide_title">Hide title</string>
 
-	<string-array name="pref_queue_auto_bump_timeout_titles">
+    <string-array name="pref_queue_auto_bump_timeout_titles">
         <item>Disabled</item>
         <item>1</item>
         <item>2</item>
@@ -1252,4 +1257,9 @@
         <item>15 minutes</item>
     </string-array>
 
+    <string name="sum_font">Summary font</string>
+
+    <string name="any_time">Any time</string>
+    <string name="clear_db_schedule">Clear database schedule</string>
+    <string name="category_font">Category font</string>
 </resources>

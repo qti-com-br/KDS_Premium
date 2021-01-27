@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.SettingsBase;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -361,10 +362,13 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
     {
         m_arTopSumData.clear();
         KDS kds = KDSGlobalVariables.getKDS();
+        //kpp1-391
+        //String bgfg = kds.getSettings().getString(KDSSettings.ID.Sum_bgfg);
+        //KDSBGFG bf = KDSBGFG.parseString(bgfg);
+        //m_viewTopSum.setBackgroundColor(bf.getBG());
+        KDSViewFontFace ff = kds.getSettings().getKDSViewFontFace(KDSSettings.ID.Sum_font);
+        m_viewTopSum.setBackgroundColor(ff.getBG());
 
-        String bgfg = kds.getSettings().getString(KDSSettings.ID.Sum_bgfg);
-        KDSBGFG bf = KDSBGFG.parseString(bgfg);
-        m_viewTopSum.setBackgroundColor(bf.getBG());
         boolean advSumEnabled = kds.getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled);
         if (advSumEnabled) {
             int nRows = kds.getSettings().getInt(KDSSettings.ID.AdvSum_rows);
@@ -397,9 +401,9 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
             Map<String,Object> item = new HashMap<String,Object>();
             if (bSmartEnabled && advSumEnabled)
             //if (advSumEnabled)
-                item.put("qty", arSumItems.get(i).getAdvSumQtyString());
+                item.put("qty", "x"+arSumItems.get(i).getAdvSumQtyString()); //kpp1-415, add x
             else
-                item.put("qty", arSumItems.get(i).getQtyString());
+                item.put("qty", "x"+ arSumItems.get(i).getQtyString());//kpp1-415, add x
             item.put("name", arSumItems.get(i).getDescription(true));
             m_arTopSumData.add(item);
         }
@@ -609,11 +613,21 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
 
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = super.getView(position, convertView, parent);
-            String bgfg = KDSGlobalVariables.getKDS().getSettings().getString(KDSSettings.ID.Sum_bgfg);
-            KDSBGFG bf = KDSBGFG.parseString(bgfg);
+            //kpp1-391
+            //String bgfg = KDSGlobalVariables.getKDS().getSettings().getString(KDSSettings.ID.Sum_bgfg);
+            //KDSBGFG bf = KDSBGFG.parseString(bgfg);
+            KDSViewFontFace bf = KDSGlobalVariables.getKDS().getSettings().getKDSViewFontFace(KDSSettings.ID.Sum_font);
             //m_viewTopSum.setBackgroundColor(bf.getBG());
-            ((TextView)v.findViewById(R.id.text1)).setTextColor(bf.getFG());
-            ((TextView)v.findViewById(R.id.text2)).setTextColor(bf.getFG());
+            TextView t = ((TextView)v.findViewById(R.id.text1));
+            t.setTextColor(bf.getFG());
+            t.setTypeface(bf.getTypeFace());
+            t.setTextSize(bf.getFontSize());
+
+            t = ((TextView)v.findViewById(R.id.text2));
+            t.setTextColor(bf.getFG());
+            t.setTypeface(bf.getTypeFace());
+            t.setTextSize(bf.getFontSize());
+
             ((TextView)v.findViewById(R.id.txtSeparator)).setTextColor(bf.getFG());
             ((LinearLayout)v.findViewById(R.id.linearItem)).setGravity(Gravity.NO_GRAVITY);
 
