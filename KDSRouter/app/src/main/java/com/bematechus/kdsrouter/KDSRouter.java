@@ -1186,6 +1186,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     }
 
     /**
+     * rev.:
+     *  kpp1-363, router send a id to premium. That will tell station router is existed.
      * tcp client connect to server
      * @param sock
      */
@@ -1193,6 +1195,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     {
 
         //if (m_eventReceiver != null) {
+        //kpp1-363
+        if (sock instanceof KDSSocketTCPSideClient)
+        {
+            KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
+            c.writeXmlTextCommand(buildAppSockIDCommandXml());
+        }
+        //
         String ip = getSocketIP(sock);
         KDSStationConnection conn = getSocketConnection(sock);
         //KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
@@ -3946,5 +3955,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
         showMessage(msg);
 
+    }
+
+    private String buildAppSockIDCommandXml()
+    {
+        return KDSConst.APP_ID_START + KDSConst.ROUTER_SOCKET_ID + KDSConst.APP_ID_END;
     }
 }

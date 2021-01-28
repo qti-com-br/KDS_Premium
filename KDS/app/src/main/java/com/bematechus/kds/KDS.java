@@ -1763,6 +1763,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         {
             case Unknown:
                 return;
+                //kpp1-363
+            case App_Sock_ID:
+            {
+                setAppSocketID(sock, xmlData);
+            }
+            break;
             case Order:
                 //doOrderXml(sock, xmlData);
                 doOrderXmlInThread(MESSAGE_TO_MAIN.Order, sock, xmlData, "",false); //2.0.34
@@ -2096,7 +2102,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             //update the hidden option accroding to my station ID.
             order.setItemHiddenOptionAfterGetNewOrder(getStationID());
 
-            nAcceptItemsCount = doOrderFilter(order, xmlData, bForceAcceptThisOrder,false, bRefreshView);
+            nAcceptItemsCount = doOrderFilter(objSource, order, xmlData, bForceAcceptThisOrder,false, bRefreshView);
             if (bRefreshView)
                 schedule_process_update_after_receive_new_order();
         }
@@ -2586,7 +2592,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      *   The tag limitation only works in remote folder now, please also apply this change to TCP/IP orders.
      *   Notice: I don't agree this change.
      *
+     * kpp1-363, add Object objSource, parameter
+     *
+     * ----------------
      *   return accept items count
+     * @param objSource
+     *      if null: order from remote folder.
+     *      It maybe KDSSocketInterface and KDSSMBDataSource
      * @param order
      * @param xmlData
      * @param bForceAcceptThisOrderNoStationIDItems
@@ -2595,7 +2607,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      * @param bRefreshView
      * @return
      */
-    public int  doOrderFilter(KDSDataOrder order,String xmlData, boolean bForceAcceptThisOrderNoStationIDItems, boolean bForceDeliverToExpo,boolean bRefreshView)
+    public int  doOrderFilter(Object objSource,KDSDataOrder order,String xmlData, boolean bForceAcceptThisOrderNoStationIDItems, boolean bForceDeliverToExpo,boolean bRefreshView)
     {
 
 
@@ -2625,7 +2637,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             //TimeDog td = new TimeDog();
             String manipulatedXmlData = manipulateOrderXml(xmlData, removedItems);
 
-            filterInNormalStation(order,manipulatedXmlData, arTargetStations,bForceDeliverToExpo, bRefreshView);
+            filterInNormalStation(objSource, order,manipulatedXmlData, arTargetStations,bForceDeliverToExpo, bRefreshView);
             //td.debug_print_Duration("filterInNormalStation=");
 
         }
@@ -2646,7 +2658,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 if (writeOrderToWorkLoad(schOrder))
                     continue;
             }
-            filterInNormalStation(schOrder, "", null, false,true);
+            filterInNormalStation(null, schOrder, "", null, false,true);
 
         }
 
@@ -2939,6 +2951,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     /**
      *
+     * rev.:
+     *  kpp1-363. Missing Orders on Expo.
+     *          I doubt order was send to expo while send order to prep by tcp/ip directly.
+     *          So, add datasourceobj parameter. If it is null, this order is from remote folder.
+     *               If it is not null, it is from tcp/ip, then auto send order to expo.
+     * -----------------------
+     * @param objSource
+     *       null,KDSSocketInterface or KDSSMBDataSource
+     *       Use it to identify order source.
      * @param order
      * @param arOriginalTargetStations
      *  For sms feature, just send one sms when order goes to multiple stations.(No expo existed).
@@ -2946,7 +2967,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      * @return
      *  items count
      */
-    public int filterInNormalStation(KDSDataOrder order,String xmlData, ArrayList<KDSToStation> arOriginalTargetStations,boolean bForceDeliverToExpo, boolean bRefreshView)
+    public int filterInNormalStation(Object objSource, KDSDataOrder order,String xmlData, ArrayList<KDSToStation> arOriginalTargetStations,boolean bForceDeliverToExpo, boolean bRefreshView)
     {
         int nItemsCount = 0;
         if (order != null)
@@ -2980,6 +3001,16 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 boolean bDeliverToExpo = getSettings().getBoolean(KDSSettings.ID.Deliver_new_order_to_slave_expo);
                 if (bForceDeliverToExpo)
                     bDeliverToExpo = true; //for test button
+                //kpp1-363,
+                if (!bDeliverToExpo) {
+                    if (objSource != null) {
+                        if (objSource instanceof KDSSocketTCPSideBase) {
+                            if (!((KDSSocketTCPSideBase) objSource).getAppSocketID().equals(KDSConst.ROUTER_SOCKET_ID))
+                                bDeliverToExpo = true; //force order go to expo.
+                        }
+                    }
+                }
+                ///
                 ArrayList<KDSDataOrder> ordersAdded = m_users.users_orderAdd(order, xmlData,true, bDeliverToExpo, bRefreshView);//////
                 //kpp1-310 Rush orders creating previous page
                 checkRushOrderReceivedThenChangeFirstShowingOrder(ordersAdded);
@@ -5424,5 +5455,21 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), strXml);
 
         return order;
+    }
+
+
+    /**
+     * kpp1-363, just for router app.
+     */
+    private void setAppSocketID(KDSSocketInterface sock,String xmlData)
+    {
+        if (sock instanceof KDSSocketTCPSideBase)
+        {
+            KDSSocketTCPSideBase s =  (KDSSocketTCPSideBase)sock;
+            String str = xmlData;
+            str =  str.replace(KDSConst.APP_ID_START, "");
+            str =  str.replace(KDSConst.APP_ID_END, "");
+            s.setAppSocketID(str);
+        }
     }
 }
