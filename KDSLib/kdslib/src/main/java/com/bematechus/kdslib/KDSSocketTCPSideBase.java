@@ -39,6 +39,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
 
     protected Object m_attachedObj = null; //in multiple transfering, we need this to identify each stations.
 
+    protected String m_appSocketID = ""; //if it is from router. kpp1-363
+
     public KDSSocketTCPSideBase()
     {
       m_writeBuffer.clear();
@@ -281,7 +283,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
 
     }
 
-    protected  boolean write(String strText)
+    public   boolean write(String strText)
     {
 
 
@@ -638,6 +640,24 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     public boolean interface_WriteBufferIsFull()
     {
         return isBufferTooManyWritingData(MAX_WRITE_BUFFER_SIZE);
+    }
+
+    /**
+     * kpp1-363
+     * @param id
+     */
+    public void setAppSocketID(String id)
+    {
+        m_appSocketID = id;
+    }
+
+    /**
+     * kpp1-363
+     * @return
+     */
+    public String getAppSocketID()
+    {
+        return m_appSocketID;
     }
 
 }
