@@ -2056,7 +2056,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     onBumpOrder(userID);
             } else {
                 if (checkExpoCanBumpItem(userID, orderGuid, itemGuid))
-                onBumpItem(userID);
+                    onBumpItem(userID);
             }
         }
         getKDS().schedule_process_update_to_be_prepare_qty(true);

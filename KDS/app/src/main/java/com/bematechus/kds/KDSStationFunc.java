@@ -2308,6 +2308,15 @@ public class KDSStationFunc {
                 kds.getStationsConnections().writeToTT(kds.getStationID(), strXml);
             }
         }
+
+        //kpp1-449
+        if (kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID()).size() >0)
+        {
+            if (strXml.isEmpty())
+                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+            kds.getStationsConnections().writeToPrimaryOfExpo(kds.getStationID(), strXml);
+        }
+
         //if the backup station find its primary is offline, send data to primary's mirror.
         if (kds.getStationsConnections().isBackupOfOthers())
         {
