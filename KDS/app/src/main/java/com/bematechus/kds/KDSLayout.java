@@ -1258,6 +1258,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 dressedOrder.prepOrderHideShowing();
             }
 
+            //kp1-25
+            if (this.getEnv().getSettings().getStationFunc() == SettingsBase.StationFunc.Runner) {
+                if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Runner_hide_finished_category)) {
+                    dressedOrder.smartRunnerHideFinishedCategory();
+                }
+            }
+
         }
 
         if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Item_Consolidate))

@@ -971,7 +971,8 @@ public class KDSView extends View {
         //get the background color according to the time.
         int nBG = env.getSettings().getOrderTimeColorAccordingWaitingTime(order.getStartToCookTime(), font.getBG());
         //exp alert
-        if (env.getSettings().isExpeditorStation())
+        if (env.getSettings().isExpeditorStation() ||
+                env.getSettings().isRunnerStation())
         { //the exp aler color
             if (env.getSettings().getBoolean(KDSSettings.ID.Exp_Alert_Enabled)) { //20190723, there is bug here, I add this "if" condition.
                 if (order.isItemsAllBumpedInExp()) {

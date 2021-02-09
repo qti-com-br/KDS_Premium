@@ -70,7 +70,8 @@ public class KDSMyStationRelations {
     {
         for (int i=0; i< m_arStationsRelations.size(); i++)
         {
-            if (m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Expeditor)
+            if (m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Runner )
                 return true;
         }
         return false;
@@ -171,7 +172,8 @@ public class KDSMyStationRelations {
         ArrayList<String> ar = new ArrayList<>();
         for (int i=0; i< m_arStationsRelations.size(); i++)
         {
-            if (m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Expeditor)
+            if (m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
+                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Runner)
                 ar.add(m_arStationsRelations.get(i).getID());
         }
         return ar;
@@ -343,6 +345,7 @@ public class KDSMyStationRelations {
             case Expeditor:
 
             case Queue:
+            case Runner:
                 break;
             case Mirror:
             case Backup:
@@ -365,6 +368,7 @@ public class KDSMyStationRelations {
             case Prep:
             case Expeditor:
             case Queue:
+            case Runner:
                 return myStationFunction;
 
             case Mirror:
@@ -508,7 +512,8 @@ public class KDSMyStationRelations {
             return false;
         return (station.getFunction() == SettingsBase.StationFunc.Queue ||
                 station.getFunction() == SettingsBase.StationFunc.Queue_Expo ||
-                station.getFunction() == SettingsBase.StationFunc.Expeditor);
+                station.getFunction() == SettingsBase.StationFunc.Expeditor ||
+                station.getFunction() == SettingsBase.StationFunc.Runner );
     }
 
     public void removeDuplicatedStations(ArrayList<KDSStationIP> ar)
@@ -632,5 +637,23 @@ public class KDSMyStationRelations {
                 return m_arStationsRelations.get(i);
         }
         return null;
+    }
+
+    /**
+     * kp1-25
+     * @param stationID
+     * @return
+     */
+    public boolean isRunnerAsMyExpo(String stationID)
+    {
+        ArrayList<KDSStationIP> ar = getExpStations();
+        for (int i=0; i< ar.size(); i++)
+        {
+            KDSStationIP station = ar.get(i);
+            SettingsBase.StationFunc func = getStationFunction(station.getID(), "");
+            if (func == SettingsBase.StationFunc.Runner)
+                return true;
+        }
+        return false;
     }
 }

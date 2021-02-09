@@ -3,6 +3,7 @@ package com.bematechus.kds;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
+import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.PrepSorts;
 
 import java.util.ArrayList;
@@ -213,11 +214,37 @@ public class KDSUser {
 
         KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return;
+//        String lastCategory = "";
+//        if (getKDS().isRunnerStation())
+//        {
+//            PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+//            lastCategory = prepItem.Category;
+//        }
         PrepSorts.PrepItem maxItem = PrepSorts.prep_other_station_item_bumped(order, itemName);
         if (maxItem != null) {
             getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
         }
         getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
+
+        //kp1-25, notify runner's child, a new category started.
+        if (getKDS().isRunnerStation()) //I am a Runner
+        {
+            String categoryDescription = maxItem.Category;
+            if (!order.prep_get_sorts().smartCategoryIsShowing(categoryDescription))
+            {
+                String lastCategory = order.prep_get_sorts().smartCategoryLastShowing();
+                if (lastCategory.isEmpty() ||
+                        (order.smartCategoryItemsLocalFinished(lastCategory) &&
+                                order.smartCategoryItemsRemoteFinished(lastCategory)
+                        ))
+                {
+                    order.prep_get_sorts().getSmartShowingCategory().add(categoryDescription);
+                    getCurrentDB().smartCategoryAddShowingCategory(order.getGUID(), categoryDescription);
+                    KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(), KDSXMLParserCommand.KDSCommand.Runner_show_category, order, null, categoryDescription);
+                }
+            }
+        }
+
 
 //        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
 //        if (prepItem == null) return;

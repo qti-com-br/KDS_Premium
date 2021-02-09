@@ -85,6 +85,7 @@ public class KDSStationsRelation extends KDSStationIP {
             case Prep:
                 break;
             case Expeditor:
+            case Runner:
                 setExpStations("");
                 break;
             case Queue:

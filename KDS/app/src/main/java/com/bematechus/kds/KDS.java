@@ -56,6 +56,7 @@ import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
+import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.StationAnnounceEvents;
@@ -400,6 +401,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         m_printer.updateSettings(settings);
 
+        //kp1-25
+        PrepSorts.m_bSmartCategoryEnabled = false;
+        if (isRunnerStation())
+            PrepSorts.m_bSmartCategoryEnabled = true;
+        else
+        {
+            if (getStationsConnections().getRelations().isRunnerAsMyExpo(getStationID()))
+            {
+                PrepSorts.m_bSmartCategoryEnabled = true;
+            }
+        }
+
+
     }
     public void updateStationFunction()
     {
@@ -467,7 +481,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     {
 
         if (getSettings().getBoolean(KDSSettings.ID.Pager_enabled)) {
-            if (this.isExpeditorStation() || isQueueExpo() || isQueueExpoView())
+            if (this.isExpeditorStation() || isQueueExpo() || isQueueExpoView() ||
+                this.isRunnerStation())
                 getPagerManager().onTime();
         }
 
@@ -1157,7 +1172,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                         break; //just smart mode needs this.
                     String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
 
-                    onPreparationTimeModeItemBumpUnbumped(utf8, (command ==KDSSocketTCPCommandBuffer.UDP_ITEM_BUMPED) );
+                    onSmartOrderModeItemBumpUnbumped(utf8, (command ==KDSSocketTCPCommandBuffer.UDP_ITEM_BUMPED) );
                 }
                     break;
                 default: {
@@ -2081,7 +2096,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         }
 
         //for pager feature
-        if (isExpeditorStation() ||isQueueExpo() || isQueueExpoView())
+        if (isExpeditorStation() ||isQueueExpo() || isQueueExpoView() ||
+            isRunnerStation())
             changePagerIDByUserInfo(order);
 
         int nAcceptItemsCount = 0;
@@ -2103,8 +2119,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             order.setItemHiddenOptionAfterGetNewOrder(getStationID());
 
             nAcceptItemsCount = doOrderFilter(objSource, order, xmlData, bForceAcceptThisOrder,false, bRefreshView);
+            if (bSmartEnabled)
+                this.getCurrentDB().smart_category_init(order, order.prep_get_sorts());
             if (bRefreshView)
                 schedule_process_update_after_receive_new_order();
+
         }
         if (bRefreshView)
             refreshView();
@@ -2241,7 +2260,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 if (order != null)//kpp1-333
                 {
                     if (getStationFunction() == KDSSettings.StationFunc.Expeditor ||
-                        getStationFunction() == KDSSettings.StationFunc.Queue_Expo) {
+                        getStationFunction() == KDSSettings.StationFunc.Queue_Expo ||
+                            getStationFunction() == KDSSettings.StationFunc.Runner) {
                         if (getSettings().getBoolean(KDSSettings.ID.Printer_Enabled)) {
                             KDSPrinter.HowToPrintOrder howtoprint = KDSPrinter.HowToPrintOrder.values()[(getSettings().getInt(KDSSettings.ID.Printer_howtoprint))];
                             if (howtoprint == KDSPrinter.HowToPrintOrder.WhileReceive) {
@@ -2482,6 +2502,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, "");
             }
             break;
+            case Runner_show_category: //kp1-25
+            {
+                onRunnerChangedCategory(this, command, xmlData);
+            }
+            break;
 
 
         }
@@ -2502,7 +2527,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     public void checkLostFocusAfterSyncBumpOrderName( KDSXMLParserCommand command ,String strXmlCommand)
     {
 
-        if (isExpeditorStation()) return;//2.0.15
+        if (isExpeditorStation() ||
+            isRunnerStation()) return;//2.0.15
 
         String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
         //KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), strXml);
@@ -2764,7 +2790,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     private KDSDataOrder keepExpoItemsAccordingToStationsSetting(KDSDataOrder order, ArrayList<KDSDataItem> removedItems)
     {
 
-        if (!this.isExpeditorStation() && !this.isQueueExpo())
+        if (!this.isExpeditorStation() && !this.isQueueExpo() && !this.isRunnerStation())
             return order;
         //KKPP1-152
         if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||
@@ -2826,7 +2852,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //Queue expo supports certain stations
         //just keep the items which target station uses I as expo/expo-queue.
         //For KPP1-37, I add queue-expo filter at here.
-        if (this.isExpeditorStation() || this.isQueueExpo()) //2.1.15.3, KPP1-37
+        if (this.isExpeditorStation() || this.isQueueExpo() || this.isRunnerStation()) //2.1.15.3, KPP1-37
             keepExpoItemsAccordingToStationsSetting(order,removedItems);
 
 
@@ -2836,7 +2862,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         if (this.isExpeditorStation() ||
                // this.isQueueStation() ||
                 this.isTrackerStation() ||
-                this.isQueueExpo()) return order;
+                this.isQueueExpo() ||
+                this.isRunnerStation()) return order;
 
         //2.0.18
         // If it is expo queue, accept this order.
@@ -2857,7 +2884,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         {
             if (order.getItems().getItem(i).isExpitem())
             {
-                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) ) {
+                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) &&
+                        (!isRunnerStation())) {
                     removedItems.add(order.getItems().getItem(i));
                     order.getItems().removeComponent(i);
                 }
@@ -2875,7 +2903,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             //
             if (tostation == KDSToStations.PrimarySlaveStation.Unknown) {
                 //keep modify item. The expo station don't need these type items, as the stations will send items to it.
-                if ( (!this.isQueueExpo()) && (!this.isExpeditorStation())) {
+                if ( (!this.isQueueExpo()) && (!this.isExpeditorStation()) &&(!isRunnerStation())) {
                     if (order.getItems().getItem(i).getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
                             order.getItems().getItem(i).getTransType() == KDSDataOrder.TRANSTYPE_DELETE)
                         continue;
@@ -4217,7 +4245,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      * @param command
      *  format: orderName, itemName, itemName, ....
      */
-    public void onPreparationTimeModeItemBumpUnbumped(String command, boolean bBumped)
+    public void onSmartOrderModeItemBumpUnbumped(String command, boolean bBumped)
     {
         ArrayList<String> ar = KDSUtil.spliteString(command, ",");
         if (ar.size()<2)
@@ -4329,10 +4357,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 }
             }
         }
-        if (order.isSMSStateChanged(this.isExpeditorStation(), bOrderBumped))
+        if (order.isSMSStateChanged(this.isExpeditorStation() || this.isRunnerStation(), bOrderBumped))
         {
             if (m_activationHTTP != null) {
-                int nSMSState = order.getSMSCurrentState(this.isExpeditorStation(), bOrderBumped);
+                int nSMSState = order.getSMSCurrentState(this.isExpeditorStation()|| this.isRunnerStation(), bOrderBumped);
                 m_activationHTTP.postSMS( order, nSMSState);
 
                 showToastMessage("SMS:" + KDSDataOrder.getSMSStateString(nSMSState));
@@ -5034,7 +5062,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         Activation.ItemJobFromOperations opt = Activation.ItemJobFromOperations.Local_bump_item;
         if (!bBumped)
             opt = Activation.ItemJobFromOperations.Local_unbump_item;
-        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation(),bBumped,   opt);
+        m_activationHTTP.postItemBumpRequest(getStationID(), order, item , this.isExpeditorStation()||this.isRunnerStation(),bBumped,   opt);
         return true;
 
     }
@@ -5259,7 +5287,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     private void syncWebBackofficeExpoItemBumpsPreparationTime(String orderGuid, ArrayList<KDSDataItem> arChangedItems, Activation.ItemJobFromOperations fromOperations)
     {
         if (arChangedItems.size() <=0) return;
-        if (!this.isExpeditorStation()) return;
+        if (!this.isExpeditorStation() && (!this.isRunnerStation())) return;
 
 
         KDSDataOrder order = this.getUsers().getOrderByGUID(orderGuid);
@@ -5471,5 +5499,27 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             str =  str.replace(KDSConst.APP_ID_END, "");
             s.setAppSocketID(str);
         }
+    }
+    public boolean isRunnerStation()
+    {
+        return (getStationFunction() == KDSSettings.StationFunc.Runner);
+    }
+
+    /**
+     *
+     * @param kds
+     * @param command
+     * @param strOrinalData
+     */
+    public void onRunnerChangedCategory(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    {
+        String orderName = command.getParam("P0", "");
+        String category = command.getParam("P1", "");
+        KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        String guid = order.getGUID();
+        this.getCurrentDB().smartCategoryAddShowingCategory(guid, category);
+        order.prep_get_sorts().setSmartShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
+        this.refreshView();
+
     }
 }

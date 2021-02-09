@@ -3071,4 +3071,56 @@ get the total qty of all found items
         return true;
     }
 
+
+    /**
+     * kp1-25
+     * @param category
+     * @return
+     */
+    public boolean smartCategoryItemsLocalFinished(String category)
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!item.getCategory().equals(category)) continue;
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @param category
+     * @return
+     */
+    public boolean smartCategoryItemsRemoteFinished(String category)
+    {
+
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!item.getCategory().equals(category)) continue;
+            if (item.getBumpedStationsString().isEmpty() )
+               return false;
+        }
+        return true;
+    }
+
+    public ArrayList<String> getAllCategories()
+    {
+        ArrayList<String> ar = new ArrayList<>();
+
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            if (KDSUtil.isExistedInArray(ar, m_items.getItem(i).getCategory() ) )
+                continue;
+            else
+                ar.add(m_items.getItem(i).getCategory());
+        }
+
+        return ar;
+    }
 }

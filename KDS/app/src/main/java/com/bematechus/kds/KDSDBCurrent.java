@@ -3307,8 +3307,25 @@ update the schedule item ready qty
 
         order.prep_set_sorts(prepSorts);
 
+        //
+
     }
 
+    /**
+     * kp1-25
+     * @param order
+     * @param smartItems
+     */
+    public void smart_category_init(KDSDataOrder order, PrepSorts smartItems)
+    {
+        //kpp1-456, we init the first category here.
+        PrepSorts.PrepItem smartMaxItem = smartItems.findMaxPreparationTime(smartItems.m_arItems);
+        String category = smartMaxItem.Category;
+        String orderguid = order.getGUID();
+        smartCategoryAddShowingCategory(orderguid, category);
+
+        smartItems.setSmartShowingCategory( smartCategoryGetShowingCategories(orderguid));
+    }
 
 
     public void prep_set_real_started_time(String orderGuid, String itemName, float seconds)
@@ -3350,6 +3367,8 @@ update the schedule item ready qty
         }
         c.close();
         prep.sort();
+        //kpp1-456
+        prep.setSmartShowingCategory(smartCategoryGetShowingCategories(orderGuid));
         return prep;
     }
 
@@ -3855,6 +3874,49 @@ update the schedule item ready qty
         return ar;
     }
 
+    final String SMART_CATEGORY_SEPERATOR = "\n";
+    /**
+     * kpp1-456
+     * @param orderGuid
+     * @param categoryName
+     */
+    public void smartCategoryAddShowingCategory(String orderGuid, String categoryName)
+    {
+        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+        if (KDSUtil.isExistedInArray(ar, categoryName))
+            return;
+        ar.add(categoryName);
+        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
+        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+        this.executeDML(sql);
+
+    }
+
+    /**
+     * kpp1-456
+     * @param orderGuid
+     * @return
+     */
+    public ArrayList<String> smartCategoryGetShowingCategories(String orderGuid)
+    {
+        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+        ArrayList<String> ar = new ArrayList<>();
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        String s = "";
+
+
+        while (c.moveToNext()) {
+            s = c.getString(0);
+        }
+        c.close();
+        if (s.isEmpty()) return ar;
+        ar = KDSUtil.spliteString(s, SMART_CATEGORY_SEPERATOR);
+
+        return ar;
+    }
+
     /***************************************************************************
      * SQL definitions
      *
@@ -3898,7 +3960,7 @@ update the schedule item ready qty
             +"r9 text(16),"
             + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),"
             + "QueueMsg text(256), "// )";
-            + "TrackerID text(16),"
+            + "TrackerID text(16)," //As TT was removed, I use this to do kpp1-456, "Runner" station. Save showing cateogry name.
             + "PagerID text(16),"//for table-tracker
             + "CookState int default 0,"
             + "SosReady int default 0 ";
