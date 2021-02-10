@@ -233,10 +233,18 @@ public class KDSUser {
             if (!order.prep_get_sorts().smartCategoryIsShowing(categoryDescription))
             {
                 String lastCategory = order.prep_get_sorts().smartCategoryLastShowing();
-                if (lastCategory.isEmpty() ||
-                        (order.smartCategoryItemsLocalFinished(lastCategory) &&
-                                order.smartCategoryItemsRemoteFinished(lastCategory)
-                        ))
+                boolean bFitFinishedCondition = false;
+                if (getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
+                { //the remote prep station must bump item first
+                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(lastCategory) &&
+                                                order.smartCategoryItemsRemoteFinished(lastCategory) );
+
+                }
+                else
+                { //don't care remote station bumping
+                    bFitFinishedCondition = order.smartCategoryItemsLocalFinished(lastCategory);
+                }
+                if (lastCategory.isEmpty() || bFitFinishedCondition )
                 {
                     order.prep_get_sorts().getSmartShowingCategory().add(categoryDescription);
                     getCurrentDB().smartCategoryAddShowingCategory(order.getGUID(), categoryDescription);

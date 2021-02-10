@@ -538,7 +538,7 @@ public class PrepSorts {
         PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
         if (prepItem == null) return null;
         prepItem.setFinished(true);//, order.getDurationSeconds());
-        PrepSorts.PrepItem maxItem = null;
+        
         boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
         if (bAllCategoryFinished)
             return order.prep_get_sorts().sort();

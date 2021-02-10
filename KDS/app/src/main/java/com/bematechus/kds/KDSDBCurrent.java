@@ -3320,6 +3320,7 @@ update the schedule item ready qty
     {
         //kpp1-456, we init the first category here.
         PrepSorts.PrepItem smartMaxItem = smartItems.findMaxPreparationTime(smartItems.m_arItems);
+        if (smartMaxItem == null) return;
         String category = smartMaxItem.Category;
         String orderguid = order.getGUID();
         smartCategoryAddShowingCategory(orderguid, category);

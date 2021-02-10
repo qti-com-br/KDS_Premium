@@ -458,7 +458,7 @@ public class KDSLayoutOrder extends KDSDataOrder {
         ArrayList<String> arHide = new ArrayList<>();
         for (int i=0; i< arCategories.size(); i++)
         {
-            if (smartCategoryItemsRemoteFinished(arCategories.get(i)))
+            if (smartCategoryItemsLocalFinished(arCategories.get(i)))
             {
                 arHide.add(arCategories.get(i));
             }

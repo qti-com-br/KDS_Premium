@@ -2979,7 +2979,7 @@ get the total qty of all found items
         c.setStartTime(new Date());
         c.setStatus(0);
         c.setToTable("Tbl #4");
-        c.setTrackerID("2");
+        //c.setTrackerID("2");
         c.setPagerID("12");
         c.setIconIdx(1);
 

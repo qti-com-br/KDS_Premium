@@ -2087,13 +2087,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
           if (bSmartEnabled)
             this.getCurrentDB().prep_add_order_items(order); //keep full order items for preparation time mode.
 //
-        if (isTrackerStation() || isTrackerView())
-        {
-            changeTrackerIDByUserInfo(order);
-
-            if (order.getOrderType().equals(KDSDataOrder.ORDER_TYPE_SCHEDULE))
-                return null; //tracker don't need schedule
-        }
+        //tacker is removed.
+//        if (isTrackerStation() || isTrackerView())
+//        {
+//            changeTrackerIDByUserInfo(order);
+//
+//            if (order.getOrderType().equals(KDSDataOrder.ORDER_TYPE_SCHEDULE))
+//                return null; //tracker don't need schedule
+//        }
 
         //for pager feature
         if (isExpeditorStation() ||isQueueExpo() || isQueueExpoView() ||
