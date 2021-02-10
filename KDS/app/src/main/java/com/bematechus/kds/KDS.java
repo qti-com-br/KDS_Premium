@@ -2301,36 +2301,41 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Station_Modify_Order:
                 KDSStationFunc. doSyncCommandOrderModified(this,command, xmlData);
                 break;
-            case Station_Bump_Item:
-                //kpp1-407, save my orginal order
-                String strOrderName = command.getParam("P0", "");
-                KDSDataOrder orderExisted = this.getUsers().getOrderByName(strOrderName);
-                //
-                ArrayList<KDSDataItem> arChangedItem = new ArrayList<>(); //retrieve changed items.
-                orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData, arChangedItem);
-                sortOrderForMoveFinishedToFront();
-                checkSMS(orderGuid, false); //2.1.10
-                if (arChangedItem.size() >0) //just expo save data to this array
-                {//kpp1-62, kpp1-74
-                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
-                }
-                //kpp1-407
-                mirrorStationSyncWebDatabase(code,command, orderExisted, arChangedItem);
+            case Station_Bump_Item: {
+                prepGetStationBumpedItemCommand(command, code, xmlData);
+//                //kpp1-407, save my orginal order
+//                String strOrderName = command.getParam("P0", "");
+//                KDSDataOrder orderExisted = this.getUsers().getOrderByName(strOrderName);
+//                //
+//                ArrayList<KDSDataItem> arChangedItem = new ArrayList<>(); //retrieve changed items.
+//                orderGuid = KDSStationFunc.doSyncCommandItemBumped(this, command, xmlData, arChangedItem);
+//                sortOrderForMoveFinishedToFront();
+//                checkSMS(orderGuid, false); //2.1.10
+//                if (arChangedItem.size() > 0) //just expo save data to this array
+//                {//kpp1-62, kpp1-74
+//                    syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
+//                }
+//                //kpp1-407
+//                mirrorStationSyncWebDatabase(code, command, orderExisted, arChangedItem);
+            }
                 break;
-            case Station_Unbump_Item:
-                //kpp1-407, save my orginal order
-                String orderName = command.getParam("P0", "");
-                KDSDataOrder myOrder = this.getUsers().getOrderByName(orderName);;
-
-                //
-                ArrayList<KDSDataItem> arUnbumpItems = new ArrayList<>();
-                orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this,command, xmlData, arUnbumpItems);
-                sortOrderForMoveFinishedToFront();
-                schedule_process_update_to_be_prepare_qty(true);
-
-                checkSMS(orderGuid, false); //2.1.10
-                //kpp1-407
-                mirrorStationSyncWebDatabase(code,command, myOrder,  arUnbumpItems);
+            case Station_Unbump_Item: {
+                prepGetStationUnbumpItemCommand(command, code, xmlData);
+//                //kpp1-407, save my orginal order
+//                String orderName = command.getParam("P0", "");
+//                KDSDataOrder myOrder = this.getUsers().getOrderByName(orderName);
+//                ;
+//
+//                //
+//                ArrayList<KDSDataItem> arUnbumpItems = new ArrayList<>();
+//                orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this, command, xmlData, arUnbumpItems);
+//                sortOrderForMoveFinishedToFront();
+//                schedule_process_update_to_be_prepare_qty(true);
+//
+//                checkSMS(orderGuid, false); //2.1.10
+//                //kpp1-407
+//                mirrorStationSyncWebDatabase(code, command, myOrder, arUnbumpItems);
+            }
                 break;
             case Station_Modified_Item:
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
@@ -2381,6 +2386,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             break;
             case Expo_Bump_Order: //expo and normal station has different steps, those are the expo operations and will inform to its backup/mirror
             {
+
                 KDSStationFunc.doSyncCommandExpoOrderBumped(this, command, xmlData);
             }
             break;
@@ -2391,12 +2397,22 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             break;
             case Expo_Bump_Item:
             {
-                KDSStationFunc.doSyncCommandExpoItemBumped(this, command, xmlData);
+                //
+                if (getStationFunction() == SettingsBase.StationFunc.Prep) {
+                    prepGetStationBumpedItemCommand(command, code, xmlData);
+                }
+                /////////////////
+                else {
+                    KDSStationFunc.doSyncCommandExpoItemBumped(this, command, xmlData);
+                }
             }
             break;
             case Expo_Unbump_Item:
             {
-                KDSStationFunc.doSyncCommandExpoItemUnbumped(this, command, xmlData);
+                if (getStationFunction() == SettingsBase.StationFunc.Prep)
+                    prepGetStationUnbumpItemCommand(command, code, xmlData);
+                else
+                    KDSStationFunc.doSyncCommandExpoItemUnbumped(this, command, xmlData);
             }
             break;
             case Statistic_Ask_DB_Data:
@@ -5471,5 +5487,53 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             str =  str.replace(KDSConst.APP_ID_END, "");
             s.setAppSocketID(str);
         }
+    }
+
+    /**
+     * kpp1-447
+     * @param command
+     * @param code
+     * @param xmlData
+     */
+    private void prepGetStationBumpedItemCommand(KDSXMLParserCommand command,KDSXMLParserCommand.KDSCommand code, String xmlData)
+    {
+        //kpp1-407, save my orginal order
+        String strOrderName = command.getParam("P0", "");
+        KDSDataOrder orderExisted = this.getUsers().getOrderByName(strOrderName);
+        //
+        ArrayList<KDSDataItem> arChangedItem = new ArrayList<>(); //retrieve changed items.
+        String orderGuid = KDSStationFunc.doSyncCommandItemBumped(this,command, xmlData, arChangedItem);
+        sortOrderForMoveFinishedToFront();
+        checkSMS(orderGuid, false); //2.1.10
+        if (arChangedItem.size() >0) //just expo save data to this array
+        {//kpp1-62, kpp1-74
+            syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItem, Activation.ItemJobFromOperations.Expo_sync_prep_bump_item);
+        }
+        //kpp1-407
+        mirrorStationSyncWebDatabase(code,command, orderExisted, arChangedItem);
+    }
+
+    /**
+     * kpp1-447
+     * @param command
+     * @param code
+     * @param xmlData
+     */
+    private void prepGetStationUnbumpItemCommand(KDSXMLParserCommand command,KDSXMLParserCommand.KDSCommand code, String xmlData)
+    {
+        //kpp1-407, save my orginal order
+        String orderName = command.getParam("P0", "");
+        KDSDataOrder myOrder = this.getUsers().getOrderByName(orderName);
+        ;
+
+        //
+        ArrayList<KDSDataItem> arUnbumpItems = new ArrayList<>();
+        String orderGuid = KDSStationFunc.doSyncCommandItemUnbumped(this, command, xmlData, arUnbumpItems);
+        sortOrderForMoveFinishedToFront();
+        schedule_process_update_to_be_prepare_qty(true);
+
+        checkSMS(orderGuid, false); //2.1.10
+        //kpp1-407
+        mirrorStationSyncWebDatabase(code, command, myOrder, arUnbumpItems);
     }
 }
