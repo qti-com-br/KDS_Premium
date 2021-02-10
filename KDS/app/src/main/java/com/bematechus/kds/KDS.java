@@ -5538,7 +5538,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         this.getCurrentDB().smartCategoryAddShowingCategory(guid, category);
         order.prep_get_sorts().setSmartShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
         this.refreshView();
-
+    }
 
     /**
      * kpp1-447
