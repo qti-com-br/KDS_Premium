@@ -1073,13 +1073,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         getTextView(R.id.txtTitle).setText(strTitle);
 
-        String strID = this.getSettings().getString(KDSSettings.ID.KDS_ID);
-        String s = "#" + strID;
+        //kp-26
+        if (this.getSettings().getBoolean(KDSSettings.ID.Hide_store_name))
+        {
+            getTextView(R.id.imgLCI).setVisibility(View.GONE);
+            getTextView(R.id.imgLCI).setText("");
+        }
+        else {
 
-        if (!Activation.getStoreName().isEmpty())
-            s = Activation.getStoreName() + "-" + s;
-        //m_imgLogo.setText(s);
-        getTextView(R.id.imgLCI).setText(s);
+            String strID = this.getSettings().getString(KDSSettings.ID.KDS_ID);
+            String s = "#" + strID;
+
+            if (!Activation.getStoreName().isEmpty())
+                s = Activation.getStoreName() + "-" + s;
+            //m_imgLogo.setText(s);
+            getTextView(R.id.imgLCI).setVisibility(View.VISIBLE);
+            getTextView(R.id.imgLCI).setText(s);
+        }
         //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 

@@ -1262,4 +1262,5 @@
     <string name="any_time">Any time</string>
     <string name="clear_db_schedule">Clear database schedule</string>
     <string name="category_font">Category font</string>
+    <string name="title_hide_store_name">Hide store name</string>
 </resources>
