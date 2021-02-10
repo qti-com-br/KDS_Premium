@@ -581,9 +581,14 @@ public class KDSSettings extends SettingsBase {
        Sum_font,
      //kpp1-420
         Category_group_font,
+
      //kp1-25
         Runner_confirm_bump,
         Runner_hide_finished_category,
+
+     //kp-26
+       Hide_store_name,
+
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1357,6 +1362,9 @@ public class KDSSettings extends SettingsBase {
         //kp1-25
         init_option(ID.Runner_confirm_bump,"bool_runner_confirm_bump",false);
         init_option(ID.Runner_hide_finished_category,"bool_runner_hide_finished_category",false);
+
+        //kp-26
+        init_option(ID.Hide_store_name,"bool_hide_store_name",false);
 
     }
 
