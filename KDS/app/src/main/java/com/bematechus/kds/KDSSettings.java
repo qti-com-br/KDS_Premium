@@ -581,6 +581,8 @@ public class KDSSettings extends SettingsBase {
        Sum_font,
      //kpp1-420
         Category_group_font,
+     //kp-26
+       Hide_store_name,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1351,6 +1353,9 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
         //kpp1-420
         init_option(ID.Category_group_font,"fontface_category_group_font",new KDSViewFontFace(getResColor(R.color.item_bg), getResColor(R.color.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_MIDDLE));
+
+        //kp-26
+        init_option(ID.Hide_store_name,"bool_hide_store_name",false);
 
     }
 

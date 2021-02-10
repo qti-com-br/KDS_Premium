@@ -28,6 +28,12 @@
         android:key="screen_show_time"
         android:title="@string/pref_kds_screen_show_time"
         android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="hide_store_name"
+        android:title="@string/title_hide_store_name"
+        android:defaultValue="false" />
+
     <CheckBoxPreference
         android:key="hide_navigation_bar"
         android:title="@string/pref_kds_hide_navigation_bar"

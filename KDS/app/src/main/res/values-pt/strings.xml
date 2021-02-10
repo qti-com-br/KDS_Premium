@@ -893,4 +893,5 @@
 	<string name="any_time">Qualquer hora</string>
 	<string name="clear_db_schedule">Limpar cronograma do banco de dados</string>
 	<string name="category_font">Fonte de categoria</string>
+    <string name="title_hide_store_name">Hide store name</string>
 </resources>
