@@ -480,7 +480,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             }
         }
 
-        else if (kds.isExpeditorStation()  ) //kpp1-286
+        else if (kds.isExpeditorStation() ||kds.isRunnerStation() ) //kpp1-286
         {
             //mirror do same work, kpp1-286
             if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
@@ -594,7 +594,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             }
 
         }
-        else if (kds.isQueueStation()|| kds.isTrackerStation()|| kds.isQueueExpo() || kds.isExpeditorStation()) //2.0.14, add expo
+        else if (kds.isQueueStation()|| kds.isTrackerStation()|| kds.isQueueExpo() || kds.isExpeditorStation() || kds.isRunnerStation()) //2.0.14, add expo
         {
             if (itemA != null)
                 exp_item_unbumped_in_other_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA);
@@ -982,7 +982,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
         {
             tt_receive_exp_order_bumped_notification(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order);
         }
-        else if (kds.isExpeditorStation()  ) //kpp1-286
+        else if (kds.isExpeditorStation() || kds.isRunnerStation() ) //kpp1-286
         {
             //mirror do same work, kpp1-286
             if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
@@ -1079,7 +1079,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             exp_order_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, order, true);
         }
 
-        else if (kds.isExpeditorStation()  ) //kpp1-286
+        else if (kds.isExpeditorStation() ||kds.isRunnerStation()  ) //kpp1-286
         {
             //mirror do same work, kpp1-286
             if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
@@ -1240,7 +1240,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
             sync_with_queue(kds, command.getCode(), orderB, itemB, "");
         }
 
-        if (kds.isExpeditorStation())
+        if (kds.isExpeditorStation() || kds.isRunnerStation())
         {
             if (orderA != null && orderA.isItemsAllBumpedInExp())
                 kds.getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
@@ -1320,7 +1320,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
                 exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), fromStationID, fromIP, orderB, itemB);
         }
 
-        else if (kds.isExpeditorStation()  ) //kpp1-286
+        else if (kds.isExpeditorStation() || kds.isRunnerStation() ) //kpp1-286
         {
             //mirror do same work, kpp1-286
             if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))

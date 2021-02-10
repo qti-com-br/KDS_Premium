@@ -894,5 +894,8 @@
 	<string name="any_time">Cualquier tiempo</string>
 	<string name="clear_db_schedule">Calendario para borrar base de datos</string>
 	<string name="category_font">Fuente de Categoria</string>
+    <string name="runner_confirm_bump_summary">Runner can not bump item and order unless all its prep station bumped</string>
+	<string name="runner">Runner</string>
+    <string name="runner_hide_finished_category">Runner hide finished category group</string>
     <string name="title_hide_store_name">Hide store name</string>
 </resources>

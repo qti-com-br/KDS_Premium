@@ -27,6 +27,7 @@ public class SettingsBase {
         Duplicate,
         TableTracker,
         Queue_Expo, //sos(Queue) work with expo
+        Runner, //kpp1-456
         MAX_COUNT,
     }
 

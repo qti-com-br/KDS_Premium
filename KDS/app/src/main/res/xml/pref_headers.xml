@@ -111,6 +111,9 @@
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$ExpeditorPreferenceFragment"
         android:title="@string/pref_kds_expalert_title" />
 
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$RunnerPreferenceFragment"
+        android:title="@string/runner" />
+
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$MediaPreferenceFragment"
         android:title="@string/pref_kds_media_title" />
 

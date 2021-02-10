@@ -2051,4 +2051,18 @@ just 16bits value
         else
             return KDSConst.INT_FALSE;
     }
+
+    static public String stringArrayToString(ArrayList<String> ar, String seperator)
+    {
+
+            String s = "";
+            for (int i=0; i< ar.size(); i++)
+            {
+                if (!s.isEmpty())
+                    s += seperator;
+                s += ar.get(i);
+
+            }
+            return s;
+    }
 }

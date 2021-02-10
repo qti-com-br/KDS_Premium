@@ -264,7 +264,8 @@ public class KDSLayoutOrder extends KDSDataOrder {
     {
         //2.0.11, enable prep queue
         if (!KDSGlobalVariables.getKDS().isExpeditorStation() && (!KDSGlobalVariables.getKDS().isQueueExpo())
-                && (!KDSGlobalVariables.getKDS().isPrepStation()))
+                && (!KDSGlobalVariables.getKDS().isPrepStation()) &&
+                (!KDSGlobalVariables.getKDS().isRunnerStation()) )
             return ;
         if (!KDSGlobalVariables.getKDS().getSettings().getBoolean(KDSSettings.ID.Queue_double_bump_expo_order))
             return ;
@@ -446,4 +447,44 @@ public class KDSLayoutOrder extends KDSDataOrder {
         return null;
     }
 
+
+    /**
+     * kp1-25
+     */
+    public void smartRunnerHideFinishedCategory()
+    {
+
+        ArrayList<String> arCategories = getAllCategories();
+        ArrayList<String> arHide = new ArrayList<>();
+        for (int i=0; i< arCategories.size(); i++)
+        {
+            if (smartCategoryItemsLocalFinished(arCategories.get(i)))
+            {
+                arHide.add(arCategories.get(i));
+            }
+        }
+
+        for (int i=0; i< arHide.size(); i++)
+        {
+            smartHideCategory(arHide.get(i));
+        }
+        arHide.clear();
+
+    }
+
+    private void smartHideCategory(String category)
+    {
+        ArrayList<KDSDataItem> arHide = new ArrayList<>();
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            if (m_items.getItem(i).getCategory().equals(category))
+                arHide.add(m_items.getItem(i));
+        }
+
+        for (int i=0; i< arHide.size(); i++)
+        {
+            m_items.removeComponent(arHide.get(i));
+        }
+        arHide.clear();
+    }
 }

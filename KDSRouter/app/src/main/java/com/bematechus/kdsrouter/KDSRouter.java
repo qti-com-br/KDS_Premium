@@ -2418,7 +2418,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         for (int i=0; i< ncount; i++) {
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() != KDSRouterSettings.StationFunc.Expeditor &&
-                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo )
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner
+            )
                 continue;
             String stationID = stationRelation.getID();
             if (!isActivedStation(stationID)) {
@@ -2565,7 +2567,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         {
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() != KDSRouterSettings.StationFunc.Expeditor &&
-                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo)
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner )
                 continue;
             String stationID = stationRelation.getID();
 
@@ -3551,7 +3554,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor ||
                     stationRelation.getFunction() == KDSRouterSettings.StationFunc.Queue_Expo ||
-                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker )
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Runner
+                    )
             {
                 KDSToStation toStation = new KDSToStation();
                 toStation.setPrimaryStation(stationRelation.getID());

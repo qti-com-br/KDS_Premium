@@ -16,6 +16,8 @@ import java.util.Date;
 public class PrepSorts {
 
     static String TAG = "PrepSorts";
+    static public boolean m_bSmartCategoryEnabled = false; //for kp1-25
+
     public ArrayList<PrepItem> m_arItems = new ArrayList<>();
 
     public void add(PrepItem item)
@@ -28,6 +30,7 @@ public class PrepSorts {
         return m_arItems.size();
     }
 
+    public ArrayList<String> m_arSmartShowingCategory = new ArrayList<>(); //kpp1-456
 
     /**
      * return the max item
@@ -235,6 +238,10 @@ public class PrepSorts {
      */
     public int item_start_cooking_time_seconds( String itemName, Date dtOrderStart, float orderDelay)
     {
+        //kpp1-441
+        if (m_bSmartCategoryEnabled)
+            return item_start_cooking_time_seconds_for_smart_category(itemName, dtOrderStart, orderDelay);
+        //
         PrepItem prep = findItem(itemName);
         if (prep == null) return 0;
         if (prep.finished) return 0; //kpp1-431-1, finished item should cooked.
@@ -328,6 +335,9 @@ public class PrepSorts {
      */
     static public PrepSorts.PrepItem prep_other_station_item_bumped( KDSDataOrder order, String itemName)
     {
+        if (m_bSmartCategoryEnabled)
+            return prep_other_station_item_bumped_for_smart_category(order, itemName);
+
         //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return null;
         PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
@@ -372,6 +382,9 @@ public class PrepSorts {
 
     static public ArrayList<PrepSorts.PrepItem> prep_other_station_item_unbumped(KDSDataOrder order,String itemName)
     {
+        if (m_bSmartCategoryEnabled)
+            return prep_other_station_item_unbumped_for_smart_category(order, itemName);
+
         //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return null;
         PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
@@ -473,6 +486,117 @@ public class PrepSorts {
 
         }
 
+    }
+
+    /**
+     * kpp1-456
+     * @param itemName
+     * @param dtOrderStart
+     * @param orderDelay
+     * @return
+     */
+    public int item_start_cooking_time_seconds_for_smart_category( String itemName, Date dtOrderStart, float orderDelay)
+    {
+        PrepItem prep = findItem(itemName);
+        if (prep == null) return 0;
+        if (prep.finished) return 0; //kpp1-431-1, finished item should cooked.
+
+        String category = prep.Category;
+        if (KDSUtil.isExistedInArray(this.m_arSmartShowingCategory, category))
+            return 0;
+        else
+            return Integer.MAX_VALUE-999999999;
+
+//        String maxItemName = prep.MaxItemName;
+//
+//        PrepItem maxItem = findItem(maxItemName);
+//        if (maxItem != null) {
+//            if (prep.Category.equals(maxItem.Category))
+//                return 0;
+//            else
+//                return Integer.MAX_VALUE-999999999;
+//
+//
+//        }
+//        else
+//        {
+//            return 0;
+//        }
+
+    }
+
+    /**
+     * kpp1-456
+     * @param order
+     * @param itemName
+     * @return
+     */
+    static public PrepSorts.PrepItem prep_other_station_item_bumped_for_smart_category( KDSDataOrder order, String itemName)
+    {
+        //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
+        if (order == null) return null;
+        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+        if (prepItem == null) return null;
+        prepItem.setFinished(true);//, order.getDurationSeconds());
+        
+        boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
+        if (bAllCategoryFinished)
+            return order.prep_get_sorts().sort();
+        else
+            return order.prep_get_sorts().findItem(prepItem.MaxItemName);
+
+
+
+
+    }
+
+    /**
+     *kpp1-456
+     * @param order
+     * @param itemName
+     * @return
+     */
+    static public ArrayList<PrepSorts.PrepItem> prep_other_station_item_unbumped_for_smart_category(KDSDataOrder order,String itemName)
+    {
+        //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
+//        if (order == null) return null;
+//        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+//        if (prepItem == null) return null;
+//        prepItem.setFinished(false);//.finished = false;
+//        //if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName))
+//        PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
+//        if (maxItem != null && maxItem == prepItem && (!order.prep_get_sorts().areAllDifferentCategoryLessDelayTimeItemsFinished(maxItem)) )
+//        {//we just restore old max item
+//            ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().reset_real_start_time(maxItem);
+//            return ar;
+//
+//        }
+        return null;
+
+    }
+
+    public void setSmartShowingCategory(ArrayList<String> ar)
+    {
+        m_arSmartShowingCategory.clear();
+        m_arSmartShowingCategory.addAll(ar);
+
+    }
+    public ArrayList<String> getSmartShowingCategory()
+    {
+        return m_arSmartShowingCategory;
+    }
+    
+    public boolean smartCategoryIsShowing(String category)
+    {
+        return KDSUtil.isExistedInArray(getSmartShowingCategory(), category);
+    }
+
+    public String smartCategoryLastShowing()
+    {
+        int ncount = m_arSmartShowingCategory.size();
+        if (ncount<=0)
+            return "";
+        return m_arSmartShowingCategory.get(ncount-1);
     }
 
     /********************************************************************************************/
