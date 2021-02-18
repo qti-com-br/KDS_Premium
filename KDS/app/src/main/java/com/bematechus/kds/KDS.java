@@ -2815,7 +2815,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER)
             return order;
 
-        ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(getStationID());
+        //kp-16 Expo not receiving order from backup prep station
+        //ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(getStationID());
+        ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getStationsWhoUseMeAsExpo(getStationID());
+        //
         KDSStationIP myStation = new KDSStationIP();
         myStation.setID(getStationID());
         arPrepWhoUseMeAsExpo.add(myStation);
