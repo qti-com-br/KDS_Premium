@@ -2949,4 +2949,51 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             return false;
         }
     }
+
+
+    /**
+     * kp-25
+     * @param orderGuid
+     * @return
+     */
+    public KDSDataItem getFirstActiveLineItemOfOrder(String orderGuid)
+    {
+
+        if (m_view.getLineItemsViewer().smartSortEnabled())
+        {
+            return m_view.getLineItemsViewer().smartSortGetFirstItemOfOrder(orderGuid);
+        }
+
+        for (int i=0; i<m_orders.getCount(); i++)
+        {
+            KDSDataOrder order = m_orders.get(i);
+            if (order == null) continue;
+            if (!order.getGUID().equals(orderGuid)) continue;
+            return order.getFirstActiveItem();
+
+        }
+        return null;
+    }
+
+    /**
+     * kp-25
+     * @param orderGuid
+     */
+    public void focusLineItemOrderFirstItem(String orderGuid)
+    {
+        refreshLineItemsView();
+
+        getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
+        KDSDataItem item = getFirstActiveLineItemOfOrder(orderGuid);
+        if (item == null)
+        {
+            getEnv().getStateValues().setFocusedItemGUID("");
+        }
+        else
+        {
+            getEnv().getStateValues().setFocusedItemGUID(item.getGUID());
+            adjustFocusOrderLayoutFirstShowingOrder(false);
+        }
+        refreshLineItemsView();
+    }
 }

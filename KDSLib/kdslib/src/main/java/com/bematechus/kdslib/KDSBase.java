@@ -33,6 +33,7 @@ public class KDSBase {
         Received_rush_order, //params: 0: useA new order. 1: userB new order.
         TCP_listen_port_error, //params: 0: error message.
         Order_Bumped_By_Other_Expo_Or_Station, //kpp1-286
+        Runner_LineItems_Show_New_Category,
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);

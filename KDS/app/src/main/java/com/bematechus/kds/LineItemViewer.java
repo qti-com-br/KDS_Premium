@@ -197,6 +197,8 @@ public class LineItemViewer {
             //fromItemIndex = grid.getDataRows() - focusedItemIndex - 1;
             fromItemIndex =  nCurrentShowingRows - focusedItemIndex - 1;
             fromOrderIndex = focusedOrderIndex;
+            //kp-25
+            if (fromItemIndex <0) fromItemIndex = 0;
         }
         else
         {
@@ -2537,6 +2539,17 @@ public class LineItemViewer {
     public KDSDataItem smartSortGetFirstItem()
     {
         return m_smartItemsRows.getFirstItem();
+    }
+
+    /**
+     * kp-25
+     * @param orderGuid
+     * @return
+     */
+    public KDSDataItem smartSortGetFirstItemOfOrder(String orderGuid)
+    {
+
+        return m_smartItemsRows.getFirstItemOfOrder(orderGuid);
     }
 
 }

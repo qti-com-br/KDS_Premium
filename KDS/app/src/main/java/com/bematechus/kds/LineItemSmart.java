@@ -276,4 +276,19 @@ public class LineItemSmart {
 
         return Math.abs(nEnd - nStart);
     }
+
+    /**
+     * kp-25, runner
+     * @param orderGuid
+     * @return
+     */
+    public KDSDataItem getFirstItemOfOrder(String orderGuid)
+    {
+        for (int i=0; i< m_arSort.size(); i++)
+        {
+            if (m_arSort.get(i).m_item.getOrderGUID().equals(orderGuid))
+                return m_arSort.get(i).m_item;
+        }
+        return null;
+    }
 }
