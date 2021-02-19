@@ -475,7 +475,7 @@ public class KDSMyStationRelations {
         {
 
             relation = m_arStationsRelations.get(i);
-            if (relation.getFunction() != SettingsBase.StationFunc.Prep)
+            if ((relation.getFunction() != SettingsBase.StationFunc.Prep)  )
                 continue;
             if (relation.getID().equals(expoStationID))
                 continue;
@@ -655,5 +655,41 @@ public class KDSMyStationRelations {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * KP-16 Expo not receiving order from backup prep station
+     * @param expoStationID
+     * @return
+     *  All station id who use given station as expo.
+     */
+    public ArrayList<KDSStationIP> getStationsWhoUseMeAsExpo(String expoStationID)
+    {
+        ArrayList<KDSStationIP> arReturn = new ArrayList<>();
+
+        KDSStationsRelation relation = null;
+        for (int i=0; i< m_arStationsRelations.size(); i++)
+        {
+
+            relation = m_arStationsRelations.get(i);
+            if ((relation.getFunction() != SettingsBase.StationFunc.Prep) &&
+                    (relation.getFunction() != SettingsBase.StationFunc.Backup) &&
+                    (relation.getFunction() != SettingsBase.StationFunc.Mirror) &&
+                    (relation.getFunction() != SettingsBase.StationFunc.Duplicate) )
+                continue;
+            if (relation.getID().equals(expoStationID))
+                continue;
+            String expos = relation.getExpStations();
+            ArrayList<KDSStationIP> ar =  KDSStationsRelation.parseStationsString(expos);
+            for (int j=0; j<ar.size(); j++)
+            {
+                if (ar.get(j).getID().equals(expoStationID)) {
+                    arReturn.add(relation);
+                    break;
+                }
+            }
+
+        }
+        return arReturn;
     }
 }
