@@ -2337,12 +2337,14 @@ public class KDSStationFunc {
             }
         }
 
-        //kpp1-449
-        if (kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID()).size() >0)
-        {
-            if (strXml.isEmpty())
-                strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
-            kds.getStationsConnections().writeToPrimaryOfExpo(kds.getStationID(), strXml);
+        //kpp1-449, KP-13 Bumped Item on expo doesn't show on prep station
+        //KP-41, Expo and Runner - orders going to incorrect station
+        if (isCommandNeedBroadcastToExpoChildren(syncMode)) {
+            if (kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID()).size() > 0) {
+                if (strXml.isEmpty())
+                    strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+                kds.getStationsConnections().writeToPrimaryOfExpo(kds.getStationID(), strXml);
+            }
         }
 
         //if the backup station find its primary is offline, send data to primary's mirror.
@@ -2412,5 +2414,21 @@ public class KDSStationFunc {
             return true;
         else
             return false;
+    }
+
+    /**
+     * KP-41 Expo and Runner - orders going to incorrect station
+     * Solution:
+     *  Expo will just send two command to prep station.
+     *
+     * @param command
+     * @return
+     */
+    static public boolean isCommandNeedBroadcastToExpoChildren(KDSXMLParserCommand.KDSCommand command)
+    {
+        if (command == KDSXMLParserCommand.KDSCommand.Expo_Bump_Item ||
+            command == KDSXMLParserCommand.KDSCommand.Expo_Unbump_Item)
+            return true;
+        return false;
     }
 }
