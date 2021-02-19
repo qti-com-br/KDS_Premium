@@ -1226,5 +1226,17 @@ public class KDSView extends View {
         ScreenLogoDraw.drawScreenLogo(this, this.getBounds(), canvas, getSettings(), isScreenEmpty(), 0);
     }
 
+    /**
+     * kp-2. Vertical Expand-Going to previous page takes you to the first page.
+     * @return
+     */
+    public int getBlockBorderOccupyHeight()
+    {
+        int nValidHeight = getBlockAverageValidHeight();
+        int nFullHeight = this.getBlockAverageHeight();
+        return nFullHeight - nValidHeight;
+    }
+
+
 }
 
