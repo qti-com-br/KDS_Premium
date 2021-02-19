@@ -45,7 +45,7 @@
 	<string name="printable">Imprimível</string>
 	<string name="add_new">Novo</string>
 	<string name="preptime">Atraso/Prep(mins)</string>
-	<string name="delayprep">Atraso/Prep(mins)</string>
+	<string name="delayprep">Atraso(mins)</string>
 	<string name="error_isnot_unique_id">Este ID # já está sendo usado. Por favor, escolha outro.</string>
 	<string name="error_id_out_range">Por favor, digite um ID entre 0 e 99.</string>
 	<string name="error_id_is_empty">Digite um ID.</string>
@@ -191,4 +191,5 @@
 	<string name="enable_3rd_party_order">Enable 3rd party order</string>
 	<string name="get_fcm_order">Get order # from FCM</string>
     <string name="modifers">Modificadores</string>
+    <string name="preparation_time">Preparation(mins)</string>
 </resources>

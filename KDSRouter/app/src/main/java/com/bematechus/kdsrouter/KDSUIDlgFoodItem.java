@@ -38,8 +38,11 @@ public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPick
     EditText m_txtScreen = null;
     //EditText m_txtDelay = null;
     CheckBox m_chkPrintable = null;
-    EditText m_txtPrepTime = null;
-    EditText m_txtSeconds = null;
+    EditText m_txtPrepMins = null;
+    EditText m_txtPrepSecs = null;
+
+    EditText m_txtDelayMins = null;
+    EditText m_txtDelaySecs = null;
 
     Button m_btnBG = null;
     Button m_btnFG = null;
@@ -81,16 +84,24 @@ public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPick
         m_item.setToStation(m_txtStation.getText().toString());
         m_item.setToScreen(m_txtScreen.getText().toString());
 
-        String mins = m_txtPrepTime.getText().toString();
-        String secs = m_txtSeconds.getText().toString();
-        int nmins = KDSUtil.convertStringToInt(mins, 0);
-        int nsecs = KDSUtil.convertStringToInt(secs, 0);
-        float flt = nsecs;
-        flt /=60;
-        flt += nmins;
+        String mins = m_txtPrepMins.getText().toString();
+        String secs = m_txtPrepSecs.getText().toString();
+//        int nmins = KDSUtil.convertStringToInt(mins, 0);
+//        int nsecs = KDSUtil.convertStringToInt(secs, 0);
+//        float flt = nsecs;
+//        flt /=60;
+//        flt += nmins;
+
+        float flt = convertMinsSecsStringToMinutes(mins, secs);
 
         //m_item.setDelay(KDSUtil.convertStringToFloat(m_txtDelay.getText().toString(), 0));
         m_item.setPreparationTime(flt);//KDSUtil.convertStringToFloat(m_txtPrepTime.getText().toString(), 0));
+        mins = m_txtDelayMins.getText().toString();
+        secs = m_txtDelaySecs.getText().toString();
+        flt = convertMinsSecsStringToMinutes(mins, secs);
+        m_item.setDelay(flt);
+
+
         m_item.setPrintable(m_chkPrintable.isChecked());
 
         m_item.getBuildCard().getArray().clear();
@@ -146,10 +157,14 @@ public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPick
         m_chkSumTranslate = (CheckBox)getView().findViewById(R.id.chkSumTranslate);
         m_txtStation =  (EditText)getView().findViewById(R.id.txtStation);
         m_txtScreen =  (EditText)getView().findViewById(R.id.txtScreen);
-        m_txtPrepTime =  (EditText)getView().findViewById(R.id.txtPrepTime);
-        m_txtSeconds =  (EditText)getView().findViewById(R.id.txtSecs);
+        m_txtPrepMins =  (EditText)getView().findViewById(R.id.txtPrepMins);
+        m_txtPrepSecs =  (EditText)getView().findViewById(R.id.txtPrepSecs);
 
         m_chkPrintable =  (CheckBox)getView().findViewById(R.id.chkPrintable);
+
+
+        m_txtDelayMins =  (EditText)getView().findViewById(R.id.txtDelayMins);
+        m_txtDelaySecs =  (EditText)getView().findViewById(R.id.txtDelaySecs);
 
         //m_chkModifierEnabled = (CheckBox)getView().findViewById(R.id.chkModifier);
 
@@ -182,8 +197,12 @@ public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPick
         m_txtScreen.setText(item.getToScreen());
 
 
-        m_txtPrepTime.setText(KDSUtil.convertIntToString(item.getPreparationTimeMins()));
-        m_txtSeconds.setText(KDSUtil.convertIntToString(item.getPreparationTimeSecs()));
+        m_txtPrepMins.setText(KDSUtil.convertIntToString(item.getPreparationTimeMins()));
+        m_txtPrepSecs.setText(KDSUtil.convertIntToString(item.getPreparationTimeSecs()));
+
+        m_txtDelayMins.setText(KDSUtil.convertIntToString(item.getDelayMins()));
+        m_txtDelaySecs.setText(KDSUtil.convertIntToString(item.getDelaySecs()));
+
 
         m_chkPrintable.setChecked(item.getPrintable());
 
@@ -758,5 +777,14 @@ public class KDSUIDlgFoodItem  extends KDSUIDialogBase implements KDSUIColorPick
 
     }
 
+    private float convertMinsSecsStringToMinutes(String mins, String secs)
+    {
+        int nmins = KDSUtil.convertStringToInt(mins, 0);
+        int nsecs = KDSUtil.convertStringToInt(secs, 0);
+        float flt = nsecs;
+        flt /=60;
+        flt += nmins;
+        return flt;
+    }
 
 }

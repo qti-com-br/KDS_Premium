@@ -98,7 +98,7 @@
     <string name="printable">可打印</string>
     <string name="add_new">新的</string>
     <string name="preptime">暂缓/准备(分)</string>
-    <string name="delayprep">暂缓/准备(分)</string>
+    <string name="delayprep">暂缓(分)</string>
 
     <!--<string name="retrieve_config_waiting_data">等待数据 ...</string>-->
     <!--<string name="retrieve_config_done">完成! 请关闭设置.</string>-->
@@ -372,4 +372,5 @@
     <string name="enable_3rd_party_order">Enable 3rd party order</string>
     <string name="get_fcm_order">Get order # from FCM</string>
     <string name="modifers">Modifers</string>
+    <string name="preparation_time">Preparation(mins)</string>
 </resources>

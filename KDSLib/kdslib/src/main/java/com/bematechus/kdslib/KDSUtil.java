@@ -2065,4 +2065,19 @@ just 16bits value
             }
             return s;
     }
+
+    static public int getMinutesFromMinsFloat(float mins)
+    {
+        float f = mins  *60;
+        int m =(int)( f/60);
+        return m;
+    }
+
+    static public int getSecondsFromMinsFloat(float mins)
+    {
+        float f = mins  *60;
+        int m =(int)( f/60);
+        int sec =Math.round( f % 60);
+        return sec;
+    }
 }

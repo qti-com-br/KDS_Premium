@@ -328,4 +328,47 @@ public class KDSRouterDataItem extends KDSData {
      return sql;
     }
 
+//    public int getMinutesFromMinsFloat(float mins)
+//    {
+//        float f = mins  *60;
+//        int m =(int)( f/60);
+//        return m;
+//    }
+//
+//    public int getSecondsFromMinsFloat(float mins)
+//    {
+//        float f = mins  *60;
+//        int m =(int)( f/60);
+//        int sec =Math.round( f % 60);
+//        return sec;
+//    }
+
+    public int getDelayMins()
+    {
+        return KDSUtil.getMinutesFromMinsFloat(m_fltDelay);
+//        float f = m_fltPreparationTime  *60;
+//        int m =(int)( f/60);
+//        return m;
+    }
+
+    public int getDelaySecs()
+    {
+        return KDSUtil.getSecondsFromMinsFloat(m_fltDelay);
+
+//        float f = m_fltPreparationTime  *60;
+//        int m =(int)( f/60);
+//        int sec =Math.round( f % 60);
+//        return sec;
+    }
+
+    public String getDelayTimeFormated()
+    {
+        float f = m_fltDelay  *60;
+        int m =(int)( f/60);
+        int sec =Math.round( f % 60);
+        if (m_fltDelay != 0)
+            return String.format("%d:%02d", m, sec);
+        else
+            return "";
+    }
 }
