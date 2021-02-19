@@ -7619,6 +7619,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             }
             break;
+            case Runner_LineItems_Show_New_Category:
+            {
+                String orderGuid = (String) arParams.get(0);
+                onRunnerLineItemShowNewCategory(orderGuid);
+            }
+            break;
             default:
             {
                 break;
@@ -7814,6 +7820,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //  m_activation.setMacAddress("BEMA0000011");//test
         //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
         m_activation.startActivationNoEmptyUserNameAllowed(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
+    }
+
+
+    private void onRunnerLineItemShowNewCategory(String orderGuid)
+    {
+
+        getUserUI(KDSUser.USER.USER_A).getLayout().focusLineItemOrderFirstItem(orderGuid);
+        if (getKDS().isMultpleUsersMode())
+            getUserUI(KDSUser.USER.USER_B).getLayout().focusLineItemOrderFirstItem(orderGuid);
     }
 }
 

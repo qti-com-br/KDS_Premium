@@ -5540,6 +5540,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         String guid = order.getGUID();
         this.getCurrentDB().smartCategoryAddShowingCategory(guid, category);
         order.prep_get_sorts().setSmartShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
+
+        //set the focus the just showing category.
+        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(guid);
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Runner_LineItems_Show_New_Category, ar);
+
+        }
         this.refreshView();
     }
 
