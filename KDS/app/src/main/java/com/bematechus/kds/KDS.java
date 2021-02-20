@@ -5537,6 +5537,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         String orderName = command.getParam("P0", "");
         String category = command.getParam("P1", "");
         KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        if (order == null) return; //kp-43 Prep stations crashing
         String guid = order.getGUID();
         this.getCurrentDB().smartCategoryAddShowingCategory(guid, category);
         order.prep_get_sorts().setSmartShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
