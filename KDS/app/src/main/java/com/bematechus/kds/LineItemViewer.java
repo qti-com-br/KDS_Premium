@@ -831,9 +831,16 @@ public class LineItemViewer {
     private void setFocusToRow(LineItemGrid grid, int nRow)
     {
         grid.setFocusedRowIndex(nRow);
-        LineItemGridRow r = grid.getRow(nRow);
-        getEnv().getStateValues().setFocusedOrderGUID(r.getOrderGuid());
-        getEnv().getStateValues().setFocusedItemGUID(r.getItemGuid());
+        if (nRow >=0) {
+            LineItemGridRow r = grid.getRow(nRow);
+            getEnv().getStateValues().setFocusedOrderGUID(r.getOrderGuid());
+            getEnv().getStateValues().setFocusedItemGUID(r.getItemGuid());
+        }
+        else
+        {
+            getEnv().getStateValues().setFocusedOrderGUID("");
+            getEnv().getStateValues().setFocusedItemGUID("");
+        }
     }
     public void onTouchXY(int x, int y)
     {
@@ -2550,6 +2557,16 @@ public class LineItemViewer {
     {
 
         return m_smartItemsRows.getFirstItemOfOrder(orderGuid);
+    }
+
+    /**
+     * KP-25,
+     */
+    public void resetGridInternalFocus()
+    {
+        setFocusToRow(m_gridTop, -1);
+        setFocusToRow(m_gridBottom, -1);
+
     }
 
 }
