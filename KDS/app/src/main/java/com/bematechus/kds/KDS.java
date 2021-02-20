@@ -2815,7 +2815,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER)
             return order;
 
-        ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(getStationID());
+        //kp-16 Expo not receiving order from backup prep station
+        //ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(getStationID());
+        ArrayList<KDSStationIP> arPrepWhoUseMeAsExpo = this.getStationsConnections().getRelations().getStationsWhoUseMeAsExpo(getStationID());
+        //
         KDSStationIP myStation = new KDSStationIP();
         myStation.setID(getStationID());
         arPrepWhoUseMeAsExpo.add(myStation);
@@ -5537,6 +5540,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         String guid = order.getGUID();
         this.getCurrentDB().smartCategoryAddShowingCategory(guid, category);
         order.prep_get_sorts().setSmartShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
+
+        //set the focus the just showing category.
+        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(guid);
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Runner_LineItems_Show_New_Category, ar);
+
+        }
         this.refreshView();
     }
 

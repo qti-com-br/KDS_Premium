@@ -1978,7 +1978,10 @@ public class PreferenceFragmentStations
                     //m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.TableTracker.ordinal()), SettingsBase.StationFunc.TableTracker));
                     m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Queue_Expo.ordinal()), SettingsBase.StationFunc.Queue_Expo));
                     //kpp1-456
-                    m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
+                    //I don't know why can not load latest resource array,
+                    // It cause app crashed. So, check array size here.
+                    if (arFuncStrings.size() > SettingsBase.StationFunc.Runner.ordinal())
+                        m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
                 }
                 list = m_stationFuncSpinnerListHaveExpo;
 
@@ -1998,7 +2001,8 @@ public class PreferenceFragmentStations
                     //kpp1-406, remove tracker
                     //m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.TableTracker.ordinal()), SettingsBase.StationFunc.TableTracker));
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Queue_Expo.ordinal()), SettingsBase.StationFunc.Queue_Expo));
-                    m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
+                    if (arFuncStrings.size() > SettingsBase.StationFunc.Runner.ordinal())
+                        m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
                 }
                 list = m_stationFuncSpinnerListNoExpo;
             }

@@ -288,21 +288,33 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (nStartOrderIndex <0)
             nStartOrderIndex = 0;
         int ncount = orders.getCount();
-        int nCounter = 0;
-        int nMax = getMaxBlocksOrRows();
+        float nCounter = 0;
+        float nMax = getMaxBlocksOrRows();
+
+        //kp-2
+        int nRowHeight = m_view.getBestBlockRowHeight();
+        int nBlockBorderSize = m_view.getBlockBorderOccupyHeight();
+        float fltBorder = (float) nBlockBorderSize/(float) nRowHeight;
+
+        //
 
         for (int i = nStartOrderIndex; i < ncount; i++) {
             // t.debug_print_Duration("showOrders1");
             KDSDataOrder order = orders.get(i);
             // t.debug_print_Duration("showOrders2");
             int nNeeded= checkOrderShowing(order, nBlockRows);
+
+            Log.d(TAG, "Order #" + order.getOrderName() + ", rows=" + nNeeded);
+
             if (nNeeded<=0) return false;
-            if (nCounter + nNeeded>nMax)
+            if ((float)(nCounter + nNeeded)>nMax)
             {
+                Log.d(TAG, "Order invisible #" + order.getOrderName());
                 return false;
             }
             else {
                 nCounter += nNeeded;
+                nCounter += fltBorder; //kp-2
                 if ( order.getGUID().equals(focusedOrderGuid))
                     return true;
             }
@@ -2819,10 +2831,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                         else
                         {
                             prevGuid = getOrderGuidAccordingToShowingMethod(itemShowingMethod, i+1);
+                            Log.d(TAG, "Order prev page=" + order.getOrderName());
                             if (prevGuid.isEmpty()) {
                                 prevGuid = order.getGUID();
-                                break;
+                                //break; //kp-2
                             }
+                            break;
                         }
                     }
                     else
@@ -2948,5 +2962,52 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
             return false;
         }
+    }
+
+
+    /**
+     * kp-25
+     * @param orderGuid
+     * @return
+     */
+    public KDSDataItem getFirstActiveLineItemOfOrder(String orderGuid)
+    {
+
+        if (m_view.getLineItemsViewer().smartSortEnabled())
+        {
+            return m_view.getLineItemsViewer().smartSortGetFirstItemOfOrder(orderGuid);
+        }
+
+        for (int i=0; i<m_orders.getCount(); i++)
+        {
+            KDSDataOrder order = m_orders.get(i);
+            if (order == null) continue;
+            if (!order.getGUID().equals(orderGuid)) continue;
+            return order.getFirstActiveItem();
+
+        }
+        return null;
+    }
+
+    /**
+     * kp-25
+     * @param orderGuid
+     */
+    public void focusLineItemOrderFirstItem(String orderGuid)
+    {
+        refreshLineItemsView();
+
+        getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
+        KDSDataItem item = getFirstActiveLineItemOfOrder(orderGuid);
+        if (item == null)
+        {
+            getEnv().getStateValues().setFocusedItemGUID("");
+        }
+        else
+        {
+            getEnv().getStateValues().setFocusedItemGUID(item.getGUID());
+            adjustFocusOrderLayoutFirstShowingOrder(false);
+        }
+        refreshLineItemsView();
     }
 }
