@@ -1990,6 +1990,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!getKDS().isExpeditorStation() &&
                 (!getKDS().isRunnerStation()))
             return false;
+
+        //kp-44, runner confirm bump
+        if (getKDS().isRunnerStation())
+        {
+            if (getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
+            {
+                KDSDataOrder order =  getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
+                if (!order.isExpoAllItemsFinished(getKDS().getStationID()))
+                {
+                    showToastMessage(getString(R.string.runner_confirm_bump_unless_prep_bumped));
+                    return true;
+                }
+            }
+            else
+                return false;
+        }
+        //
         if (!getSettings().getBoolean(KDSSettings.ID.Bumping_expo_confirmation))
             return false;
 
@@ -7412,7 +7429,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 if (item == null) return;
                 if (item.getBumpedStationsString().isEmpty())
                 {
-                    showToastMessage("Can not bump item unless its prep station bumped.");
+                    showToastMessage(getString(R.string.runner_confirm_bump_unless_prep_bumped));
                     return;
                 }
             }
