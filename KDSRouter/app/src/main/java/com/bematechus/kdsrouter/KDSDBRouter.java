@@ -1481,6 +1481,27 @@ public class KDSDBRouter extends KDSDBBase {
         return (!s.isEmpty());
     }
 
+    /**
+     * KP-27, add preparation time and delay time to category
+     * @param categoryDescription
+     * @return
+     */
+    public float categoryGetPreparationTime(String categoryDescription)
+    {
+        String s = categoryDescription;
+        s = KDSUtil.fixSqliteSingleQuotationIssue(s);
+        String sql = "select r0 from Category where description='" + s + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        float flt = 0;
+        if (c.moveToNext()) {
+            flt  =  getFloat(c,0);
+            c.close();
+        }
+
+        return flt;
+
+    }
+
     /***************************************************************************
      * SQL definitions
      */
