@@ -3078,7 +3078,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * 2015-12-26
      * load the preparation time from database.
      * set the item delay tag
-     *
+     * Rev.
+     *    20210220, KP-27, add delay/preparation for both category and item.
      * @param order
      * @param xmlData
      */
@@ -3094,7 +3095,14 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             String description = item.getDescription();
 
             float flt = this.getRouterDB().itemGetPreparationTime(description);
-            item.setPreparationTime(flt);
+            if (flt >0) {
+                item.setPreparationTime(flt);
+                continue;
+            }
+            //kp-27
+            flt = this.getRouterDB().categoryGetPreparationTime(description);
+            if (flt >0)
+                item.setPreparationTime(flt);
 
 
         }
