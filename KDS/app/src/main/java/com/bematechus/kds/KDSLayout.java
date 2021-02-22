@@ -2989,25 +2989,60 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         return null;
     }
 
+    Handler m_runnerHandle = new Handler();
     /**
-     * kp-25
+     * kp-25.
+     * rev.
+     *  Force the focus goes to first item.
      * @param orderGuid
      */
     public void focusLineItemOrderFirstItem(String orderGuid)
     {
-        refreshLineItemsView();
+        if (!isLineItemsMode()) return;
+        //refreshLineItemsView();
+        lineitemsResetFocus();
+        //As the drawing function is running in async mode,
+        //  only once reset focus is not worked.
+        m_runnerHandle.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                lineitemsResetFocus();
+                refresh();
+            }
+        }, 200);
 
-        getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
-        KDSDataItem item = getFirstActiveLineItemOfOrder(orderGuid);
-        if (item == null)
-        {
-            getEnv().getStateValues().setFocusedItemGUID("");
-        }
-        else
-        {
-            getEnv().getStateValues().setFocusedItemGUID(item.getGUID());
-            adjustFocusOrderLayoutFirstShowingOrder(false);
-        }
-        refreshLineItemsView();
+//        getEnv().getStateValues().setFirstShowingOrderGUID("");
+//        getEnv().getStateValues().setFirstItemGuid("");
+//
+//        getEnv().getStateValues().setFocusedOrderGUID("");
+//        getEnv().getStateValues().setFocusedItemGUID("");
+//        m_view.getLineItemsViewer().setGridInternalFocusToFirstRow();
+//        //getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
+//        //KDSDataItem item = getFirstActiveLineItemOfOrder(orderGuid);
+//        KDSDataItem item = getFirstActiveLineItem();
+//        if (item == null)
+//        {
+//            getEnv().getStateValues().setFocusedOrderGUID("");
+//            getEnv().getStateValues().setFocusedItemGUID("");
+//        }
+//        else
+//        {
+//            getEnv().getStateValues().setFocusedOrderGUID(item.getOrderGUID());
+//            getEnv().getStateValues().setFocusedItemGUID(item.getGUID());
+//            adjustFocusOrderLayoutFirstShowingOrder(false);
+//        }
+        //refreshLineItemsView();
+        //m_view.getLineItemsViewer().setGridInternalFocusToFirstRow();
+        //focusFirstShowingLineItem();
+    }
+
+    private void lineitemsResetFocus()
+    {
+        getEnv().getStateValues().setFirstShowingOrderGUID("");
+        getEnv().getStateValues().setFirstItemGuid("");
+
+        getEnv().getStateValues().setFocusedOrderGUID("");
+        getEnv().getStateValues().setFocusedItemGUID("");
+        m_view.getLineItemsViewer().resetGridInternalFocus();
     }
 }
