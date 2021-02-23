@@ -175,6 +175,7 @@
         <item>Tracker</item>
         <item>Queue-Expo</item>
         <item>Runner</item>
+        <item>Summary</item>
     </string-array>
     <string-array name="slave_function">
         <item>No slave</item>

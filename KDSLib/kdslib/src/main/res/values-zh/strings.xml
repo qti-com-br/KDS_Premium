@@ -171,6 +171,7 @@
         <item>跟踪</item>
         <item>总台与总台</item>
         <item>Runner</item>
+        <item>Summary</item>
     </string-array>
     <string-array name="slave_function">
         <item>无副终端</item>

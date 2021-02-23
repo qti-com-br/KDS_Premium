@@ -904,31 +904,35 @@ public class PreferenceFragmentStations
                 KDSStationsRelation primaryRelation = getStationRelation(primaryStationID);
                 if (primaryRelation == null) return;
                 SettingsBase.SlaveFunc slaveFunc = SettingsBase.SlaveFunc.Unknown;
-                switch (slaveStationFunc)
-                {
+                switch (slaveStationFunc) {
                     case Prep:
-                        slaveFunc =  SettingsBase.SlaveFunc.Unknown;
+                        slaveFunc = SettingsBase.SlaveFunc.Unknown;
                         break;
                     case Expeditor:
                     case Queue_Expo:
                     case Runner: //kpp1-456
+                    case Summary: //kp-21
                     {
                         slaveFunc = SettingsBase.SlaveFunc.Unknown;
                     }
                     break;
                     case Queue:
-                        slaveFunc =  SettingsBase.SlaveFunc.Order_Queue_Display;
+                        slaveFunc = SettingsBase.SlaveFunc.Order_Queue_Display;
                         //2.0.11, allow prep as primary of queue
                         if (primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor &&
                                 primaryRelation.getFunction() != SettingsBase.StationFunc.Prep &&
-                                primaryRelation.getFunction() != SettingsBase.StationFunc.Runner)
+                                primaryRelation.getFunction() != SettingsBase.StationFunc.Runner &&
+                                primaryRelation.getFunction() != SettingsBase.StationFunc.Summary
+                        )
                             return;
                         break;
                     case Mirror:
-                        slaveFunc =  SettingsBase.SlaveFunc.Mirror;
-                        if ( (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep) &&
+                        slaveFunc = SettingsBase.SlaveFunc.Mirror;
+                        if ((primaryRelation.getFunction() != SettingsBase.StationFunc.Prep) &&
                                 (primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor) &&
-                                (primaryRelation.getFunction() != SettingsBase.StationFunc.Runner)) //kpp1-286, expo allow mirror
+                                (primaryRelation.getFunction() != SettingsBase.StationFunc.Runner) && //kpp1-286, expo allow mirror
+                                (primaryRelation.getFunction() != SettingsBase.StationFunc.Summary)
+                        )
                             return;
                         break;
                     case Backup:
@@ -937,7 +941,9 @@ public class PreferenceFragmentStations
                                 &&primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor
                                 &&primaryRelation.getFunction() != SettingsBase.StationFunc.Backup &&
                                 primaryRelation.getFunction() != SettingsBase.StationFunc.Queue_Expo &&
-                                primaryRelation.getFunction() != SettingsBase.StationFunc.Runner)
+                                primaryRelation.getFunction() != SettingsBase.StationFunc.Runner &&
+                                primaryRelation.getFunction() != SettingsBase.StationFunc.Summary
+                        )
 
                             return;
                         break;
@@ -950,7 +956,9 @@ public class PreferenceFragmentStations
                         slaveFunc =  SettingsBase.SlaveFunc.Duplicate_station;
                         if (primaryRelation.getFunction() != SettingsBase.StationFunc.Prep &&
                            (primaryRelation.getFunction() != SettingsBase.StationFunc.Expeditor) &&
-                                (primaryRelation.getFunction() != SettingsBase.StationFunc.Runner)) //kpp1-286, expo allow mirror
+                           (primaryRelation.getFunction() != SettingsBase.StationFunc.Runner) &&//kpp1-286, expo allow mirror
+                           (primaryRelation.getFunction() != SettingsBase.StationFunc.Summary)
+                        )
                             return;
                         break;
                 }
@@ -1117,6 +1125,7 @@ public class PreferenceFragmentStations
                     case Expeditor:
                     case TableTracker:
                     case Runner:
+                    case Summary:
                         break;
                     case Queue:
                         //2.0.11, comment it, allow prep station has queue slave.
@@ -1157,6 +1166,7 @@ public class PreferenceFragmentStations
                         break;
                     case Expeditor:
                     case Runner:
+                    case Summary:
                         slaveFunc =  SettingsBase.SlaveFunc.Unknown;
                         break;
                     case TableTracker:
@@ -1333,6 +1343,23 @@ public class PreferenceFragmentStations
                             removeSlaveStation(relation.getID(), relation.getFunction());
                         if (relation.getFunction() != SettingsBase.StationFunc.Runner) {
                             relation.setFunction(SettingsBase.StationFunc.Runner);
+                            relation.setExpStations(""); //clear expo'expo
+
+                            MyAdapter.this.addExpeditorToAll(relation.getID());
+                            MyAdapter.this.notifyDataSetChanged();
+                        }
+                    }
+                    break;
+                    case Summary:
+                    {
+                        if (relation.getFunction() != newStationFunc)
+                            removeSlaveStation(relation.getID(), relation.getFunction());
+
+                        initSlaveFunctionSpinner(KDSApplication.getContext(), slaveFuncSpinner,  SettingsBase.StationFunc.Summary);
+                        if (relation.getFunction() != newStationFunc)
+                            removeSlaveStation(relation.getID(), relation.getFunction());
+                        if (relation.getFunction() != SettingsBase.StationFunc.Summary) {
+                            relation.setFunction(SettingsBase.StationFunc.Summary);
                             relation.setExpStations(""); //clear expo'expo
 
                             MyAdapter.this.addExpeditorToAll(relation.getID());
@@ -1982,6 +2009,8 @@ public class PreferenceFragmentStations
                     // It cause app crashed. So, check array size here.
                     if (arFuncStrings.size() > SettingsBase.StationFunc.Runner.ordinal())
                         m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
+                    if (arFuncStrings.size() > SettingsBase.StationFunc.Summary.ordinal())
+                        m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Summary.ordinal()), SettingsBase.StationFunc.Summary));
                 }
                 list = m_stationFuncSpinnerListHaveExpo;
 
@@ -2003,6 +2032,8 @@ public class PreferenceFragmentStations
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Queue_Expo.ordinal()), SettingsBase.StationFunc.Queue_Expo));
                     if (arFuncStrings.size() > SettingsBase.StationFunc.Runner.ordinal())
                         m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
+                    if (arFuncStrings.size() > SettingsBase.StationFunc.Summary.ordinal())
+                        m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Summary.ordinal()), SettingsBase.StationFunc.Summary));
                 }
                 list = m_stationFuncSpinnerListNoExpo;
             }
@@ -2072,7 +2103,8 @@ public class PreferenceFragmentStations
                     r.getFunction() != SettingsBase.StationFunc.Prep &&
                     r.getFunction() != SettingsBase.StationFunc.Queue_Expo &&
                     r.getFunction() != SettingsBase.StationFunc.Queue && //add this line, in old version, it add queue as expo
-                    r.getFunction() != SettingsBase.StationFunc.Runner
+                    r.getFunction() != SettingsBase.StationFunc.Runner &&
+                    r.getFunction() != SettingsBase.StationFunc.Summary
             )
             {
                 String primary = getMyPrimaryStation(stationID);
@@ -2094,8 +2126,9 @@ public class PreferenceFragmentStations
                     r.getFunction() != SettingsBase.StationFunc.Prep &&
                     r.getFunction()!= SettingsBase.StationFunc.TableTracker &&
                     r.getFunction() != SettingsBase.StationFunc.Queue_Expo &&
-                    r.getFunction() != SettingsBase.StationFunc.Runner
-                ) {
+                    r.getFunction() != SettingsBase.StationFunc.Runner &&
+                    r.getFunction() != SettingsBase.StationFunc.Summary
+            ) {
                 String primary = getMyPrimaryStation(stationID);
                 if (primary.isEmpty()) return null;
                 if (primary.equals(whoUseMeAsPrimary)) return r;
@@ -2213,6 +2246,7 @@ public class PreferenceFragmentStations
                         break;
                     case Expeditor:
                     case Runner://kpp1-456
+                    case Summary:
                         if (oldAdapter.getCount() == EXPO_SLAVE_OPTIONS) return;//no slave, backup,  queue
                         break;
                     case Queue:
@@ -2251,6 +2285,7 @@ public class PreferenceFragmentStations
                     break;
                 case Expeditor:
                 case Runner://kpp1-456
+                case Summary:
                     if (m_slaveFuncExpoSpinnerList.size() <=0) {
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Unknown.ordinal()), SettingsBase.SlaveFunc.Unknown));
                         m_slaveFuncExpoSpinnerList.add(new SlaveFunction(arFuncStrings.get(SettingsBase.SlaveFunc.Backup.ordinal()), SettingsBase.SlaveFunc.Backup));
@@ -3044,6 +3079,7 @@ public class PreferenceFragmentStations
                 case Expeditor:
                 case TableTracker:
                 case Runner:
+                case Summary:
                     break;
 
                 case Queue:
@@ -3114,7 +3150,8 @@ public class PreferenceFragmentStations
     {
         if (func == SettingsBase.StationFunc.Expeditor ||
             func == SettingsBase.StationFunc.Queue_Expo ||
-                func == SettingsBase.StationFunc.Runner
+                func == SettingsBase.StationFunc.Runner ||
+                func == SettingsBase.StationFunc.Summary
             )
             return true;
         else

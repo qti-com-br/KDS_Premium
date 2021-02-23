@@ -96,6 +96,15 @@
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PagerPreferenceFragment"
         android:title="@string/pref_pager_title" />
 
+    <header android:title="@string/summary" />
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$SumPreferenceFragment"
+        android:title="@string/pref_kds_sum_title" />
+    <header android:fragment="com.bematechus.kds.PreferenceFragmentAdvSum"
+        android:title="@string/advanced_summary" />
+
+    <header android:fragment="com.bematechus.kds.PreferenceSumStation"
+        android:title="Summary station" />
+
     <header android:title="@string/pref_kds_category_others" />
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PrinterPreferenceFragment"
         android:title="@string/pref_kds_printer_title" />
@@ -103,10 +112,14 @@
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$BeeperPreferenceFragment"
         android:title="@string/pref_kds_beeper_title" />
     <!--android:summary="How to show summary."-->
-    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$SumPreferenceFragment"
-        android:title="@string/pref_kds_sum_title" />
-    <header android:fragment="com.bematechus.kds.PreferenceFragmentAdvSum"
-        android:title="@string/advanced_summary" />
+<!--    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$SumPreferenceFragment"-->
+<!--        android:title="@string/pref_kds_sum_title" />-->
+<!--    <header android:fragment="com.bematechus.kds.PreferenceFragmentAdvSum"-->
+<!--        android:title="@string/advanced_summary" />-->
+<!--    -->
+<!--    <header android:fragment="com.bematechus.kds.PreferenceFragmentAdvSum"-->
+<!--        android:title="Summary station" />-->
+
     <!--android:summary="Expeditor special settings"-->
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$ExpeditorPreferenceFragment"
         android:title="@string/pref_kds_expalert_title" />

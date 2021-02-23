@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<!--    <CheckBox-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/enable_advanced_summary"-->
+<!--        android:id="@+id/chkEnableAdvSum" />-->
+
+<!--    <CheckBox-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/summary_panel_always_visible"-->
+<!--        android:id="@+id/chkEnableSumAlwaysVisible"-->
+<!--        android:visibility="visible" />-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textAppearance="?android:attr/textAppearanceMedium"-->
+<!--            android:text="@string/rows"-->
+<!--            android:id="@+id/textView20" />-->
+
+<!--        <Spinner-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/spinnerRows"-->
+<!--            android:entries="@array/pref_top_sum_cols_titles"-->
+<!--            android:dropDownWidth="50dp"-->
+<!--            android:spinnerMode="dropdown" />-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/cols"
+            android:id="@+id/textView21" />
+
+        <Spinner
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerCols"
+            android:entries="@array/pref_top_sum_cols_titles"
+            android:spinnerMode="dropdown" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/settings_headers_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/summary_items"
+            android:id="@+id/textView26"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:textAlignment="center"
+            android:gravity="center" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/add_item"
+            android:id="@+id/btnAdd"
+            android:background="@drawable/button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:textAlignment="center"
+            android:textSize="12dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/remove"
+            android:id="@+id/btnRemove"
+            android:background="@drawable/button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:textAlignment="center"
+            android:textSize="12dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/move_up"
+            android:id="@+id/btnUp"
+            android:background="@drawable/button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:textAlignment="center"
+            android:textSize="12dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/move_down"
+            android:id="@+id/btnDown"
+            android:background="@drawable/button_selector"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center_vertical"
+            android:textAlignment="center"
+            android:textSize="12dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp" />
+
+    </LinearLayout>
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/lstData"
+        android:background="@drawable/listview_border"
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:numColumns="2"
+        android:layout_marginTop="3dp" />
+</LinearLayout>

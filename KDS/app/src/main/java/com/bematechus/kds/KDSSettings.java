@@ -589,6 +589,8 @@ public class KDSSettings extends SettingsBase {
      //kp-26
        Hide_store_name,
 
+     //
+       SumStn_entries, //summary station
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1365,6 +1367,8 @@ public class KDSSettings extends SettingsBase {
 
         //kp-26
         init_option(ID.Hide_store_name,"bool_hide_store_name",false);
+
+        init_option(ID.SumStn_entries,"string_sum_station_entries","");
 
     }
 
