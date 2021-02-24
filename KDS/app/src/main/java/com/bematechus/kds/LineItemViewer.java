@@ -1136,10 +1136,12 @@ public class LineItemViewer {
         public void setFocusedRowIndex(int nIndex)
         {
             //if (getEnv().getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
-            if (isTextWrap() || isEachLineCondimentModifier()){
-                if (m_gridTop.isCombinedRow(m_gridTop.getRow(nIndex))) {
-                    LineItemGridRow combineToRow = m_gridTop.getCombinedToWhichRow(m_gridTop.getRow(nIndex));
-                    nIndex = m_gridTop.getRowIndex(combineToRow);
+            if (nIndex >=0) {
+                if (isTextWrap() || isEachLineCondimentModifier()) {
+                    if (m_gridTop.isCombinedRow(m_gridTop.getRow(nIndex))) {
+                        LineItemGridRow combineToRow = m_gridTop.getCombinedToWhichRow(m_gridTop.getRow(nIndex));
+                        nIndex = m_gridTop.getRowIndex(combineToRow);
+                    }
                 }
             }
 
