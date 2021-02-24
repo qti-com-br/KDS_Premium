@@ -7,10 +7,10 @@ def releaseTime() {
 android {
     signingConfigs {
         config {
-            keyAlias 'kds-router'
-            keyPassword 'bematechus'
-            storeFile file('keystore/kds-router.jks')
-            storePassword 'bematechus'
+            keyAlias 'premium_router_key'
+            keyPassword 'Logic@32809'
+            storeFile file('../../../kdsPremium.keystore')
+            storePassword 'Logic@32809'
         }
     }
     lintOptions {
@@ -26,8 +26,8 @@ android {
         applicationId "com.bematechus.kdsrouter"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 2410
-        versionName '2.4.1.0'
+        versionCode 2420
+        versionName '2.4.2.0'
     }
     buildTypes {
         release {
@@ -56,7 +56,7 @@ android {
     }
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "KDS-Router-${variant.baseName}-${variant.versionName}(${variant.versionCode}).apk"
+            outputFileName = "KDS-Router-${variant.baseName}-${variant.versionName}.apk"
         }
 //        variant.outputs.each { output ->
 //            def outputFile = output.outputFile
@@ -74,25 +74,28 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2410
-            versionName '2.4.1.0'
+            versionCode 2420
+            versionName '2.4.2.0'
             dimension "default"
+			buildConfigField "String", "WEBSOCKET_URL", "\"ws://dev.kdsgo.com:9205\""
         }
         stage {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2410
-            versionName '2.4.1.0'
+            versionCode 2420
+            versionName '2.4.2.0'
             dimension "default"
+			buildConfigField "String", "WEBSOCKET_URL", "\"ws://stage.kdsgo.com:9205\""
         }
         prod {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2410
-            versionName '2.4.1.0'
+            versionCode 2420
+            versionName '2.4.2.0'
             dimension "default"
+			buildConfigField "String", "WEBSOCKET_URL", "\"ws://kdsgo.com:9205\""
         }
     }
     compileOptions {

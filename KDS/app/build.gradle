@@ -3,10 +3,14 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'kds'
-            keyPassword 'bematechus'
-            storeFile file('keystore/bematech-kds.jks')
-            storePassword 'bematechus'
+            keyAlias 'premium_router_key'
+            keyPassword 'Logic@32809'
+            storeFile file('../../../kdsPremium.keystore')
+            storePassword 'Logic@32809'
+//            keyAlias 'kds'
+//            keyPassword 'bematechus'
+//            storeFile file('keystore/bematech-kds.jks')
+//            storePassword 'bematechus'
         }
     }
     lintOptions {
@@ -21,8 +25,8 @@ android {
         applicationId "com.bematechus.kds"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 2410
-        versionName '2.4.1.0'
+        versionCode 2420
+        versionName '2.4.2.0'
         signingConfig signingConfigs.config
     }
     buildTypes {
@@ -38,7 +42,7 @@ android {
     }
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "KDS-${variant.baseName}-${variant.versionName}(${variant.versionCode}).apk"
+            outputFileName = "KDS-${variant.baseName}-${variant.versionName}.apk"
         }
 
 //        variant.outputs.each { output ->
@@ -56,24 +60,24 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2410
-            versionName '2.4.1.0'
+            versionCode 2420
+            versionName '2.4.2.0'
             dimension "default"
         }
         stage {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2410
-            versionName '2.4.1.0'
+            versionCode 2420
+            versionName '2.4.2.0'
             dimension "default"
         }
         prod {
             minSdkVersion 19
             applicationId 'com.bematechus.kds'
             targetSdkVersion 22
-            versionCode 2410
-            versionName '2.4.1.0'
+            versionCode 2420
+            versionName '2.4.2.0'
             dimension "default"
         }
     }

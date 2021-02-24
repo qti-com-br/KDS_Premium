@@ -269,6 +269,28 @@ public class KDSDBOffline extends KDSDBBase {
         String sql = "delete from offlinedata";
         this.executeDML(sql);
     }
+
+
+    public boolean offlineContains(String stationID)
+    {
+        String sql =String.format( "select count(*) from offlinedata where stationid='%s'",
+                stationID);
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        while (c.moveToNext())
+        {
+
+            int n = getInt(c,0);
+            c.close();
+            if (n >0) return true;
+
+
+        }
+
+        return false;
+    }
+
     /*****************************************************************************************/
     public static final String Table_Offline = "Create table offlinedata ("
             + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"

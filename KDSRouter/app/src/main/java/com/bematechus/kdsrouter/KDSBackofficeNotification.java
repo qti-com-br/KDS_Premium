@@ -60,7 +60,6 @@ import java.util.TimerTask;
 public class KDSBackofficeNotification extends Handler{
 
     static final String TAG = "BackOfficeNotification";
-    static final String BACKOFFICE_URI = "ws://dev.kdsgo.com:9205";//
 
     public static boolean ENABLE_DEBUG = false; //show debug orders!!
 
@@ -152,9 +151,7 @@ public class KDSBackofficeNotification extends Handler{
     {
 
         try {
-            //String strUrl = String.format("ws://%s:8000/api/v2/websocket", "logiccontrols.com");
-            String strUrl = BACKOFFICE_URI;
-            URI url = new URI(strUrl);
+            URI url = new URI(BuildConfig.WEBSOCKET_URL);
             if (m_webSocket != null)
             {
                 m_webSocket.setStopMe(true);

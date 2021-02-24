@@ -130,8 +130,11 @@ public class KDSSummaryItem {
     private String makeCondimentSummaryText(KDSSummaryCondiment c)
     {
         String s = "";
-        if (c.getQty()>1)
-            s += (int)(c.getQty()) + "x "; //kpp1-421
+        //kpp1-435
+        int qty = (int)(c.getQty() * this.getQty());
+        
+        if (qty>1)
+            s += qty + "x "; //kpp1-421, kpp1-421 comments
         s += c.getDescription(); //kpp1-421
         return s;
     }

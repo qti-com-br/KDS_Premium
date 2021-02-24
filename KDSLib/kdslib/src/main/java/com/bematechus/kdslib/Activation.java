@@ -1384,7 +1384,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         m_bSilent = bSilent;
         String userName = loadUserName();
         String password = loadPassword();
-        //Log.i(TAG, "reg: startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
+        KDSLog.i(TAG, "startActivation, bSilent=" + (bSilent?"true":"false") + ",name="+userName+",pwd="+password);
 
 //        userName = USER_NAME;
 //        password = PASSWORD;
@@ -1392,9 +1392,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (m_bSilent) {
                 updateFailedCount();
                 setDoLicensing(false);//m_bDoLicensing = false;
+                KDSLog.i(TAG, KDSLog._FUNCLINE_() + "fireActivationFailEvent fired");
                 fireActivationFailEvent(ActivationRequest.COMMAND.Login,  ActivationRequest.ErrorType.UserName_Password, "No valid username and password");
                 return;
             }
+            KDSLog.i(TAG, KDSLog._FUNCLINE_() + "showLoginActivity called");
             showLoginActivity(caller, showErrorMessage);
 
             //showInputNamePasswordDlg(m_context);
@@ -1411,11 +1413,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 //                }
 //            }
             if ( !bForceShowNamePwdDlg) {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "postLoginRequest called");
                 postLoginRequest(userName, password);
                 setDoLicensing(false); //kpp1-368
             }
-            else
+            else {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "showLoginActivity called 2");
                 showLoginActivity(caller, showErrorMessage);
+            }
         }
     }
     ProgressDialog m_progressDlg = null;
@@ -1447,7 +1452,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             if (KDSConst._DEBUG_HIDE_LOGIN_DLG)
                 return;
         }
-
+        if (ActivityLogin.isShowing()) return; //kpp1-434
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         setDoLicensing(true);//m_bDoLicensing = true;
@@ -1805,6 +1810,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         ActivationRequest r = ActivationRequest.requestOrderSync(m_storeGuid,  order, state);
         r.setSyncDataFromOperation(fromOperation);
         ActivationRequest.SyncDataFromOperation syncOp = fromOperation;
+        boolean bExpoTypeStation = false;
+        bExpoTypeStation = ( m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ||
+                                m_stationFuncName.equals(SettingsBase.StationFunc.Runner.toString()));
         switch (syncOp)
         {
 
@@ -1819,19 +1827,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 r.getNextStepData().add( req );
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
 
-                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_new_order ));
+                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,bExpoTypeStation, false, ItemJobFromOperations.Local_new_order ));
                 //postCustomerRequest(m_stationID, order);
                 r.getNextStepData().add(ActivationRequest.requestCustomerSync(m_storeGuid, order));
 
                 break;
             case Bump:
                 if (!order.isAllItemsBumpedInLocal())
-                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true, ItemJobFromOperations.Local_bump_order ));
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,bExpoTypeStation, true, ItemJobFromOperations.Local_bump_order ));
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
                 break;
             case Unbump:
                 if (!order.isAllItemsBumpedInLocal())
-                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_unbump_order ));
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,bExpoTypeStation, false, ItemJobFromOperations.Local_unbump_order ));
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
                 break;
         }
@@ -2634,6 +2642,30 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
             //e.printStackTrace();
         }
 
+    }
+
+    public void startActivationNoEmptyUserNameAllowed(boolean bSilent,boolean bForceShowNamePwdDlg, Activity caller, String errMessage)
+    {
+
+        if (isDoLicensing()) return;// (m_bDoLicensing) return;
+        setDoLicensing(true);//m_bDoLicensing = true;
+        m_nSyncGetDevicesTries = 0;
+
+        m_bSilent = bSilent;
+        String userName = loadUserName();
+        String password = loadPassword();
+        if (userName.isEmpty() || password.isEmpty()) {
+            showLoginActivity(caller, errMessage);
+        }
+        else
+        {
+            if ( !bForceShowNamePwdDlg) {
+                postLoginRequest(userName, password);
+                setDoLicensing(false); //kpp1-368
+            }
+            else
+                showLoginActivity(caller, errMessage);
+        }
     }
 
 }

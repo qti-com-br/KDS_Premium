@@ -54,6 +54,7 @@ import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.PreferenceFragmentStations;
+import com.bematechus.kdslib.SettingsBase;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -1740,7 +1741,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 {
                     if (r.getFunction() == KDSSettings.StationFunc.Expeditor ||
                             r.getFunction() == KDSSettings.StationFunc.Queue ||
-                            r.getFunction() == KDSSettings.StationFunc.Queue_Expo)
+                            r.getFunction() == KDSSettings.StationFunc.Queue_Expo ||
+                            r.getFunction() == KDSSettings.StationFunc.Runner)
                         return true;
                 }
             }
@@ -2061,7 +2063,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
 
             String key = ("lineitems_cols_size");
-            String strColsSize = pref.getString(key, "");//.getInt(key, 0);
+            String strColsSize = pref.getString(key, KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");//.getInt(key, 0);
             ArrayList<String> ar = KDSUtil.spliteString(strColsSize, ",");
             return ar.size();
 
@@ -2429,6 +2431,25 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
         {
+
+        }
+    }
+
+    /**
+     * This fragment shows data and sync preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class RunnerPreferenceFragment extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_runner);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+
+
 
         }
     }

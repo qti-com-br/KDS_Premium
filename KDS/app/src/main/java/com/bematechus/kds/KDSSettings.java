@@ -582,6 +582,14 @@ public class KDSSettings extends SettingsBase {
      //kpp1-420
        Category_group_font,
        Hiddenstation_hide_whole_item, //kpp1-428
+
+     //kp1-25
+        Runner_confirm_bump,
+        Runner_hide_finished_category,
+
+     //kp-26
+       Hide_store_name,
+
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1352,10 +1360,16 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
         //kpp1-420
         init_option(ID.Category_group_font,"fontface_category_group_font",new KDSViewFontFace(getResColor(R.color.item_bg), getResColor(R.color.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_MIDDLE));
+        //kp1-25
+        init_option(ID.Runner_confirm_bump,"bool_runner_confirm_bump",false);
+        init_option(ID.Runner_hide_finished_category,"bool_runner_hide_finished_category",false);
 
         //kpp1-428
         init_option(ID.Hiddenstation_hide_whole_item,"bool_hiddenstation_hide_whole_item",true);
 
+
+        //kp-26
+        init_option(ID.Hide_store_name,"bool_hide_store_name",false);
 
     }
 
@@ -1728,7 +1742,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.LineItems_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
         set(ID.LineItems_caption_text,getResString(R.string.line_items_display));
         set(ID.LineItems_caption_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
-        set(ID.LineItems_cols,"25,25,25,25");
+        set(ID.LineItems_cols,KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");
 
         set(ID.LineItems_col0_text,getResString(R.string.str_id));
         //set(ID.LineItems_col0_size,10);
@@ -2328,6 +2342,15 @@ public class KDSSettings extends SettingsBase {
 
     }
 
+   /**
+    * kpp1-456
+    * @return
+    */
+    public boolean isRunnerStation()
+    {
+     return (m_nStationFunc == StationFunc.Runner);
+    }
+
     /**
      * this is for
      * @return
@@ -2336,7 +2359,7 @@ public class KDSSettings extends SettingsBase {
     {
         //int nDefaultBG =  getKDSViewFontFace(ID.Panels_Default_FontFace).getBG();
         int nDefaultBG =  getInt(ID.Panels_BG);
-        if (!isExpeditorStation())
+        if (!isExpeditorStation() && (!isRunnerStation()))
         //if (!bIsExpo)
             return nDefaultBG;
         if (!getBoolean(KDSSettings.ID.Exp_Alert_Enabled))
@@ -2357,7 +2380,7 @@ public class KDSSettings extends SettingsBase {
     public int getExpAlertTitleBgColor(boolean bAllItemsBumpedInExp, int nDefaultBG)
     {
 
-        if (!isExpeditorStation())
+        if (!isExpeditorStation() && (!isRunnerStation()))
             return nDefaultBG;
         if (!getBoolean(KDSSettings.ID.Exp_Alert_Enabled))
             return nDefaultBG;

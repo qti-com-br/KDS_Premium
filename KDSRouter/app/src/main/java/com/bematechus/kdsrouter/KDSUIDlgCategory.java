@@ -27,10 +27,12 @@ public class KDSUIDlgCategory  extends KDSUIDialogBase implements KDSUIColorPick
     EditText m_txtDescription = null;
     EditText m_txtStation = null;
     EditText m_txtScreen = null;
-    EditText m_txtDelay = null;
-    EditText m_txtSeconds = null;
+    EditText m_txtDelayMins = null;
+    EditText m_txtDelaySecs = null;
     CheckBox m_chkPrintable = null;
 
+    EditText m_txtPrepMins = null;
+    EditText m_txtPrepSecs = null;
 
     Button m_btnBG = null;
     Button m_btnFG = null;
@@ -55,16 +57,28 @@ public class KDSUIDlgCategory  extends KDSUIDialogBase implements KDSUIColorPick
 
         m_category.setToStation(m_txtStation.getText().toString());
         m_category.setToScreen(m_txtScreen.getText().toString());
-        String mins = m_txtDelay.getText().toString();
-        String secs = m_txtSeconds.getText().toString();
-        int nmins = KDSUtil.convertStringToInt(mins, 0);
-        int nsecs = KDSUtil.convertStringToInt(secs, 0);
-        float flt = nsecs;
-        flt /=60;
-        flt += nmins;
+        String mins = m_txtDelayMins.getText().toString();
+        String secs = m_txtDelaySecs.getText().toString();
 
-        m_category.setDelay( flt);//KDSUtil.convertStringToFloat(m_txtDelay.getText().toString(), 0));
+        float delay = convertMinutesAndSecondsToMins(mins, secs);
+
+//        int nmins = KDSUtil.convertStringToInt(mins, 0);
+//        int nsecs = KDSUtil.convertStringToInt(secs, 0);
+//        float flt = nsecs;
+//        flt /=60;
+//        flt += nmins;
+
+        m_category.setDelay( delay );//KDSUtil.convertStringToFloat(m_txtDelay.getText().toString(), 0));
+
         m_category.setPrintable(m_chkPrintable.isChecked());
+
+        mins = m_txtPrepMins.getText().toString();
+        secs = m_txtPrepSecs.getText().toString();
+
+        float preparation = convertMinutesAndSecondsToMins(mins, secs);
+        m_category.setPreparationTime(preparation);
+
+
     }
 
     /**
@@ -107,10 +121,14 @@ public class KDSUIDlgCategory  extends KDSUIDialogBase implements KDSUIColorPick
 
         m_txtStation =  (EditText)getView().findViewById(R.id.txtStation);
         m_txtScreen =  (EditText)getView().findViewById(R.id.txtScreen);
-        m_txtDelay =  (EditText)getView().findViewById(R.id.txtDelay);
-        m_txtSeconds =  (EditText)getView().findViewById(R.id.txtSecs);
+        m_txtDelayMins =  (EditText)getView().findViewById(R.id.txtDelayMins);
+        m_txtDelaySecs =  (EditText)getView().findViewById(R.id.txtDelaySecs);
 
         m_chkPrintable =  (CheckBox)getView().findViewById(R.id.chkPrintable);
+
+        m_txtPrepMins =  (EditText)getView().findViewById(R.id.txtPrepMins);
+        m_txtPrepSecs =  (EditText)getView().findViewById(R.id.txtPrepSecs);
+
 
         m_btnBG = (Button)getView().findViewById(R.id.btnBG);
         m_btnBG.setOnClickListener(new View.OnClickListener() {
@@ -139,9 +157,12 @@ public class KDSUIDlgCategory  extends KDSUIDialogBase implements KDSUIColorPick
         }
         m_txtStation.setText(category.getToStation());
         m_txtScreen.setText(category.getToScreen());
-        m_txtDelay.setText(KDSUtil.convertIntToString(category.getDelayMins()));
-        m_txtSeconds.setText(KDSUtil.convertIntToString(category.getDelaySecs()));
+        m_txtDelayMins.setText(KDSUtil.convertIntToString(category.getDelayMins()));
+        m_txtDelaySecs.setText(KDSUtil.convertIntToString(category.getDelaySecs()));
         m_chkPrintable.setChecked(category.getPrintable());
+
+        m_txtPrepMins.setText(KDSUtil.convertIntToString(category.getPreparationMins()));
+        m_txtPrepSecs.setText(KDSUtil.convertIntToString(category.getPreparationSecs()));
 
 
 
@@ -182,5 +203,15 @@ public class KDSUIDlgCategory  extends KDSUIDialogBase implements KDSUIColorPick
             m_nFG = color;
         m_txtDescription.setBackgroundColor(m_nBG);
         m_txtDescription.setTextColor(m_nFG);
+    }
+
+    private float convertMinutesAndSecondsToMins(String minutes, String seconds)
+    {
+        int nmins = KDSUtil.convertStringToInt(minutes, 0);
+        int nsecs = KDSUtil.convertStringToInt(seconds, 0);
+        float flt = nsecs;
+        flt /=60;
+        flt += nmins;
+        return flt;
     }
 }

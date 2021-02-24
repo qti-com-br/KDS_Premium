@@ -102,7 +102,7 @@
     <string name="printable">Printable</string>
     <string name="add_new">New</string>
     <string name="preptime">Delay/Prep(mins)</string>
-    <string name="delayprep">Delay/Prep(mins):</string>
+    <string name="delayprep">Delay(mins):</string>
 
     <!--<string name="retrieve_config_waiting_data">Waiting for data ...</string>-->
     <!--<string name="retrieve_config_done">Done! Please close configuration.</string>-->
@@ -380,4 +380,5 @@
     <string name="enable_3rd_party_order">Enable 3rd party order</string>
     <string name="get_fcm_order">Get order # from FCM</string>
     <string name="modifers">Modifers</string>
+    <string name="preparation_time">Preparation(mins)</string>
 </resources>

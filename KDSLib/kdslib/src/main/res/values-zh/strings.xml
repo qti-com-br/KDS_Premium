@@ -170,6 +170,7 @@
         <item>副本</item>
         <item>跟踪</item>
         <item>总台与总台</item>
+        <item>Runner</item>
     </string-array>
     <string-array name="slave_function">
         <item>无副终端</item>
@@ -221,5 +222,5 @@
     <string name="agreement_text">By using this app, you confirm you have read and agreed to EULA https://kdsgo.com/eula.html and Privacy Policy https://logiccontrols.com/privacy-policy/.</string>
 	<string name="domain_name_can_be_empty">Domain name, can be empty</string>
 	<string name="domain">Domain:</string>
-
+    <string name="quantity">Quantity</string>
 </resources>

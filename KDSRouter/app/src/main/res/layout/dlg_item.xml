@@ -26,9 +26,10 @@
             <TextView
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_column="0"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="@string/description"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="@dimen/dlg_item_text_size" />
@@ -41,8 +42,10 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:textSize="@dimen/dlg_item_text_size" />
-            <LinearLayout android:layout_column="2"
-                android:layout_width="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_column="2">
 
                 <Button
                     android:id="@+id/btnBG"
@@ -73,14 +76,16 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/station"
                 android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_column="0"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:layout_weight="1" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/station"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -101,14 +106,15 @@
                     android:singleLine="true" />
 
                 <TextView
+                    android:id="@+id/textView19"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/screen"
-                    android:id="@+id/textView19"
                     android:layout_column="0"
-                    android:textSize="@dimen/dlg_item_text_size"
-                    android:layout_marginLeft="50dp" />
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:text="@string/screen"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -119,33 +125,21 @@
                     android:layout_span="2"
                     android:textSize="@dimen/dlg_item_text_size"
                     android:singleLine="true" />
-            </LinearLayout>
 
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/delayprep"
-                android:id="@+id/textViewScreen"
-                android:layout_column="0"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:layout_weight="1" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_span="2">
-
+<!--                -->
+                <TextView
+                    android:id="@+id/textDelay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/delayprep"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="@dimen/dlg_item_text_size" />
                 <EditText
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/txtPrepTime"
+                    android:id="@+id/txtDelayMins"
                     android:selectAllOnFocus="true"
                     android:inputType="number"
                     android:textSize="@dimen/dlg_item_text_size"
@@ -159,6 +153,64 @@
                     android:text=":"
                     android:layout_toRightOf="@id/txtPrepTime"
                     android:layout_toEndOf="@id/txtPrepTime"
+                    android:id="@+id/txtDelayDot"
+                    android:textSize="@dimen/dlg_item_text_size"
+                    />
+
+                <EditText
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/txtDelaySecs"
+                    android:selectAllOnFocus="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/txtDot"
+                    android:layout_toEndOf="@+id/txtDot"
+                    android:textSize="@dimen/dlg_item_text_size"
+                    android:singleLine="true" />
+<!--                -->
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textViewScreen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_column="0"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/preparation_time"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_span="2">
+
+                <EditText
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtPrepMins"
+                    android:selectAllOnFocus="true"
+                    android:inputType="number"
+                    android:textSize="@dimen/dlg_item_text_size"
+
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text=":"
+                    android:layout_toRightOf="@id/txtPrepMins"
+                    android:layout_toEndOf="@id/txtPrepMins"
                     android:id="@+id/txtDot"
                     android:textSize="@dimen/dlg_item_text_size"
                     />
@@ -168,7 +220,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:ems="10"
-                    android:id="@+id/txtSecs"
+                    android:id="@+id/txtPrepSecs"
                     android:selectAllOnFocus="true"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/txtDot"
@@ -184,8 +236,8 @@
                     android:layout_weight="1"
                     android:layout_span="2"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/txtSecs"
-                    android:layout_toEndOf="@+id/txtSecs"
+                    android:layout_toRightOf="@+id/txtPrepSecs"
+                    android:layout_toEndOf="@+id/txtPrepSecs"
                     android:text="@string/printable"
                     android:textSize="@dimen/dlg_item_text_size"
                     android:layout_marginLeft="50dp" />
@@ -277,11 +329,11 @@
                     </LinearLayout>
 
                     <ListView
+                        android:id="@+id/lstSumNames"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/lstSumNames"
-                        android:background="@drawable/media_listview_border"
                         android:layout_weight="1"
+                        android:background="@drawable/media_listview_border"
                         android:choiceMode="singleChoice" />
 
                 </LinearLayout>
@@ -294,12 +346,13 @@
                 android:layout_weight="1">
 
                 <TextView
+                    android:id="@+id/textView38"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:gravity="center_vertical"
                     android:text="@string/modifers"
-                    android:textSize="@dimen/dlg_item_text_size"
-                    android:id="@+id/textView38" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="@dimen/dlg_item_text_size" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -360,12 +413,13 @@
             android:layout_height="35dp">
 
             <TextView
+                android:id="@+id/textView6"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="@string/build_cards"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:id="@+id/textView6" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <Button
                 android:id="@+id/btnBCLocal"
@@ -451,12 +505,13 @@
             android:layout_height="35dp">
 
             <TextView
+                android:id="@+id/textView8"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="@string/training_video"
-                android:textSize="@dimen/dlg_item_text_size"
-                android:id="@+id/textView8" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/dlg_item_text_size" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"

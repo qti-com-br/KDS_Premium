@@ -1110,7 +1110,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             ItemMark itemMark = ItemMark.parseString(s);
             itemMark.setMarkType(ItemMark.MarkType.Station_bumped_for_expo);
             //2.0.14
-            if (env.getSettings().isExpeditorStation()) {
+            if (env.getSettings().isExpeditorStation() ||
+                    env.getSettings().isRunnerStation()) {
 
                 ArrayList<String> arExpo = KDSGlobalVariables.getKDS().getStationsConnections().getRelations().getAllExpoStations();
                 if (!item.isAllStationBumpedInExp(arExpo)) {

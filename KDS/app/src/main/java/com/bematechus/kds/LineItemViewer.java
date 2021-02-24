@@ -197,6 +197,8 @@ public class LineItemViewer {
             //fromItemIndex = grid.getDataRows() - focusedItemIndex - 1;
             fromItemIndex =  nCurrentShowingRows - focusedItemIndex - 1;
             fromOrderIndex = focusedOrderIndex;
+            //kp-25
+            if (fromItemIndex <0) fromItemIndex = 0;
         }
         else
         {
@@ -829,9 +831,16 @@ public class LineItemViewer {
     private void setFocusToRow(LineItemGrid grid, int nRow)
     {
         grid.setFocusedRowIndex(nRow);
-        LineItemGridRow r = grid.getRow(nRow);
-        getEnv().getStateValues().setFocusedOrderGUID(r.getOrderGuid());
-        getEnv().getStateValues().setFocusedItemGUID(r.getItemGuid());
+        if (nRow >=0) {
+            LineItemGridRow r = grid.getRow(nRow);
+            getEnv().getStateValues().setFocusedOrderGUID(r.getOrderGuid());
+            getEnv().getStateValues().setFocusedItemGUID(r.getItemGuid());
+        }
+        else
+        {
+            getEnv().getStateValues().setFocusedOrderGUID("");
+            getEnv().getStateValues().setFocusedItemGUID("");
+        }
     }
     public void onTouchXY(int x, int y)
     {
@@ -2537,6 +2546,27 @@ public class LineItemViewer {
     public KDSDataItem smartSortGetFirstItem()
     {
         return m_smartItemsRows.getFirstItem();
+    }
+
+    /**
+     * kp-25
+     * @param orderGuid
+     * @return
+     */
+    public KDSDataItem smartSortGetFirstItemOfOrder(String orderGuid)
+    {
+
+        return m_smartItemsRows.getFirstItemOfOrder(orderGuid);
+    }
+
+    /**
+     * KP-25,
+     */
+    public void resetGridInternalFocus()
+    {
+        setFocusToRow(m_gridTop, -1);
+        setFocusToRow(m_gridBottom, -1);
+
     }
 
 }

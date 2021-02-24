@@ -7,6 +7,7 @@
 package com.bematechus.kds;
 
 
+import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSPOSMessage;
 import com.bematechus.kdslib.KDSUtil;
@@ -29,6 +30,7 @@ public class KDSXMLParser  {
         Command,
         Feedback_OrderStatus,
         Notification,
+        App_Sock_ID,
         
     }
     static final private String  NOTIFY_TYPE = ("NotifyType");
@@ -44,6 +46,10 @@ public class KDSXMLParser  {
     protected static XMLType checkXmlType(String strText)
     {
 
+        //kpp1-363
+        if (strText.indexOf(KDSConst.APP_ID_START) >=0)
+            return XMLType.App_Sock_ID;
+        //
         if (strText.indexOf(KDSXMLParserOrder.DBXML_ELEMENT_FEEDBACK_ORDER_STATUS) >=0)
             return XMLType.Feedback_OrderStatus;
         if (strText.indexOf("</"+ KDSXMLParserCommand.DBXML_ELEMENT_COMMAND +">") >=0) //check the tag end symbol.

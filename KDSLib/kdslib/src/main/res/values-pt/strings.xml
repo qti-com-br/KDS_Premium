@@ -193,6 +193,7 @@
 		<item>Duplicado</item>
 		<item>Rastreador</item>
 		<item>Fila-Expedidor</item>
+		<item>Runner</item>
 	</string-array>
 	<string-array name="slave_function">
 		<item>Sem função secundária</item>
@@ -202,5 +203,5 @@
 		<item>Duplicado</item>
 		<item>Exibir fila de pedidos</item>
 	</string-array>
-
+	<string name="quantity">Quantity</string>
 </resources>

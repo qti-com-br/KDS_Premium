@@ -43,7 +43,7 @@
 	<string name='printable'>Imprimible</string>
 	<string name='add_new'>Nuevo</string>
 	<string name='preptime'>Retraso/Prep(mins)</string>
-	<string name='delayprep'>Retraso/Prep(mins)</string>
+	<string name='delayprep'>Retraso(mins)</string>
 	<string name='error_isnot_unique_id'>El # ID ha sido utilizado por otra estación. Por favor realizar el cambio.</string>
 	<string name='error_id_out_range'>Ingrese el valor de ID entre 1 y 99.</string>
 	<string name='error_id_is_empty'>Por favor ingrese el ID</string>
@@ -190,5 +190,6 @@
 	<string name="title_activity_main">MainActivity</string>
 	<string name="enable_3rd_party_order">Enable 3rd party order</string>
 	<string name="get_fcm_order">Get order # from FCM</string>
-    <string name="modifers">Modifers</string>
+    <string name="modifers">Modificadores</string>
+    <string name="preparation_time">Preparation(mins)</string>
 </resources>

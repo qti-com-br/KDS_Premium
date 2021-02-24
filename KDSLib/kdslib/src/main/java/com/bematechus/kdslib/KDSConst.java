@@ -114,4 +114,12 @@ public class KDSConst {
 
     //kpp1-409
     static public String ORDER_GUID_FOR_API_ITEM_CHANGES = "9e09b816-2502-42bd-bfee-a69a1cce1cd6";
+
+    static public String LINE_ITEMS_DEFAULT_COLS = "20,10,30,30,10";
+    static public String LINE_ITEMS_OLD_COLS = "25,25,25,25";
+
+    //write to premium station, this will let premium know router app existed.
+    static public String APP_ID_START = "<AppSockID>";
+    static public String APP_ID_END = "</AppSockID>";
+    static public String ROUTER_SOCKET_ID = "e91d9563-efc3-4b7e-9c5e-01c2b9b19374";
 }
