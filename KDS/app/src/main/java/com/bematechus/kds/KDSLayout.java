@@ -1219,7 +1219,9 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         KDSLayoutOrder dressedOrder = new KDSLayoutOrder();
         order.copyTo(dressedOrder);
         dressedOrder.setOriginalOrder(order);
-
+        //kpp1-428
+        if (getEnv().getSettings().getBoolean(KDSSettings.ID.Hiddenstation_hide_whole_item))
+            dressedOrder.removeHiddenItems();
         //smart showing
 //        boolean bSmartEnabled = (KDSSettings.SmartMode.values()[ this.getEnv().getSettings().getInt(KDSSettings.ID.Smart_mode)] == KDSSettings.SmartMode.Normal );
 //        //if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Smart_Order_Enabled))
