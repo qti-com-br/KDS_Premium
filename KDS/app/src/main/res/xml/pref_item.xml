@@ -33,6 +33,11 @@
         android:dependency = "item_group_category"
         app:supportsColor="true"/>
 
+    <CheckBoxPreference
+        android:key="hiddenstation_hide_whole_item"
+        android:title="@string/hiddenstation_item_hide_all"
+        android:defaultValue="true" />
+
 <!--         -->
     <PreferenceCategory android:title="@string/item_mark_setting">
         <com.bematechus.kds.KDSPreferenceItemMark
