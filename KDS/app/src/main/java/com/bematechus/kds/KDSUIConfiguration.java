@@ -435,19 +435,19 @@ public class KDSUIConfiguration extends PreferenceActivity {
         //kpp1-386
         public void onTime()
         {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-            String s = prefs.getString("clear_db_schedule", "-1");
-            int nScheduleHour = KDSUtil.convertStringToInt(s, -1);
-            if (nScheduleHour <0) {
-                enableClearDbPreference(true);
-                return; //any time
-            }
-            Calendar c = Calendar.getInstance();
-            int nHour = c.get(Calendar.HOUR_OF_DAY);
-            if (nHour - nScheduleHour == 0)
-                enableClearDbPreference(true);
-            else
-                enableClearDbPreference(false);
+//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+//            String s = prefs.getString("clear_db_schedule", "-1");
+//            int nScheduleHour = KDSUtil.convertStringToInt(s, -1);
+//            if (nScheduleHour <0) {
+//                enableClearDbPreference(true);
+//                return; //any time
+//            }
+//            Calendar c = Calendar.getInstance();
+//            int nHour = c.get(Calendar.HOUR_OF_DAY);
+//            if (nHour - nScheduleHour == 0)
+//                enableClearDbPreference(true);
+//            else
+//                enableClearDbPreference(false);
 
         }
 

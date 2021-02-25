@@ -1263,4 +1263,5 @@
     <string name="runner_hide_finished_category">Runner hide finished category group</string>
     <string name="title_hide_store_name">Hide store name</string>
     <string name="runner_confirm_bump_unless_prep_bumped">Can not bump item unless its prep station bumped.</string>
+    <string name="enabled">Enabled</string>
 </resources>
