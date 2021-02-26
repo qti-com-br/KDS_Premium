@@ -230,9 +230,9 @@ public class KDSUser {
         if (getKDS().isRunnerStation()) //I am a Runner
         {
             String categoryDescription = maxItem.Category;
-            if (!order.prep_get_sorts().smartCategoryIsShowing(categoryDescription))
+            if (!order.prep_get_sorts().runnerCategoryIsShowing(categoryDescription))
             {
-                String lastCategory = order.prep_get_sorts().smartCategoryLastShowing();
+                String lastCategory = order.prep_get_sorts().runnerGetLastShowingCategory();
                 boolean bFitFinishedCondition = false;
                 if (getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
                 { //the remote prep station must bump item first
@@ -246,7 +246,7 @@ public class KDSUser {
                 }
                 if (lastCategory.isEmpty() || bFitFinishedCondition )
                 {
-                    order.prep_get_sorts().getSmartShowingCategory().add(categoryDescription);
+                    order.prep_get_sorts().runnerGetShowingCategory().add(categoryDescription);
                     getCurrentDB().smartCategoryAddShowingCategory(order.getGUID(), categoryDescription);
                     KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(), KDSXMLParserCommand.KDSCommand.Runner_show_category, order, null, categoryDescription);
                 }

@@ -1502,6 +1502,27 @@ public class KDSDBRouter extends KDSDBBase {
 
     }
 
+    /**
+     * KP-17,
+     * @param itemDescription
+     * @return
+     */
+    public float itemGetDelay(String itemDescription)
+    {
+        String s = itemDescription;
+        s = KDSUtil.fixSqliteSingleQuotationIssue(s);
+        String sql = "select delay from items where description='" + s + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        float flt = 0;
+        if (c.moveToNext()) {
+            flt  =  getFloat(c,0);
+            c.close();
+        }
+
+        return flt;
+
+    }
+
     /***************************************************************************
      * SQL definitions
      */

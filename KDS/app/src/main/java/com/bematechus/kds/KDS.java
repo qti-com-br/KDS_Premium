@@ -5540,7 +5540,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         if (order == null) return; //kp-43 Prep stations crashing
         String guid = order.getGUID();
         this.getCurrentDB().smartCategoryAddShowingCategory(guid, category);
-        order.prep_get_sorts().setSmartShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
+        order.prep_get_sorts().runnerSetShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
 
         //set the focus the just showing category.
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
