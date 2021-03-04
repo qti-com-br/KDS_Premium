@@ -2848,7 +2848,6 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
 
 
-
                 //build cards
                 String xmlBuildCards = xml.getSubGrouValue(KDSXMLParserOrder.DBXML_ELEMENT_BUILD_CARD, "");
                 xmlBuildCards = xmlBuildCards.trim();
@@ -3126,7 +3125,27 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             // It is the wrong concept, please change it so the <PreparationTime> doesn’t limit to same category but work for all categories.
 
             //item.setItemDelay(categoryDelay); //just for smart order, the normal smart mode is removed, just keep advanced.
-            item.setCategoryDelay(categoryDelay);//for preparation time mode.
+            if (categoryDelay >0)
+                item.setCategoryDelay(categoryDelay);//for preparation time mode.
+            //
+
+        }
+
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getItemType() == KDSDataItem.ITEM_TYPE.Exp)
+                continue;
+            //if (item.getItemDelay() > 0)//KPP1-410, bug here.
+            if (item.getItemDelay() > 0)//KPP1-410, xml data in high priority.
+                continue;
+
+            float delay = this.getRouterDB().itemGetDelay(item.getDescription());
+
+            if (delay >0)
+                item.setItemDelay(delay);//for preparation time mode.
+            //
+
         }
     }
 

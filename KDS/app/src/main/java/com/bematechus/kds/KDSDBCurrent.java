@@ -3279,6 +3279,8 @@ update the schedule item ready qty
      *      The itemdelay value is wrong. It put the categorydelay and max prep item time together.
      *          this is for smart order.
      *      But, in preparation mode, we don't need to do this. So, will add new items, I use category delay to replace item delay value.
+     * rev.
+     *  Above notice revmoed: Save item/category delay independently.
      * @param order
      */
     public void prep_add_order_items(KDSDataOrder order)
@@ -3288,7 +3290,7 @@ update the schedule item ready qty
         for (int i = 0; i< ncount; i++)
         {
             KDSDataItem item = order.getItems().getItem(i);
-            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay) values(" ;
+            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0) values(" ;
             sql += "'" + order.getGUID() +"'";
             sql += ",'" + KDSUtil.fixSqliteSingleQuotationIssue(item.getItemName()) +"'";
             sql += ",'" + item.getCategory() + "'";
@@ -3296,7 +3298,9 @@ update the schedule item ready qty
             sql += ",''";
             sql += ",0";
             sql += ",-1";
-            sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //See notice
+            //sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //See notice
+            sql += "," + KDSUtil.convertFloatToString(item.getItemDelay()); //
+            sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //
             sql += ")";
             this.executeDML(sql);
         }
@@ -3319,13 +3323,13 @@ update the schedule item ready qty
     public void smart_category_init(KDSDataOrder order, PrepSorts smartItems)
     {
         //kpp1-456, we init the first category here.
-        PrepSorts.PrepItem smartMaxItem = smartItems.findMaxPreparationTime(smartItems.m_arItems);
+        PrepSorts.PrepItem smartMaxItem = smartItems.findNextShowingItem(smartItems.m_arItems);
         if (smartMaxItem == null) return;
         String category = smartMaxItem.Category;
         String orderguid = order.getGUID();
         smartCategoryAddShowingCategory(orderguid, category);
 
-        smartItems.setSmartShowingCategory( smartCategoryGetShowingCategories(orderguid));
+        smartItems.runnerSetShowingCategory( smartCategoryGetShowingCategories(orderguid));
     }
 
 
@@ -3344,7 +3348,7 @@ update the schedule item ready qty
     {
         String sql = "";
 
-        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay from prepsort where orderguid='" + orderGuid +"'";
+        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
 
 
         PrepSorts prep = new PrepSorts();
@@ -3362,6 +3366,7 @@ update the schedule item ready qty
             item.finished = (getInt(c,5)==1);
             item.RealStartTime = getInt(c,6);
             item.ItemDelay = getFloat(c,7);
+            item.CategoryDelay = getFloat(c,8);
 
             prep.add(item);
 
@@ -3369,7 +3374,7 @@ update the schedule item ready qty
         c.close();
         prep.sort();
         //kpp1-456
-        prep.setSmartShowingCategory(smartCategoryGetShowingCategories(orderGuid));
+        prep.runnerSetShowingCategory(smartCategoryGetShowingCategories(orderGuid));
         return prep;
     }
 
@@ -4125,7 +4130,7 @@ update the schedule item ready qty
             "MaxItemName text(256)," + //the maxitem name
             "finished int," + //identify if this item finihsed
             "RealStartTime int," +//the real time that this item start to cook. (seconds from order started).
-            "r0 text(20)," +
+            "r0 text(20)," + //Save category delay here.
             "r1 text(20), " +
             "r2 text(20)," +
             "r3 text(20), " +

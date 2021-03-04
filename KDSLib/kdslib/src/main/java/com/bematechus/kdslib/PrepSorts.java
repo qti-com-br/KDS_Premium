@@ -12,11 +12,45 @@ import java.util.Date;
 
 /**
  * Created by Administrator on 2017/12/29.
+ *
+ * 1.       Runner mode.
+ * If station’s expo station is a runner, station will run in this mode.
+ * It is same as current “Runner” station. Smart station will show items category by category. If one category finished, next category will show.
+ * The categories will use <CatDelay> tag value to sort.
+ * 2.       Category delay mode.
+ * If any item’s <CatDelay> value was set, prep will run in this mode.
+ * a.       Same category items will wait <CatDelay> miniutes, then start to show them.
+ * b.       If current items in same category were all bumped(finished) before "delay" timeout,  the next category will show.
+ * 3.       Item Delay mode.
+ * If any item’s <ItemDelay> was set, station will run in this mode. <CatDelay> must been empty.
+ * Item will show according to this <ItemDelay> value. The less delay item will show first.
+ * 4.       Item preparation time mode
+ * If <ItemDelay>, <CatDelay> is 0. And its expo is not runner. And, any item’s <PrepTime> value >0, station runs in this mode.
+ * Station will show item according the <PrepTime> value.  Items will sort by <PrepTime> value descend. The max <PrepTime> value item will been shown first.
+ *
+ * And, for <PrepTime> value.
+ * a.       If order xml file contains it, use it.
+ * b.       If order xml file do not set it,
+ * (1)     Router database has set this item’s preparation item. Use it.
+ * (2)     If router does not set item’s preparation time value, use the preparation time value of category.
  */
 public class PrepSorts {
 
     static String TAG = "PrepSorts";
+
     static public boolean m_bSmartCategoryEnabled = false; //for kp1-25
+
+    /**
+     *
+     */
+    public enum SmartMode
+    {
+        Unknown,
+        Category_Runner, //if there are runner for my expo station.
+        Category_Delay, //use <catdeley> delay time.  any item’s <CatDelay> value was set, prep will run in this mode.
+        Item_Delay, //If any item’s <ItemDelay> was set, station will run in this mode. <CatDelay> must been empty.
+        Item_Preparation, //use preparation time. <ItemDelay>, <CatDelay> is 0. And its expo is not runner. And, any item’s <PrepTime> value >0, station runs in this mode.
+    }
 
     public ArrayList<PrepItem> m_arItems = new ArrayList<>();
 
@@ -32,13 +66,14 @@ public class PrepSorts {
 
     public ArrayList<String> m_arSmartShowingCategory = new ArrayList<>(); //kpp1-456
 
+
     /**
      * return the max item
      * @return
      */
     public PrepItem sort()
     {
-        PrepItem maxItem = findMaxPreparationTime(m_arItems);
+        PrepItem maxItem = findNextShowingItem(m_arItems);
         if (maxItem == null) return null;
         for (int i=0; i< m_arItems.size(); i++)
         {
@@ -48,60 +83,67 @@ public class PrepSorts {
         return maxItem;
     }
 
+//    /**
+//     *sort preparation time items.
+//     * 1. sort item in each category
+//     */
+//    public void sort1()
+//    {
+//
+//        ArrayList<String> arCategories = getAllCategories(m_arItems);
+//        for (int i=0; i< arCategories.size(); i++)
+//        {
+//            String category = arCategories.get(i);
+//            sortCategory(category);
+//        }
+//
+//    }
+//    private void sortCategory(String category)
+//    {
+//        PrepItem maxItem = findMaxCategoryPreparationTime(m_arItems,category );
+//        if (maxItem == null)
+//            return;
+//        for (int i=0; i< m_arItems.size(); i++)
+//        {
+//            PrepItem item =m_arItems.get(i);
+//            if (item.Category.equals(category))
+//            {
+//                item.MaxItemName = maxItem.ItemName;
+//                //item.WaitSecsToStart = maxItem.getTotalMinsToCook() - item.getTotalMinsToCook();
+//            }
+//        }
+//
+//    }
+
+//    public PrepItem findMaxCategoryPreparationTime(ArrayList<PrepItem> items , String category)
+//    {
+//        PrepItem maxPrepTime = null;
+//        for (int i=0; i< items.size(); i++)
+//        {
+//            PrepItem item = items.get(i);
+//            if (item.finished) continue;
+//            if (item.Category.equals(category))
+//            {
+//                if (maxPrepTime == null) {
+//                    maxPrepTime = item;
+//                    continue;
+//                }
+//                if (item.PrepTime> maxPrepTime.PrepTime)
+//                    maxPrepTime = item;
+//            }
+//        }
+//        return maxPrepTime;
+//    }
+
     /**
-     *sort preparation time items.
-     * 1. sort item in each category
+     * who will been shown next.
+     * @param items
+     * @return
      */
-    public void sort1()
+    public PrepItem findNextShowingItem(ArrayList<PrepItem> items)
     {
+        SmartMode mode = getSmartMode();
 
-        ArrayList<String> arCategories = getAllCategories(m_arItems);
-        for (int i=0; i< arCategories.size(); i++)
-        {
-            String category = arCategories.get(i);
-            sortCategory(category);
-        }
-
-    }
-    private void sortCategory(String category)
-    {
-        PrepItem maxItem = findMaxCategoryPreparationTime(m_arItems,category );
-        if (maxItem == null)
-            return;
-        for (int i=0; i< m_arItems.size(); i++)
-        {
-            PrepItem item =m_arItems.get(i);
-            if (item.Category.equals(category))
-            {
-                item.MaxItemName = maxItem.ItemName;
-                //item.WaitSecsToStart = maxItem.getTotalMinsToCook() - item.getTotalMinsToCook();
-            }
-        }
-
-    }
-
-    public PrepItem findMaxCategoryPreparationTime(ArrayList<PrepItem> items , String category)
-    {
-        PrepItem maxPrepTime = null;
-        for (int i=0; i< items.size(); i++)
-        {
-            PrepItem item = items.get(i);
-            if (item.finished) continue;
-            if (item.Category.equals(category))
-            {
-                if (maxPrepTime == null) {
-                    maxPrepTime = item;
-                    continue;
-                }
-                if (item.PrepTime> maxPrepTime.PrepTime)
-                    maxPrepTime = item;
-            }
-        }
-        return maxPrepTime;
-    }
-
-    public PrepItem findMaxPreparationTime(ArrayList<PrepItem> items)
-    {
         PrepItem maxPrepTime = null;
         for (int i=0; i< items.size(); i++)
         {
@@ -112,29 +154,58 @@ public class PrepSorts {
                 maxPrepTime = item;
                 continue;
             }
-            //if (item.PrepTime> maxPrepTime.PrepTime)
-            if ( (item.PrepTime-item.ItemDelay)> (maxPrepTime.PrepTime-maxPrepTime.ItemDelay)) //kpp1-417, delay time.
-                maxPrepTime = item;
+//            //if (item.PrepTime> maxPrepTime.PrepTime)
+//            //if ( (item.PrepTime-item.ItemDelay)> (maxPrepTime.PrepTime-maxPrepTime.ItemDelay)) //kpp1-417, delay time.
+//            if ( (item.PrepTime-item.ItemDelay - item.CategoryDelay)>
+//                    (maxPrepTime.PrepTime-maxPrepTime.ItemDelay - maxPrepTime.CategoryDelay)) //kpp1-417, delay time.
+//                maxPrepTime = item;
+
+            switch (mode)
+            {
+
+                case Unknown:
+                    return null;
+
+                case Category_Runner:
+                case Category_Delay:
+                {
+                    if ( item.CategoryDelay < maxPrepTime.CategoryDelay) //less delay item will show first
+                        maxPrepTime = item;
+                }
+                break;
+
+                case Item_Delay: {
+                    if (item.ItemDelay < maxPrepTime.ItemDelay) //less delay item will show first
+                        maxPrepTime = item;
+                }
+                break;
+                case Item_Preparation:
+                {
+                    if (item.PrepTime > maxPrepTime.PrepTime) //more preparation item will show first
+                        maxPrepTime = item;
+                }
+                break;
+            }
 
         }
         return maxPrepTime;
     }
 
-    public ArrayList<String> getAllCategories(ArrayList<PrepItem> items)
-    {
-        ArrayList<String> ar = new ArrayList<>();
-
-        for (int i=0; i< items.size(); i++)
-        {
-            if (isExistedInArrary(ar, items.get(i).Category) )
-                continue;
-            else
-                ar.add(items.get(i).Category);
-        }
-
-        return ar;
-
-    }
+//    public ArrayList<String> getAllCategories(ArrayList<PrepItem> items)
+//    {
+//        ArrayList<String> ar = new ArrayList<>();
+//
+//        for (int i=0; i< items.size(); i++)
+//        {
+//            if (isExistedInArrary(ar, items.get(i).Category) )
+//                continue;
+//            else
+//                ar.add(items.get(i).Category);
+//        }
+//
+//        return ar;
+//
+//    }
 
 
     /**
@@ -163,15 +234,15 @@ public class PrepSorts {
         return ar;
     }
 
-    private boolean isExistedInArrary(ArrayList<String> ar, String str)
-    {
-        for (int i=0; i< ar.size(); i++)
-        {
-            if (ar.get(i).equals(str))
-                return true;
-        }
-        return false;
-    }
+//    private boolean isExistedInArrary(ArrayList<String> ar, String str)
+//    {
+//        for (int i=0; i< ar.size(); i++)
+//        {
+//            if (ar.get(i).equals(str))
+//                return true;
+//        }
+//        return false;
+//    }
 
     public PrepItem findItem(String itemName)
     {
@@ -195,31 +266,6 @@ public class PrepSorts {
     {
         int secs = item_start_cooking_time_seconds(itemName, dtOrderStart, orderDelay);
 
-//        PrepItem prep = findItem(itemName);
-//        if (prep == null) return true;
-//        String maxItemName = prep.MaxItemName;
-//
-//        int secs = 0;
-//
-//        PrepItem maxItem = findItem(maxItemName);
-//        if (maxItem != null) {
-//            //the real start time has problem. We need to handle case that the max item don't set real start time.
-//            if (maxItem.RealStartTime <= 0)
-//                maxItem.RealStartTime = convertMinutes2Secs(orderDelay) + convertMinutes2Secs(maxItem.ItemDelay);
-//
-//            secs = maxItem.RealStartTime;
-//        }
-//        else
-//        {
-//            secs = convertMinutes2Secs(orderDelay);
-//        }
-//       // secs +=  convertMinutes2Secs(itemDelay);
-//        if (maxItem != null)
-//            secs += convertMinutes2Secs(maxItem.PrepTime -  prep.PrepTime);
-//        //in preparation mode, the itemdelay equals the category delay. The max item has handle the category delay
-//        // so, don't add this item delay again.
-//       // if (prep != maxItem)
-//       //     secs += convertMinutes2Secs(prep.ItemDelay);
         TimeDog d = new TimeDog(dtOrderStart);
        // KDSLog.d(TAG,"MaxName=" + maxItemName +",ItemName=" + itemName + ",seconds=" + KDSUtil.convertIntToString(secs) );
        // KDSLog.d(TAG, prep.toString());
@@ -235,12 +281,14 @@ public class PrepSorts {
      *  Unit is minutes
      * @return
      *  How many seconds later, this item can sart to cook (from order start time).
+     *  0: item should been shown now.
      */
-    public int item_start_cooking_time_seconds( String itemName, Date dtOrderStart, float orderDelay)
+    private int item_start_cooking_time_seconds2( String itemName, Date dtOrderStart, float orderDelay)
     {
+
         //kpp1-441
         if (m_bSmartCategoryEnabled)
-            return item_start_cooking_time_seconds_for_smart_category(itemName, dtOrderStart, orderDelay);
+            return category_runner_item_start_cooking_time_seconds(itemName, dtOrderStart, orderDelay);
         //
         PrepItem prep = findItem(itemName);
         if (prep == null) return 0;
@@ -254,25 +302,27 @@ public class PrepSorts {
         if (maxItem != null) {
             //the real start time has problem. We need to handle case that the max item don't set real start time.
             if (maxItem.RealStartTime <= 0)
-                maxItem.RealStartTime = convertMinutes2Secs(orderDelay + maxItem.ItemDelay);
+                maxItem.RealStartTime = convertMinutes2Secs(orderDelay + maxItem.ItemDelay + maxItem.CategoryDelay);
 
             secs = maxItem.RealStartTime;
             //kpp1-417
             if (prep != maxItem) // it is not checking max item.
             {
                 //kpp1-431-2, same category should started in same time. This ask us just use "delay", remove preparation time.
-                //
-                if (prep.Category.equals(maxItem.Category))
-                {
-                    if (prep.ItemDelay == maxItem.ItemDelay)
-                    {
-                        return secs;
+                //kp-17, just category delay feature use it.
+                if (prep.CategoryDelay>0 ||
+                    maxItem.CategoryDelay >0) {
+                    if (prep.Category.equals(maxItem.Category)) {
+                        //if (prep.ItemDelay == maxItem.ItemDelay)
+                        if (prep.CategoryDelay == maxItem.CategoryDelay) {
+                            return secs;
+                        }
                     }
                 }
                 //
                 //Add the difference of preparation time for max and normal item.
                 // Add the normal item delay time.
-                int nDelay = (int)(convertMinutes2Secs(prep.ItemDelay) - secs);
+                int nDelay = (int)(convertMinutes2Secs(orderDelay + prep.ItemDelay + prep.CategoryDelay) - secs);
                 if (nDelay<0) nDelay = 0;
                 float prepWait = maxItem.PrepTime - prep.PrepTime;
                 if (prepWait <0) prepWait = 0;
@@ -284,7 +334,92 @@ public class PrepSorts {
         else
         {
             //secs = convertMinutes2Secs(orderDelay);
-            secs = convertMinutes2Secs(orderDelay + prep.ItemDelay); //kpp1-417
+            secs = convertMinutes2Secs(orderDelay + prep.ItemDelay+prep.CategoryDelay); //kpp1-417
+        }
+        // secs +=  convertMinutes2Secs(itemDelay);
+        //if (maxItem != null) //kpp1-417
+        //    secs += convertMinutes2Secs(maxItem.PrepTime -  prep.PrepTime);
+        return secs;
+
+
+    }
+
+    public int item_start_cooking_time_seconds( String itemName, Date dtOrderStart, float orderDelay)
+    {
+        SmartMode mode = getSmartMode();
+
+
+        if (mode == SmartMode.Category_Runner)
+            return category_runner_item_start_cooking_time_seconds(itemName, dtOrderStart, orderDelay);
+
+        //
+        PrepItem prep = findItem(itemName);
+        if (prep == null) return 0;
+        if (prep.finished) return 0; //kpp1-431-1, finished item should cooked.
+
+        String maxItemName = prep.MaxItemName;
+
+        int secs = 0;
+
+        PrepItem maxItem = findItem(maxItemName);
+        if (maxItem != null) {
+            //the real start time has problem. We need to handle case that the max item don't set real start time.
+            if (maxItem.RealStartTime <= 0)
+                maxItem.RealStartTime = convertMinutes2Secs(orderDelay + maxItem.ItemDelay + maxItem.CategoryDelay);
+
+            secs = maxItem.RealStartTime;
+            //kpp1-417
+            if (prep != maxItem) // it is not checking max item.
+            {
+                //kpp1-431-2, same category should started in same time. This ask us just use "delay", remove preparation time.
+                //kp-17, just category delay feature use it.
+                switch (mode)
+                {
+
+                    case Unknown:
+                        break;
+                    case Category_Delay:
+                    {
+                       if (prep.Category.equals(maxItem.Category)) {
+                           return secs;
+                       }
+                       int nDelay = (int)(convertMinutes2Secs(orderDelay + prep.CategoryDelay) - secs);
+                       if (nDelay<0) nDelay = 0;
+                       secs += nDelay;
+                    }
+                    break;
+                    case Item_Delay:
+                    {
+                        int nDelay = (int)(convertMinutes2Secs(orderDelay + prep.ItemDelay) - secs);
+                        if (nDelay<0) nDelay = 0;
+                        secs += nDelay;
+                    }
+                        break;
+                    case Item_Preparation:
+                    {
+                        float prepWait = maxItem.PrepTime - prep.PrepTime;
+                        if (prepWait <0) prepWait = 0;
+                        secs += convertMinutes2Secs(prepWait);
+                    }
+                        break;
+                }
+
+//                //
+//                //Add the difference of preparation time for max and normal item.
+//                // Add the normal item delay time.
+//                int nDelay = (int)(convertMinutes2Secs(orderDelay + prep.ItemDelay + prep.CategoryDelay) - secs);
+//                if (nDelay<0) nDelay = 0;
+//                float prepWait = maxItem.PrepTime - prep.PrepTime;
+//                if (prepWait <0) prepWait = 0;
+//                secs += convertMinutes2Secs(prepWait) + nDelay;
+//                //secs += convertMinutes2Secs(maxItem.PrepTime - prep.PrepTime) + nDelay;
+//                //secs += convertMinutes2Secs(maxItem.PrepTime - prep.PrepTime + prep.ItemDelay - maxItem.ItemDelay);
+            }
+        }
+        else
+        {
+            //secs = convertMinutes2Secs(orderDelay);
+            secs = convertMinutes2Secs(orderDelay + prep.ItemDelay+prep.CategoryDelay); //kpp1-417
         }
         // secs +=  convertMinutes2Secs(itemDelay);
         //if (maxItem != null) //kpp1-417
@@ -333,10 +468,11 @@ public class PrepSorts {
      * @return
      *  New max item
      */
-    static public PrepSorts.PrepItem prep_other_station_item_bumped( KDSDataOrder order, String itemName)
+    static public PrepSorts.PrepItem prep_other_station_item_bumped2( KDSDataOrder order, String itemName)
     {
+
         if (m_bSmartCategoryEnabled)
-            return prep_other_station_item_bumped_for_smart_category(order, itemName);
+            return category_runner_prep_other_station_item_bumped(order, itemName);
 
         //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return null;
@@ -344,20 +480,25 @@ public class PrepSorts {
         if (prepItem == null) return null;
         prepItem.setFinished(true);//, order.getDurationSeconds());
         PrepSorts.PrepItem maxItem = null;
-        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0 ||order.prep_get_sorts().areThereDelayItemUnfinished() )
+        if (prepItem.PrepTime >0
+                || prepItem.ItemDelay >0
+                ||order.prep_get_sorts().areThereDelayItemUnfinished()
+                || prepItem.CategoryDelay>0 )
         { //kpp1-322, add this condition
             //kpp1-431-2,Smart items:  if there is 0 delay item, and it is bumped, next category items should active.
             if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
                 boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
 
                 //the interal max item was not changed, so same old cooking state.
-                PrepItem nextMaxItem = order.prep_get_sorts().findMaxPreparationTime(order.prep_get_sorts().m_arItems);
-                boolean nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
+                PrepItem nextMaxItem = order.prep_get_sorts().findNextShowingItem(order.prep_get_sorts().m_arItems);
+                boolean nextMaxItemShouldStarted = false;
+                if (nextMaxItem != null)
+                    nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
                 //change max item to new one.
                 maxItem = order.prep_get_sorts().sort();
                 if (maxItem != null) {
                     int startSeconds = order.getDurationSeconds();
-                    int delaySeconds = (int)(maxItem.ItemDelay * 60);
+                    int delaySeconds = (int)((maxItem.ItemDelay + maxItem.CategoryDelay)* 60);
                     if (!nextMaxItemShouldStarted) {
                         //if the max order has started, don't update its real start time.
                         if (bAllCategoryFinished)
@@ -380,10 +521,154 @@ public class PrepSorts {
 
     }
 
+    static public PrepSorts.PrepItem prep_other_station_item_bumped( KDSDataOrder order, String itemName)
+    {
+        if (order == null) return null;
+        SmartMode mode = order.prep_get_sorts().getSmartMode();
+
+        if (mode == SmartMode.Unknown)
+            return null;
+
+        if (mode == SmartMode.Category_Runner)
+            return category_runner_prep_other_station_item_bumped(order, itemName);
+
+
+        //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
+
+        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+        if (prepItem == null) return null;
+        prepItem.setFinished(true);//, order.getDurationSeconds());
+        PrepSorts.PrepItem maxItem = null;
+
+        switch (mode)
+        {
+
+            case Category_Delay:
+            {
+                if (order.prep_get_sorts().areThereDelayItemUnfinished() )
+                { //kpp1-322, add this condition
+                    //kpp1-431-2,Smart items:  if there is 0 delay item, and it is bumped, next category items should active.
+                    if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+                        boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
+
+                        //the internal max item was not changed, so save old cooking state.
+                        PrepItem nextMaxItem = order.prep_get_sorts().findNextShowingItem(order.prep_get_sorts().m_arItems);
+                        boolean nextMaxItemShouldStarted = false;
+                        if (nextMaxItem != null)
+                            nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
+                        //change max item to new one.
+                        maxItem = order.prep_get_sorts().sort();
+                        if (maxItem != null) {
+                            int startSeconds = order.getDurationSeconds();
+                            int delaySeconds = (int)(( maxItem.CategoryDelay)* 60);
+                            if (!nextMaxItemShouldStarted) {//we cook this item before its delay timeout.
+                                //if the max order has started, don't update its real start time.
+                                if (bAllCategoryFinished)
+                                {
+                                    maxItem.RealStartTime = startSeconds;
+                                    order.prep_get_sorts().setAllSameCategoryItemsStarted(maxItem);
+                                }
+                                else {
+                                    maxItem.RealStartTime = (startSeconds > delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+                break;
+            case Item_Delay:
+            {
+                if (order.prep_get_sorts().areThereDelayItemUnfinished() )
+                { //kpp1-322, add this condition
+                    //kpp1-431-2,Smart items:  if there is 0 delay item, and it is bumped, next category items should active.
+                    if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+                        
+                        //the internal max item was not changed, so save old cooking state.
+                        PrepItem nextMaxItem = order.prep_get_sorts().findNextShowingItem(order.prep_get_sorts().m_arItems);
+                        boolean nextMaxItemShouldStarted = false;
+                        if (nextMaxItem != null)
+                            nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
+                        //change max item to new one.
+                        maxItem = order.prep_get_sorts().sort();
+                        if (maxItem != null) {
+                            int startSeconds = order.getDurationSeconds();
+                            int delaySeconds = (int)(( maxItem.ItemDelay)* 60);
+                            if (!nextMaxItemShouldStarted) {//we cook this item before its delay timeout.
+                                maxItem.RealStartTime = (startSeconds < delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+                                
+                            }
+
+                        }
+                    }
+                }
+            }
+            break;
+            case Item_Preparation:
+            {
+                if (order.prep_get_sorts().areThereDelayItemUnfinished() )
+                { //kpp1-322, add this condition
+                    //kpp1-431-2,Smart items:  if there is 0 delay item, and it is bumped, next category items should active.
+                    if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+                        maxItem = order.prep_get_sorts().sort();
+                        if (maxItem != null) {
+                            int startSeconds = order.getDurationSeconds();
+                            maxItem.RealStartTime = startSeconds;
+                        }
+
+                        
+                    }
+                }
+            }
+                break;
+        }
+
+//        if (prepItem.PrepTime >0
+//                || prepItem.ItemDelay >0
+//                ||order.prep_get_sorts().areThereDelayItemUnfinished()
+//                || prepItem.CategoryDelay>0 )
+//        { //kpp1-322, add this condition
+//            //kpp1-431-2,Smart items:  if there is 0 delay item, and it is bumped, next category items should active.
+//            if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
+//                boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
+//
+//                //the interal max item was not changed, so same old cooking state.
+//                PrepItem nextMaxItem = order.prep_get_sorts().findNextShowingItem(order.prep_get_sorts().m_arItems);
+//                boolean nextMaxItemShouldStarted = false;
+//                if (nextMaxItem != null)
+//                    nextMaxItemShouldStarted = order.prep_get_sorts().is_cooking_time(nextMaxItem.ItemName, order.getStartTime(), order.getOrderDelay());
+//                //change max item to new one.
+//                maxItem = order.prep_get_sorts().sort();
+//                if (maxItem != null) {
+//                    int startSeconds = order.getDurationSeconds();
+//                    int delaySeconds = (int)((maxItem.ItemDelay + maxItem.CategoryDelay)* 60);
+//                    if (!nextMaxItemShouldStarted) {
+//                        //if the max order has started, don't update its real start time.
+//                        if (bAllCategoryFinished)
+//                        {
+//                            maxItem.RealStartTime = startSeconds;
+//                            order.prep_get_sorts().setAllSameCategoryItemsStarted(maxItem);
+//                        }
+//                        else {
+//                            maxItem.RealStartTime = (startSeconds > delaySeconds ? startSeconds : delaySeconds); //Math.abs(order.getDurationSeconds() - (int)(maxItem.ItemDelay * 60)); //kpp1-417, make delay time must been done.
+//                        }
+//                        //maxItem.RealStartTime = startSeconds;// > delaySeconds ? startSeconds : delaySeconds);
+//                    }
+//                    //    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
+//                }
+//            }
+//        }
+        //getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
+        return maxItem;
+
+
+    }
+
     static public ArrayList<PrepSorts.PrepItem> prep_other_station_item_unbumped(KDSDataOrder order,String itemName)
     {
         if (m_bSmartCategoryEnabled)
-            return prep_other_station_item_unbumped_for_smart_category(order, itemName);
+            return category_runner_prep_other_station_item_unbumped(order, itemName);
 
         //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return null;
@@ -437,7 +722,7 @@ public class PrepSorts {
         for (int i=0; i< m_arItems.size(); i++)
         {
             PrepItem item = m_arItems.get(i);
-            if (item.ItemDelay ==0 && item.PrepTime ==0) continue;
+            if ( (item.ItemDelay ==0) && (item.PrepTime ==0) && (item.CategoryDelay==0)) continue;
             if (item.finished) continue;
             return true;
         }
@@ -460,7 +745,8 @@ public class PrepSorts {
             if (item.finished) continue;
             if (item == maxItem ) continue;
             if (item.Category.equals(maxItem.Category)) continue;
-            if ( item.ItemDelay<= maxItem.ItemDelay)
+            //if ( item.ItemDelay<= maxItem.ItemDelay)
+            if ( item.CategoryDelay<= maxItem.CategoryDelay) //kp-17
                 return false;
 
         }
@@ -479,7 +765,8 @@ public class PrepSorts {
             if (item.finished) continue;
             if (item == maxItem ) continue;
             if (item.Category.equals(maxItem.Category) &&
-                item.ItemDelay == maxItem.ItemDelay)
+                    item.CategoryDelay == maxItem.CategoryDelay)
+                //item.ItemDelay == maxItem.ItemDelay)
                 item.RealStartTime = maxItem.RealStartTime;
 
 
@@ -495,7 +782,7 @@ public class PrepSorts {
      * @param orderDelay
      * @return
      */
-    public int item_start_cooking_time_seconds_for_smart_category( String itemName, Date dtOrderStart, float orderDelay)
+    public int category_runner_item_start_cooking_time_seconds( String itemName, Date dtOrderStart, float orderDelay)
     {
         PrepItem prep = findItem(itemName);
         if (prep == null) return 0;
@@ -507,21 +794,7 @@ public class PrepSorts {
         else
             return Integer.MAX_VALUE-999999999;
 
-//        String maxItemName = prep.MaxItemName;
-//
-//        PrepItem maxItem = findItem(maxItemName);
-//        if (maxItem != null) {
-//            if (prep.Category.equals(maxItem.Category))
-//                return 0;
-//            else
-//                return Integer.MAX_VALUE-999999999;
-//
-//
-//        }
-//        else
-//        {
-//            return 0;
-//        }
+
 
     }
 
@@ -531,7 +804,7 @@ public class PrepSorts {
      * @param itemName
      * @return
      */
-    static public PrepSorts.PrepItem prep_other_station_item_bumped_for_smart_category( KDSDataOrder order, String itemName)
+    static public PrepSorts.PrepItem category_runner_prep_other_station_item_bumped( KDSDataOrder order, String itemName)
     {
         //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return null;
@@ -556,7 +829,7 @@ public class PrepSorts {
      * @param itemName
      * @return
      */
-    static public ArrayList<PrepSorts.PrepItem> prep_other_station_item_unbumped_for_smart_category(KDSDataOrder order,String itemName)
+    static public ArrayList<PrepSorts.PrepItem> category_runner_prep_other_station_item_unbumped(KDSDataOrder order,String itemName)
     {
         //KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
 //        if (order == null) return null;
@@ -575,29 +848,61 @@ public class PrepSorts {
 
     }
 
-    public void setSmartShowingCategory(ArrayList<String> ar)
+    public void runnerSetShowingCategory(ArrayList<String> ar)
     {
         m_arSmartShowingCategory.clear();
         m_arSmartShowingCategory.addAll(ar);
 
     }
-    public ArrayList<String> getSmartShowingCategory()
+    public ArrayList<String> runnerGetShowingCategory()
     {
         return m_arSmartShowingCategory;
     }
     
-    public boolean smartCategoryIsShowing(String category)
+    public boolean runnerCategoryIsShowing(String category)
     {
-        return KDSUtil.isExistedInArray(getSmartShowingCategory(), category);
+        return KDSUtil.isExistedInArray(runnerGetShowingCategory(), category);
     }
 
-    public String smartCategoryLastShowing()
+    public String runnerGetLastShowingCategory()
     {
         int ncount = m_arSmartShowingCategory.size();
         if (ncount<=0)
             return "";
         return m_arSmartShowingCategory.get(ncount-1);
     }
+
+    public SmartMode getSmartMode()
+    {
+        if (m_bSmartCategoryEnabled)
+            return SmartMode.Category_Runner;
+        else
+        {
+            int ncount = m_arItems.size();
+            for (int i=0; i< ncount; i++)
+            {
+                if (m_arItems.get(i).CategoryDelay >0 )
+                    return SmartMode.Category_Delay;
+            }
+
+            for (int i=0; i< ncount; i++)
+            {
+                if (m_arItems.get(i).ItemDelay >0)
+                    return SmartMode.Item_Delay;
+            }
+
+            for (int i=0; i< ncount; i++)
+            {
+                if (m_arItems.get(i).PrepTime >0)
+                    return SmartMode.Item_Preparation;
+            }
+        }
+
+        return SmartMode.Unknown;
+
+    }
+
+
 
     /********************************************************************************************/
     /********************************************************************************************/
@@ -613,6 +918,7 @@ public class PrepSorts {
        // public float WaitSecsToStart = 0;
         public boolean finished = false;
         public int RealStartTime= 0; //seconds from order started
+        public float CategoryDelay = 0;
         public void setFinished(boolean bFinished)//, int nStartedSeconds)
         {
             finished = bFinished;
@@ -628,14 +934,14 @@ public class PrepSorts {
 
             s +=",ItemDelay=" + KDSUtil.convertFloatToString(ItemDelay);
             s +=",PrepTime=" + KDSUtil.convertFloatToString(PrepTime);
-
+            s +=",CategoryDelay=" + KDSUtil.convertFloatToString(CategoryDelay);
             return s;
 
         }
         public String sqlNew()
         {
 
-            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay) values(" ;
+            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0) values(" ;
             sql += "'" + orderguid +"'";
             sql += ",'" + KDSUtil.fixSqliteSingleQuotationIssue( ItemName) +"'";
             sql += ",'" + Category + "'";
@@ -645,6 +951,7 @@ public class PrepSorts {
             sql += "," + KDSUtil.convertIntToString( finished?1:0 );
             sql += "," + KDSUtil.convertIntToString(RealStartTime);
             sql += "," + KDSUtil.convertFloatToString( ItemDelay);
+            sql += "," + KDSUtil.convertFloatToString( CategoryDelay);
             sql += ")";
             return sql;
         }
@@ -655,10 +962,10 @@ public class PrepSorts {
             return sql;
         }
 
-        public float getTotalMinsToCook()
-        {
-            return ItemDelay + PrepTime;
-        }
+//        public float getTotalMinsToCook()
+//        {
+//            return ItemDelay + PrepTime;
+//        }
 
     }
 

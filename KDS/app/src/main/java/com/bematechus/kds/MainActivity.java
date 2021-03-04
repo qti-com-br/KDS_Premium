@@ -45,6 +45,7 @@ import android.view.View;
 //import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 
 import android.widget.ImageView;
@@ -106,6 +107,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -322,6 +324,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         checkOfflineStations(); //kpp1-290
 
         m_cleaning.checkCleaningHabits();
+
+        checkAutoClearDB();
 
     }
 
@@ -7846,6 +7850,41 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getUserUI(KDSUser.USER.USER_A).getLayout().focusLineItemOrderFirstItem(orderGuid);
         if (getKDS().isMultpleUsersMode())
             getUserUI(KDSUser.USER.USER_B).getLayout().focusLineItemOrderFirstItem(orderGuid);
+    }
+
+    static public boolean m_bAutoClearDBDone = false;
+    private void checkAutoClearDB()
+    {
+        String s = getSettings().getString(KDSSettings.ID.Clear_db_schedule);
+        if (s.isEmpty()) return;
+        if (s.indexOf(":") <0) return;
+        String[] ar = s.split(":");
+        int hour =Integer.parseInt(ar[0]);//
+        int minutes = Integer.parseInt(ar[1]);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minutes);
+        cal.set(Calendar.SECOND, 0);
+        Date dt =  cal.getTime();
+        TimeDog td = new TimeDog(dt);
+        if (td.is_timeout(60000)) //1 minutes later, do nothing.
+        {
+            m_bAutoClearDBDone = false;
+            return;
+        }
+
+        if (td.is_timeout(1))
+        {
+            if (!m_bAutoClearDBDone)
+            {
+                doClearDB(true);
+                m_bAutoClearDBDone = true;
+            }
+
+        }
+
+
     }
 }
 

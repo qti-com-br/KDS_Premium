@@ -447,6 +447,36 @@ public class KDSLayoutOrder extends KDSDataOrder {
         return null;
     }
 
+    /**
+     * kpp1-428
+     * remove the hidden items in dressed order.
+     *
+     * @return
+     *  The hidden items
+     */
+    public int removeHiddenItems()
+    {
+        int ncount = this.getItems().getCount();
+
+        ArrayList<KDSDataItem> arWillHide = new ArrayList<>();
+
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (item.getHidden())
+            {
+                arWillHide.add(item);
+            }
+        }
+
+        ncount =  arWillHide.size();
+        for (int i=0; i< ncount; i++)
+        {
+            this.getItems().removeComponent(arWillHide.get(i));
+        }
+        arWillHide.clear();
+        return ncount;
+    }
 
     /**
      * kp1-25
