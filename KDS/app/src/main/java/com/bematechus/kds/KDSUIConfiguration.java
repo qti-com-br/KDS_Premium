@@ -2454,4 +2454,21 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class PreferenceFragmentSumStation extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_sum_station);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+
+
+
+        }
+    }
+
+
+
 }

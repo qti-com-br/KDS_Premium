@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class SumStationEntry {
 
+    static public final String SUM_STATION_SEPARATOR = "\n";
     public enum  EntryType
     {
         Item,
@@ -20,7 +21,7 @@ public class SumStationEntry {
     EntryType mType = EntryType.Item;
     String mDescription = "";
     String mDisplayText = "";
-    int mAlertValue = -1;
+    //int mAlertValue = -1;
 
     public void setEntryType(EntryType type)
     {
@@ -49,15 +50,15 @@ public class SumStationEntry {
         mDisplayText= s;
     }
 
-    public int getAlertValue()
-    {
-        return mAlertValue;
-    }
-    public void setAlertValue(int n)
-    {
-        mAlertValue = n;
-
-    }
+//    public int getAlertValue()
+//    {
+//        return mAlertValue;
+//    }
+//    public void setAlertValue(int n)
+//    {
+//        mAlertValue = n;
+//
+//    }
 
     @Override
     public String toString()
@@ -65,26 +66,28 @@ public class SumStationEntry {
         return getDescription();
     }
 
-    static private String SEPARATOR = "\f";
+    static protected String SEPARATOR = "\f";
     public String toPrefString()
     {
-        String s = getDescription();
-        s += SEPARATOR;
-        s += getDisplayText();
-        s += SEPARATOR;
-        s += KDSUtil.convertIntToString(getAlertValue());
-        return s;
+        return null;
+//        String s = getDescription();
+//        s += SEPARATOR;
+//        s += getDisplayText();
+//        s += SEPARATOR;
+//        s += KDSUtil.convertIntToString(getAlertValue());
+//        return s;
     }
 
-    static public SumStationEntry parsePrefString(String s)
-    {
-        ArrayList<String> ar = KDSUtil.spliteString(s, SEPARATOR);
-        if (ar.size() !=3) return null;
-        SumStationEntry entry = new SumStationEntry();
-        entry.setDescription(ar.get(0));
-        entry.setDisplayText(ar.get(1));
-        entry.setAlertValue( KDSUtil.convertStringToInt( ar.get(2), -1));
-        return entry;
-
-    }
+//    static public SumStationEntry parsePrefString(String s)
+//    {
+//        return null;
+////        ArrayList<String> ar = KDSUtil.spliteString(s, SEPARATOR);
+////        if (ar.size() !=3) return null;
+////        SumStationEntry entry = new SumStationEntry();
+////        entry.setDescription(ar.get(0));
+////        entry.setDisplayText(ar.get(1));
+////        entry.setAlertValue( KDSUtil.convertStringToInt( ar.get(2), -1));
+////        return entry;
+//
+//    }
 }

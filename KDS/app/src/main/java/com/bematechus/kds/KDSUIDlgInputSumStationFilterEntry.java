@@ -26,24 +26,18 @@ import java.util.Comparator;
 /**
  * Created by Administrator on 2017/9/21.
  */
-public class KDSUIDlgInputSumStationEntry  extends KDSUIDialogBase  implements  KDSUIDialogBase.KDSDialogBaseListener{
+public class KDSUIDlgInputSumStationFilterEntry  extends KDSUIDialogBase  implements  KDSUIDialogBase.KDSDialogBaseListener{
 
-//
-//    public enum Mode
-//    {
-//        Item,
-//        Condiment,
-//    }
     TextView m_txtText = null;
-    SumStationEntry mEntryOriginal = null;
-    SumStationEntry mEntryEdit = null;
+    SumStationFilterEntry mEntryOriginal = null;
+    SumStationFilterEntry mEntryEdit = null;
 
-    //ListView m_lstData = null;
-    String m_strDescription = "";
-    //ArrayList<String> m_arData = new ArrayList<>();
-    SumStationEntry.EntryType m_mode = SumStationEntry.EntryType.Item;
 
-    public SumStationEntry getOriginalEntry()
+    //String m_strDescription = "";
+
+    //SumStationFilterEntry.EntryType m_mode = SumStationFilterEntry.EntryType.Item;
+
+    public SumStationFilterEntry getOriginalEntry()
     {
         return mEntryOriginal;
     }
@@ -60,8 +54,10 @@ public class KDSUIDlgInputSumStationEntry  extends KDSUIDialogBase  implements  
     }
     public void onOkClicked()
     {
-        mEntryEdit = new SumStationEntry();
+        mEntryEdit = new SumStationFilterEntry();
         mEntryEdit.setDescription(m_txtText.getText().toString());
+        String s = ((TextView)this.getView().findViewById(R.id.txtDisplay)).getText().toString();
+        mEntryEdit.setDisplayText(s);
         if ( ((RadioButton)this.getView().findViewById(R.id.rbItem)).isChecked())
             mEntryEdit.setEntryType(SumStationEntry.EntryType.Item);
         else
@@ -83,7 +79,7 @@ public class KDSUIDlgInputSumStationEntry  extends KDSUIDialogBase  implements  
             return SumStationEntry.EntryType.Condiment;
     }
 
-    public KDSUIDlgInputSumStationEntry(final Context context, KDSUIDialogBase.KDSDialogBaseListener listener, SumStationEntry entry) {
+    public KDSUIDlgInputSumStationFilterEntry(final Context context, KDSUIDialogBase.KDSDialogBaseListener listener, SumStationFilterEntry entry) {
         this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_input_sumstn_entry, "");
         //m_mode = mode;
@@ -122,52 +118,8 @@ public class KDSUIDlgInputSumStationEntry  extends KDSUIDialogBase  implements  
         String s = m_txtText.getText().toString();
         KDSUIDialogBrowseInDB dlg = new KDSUIDialogBrowseInDB(this.getView().getContext(), getSelectedEntryType(),s, this );
         dlg.show();
-//        String s = m_txtText.getText().toString();
-//        ArrayList<String> arCurrent = null;
-//        ArrayList<String> arStatistic = null;
-//        if (m_mode == Mode.Item) {
-//            arCurrent = KDSGlobalVariables.getKDS().getCurrentDB().getUniqueItems(s);
-//            if (KDSConst.ENABLE_FEATURE_STATISTIC)
-//                arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueItems(s);
-//        }
-//        else if (m_mode == Mode.Condiment)
-//        {
-//            arCurrent = KDSGlobalVariables.getKDS().getCurrentDB().getUniqueCondiments(s);
-//            if (KDSConst.ENABLE_FEATURE_STATISTIC)
-//                arStatistic = KDSGlobalVariables.getKDS().getStatisticDB().getUniqueCondiments(s);
-//        }
-//        if (KDSConst.ENABLE_FEATURE_STATISTIC) {
-//            for (int i = 0; i < arStatistic.size(); i++) {
-//                if (KDSUtil.isExistedInArray(arCurrent, arStatistic.get(i)))
-//                    continue;
-//                else
-//                    arCurrent.add(arStatistic.get(i));
-//
-//            }
-//        }
-//        m_arData.clear();
-//        m_arData.addAll(arCurrent);
-//
-//        Collections.sort(m_arData, new Comparator<String>() {
-//            @Override
-//            public int compare(String lhs, String rhs) {
-//                return lhs.compareTo(rhs);
-//            }
-//        });
-//
-//        ((ArrayAdapter)(m_lstData.getAdapter())).notifyDataSetChanged();
-//
-//        if (m_arData.size() <=0)
-//            showNoDataWarning();
     }
 
-//    private void showNoDataWarning()
-//    {
-//        String s = this.getDialog().getContext().getString(R.string.no_data_in_db);
-//
-//        Toast.makeText(this.getDialog().getContext(), s, Toast.LENGTH_SHORT).show();
-//
-//    }
 
 
     public void onKDSDialogCancel(KDSUIDialogBase dialog)
@@ -197,6 +149,7 @@ public class KDSUIDlgInputSumStationEntry  extends KDSUIDialogBase  implements  
     public void afterSelectedEntryFromDB(String description)
     {
         ((TextView)this.getView().findViewById(R.id.txtText)).setText(description);
+        ((TextView)this.getView().findViewById(R.id.txtDisplay)).setText(description);
 
     }
 
