@@ -75,14 +75,14 @@ public class KDSPreferenceSumStnFilter extends Preference implements KDSUIDialog
         String items = filter;
         editor.putString(SUM_STATION_KEY_ITEMS, items);
 
-        KDSGlobalVariables.getKDS().getSettings().set(KDSSettings.ID.SumStn_entries, items);
+        KDSGlobalVariables.getKDS().getSettings().set(KDSSettings.ID.SumStn_filters, items);
 
         editor.commit();
 
-        if (KDSGlobalVariables.getMainActivity() != null)
-        {
-            KDSGlobalVariables.getMainActivity().onSharedPreferenceChanged(null, SUM_STATION_KEY_ITEMS);
-        }
+//        if (KDSGlobalVariables.getMainActivity() != null)
+//        {
+//            KDSGlobalVariables.getMainActivity().onSharedPreferenceChanged(null, SUM_STATION_KEY_ITEMS);
+//        }
         return true;
     }
 

@@ -63,14 +63,15 @@ public class KDSPreferenceSumStnAlert extends Preference implements KDSUIDialogB
         String items = filter;
         editor.putString(SUM_STATION_KEY_ITEMS, items);
 
-        KDSGlobalVariables.getKDS().getSettings().set(KDSSettings.ID.SumStn_entries, items);
+        KDSGlobalVariables.getKDS().getSettings().set(KDSSettings.ID.SumStn_alerts, items);
 
         editor.commit();
+        editor.apply();
 
-        if (KDSGlobalVariables.getMainActivity() != null)
-        {
-            KDSGlobalVariables.getMainActivity().onSharedPreferenceChanged(null, SUM_STATION_KEY_ITEMS);
-        }
+//        if (KDSGlobalVariables.getMainActivity() != null)
+//        {
+//            KDSGlobalVariables.getMainActivity().onSharedPreferenceChanged(null, SUM_STATION_KEY_ITEMS);
+//        }
         return true;
     }
 

@@ -205,4 +205,5 @@
 		<item>Exibir fila de pedidos</item>
 	</string-array>
 	<string name="quantity">Quantity</string>
+	<string name="input_internet_file">Entre com o arquivo da Internet</string>
 </resources>

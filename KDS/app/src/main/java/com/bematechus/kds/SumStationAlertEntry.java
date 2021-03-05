@@ -76,7 +76,7 @@ public class SumStationAlertEntry extends SumStationEntry {
     static public SumStationAlertEntry parsePrefString(String s)
     {
         ArrayList<String> ar = KDSUtil.spliteString(s, SEPARATOR);
-        if (ar.size() !=3) return null;
+        if (ar.size() !=6) return null;
         SumStationAlertEntry entry = new SumStationAlertEntry();
         entry.setDescription(ar.get(0));
         entry.setDisplayText(ar.get(1));

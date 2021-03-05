@@ -1,13 +1,9 @@
-package com.bematechus.kdsrouter;
+package com.bematechus.kdslib;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.View;
 import android.widget.TextView;
-
-import com.bematechus.kdslib.KDSUIDialogBase;
 
 /**
  * Created by Administrator on 2016/9/21.

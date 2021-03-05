@@ -57,6 +57,7 @@
             android:id="@+id/btnFind"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/button_selector"
             android:text="@string/browse_in_item_database" />
 
     </LinearLayout>
@@ -93,7 +94,7 @@
             android:text="Alert qty" />
 
         <EditText
-            android:id="@+id/editTextNumber"
+            android:id="@+id/txtQty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -112,11 +113,26 @@
             android:text="Alert time" />
 
         <TextView
-            android:id="@+id/textView47"
+            android:id="@+id/txtTime"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnResetTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:background="@drawable/button_selector"
+            android:text="Reset" />
+
+        <Button
+            android:id="@+id/btnChooseTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="Time" />
 
     </LinearLayout>
 
@@ -132,7 +148,7 @@
             android:text="Alert message" />
 
         <EditText
-            android:id="@+id/editTextTextMultiLine"
+            android:id="@+id/txtMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -157,32 +173,34 @@
                 android:text="Alert image" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/btnLocal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@drawable/button_selector"
                 android:text="Local" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/btnEthernet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@drawable/button_selector"
                 android:text="Ethernet" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btnInternet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@drawable/button_selector"
                 android:text="Internet" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView46"
+            android:id="@+id/imageFileName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

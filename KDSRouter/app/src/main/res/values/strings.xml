@@ -140,7 +140,7 @@
     <string name="network_lost">Network lost</string>
     <string name="network_restore">Network restore</string>
 
-    <string name="input_internet_file">Input internet file</string>
+<!--    <string name="input_internet_file">Input internet file</string>-->
     <string name="remove">Remove</string>
     <string name="local">Local</string>
     <string name="ethernet">Network</string>

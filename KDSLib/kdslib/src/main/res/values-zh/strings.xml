@@ -224,4 +224,5 @@
 	<string name="domain_name_can_be_empty">Domain name, can be empty</string>
 	<string name="domain">Domain:</string>
     <string name="quantity">Quantity</string>
+    <string name="input_internet_file">输入国际网文件</string>
 </resources>

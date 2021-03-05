@@ -58,7 +58,7 @@
 	<string name='error_relations_backup_dead_loop'>Estaciones # función apoyo \&#x27;dead loop\&#x27;.</string>
 	<string name='network_lost'>Red perdida</string>
 	<string name='network_restore'>Red restaurada </string>
-	<string name='input_internet_file'>Entrada de Archivo de Internet</string>
+<!--	<string name='input_internet_file'>Entrada de Archivo de Internet</string>-->
 	<string name='remove'>Eliminar</string>
 	<string name='local'>Local</string>
 	<string name='ethernet'>Red</string>

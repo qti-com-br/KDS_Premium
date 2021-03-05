@@ -60,7 +60,7 @@
 	<string name="error_relations_backup_dead_loop">Estações # reserva em \'dead loop\'</string>
 	<string name="network_lost">Rede perdida</string>
 	<string name="network_restore">Rede restaurada</string>
-	<string name="input_internet_file">Entre com o arquivo da Internet</string>
+<!--	<string name="input_internet_file">Entre com o arquivo da Internet</string>-->
 	<string name="remove">Remover</string>
 	<string name="local">Local</string>
 	<string name="ethernet">Rede</string>

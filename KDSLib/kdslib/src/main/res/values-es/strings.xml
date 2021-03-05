@@ -180,4 +180,5 @@
 	<string name="domain">Domain:</string>
 	<string name="domain_name_can_be_empty">El nombre de domain puede estar vacío</string>
 	<string name="quantity">Quantity</string>
+	<string name='input_internet_file'>Entrada de Archivo de Internet</string>
 </resources>

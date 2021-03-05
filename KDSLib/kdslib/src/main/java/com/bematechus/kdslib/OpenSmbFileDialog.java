@@ -1,4 +1,4 @@
-package com.bematechus.kdsrouter;
+package com.bematechus.kdslib;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSMBPath;
-import com.bematechus.kdslib.KDSSmbFile;
+import com.bematechus.kdslib.KDSSmbExplorerHandler;
 //import com.bematechus.kdslib.KDSSmbFile1;
 import com.bematechus.kdslib.KDSSmbFile2;
 import com.bematechus.kdslib.KDSUIDialogBase;
@@ -148,16 +148,16 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
 
     }
 
-    static public String getFuncKeyName(KDSRouterSettings.ID funcKey)
-    {
-        String strFunc = "";
-        if (funcKey == KDSRouterSettings.ID.Bumpbar_OK)
-            strFunc = "[Enter]";// KDSRouterSettings.getOkKeyString(context);
-        else if (funcKey == KDSRouterSettings.ID.Bumpbar_Cancel)
-            strFunc = "[Ctrl]";// KDSRouterSettings.getCancelKeyString(context);
-
-        return strFunc;
-    }
+//    static public String getFuncKeyName(KDSRouterSettings.ID funcKey)
+//    {
+//        String strFunc = "";
+//        if (funcKey == KDSRouterSettings.ID.Bumpbar_OK)
+//            strFunc = "[Enter]";// KDSRouterSettings.getOkKeyString(context);
+//        else if (funcKey == KDSRouterSettings.ID.Bumpbar_Cancel)
+//            strFunc = "[Ctrl]";// KDSRouterSettings.getCancelKeyString(context);
+//
+//        return strFunc;
+//    }
 
     public void onAnonymousChanged()
     {
@@ -167,14 +167,14 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
         m_txtPwd.setEnabled(bEnable);
 
     }
-    public KDSRouterSettings.ID checkKdbEvent(KeyEvent event)
-    {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_CTRL_LEFT)
-            return KDSRouterSettings.ID.Bumpbar_Cancel;
-        else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
-            return KDSRouterSettings.ID.Bumpbar_OK;
-        return KDSRouterSettings.ID.NULL;
-    }
+//    public KDSRouterSettings.ID checkKdbEvent(KeyEvent event)
+//    {
+//        if (event.getKeyCode() == KeyEvent.KEYCODE_CTRL_LEFT)
+//            return KDSRouterSettings.ID.Bumpbar_Cancel;
+//        else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+//            return KDSRouterSettings.ID.Bumpbar_OK;
+//        return KDSRouterSettings.ID.NULL;
+//    }
 
     private void login()
     {

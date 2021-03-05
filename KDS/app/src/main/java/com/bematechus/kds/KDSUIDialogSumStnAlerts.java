@@ -157,7 +157,7 @@ public class KDSUIDialogSumStnAlerts extends KDSUIDialogBase implements  KDSUIDi
     }
 
 
-    static public final String SUM_STATION_SEPARATOR = "\n";
+    static public final String SUM_STATION_SEPARATOR = "\b";
 
 
 
