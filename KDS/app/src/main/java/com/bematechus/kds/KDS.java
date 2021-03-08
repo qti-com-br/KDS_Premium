@@ -2121,7 +2121,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
             nAcceptItemsCount = doOrderFilter(objSource, order, xmlData, bForceAcceptThisOrder,false, bRefreshView);
             if (bSmartEnabled)
-                this.getCurrentDB().smart_category_init(order, order.prep_get_sorts());
+                this.getCurrentDB().smart_runner_category_init(order, order.prep_get_sorts());
             if (bRefreshView)
                 schedule_process_update_after_receive_new_order();
 
@@ -5532,14 +5532,38 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      * @param command
      * @param strOrinalData
      */
-    public void onRunnerChangedCategory(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    public void onRunnerChangedCategory2(KDS kds, KDSXMLParserCommand command, String strOrinalData)
     {
         String orderName = command.getParam("P0", "");
         String category = command.getParam("P1", "");
         KDSDataOrder order = this.getUsers().getOrderByName(orderName);
         if (order == null) return; //kp-43 Prep stations crashing
         String guid = order.getGUID();
-        this.getCurrentDB().smartCategoryAddShowingCategory(guid, category);
+        this.getCurrentDB().smartRunnerCategoryAddShowingCategory(guid, category);
+        order.prep_get_sorts().runnerSetShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
+
+        //set the focus the just showing category.
+        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(guid);
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Runner_LineItems_Show_New_Category, ar);
+
+        }
+        this.refreshView();
+    }
+
+    public void onRunnerChangedCategory(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    {
+        String orderName = command.getParam("P0", "");
+        String categories = command.getParam("P1", "");
+        ArrayList<String> arCategories = KDSUtil.spliteString(categories, "\n");
+
+        KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        if (order == null) return; //kp-43 Prep stations crashing
+        String guid = order.getGUID();
+        //this.getCurrentDB().smartRunnerCategoryAddShowingCategory(guid, category);
+        this.getCurrentDB().smartRunnerCategoryAddShowingCategories(guid,arCategories );
         order.prep_get_sorts().runnerSetShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
 
         //set the focus the just showing category.

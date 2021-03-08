@@ -233,22 +233,34 @@ public class KDSUser {
             if (!order.prep_get_sorts().runnerCategoryIsShowing(categoryDescription))
             {
                 String lastCategory = order.prep_get_sorts().runnerGetLastShowingCategory();
+                ArrayList<String> allSameCatDelayCategories = order.prep_get_sorts().runnerGetAllSameCatDelayCategories(lastCategory);
                 boolean bFitFinishedCondition = false;
                 if (getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
                 { //the remote prep station must bump item first
-                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(lastCategory) &&
-                                                order.smartCategoryItemsRemoteFinished(lastCategory) );
-
+//                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(lastCategory) &&
+//                                                order.smartCategoryItemsRemoteFinished(lastCategory) );
+                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(allSameCatDelayCategories) &&
+                                                order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
                 }
                 else
                 { //don't care remote station bumping
-                    bFitFinishedCondition = order.smartCategoryItemsLocalFinished(lastCategory);
+                    //bFitFinishedCondition = order.smartCategoryItemsLocalFinished(lastCategory);
+                    bFitFinishedCondition = order.smartCategoryItemsLocalFinished(allSameCatDelayCategories);
                 }
                 if (lastCategory.isEmpty() || bFitFinishedCondition )
                 {
-                    order.prep_get_sorts().runnerGetShowingCategory().add(categoryDescription);
-                    getCurrentDB().smartCategoryAddShowingCategory(order.getGUID(), categoryDescription);
-                    KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(), KDSXMLParserCommand.KDSCommand.Runner_show_category, order, null, categoryDescription);
+                    //order.prep_get_sorts().runnerGetShowingCategory().add(categoryDescription);
+                    allSameCatDelayCategories = order.prep_get_sorts().runnerGetAllSameCatDelayCategories(categoryDescription);
+
+                    //order.prep_get_sorts().runnerAddShowingCategory(categoryDescription);
+                    order.prep_get_sorts().runnerAddShowingCategories(allSameCatDelayCategories);
+                    //getCurrentDB().smartRunnerCategoryAddShowingCategory(order.getGUID(), categoryDescription);
+                    getCurrentDB().smartRunnerCategoryAddShowingCategories(order.getGUID(), allSameCatDelayCategories);
+                    //KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(), KDSXMLParserCommand.KDSCommand.Runner_show_category, order, null, categoryDescription);
+                    KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(),
+                                    KDSXMLParserCommand.KDSCommand.Runner_show_category,
+                                    order, null,
+                                    categoriesToString(allSameCatDelayCategories));
                 }
             }
         }
@@ -269,6 +281,19 @@ public class KDSUser {
 //        getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
 
 
+    }
+
+    private String categoriesToString(ArrayList<String> categories)
+    {
+        String s = "";
+        for (int i=0; i< categories.size(); i++)
+        {
+            if (!s.isEmpty())
+                s += "\n";
+            s += categories.get(i);
+
+        }
+        return s;
     }
 
     /**

@@ -3316,19 +3316,29 @@ update the schedule item ready qty
     }
 
     /**
+     * Rev.
+     *  20200308:
+     *      KP-50, In runner mode, we allow same catdelay value in different cateogry.
+     *             Same catdelay will show in same time.
+     *
      * kp1-25
      * @param order
      * @param smartItems
      */
-    public void smart_category_init(KDSDataOrder order, PrepSorts smartItems)
+    public void smart_runner_category_init(KDSDataOrder order, PrepSorts smartItems)
     {
         //kpp1-456, we init the first category here.
         PrepSorts.PrepItem smartMaxItem = smartItems.findNextShowingItem(smartItems.m_arItems);
         if (smartMaxItem == null) return;
-        String category = smartMaxItem.Category;
+        //String category = smartMaxItem.Category;
         String orderguid = order.getGUID();
-        smartCategoryAddShowingCategory(orderguid, category);
 
+        //kp-50, same catdelay
+
+        ArrayList<String> arWillShowingCategory = smartItems.runnerGetAllSameCatDelayCategories(smartMaxItem.CategoryDelay);
+
+        smartRunnerCategoryAddShowingCategories(orderguid, arWillShowingCategory);
+        //
         smartItems.runnerSetShowingCategory( smartCategoryGetShowingCategories(orderguid));
     }
 
@@ -3886,7 +3896,7 @@ update the schedule item ready qty
      * @param orderGuid
      * @param categoryName
      */
-    public void smartCategoryAddShowingCategory(String orderGuid, String categoryName)
+    public void smartRunnerCategoryAddShowingCategory(String orderGuid, String categoryName)
     {
         ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
         if (KDSUtil.isExistedInArray(ar, categoryName))
@@ -3921,6 +3931,30 @@ update the schedule item ready qty
         ar = KDSUtil.spliteString(s, SMART_CATEGORY_SEPERATOR);
 
         return ar;
+    }
+
+    /**
+     * KP-50
+     *
+     * @param orderGuid
+     * @param categoryName
+     */
+    public void smartRunnerCategoryAddShowingCategories(String orderGuid, ArrayList<String> categoriesName)
+    {
+        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+        boolean bChanged = false;
+        for (int i=0; i< categoriesName.size(); i++) {
+            if (KDSUtil.isExistedInArray(ar, categoriesName.get(i)))
+                continue;
+            ar.add(categoriesName.get(i));
+            bChanged = true;
+        }
+        if (!bChanged) return;
+
+        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
+        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+        this.executeDML(sql);
+
     }
 
     /***************************************************************************

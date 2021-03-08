@@ -64,6 +64,7 @@ public class PrepSorts {
         return m_arItems.size();
     }
 
+    //It was init in KDSDBCurrent-->"smart_runner_category_init" function!!!!
     public ArrayList<String> m_arSmartShowingCategory = new ArrayList<>(); //kpp1-456
 
 
@@ -902,6 +903,72 @@ public class PrepSorts {
 
     }
 
+    public boolean runnerAddShowingCategory(String category)
+    {
+        if (!KDSUtil.isExistedInArray(m_arSmartShowingCategory, category)) {
+            m_arSmartShowingCategory.add(category);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public boolean runnerAddShowingCategories(ArrayList<String> categories)
+    {
+        for (int i=0; i< categories.size(); i++) {
+            runnerAddShowingCategory(categories.get(i));
+        }
+        return true;
+    }
+
+
+    public ArrayList<String> runnerGetAllSameCatDelayCategories(float nCatDelay)
+    {
+        float fltCatDelay = nCatDelay;
+        ArrayList<String> arWillShowingCategory = new ArrayList<>();
+
+        for (int i=0; i< m_arItems.size(); i++)
+        {
+            PrepSorts.PrepItem smartItem = m_arItems.get(i);
+            if (fltCatDelay == smartItem.CategoryDelay)
+            {
+                if (!KDSUtil.isExistedInArray(arWillShowingCategory, smartItem.Category))
+                    arWillShowingCategory.add(m_arItems.get(i).Category);
+            }
+        }
+        return arWillShowingCategory;
+    }
+
+    public float getCategoryDelay(String category)
+    {
+        for (int i=0; i< m_arItems.size(); i++)
+        {
+            if (m_arItems.get(i).Category.equals(category))
+            {
+                return m_arItems.get(i).CategoryDelay;
+            }
+        }
+        return 0;
+    }
+    /**
+     * according give category to check all same delay categories
+     * @param sampleCategory
+     * @return
+     */
+    public ArrayList<String> runnerGetAllSameCatDelayCategories(String sampleCategory)
+    {
+        if (sampleCategory.isEmpty())
+            return new ArrayList<String>();
+
+        float catdelay = getCategoryDelay(sampleCategory);
+        if (catdelay<=0)
+            return new ArrayList<String>();
+        return runnerGetAllSameCatDelayCategories(catdelay);
+
+
+    }
 
 
     /********************************************************************************************/
