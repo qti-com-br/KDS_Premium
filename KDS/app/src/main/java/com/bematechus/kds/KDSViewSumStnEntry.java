@@ -107,7 +107,7 @@ public class KDSViewSumStnEntry {
      * @return
      *  return last group id
      */
-    public int onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect, ArrayList<Rect> arOrderView, boolean bDrawSeparator, int nLastGroupID)
+    public int onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect, ArrayList<Rect> arPanelRect, boolean bDrawSeparator, int nLastGroupID)
     {
 
         KDSViewFontFace ffDescription = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);
@@ -115,7 +115,7 @@ public class KDSViewSumStnEntry {
         KDSViewFontFace ffMessage = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Message_Default_FontFace);
 
 
-        Rect rt = getAbsoluteRect(screenDataRect, arOrderView);
+        Rect rt = getAbsoluteRect(screenDataRect, arPanelRect);
         //rt.inset(KDSIOSView.INSET_DX, 0);
         rt.left += KDSIOSView.INSET_DX;
         rt.right -= KDSIOSView.BORDER_INSET_DX;

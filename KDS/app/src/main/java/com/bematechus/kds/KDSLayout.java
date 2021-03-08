@@ -1488,10 +1488,17 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     public String focusNext()
     {
-        if (isLineItemsMode())
+        KDSView.OrdersViewMode mode = m_view.getOrdersViewMode();
+        //if (isLineItemsMode())
+        if (mode == KDSView.OrdersViewMode.LineItems)
             return focusNextLineItem();
-        else
+        else if (mode == KDSView.OrdersViewMode.Normal)
             return focusNextOrder();
+        else if (mode == KDSView.OrdersViewMode.Summary)
+        {
+            return "";
+        }
+        return "";
 
     }
 
@@ -1551,10 +1558,17 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     public String focusPrev()
     {
-        if (isLineItemsMode())
+        KDSView.OrdersViewMode mode = m_view.getOrdersViewMode();
+        //if (isLineItemsMode())
+        if (mode == KDSView.OrdersViewMode.LineItems)
             return focusPrevLineItem();
-        else
+        else if (mode == KDSView.OrdersViewMode.Normal)
             return focusPrevOrder();
+        else if (mode == KDSView.OrdersViewMode.Summary)
+        {
+
+        }
+        return "";
     }
 
     public String focusPrevOrder()
@@ -1626,8 +1640,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      */
     public void refreshTimer()
     {
-
-        if (this.getView().getOrdersViewMode() == KDSView.OrdersViewMode.Normal) {
+        KDSView.OrdersViewMode mode = this.getView().getOrdersViewMode();
+        if (mode == KDSView.OrdersViewMode.Normal) {
             //boolean bSmartEnabled = this.getEnv().getSettings().getBoolean(KDSSettings.ID.Smart_Order_Enabled);
            // boolean bSmartEnabled = (KDSSettings.SmartMode.values()[ this.getEnv().getSettings().getInt(KDSSettings.ID.Smart_mode)] == KDSSettings.SmartMode.Normal );
             //boolean bPrepModeEnabled = this.getEnv().getSettings().getBoolean(KDSSettings.ID.Prep_mode_enabled);
@@ -1643,9 +1657,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             this.getView().setJustRedrawTimer();
             this.getView().invalidate();
         }
-        else
+        else if (mode == KDSView.OrdersViewMode.LineItems)
         {
             this.getView().getLineItemsViewer().onTimer();
+        }
+        else if (mode == KDSView.OrdersViewMode.Summary)
+        {
+
         }
 
     }
@@ -1817,6 +1835,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     {
 
         m_view.getLineItemsViewer().showOrders(orders);//, firstOrderGuid, firstItemGuid);
+    }
+
+    public void showOrdersInSummaryStationMode()
+    {
+
+        m_view.getSumStnViewer().refreshSummary(KDSGlobalVariables.getKDS().getCurrentDB());
     }
 
     /**
@@ -2001,6 +2025,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     {
 
         m_view.getLineItemsViewer().showOrders(m_orders);//, orderGUID, itemGUID);
+        m_view.refresh();
+    }
+
+    public void refreshSummaryStationView()
+    {
+        showOrdersInSummaryStationMode();
         m_view.refresh();
     }
 
@@ -2242,10 +2272,17 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      */
     public String focusNextPage()
     {
-        if (isLineItemsMode())
+        KDSView.OrdersViewMode mode = m_view.getOrdersViewMode();
+        //if (isLineItemsMode())
+        if (mode == KDSView.OrdersViewMode.LineItems)
             return focusNextPageLineItem();
-        else
+        else if (mode == KDSView.OrdersViewMode.Normal)
             return focusNextPageOrder();
+        else if (mode == KDSView.OrdersViewMode.Summary)
+        {
+
+        }
+        return "";
 
     }
 
@@ -2255,10 +2292,17 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      */
     public String focusPrevPage()
     {
-        if (isLineItemsMode())
+        KDSView.OrdersViewMode mode = m_view.getOrdersViewMode();
+        //if (isLineItemsMode())
+        if (mode == KDSView.OrdersViewMode.LineItems)
             return focusPrevPageLineItem();
-        else
+        else if (mode == KDSView.OrdersViewMode.Normal)
             return focusPrevPageOrder();
+        else if (mode == KDSView.OrdersViewMode.Summary)
+        {
+
+        }
+        return "";
     }
 
     /**
@@ -2521,8 +2565,9 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             //m_view.clear();
             return true;
         }
+        KDSView.OrdersViewMode mode = m_view.getOrdersViewMode();
         synchronized (m_view.m_panelsLocker) {
-            if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.Normal) {
+            if (mode == KDSView.OrdersViewMode.Normal) {
 
                 int nBlockRows = m_view.getAverageRowsInBlock();
                 int nStartOrderIndex = 0;
@@ -2579,7 +2624,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 //t.debug_print_Duration("showOrders4");
                 return true;
 
-            } else if (m_view.getOrdersViewMode() == KDSView.OrdersViewMode.LineItems) {
+            } else if (mode == KDSView.OrdersViewMode.LineItems) {
                 if (m_view.getLineItemsViewer().smartSortEnabled())
                 {  //kpp1-322
 //                    if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
@@ -2617,6 +2662,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
                 //m_view.getLineItemsViewer().showOrders(orders);
                 //this.getView().refresh();//.invalidate();
+            }
+            else if (mode == KDSView.OrdersViewMode.Summary)
+            {
+                showOrdersInSummaryStationMode();
             }
         }
         return true;

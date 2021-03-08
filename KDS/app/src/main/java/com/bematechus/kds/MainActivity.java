@@ -1684,6 +1684,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             opFocusPrev(userID);
             return;
         }
+        else if (isSummaryStationMode())
+            return;
 
         String guid = getPrevItemGuid(userID);
 
@@ -1827,6 +1829,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             opFocusNext(userID);
             return;
         }
+        else if (isSummaryStationMode())
+            return;
         // String guid = getKDS().getNextItemGuid(userID, getSelectedOrderGuid(userID), getSelectedItemGuid(userID));
         String guid = getNextItemGuid(userID);
         // if (guid.isEmpty()) return;
@@ -2632,6 +2636,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
+    public boolean isSummaryStationMode()
+    {
+        return (getKDS().getSettings().getStationFunc() == SettingsBase.StationFunc.Summary);
+    }
+
+
     private void lineItemsFocusNextAfterBump(KDSUser.USER userID,String focusedOrderGuid, String focusedItemGuid)
     {
         if (!getKDS().getSettings().getLineItemsViewEnabled())//.getBoolean(KDSSettings.ID.LineItems_Enabled))
@@ -2817,6 +2827,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             onUnbumpOrder(userID);
         }
+        else if (isSummaryStationMode())
+        {
+            return;
+        }
         else {
             if (itemGuid.isEmpty() || orderGuid.isEmpty()) {
                 onUnbumpOrder(userID);
@@ -2945,6 +2959,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         itemguid = data.getStringExtra("itemguid");
                         int screen = data.getIntExtra("screen", 0);
                         unbumpItem(KDSUser.USER.values()[screen], guid, itemguid);
+                    }
+                    else if (isSummaryStationMode())
+                    {
+                        break;
                     }
                     else
                         restoreOrder(guid);

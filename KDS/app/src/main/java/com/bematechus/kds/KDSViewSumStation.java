@@ -1,21 +1,31 @@
 package com.bematechus.kds;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
+import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
 import com.bematechus.kdslib.KDSLog;
 
 import java.util.ArrayList;
 
-public class KDSViewSumStation extends KDSView {
+public class KDSViewSumStation //extends KDSView
+{
+    static public String TAG = "KDSViewSumStn";
+    public View m_viewParent = null;
+    Paint m_paint = new Paint();
+    ArrayList<KDSViewSumStnPanel> m_arPanels = new ArrayList<>();
 
-    ArrayList<KDSViewSumStnPanel> m_arIOSOrdersView = new ArrayList<>();
-    //Point m_ptNextStartPointInScreenDataArea = new Point(0, 0);
     int mMaxPanels = 4;
+    int mMaxItemsEachPanel = 2;
+
     /*************************************/
 
 //    static public final int ROUND_CORNER_DX = 10;
@@ -37,88 +47,103 @@ public class KDSViewSumStation extends KDSView {
         return mMaxPanels;
     }
 
-    public KDSViewSumStation(Context context) {
-        super(context);
+//    public KDSViewSumStation(Context context) {
+//        super(context);
+//    }
+//
+//    public KDSViewSumStation(Context context, AttributeSet attrs) {
+//        super(context, attrs);
+//
+//
+//    }
+//
+//    public KDSViewSumStation(Context context, AttributeSet attrs, int defaultStyle) {
+//        super(context, attrs, defaultStyle);
+//
+//
+//    }
+//
+    public KDSViewSumStation(View parent)
+    {
+        m_viewParent = parent;
+        init();
+    }
+    public  void init()
+    {
+        m_paint.setAntiAlias(true);
     }
 
-    public KDSViewSumStation(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    //@Override
+    public void onDraw(Canvas canvas) {
 
-
-    }
-
-    public KDSViewSumStation(Context context, AttributeSet attrs, int defaultStyle) {
-        super(context, attrs, defaultStyle);
-
-
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-
-        if (m_bDrawing) return;
-        m_bDrawing = true;
+    //    if (m_bDrawing) return;
+     //   m_bDrawing = true;
         try {
 
             drawMe_DoubleBuffer(canvas);
-            m_bForceFullDrawing = false;
+       //     m_bForceFullDrawing = false;
         } catch (Exception err) {
 
             KDSLog.e(TAG, KDSLog._FUNCLINE_(), err);
         }
-        m_bDrawing = false;
+       // m_bDrawing = false;
     }
 
     public int panelsGetCount() {
-        return m_arIOSOrdersView.size();
+        return m_arPanels.size();
     }
 
     protected void drawMe_DoubleBuffer(Canvas canvas) {
 
-        Canvas g = get_double_buffer();
+        Canvas g = canvas;// get_double_buffer();
         if (g == null) return;
 
 
-        if (getSettings() == null) return;
-        int bg = getSettings().getInt(KDSSettings.ID.Panels_View_BG);
+        if (getEnv().getSettings() == null) return;
+        int bg = getEnv().getSettings().getInt(KDSSettings.ID.Panels_View_BG);
         g.drawColor(bg);
         Rect screenDataRect = sumstn_getDataArea();
         int ncount = panelsGetCount();
         for (int i = 0; i < ncount; i++) {
-            m_arIOSOrdersView.get(i).onDraw(g, getEnv(), screenDataRect, i);
+            m_arPanels.get(i).onDraw(g, getEnv(), screenDataRect, i);
         }
 
-//        if (m_bHighLight) {//this view is hightlight in multiple users mode
-//            // KDSViewFontFace ff =  getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Focused_FontFace);
-//            //int hightlightBg = ff.getBG();
-//            int hightlightBg = getSettings().getInt(KDSSettings.ID.Focused_BG);
-//
-//            Rect rtHightLight = new Rect(0, g.getHeight() - 3, g.getWidth(), g.getHeight());
-//            CanvasDC.fillRect(g, hightlightBg, rtHightLight);
-//            //g.drawRect(rtHightLight, );
-//        }
 
-        commit_double_buffer(canvas);
+        //commit_double_buffer(canvas);
 
     }
 
+    public KDSViewSettings getEnv()
+    {
+        return ((KDSView)m_viewParent).getEnv();
+    }
+
+
     public void sumstn_clear() {
-        m_arIOSOrdersView.clear();
-        //m_ptNextStartPointInScreenDataArea.x = 0;
-        //m_ptNextStartPointInScreenDataArea.y = 0;
+        m_arPanels.clear();
 
     }
 
     public boolean clear() {
         sumstn_clear();;
-        this.invalidate();
+        //m_viewParent.invalidate();
         return true;
+    }
+
+    public Rect getBounds()
+    {
+        Rect rc = new Rect();
+
+        this.m_viewParent.getDrawingRect(rc);
+        // rc.inset(2,2);
+
+        return rc;
     }
 
     public Rect sumstn_getDataArea() {
         Rect rt = this.getBounds();
 
-        rt.top += 30;
+        rt.top += INSET_DY;
         rt.bottom -= INSET_DY;
         rt.left += INSET_DX;
         rt.right -= INSET_DX;
@@ -127,13 +152,34 @@ public class KDSViewSumStation extends KDSView {
 
     }
 
-    static public Point convertAbsoluteOrderViewPoint(Point pt, Rect rtOrderView) {
-        Point ptRelative = new Point(pt);
-        ptRelative.x = pt.x + rtOrderView.left;
-        ptRelative.y = pt.y + rtOrderView.top;
-        return ptRelative;
+    Handler m_refreshHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            KDSViewSumStation.this.m_viewParent.invalidate();
+            return true;
+        }
+    });
+
+    public void refresh()
+    {
+        Message m = new Message();
+        m.what = 0;
+        m_refreshHandler.sendMessage(m);
     }
 
+//    static public Point convertAbsoluteOrderViewPoint(Point pt, Rect rtOrderView) {
+//        Point ptRelative = new Point(pt);
+//        ptRelative.x = pt.x + rtOrderView.left;
+//        ptRelative.y = pt.y + rtOrderView.top;
+//        return ptRelative;
+//    }
+
+    private int getBlockAverageWidth()
+    {
+        Rect rt = this.getBounds();
+        int n = rt.width() / mMaxPanels;
+        return n;
+    }
     private Rect getPanelRect(Rect screenDataRect, int nPanelIndex)
     {
         int w = getBlockAverageWidth();
@@ -149,101 +195,67 @@ public class KDSViewSumStation extends KDSView {
      * @param group
      * @return
      */
-    public boolean showSumGroup(KDSViewSumStnSumGroup group) {
+    private boolean showSumGroup(KDSViewSumStnSumGroup group) {
         Rect screenDataRect = sumstn_getDataArea();
         if (screenDataRect.width() <= 0) return false;
-        //Point pt = convertAbsoluteOrderViewPoint(m_ptNextStartPointInScreenDataArea, screenDataRect);
+
         Rect rtPanel = getPanelRect(screenDataRect, m_arPanels.size());
         if (rtPanel == null) return false;
-        //if (!screenDataRect.contains(pt.x + INSET_DX, pt.y + INSET_DY))
-        //    return false;
 
         KDSViewSumStnPanel panel = KDSViewSumStnPanel.createNew(group);
+        panel.setRect(rtPanel);
         if (! KDSViewSumStnPanel.build( group, panel, rtPanel))
             return false;
-        //if (arRects.size() <= 0) return false;
-        //Rect rtLast = arRects.get(0);
-
-        //if (!screenDataRect.contains(rtLast.right - INSET_DX, rtLast.bottom - INSET_DY))
-        //    return false;
-
-
-        panel.setRect(rtPanel);
-        m_arIOSOrdersView.add(panel);
-
+        m_arPanels.add(panel);
 
         return true;
 
     }
 
-//    protected KDSIOSViewOrder getTouchedOrderView(int x, int y) {
-//        Rect rtDataArea = ios_getDataArea();
-//
-//        for (int i = 0; i < m_arIOSOrdersView.size(); i++) {
-//            if (m_arIOSOrdersView.get(i).pointInMe(rtDataArea, x, y)) {
-//                return m_arIOSOrdersView.get(i);
-//            }
-//        }
-//        return null;
-//    }
 
-//    protected boolean touchXY(int x, int y) {
-////        if (useSupperFunction())
-////            return super.touchXY(x, y);
-//
-//        KDSIOSViewOrder orderView = getTouchedOrderView(x, y);
-//        if (orderView == null)
-//            return false;
-//        KDSIOSViewItem itemView = orderView.getTouchedItem(ios_getDataArea(), x, y);
-//        getEnv().getStateValues().setFocusedOrderGUID(orderView.getData().getGUID());
-//        getEnv().getStateValues().setFocusedItemGUID("");
-//        if (itemView != null) {
-//            getEnv().getStateValues().setFocusedItemGUID(itemView.m_item.getGUID());
-//
-//        }
-//
-//        this.invalidate();
-//        return true;
-//
+//    public KDSViewPanelBase getLastPanel() {
+//        if (m_arPanels.size() <= 0)
+//            return null;
+//        return m_arPanels.get(m_arPanels.size() - 1);
 //
 //    }
+//
+//    public int getPanelsCount() {
+//        return m_arPanels.size();
+//    }
 
-    public KDSViewPanelBase getLastPanel() {
-//        if (useSupperFunction())
-//            return super.getLastPanel();
-        if (m_arIOSOrdersView.size() <= 0)
-            return null;
-        return m_arIOSOrdersView.get(m_arIOSOrdersView.size() - 1);
+    /**
+     *  call this function from external.
+     * @param arSummaryItems
+     */
+    public void showSummary(ArrayList<KDSSummaryItem> arSummaryItems)
+    {
+        this.clear();
+        int ncount = 0;
+        KDSViewSumStnSumGroup group = new KDSViewSumStnSumGroup();
+        for (int i = 0; i< arSummaryItems.size(); i++)
+        {
+
+            group.items().add(arSummaryItems.get(i));
+            ncount ++;
+            if (ncount >= mMaxItemsEachPanel || (i == arSummaryItems.size() -1) )
+            {
+                showSumGroup(group);
+                ncount = 0;
+                group = new KDSViewSumStnSumGroup();
+            }
+        }
+    }
+
+    public void updateSettings(KDSSettings settings)
+    {
 
     }
 
-    public int getPanelsCount() {
-//        if (useSupperFunction())
-//            return super.getPanelsCount();
-        return m_arIOSOrdersView.size();
+    public void refreshSummary(KDSDBCurrent db)
+    {
+        ArrayList<KDSSummaryItem> arData = db.summaryItems("", 0, null, false, true);
+        showSummary(arData);
     }
 
-
-//    /**
-//     * check if this order is visible in view
-//     *
-//     * @param orderGuid
-//     * @return
-//     */
-//    protected boolean isOrderVisible(String orderGuid) {
-////        if (useSupperFunction())
-////            return super.isOrderVisible(orderGuid);
-//
-//        int ncount = m_arIOSOrdersView.size();
-//        for (int i = 0; i < ncount; i++) {
-//            KDSIOSViewOrder panel = this.m_arIOSOrdersView.get(i);
-//            if (panel == null)
-//                continue;
-//            String guid = panel.getData().getGUID();
-//
-//            if (guid.equals(orderGuid))
-//                return true;
-//        }
-//        return false;
-//    }
 }
