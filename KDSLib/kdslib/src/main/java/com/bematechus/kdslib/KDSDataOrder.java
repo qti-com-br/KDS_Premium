@@ -3090,6 +3090,21 @@ get the total qty of all found items
         return true;
     }
 
+    public boolean smartCategoryItemsLocalFinished(ArrayList<String> categories)
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!KDSUtil.isExistedInArray(categories, item.getCategory()))
+                continue;
+            //if (!item.getCategory().equals(category)) continue;
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
+    }
+
     /**
      * 
      * @param category
@@ -3105,6 +3120,22 @@ get the total qty of all found items
             if (!item.getCategory().equals(category)) continue;
             if (item.getBumpedStationsString().isEmpty() )
                return false;
+        }
+        return true;
+    }
+
+    public boolean smartCategoryItemsRemoteFinished(ArrayList<String> categories)
+    {
+
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            //if (!item.getCategory().equals(category)) continue;
+            if (!KDSUtil.isExistedInArray(categories, item.getCategory()))
+                continue;;
+            if (item.getBumpedStationsString().isEmpty() )
+                return false;
         }
         return true;
     }
