@@ -1177,6 +1177,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 return KDSStationExpeditor.exp_sync_item_bumped(kds, command, arChangedItems);
 
             case Mirror:
@@ -1206,6 +1207,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_schedule_item_ready_qty_changed(kds, command);
                 break;
             case Mirror:
@@ -1241,6 +1243,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 return KDSStationExpeditor.exp_sync_item_unbumped(kds, command, arChangedItems);
 
             case Mirror:
@@ -1270,6 +1273,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_item_modified(kds, command);
                 break;
             case Mirror:
@@ -1306,6 +1310,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 String s = KDSStationExpeditor.exp_sync_order_bumped(kds, command, arChangedItems);
                 return s;
 
@@ -1338,6 +1343,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 //KDSStationExpeditor.exp_sync_station_cook_started(kds, command); //why
                 KDSStationExpeditor.exp_sync_expo_order_bumped(kds, command);
                 break;
@@ -1369,6 +1375,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_station_cook_started(kds, command);
                 break;
             case Mirror:
@@ -1396,6 +1403,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationNormal.orderTrackerBump(kds.getUsers().getUserA(),strOrderName);
                 break;
             case Mirror:
@@ -1425,6 +1433,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_expo_order_unbumped(kds, command);
                 break;
             case Mirror:
@@ -1453,6 +1462,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_expo_item_bumped(kds, command);
                 break;
             case Mirror:
@@ -1481,6 +1491,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_expo_item_unbumped(kds, command);
                 break;
             case Mirror:
@@ -1509,6 +1520,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.queue_sync_expo_order_ready_unready(kds, command);
                 break;
             case Mirror:
@@ -1537,6 +1549,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.queue_sync_expo_order_ready_unready(kds, command);
                 break;
             case Mirror:
@@ -1571,6 +1584,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_order_canceled(kds, command);
                 break;
             case Mirror:
@@ -1598,6 +1612,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_order_modified(kds, command);
                 break;
             case Mirror:
@@ -1634,6 +1649,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSDataOrder order = KDSStationExpeditor.exp_sync_order_new(kds, command, ordersExisted, ordersChanged);
                 kds.refreshView();
                 return order;
@@ -1679,6 +1695,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_order_unbumped(kds, command);
                 //break;
             case Mirror:
@@ -2387,7 +2404,8 @@ public class KDSStationFunc {
     static public void sync_with_stations_use_me_as_expo(KDS kds,KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item, String xmlData)
     {
         if (!kds.isExpeditorStation() &&
-                (!kds.isRunnerStation())) return;
+                (!kds.isRunnerStation()) &&
+                (!kds.isSummaryStation())) return;
         String strXml = "";
 
         ArrayList<KDSStationIP> arPrepStations = kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID());
@@ -2409,7 +2427,8 @@ public class KDSStationFunc {
     {
         if (func == SettingsBase.StationFunc.Expeditor ||
                 func == SettingsBase.StationFunc.Queue_Expo ||
-                func == SettingsBase.StationFunc.Runner
+                func == SettingsBase.StationFunc.Runner ||
+                func == SettingsBase.StationFunc.Summary
         )
             return true;
         else

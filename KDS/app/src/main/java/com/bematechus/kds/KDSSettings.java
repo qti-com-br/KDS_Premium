@@ -590,9 +590,16 @@ public class KDSSettings extends SettingsBase {
      //kp-26
        Hide_store_name,
 
-     //
+     // summary staton
        SumStn_filters, //summary station
        SumStn_alerts, //summary station
+       SumStn_font,
+       SumStn_sum_method,
+       SumStn_panels_count,
+       SumStn_items_count,
+       SumStn_filter_enabled,
+       SumStn_alert_enabled,
+       Sumstn_order_by,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1376,6 +1383,14 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.SumStn_filters,"string_sumstn_filters","");
         init_option(ID.SumStn_alerts,"string_sumstn_alerts","");
+
+        init_option(ID.SumStn_font,"fontface_sumstn_item_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
+        init_option(ID.SumStn_sum_method,"string_sumstn_sum_type", "0");
+        init_option(ID.SumStn_panels_count,"string_sumstn_panels", "4");
+        init_option(ID.SumStn_items_count,"string_sumstn_panel_items", "10");
+        init_option(ID.SumStn_filter_enabled,"bool_sumstn_enable_filter", false);
+        init_option(ID.SumStn_alert_enabled,"bool_sumstn_enable_alert", false);
+        init_option(ID.Sumstn_order_by,"string_sumstn_order_by", "0");
 
     }
 

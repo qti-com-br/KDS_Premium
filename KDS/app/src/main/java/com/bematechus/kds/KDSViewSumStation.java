@@ -12,9 +12,15 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.KDSViewFontFace;
+import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class KDSViewSumStation //extends KDSView
 {
@@ -23,46 +29,27 @@ public class KDSViewSumStation //extends KDSView
     Paint m_paint = new Paint();
     ArrayList<KDSViewSumStnPanel> m_arPanels = new ArrayList<>();
 
+    //settings
+    KDSViewFontFace mFont = new KDSViewFontFace();
+    KDSSettings.SumType mSumType = KDSSettings.SumType.ItemWithoutCondiments;
+    ArrayList<SumStationFilterEntry> mFilters = new ArrayList<>();
+    ArrayList<SumStationAlertEntry> mAlerts = new ArrayList<>();
+
     int mMaxPanels = 4;
     int mMaxItemsEachPanel = 2;
+    boolean mFilterEnabled = false;
+    boolean mAlertEnabled = false;
+    KDSSettings.SumOrderBy mOrderBy = KDSSettings.SumOrderBy.Ascend;
 
     /*************************************/
 
-//    static public final int ROUND_CORNER_DX = 10;
-//    static public final int ROUND_CORNER_DY = 10;
-    static public final int INSET_DY = 10;
-    static public final int INSET_DX = 10;
+    static public final int INSET_DY = 5;
+    static public final int INSET_DX = 5;
     static public final int BORDER_INSET_DX = 5;
     static public final int BORDER_INSET_DY = 5;
 
     /**************************************/
 
-    public void setMaxPanels(int n)
-    {
-        mMaxPanels = n;
-    }
-
-    public int getMaxPanels()
-    {
-        return mMaxPanels;
-    }
-
-//    public KDSViewSumStation(Context context) {
-//        super(context);
-//    }
-//
-//    public KDSViewSumStation(Context context, AttributeSet attrs) {
-//        super(context, attrs);
-//
-//
-//    }
-//
-//    public KDSViewSumStation(Context context, AttributeSet attrs, int defaultStyle) {
-//        super(context, attrs, defaultStyle);
-//
-//
-//    }
-//
     public KDSViewSumStation(View parent)
     {
         m_viewParent = parent;
@@ -73,20 +60,19 @@ public class KDSViewSumStation //extends KDSView
         m_paint.setAntiAlias(true);
     }
 
-    //@Override
+
     public void onDraw(Canvas canvas) {
 
-    //    if (m_bDrawing) return;
-     //   m_bDrawing = true;
+
         try {
 
             drawMe_DoubleBuffer(canvas);
-       //     m_bForceFullDrawing = false;
+
         } catch (Exception err) {
 
             KDSLog.e(TAG, KDSLog._FUNCLINE_(), err);
         }
-       // m_bDrawing = false;
+
     }
 
     public int panelsGetCount() {
@@ -102,14 +88,11 @@ public class KDSViewSumStation //extends KDSView
         if (getEnv().getSettings() == null) return;
         int bg = getEnv().getSettings().getInt(KDSSettings.ID.Panels_View_BG);
         g.drawColor(bg);
-        Rect screenDataRect = sumstn_getDataArea();
+        Rect screenDataRect = getDataArea();
         int ncount = panelsGetCount();
         for (int i = 0; i < ncount; i++) {
-            m_arPanels.get(i).onDraw(g, getEnv(), screenDataRect, i);
+            m_arPanels.get(i).onDraw(g, getEnv(), screenDataRect, i, mFont);
         }
-
-
-        //commit_double_buffer(canvas);
 
     }
 
@@ -119,16 +102,11 @@ public class KDSViewSumStation //extends KDSView
     }
 
 
-    public void sumstn_clear() {
+    public void clear() {
         m_arPanels.clear();
 
     }
 
-    public boolean clear() {
-        sumstn_clear();;
-        //m_viewParent.invalidate();
-        return true;
-    }
 
     public Rect getBounds()
     {
@@ -140,7 +118,7 @@ public class KDSViewSumStation //extends KDSView
         return rc;
     }
 
-    public Rect sumstn_getDataArea() {
+    public Rect getDataArea() {
         Rect rt = this.getBounds();
 
         rt.top += INSET_DY;
@@ -167,22 +145,15 @@ public class KDSViewSumStation //extends KDSView
         m_refreshHandler.sendMessage(m);
     }
 
-//    static public Point convertAbsoluteOrderViewPoint(Point pt, Rect rtOrderView) {
-//        Point ptRelative = new Point(pt);
-//        ptRelative.x = pt.x + rtOrderView.left;
-//        ptRelative.y = pt.y + rtOrderView.top;
-//        return ptRelative;
-//    }
-
-    private int getBlockAverageWidth()
-    {
-        Rect rt = this.getBounds();
-        int n = rt.width() / mMaxPanels;
-        return n;
-    }
+    /**
+     * this should been relatve rect
+     * @param screenDataRect
+     * @param nPanelIndex
+     * @return
+     */
     private Rect getPanelRect(Rect screenDataRect, int nPanelIndex)
     {
-        int w = getBlockAverageWidth();
+        int w = screenDataRect.width()/mMaxPanels;
         int h = screenDataRect.height();
 
         int x = nPanelIndex * w;
@@ -196,7 +167,7 @@ public class KDSViewSumStation //extends KDSView
      * @return
      */
     private boolean showSumGroup(KDSViewSumStnSumGroup group) {
-        Rect screenDataRect = sumstn_getDataArea();
+        Rect screenDataRect = getDataArea();
         if (screenDataRect.width() <= 0) return false;
 
         Rect rtPanel = getPanelRect(screenDataRect, m_arPanels.size());
@@ -213,16 +184,16 @@ public class KDSViewSumStation //extends KDSView
     }
 
 
-//    public KDSViewPanelBase getLastPanel() {
-//        if (m_arPanels.size() <= 0)
-//            return null;
-//        return m_arPanels.get(m_arPanels.size() - 1);
-//
-//    }
-//
-//    public int getPanelsCount() {
-//        return m_arPanels.size();
-//    }
+    private SumStationFilterEntry filterCheck(KDSSummaryItem sumData)
+    {
+        String description = sumData.m_description;
+        for (int i = 0; i< mFilters.size(); i++)
+        {
+            if (mFilters.get(i).getDescription().equals(description))
+                return mFilters.get(i);
+        }
+        return null;
+    }
 
     /**
      *  call this function from external.
@@ -235,27 +206,193 @@ public class KDSViewSumStation //extends KDSView
         KDSViewSumStnSumGroup group = new KDSViewSumStnSumGroup();
         for (int i = 0; i< arSummaryItems.size(); i++)
         {
-
-            group.items().add(arSummaryItems.get(i));
+            KDSSummaryItem sumData = arSummaryItems.get(i);
+            if (mFilterEnabled)
+            {//check filter
+                SumStationFilterEntry entry = filterCheck(sumData);
+                if (entry == null)
+                    continue;
+                if (!entry.getDisplayText().isEmpty())
+                    sumData.setDescription(entry.getDisplayText());
+            }
+            group.items().add(sumData);
             ncount ++;
-            if (ncount >= mMaxItemsEachPanel || (i == arSummaryItems.size() -1) )
+            if (ncount >= mMaxItemsEachPanel )//|| (i == arSummaryItems.size() -1) )
             {
                 showSumGroup(group);
                 ncount = 0;
                 group = new KDSViewSumStnSumGroup();
             }
         }
+        if (group.items().size() >0)
+        {
+            showSumGroup(group);
+        }
     }
 
     public void updateSettings(KDSSettings settings)
     {
+        mFont = settings.getKDSViewFontFace(KDSSettings.ID.SumStn_font);
+        mMaxPanels = settings.getInt(KDSSettings.ID.SumStn_panels_count);
+        mMaxItemsEachPanel = settings.getInt(KDSSettings.ID.SumStn_items_count);
+        int n = settings.getInt(KDSSettings.ID.SumStn_sum_method);
+        mSumType = KDSSettings.SumType.values()[n];
+        mFilterEnabled = settings.getBoolean(KDSSettings.ID.SumStn_filter_enabled);
+        mAlertEnabled = settings.getBoolean(KDSSettings.ID.SumStn_alert_enabled);
+        String s = settings.getString(KDSSettings.ID.SumStn_filters);
+        mFilters =  KDSUIDialogSumStationFilter.parseSumItems(s);
+
+        s = settings.getString(KDSSettings.ID.SumStn_alerts);
+        mAlerts = KDSUIDialogSumStnAlerts.parseSumItems(s);
+
+        n = settings.getInt(KDSSettings.ID.Sumstn_order_by);
+        mOrderBy = KDSSettings.SumOrderBy.values()[n];
 
     }
+
+    ArrayList<KDSSummaryItem> mSummaryData = new ArrayList<>();
+    Object mLocker = new Object();
 
     public void refreshSummary(KDSDBCurrent db)
     {
-        ArrayList<KDSSummaryItem> arData = db.summaryItems("", 0, null, false, true);
+        ArrayList<KDSSummaryItem> arData = null;
+
+        boolean bAscend = (mOrderBy== KDSSettings.SumOrderBy.Ascend);
+        switch (mSumType)
+        {
+
+            case ItemWithoutCondiments: {
+                arData = db.summaryItems("", 0, true, false, bAscend );
+            }
+            break;
+            case ItemWithCondiments:
+            {
+                arData = db.summaryItems("", 0, true, true, bAscend);
+            }
+            break;
+            case CondimentsOnly:
+            {
+                arData = db.summaryOnlyCondiments(0, bAscend, true);
+            }
+            break;
+        }
+        //if (mSumType == KDSSettings.SumType.ItemWithCondiments)
+        //    bCheckCondiments = true;
+
+        //ArrayList<KDSSummaryItem> arData = db.summaryItems("", 0, true, bCheckCondiments, true);
         showSummary(arData);
+        synchronized (mLocker) { //save data for alert
+            mSummaryData.clear();
+            mSummaryData.addAll(arData);
+        }
     }
 
+    public void onTimer()
+    {
+        if (!mAlertEnabled) return;
+        checkSumStationAlert();
+    }
+
+    private void checkSumStationAlert()
+    {
+        for (int i=0; i< mAlerts.size(); i++)
+        {
+            SumStationAlertEntry entry = mAlerts.get(i);
+            checkAlert(entry);
+
+        }
+    }
+
+    private boolean qtyAlertFitCondition(String description, int qty)
+    {
+        synchronized (mLocker)
+        {
+            for (int i=0; i< mSummaryData.size(); i++)
+            {
+                if (mSummaryData.get(i).getDescription().equals(description))
+                {
+                    return (mSummaryData.get(i).getQty() < qty );
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param alertTime
+     *  format: HH:mm
+     * @return
+     */
+    private boolean timeAlertFit(String alertTime)
+    {
+        ArrayList<String> ar = KDSUtil.spliteString(alertTime, ":");
+        if (ar.size() <2) return false;
+        int h = KDSUtil.convertStringToInt( ar.get(0), -1);
+        int m = KDSUtil.convertStringToInt( ar.get(1), -1);
+        if ((h ==-1) || (m == -1) )
+            return false;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, h);
+        c.set(Calendar.MINUTE, m);
+        Date dtAlert = c.getTime();
+
+        Date dt = new Date();
+        long l = dt.getTime() - dtAlert.getTime();
+        return ( l>0 && l<60000 );
+
+
+
+
+    }
+
+    private void checkAlert(SumStationAlertEntry entry)
+    {
+        int nAlertQty = entry.getAlertQty();
+        String alertTime = entry.getAlertTime();
+        if (nAlertQty >0)
+        {
+            if (qtyAlertFitCondition(entry.getDescription(), nAlertQty))
+            {
+                if (!entry.getQtyAlertDone()) {
+                    if (showAlert(entry))
+                        entry.setQtyAlertDone(true);
+                }
+            }
+            else
+            {
+                entry.setQtyAlertDone(false);
+            }
+        }
+
+        if (!alertTime.isEmpty())
+        {
+            if (timeAlertFit(alertTime))
+            {
+                if (!entry.getTimeAlertDone())
+                {
+                    if (showAlert(entry))
+                        entry.setTimeAlertDone(true);
+                }
+
+            }
+            else
+            {
+                entry.setTimeAlertDone(false);
+            }
+        }
+    }
+
+    KDSUIDlgSumStnAlert mAlertDlg = null;
+    private boolean showAlert(SumStationAlertEntry entry)
+    {
+        if (mAlertDlg != null) {
+            if (mAlertDlg.isVisible())
+                return false;
+            mAlertDlg.hide();
+        }
+        mAlertDlg = new KDSUIDlgSumStnAlert(m_viewParent.getContext(), entry);
+        mAlertDlg.show();
+        return true;
+    }
 }

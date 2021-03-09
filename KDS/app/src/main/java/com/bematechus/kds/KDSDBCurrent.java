@@ -1674,7 +1674,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
 
     /************************************************************************/
-    public ArrayList<KDSSummaryItem> summaryItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bCheckCondiments, boolean bAscend)//, boolean bEnableSummaryTranslation)
+    public ArrayList<KDSSummaryItem> summaryItems(String stationID, int nUser, boolean bSummaryStation, boolean bCheckCondiments, boolean bAscend)//, boolean bEnableSummaryTranslation)
     {
         //TimeDog t = new TimeDog();
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
@@ -1684,7 +1684,7 @@ public class KDSDBCurrent extends KDSDBBase {
         if (bCheckCondiments) {
             //return summaryItemsWithCondiments(stationID, nUser, arValidOrderGUID, bAscend);//bEnableSummaryTranslation);
             //kpp1-415
-            return summaryItemsWithCondiments(stationID, nUser, null, bAscend);//bEnableSummaryTranslation);
+            return summaryItemsWithCondiments(stationID, nUser, bSummaryStation, bAscend);//bEnableSummaryTranslation);
         }
         String sql = "";
 
@@ -1693,7 +1693,9 @@ public class KDSDBCurrent extends KDSDBBase {
         //20160712 CHANGED, add qtychanged field.
         sql = String.format( "select a.description, sum(a.qty+ifnull(a.qtychanged,0)) as s from items as a, orders as b where LocalBumped=0 and hiden=0 and b.parked<>1 and b.bumped<>1 and a.orderguid=b.guid and screen=%d group by description order by s DESC",
                             nUser);
-
+        if (bSummaryStation)
+            sql = String.format( "select a.description, sum(a.qty+ifnull(a.qtychanged,0)) as s from items as a, orders as b where LocalBumped=0 and hiden=0 and b.parked<>1 and b.bumped<>1 and a.orderguid=b.guid and screen=%d and a.bumpedstations='' group by description order by s DESC",
+                    nUser);
 
         Cursor c = getDB().rawQuery(sql, null);
 
@@ -1943,12 +1945,12 @@ public class KDSDBCurrent extends KDSDBBase {
 /*                                                                      */
 
     /************************************************************************/
-    private ArrayList<KDSSummaryItem> summaryItemsWithCondiments(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bAscend) {
+    private ArrayList<KDSSummaryItem> summaryItemsWithCondiments(String stationID, int nUser, boolean bSummaryStation, boolean bAscend) {
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
         ArrayList<String> arUniqueItems = new ArrayList<>();
         //TimeDog td = new TimeDog();
 
-        arUniqueItems = getAllUniqueItems(stationID, nUser, arValidOrderGUID);
+        arUniqueItems = getAllUniqueItems(stationID, nUser, bSummaryStation);
         if (arUniqueItems.size() <= 0) return arSums;
         String itemDescription = "";
 //        td.debug_print_Duration(" sum with condiments ------------------------------------- ");
@@ -1958,6 +1960,9 @@ public class KDSDBCurrent extends KDSDBBase {
         //String sql = " and (";
         String sql =String.format(" and items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and orders.screen=%d)",
                                     nUser);
+        if (bSummaryStation)
+            sql =String.format(" and items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and orders.screen=%d)",
+                    nUser);
         //kpp1-415, use new code for orderguid
 
 //        String s = "";
@@ -1979,7 +1984,7 @@ public class KDSDBCurrent extends KDSDBBase {
             itemDescription = arUniqueItems.get(i);
             if (itemDescription.isEmpty()) continue;
             if (sql.isEmpty()) continue;
-            Cursor c = getSameItems(stationID, nUser, arValidOrderGUID, itemDescription, sql);
+            Cursor c = getSameItems(stationID, nUser, bSummaryStation, itemDescription, sql);
 //            td.debug_print_Duration("sum with condiments 101=");
 //            td.reset();
             if (c == null) continue;
@@ -2396,7 +2401,7 @@ return:
                                                                      */
 
     /************************************************************************/
-    Cursor getSameItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID, String itemDescription, String sqlOrdersGuid) {
+    Cursor getSameItems(String stationID, int nUser, boolean bSummaryStation, String itemDescription, String sqlOrdersGuid) {
 
 
         itemDescription = replaceSingleQuotation(itemDescription);
@@ -2412,6 +2417,8 @@ return:
         //sql = String.format("select items.guid,items.orderguid,items.qty,items.category,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
         //sql = String.format("select items.guid,items.qty,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
         sql = String.format("select guid,qty,qtychanged from items where LocalBumped=0 and marked=0 and description='%s' ",  itemDescription);
+        if (bSummaryStation)
+            sql = String.format("select guid,qty,qtychanged from items where LocalBumped=0 and bumpedstations='' and marked=0 and description='%s' ",  itemDescription);
         sql += sqlOrdersGuid;
 //        sql += " and (";
 //        String s = "";
@@ -2438,7 +2445,7 @@ return:
      * @param arValidOrderGUID
      * @return
      */
-    private ArrayList<String> getAllUniqueItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID) {
+    private ArrayList<String> getAllUniqueItems(String stationID, int nUser, boolean bSummaryStation) {
 
         ArrayList<String> arItems = new ArrayList<>();
 
@@ -2447,7 +2454,9 @@ return:
         String sql = "";
 //        sql = String.format("select items.description from items,orders where items.hiden=0 and items.LocalBumped=0 and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) ) group by items.description",
 //                            nUser);
-        sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0 group by items.description");
+        sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0  group by items.description");
+        if (bSummaryStation)
+            sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0 and items.bumpedstations='' group by items.description");
 
 //        //3.1.0.18 add hide
 //        sql = String.format("select description from items where hiden=0 ", stationID, nUser);//3.1.0.18
@@ -3858,7 +3867,7 @@ update the schedule item ready qty
      * @param bAscend
      * @return
      */
-    public ArrayList<KDSSummaryItem> summaryOnlyCondiments(int nUser, boolean bAscend)//, boolean bEnableSummaryTranslation)
+    public ArrayList<KDSSummaryItem> summaryOnlyCondiments(int nUser, boolean bAscend, boolean bSummaryStation)//, boolean bEnableSummaryTranslation)
     {
 
         String sql = String.format("select condiments.description,sum(ifnull(condiments.qty,1)*(items.qty+ifnull(items.qtychanged,0))) as q,count(condiments.description) as samecount " +
@@ -3867,7 +3876,13 @@ update the schedule item ready qty
                 "group by condiments.description " +
                 "order by condiments.description %s ",
                 nUser,  bAscend?"asc":"desc");
-
+        if (bSummaryStation)
+            sql = String.format("select condiments.description,sum(ifnull(condiments.qty,1)*(items.qty+ifnull(items.qtychanged,0))) as q,count(condiments.description) as samecount " +
+                            "from condiments,items " +
+                            "where condiments.itemguid=items.guid and items.localbumped=0 and items.bumpedstations='' and items.marked=0 and condiments.itemguid in (select items.guid from items where items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and screen=%d)) " +
+                            "group by condiments.description " +
+                            "order by condiments.description %s ",
+                    nUser,  bAscend?"asc":"desc");
 
         ArrayList<KDSSummaryItem> ar = new ArrayList<>();
 
@@ -3956,6 +3971,143 @@ update the schedule item ready qty
         this.executeDML(sql);
 
     }
+
+//    /**
+//     * for summary station.
+//     *
+//     * @param stationID
+//     * @param nUser
+//     * @param arValidOrderGUID
+//     * @param bCheckCondiments
+//     * @param bAscend
+//     * @return
+//     */
+//    public ArrayList<KDSSummaryItem> summaryItemsForSummaryStation(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bCheckCondiments, boolean bAscend)//, boolean bEnableSummaryTranslation)
+//    {
+//        //TimeDog t = new TimeDog();
+//        ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
+//        if (getDB() == null) return arSums;
+//
+//
+//        if (bCheckCondiments) {
+//
+//            return summaryItemsWithCondimentsForSummaryStation(stationID, nUser, null, bAscend);//bEnableSummaryTranslation);
+//        }
+//        String sql = "";
+//
+//        String s = "";
+//
+//        //20160712 CHANGED, add qtychanged field.
+//        sql = String.format( "select a.description, sum(a.qty+ifnull(a.qtychanged,0)) as s from items as a, orders as b where LocalBumped=0 and hiden=0 and b.parked<>1 and b.bumped<>1 and a.orderguid=b.guid and screen=%d and a.bumpedstations='' group by description order by s DESC",
+//                nUser);
+//
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        while (c.moveToNext()) {
+//
+//            KDSSummaryItem sumItem = new KDSSummaryItem();
+//            sumItem.setDescription( getString(c,0));
+//
+//            sumItem.setQty(getFloat(c,1));
+//            arSums.add(sumItem);
+//
+//        }
+//        c.close();
+//
+//        summaryItemsSortByQty(arSums, !bAscend);
+//        summaryRebuildNamesAndQty(arSums);
+//        //t.debug_print_Duration("load sumend");
+//        return arSums;
+//
+//    }
+
+//    private ArrayList<String> getAllUniqueItemsForSummaryStation(String stationID, int nUser, ArrayList<String> arValidOrderGUID) {
+//
+//        ArrayList<String> arItems = new ArrayList<>();
+//
+//        if (getDB() == null) return arItems;
+//
+//        String sql = "";
+//        sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0 and items.bumpedstations='' group by items.description");
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//
+//        while (c.moveToNext()) {
+////            String s = getString(c,0);
+////            arItems.add(s);
+//            arItems.add( getString(c,0));
+//        }
+//        c.close();
+//
+//        return arItems;
+//
+//    }
+
+
+//    /************************************************************************/
+//    Cursor getSameItemsForSummaryStation(String stationID, int nUser, ArrayList<String> arValidOrderGUID, String itemDescription, String sqlOrdersGuid) {
+//
+//
+//        itemDescription = replaceSingleQuotation(itemDescription);
+//        String sql = "";
+//        sql = String.format("select guid,qty,qtychanged from items where LocalBumped=0 and bumpedstations='' and marked=0 and description='%s' ",  itemDescription);
+//        sql += sqlOrdersGuid;
+//        Cursor c = getDB().rawQuery(sql, null);
+//        return c;
+//
+//    }
+
+//    private ArrayList<KDSSummaryItem> summaryItemsWithCondimentsForSummaryStation(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bAscend) {
+//        ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
+//        ArrayList<String> arUniqueItems = new ArrayList<>();
+//        //TimeDog td = new TimeDog();
+//
+//        arUniqueItems = getAllUniqueItemsForSummaryStation(stationID, nUser, arValidOrderGUID);
+//        if (arUniqueItems.size() <= 0) return arSums;
+//        String itemDescription = "";
+//        String sql =String.format(" and items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and orders.screen=%d)",
+//                nUser);
+//        for (int i = 0; i < arUniqueItems.size(); i++) {
+//            itemDescription = arUniqueItems.get(i);
+//            if (itemDescription.isEmpty()) continue;
+//            if (sql.isEmpty()) continue;
+//            Cursor c = getSameItemsForSummaryStation(stationID, nUser, arValidOrderGUID, itemDescription, sql);
+////            td.debug_print_Duration("sum with condiments 101=");
+////            td.reset();
+//            if (c == null) continue;
+//            ArrayList<String> sameItemsGuid = new ArrayList<>();
+//            ArrayList<Float> sameItemsQty = new ArrayList<>();
+//            ArrayList<Float> sameItemsQtyChg = new ArrayList<>();
+//            while (c.moveToNext())
+//            {
+//                sameItemsGuid.add(c.getString(0));
+//                sameItemsQty.add(getFloat(c,1));
+//                sameItemsQtyChg.add(getFloat(c,2));
+//            }
+//            c.close();
+//            createItemsSummaryWidthCondiments(stationID, nUser, itemDescription, sameItemsGuid,sameItemsQty,sameItemsQtyChg, arSums);
+//
+////            td.debug_print_Duration("sum with condiments 102=");
+////            td.reset();
+//
+//        }
+//
+////        td.debug_print_Duration("sum with condiments 11=");
+////        td.reset();
+//
+//        summaryItemsSortByQty(arSums,!bAscend);
+//        //td.debug_print_Duration("sum with condiments 12=");
+//        //td.reset();
+//        summaryRebuildNamesAndQty(arSums);
+//        //td.debug_print_Duration("sum with condiments 13=");
+//        //td.reset();
+//        return arSums;
+//
+//
+//    }
+
 
     /***************************************************************************
      * SQL definitions

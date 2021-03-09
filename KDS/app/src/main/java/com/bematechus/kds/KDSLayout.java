@@ -1663,7 +1663,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         }
         else if (mode == KDSView.OrdersViewMode.Summary)
         {
-
+            this.getView().getSumStnViewer().onTimer();
         }
 
     }
@@ -1837,9 +1837,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         m_view.getLineItemsViewer().showOrders(orders);//, firstOrderGuid, firstItemGuid);
     }
 
-    public void showOrdersInSummaryStationMode()
+    public void showOrdersInSummaryStationMode(KDSDataOrders orders)
     {
-
+        //Here, we need to check if all items was bumped by other station.
+        // then remove this order from orders array.
+        //Otherwise, the orders will always kept in memory.
+        orders.removeForSumStation();
         m_view.getSumStnViewer().refreshSummary(KDSGlobalVariables.getKDS().getCurrentDB());
     }
 
@@ -2030,7 +2033,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     public void refreshSummaryStationView()
     {
-        showOrdersInSummaryStationMode();
+        showOrdersInSummaryStationMode(m_orders);
         m_view.refresh();
     }
 
@@ -2548,11 +2551,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         //TimeDog t = new TimeDog();
         //m_orders = orders;
-        KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
+        //KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
         //m_view.clear();
         //synchronized (m_view.m_panelsLocker) {
-        if (!getEnv().getSettings().getBoolean(KDSSettings.ID.LineItems_Enabled)) //kpp1-322
-            m_view.clearPanels();
+//        if (!getEnv().getSettings().getBoolean(KDSSettings.ID.LineItems_Enabled)) //kpp1-322
+//            m_view.clearPanels();
 //            if (layoutFormat == KDSSettings.LayoutFormat.iOS_Like)
 //            {
 //                m_view.ios_clear();
@@ -2560,15 +2563,18 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         //}
 
-        if (orders == null || orders.getCount() <= 0) {
-            //this.getView().refresh();
-            //m_view.clear();
-            return true;
-        }
+//        if (orders == null || orders.getCount() <= 0) {
+//            //this.getView().refresh();
+//            //m_view.clear();
+//            return true;
+//        }
         KDSView.OrdersViewMode mode = m_view.getOrdersViewMode();
         synchronized (m_view.m_panelsLocker) {
             if (mode == KDSView.OrdersViewMode.Normal) {
-
+                m_view.clearPanels();
+                if (orders == null || orders.getCount() <= 0) {
+                    return true;
+                }
                 int nBlockRows = m_view.getAverageRowsInBlock();
                 int nStartOrderIndex = 0;
                 if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
@@ -2625,6 +2631,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 return true;
 
             } else if (mode == KDSView.OrdersViewMode.LineItems) {
+                if (orders == null || orders.getCount() <= 0) {
+
+                    return true;
+                }
                 if (m_view.getLineItemsViewer().smartSortEnabled())
                 {  //kpp1-322
 //                    if (getEnv().getStateValues().getFirstShowingOrderGUID().isEmpty())
@@ -2665,7 +2675,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             }
             else if (mode == KDSView.OrdersViewMode.Summary)
             {
-                showOrdersInSummaryStationMode();
+                showOrdersInSummaryStationMode(orders);
             }
         }
         return true;

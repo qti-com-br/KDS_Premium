@@ -29,8 +29,6 @@ public class KDSViewSumStnEntry {
     KDSSummaryItem m_item = null;
 
     KDSViewSumStnPanel.KDSSize m_size = new KDSViewSumStnPanel.KDSSize(0,0);
-    Rect m_rtRelativeToOrderView = new Rect();
-
     Point m_ptStartPoint = new Point();
 
     public KDSViewSumStnEntry(KDSSummaryItem item)
@@ -45,24 +43,15 @@ public class KDSViewSumStnEntry {
 
     }
 
-    public void setRectRelativeToOrderView(Rect rt)
-    {
-        m_rtRelativeToOrderView = rt;
-    }
-
     public void setSize(KDSViewSumStnPanel.KDSSize size)
     {
         m_size = size;
     }
     static public int calculateNeedHeight(KDSSummaryItem item)
     {
-        //int nmessages = item.getCondiments().getCount();
-        //int nmodifiers = item.getModifiers().getCount();
+
         int nItem = 1;
         int nCondiments = item.getCondiments().size();//.getCount();
-        //int nAddon = 0;
-//        if (nLastGroupID != item.getAddOnGroup())
-//            nAddon = 1;
         int h =   nItem * m_itemTextHeight + nCondiments * m_condimentHeight;
         return h;
 
@@ -85,14 +74,10 @@ public class KDSViewSumStnEntry {
     {
 
         if (str.isEmpty()) return;
-
-        //if (order.isDimColor()) ff.setBG(KDSConst.DIM_BG);
         CanvasDC.drawText_without_clear_bg(g, ff, rcAbsolute, str, Paint.Align.LEFT, bBold);
 
     }
-//    static KDSViewFontFace m_ffDescription = new KDSViewFontFace();
-//    static KDSViewFontFace m_ffCondiment = new KDSViewFontFace();
-//    static KDSViewFontFace m_ffMessage = new KDSViewFontFace();
+
 
     static Paint m_paintSeparator = new Paint();
 
@@ -101,107 +86,47 @@ public class KDSViewSumStnEntry {
      * @param g
      * @param env
      * @param screenDataRect
-     * @param arOrderView
+     * @param arPanelRect
      * @param bDrawSeparator
-     * @param nLastGroupID
-     * @return
-     *  return last group id
      */
-    public int onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect, ArrayList<Rect> arPanelRect, boolean bDrawSeparator, int nLastGroupID)
+    public void onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect, ArrayList<Rect> arPanelRect, boolean bDrawSeparator, KDSViewFontFace ff)
     {
 
-        KDSViewFontFace ffDescription = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);
-        KDSViewFontFace ffCondiment = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Condiment_Default_FontFace);
-        KDSViewFontFace ffMessage = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Message_Default_FontFace);
+        //KDSViewFontFace ffDescription = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);
+        //KDSViewFontFace ffCondiment = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Condiment_Default_FontFace);
+
 
 
         Rect rt = getAbsoluteRect(screenDataRect, arPanelRect);
-        //rt.inset(KDSIOSView.INSET_DX, 0);
-        rt.left += KDSIOSView.INSET_DX;
-        rt.right -= KDSIOSView.BORDER_INSET_DX;
-        rt.right -= KDSIOSView.INSET_DX*2;
+
+        rt.left += KDSViewSumStation.INSET_DX;
+        rt.right -= KDSViewSumStation.BORDER_INSET_DX;
+
         Rect rtText = new Rect(rt);
+        rtText.bottom = rtText.top + m_itemTextHeight;
+        String str = String.format("%dx %s", (int) m_item.getQty(), m_item.getItemDescription());
 
-//        if (m_item instanceof KDSDataMoreIndicator)
-//        {
-//            rtText.bottom = rtText.top + m_itemTextHeight;
-//            KDSLayoutCell.drawMoreIndicator(g, rtText, env);
-//            return nLastGroupID;
-//        }
-//        else if (m_item instanceof KDSDataCategoryIndicator)
-//        {
-//            rtText.bottom = rtText.top + m_itemTextHeight;
-//            KDSLayoutCell.drawCategoryIndicator( g, rtText,env, (KDSDataCategoryIndicator)m_item);
-//            return nLastGroupID;
-//        }
-//
-//        if (m_item.getAddOnGroup() != nLastGroupID) {
-//            nLastGroupID = m_item.getAddOnGroup();
-//            rtText = drawAddon(g, env, rtText, ffMessage);
-//            //show add-on
-////            String addon = "Add-on";
-////            rtText.bottom = rtText.top + m_messageHeight;
-////            drawString(g, ffMessage, rtText,addon, false);
-////            rtText.top = rtText.bottom;
-////            rtText.bottom+= m_messageHeight;
-//        }
+        //KDSBGFG color = KDSLayoutCell.getStateColor(m_item, env, ffDescription.getBG(), ffDescription.getFG());
+        KDSBGFG color = new KDSBGFG(ff.getBG(), ff.getFG());
+        CanvasDC.fillRect(g, ff.getBG(), rtText);
+        //CanvasDC.fillRect(g, Color.RED, rtText);
 
-        //draw description
-        //if (!m_item.getHidden() )
-        {
-
-            rtText.bottom = rtText.top + m_itemTextHeight;
-            String str = String.format("%dx %s", (int) m_item.getQty(), m_item.getDescription());
-
-            //KDSBGFG color = KDSLayoutCell.getStateColor(m_item, env, ffDescription.getBG(), ffDescription.getFG());
-            KDSBGFG color = new KDSBGFG(ffDescription.getBG(), ffDescription.getFG());
-            CanvasDC.fillRect(g, ffDescription.getBG(), rtText);
-            //CanvasDC.fillRect(g, Color.RED, rtText);
-            //rtText = KDSLayoutCell.drawItemState(g, m_item, rtText, env, color, m_itemTextHeight, ffDescription);
-
-//            int noldbg = ffDescription.getBG();
-//            int noldfg = ffDescription.getFG();
-//
-//            ffDescription.setFG(color.getFG());
-//            ffDescription.setBG(color.getBG());
-            drawString(g, ffDescription, rtText, str, true);
-//            if (m_item.isQtyChanged())
-//            {
-//                drawVoidMessage(g, env, rtText, ffMessage, color);
-//            }
-//            ffDescription.setFG(noldfg);
-//            ffDescription.setBG(noldbg);
-        }
-        //draw messages
-//        Rect rtMessage = new Rect(rtText);
-//        rtMessage.top+= m_itemTextHeight;
-//        rtMessage.bottom = rtMessage.top + m_messageHeight;
-//
-//        for (int i=0; i< m_item.getPreModifiers().getCount(); i++)
-//        {
-//            drawString(g, ffMessage, rtMessage, m_item.getPreModifiers().getMessage(i).getMessage(), false);
-//            rtMessage.top+= m_messageHeight ;
-//            rtMessage.bottom = rtMessage.top + m_messageHeight;
-//        }
-
-        //draw modifiers
-//        Rect rtModifier = new Rect(rtMessage);
-//        rtModifier.bottom = rtModifier.top + m_messageHeight;
-//        for (int i=0; i< m_item.getModifiers().getCount(); i++)
-//        {
-//            drawString(g, ffMessage, rtModifier, m_item.getModifiers().getModifier(i).getDescription(), false);
-//            rtModifier.top+= m_messageHeight ;
-//            rtModifier.bottom = rtModifier.top + m_messageHeight;
-//        }
-
+        drawString(g, ff, rtText, str, true);
 
         //draw condiments
         Rect rtCondiment = new Rect(rtText);
         // rtCondiment.top+= m_messageHeight;
+        rtCondiment.top += m_itemTextHeight;
         rtCondiment.bottom = rtCondiment.top + m_condimentHeight;
         for (int i=0; i< m_item.getCondiments().size(); i++)
         {
-            drawString(g, ffCondiment, rtCondiment, m_item.getCondiments().get(i).getDescription(), false);
+            int nCondimentQty = m_item.getCondiments().get(i).getQty();
+            if (nCondimentQty <=0)
+                nCondimentQty = 1;
+            nCondimentQty *= m_item.getQty();
+
+            str = String.format("        %dx %s", (int) nCondimentQty, m_item.getCondiments().get(i).getDescription());
+            drawString(g, ff, rtCondiment, str, false);
             rtCondiment.top+= m_condimentHeight ;
             rtCondiment.bottom = rtCondiment.top + m_condimentHeight;
         }
@@ -211,74 +136,8 @@ public class KDSViewSumStnEntry {
             g.drawLine(rt.left + KDSIOSView.INSET_DX, rt.top, rt.right - KDSIOSView.INSET_DX*2, rt.top, m_paintSeparator);
         }
 
-        return nLastGroupID;
     }
 
-//    private Rect drawAddon(Canvas g, KDSViewSettings env, Rect rect, KDSViewFontFace ff )
-//    {
-//        //show add-on
-//        String addon = "Add-on";
-//        rect.bottom = rect.top + m_messageHeight;
-//        drawString(g, ff, rect,addon, false);
-//        rect.top = rect.bottom;
-//        rect.bottom+= m_messageHeight;
-//        return rect;
-//    }
-//    /**
-//     *
-//     * @param g
-//     * @param env
-//     * @param rect
-//     *  The pre-content occupy this rect.
-//     * @return
-//     */
-//    private Rect drawVoidMessage(Canvas g, KDSViewSettings env, Rect rect, KDSViewFontFace ff, KDSBGFG itemStateColor )
-//    {
-//        int n = env.getSettings().getInt(KDSSettings.ID.Void_showing_method);
-//        KDSSettings.VoidShowingMethod method = KDSSettings.VoidShowingMethod.values()[n];
-//        Rect rt = new Rect(rect);
-//        switch (method)
-//        {
-//            case Direct_Qty:
-//                if (env.getSettings().getBoolean(KDSSettings.ID.Void_add_message_enabled))
-//                {
-//                    rt.top = rt.bottom;
-//                    rt.bottom = rt.top + m_messageHeight;
-//
-//                    CanvasDC.fillRect(g, ff.getBG(), rt);
-//
-//                    String strDescription = env.getSettings().getString(KDSSettings.ID.Void_add_message);
-//                    String s =  KDSLayoutCell.getSpaces(2);
-//                    strDescription = s + strDescription;
-//
-//                    CanvasDC.drawText(g, ff, rt, strDescription, Paint.Align.LEFT);
-//
-//                }
-//                break;
-//            case Add_void:
-//            {
-//                rt.top = rt.bottom;
-//                rt.bottom = rt.top + m_messageHeight;
-//                CanvasDC.fillRect(g, itemStateColor.getBG(), rt);
-//
-//                float qty = m_item.getChangedQty();
-//                String strDescription = m_item.getDescription();
-//
-//                String s = KDSLayoutCell.getSpaces(2);
-//                String strQty = KDSLayoutCell.getVoidItemQtyString(env, qty);//  Integer.toString(Math.abs((int) qty));
-//
-//                s += strQty;//Integer.toString((int) qty);
-//                s += KDSLayoutCell.getSpaces(3);
-//                s += strDescription;
-//
-//                CanvasDC.drawText(g, ff, rt, s, Paint.Align.LEFT);
-//
-//            }
-//            break;
-//
-//        }
-//        return rt;
-//    }
     public Rect getRect()
     {
         Rect rt = new Rect(m_ptStartPoint.x, m_ptStartPoint.y, m_ptStartPoint.x + m_size.width, m_ptStartPoint.y+m_size.height);

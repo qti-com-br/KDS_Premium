@@ -11,6 +11,27 @@ public class SumStationAlertEntry extends SumStationEntry {
     String mAlertMessage = "";
     String mAlertImageFile = "";
 
+    boolean mQtyAlertDone = false; //for mem variable. don't save it.
+    boolean mTimeAlertDone = false; //for mem variable. don't save it.
+
+    public void setQtyAlertDone(boolean bDone)
+    {
+        mQtyAlertDone = bDone;
+    }
+    public boolean getQtyAlertDone()
+    {
+        return mQtyAlertDone;
+    }
+
+    public void setTimeAlertDone(boolean bDone)
+    {
+        mTimeAlertDone = bDone;
+    }
+    public boolean getTimeAlertDone()
+    {
+        return mTimeAlertDone;
+    }
+
     public int getAlertQty()
     {
         return mAlertQty;

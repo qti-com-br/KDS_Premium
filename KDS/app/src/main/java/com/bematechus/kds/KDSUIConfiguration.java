@@ -2463,6 +2463,12 @@ public class KDSUIConfiguration extends PreferenceActivity {
             addPreferencesFromResource(R.xml.pref_sum_station);
             suspendOnSharedPreferencesChangedEvent(false);
 
+            bindPreferenceSummaryToValue(findPreference("sumstn_sum_type"));
+
+            bindPreferenceSummaryToValue(findPreference("sumstn_panels"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_panel_items"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_order_by"));
+
 
 
 

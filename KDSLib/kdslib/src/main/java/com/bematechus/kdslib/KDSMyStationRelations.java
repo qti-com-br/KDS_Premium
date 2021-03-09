@@ -71,7 +71,9 @@ public class KDSMyStationRelations {
         for (int i=0; i< m_arStationsRelations.size(); i++)
         {
             if (m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
-                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Runner )
+                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Runner ||
+                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Summary
+            )
                 return true;
         }
         return false;
@@ -173,7 +175,8 @@ public class KDSMyStationRelations {
         for (int i=0; i< m_arStationsRelations.size(); i++)
         {
             if (m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Expeditor ||
-                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Runner)
+                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Runner ||
+                    m_arStationsRelations.get(i).getFunction() == SettingsBase.StationFunc.Summary )
                 ar.add(m_arStationsRelations.get(i).getID());
         }
         return ar;
@@ -513,7 +516,8 @@ public class KDSMyStationRelations {
         return (station.getFunction() == SettingsBase.StationFunc.Queue ||
                 station.getFunction() == SettingsBase.StationFunc.Queue_Expo ||
                 station.getFunction() == SettingsBase.StationFunc.Expeditor ||
-                station.getFunction() == SettingsBase.StationFunc.Runner );
+                station.getFunction() == SettingsBase.StationFunc.Runner ||
+                station.getFunction() == SettingsBase.StationFunc.Summary);
     }
 
     public void removeDuplicatedStations(ArrayList<KDSStationIP> ar)

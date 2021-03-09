@@ -45,7 +45,7 @@ public class KDSUIDlgInputSumStationAlertEntry  extends KDSUIDialogBase implemen
         else
             mEntryEdit.setEntryType(SumStationEntry.EntryType.Condiment);
         mEntryEdit.setDisplayText(((TextView)this.getView().findViewById(R.id.txtDisplay)).getText().toString());
-        String s = ((TextView)this.getView().findViewById(R.id.txtDisplay)).getText().toString();
+        String s = ((TextView)this.getView().findViewById(R.id.txtQty)).getText().toString();
         int n = KDSUtil.convertStringToInt(s, -1);
         mEntryEdit.setAlertQty(n);
         mEntryEdit.setAlertTime(((TextView)this.getView().findViewById(R.id.txtTime)).getText().toString());
