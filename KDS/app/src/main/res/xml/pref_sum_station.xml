@@ -47,6 +47,11 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <CheckBoxPreference
+        android:key="sumstn_right_qty"
+        android:title="@string/show_quantity_at_right"
+        android:defaultValue="false" />
+
     <com.bematechus.kdslib.KDSListPreference
         android:key="sumstn_panels"
         android:title="@string/panels_count"

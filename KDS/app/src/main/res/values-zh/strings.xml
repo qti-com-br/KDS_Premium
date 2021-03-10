@@ -1285,4 +1285,5 @@
     <string name="internet">Internet</string>
     <string name="local">Local</string>
     <string name="summary_station">Summary station</string>
+    <string name="show_quantity_at_right">Show quantity at right</string>
 </resources>

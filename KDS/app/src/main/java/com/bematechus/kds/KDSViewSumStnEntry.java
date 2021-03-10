@@ -11,6 +11,7 @@ import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataMoreIndicator;
+import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 
 import java.util.ArrayList;
@@ -94,11 +95,6 @@ public class KDSViewSumStnEntry {
                        int nRowHeight)
     {
 
-        //KDSViewFontFace ffDescription = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);
-        //KDSViewFontFace ffCondiment = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Condiment_Default_FontFace);
-
-
-
         Rect rt = getAbsoluteRect(screenDataRect, arPanelRect);
 
         rt.left += KDSViewSumStation.INSET_DX;
@@ -106,21 +102,25 @@ public class KDSViewSumStnEntry {
 
         Rect rtText = new Rect(rt);
         rtText.bottom = rtText.top + nRowHeight;// m_itemTextHeight;
-        String str = String.format("%dx %s", (int) m_item.getQty(), m_item.getItemDescription());
+        boolean bRightQty = env.getSettings().getBoolean(KDSSettings.ID.Sumstn_right_qty);
 
-        //KDSBGFG color = KDSLayoutCell.getStateColor(m_item, env, ffDescription.getBG(), ffDescription.getFG());
-        KDSBGFG color = new KDSBGFG(ff.getBG(), ff.getFG());
+        String str = String.format("%dx %s", (int) m_item.getQty(), m_item.getItemDescription());
+        if (bRightQty)
+            str = String.format("%s", m_item.getItemDescription());
+
         CanvasDC.fillRect(g, ff.getBG(), rtText);
-        //CanvasDC.fillRect(g, Color.RED, rtText);
         rtText.left += KDSViewSumStation.INSET_DX;
+        rtText.right -= KDSViewSumStation.INSET_DX;
         drawString(g, ff, rtText, str, true);
+        if (bRightQty)
+            drawRightQtyString(g, ff, rtText, " x" + KDSUtil.convertIntToString((long)m_item.getQty()), true);
 
         //draw condiments
         Rect rtCondiment = new Rect(rtText);
         // rtCondiment.top+= m_messageHeight;
         rtCondiment.top += nRowHeight;//m_itemTextHeight;
         rtCondiment.bottom = rtCondiment.top + nRowHeight;// m_condimentHeight;
-
+        String condimentPrefix = "        ";
         for (int i=0; i< m_item.getCondiments().size(); i++)
         {
             int nCondimentQty = m_item.getCondiments().get(i).getQty();
@@ -128,8 +128,12 @@ public class KDSViewSumStnEntry {
                 nCondimentQty = 1;
             nCondimentQty *= m_item.getQty();
 
-            str = String.format("        %dx %s", (int) nCondimentQty, m_item.getCondiments().get(i).getDescription());
+            str = String.format(condimentPrefix+"%dx %s", (int) nCondimentQty, m_item.getCondiments().get(i).getDescription());
+            if (bRightQty)
+                str = String.format(condimentPrefix + "%s", m_item.getCondiments().get(i).getDescription());
             drawString(g, ff, rtCondiment, str, false);
+            if (bRightQty)
+                drawRightQtyString(g, ff, rtCondiment, " x" + KDSUtil.convertIntToString((long)nCondimentQty), false);
             rtCondiment.top+= nRowHeight;//m_condimentHeight ;
             rtCondiment.bottom = rtCondiment.top + nRowHeight;// m_condimentHeight;
         }
@@ -141,6 +145,17 @@ public class KDSViewSumStnEntry {
 
     }
 
+    protected void drawRightQtyString(Canvas g, KDSViewFontFace ff, Rect rcAbsolute , String str, boolean bBold)
+    {
+
+        if (str.isEmpty()) return;
+        int nWidth = CanvasDC.getTextPixelsWidth(ff, str);
+        Rect rt = new Rect(rcAbsolute);
+        rt.left = rt.right - nWidth - KDSViewSumStation.INSET_DX;
+        CanvasDC.fillRect(g, ff.getBG(), rt );
+        CanvasDC.drawText_without_clear_bg(g, ff, rcAbsolute, str, Paint.Align.RIGHT, bBold);
+
+    }
 //    public Rect getRect()
 //    {
 //        Rect rt = new Rect(m_ptStartPoint.x, m_ptStartPoint.y, m_ptStartPoint.x + m_size.width, m_ptStartPoint.y+m_size.height);

@@ -603,6 +603,7 @@ public class KDSSettings extends SettingsBase {
        SumStn_screen_bg,
        SumStn_caption_font,
        SumStn_caption_prefix,
+       Sumstn_right_qty,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1398,7 +1399,9 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.SumStn_screen_bg,"int_sumstn_screen_bg",getResColor(R.color.view_bg));
         init_option(ID.SumStn_caption_font,"fontface_sumstn_caption_font",new KDSViewFontFace(getResColor(R.color.caption_bg), getResColor(R.color.caption_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
 
-       init_option(ID.SumStn_caption_prefix, "string_sumstn_caption_prefix", getResString(R.string.summary));
+        init_option(ID.SumStn_caption_prefix, "string_sumstn_caption_prefix", getResString(R.string.summary));
+        init_option(ID.Sumstn_right_qty, "bool_sumstn_right_qty", false);
+
     }
 
     /**
