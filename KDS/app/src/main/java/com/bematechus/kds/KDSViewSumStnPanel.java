@@ -25,6 +25,7 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
     //static public int m_premessageHeight = 20;
     static public int m_orderCaptionHeight = 40;
 
+    int mRowHeight = 20;
     ArrayList<KDSViewSumStnEntry> m_arRowEntries = new ArrayList<>(); //all my rows
     ArrayList<Rect> m_arRects = new ArrayList<>(); //my location
 
@@ -32,17 +33,21 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
 
     KDSViewSumStnSumGroup m_sumGroup = null; //all summary items
 
-    KDSViewFontFace m_font = new KDSViewFontFace();
-    String mCaptionText = "Summary";
+    //KDSViewFontFace m_font = new KDSViewFontFace();
+    //String mCaptionText = "Summary";
 
-    public KDSViewFontFace getFont() {
-        return m_font;
+//    public KDSViewFontFace getFont() {
+//        return m_font;
+//    }
+//
+//    public void setFont(KDSViewFontFace ff) {
+//        m_font.copyFrom(ff);
+//    }
+
+    public void setRowHeight(int nRowHeight)
+    {
+        mRowHeight = nRowHeight;
     }
-
-    public void setFont(KDSViewFontFace ff) {
-        m_font.copyFrom(ff);
-    }
-
     public void setRect(Rect rt) {
         m_arRects.clear();
         m_arRects.add(rt);//.addAll(ar);
@@ -71,7 +76,7 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
      *  The relative rect to screen data rect.
      * @return
      */
-    static public boolean build(KDSViewSumStnSumGroup group,KDSViewSumStnPanel panel, Rect rtPanel) {
+    static public boolean build(KDSViewSumStnSumGroup group,KDSViewSumStnPanel panel, Rect rtPanel, int rowHeight) {
 
 
         ArrayList<KDSViewSumStnPanel.KDSSize> arSizes = new ArrayList<>();
@@ -83,7 +88,7 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
         int nStartY = rtCaption.bottom+1;
         for (int i = 0; i < group.items().size(); i++) {
 
-            int itemh = KDSViewSumStnEntry.calculateNeedHeight(group.items().get(i));
+            int itemh = KDSViewSumStnEntry.calculateNeedHeight(group.items().get(i), rowHeight);
             arSizes.add(new KDSViewSumStnPanel.KDSSize(w, itemh));
             KDSViewSumStnEntry rowView = panel.addItem(new KDSViewSumStnEntry(group.items().get(i)));
             rowView.setSize(arSizes.get(arSizes.size() - 1));
@@ -128,9 +133,9 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
 
     }
 
-    private void drawPanel(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex, KDSViewFontFace ff) {
+    private void drawPanel(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex, KDSViewFontFace ffCaption, KDSViewFontFace ffItem) {
         if (m_arRects.size() <= 0) return;
-        int nbg = ff.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+        int nbg = ffItem.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
 
         Rect rtReal = convertToAbsoluteRect(m_arRects.get(0), screenDataRect);
         //Rect rtReal = m_arRects.get(0);
@@ -140,19 +145,22 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
 
     }
 
-    public void onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex, KDSViewFontFace ff) {
+    public void onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect,
+                       int nOrderPanelIndex,
+                       KDSViewFontFace ffCaption, KDSViewFontFace ffItem,
+                       int nRowHeight) {
         if (m_arRects.size() <= 0) return;
-        drawPanel(g, env, screenDataRect, nOrderPanelIndex, ff);
+        drawPanel(g, env, screenDataRect, nOrderPanelIndex, ffCaption, ffItem);
 
-        drawCaption(g, env, screenDataRect, nOrderPanelIndex, ff);
+        drawCaption(g, env, screenDataRect, nOrderPanelIndex, ffCaption, ffItem);
 
         for (int i = 0; i < m_arRowEntries.size(); i++) {
-            m_arRowEntries.get(i).onDraw(g, env, screenDataRect, m_arRects, (i != 0), ff);
+            m_arRowEntries.get(i).onDraw(g, env, screenDataRect, m_arRects, (i != 0), ffItem, nRowHeight);
         }
     }
 
 
-    protected boolean drawCaptionBG(Canvas g, KDSViewSettings env, Rect rtScreenDataArea, int nBG, int nOrderPanelIndex) {
+    protected boolean drawCaptionBG(Canvas g, KDSViewSettings env, Rect rtScreenDataArea, int nBG) {
         Rect rcBG = getCaptionBGRect();
         rcBG = convertToAbsoluteRect(rcBG, m_arRects.get(0));
         rcBG = convertToAbsoluteRect(rcBG, rtScreenDataArea);
@@ -164,12 +172,12 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
         return true;
     }
 
-    protected boolean drawCaption(Canvas g, KDSViewSettings env, Rect rtScreenDataArea, int nOrderPanelIndex, KDSViewFontFace ff) {
+    protected boolean drawCaption(Canvas g, KDSViewSettings env, Rect rtScreenDataArea, int nPanelIndex, KDSViewFontFace ffCaption, KDSViewFontFace ffItem) {
         Rect rtCaption = getCaptionRect();
 
         //this.getFont().copyFrom(env.getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace));
 
-        KDSViewFontFace ffCaption = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace);
+        //KDSViewFontFace ffCaption = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Order_Normal_FontFace);
 
         //int nCaptionBG = ff.getBG();// KDSView.getOrderCaptionBackgroundColor(order, env, this.getFont());
         int nBG = ffCaption.getBG();
@@ -179,25 +187,32 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
             rcAbsolute.right = rtScreenDataArea.width() - 2 * KDSViewSumStation.INSET_DX;// - 2*+KDSIOSView.BORDER_INSET_DX;
 
         rcAbsolute = convertToAbsoluteRect(rcAbsolute, rtScreenDataArea);
-        drawCaptionBG(g, env, rtScreenDataArea, nBG, nOrderPanelIndex);
+        drawCaptionBG(g, env, rtScreenDataArea, nBG);
         Rect rcTop = new Rect(rcAbsolute);
-        rcTop.bottom = rcTop.top + rcTop.height() / 2;
+        //rcTop.bottom = rcTop.top + rcTop.height() / 2;
 
-        drawString(g, rcTop, ff, getCaptionText(), Paint.Align.LEFT, false);
+        drawString(g, rcTop, ffCaption, getCaptionText(env, nPanelIndex), Paint.Align.LEFT, false);
 
         return true;
 
     }
 
-    public String getCaptionText()
+    public String getCaptionText(KDSViewSettings env, int nPanelIndex)
     {
-        return mCaptionText;
+        String strPrefix = env.getSettings().getString(KDSSettings.ID.SumStn_caption_prefix);
+
+        int nStartSumItemIndex = nPanelIndex * env.getSettings().getInt(KDSSettings.ID.SumStn_items_count);
+
+        int nCount = m_arRowEntries.size();
+        String s = String.format("%s (%d -- %d)", strPrefix, nStartSumItemIndex + 1, nStartSumItemIndex  + nCount);
+        return s;
+        //return mCaptionText;
     }
 
-    public void setCaptionText(String s)
-    {
-        mCaptionText = s;
-    }
+   // public void setCaptionText(String s)
+//    {
+//        mCaptionText = s;
+//    }
 
     protected void drawString(Canvas g, Rect rcAbsolute, KDSViewFontFace ff, String str, Paint.Align align, boolean bBold) {
 
@@ -265,5 +280,7 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
             height = h;
         }
     }
+
+
 
 }

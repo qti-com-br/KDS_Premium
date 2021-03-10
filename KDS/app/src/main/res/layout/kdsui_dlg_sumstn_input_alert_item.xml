@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -21,14 +22,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
-                android:text="Item" />
+                android:text="@string/add_item" />
 
             <RadioButton
                 android:id="@+id/rbCondiment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Condiment" />
+                android:text="@string/add_condiment" />
         </RadioGroup>
 
     </LinearLayout>
@@ -57,8 +58,9 @@
             android:id="@+id/btnFind"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:background="@drawable/button_selector"
-            android:text="@string/browse_in_item_database" />
+            android:text="@string/browse_database" />
 
     </LinearLayout>
 
@@ -71,7 +73,7 @@
             android:id="@+id/textView19"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Display Description:" />
+            android:text="@string/display_description" />
 
         <EditText
             android:id="@+id/txtDisplay"
@@ -91,7 +93,7 @@
             android:id="@+id/textView42"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Alert qty" />
+            android:text="@string/alert_qty" />
 
         <EditText
             android:id="@+id/txtQty"
@@ -110,7 +112,7 @@
             android:id="@+id/textView43"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Alert time" />
+            android:text="@string/alert_time" />
 
         <TextView
             android:id="@+id/txtTime"
@@ -122,14 +124,16 @@
             android:id="@+id/btnResetTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@drawable/button_selector"
-            android:text="Reset" />
+            android:text="@string/reset" />
 
         <Button
             android:id="@+id/btnChooseTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@drawable/button_selector"
             android:text="Time" />
@@ -145,7 +149,7 @@
             android:id="@+id/textView44"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Alert message" />
+            android:text="@string/alert_message" />
 
         <EditText
             android:id="@+id/txtMessage"
@@ -170,31 +174,34 @@
                 android:id="@+id/textView45"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alert image" />
+                android:text="@string/alert_image" />
 
             <Button
                 android:id="@+id/btnLocal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_selector"
-                android:text="Local" />
+                android:text="@string/local" />
 
             <Button
                 android:id="@+id/btnEthernet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_selector"
-                android:text="Ethernet" />
+                android:text="@string/ethernet" />
 
             <Button
                 android:id="@+id/btnInternet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_selector"
-                android:text="Internet" />
+                android:text="@string/internet" />
         </LinearLayout>
 
         <TextView

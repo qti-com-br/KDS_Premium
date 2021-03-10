@@ -1697,7 +1697,7 @@ public class KDSStationFunc {
             case Runner:
             case Summary:
                 KDSStationExpeditor.exp_sync_order_unbumped(kds, command);
-                //break;
+                break;
             case Mirror:
                 break;
             case Backup:
@@ -2403,9 +2403,11 @@ public class KDSStationFunc {
      */
     static public void sync_with_stations_use_me_as_expo(KDS kds,KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item, String xmlData)
     {
-        if (!kds.isExpeditorStation() &&
-                (!kds.isRunnerStation()) &&
-                (!kds.isSummaryStation())) return;
+//        if (!kds.isExpeditorStation() &&
+//                (!kds.isRunnerStation()) &&
+//                (!kds.isSummaryStation())) return;
+        if (!isExpoTypeStation(kds.getStationFunction()))
+            return;
         String strXml = "";
 
         ArrayList<KDSStationIP> arPrepStations = kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID());

@@ -1842,8 +1842,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //Here, we need to check if all items was bumped by other station.
         // then remove this order from orders array.
         //Otherwise, the orders will always kept in memory.
-        orders.removeForSumStation();
-        m_view.getSumStnViewer().refreshSummary(KDSGlobalVariables.getKDS().getCurrentDB());
+        //remove two finished 2 hours order. For bump/unbump, otherwise, the unbumping get wrong data.
+        long timeout = 1 * 60* 60 * 1000;
+        orders.removeForSumStation(timeout);
+
+        m_view.getSumStnViewer().refreshSummaryInSumStation(KDSGlobalVariables.getKDS().getCurrentDB());
     }
 
     /**

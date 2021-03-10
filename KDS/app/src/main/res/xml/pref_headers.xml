@@ -103,7 +103,7 @@
         android:title="@string/advanced_summary" />
 
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PreferenceFragmentSumStation"
-        android:title="Summary station" />
+        android:title="@string/summary_station" />
 
     <header android:title="@string/pref_kds_category_others" />
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$PrinterPreferenceFragment"

@@ -22,9 +22,9 @@ import java.util.ArrayList;
  */
 
 public class KDSViewSumStnEntry {
-    public static int m_itemTextHeight = 20;
-    public static int m_messageHeight = 20;
-    public static int m_condimentHeight = 20;
+//    public static int m_itemTextHeight = 20;
+//    public static int m_messageHeight = 20;
+//    public static int m_condimentHeight = 20;
 
     KDSSummaryItem m_item = null;
 
@@ -47,12 +47,12 @@ public class KDSViewSumStnEntry {
     {
         m_size = size;
     }
-    static public int calculateNeedHeight(KDSSummaryItem item)
+    static public int calculateNeedHeight(KDSSummaryItem item, int nRowHeight)
     {
 
         int nItem = 1;
         int nCondiments = item.getCondiments().size();//.getCount();
-        int h =   nItem * m_itemTextHeight + nCondiments * m_condimentHeight;
+        int h =   nItem * nRowHeight + nCondiments * nRowHeight;
         return h;
 
 
@@ -89,7 +89,9 @@ public class KDSViewSumStnEntry {
      * @param arPanelRect
      * @param bDrawSeparator
      */
-    public void onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect, ArrayList<Rect> arPanelRect, boolean bDrawSeparator, KDSViewFontFace ff)
+    public void onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect,
+                       ArrayList<Rect> arPanelRect, boolean bDrawSeparator, KDSViewFontFace ff,
+                       int nRowHeight)
     {
 
         //KDSViewFontFace ffDescription = env.getSettings().getKDSViewFontFace(KDSSettings.ID.Item_Default_FontFace);
@@ -103,21 +105,22 @@ public class KDSViewSumStnEntry {
         rt.right -= KDSViewSumStation.BORDER_INSET_DX;
 
         Rect rtText = new Rect(rt);
-        rtText.bottom = rtText.top + m_itemTextHeight;
+        rtText.bottom = rtText.top + nRowHeight;// m_itemTextHeight;
         String str = String.format("%dx %s", (int) m_item.getQty(), m_item.getItemDescription());
 
         //KDSBGFG color = KDSLayoutCell.getStateColor(m_item, env, ffDescription.getBG(), ffDescription.getFG());
         KDSBGFG color = new KDSBGFG(ff.getBG(), ff.getFG());
         CanvasDC.fillRect(g, ff.getBG(), rtText);
         //CanvasDC.fillRect(g, Color.RED, rtText);
-
+        rtText.left += KDSViewSumStation.INSET_DX;
         drawString(g, ff, rtText, str, true);
 
         //draw condiments
         Rect rtCondiment = new Rect(rtText);
         // rtCondiment.top+= m_messageHeight;
-        rtCondiment.top += m_itemTextHeight;
-        rtCondiment.bottom = rtCondiment.top + m_condimentHeight;
+        rtCondiment.top += nRowHeight;//m_itemTextHeight;
+        rtCondiment.bottom = rtCondiment.top + nRowHeight;// m_condimentHeight;
+
         for (int i=0; i< m_item.getCondiments().size(); i++)
         {
             int nCondimentQty = m_item.getCondiments().get(i).getQty();
@@ -127,8 +130,8 @@ public class KDSViewSumStnEntry {
 
             str = String.format("        %dx %s", (int) nCondimentQty, m_item.getCondiments().get(i).getDescription());
             drawString(g, ff, rtCondiment, str, false);
-            rtCondiment.top+= m_condimentHeight ;
-            rtCondiment.bottom = rtCondiment.top + m_condimentHeight;
+            rtCondiment.top+= nRowHeight;//m_condimentHeight ;
+            rtCondiment.bottom = rtCondiment.top + nRowHeight;// m_condimentHeight;
         }
         if (bDrawSeparator) {
             m_paintSeparator.setColor(Color.GRAY);
@@ -138,11 +141,11 @@ public class KDSViewSumStnEntry {
 
     }
 
-    public Rect getRect()
-    {
-        Rect rt = new Rect(m_ptStartPoint.x, m_ptStartPoint.y, m_ptStartPoint.x + m_size.width, m_ptStartPoint.y+m_size.height);
-        return rt;
-    }
+//    public Rect getRect()
+//    {
+//        Rect rt = new Rect(m_ptStartPoint.x, m_ptStartPoint.y, m_ptStartPoint.x + m_size.width, m_ptStartPoint.y+m_size.height);
+//        return rt;
+//    }
 
 
 }

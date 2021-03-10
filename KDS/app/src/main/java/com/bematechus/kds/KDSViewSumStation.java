@@ -30,7 +30,9 @@ public class KDSViewSumStation //extends KDSView
     ArrayList<KDSViewSumStnPanel> m_arPanels = new ArrayList<>();
 
     //settings
-    KDSViewFontFace mFont = new KDSViewFontFace();
+    KDSViewFontFace mItemFont = new KDSViewFontFace();
+    KDSViewFontFace mCaptionFont = new KDSViewFontFace();
+
     KDSSettings.SumType mSumType = KDSSettings.SumType.ItemWithoutCondiments;
     ArrayList<SumStationFilterEntry> mFilters = new ArrayList<>();
     ArrayList<SumStationAlertEntry> mAlerts = new ArrayList<>();
@@ -86,12 +88,13 @@ public class KDSViewSumStation //extends KDSView
 
 
         if (getEnv().getSettings() == null) return;
-        int bg = getEnv().getSettings().getInt(KDSSettings.ID.Panels_View_BG);
+        int bg = getEnv().getSettings().getInt(KDSSettings.ID.SumStn_screen_bg);//.Panels_View_BG);
         g.drawColor(bg);
         Rect screenDataRect = getDataArea();
         int ncount = panelsGetCount();
+        int nRowHeight = getTextPixelsHeight(mItemFont, "pPyYqQ");
         for (int i = 0; i < ncount; i++) {
-            m_arPanels.get(i).onDraw(g, getEnv(), screenDataRect, i, mFont);
+            m_arPanels.get(i).onDraw(g, getEnv(), screenDataRect, i, mCaptionFont, mItemFont, nRowHeight);
         }
 
     }
@@ -167,15 +170,20 @@ public class KDSViewSumStation //extends KDSView
      * @return
      */
     private boolean showSumGroup(KDSViewSumStnSumGroup group) {
+        if (m_arPanels.size() >= mMaxPanels)
+            return false;
         Rect screenDataRect = getDataArea();
         if (screenDataRect.width() <= 0) return false;
 
         Rect rtPanel = getPanelRect(screenDataRect, m_arPanels.size());
         if (rtPanel == null) return false;
-
+        int nRowHeight = getTextPixelsHeight(mItemFont, "pPyYqQ");
+        int nCaptionHeight = getTextPixelsHeight(mCaptionFont, "pPyYqQ") + mCaptionFont.getFontSize()/2;
+        KDSViewSumStnPanel.m_orderCaptionHeight = nCaptionHeight;
         KDSViewSumStnPanel panel = KDSViewSumStnPanel.createNew(group);
         panel.setRect(rtPanel);
-        if (! KDSViewSumStnPanel.build( group, panel, rtPanel))
+        panel.setRowHeight(nRowHeight);
+        if (! KDSViewSumStnPanel.build( group, panel, rtPanel, nRowHeight))
             return false;
         m_arPanels.add(panel);
 
@@ -199,7 +207,7 @@ public class KDSViewSumStation //extends KDSView
      *  call this function from external.
      * @param arSummaryItems
      */
-    public void showSummary(ArrayList<KDSSummaryItem> arSummaryItems)
+    public void showSummaryInSumStation(ArrayList<KDSSummaryItem> arSummaryItems)
     {
         this.clear();
         int ncount = 0;
@@ -232,7 +240,8 @@ public class KDSViewSumStation //extends KDSView
 
     public void updateSettings(KDSSettings settings)
     {
-        mFont = settings.getKDSViewFontFace(KDSSettings.ID.SumStn_font);
+        mCaptionFont = settings.getKDSViewFontFace(KDSSettings.ID.SumStn_caption_font);
+        mItemFont = settings.getKDSViewFontFace(KDSSettings.ID.SumStn_font);
         mMaxPanels = settings.getInt(KDSSettings.ID.SumStn_panels_count);
         mMaxItemsEachPanel = settings.getInt(KDSSettings.ID.SumStn_items_count);
         int n = settings.getInt(KDSSettings.ID.SumStn_sum_method);
@@ -253,7 +262,7 @@ public class KDSViewSumStation //extends KDSView
     ArrayList<KDSSummaryItem> mSummaryData = new ArrayList<>();
     Object mLocker = new Object();
 
-    public void refreshSummary(KDSDBCurrent db)
+    public void refreshSummaryInSumStation(KDSDBCurrent db)
     {
         ArrayList<KDSSummaryItem> arData = null;
 
@@ -280,7 +289,7 @@ public class KDSViewSumStation //extends KDSView
         //    bCheckCondiments = true;
 
         //ArrayList<KDSSummaryItem> arData = db.summaryItems("", 0, true, bCheckCondiments, true);
-        showSummary(arData);
+        showSummaryInSumStation(arData);
         synchronized (mLocker) { //save data for alert
             mSummaryData.clear();
             mSummaryData.addAll(arData);
@@ -394,5 +403,18 @@ public class KDSViewSumStation //extends KDSView
         mAlertDlg = new KDSUIDlgSumStnAlert(m_viewParent.getContext(), entry);
         mAlertDlg.show();
         return true;
+    }
+
+    public static int getTextPixelsHeight(KDSViewFontFace ff,String strText)
+    {
+        Paint paint = new Paint();
+        //paint.setColor(ff.getFG());
+        paint.setTypeface(ff.getTypeFace());
+        paint.setTextSize(ff.getFontSize());
+        //paint.setAntiAlias(true);
+        Rect r = new Rect();
+
+        paint.getTextBounds(strText, 0, strText.length(), r);
+        return r.height() + ff.getFontSize()/2;// .left + r.width();
     }
 }

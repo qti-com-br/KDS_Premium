@@ -1014,7 +1014,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (getKDS().getStationFunction() == KDSSettings.StationFunc.Expeditor)
             strTitle += " (EXPO)";
         if (getKDS().getStationFunction() == KDSSettings.StationFunc.Runner)
-            strTitle += " (Runner)";
+            strTitle += " ("+getString(R.string.runner)+ ")";
+        if (getKDS().getStationFunction() == KDSSettings.StationFunc.Summary)
+            strTitle += " ("+getString(R.string.summary) + ")";
         //strTitle = "[#"+strID +"] "+ strTitle;
         if (getKDS().getStationsConnections().getRelations().isBackupStation())
         {

@@ -2468,6 +2468,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("sumstn_panels"));
             bindPreferenceSummaryToValue(findPreference("sumstn_panel_items"));
             bindPreferenceSummaryToValue(findPreference("sumstn_order_by"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_caption_prefix"));
 
 
 

@@ -9,6 +9,7 @@ package com.bematechus.kdslib;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -1134,8 +1135,9 @@ public class KDSDataOrders extends KDSDataArray {
      *
      * @return
      */
-    public int removeForSumStation()
+    public int removeForSumStation(long timeout)
     {
+
         synchronized (m_locker) {
             Vector<Object> arWillRemoved = new Vector<>();
 
@@ -1145,8 +1147,13 @@ public class KDSDataOrders extends KDSDataArray {
             for (int i = 0; i < ar.size(); i++) {
 
                 KDSDataOrder c = (KDSDataOrder) ar.get(i);
-                if (c.isAllItemsFinished()) {
-                    arWillRemoved.add(c);
+                Date dt = c.getStartTime();
+                long l = System.currentTimeMillis() - dt.getTime();
+                if (l >= timeout) {
+                    if (c.isAllItemsFinished()) {
+                        arWillRemoved.add(c);
+
+                    }
                 }
             }
             int ncount = arWillRemoved.size();

@@ -1269,4 +1269,27 @@
     <string name="title_hide_store_name">Hide store name</string>
     <string name="runner_confirm_bump_unless_prep_bumped">Can not bump item unless its prep station bumped.</string>
     <string name="enabled">Enabled</string>
+
+    <string name="panel_caption_prefix">Panel caption prefix</string>
+    <string name="panel_font">Panel Font</string>
+    <string name="summary_method">Summary method</string>
+    <string name="panels_count">Panels count</string>
+    <string name="each_panel_contains_max_items">Each panel contains max items</string>
+    <string name="summary_filter">Summary filter</string>
+    <string name="showing_items">Showing items</string>
+    <string name="enable_item_alert">Enable Item alert</string>
+    <string name="alert_items">Alert items</string>
+    <string name="add_condiment">Add condiment</string>
+    <string name="browse_database">Browse database</string>
+    <string name="display_description">Display Description</string>
+    <string name="alert_qty">Alert qty</string>
+    <string name="alert_time">Alert time</string>
+    <string name="reset">Reset</string>
+    <string name="alert_message">Alert message</string>
+    <string name="alert_image">Alert image</string>
+    <string name="ethernet">Ethernet</string>
+    <string name="internet">Internet</string>
+    <string name="local">Local</string>
+    <string name="summary_station">Summary station</string>
+
 </resources>

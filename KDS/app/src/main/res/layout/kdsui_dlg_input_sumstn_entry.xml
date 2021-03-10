@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -21,14 +22,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
-                android:text="Item" />
+                android:text="@string/add_item" />
 
             <RadioButton
                 android:id="@+id/rbCondiment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Condiment" />
+                android:text="@string/add_condiment" />
         </RadioGroup>
 
     </LinearLayout>
@@ -57,7 +58,9 @@
             android:id="@+id/btnFind"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/browse_in_item_database" />
+            android:layout_margin="5dp"
+            android:background="@drawable/button_selector"
+            android:text="@string/browse_database" />
 
     </LinearLayout>
 
@@ -70,7 +73,7 @@
             android:id="@+id/textView19"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Display Description:" />
+            android:text="@string/display_description" />
 
         <EditText
             android:id="@+id/txtDisplay"

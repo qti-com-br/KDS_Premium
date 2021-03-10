@@ -600,6 +600,9 @@ public class KDSSettings extends SettingsBase {
        SumStn_filter_enabled,
        SumStn_alert_enabled,
        Sumstn_order_by,
+       SumStn_screen_bg,
+       SumStn_caption_font,
+       SumStn_caption_prefix,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1392,6 +1395,10 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.SumStn_alert_enabled,"bool_sumstn_enable_alert", false);
         init_option(ID.Sumstn_order_by,"string_sumstn_order_by", "0");
 
+        init_option(ID.SumStn_screen_bg,"int_sumstn_screen_bg",getResColor(R.color.view_bg));
+        init_option(ID.SumStn_caption_font,"fontface_sumstn_caption_font",new KDSViewFontFace(getResColor(R.color.caption_bg), getResColor(R.color.caption_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
+
+       init_option(ID.SumStn_caption_prefix, "string_sumstn_caption_prefix", getResString(R.string.summary));
     }
 
     /**
@@ -2372,7 +2379,13 @@ public class KDSSettings extends SettingsBase {
      return (m_nStationFunc == StationFunc.Runner);
     }
 
-    /**
+    public boolean isSummaryStation()
+    {
+      return (m_nStationFunc == StationFunc.Summary);
+    }
+
+
+ /**
      * this is for
      * @return
      */
