@@ -28,6 +28,7 @@ public class SettingsBase {
         TableTracker,
         Queue_Expo, //sos(Queue) work with expo
         Runner, //kpp1-456
+        Summary, //Summary Station. KP-21
         MAX_COUNT,
     }
 

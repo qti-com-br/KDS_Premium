@@ -9,6 +9,7 @@ package com.bematechus.kdslib;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -1126,5 +1127,40 @@ public class KDSDataOrders extends KDSDataArray {
             return null;
         }
 
+    }
+
+    /**
+     * clear the order that its all items have been bumped in prep station.
+     * This is for summary station.
+     *
+     * @return
+     */
+    public int removeForSumStation(long timeout)
+    {
+
+        synchronized (m_locker) {
+            Vector<Object> arWillRemoved = new Vector<>();
+
+            Vector ar = this.getComponents();
+            if (ar.size() <= 0) return 0;
+
+            for (int i = 0; i < ar.size(); i++) {
+
+                KDSDataOrder c = (KDSDataOrder) ar.get(i);
+                Date dt = c.getStartTime();
+                long l = System.currentTimeMillis() - dt.getTime();
+                if (l >= timeout) {
+                    if (c.isAllItemsFinished()) {
+                        arWillRemoved.add(c);
+
+                    }
+                }
+            }
+            int ncount = arWillRemoved.size();
+            if (ncount>0)
+                ar.removeAll(arWillRemoved);
+
+            return ncount;
+        }
     }
 }

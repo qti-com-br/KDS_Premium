@@ -17,8 +17,10 @@ import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSUIColorPickerDialog;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.KDSUIDlgInternetFile;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.OpenFileDialog;
+import com.bematechus.kdslib.OpenSmbFileDialog;
 
 import java.util.ArrayList;
 import java.util.List;

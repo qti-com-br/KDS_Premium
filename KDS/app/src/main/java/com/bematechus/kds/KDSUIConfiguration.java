@@ -2454,4 +2454,28 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class PreferenceFragmentSumStation extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_sum_station);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+            bindPreferenceSummaryToValue(findPreference("sumstn_sum_type"));
+
+            bindPreferenceSummaryToValue(findPreference("sumstn_panels"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_panel_items"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_order_by"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_caption_prefix"));
+
+
+
+
+        }
+    }
+
+
+
 }

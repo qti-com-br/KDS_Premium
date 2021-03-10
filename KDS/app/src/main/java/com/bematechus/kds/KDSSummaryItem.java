@@ -127,7 +127,7 @@ public class KDSSummaryItem {
 
     }
 
-    private String makeCondimentSummaryText(KDSSummaryCondiment c)
+    public String makeCondimentSummaryText(KDSSummaryCondiment c)
     {
         String s = "";
         //kpp1-435
@@ -200,5 +200,9 @@ public class KDSSummaryItem {
         return m_arCondiments;
     }
 
+    public String getItemDescription()
+    {
+        return m_description;
+    }
 }
 

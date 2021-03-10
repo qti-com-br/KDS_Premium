@@ -2419,7 +2419,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() != KDSRouterSettings.StationFunc.Expeditor &&
                     stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo &&
-                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Summary
             )
                 continue;
             String stationID = stationRelation.getID();
@@ -2568,7 +2569,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() != KDSRouterSettings.StationFunc.Expeditor &&
                     stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo &&
-                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner )
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Summary
+            )
                 continue;
             String stationID = stationRelation.getID();
 
@@ -3582,8 +3585,9 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor ||
                     stationRelation.getFunction() == KDSRouterSettings.StationFunc.Queue_Expo ||
                     stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker ||
-                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Runner
-                    )
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Runner ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Summary
+            )
             {
                 KDSToStation toStation = new KDSToStation();
                 toStation.setPrimaryStation(stationRelation.getID());

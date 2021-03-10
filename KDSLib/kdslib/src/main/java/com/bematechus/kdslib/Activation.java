@@ -1812,7 +1812,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         ActivationRequest.SyncDataFromOperation syncOp = fromOperation;
         boolean bExpoTypeStation = false;
         bExpoTypeStation = ( m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ||
-                                m_stationFuncName.equals(SettingsBase.StationFunc.Runner.toString()));
+                                m_stationFuncName.equals(SettingsBase.StationFunc.Runner.toString()) ||
+                                m_stationFuncName.equals(SettingsBase.StationFunc.Summary.toString())
+                );
         switch (syncOp)
         {
 

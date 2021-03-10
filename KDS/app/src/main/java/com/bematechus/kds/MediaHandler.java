@@ -24,7 +24,10 @@ public class MediaHandler extends Handler {
         m_receiver = receiver;
     }
 
-
+    public void setReceiver(MediaEventReceiver r)
+    {
+        m_receiver = r;
+    }
 
     public void sendSmbDownloadedMessage(String localFileName)
     {

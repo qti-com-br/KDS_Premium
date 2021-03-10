@@ -1014,7 +1014,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (getKDS().getStationFunction() == KDSSettings.StationFunc.Expeditor)
             strTitle += " (EXPO)";
         if (getKDS().getStationFunction() == KDSSettings.StationFunc.Runner)
-            strTitle += " (Runner)";
+            strTitle += " ("+getString(R.string.runner)+ ")";
+        if (getKDS().getStationFunction() == KDSSettings.StationFunc.Summary)
+            strTitle += " ("+getString(R.string.summary) + ")";
         //strTitle = "[#"+strID +"] "+ strTitle;
         if (getKDS().getStationsConnections().getRelations().isBackupStation())
         {
@@ -1622,7 +1624,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opFocusNext(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isUserLayoutReady(userID)) return;
-
+        if (isSummaryStationMode()) return;
         getUserUI(userID).getLayout().focusNext();
         //getUserUI(userID).refreshPrevNext(); //roll back code.
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -1642,6 +1644,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     private void opFocusPrev(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         MainActivityFragment f = getMainFragment();
         if (f != null)
             f.focusPrev(userID);
@@ -1652,6 +1655,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opSummary(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
         showSummary(userID,  !this.getUserUI(userID).isVisibleSum(pos));
@@ -1684,6 +1688,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             opFocusPrev(userID);
             return;
         }
+        else if (isSummaryStationMode())
+            return;
 
         String guid = getPrevItemGuid(userID);
 
@@ -1827,6 +1833,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             opFocusNext(userID);
             return;
         }
+        else if (isSummaryStationMode())
+            return;
         // String guid = getKDS().getNextItemGuid(userID, getSelectedOrderGuid(userID), getSelectedItemGuid(userID));
         String guid = getNextItemGuid(userID);
         // if (guid.isEmpty()) return;
@@ -1845,7 +1853,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void opPrint(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
-
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (orderGuid.isEmpty()) return;
         KDSDataOrder order = getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
@@ -1930,6 +1938,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opSwitchUser() {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         getKDS().getUsers().switchUser();
 
         focusUser(getKDS().getUsers().getFocusedUserID());
@@ -2054,6 +2063,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opBump(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (orderGuid.isEmpty()) return;
 
@@ -2632,6 +2642,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
+    public boolean isSummaryStationMode()
+    {
+        return (getKDS().getSettings().getStationFunc() == SettingsBase.StationFunc.Summary);
+    }
+
+
     private void lineItemsFocusNextAfterBump(KDSUser.USER userID,String focusedOrderGuid, String focusedItemGuid)
     {
         if (!getKDS().getSettings().getLineItemsViewEnabled())//.getBoolean(KDSSettings.ID.LineItems_Enabled))
@@ -2808,6 +2824,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opUnbump(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         //if (orderGuid.isEmpty()) return;
 
@@ -2816,6 +2833,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (isLineItemsMode())
         {
             onUnbumpOrder(userID);
+        }
+        else if (isSummaryStationMode())
+        {
+            return;
         }
         else {
             if (itemGuid.isEmpty() || orderGuid.isEmpty()) {
@@ -2830,6 +2851,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opUnbumpLast(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         onUnbumpLastOrder(userID);
         getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_unbump_order);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -2945,6 +2967,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         itemguid = data.getStringExtra("itemguid");
                         int screen = data.getIntExtra("screen", 0);
                         unbumpItem(KDSUser.USER.values()[screen], guid, itemguid);
+                    }
+                    else if (isSummaryStationMode())
+                    {
+                        break;
                     }
                     else
                         restoreOrder(guid);
@@ -3450,6 +3476,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opTransfer(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         if (!isAnyOrderSelected(userID)) {
             showToastMessage(getString(R.string.transfer_select_order_warn));
             return;
@@ -3520,6 +3547,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opSort(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         if (this.getSettings().getInt(KDSSettings.ID.Order_Sort) != KDSSettings.OrdersSort.Manually.ordinal())
             return;
         KDSConst.OrderSortBy sortBy = getKDS().getUsers().getUser(userID).getOrders().getSortBy();
@@ -3538,6 +3566,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);
         if (orderGuid.isEmpty()) return;
         KDSUser user = getKDS().getUsers().getUser(userID);
@@ -3552,6 +3581,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opPark(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);
         if (orderGuid.isEmpty()) return;
         KDSUser user = getKDS().getUsers().getUser(userID);
@@ -3574,6 +3604,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opUnpark(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         Intent intent = new Intent(MainActivity.this, KDSActivityUnbump.class);
         String stations = getKDS().getStationID();
 
@@ -3643,6 +3674,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void opMore(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         KDSUIDialogMore d = new KDSUIDialogMore(this, getFocusedUserID(), this);
         d.show();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -4370,7 +4402,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshView(int  nUserID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
 
+
         KDSUser.USER userID = KDSUser.USER.values()[nUserID];
+
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -5292,6 +5326,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void opFocusPanel(KDSUser.USER userID, int nPanel) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isUserLayoutReady(userID)) return;
+        if (isSummaryStationMode()) return;
         getUserUI(userID).getLayout().focusPanel(nPanel);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -5456,6 +5491,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void  doMoreFunc_BuildCard(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         KDSDataItem item = getSelectItem(userID);
         if (item == null) return;
         CSVStrings files = item.getBuildCard();
@@ -5480,7 +5516,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void  doMoreFunc_Training_Video(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-
+        if (isSummaryStationMode()) return;
         KDSDataItem item = getSelectItem(userID);
         if (item == null) return;
         CSVStrings files = item.getTrainingVideo();
@@ -6454,6 +6490,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opTabNextDisplayMode()
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         TabDisplay.TabButtonData data = m_tabDisplay.getNextTabDisplayMode();
         if (data == null)
             return;
@@ -6473,6 +6510,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private boolean opNextPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return false;
         if (!isUserLayoutReady(userID)) return false;
         int ncount = getUserUI(userID).getLayout().getNextCount();
         getUserUI(userID).getLayout().focusNextPage();
@@ -6489,6 +6527,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private boolean opPrevPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return false;
         if (!isUserLayoutReady(userID)) return false;
         int ncount = getUserUI(userID).getLayout().getPrevCount();
         getUserUI(userID).getLayout().focusPrevPage();

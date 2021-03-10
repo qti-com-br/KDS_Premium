@@ -135,7 +135,7 @@
     <string name="network_lost">网络丢失</string>
     <string name="network_restore">网络恢复了</string>
 
-    <string name="input_internet_file">输入国际网文件</string>
+<!--    <string name="input_internet_file">输入国际网文件</string>-->
     <string name="remove">删除</string>
     <string name="local">本地</string>
     <string name="ethernet">网络</string>
