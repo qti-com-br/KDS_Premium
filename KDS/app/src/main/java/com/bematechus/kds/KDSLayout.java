@@ -33,6 +33,7 @@ import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
@@ -1837,14 +1838,20 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         m_view.getLineItemsViewer().showOrders(orders);//, firstOrderGuid, firstItemGuid);
     }
 
+    //final int SUM_STATION_KEEP_DATA_TIMEOUT = 28800000; //8 hours
+    //final int SUM_STATION_KEEP_DATA_TIMEOUT = 10000; //8 hours
+
     public void showOrdersInSummaryStationMode(KDSDataOrders orders)
     {
-        //Here, we need to check if all items was bumped by other station.
-        // then remove this order from orders array.
-        //Otherwise, the orders will always kept in memory.
-        //remove two finished 2 hours order. For bump/unbump, otherwise, the unbumping get wrong data.
-        long timeout = 1 * 60* 60 * 1000;
-        orders.removeForSumStation(timeout);
+        //move to mainactivity.
+//        //Here, we need to check if all items was bumped by other station.
+//        // then remove this order from orders array.
+//        //Otherwise, the orders will always kept in memory.
+//        //remove two finished 2 hours order. For bump/unbump, otherwise, the unbumping get wrong data.
+//        long timeout = SUM_STATION_KEEP_DATA_TIMEOUT;/// 8 * 60* 60 * 1000;
+//        Vector<Object > arRemovedOrders = orders.removeForSumStation(timeout);
+//        //KDSGlobalVariables.getKDS().getCurrentDB().removeOrdersForSumStation(arRemovedOrders);
+//        arRemovedOrders.clear();
 
         m_view.getSumStnViewer().refreshSummaryInSumStation(KDSGlobalVariables.getKDS().getCurrentDB());
     }
@@ -2034,11 +2041,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         m_view.refresh();
     }
 
-    public void refreshSummaryStationView()
-    {
-        showOrdersInSummaryStationMode(m_orders);
-        m_view.refresh();
-    }
+//    public void refreshSummaryStationView()
+//    {
+//        showOrdersInSummaryStationMode(m_orders);
+//        m_view.refresh();
+//    }
 
     public String focusPrevLineItem()
     {
