@@ -149,7 +149,7 @@ public class KDSUIDialogSumStnAlerts extends KDSUIDialogBase implements  KDSUIDi
     boolean findItem(ArrayList<SumStationAlertEntry> lst, SumStationAlertEntry entry) {
         int ncount = lst.size();
         for (int i = 0; i < ncount; i++) {
-            if (lst.get(i).getDescription().equals(entry.getDescription()))
+            if (lst.get(i).isEqual(entry))//.getDescription().equals(entry.getDescription()))
                 //          lst.get(i).getDescription().equals(entry.getDescription() + KDSSummaryItem.CONDIMENT_TAG)    )
                 return true;
         }

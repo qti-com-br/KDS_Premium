@@ -180,13 +180,20 @@ public class KDSUIDlgInputSumStationAlertEntry  extends KDSUIDialogBase implemen
     private void onEthernetFile()
     {
         OpenSmbFileDialog dlg = new OpenSmbFileDialog(this.getView().getContext(),getValidImageExtensions(), this);
+
         //dlg.setTag(TAG_FOR_BUILDCARD);
         dlg.show();
     }
 
     private void onInternetFile()
     {
+        String s = ((TextView) this.getView().findViewById(R.id.imageFileName)).getText().toString();
+
         KDSUIDlgInternetFile dlg = new KDSUIDlgInternetFile(this.getView().getContext(), getValidImageExtensions(), this);
+        if (ImageUtil.isInternetFile(s))
+        {
+            ((TextView)dlg.getView().findViewById(R.id.txtFileName)).setText(s);
+        }
         //dlg.setTag(TAG_FOR_BUILDCARD);
         dlg.show();
     }

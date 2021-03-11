@@ -68,6 +68,7 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
     }
 
     public OpenSmbFileDialog(final Context context,String strExtension, KDSUIDialogBase.KDSDialogBaseListener listener) {
+        this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_smb_explorer, "");
         this.setTitle(context.getString(R.string.open_file));//"Open file");
         m_strExtension = strExtension;
@@ -239,7 +240,7 @@ public class OpenSmbFileDialog extends KDSUIDialogBase implements AdapterView.On
 //        if (m_listData != null) {
 //            m_listData.clear();
 //        }
-
+        KDSSmbFile2.setEnableSmbV2(true);
         Object objs[] = new Object[]{smbFolder};
 
 

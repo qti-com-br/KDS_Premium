@@ -45,6 +45,8 @@ public class KDSUIDlgSumStnAlert extends KDSUIDialogBase implements MediaHandler
         if (!entry.getDisplayText().isEmpty())
             s = entry.getDisplayText();
         ((TextView)this.getView().findViewById(R.id.txtTitle)).setText(s);
+        if (!entry.getAlertImageFile().isEmpty())
+            showImage(entry.getAlertImageFile());
         //((ImageView)this.getView().findViewById(R.id.imgImage)).setText(entry.getAlertMessage());
     }
 
@@ -62,9 +64,10 @@ public class KDSUIDlgSumStnAlert extends KDSUIDialogBase implements MediaHandler
     {
         return this.getView().getContext().getString(resid);
     }
-    public void medaievent_onHttpBitmapFileDownloaded()
+    public void medaievent_onHttpBitmapFileDownloaded(Bitmap bmp)
     {
         clearInfo();
+        m_internetBmp = bmp;
         //setPauseImageSlipTimer(false);
         m_imageView.setImageBitmap(m_internetBmp);
         if (m_internetBmp == null)
@@ -121,7 +124,16 @@ public class KDSUIDlgSumStnAlert extends KDSUIDialogBase implements MediaHandler
                 @Override
                 protected Object doInBackground(Object[] params) {
                     String httpFileName = (String)params[0];
-                    m_internetBmp = ImageUtil.getHttpBitmap(httpFileName, KDSUIDlgSumStnAlert.this);
+                    //m_internetBmp = ImageUtil.getHttpBitmap(httpFileName, KDSUIDlgSumStnAlert.this);
+                    try {
+                        m_internetBmp = ImageUtil.getInternetImage(httpFileName, KDSUIDlgSumStnAlert.this);
+
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
                     //ImageUtil.m_handler.sendHttpBitmapDownloadedMessage();
                     return null;
                 }

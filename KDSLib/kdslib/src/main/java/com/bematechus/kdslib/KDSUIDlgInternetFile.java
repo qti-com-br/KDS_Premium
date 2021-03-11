@@ -33,6 +33,7 @@ public class KDSUIDlgInternetFile extends KDSUIDialogBase {
      * @param listener
      */
     public KDSUIDlgInternetFile(final Context context,String strExtension, KDSDialogBaseListener listener) {
+        this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_internet_file, "");
         this.setTitle(context.getString(R.string.input_internet_file));
         m_strExtension = strExtension;

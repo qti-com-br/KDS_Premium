@@ -111,6 +111,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 import static com.bematechus.kdslib.KDSApplication.getContext;
 import static com.bematechus.kdslib.KDSUtil.showMsg;
@@ -326,6 +327,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_cleaning.checkCleaningHabits();
 
         checkAutoClearDB();
+
+        removeSumStationTimeoutData();
 
     }
 
@@ -4416,6 +4419,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             refreshTTView();
         }
+        else if (funcView == SettingsBase.StationFunc.Summary)
+        {
+            if (isUserLayoutReady(userID)) {
+                // TimeDog t = new TimeDog();
+                this.getUserUI(userID).getLayout().showOrders(orders);
+            }
+        }
         else {
             //if (this.getUserUI(userID).getLayout() != null) {
             if (isUserLayoutReady(userID)){
@@ -7923,6 +7933,33 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         }
 
+
+    }
+
+    final int SUM_STATION_KEEP_DATA_TIMEOUT = 28800000; //8 hours
+    //final int SUM_STATION_KEEP_DATA_TIMEOUT = 10000; //for test
+    final int SUM_STATION_AUTO_CLEAR_TIMEOUT = 300000; //5 mins
+    //final int SUM_STATION_AUTO_CLEAR_TIMEOUT = 5000; //for test
+    TimeDog m_tdSumStation = new TimeDog();
+
+    private void removeSumStationTimeoutData()
+    {
+        if (!isSummaryStationMode()) return;
+        if (!m_tdSumStation.is_timeout(SUM_STATION_AUTO_CLEAR_TIMEOUT)) //10mins
+            return;
+        m_tdSumStation.reset();
+        //Here, we need to check if all items was bumped by other station.
+        // then remove this order from orders array.
+        //Otherwise, the orders will always kept in memory.
+        //remove two finished 2 hours order. For bump/unbump, otherwise, the unbumping get wrong data.
+        long timeout = SUM_STATION_KEEP_DATA_TIMEOUT;/// 8 * 60* 60 * 1000;
+        Vector<Object > arRemovedOrders = getKDS().getUsers().getUserA().getOrders().removeForSumStation(timeout);
+        if (arRemovedOrders.size() >0)
+        {
+            Log.d(TAG, "remove orders for summary station");
+        }
+        getKDS().getCurrentDB().removeOrdersForSumStation(arRemovedOrders);
+        arRemovedOrders.clear();
 
     }
 }

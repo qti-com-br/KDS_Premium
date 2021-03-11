@@ -652,7 +652,7 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
                 protected Object doInBackground(Object[] params) {
                     String httpFileName = (String)params[0];
                     m_internetBmp = getHttpBitmap(httpFileName);
-                    m_handler.sendHttpBitmapDownloadedMessage();
+                    m_handler.sendHttpBitmapDownloadedMessage(m_internetBmp);
                     return null;
                 }
             };
@@ -1101,10 +1101,11 @@ public class KDSActivityMedia extends Activity implements KDSTimer.KDSTimerInter
         }
     }
 
-    public void medaievent_onHttpBitmapFileDownloaded()
+    public void medaievent_onHttpBitmapFileDownloaded(Bitmap bmp)
     {
         clearInfo();
         setPauseImageSlipTimer(false);
+        m_internetBmp = bmp;
         m_imageView.setImageBitmap(m_internetBmp);
         if (m_internetBmp == null)
         {

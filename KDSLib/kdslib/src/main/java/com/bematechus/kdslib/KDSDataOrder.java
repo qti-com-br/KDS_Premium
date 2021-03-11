@@ -1,6 +1,8 @@
 
 package com.bematechus.kdslib;
 
+import android.util.Log;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
@@ -3153,5 +3155,29 @@ get the total qty of all found items
         }
 
         return ar;
+    }
+
+    public boolean isAllItemsFinishedForSumStation()
+    {
+        int ncount = this.getItems().getCount();
+//        if (ncount<=0)
+//        {
+//            if (this.getTag() instanceof Integer)
+//            {
+//                ncount =(int) this.getTag();
+//            }
+//           // Log.d("Order", "Items count =0");
+//
+//        }
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (item.getLocalBumped() ||
+                    (!item.getBumpedStationsString().isEmpty()) )
+                continue;
+
+            return false;
+        }
+        return true;
     }
 }

@@ -8,6 +8,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSmbFile;
 import com.bematechus.kdslib.KDSUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +34,13 @@ public class ImageUtil {
             return true;
         return false;
 
+    }
+
+    static public boolean isInternetFile(String fileName)
+    {
+        if (!isSmbFile(fileName) && !isLocalFile(fileName))
+            return true;
+        return false;
     }
 
     static public boolean createTempFolder() {
@@ -116,6 +124,7 @@ public class ImageUtil {
         try {
             createTempFolder();
             // KDSSmbFile.readFromSmb()
+            KDSSmbFile.smb_setEnableSmbV2(true);
             String filename = KDSSmbFile.smb_readFromSmbToLocal(url, getTempFolder());
             if (!filename.isEmpty())
                 m_handler.sendSmbDownloadedMessage(filename);
@@ -149,7 +158,7 @@ public class ImageUtil {
         }
         try {
             HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
-            conn.setConnectTimeout(0);
+            conn.setConnectTimeout(20000);
             conn.setDoInput(true);
             conn.connect();
             InputStream is = conn.getInputStream();
@@ -159,7 +168,7 @@ public class ImageUtil {
             KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
             //KDSLog.e(TAG, KDSUtil.error( e));
         }
-        m_handler.sendHttpBitmapDownloadedMessage();
+        m_handler.sendHttpBitmapDownloadedMessage(bitmap);
         return bitmap;
     }
 
@@ -186,6 +195,54 @@ public class ImageUtil {
 
         }
         return false;
+    }
+
+
+    static public Bitmap getInternetImage(String path , MediaHandler.MediaEventReceiver receiver) throws Exception
+    {
+        m_handler.setReceiver(receiver);
+        URL url =  new URL(path);
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.setReadTimeout( 30*1000);
+        conn.setConnectTimeout(30*1000);
+        conn.setRequestMethod( "GET");
+        InputStream is= null;
+        if(conn.getResponseCode()==HttpURLConnection.HTTP_OK){
+            is=conn.getInputStream();
+        } else{
+            is = null;
+        }
+        if ( is ==  null){
+            return null;
+        }else {
+            try{
+                byte[] data=readStream( is);
+                if(data!= null){
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data,0,data.length);
+                    m_handler.sendHttpBitmapDownloadedMessage(bitmap);
+                    return bitmap;
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+            is.close();
+            return null;
+        }
+    }
+
+    /*
+     * get image buffer data
+     *  */
+    public static byte[] readStream(InputStream inStream) throws Exception{
+        ByteArrayOutputStream outStream =  new ByteArrayOutputStream();
+        byte[]buffer= new byte[102400];
+        int len =  0;
+        while( (len=inStream.read(buffer)) != -1){
+            outStream.write(buffer,0,len);
+        }
+        outStream.close();
+        inStream.close();
+        return outStream.toByteArray();
     }
 
 }

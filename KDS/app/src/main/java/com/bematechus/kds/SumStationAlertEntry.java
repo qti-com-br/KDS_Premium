@@ -119,4 +119,16 @@ public class SumStationAlertEntry extends SumStationEntry {
         this.setAlertImageFile(alert.getAlertImageFile());
 
     }
+
+    public boolean isEqual(SumStationAlertEntry entry)
+    {
+        if (this.getDescription().equals(entry.getDescription())
+            && this.getDisplayText().equals(entry.getDisplayText())
+            && this.getAlertQty() == entry.getAlertQty()
+            && this.getAlertTime().equals(entry.getAlertTime())
+            && this.getAlertMessage().equals(entry.getAlertMessage())
+            && this.getAlertImageFile().equals(entry.getAlertImageFile()))
+            return true;
+        return false;
+    }
 }

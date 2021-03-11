@@ -207,7 +207,7 @@ public class KDSViewSumStation //extends KDSView
      *  call this function from external.
      * @param arSummaryItems
      */
-    public void showSummaryInSumStation(ArrayList<KDSSummaryItem> arSummaryItems)
+    private void showSummaryInSumStation(ArrayList<KDSSummaryItem> arSummaryItems)
     {
         this.clear();
         int ncount = 0;
@@ -236,6 +236,7 @@ public class KDSViewSumStation //extends KDSView
         {
             showSumGroup(group);
         }
+        refresh();
     }
 
     public void updateSettings(KDSSettings settings)
@@ -249,20 +250,141 @@ public class KDSViewSumStation //extends KDSView
         mFilterEnabled = settings.getBoolean(KDSSettings.ID.SumStn_filter_enabled);
         mAlertEnabled = settings.getBoolean(KDSSettings.ID.SumStn_alert_enabled);
         String s = settings.getString(KDSSettings.ID.SumStn_filters);
-        mFilters =  KDSUIDialogSumStationFilter.parseSumItems(s);
+        mFilters.clear();
+        mFilters.addAll( KDSUIDialogSumStationFilter.parseSumItems(s));
 
         s = settings.getString(KDSSettings.ID.SumStn_alerts);
-        mAlerts = KDSUIDialogSumStnAlerts.parseSumItems(s);
+        ArrayList<SumStationAlertEntry> arNewAlerts = KDSUIDialogSumStnAlerts.parseSumItems(s);
+        saveCurrentAlertStateToNewAlerts(arNewAlerts);
+        mAlerts.clear();
+        mAlerts.addAll(arNewAlerts);
 
         n = settings.getInt(KDSSettings.ID.Sumstn_order_by);
         mOrderBy = KDSSettings.SumOrderBy.values()[n];
 
     }
 
+    private void saveCurrentAlertStateToNewAlerts(ArrayList<SumStationAlertEntry> arNewAlerts)
+    {
+        for (int i=0; i< arNewAlerts.size(); i++)
+        {
+            SumStationAlertEntry entryExisted = getExistedAlert(arNewAlerts.get(i));
+            if (entryExisted!= null)
+            {
+                arNewAlerts.get(i).setTimeAlertDone(entryExisted.getTimeAlertDone());
+                arNewAlerts.get(i).setQtyAlertDone(entryExisted.getQtyAlertDone());
+
+            }
+        }
+    }
+
+    private SumStationAlertEntry getExistedAlert(SumStationAlertEntry entry)
+    {
+        for (int i=0; i< mAlerts.size(); i++)
+        {
+            if (mAlerts.get(i).isEqual(entry))
+                return mAlerts.get(i);
+        }
+        return null;
+    }
+
     ArrayList<KDSSummaryItem> mSummaryData = new ArrayList<>();
     Object mLocker = new Object();
+    KDSDBCurrent mDB = null;
+    int mRefreshCounter = 0;
+    Thread mThread = null;
+    Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            for ( int i=0; i< 1000; i++) {
+                mRefreshCounter = 0;
+                refreshSumStation(mDB);
+                if (mRefreshCounter<=0)
+                    break;
+                else {
+                    try {
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
+
+            }
+        }
+    };
+    public void refreshInThread()
+    {
+
+        if (mThread == null || (!mThread.isAlive()) ) {
+            mThread = new Thread(mRunnable);
+
+            mThread.start();
+        }
+    }
+
+    Handler mRefreshHandler = new Handler()
+    {
+        public void handleMessage(Message msg) {
+            ArrayList<KDSSummaryItem> arData = (ArrayList<KDSSummaryItem>)msg.obj;
+            showSummaryInSumStation(arData);
+            synchronized (mLocker) { //save data for alert
+                mSummaryData.clear();
+                mSummaryData.addAll(arData);
+            }
+        }
+    };
+
+    private void refreshSumStation(KDSDBCurrent db)
+    {
+        ArrayList<KDSSummaryItem> arData = null;
+
+        boolean bAscend = (mOrderBy== KDSSettings.SumOrderBy.Ascend);
+        switch (mSumType)
+        {
+
+            case ItemWithoutCondiments: {
+                arData = db.summaryItems("", 0, true, false, bAscend );
+            }
+            break;
+            case ItemWithCondiments:
+            {
+                arData = db.summaryItems("", 0, true, true, bAscend);
+            }
+            break;
+            case CondimentsOnly:
+            {
+                arData = db.summaryOnlyCondiments(0, bAscend, true);
+            }
+            break;
+        }
+        //if (mSumType == KDSSettings.SumType.ItemWithCondiments)
+        //    bCheckCondiments = true;
+
+        //ArrayList<KDSSummaryItem> arData = db.summaryItems("", 0, true, bCheckCondiments, true);
+        Message m = new Message();
+        m.obj = arData;
+        m.what = 1;
+        mRefreshHandler.sendMessage(m);
+//        showSummaryInSumStation(arData);
+//        synchronized (mLocker) { //save data for alert
+//            mSummaryData.clear();
+//            mSummaryData.addAll(arData);
+//        }
+    }
 
     public void refreshSummaryInSumStation(KDSDBCurrent db)
+    {
+        mRefreshCounter ++;
+        mDB = db;
+        refreshInThread();
+
+
+    }
+
+
+    public void refreshSummaryInSumStation2(KDSDBCurrent db)
     {
         ArrayList<KDSSummaryItem> arData = null;
 
@@ -316,9 +438,11 @@ public class KDSViewSumStation //extends KDSView
     {
         synchronized (mLocker)
         {
+            if (mSummaryData.size()<=0)
+                return true;
             for (int i=0; i< mSummaryData.size(); i++)
             {
-                if (mSummaryData.get(i).getDescription().equals(description))
+                if (mSummaryData.get(i).getItemDescription().equals(description))
                 {
                     return (mSummaryData.get(i).getQty() < qty );
                 }
