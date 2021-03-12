@@ -1274,7 +1274,7 @@
     <string name="enable_item_alert">Enable Item alert</string>
     <string name="alert_items">Alert items</string>
     <string name="add_condiment">Add condiment</string>
-    <string name="brows_database">Browse database</string>
+    <string name="browse_database">Browse database</string>
     <string name="display_description">Display Description</string>
     <string name="alert_qty">Alert qty</string>
     <string name="alert_time">Alert time</string>

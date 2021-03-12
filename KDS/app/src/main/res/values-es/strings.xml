@@ -629,29 +629,29 @@
 	<string name="add_message_below_item">Anadir mensaje abajo del articulo</string>
 
 <!-- Added 2020-06-24-->
-	<string-array name='station_function'>
-		<item>Prep</item>
-		<item>Expedidor</item>
-		<item>Fila</item>
-		<item>Espejo</item>
-		<item>Apoyo</item>
-		<item>Distribuidor</item>
-		<item>Duplicado</item>
-		<item>Rastreador</item>
-		<item>Fila-Expo</item>
-	</string-array>
-	<string-array name='station_status'>
-		<item>Habilitar</item>
-		<item>Inhabilitar</item>
-	</string-array>
-	<string-array name='slave_function'>
-		<item>No Propiedad</item>
-		<item>Apoyo</item>
-		<item>Espejo</item>
-		<item>Distribución automática de la carga de trabajo</item>
-		<item>Estación Duplicado</item>
-		<item>Visualización de fila de pedidos</item>
-	</string-array>
+<!--	<string-array name='station_function'>-->
+<!--		<item>Prep</item>-->
+<!--		<item>Expedidor</item>-->
+<!--		<item>Fila</item>-->
+<!--		<item>Espejo</item>-->
+<!--		<item>Apoyo</item>-->
+<!--		<item>Distribuidor</item>-->
+<!--		<item>Duplicado</item>-->
+<!--		<item>Rastreador</item>-->
+<!--		<item>Fila-Expo</item>-->
+<!--	</string-array>-->
+<!--	<string-array name='station_status'>-->
+<!--		<item>Habilitar</item>-->
+<!--		<item>Inhabilitar</item>-->
+<!--	</string-array>-->
+<!--	<string-array name='slave_function'>-->
+<!--		<item>No Propiedad</item>-->
+<!--		<item>Apoyo</item>-->
+<!--		<item>Espejo</item>-->
+<!--		<item>Distribución automática de la carga de trabajo</item>-->
+<!--		<item>Estación Duplicado</item>-->
+<!--		<item>Visualización de fila de pedidos</item>-->
+<!--	</string-array>-->
 
 	<string-array name='pref_kds_general_data_source_titles'>
 		<item>TCP/IP</item>
@@ -911,7 +911,7 @@
 	<string name="enable_item_alert">Enable Item alert</string>
 	<string name="alert_items">Alert items</string>
 	<string name="add_condiment">Add condiment</string>
-	<string name="brows_database">Browse database</string>
+	<string name="browse_database">Browse database</string>
     <string name="display_description">Display Description</string>
 	<string name="alert_qty">Alert qty</string>
 	<string name="alert_time">Alert time</string>
