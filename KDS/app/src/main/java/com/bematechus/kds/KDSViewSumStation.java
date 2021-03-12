@@ -1,6 +1,7 @@
 package com.bematechus.kds;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -8,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -21,6 +23,8 @@ import com.bematechus.kdslib.TimeDog;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class KDSViewSumStation //extends KDSView
 {
@@ -262,6 +266,7 @@ public class KDSViewSumStation //extends KDSView
         n = settings.getInt(KDSSettings.ID.Sumstn_order_by);
         mOrderBy = KDSSettings.SumOrderBy.values()[n];
 
+        updateAlertStateFromPref();
     }
 
     private void saveCurrentAlertStateToNewAlerts(ArrayList<SumStationAlertEntry> arNewAlerts)
@@ -272,7 +277,10 @@ public class KDSViewSumStation //extends KDSView
             if (entryExisted!= null)
             {
                 arNewAlerts.get(i).setTimeAlertDone(entryExisted.getTimeAlertDone());
+                arNewAlerts.get(i).setTimeAlertFiredTime(entryExisted.getTimeAlertFiredTime());
+
                 arNewAlerts.get(i).setQtyAlertDone(entryExisted.getQtyAlertDone());
+                arNewAlerts.get(i).setQtyAlertFiredTime(entryExisted.getQtyAlertFiredTime());
 
             }
         }
@@ -280,12 +288,13 @@ public class KDSViewSumStation //extends KDSView
 
     private SumStationAlertEntry getExistedAlert(SumStationAlertEntry entry)
     {
-        for (int i=0; i< mAlerts.size(); i++)
-        {
-            if (mAlerts.get(i).isEqual(entry))
-                return mAlerts.get(i);
-        }
-        return null;
+        return findAlertByGuid(entry.getGuid());
+//        for (int i=0; i< mAlerts.size(); i++)
+//        {
+//            if (mAlerts.get(i).isEqual(entry))
+//                return mAlerts.get(i);
+//        }
+//        return null;
     }
 
     ArrayList<KDSSummaryItem> mSummaryData = new ArrayList<>();
@@ -426,29 +435,40 @@ public class KDSViewSumStation //extends KDSView
 
     private void checkSumStationAlert()
     {
+        boolean bChanged = false;
         for (int i=0; i< mAlerts.size(); i++)
         {
             SumStationAlertEntry entry = mAlerts.get(i);
-            checkAlert(entry);
+            if (checkAlert(entry))
+                bChanged = true;
 
         }
+        if (bChanged)
+            saveAlertStateToPref();
     }
 
-    private boolean qtyAlertFitCondition(String description, int qty)
+    private boolean qtyAlertFitCondition(SumStationAlertEntry entry)
     {
+        boolean bFit = false;
         synchronized (mLocker)
         {
-            if (mSummaryData.size()<=0)
-                return true;
+//            if (mSummaryData.size()<=0)
+//                return true;
             for (int i=0; i< mSummaryData.size(); i++)
             {
-                if (mSummaryData.get(i).getItemDescription().equals(description))
+                if (mSummaryData.get(i).getItemDescription().equals(entry.getDescription()))
                 {
-                    return (mSummaryData.get(i).getQty() < qty );
+                    bFit = (mSummaryData.get(i).getQty() < entry.getAlertQty() );
+                    break;
                 }
             }
         }
-        return false;
+
+        if (!bFit)
+        {//reset
+
+        }
+        return bFit;
     }
 
     /**
@@ -468,32 +488,57 @@ public class KDSViewSumStation //extends KDSView
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, h);
         c.set(Calendar.MINUTE, m);
+        c.set(Calendar.SECOND, 0);
         Date dtAlert = c.getTime();
 
         Date dt = new Date();
         long l = dt.getTime() - dtAlert.getTime();
-        return ( l>0 && l<60000 );
+        return ( l>0 && l<18000000 ); //0 -- 30 minutes
 
 
 
 
     }
 
-    private void checkAlert(SumStationAlertEntry entry)
+    /**
+     *
+     * @param entry
+     * @return
+     *  true: the alert state changed.
+     */
+    private boolean checkAlert(SumStationAlertEntry entry)
     {
+        boolean bChanged = false;
         int nAlertQty = entry.getAlertQty();
         String alertTime = entry.getAlertTime();
         if (nAlertQty >0)
         {
-            if (qtyAlertFitCondition(entry.getDescription(), nAlertQty))
+            if (qtyAlertFitCondition(entry))
             {
                 if (!entry.getQtyAlertDone()) {
-                    if (showAlert(entry))
+                    if (showAlert(entry)) {
                         entry.setQtyAlertDone(true);
+                        entry.setQtyAlertFiredTime(new Date());
+                        bChanged = true;
+                    }
                 }
+                else
+                {
+                    Date dt = entry.getQtyAlertFiredTime();
+                    TimeDog td = new TimeDog(dt);
+                    if (td.is_timeout(1 * 60 *60 *1000))
+                    //if (td.is_timeout(60 *1000))//test
+                    {//reset. Remind it again.
+                        bChanged = true;
+                        entry.setQtyAlertDone(false);
+                    }
+                }
+
             }
             else
-            {
+            { //qty is enough. Reset it.
+                if (entry.getQtyAlertDone())
+                    bChanged = true;
                 entry.setQtyAlertDone(false);
             }
         }
@@ -504,16 +549,22 @@ public class KDSViewSumStation //extends KDSView
             {
                 if (!entry.getTimeAlertDone())
                 {
-                    if (showAlert(entry))
+                    if (showAlert(entry)) {
+                        bChanged = true;
                         entry.setTimeAlertDone(true);
+                        entry.setTimeAlertFiredTime(new Date());
+                    }
                 }
 
             }
             else
             {
+                if (entry.getTimeAlertDone())
+                    bChanged = true;
                 entry.setTimeAlertDone(false);
             }
         }
+        return bChanged;
     }
 
     KDSUIDlgSumStnAlert mAlertDlg = null;
@@ -541,4 +592,67 @@ public class KDSViewSumStation //extends KDSView
         paint.getTextBounds(strText, 0, strText.length(), r);
         return r.height() + ff.getFontSize()/2;// .left + r.width();
     }
+
+    private String getAlertsStateString()
+    {
+        String s = "";
+        for (int i=0; i< mAlerts.size(); i++)
+        {
+            SumStationAlertEntry alert = mAlerts.get(i);
+            if (!s.isEmpty())
+                s += "\n";
+            s += alert.toStateString();
+        }
+        return s;
+    }
+    final String PREF_NAME = "sumalert";
+    final String PREF_KEY = "sumstn_time_alerts_state";
+    private void saveAlertStateToPref()
+    {
+        String s = getAlertsStateString();
+        Context c = m_viewParent.getContext();
+        SharedPreferences pref = c.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor =  pref.edit();
+        editor.putString(PREF_KEY, s);
+        editor.apply();
+        editor.commit();
+    }
+
+    private SumStationAlertEntry findAlertByGuid(String guid)
+    {
+        for (int i=0; i< mAlerts.size(); i++)
+        {
+            if (mAlerts.get(i).getGuid().equals(guid))
+                return mAlerts.get(i);
+        }
+        return null;
+    }
+    private void updateAlertStateFromPref()
+    {
+
+        Context c = m_viewParent.getContext();
+        SharedPreferences pref = c.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String s = pref.getString(PREF_KEY, "");
+
+        ArrayList<String> ar = KDSUtil.spliteString(s, "\n");
+        for (int i=0; i< ar.size(); i++)
+        {
+            SumStationAlertEntry alert =  SumStationAlertEntry.parseStateString(ar.get(i));
+            if (alert != null)
+            {
+                SumStationAlertEntry existedAlert = findAlertByGuid(alert.getGuid());
+                if (existedAlert != null)
+                {
+                    existedAlert.setQtyAlertDone(alert.getQtyAlertDone());
+                    existedAlert.setQtyAlertFiredTime(alert.getQtyAlertFiredTime());
+                    existedAlert.setTimeAlertDone(alert.getTimeAlertDone());
+                    existedAlert.setTimeAlertFiredTime(alert.getTimeAlertFiredTime());
+                }
+            }
+        }
+
+
+    }
+
 }
