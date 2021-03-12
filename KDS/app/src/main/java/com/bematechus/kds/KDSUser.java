@@ -240,12 +240,16 @@ public class KDSUser {
 //                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(lastCategory) &&
 //                                                order.smartCategoryItemsRemoteFinished(lastCategory) );
                     bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(allSameCatDelayCategories) &&
-                                                order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
+                                            order.prep_get_sorts().allCategoriesItemsFinished(allSameCatDelayCategories));
+                                                //order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
                 }
                 else
                 { //don't care remote station bumping
                     //bFitFinishedCondition = order.smartCategoryItemsLocalFinished(lastCategory);
-                    bFitFinishedCondition = order.smartCategoryItemsLocalFinished(allSameCatDelayCategories);
+                    //bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(allSameCatDelayCategories) ||
+                    //                        order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
+                    //check smart items, as local order was not updated when this function called.
+                    bFitFinishedCondition = order.prep_get_sorts().allCategoriesItemsFinished(allSameCatDelayCategories);
                 }
                 if (lastCategory.isEmpty() || bFitFinishedCondition )
                 {

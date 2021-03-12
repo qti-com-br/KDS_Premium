@@ -963,13 +963,32 @@ public class PrepSorts {
             return new ArrayList<String>();
 
         float catdelay = getCategoryDelay(sampleCategory);
-        if (catdelay<=0)
-            return new ArrayList<String>();
+        //if (catdelay<=0)
+        //    return new ArrayList<String>();
+        if (catdelay<0)
+            catdelay = 0;
         return runnerGetAllSameCatDelayCategories(catdelay);
 
 
     }
 
+    /**
+     * check if all given categories items finished.
+     * @param arCategories
+     * @return
+     */
+    public boolean allCategoriesItemsFinished(ArrayList<String> arCategories)
+    {
+        for (int i=0; i< m_arItems.size(); i++)
+        {
+            if (KDSUtil.isExistedInArray(arCategories, m_arItems.get(i).Category))
+            {
+                if (!m_arItems.get(i).finished)
+                    return false;
+            }
+        }
+        return true;
+    }
 
     /********************************************************************************************/
     /********************************************************************************************/
