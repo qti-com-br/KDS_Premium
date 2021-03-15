@@ -458,7 +458,7 @@ public class KDSViewSumStation //extends KDSView
             {
                 if (mSummaryData.get(i).getItemDescription().equals(entry.getDescription()))
                 {
-                    bFit = (mSummaryData.get(i).getQty() < entry.getAlertQty() );
+                    bFit = (mSummaryData.get(i).getQty() >= entry.getAlertQty() );
                     break;
                 }
             }
