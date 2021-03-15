@@ -23,6 +23,7 @@ import com.bematechus.kdslib.TimeDog;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -32,6 +33,8 @@ public class KDSViewSumStation //extends KDSView
     public View m_viewParent = null;
     Paint m_paint = new Paint();
     ArrayList<KDSViewSumStnPanel> m_arPanels = new ArrayList<>();
+
+    HashMap<String, Float> mLastAlertedQty;
 
     //settings
     KDSViewFontFace mItemFont = new KDSViewFontFace();
@@ -59,6 +62,7 @@ public class KDSViewSumStation //extends KDSView
     public KDSViewSumStation(View parent)
     {
         m_viewParent = parent;
+		mLastAlertedQty = new HashMap<String, Float>();
         init();
     }
     public  void init()
@@ -452,22 +456,26 @@ public class KDSViewSumStation //extends KDSView
         boolean bFit = false;
         synchronized (mLocker)
         {
-//            if (mSummaryData.size()<=0)
-//                return true;
             for (int i=0; i< mSummaryData.size(); i++)
             {
-                if (mSummaryData.get(i).getItemDescription().equals(entry.getDescription()))
+            	String entryDescription = entry.getDescription();
+                if (mSummaryData.get(i).getItemDescription().equals(entryDescription))
                 {
-                    bFit = (mSummaryData.get(i).getQty() >= entry.getAlertQty() );
-                    break;
+                	// KP-56 2021-03-15 Marcus
+					float currentQty = mSummaryData.get(i).getQty();
+					float lastAlertedQty = 0;
+					if (mLastAlertedQty.containsKey(entry.getDescription())) {
+						lastAlertedQty = mLastAlertedQty.get(entryDescription);
+					}
+					bFit = currentQty - lastAlertedQty >= entry.getAlertQty();
+					if (bFit) {
+						mLastAlertedQty.put(entryDescription, currentQty);
+					}
+					break;
                 }
             }
         }
 
-        if (!bFit)
-        {//reset
-
-        }
         return bFit;
     }
 
