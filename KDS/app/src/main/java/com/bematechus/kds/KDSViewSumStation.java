@@ -451,6 +451,19 @@ public class KDSViewSumStation //extends KDSView
             saveAlertStateToPref();
     }
 
+    private boolean processAlert(String entryDescription, float currentQty, float alertQty) {
+		// KP-56 2021-03-15 Marcus
+		float lastAlertedQty = 0;
+		if (mLastAlertedQty.containsKey(entryDescription)) {
+			lastAlertedQty = mLastAlertedQty.get(entryDescription);
+		}
+		boolean shouldAlert = currentQty - lastAlertedQty >= alertQty;
+		if (shouldAlert) {
+			mLastAlertedQty.put(entryDescription, currentQty);
+		}
+		return shouldAlert;
+	}
+
     private boolean qtyAlertFitCondition(SumStationAlertEntry entry)
     {
         boolean bFit = false;
@@ -461,18 +474,16 @@ public class KDSViewSumStation //extends KDSView
             	String entryDescription = entry.getDescription();
                 if (mSummaryData.get(i).getItemDescription().equals(entryDescription))
                 {
-                	// KP-56 2021-03-15 Marcus
-					float currentQty = mSummaryData.get(i).getQty();
-					float lastAlertedQty = 0;
-					if (mLastAlertedQty.containsKey(entry.getDescription())) {
-						lastAlertedQty = mLastAlertedQty.get(entryDescription);
-					}
-					bFit = currentQty - lastAlertedQty >= entry.getAlertQty();
-					if (bFit) {
-						mLastAlertedQty.put(entryDescription, currentQty);
-					}
+                	bFit = processAlert("item:" + entryDescription, mSummaryData.get(i).getQty(), entry.getAlertQty());
 					break;
-                }
+                } else if (mSummaryData.get(i).getCondiments().size() > 0) {
+                	for (KDSSummaryCondiment condiment : mSummaryData.get(i).getCondiments()) {
+                		if (condiment.mDescription.equals(entryDescription)) {
+							bFit = processAlert("cond:" + entryDescription, mSummaryData.get(i).getQty(), entry.getAlertQty());
+							break;
+						}
+					}
+				}
             }
         }
 
