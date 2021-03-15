@@ -350,8 +350,18 @@ public class PrepSorts {
         SmartMode mode = getSmartMode();
 
 
-        if (mode == SmartMode.Category_Runner)
-            return category_runner_item_start_cooking_time_seconds(itemName, dtOrderStart, orderDelay);
+        if (mode == SmartMode.Category_Runner) {
+            //return category_runner_item_start_cooking_time_seconds(itemName, dtOrderStart, orderDelay);
+            int nsecs = category_runner_item_start_cooking_time_seconds(itemName, dtOrderStart, orderDelay);
+            return nsecs;
+//            if (nsecs<=0) return nsecs;
+//            TimeDog d = new TimeDog(dtOrderStart);
+//
+//            if (d.is_timeout(nsecs * 1000))
+//            {
+//                //
+//            }
+        }
 
         //
         PrepItem prep = findItem(itemName);
@@ -792,8 +802,25 @@ public class PrepSorts {
         String category = prep.Category;
         if (KDSUtil.isExistedInArray(this.m_arSmartShowingCategory, category))
             return 0;
-        else
-            return Integer.MAX_VALUE-999999999;
+        else {
+
+            return (int)(orderDelay + prep.CategoryDelay)*60;
+//            //kp-52
+//            //if the catdelay reached, show it.
+//            if (m_arSmartShowingCategory.size() >0)
+//            {
+//                String lastCategory = m_arSmartShowingCategory.get(m_arSmartShowingCategory.size()-1);
+//                float fltDelay = getCategoryDelay(lastCategory);
+//                //find next category
+//                float fltNext = getNextCategoryDelay(fltDelay);
+//                if (fltNext > fltDelay)
+//                {
+//
+//                }
+//
+//            }
+//            return Integer.MAX_VALUE - 999999999;
+        }
 
 
 
@@ -989,6 +1016,28 @@ public class PrepSorts {
         }
         return true;
     }
+
+
+    public float getNextCategoryDelay(float fltCatDelay)
+    {
+        float flt = fltCatDelay;
+        for (int i=0; i< m_arItems.size(); i++)
+        {
+            if (m_arItems.get(i).CategoryDelay > fltCatDelay )
+            {
+                if (flt == fltCatDelay)
+                    flt = m_arItems.get(i).CategoryDelay;
+                else
+                {
+                    if (m_arItems.get(i).CategoryDelay < flt)
+                        flt = m_arItems.get(i).CategoryDelay;
+                }
+
+            }
+        }
+        return flt;
+    }
+
 
     /********************************************************************************************/
     /********************************************************************************************/
