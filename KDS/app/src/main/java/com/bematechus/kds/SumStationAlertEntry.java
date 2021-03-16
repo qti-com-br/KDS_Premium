@@ -20,7 +20,33 @@ public class SumStationAlertEntry extends SumStationEntry {
     String mGuid = KDSUtil.createNewGUID(); //for save state;
     Date mDtTimeAlertFired = new Date();
     Date mDtQtyAlertFired = new Date();
+    //KP-58
+    //mem variable. After alert, this is the reserved_qty = total-alert_qty
+    //for next alert.
+    float mLastAlertedQty = 0;
+    boolean mAlertQtyChanged = false; //mem variable. If alert qty changed, mReservedQtyAfterAlert will been reset.
     ///////////
+    boolean mDirty = false;
+
+    public void setAlertQtyChanged(boolean bChanged)
+    {
+        mAlertQtyChanged = bChanged;
+    }
+
+    public boolean getAlertQtyChanged()
+    {
+        return mAlertQtyChanged;
+    }
+
+    public void setLastAlertQty(float nqty)
+    {
+        mLastAlertedQty = nqty;
+    }
+
+    public float getLastAlertQty()
+    {
+        return mLastAlertedQty;
+    }
 
     public void setQtyAlertDone(boolean bDone)
     {
@@ -101,6 +127,8 @@ public class SumStationAlertEntry extends SumStationEntry {
         s += getAlertImageFile();
         s += SEPARATOR;
         s += getGuid();
+        s += SEPARATOR;
+        s += KDSUtil.convertIntToString(getEntryType().ordinal());
         return s;
     }
 
@@ -117,19 +145,30 @@ public class SumStationAlertEntry extends SumStationEntry {
         entry.setAlertImageFile(ar.get(5));
         if (ar.size() >6)
             entry.setGuid(ar.get(6));
+        if (ar.size() >7) {
+            int n = KDSUtil.convertStringToInt(ar.get(7), 0);
+            entry.setEntryType(EntryType.values()[n]);
+        }
         return entry;
 
     }
 
+    /**
+     * Just copy the data, don't copy its guid!!!
+     *
+     * @param alert
+     */
     public void copy(SumStationAlertEntry alert)
     {
-        this.setGuid(alert.getGuid());
+        //this.setGuid(alert.getGuid());
         this.setDescription(alert.getDescription());
         this.setDisplayText(alert.getDisplayText());
         this.setAlertQty( alert.getAlertQty());
         this.setAlertTime(alert.getAlertTime());
         this.setAlertMessage(alert.getAlertMessage());
         this.setAlertImageFile(alert.getAlertImageFile());
+        this.setEntryType(alert.getEntryType());
+
 
     }
 
@@ -185,6 +224,8 @@ public class SumStationAlertEntry extends SumStationEntry {
         s += KDSUtil.convertBoolToString(getTimeAlertDone());
         s += SEPARATOR;
         s +=  KDSUtil.convertDateToString(getTimeAlertFiredTime());;
+        s += SEPARATOR; //kp-58
+        s += KDSUtil.convertIntToString((int)getLastAlertQty());
 
         return s;
     }
@@ -192,16 +233,42 @@ public class SumStationAlertEntry extends SumStationEntry {
     static SumStationAlertEntry parseStateString(String s)
     {
         ArrayList<String> ar = KDSUtil.spliteString(s, SEPARATOR);
-        if (ar.size() !=5) return null;
+        if (ar.size() !=6) return null;
         SumStationAlertEntry entry = new SumStationAlertEntry();
         entry.setGuid(ar.get(0));
         entry.setQtyAlertDone(KDSUtil.convertStringToBool(ar.get(1), false));
         entry.setQtyAlertFiredTime(KDSUtil.convertStringToDate( ar.get(2), new Date()));
         entry.setTimeAlertDone( KDSUtil.convertStringToBool( ar.get(3), false));
         entry.setTimeAlertFiredTime( KDSUtil.convertStringToDate( ar.get(4), new Date()));
+        entry.setLastAlertQty(KDSUtil.convertStringToInt(ar.get(5), 0));
+
 
         return entry;
     }
 
+    public String getLastAlertQtyDescription()
+    {
+        switch (getEntryType())
+        {
+
+            case Item:
+                return "item:" + this.getDescription();
+
+            case Condiment:
+                return "cond:" + this.getDescription();
+
+        }
+        return "";
+    }
+
+    public void setDirty(boolean bDirty)
+    {
+        mDirty = bDirty;
+    }
+
+    public boolean isDirty()
+    {
+        return mDirty;
+    }
 
 }
