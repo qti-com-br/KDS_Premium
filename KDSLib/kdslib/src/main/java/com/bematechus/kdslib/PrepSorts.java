@@ -840,7 +840,8 @@ public class PrepSorts {
         if (prepItem == null) return null;
         prepItem.setFinished(true);//, order.getDurationSeconds());
         
-        boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
+        //boolean bAllCategoryFinished = isAllMyCategoryItemsFinished(order.prep_get_sorts(), prepItem);
+        boolean bAllCategoryFinished = isAllSameCatDelayItemsLocalBumped(order, order.prep_get_sorts(), prepItem);
         if (bAllCategoryFinished)
             return order.prep_get_sorts().sort();
         else
@@ -1038,6 +1039,30 @@ public class PrepSorts {
         return flt;
     }
 
+
+    /**
+     * runner bumped all same catdelay items
+     * @param smartItems
+     * @param smartItem
+     * @return
+     */
+    static private boolean isAllSameCatDelayItemsLocalBumped(KDSDataOrder order , PrepSorts smartItems,  PrepSorts.PrepItem smartItem)
+    {
+        float delay = smartItems.getCategoryDelay(smartItem.Category);
+
+        //String category = smartItem.Category;
+        for (int i=0; i< smartItems.m_arItems.size(); i++)
+        {
+            PrepItem item = smartItems.m_arItems.get(i);
+            if (item.CategoryDelay!= delay) continue;
+            KDSDataItem itemData = order.getItems().getItemByName(item.ItemName);
+            if (!itemData.getLocalBumped())
+                return false;
+
+
+        }
+        return true;
+    }
 
     /********************************************************************************************/
     /********************************************************************************************/
