@@ -261,16 +261,16 @@ public class KDSViewSumStation //extends KDSView
         mFilters.clear();
         mFilters.addAll( KDSUIDialogSumStationFilter.parseSumItems(s));
 
+        n = settings.getInt(KDSSettings.ID.Sumstn_order_by);
+        mOrderBy = KDSSettings.SumOrderBy.values()[n];
+
         s = settings.getString(KDSSettings.ID.SumStn_alerts);
         ArrayList<SumStationAlertEntry> arNewAlerts = KDSUIDialogSumStnAlerts.parseSumItems(s);
         saveCurrentAlertStateToNewAlerts(arNewAlerts);
         mAlerts.clear();
         mAlerts.addAll(arNewAlerts);
-
-        n = settings.getInt(KDSSettings.ID.Sumstn_order_by);
-        mOrderBy = KDSSettings.SumOrderBy.values()[n];
-
         updateAlertStateFromPref();
+        initLastAlertQty();
     }
 
     private void saveCurrentAlertStateToNewAlerts(ArrayList<SumStationAlertEntry> arNewAlerts)
@@ -285,6 +285,8 @@ public class KDSViewSumStation //extends KDSView
 
                 arNewAlerts.get(i).setQtyAlertDone(entryExisted.getQtyAlertDone());
                 arNewAlerts.get(i).setQtyAlertFiredTime(entryExisted.getQtyAlertFiredTime());
+                if (entryExisted.getAlertQty() != arNewAlerts.get(i).getAlertQty())
+                    arNewAlerts.get(i).setAlertQtyChanged(true); //for reset the "last alert qty".
 
             }
         }
@@ -451,45 +453,111 @@ public class KDSViewSumStation //extends KDSView
             saveAlertStateToPref();
     }
 
-    private boolean processAlert(String entryDescription, float currentQty, float alertQty) {
+    private boolean processAlert2(String entryDescription, float currentQty, SumStationAlertEntry entry){//float alertQty) {
 		// KP-56 2021-03-15 Marcus
 		float lastAlertedQty = 0;
 		if (mLastAlertedQty.containsKey(entryDescription)) {
 			lastAlertedQty = mLastAlertedQty.get(entryDescription);
 		}
-		boolean shouldAlert = currentQty - lastAlertedQty >= alertQty;
+		boolean shouldAlert = currentQty - lastAlertedQty >= entry.getAlertQty();//alertQty;
 		if (shouldAlert) {
 			mLastAlertedQty.put(entryDescription, currentQty);
+			//
+			entry.setLastAlertQty(currentQty);
+			entry.setQtyAlertDone(false);
 		}
 		return shouldAlert;
 	}
+
+    private boolean processAlert(String entryDescription, float currentQty, SumStationAlertEntry entry){//float alertQty) {
+        // KP-56 2021-03-15 Marcus
+        if (entry.getAlertQty() <=0)
+            return false;
+        float lastAlertedQty = 0;
+        if (mLastAlertedQty.containsKey(entryDescription)) {
+            lastAlertedQty = mLastAlertedQty.get(entryDescription);
+        }
+        int n = (int)(currentQty/entry.getAlertQty());
+
+        boolean shouldAlert = (n > lastAlertedQty);// currentQty - lastAlertedQty >= entry.getAlertQty();//alertQty;
+        if (shouldAlert) {
+            mLastAlertedQty.put(entryDescription,(float) n);
+            //
+            entry.setLastAlertQty(n);
+            entry.setQtyAlertDone(false);
+        }
+        else
+        {
+            if (n != lastAlertedQty) {
+                mLastAlertedQty.put(entryDescription,(float) n);
+                entry.setLastAlertQty(n);
+                entry.setDirty(true);
+            }
+
+        }
+        return shouldAlert;
+    }
 
     private boolean qtyAlertFitCondition(SumStationAlertEntry entry)
     {
         boolean bFit = false;
         synchronized (mLocker)
         {
-            for (int i=0; i< mSummaryData.size(); i++)
+            if (entry.getEntryType() == SumStationEntry.EntryType.Item ||
+                    (entry.getEntryType() == SumStationEntry.EntryType.Condiment &&
+                        mSumType == KDSSettings.SumType.CondimentsOnly)) {
+                for (int i = 0; i < mSummaryData.size(); i++) {
+                    String entryDescription = entry.getDescription();
+                    if (mSummaryData.get(i).getItemDescription().equals(entryDescription)) {
+                        bFit = processAlert(entry.getLastAlertQtyDescription(), mSummaryData.get(i).getQty(), entry);//.getAlertQty());
+                        break;
+                    }
+                }
+//                } else if (mSummaryData.get(i).getCondiments().size() > 0) {
+//                    if (entry.getEntryType() == SumStationEntry.EntryType.Condiment)
+//                    {
+//                        bFit = processAlert("cond:" + entryDescription, qtyAlertSumCondiments(entry), entry);//.getAlertQty());
+//                    }
+//                	for (KDSSummaryCondiment condiment : mSummaryData.get(i).getCondiments()) {
+//                		if (condiment.mDescription.equals(entryDescription)) {
+//							bFit = processAlert("cond:" + entryDescription, mSummaryData.get(i).getQty(), entry);//.getAlertQty());
+//							break;
+//						}
+//					}
+             //   }
+//            }
+            }
+            else if (entry.getEntryType() == SumStationEntry.EntryType.Condiment)
             {
-            	String entryDescription = entry.getDescription();
-                if (mSummaryData.get(i).getItemDescription().equals(entryDescription))
-                {
-                	bFit = processAlert("item:" + entryDescription, mSummaryData.get(i).getQty(), entry.getAlertQty());
-					break;
-                } else if (mSummaryData.get(i).getCondiments().size() > 0) {
-                	for (KDSSummaryCondiment condiment : mSummaryData.get(i).getCondiments()) {
-                		if (condiment.mDescription.equals(entryDescription)) {
-							bFit = processAlert("cond:" + entryDescription, mSummaryData.get(i).getQty(), entry.getAlertQty());
-							break;
-						}
-					}
-				}
+                bFit = processAlert(entry.getLastAlertQtyDescription(), qtyAlertSumCondiments(entry), entry);//.getAlertQty());
             }
         }
 
         return bFit;
     }
 
+    private int qtyAlertSumCondiments(SumStationAlertEntry entry)
+    {
+        if (entry.getEntryType() != SumStationEntry.EntryType.Condiment)
+            return -1;
+        int ntotal = 0;
+        for (int i=0; i< mSummaryData.size(); i++)
+        {
+            if (mSummaryData.get(i).getCondiments().size() > 0) {
+                for (KDSSummaryCondiment condiment : mSummaryData.get(i).getCondiments()) {
+                    if (condiment.mDescription.equals(entry.getDescription())) {
+
+                        ntotal += (condiment.getQty()*mSummaryData.get(i).getQty());
+
+                    }
+                }
+            }
+        }
+        return ntotal;
+
+
+
+    }
     /**
      *
      * @param alertTime
@@ -534,6 +602,7 @@ public class KDSViewSumStation //extends KDSView
         {
             if (qtyAlertFitCondition(entry))
             {
+                bChanged = true;//save the last alert qty.
                 if (!entry.getQtyAlertDone()) {
                     if (showAlert(entry)) {
                         entry.setQtyAlertDone(true);
@@ -556,8 +625,11 @@ public class KDSViewSumStation //extends KDSView
             }
             else
             { //qty is enough. Reset it.
-                if (entry.getQtyAlertDone())
+                if (entry.getQtyAlertDone() ||
+                    entry.isDirty()) {
                     bChanged = true;
+                    entry.setDirty(false);
+                }
                 entry.setQtyAlertDone(false);
             }
         }
@@ -667,11 +739,30 @@ public class KDSViewSumStation //extends KDSView
                     existedAlert.setQtyAlertFiredTime(alert.getQtyAlertFiredTime());
                     existedAlert.setTimeAlertDone(alert.getTimeAlertDone());
                     existedAlert.setTimeAlertFiredTime(alert.getTimeAlertFiredTime());
+                    if (existedAlert.getAlertQtyChanged()) {
+                        existedAlert.setLastAlertQty(0);
+                        existedAlert.setAlertQtyChanged(false); //reset it.
+                    }
+                    else
+                    {
+                        existedAlert.setLastAlertQty(alert.getLastAlertQty());
+                    }
                 }
             }
         }
 
 
+    }
+
+    private void initLastAlertQty()
+    {
+        mLastAlertedQty.clear();
+        for (int i=0; i< mAlerts.size(); i++)
+        {
+            SumStationAlertEntry entry =  mAlerts.get(i);
+            String name = entry.getLastAlertQtyDescription();
+            mLastAlertedQty.put(name, entry.getLastAlertQty());
+        }
     }
 
 }
