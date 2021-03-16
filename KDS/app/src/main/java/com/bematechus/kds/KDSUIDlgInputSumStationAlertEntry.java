@@ -220,6 +220,11 @@ public class KDSUIDlgInputSumStationAlertEntry  extends KDSUIDialogBase implemen
             ((TextView) this.getView().findViewById(R.id.txtTime)).setText(entry.getAlertTime());
             ((TextView) this.getView().findViewById(R.id.txtMessage)).setText(entry.getAlertMessage());
             ((TextView) this.getView().findViewById(R.id.imageFileName)).setText(entry.getAlertImageFile());
+            if (entry.getEntryType() == SumStationEntry.EntryType.Item)
+                ((RadioButton) this.getView().findViewById(R.id.rbItem)).setChecked(true);
+            else
+                ((RadioButton) this.getView().findViewById(R.id.rbCondiment)).setChecked(true);
+
         }
         else
         {

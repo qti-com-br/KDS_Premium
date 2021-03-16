@@ -271,6 +271,7 @@ public class KDSViewSumStation //extends KDSView
         mAlerts.addAll(arNewAlerts);
         updateAlertStateFromPref();
         initLastAlertQty();
+        saveAlertStateToPref();
     }
 
     private void saveCurrentAlertStateToNewAlerts(ArrayList<SumStationAlertEntry> arNewAlerts)
