@@ -322,6 +322,8 @@ public class KDSStationNormal extends KDSStationFunc {
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
+        //kp-60 Bumping  orders or items from expo not affecting summary
+        sync_with_expo(kds, KDSXMLParserCommand.KDSCommand.Station_Bump_Order, order, null);
         return orderGuid;
     }
     static public void normal_sync_order_unbumped(KDS kds, KDSXMLParserCommand command)
@@ -372,7 +374,8 @@ public class KDSStationNormal extends KDSStationFunc {
         //sync to others
         sync_with_mirror(kds, command.getCode(), orderReceived, null);
         sync_with_backup(kds, command.getCode(), orderReceived, null);
-
+        //kp-60 Bumping  orders or items from expo not affecting summary
+        sync_with_expo(kds, KDSXMLParserCommand.KDSCommand.Station_Unbump_Order, orderReceived, null);
 
     }
     static public void normal_sync_order_modified(KDS kds, KDSXMLParserCommand command)

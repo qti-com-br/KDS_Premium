@@ -1337,6 +1337,7 @@ public class KDSStationFunc {
 
             case Prep:
                 KDSStationNormal.normal_sync_order_bumped(kds, command);//kpp1-202.
+
                 break;
             case Expeditor:
             case Queue:
@@ -2451,5 +2452,21 @@ public class KDSStationFunc {
             command == KDSXMLParserCommand.KDSCommand.Expo_Unbump_Item)
             return true;
         return false;
+    }
+
+    /**
+     * summary station is expo type
+     * @param kds
+     * @param syncMode
+     * @param order
+     * @param item
+     */
+    static public void sync_with_expo(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
+    {
+        if (kds.getStationsConnections().getRelations().getExpStations().size() <=0)
+            return;//for speed
+        String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, "");
+        kds.getStationsConnections().writeToExps(kds.getStationID(), strXml);
+
     }
 }
