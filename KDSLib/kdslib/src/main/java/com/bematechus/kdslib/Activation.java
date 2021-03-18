@@ -60,7 +60,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      *
      * Management
      * Web domain: http://kitchengous.com
-     Login: bematech@kitchengous.com
+     Login: bematech@kitchengous.com (unused).
+     logiccontrols@kitchengous.com
      Password:098765
 
      //test store
