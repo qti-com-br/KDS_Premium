@@ -6758,6 +6758,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         MainActivity.this.getKDS().clearAll();
         getKDS().clearStatisticData();
+        getKDS().clearRelationshipSettings(); //kp-57
         SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(getContext());
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
@@ -7624,7 +7625,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().clearStatisticData();
         */
 
-        getKDS().clearRelationshipSettings(); //kpp1-299-1
+        //KP-57, the relationship will been checked in onactivationSuccess()->checkRemovedStationsFromBackofficeAfterRegister
+        //getKDS().clearRelationshipSettings(); //kpp1-299-1
 
         onDoActivationExplicit();
     }
