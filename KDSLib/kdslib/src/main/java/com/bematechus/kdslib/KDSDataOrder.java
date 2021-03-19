@@ -3180,4 +3180,18 @@ get the total qty of all found items
         }
         return true;
     }
+
+    public boolean smartRunnerSameCatDelayItemsLocalFinished(ArrayList<PrepSorts.PrepItem> smartItems)
+    {
+        int ncount = smartItems.size();
+        for (int i=0; i< ncount; i++)
+        {
+            PrepSorts.PrepItem smartItem = smartItems.get(i);
+            KDSDataItem item =  this.getItems().getItemByName(smartItem.ItemName);
+            if (item == null ) continue;
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
+    }
 }

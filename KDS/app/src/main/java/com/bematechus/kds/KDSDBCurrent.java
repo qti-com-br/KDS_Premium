@@ -3338,6 +3338,23 @@ update the schedule item ready qty
      * @param order
      * @param smartItems
      */
+//    public void smart_runner_category_init2(KDSDataOrder order, PrepSorts smartItems)
+//    {
+//        //kpp1-456, we init the first category here.
+//        PrepSorts.PrepItem smartMaxItem = smartItems.findNextShowingItem(smartItems.m_arItems);
+//        if (smartMaxItem == null) return;
+//        //String category = smartMaxItem.Category;
+//        String orderguid = order.getGUID();
+//
+//        //kp-50, same catdelay
+//
+//        ArrayList<String> arWillShowingCategory = smartItems.runnerGetAllSameCatDelayCategories(smartMaxItem.CategoryDelay);
+//
+//        smartRunnerCategoryAddShowingCategories(orderguid, arWillShowingCategory);
+//        //
+//        smartItems.runnerSetShowingCategory( smartCategoryGetShowingCategories(orderguid));
+//    }
+
     public void smart_runner_category_init(KDSDataOrder order, PrepSorts smartItems)
     {
         //kpp1-456, we init the first category here.
@@ -3348,13 +3365,12 @@ update the schedule item ready qty
 
         //kp-50, same catdelay
 
-        ArrayList<String> arWillShowingCategory = smartItems.runnerGetAllSameCatDelayCategories(smartMaxItem.CategoryDelay);
+        //ArrayList<String> arWillShowingCategory = smartItems.runnerGetAllSameCatDelayCategories(smartMaxItem.CategoryDelay);
 
-        smartRunnerCategoryAddShowingCategories(orderguid, arWillShowingCategory);
+        runnerSetLastShowingCatDelay(orderguid, smartMaxItem.CategoryDelay);
         //
-        smartItems.runnerSetShowingCategory( smartCategoryGetShowingCategories(orderguid));
+        smartItems.runnerSetLastShowingCatDelay( smartMaxItem.CategoryDelay);
     }
-
 
     public void prep_set_real_started_time(String orderGuid, String itemName, float seconds)
     {
@@ -3365,6 +3381,41 @@ update the schedule item ready qty
     {
         String sql = String.format("update prepsort set finished=%d where orderguid='%s' and itemname='%s'", bFinished?1:0, orderGuid, itemName);
         this.executeDML(sql);
+    }
+
+    public PrepSorts prep_get_sort_items2(String orderGuid)
+    {
+        String sql = "";
+
+        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
+
+
+        PrepSorts prep = new PrepSorts();
+        Cursor c = getDB().rawQuery(sql, null);
+
+        while (c.moveToNext())
+        {
+            PrepSorts.PrepItem item = new PrepSorts.PrepItem();
+            item.orderguid = getString(c,0);
+            item.ItemName = getString(c,1);
+            item.Category = getString(c,2);
+            item.PrepTime = getFloat(c,3);
+            item.MaxItemName = getString(c,4);
+            //item.WaitSecsToStart = c.getInt(5);
+            item.finished = (getInt(c,5)==1);
+            item.RealStartTime = getInt(c,6);
+            item.ItemDelay = getFloat(c,7);
+            item.CategoryDelay = getFloat(c,8);
+
+            prep.add(item);
+
+        }
+        c.close();
+        prep.sort();
+        //kpp1-456
+        //prep.runnerSetShowingCategory(smartCategoryGetShowingCategories(orderGuid));
+        prep.runnerSetLastShowingCatDelay(runnerGetLastShowingCatDelay(orderGuid));
+        return prep;
     }
 
     public PrepSorts prep_get_sort_items(String orderGuid)
@@ -3397,7 +3448,7 @@ update the schedule item ready qty
         c.close();
         prep.sort();
         //kpp1-456
-        prep.runnerSetShowingCategory(smartCategoryGetShowingCategories(orderGuid));
+        prep.runnerSetLastShowingCatDelay(smartRunnerGetCatDelay(orderGuid));
         return prep;
     }
 
@@ -3952,6 +4003,27 @@ update the schedule item ready qty
         return ar;
     }
 
+    public float runnerGetLastShowingCatDelay(String orderGuid)
+    {
+        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+        ArrayList<String> ar = new ArrayList<>();
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        String s = "";
+
+
+        while (c.moveToNext()) {
+            s = c.getString(0);
+        }
+        c.close();
+        if (s.isEmpty()) return 0;
+        return KDSUtil.convertStringToFloat(s, 0);
+//        ar = KDSUtil.spliteString(s, SMART_CATEGORY_SEPERATOR);
+//
+//        return ar;
+    }
+
 
     /**
      * KP-50
@@ -3989,6 +4061,41 @@ update the schedule item ready qty
         return arRemovedOrders.size();
     }
 
+    public float smartRunnerGetCatDelay(String orderGuid)
+    {
+        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+        //ArrayList<String> ar = new ArrayList<>();
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        String s = "";
+
+
+        while (c.moveToNext()) {
+            s = c.getString(0);
+        }
+        c.close();
+        if (s.isEmpty()) return 0;
+        return KDSUtil.convertStringToFloat(s, 0);
+
+    }
+    public void runnerSetLastShowingCatDelay(String orderGuid, float fltCatDelay)
+    {
+        //ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+        //boolean bChanged = false;
+        //for (int i=0; i< categoriesName.size(); i++) {
+//        //    if (KDSUtil.isExistedInArray(ar, categoriesName.get(i)))
+//                continue;
+//            ar.add(categoriesName.get(i));
+//            bChanged = true;
+//        }
+//        if (!bChanged) return;
+
+        String s = KDSUtil.convertFloatToString(fltCatDelay);
+        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+        this.executeDML(sql);
+
+    }
 
     /***************************************************************************
      * SQL definitions
