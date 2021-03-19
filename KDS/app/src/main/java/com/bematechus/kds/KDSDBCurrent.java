@@ -3960,48 +3960,48 @@ update the schedule item ready qty
         return ar;
     }
 
-    final String SMART_CATEGORY_SEPERATOR = "\n";
-    /**
-     * kpp1-456
-     * @param orderGuid
-     * @param categoryName
-     */
-    public void smartRunnerCategoryAddShowingCategory(String orderGuid, String categoryName)
-    {
-        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
-        if (KDSUtil.isExistedInArray(ar, categoryName))
-            return;
-        ar.add(categoryName);
-        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
-        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
-        this.executeDML(sql);
+//    final String SMART_CATEGORY_SEPERATOR = "\n";
+//    /**
+//     * kpp1-456
+//     * @param orderGuid
+//     * @param categoryName
+//     */
+//    public void smartRunnerCategoryAddShowingCategory(String orderGuid, String categoryName)
+//    {
+//        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+//        if (KDSUtil.isExistedInArray(ar, categoryName))
+//            return;
+//        ar.add(categoryName);
+//        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
+//        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+//        this.executeDML(sql);
+//
+//    }
 
-    }
-
-    /**
-     * kpp1-456
-     * @param orderGuid
-     * @return
-     */
-    public ArrayList<String> smartCategoryGetShowingCategories(String orderGuid)
-    {
-        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
-        ArrayList<String> ar = new ArrayList<>();
-
-        Cursor c = getDB().rawQuery(sql, null);
-
-        String s = "";
-
-
-        while (c.moveToNext()) {
-            s = c.getString(0);
-        }
-        c.close();
-        if (s.isEmpty()) return ar;
-        ar = KDSUtil.spliteString(s, SMART_CATEGORY_SEPERATOR);
-
-        return ar;
-    }
+//    /**
+//     * kpp1-456
+//     * @param orderGuid
+//     * @return
+//     */
+//    public ArrayList<String> smartCategoryGetShowingCategories(String orderGuid)
+//    {
+//        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+//        ArrayList<String> ar = new ArrayList<>();
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        String s = "";
+//
+//
+//        while (c.moveToNext()) {
+//            s = c.getString(0);
+//        }
+//        c.close();
+//        if (s.isEmpty()) return ar;
+//        ar = KDSUtil.spliteString(s, SMART_CATEGORY_SEPERATOR);
+//
+//        return ar;
+//    }
 
     public float runnerGetLastShowingCatDelay(String orderGuid)
     {
@@ -4024,29 +4024,29 @@ update the schedule item ready qty
 //        return ar;
     }
 
-
-    /**
-     * KP-50
-     * @param orderGuid
-     * @param categoriesName
-     */
-    public void smartRunnerCategoryAddShowingCategories(String orderGuid, ArrayList<String> categoriesName)
-    {
-        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
-        boolean bChanged = false;
-        for (int i=0; i< categoriesName.size(); i++) {
-            if (KDSUtil.isExistedInArray(ar, categoriesName.get(i)))
-                continue;
-            ar.add(categoriesName.get(i));
-            bChanged = true;
-        }
-        if (!bChanged) return;
-
-        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
-        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
-        this.executeDML(sql);
-
-    }
+//
+//    /**
+//     * KP-50
+//     * @param orderGuid
+//     * @param categoriesName
+//     */
+//    public void smartRunnerCategoryAddShowingCategories(String orderGuid, ArrayList<String> categoriesName)
+//    {
+//        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+//        boolean bChanged = false;
+//        for (int i=0; i< categoriesName.size(); i++) {
+//            if (KDSUtil.isExistedInArray(ar, categoriesName.get(i)))
+//                continue;
+//            ar.add(categoriesName.get(i));
+//            bChanged = true;
+//        }
+//        if (!bChanged) return;
+//
+//        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
+//        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+//        this.executeDML(sql);
+//
+//    }
 
     public int removeOrdersForSumStation(Vector<Object> arRemovedOrders)
     {
