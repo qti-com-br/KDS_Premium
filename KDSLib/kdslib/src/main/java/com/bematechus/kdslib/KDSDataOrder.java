@@ -137,6 +137,7 @@ public class KDSDataOrder extends KDSData {
     protected String m_kdsGUID = KDSUtil.createNewGUID();; //for backoffice. KPP1-75. Use it to identify same order in all stations.
 
 
+    protected String mHeaderFooterMessage = ""; //KP-48 Allergen xml tags.
 
     public enum VALID_ORDER_XML_FIELD
     {
@@ -156,6 +157,7 @@ public class KDSDataOrder extends KDSData {
         Queue_Message,
         TrackerID,
         PagerID,
+        HeaderFooterMessage,
         //2.0.50
 //        SMS_Customer_ID,
 //        SMS_Customer_Phone,
@@ -514,6 +516,8 @@ public class KDSDataOrder extends KDSData {
         this.getCustomer().copyTo(obj.getCustomer());
 
         obj.m_kdsGUID = m_kdsGUID;
+        obj.mHeaderFooterMessage = mHeaderFooterMessage;
+
     }
     /***************************************************************************
      * 
@@ -546,7 +550,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6,r7)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -581,6 +585,7 @@ public class KDSDataOrder extends KDSData {
             + ",'" + m_smsOriginalOrderGoToStations +"'" //r4
             +",'" + m_customer.getName() + "'" //r5
             +",'" + getKDSGuid() + "'" //r6
+            + ",'" + getHeaderFooterMessage() + "'"
             +  ")";
         return sql;
          
@@ -722,10 +727,14 @@ public class KDSDataOrder extends KDSData {
         if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.Status))
             sql +=  "Status="+ KDSUtil.convertIntToString(getStatus()) +",";
 
-        if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.Waiter_Name))
-            sql +=  "DBTimeStamp=" + KDSUtil.convertDateToString(getTimeStamp());
+        //if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.Waiter_Name))
+            sql +=  "DBTimeStamp='" + KDSUtil.convertDateToString(getTimeStamp()) + "',";
+
+        if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.HeaderFooterMessage))
+            sql +=  "r7='" + getHeaderFooterMessage() + "', ";
         //add the station number to it, just for last ",".
         sql +=  " Station='" + fixSqliteSingleQuotationIssue(  getPCKDSNumber()) + "' ";
+
         sql +=  " where name='" + getOrderName() + "'";
         return sql;
 
@@ -1375,6 +1384,11 @@ public class KDSDataOrder extends KDSData {
             this.setToTable(orderReceived.getToTable());
             bResult =true;
         }
+        if (orderReceived.getXmlFieldValid((VALID_ORDER_XML_FIELD.HeaderFooterMessage)))
+        {
+            this.setHeaderFooterMessage(orderReceived.getHeaderFooterMessage());
+            bResult = true;
+        }
         return bResult;
     }
 
@@ -1440,6 +1454,9 @@ public class KDSDataOrder extends KDSData {
             //
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
+
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_HEADERFOOTERMESSAGE,this.getHeaderFooterMessage(), false);
+
             String s;
             
             s =this.getFromPOSNumber();
@@ -3193,5 +3210,19 @@ get the total qty of all found items
                 return false;
         }
         return true;
+    }
+
+    /**
+     * kp-48 Allergen xml tags.
+     * @param s
+     */
+    public void setHeaderFooterMessage(String s)
+    {
+        mHeaderFooterMessage = s;
+    }
+
+    public String getHeaderFooterMessage()
+    {
+        return mHeaderFooterMessage;
     }
 }

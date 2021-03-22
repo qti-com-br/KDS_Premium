@@ -648,6 +648,7 @@
 		<item>Mensagem do Cliente</item>
 		<item>Status do Pedido</item>
 		<item>Ícone do Pedido</item>
+		<item>Header or footer message</item>
 	</string-array>
 	<string-array name="pref_kds_item_showing_method_titles">
 		<item>Em tempo real</item>

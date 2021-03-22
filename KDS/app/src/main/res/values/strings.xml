@@ -342,6 +342,7 @@
         <item>User information</item>
         <item>Order status</item>
         <item>Order icon</item>
+        <item>Header or footer message</item>
 
     </string-array>
 

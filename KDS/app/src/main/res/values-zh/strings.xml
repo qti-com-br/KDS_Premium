@@ -334,6 +334,7 @@
         <item>自定义信息</item>
         <item>订单状态</item>
         <item>订单图标</item>
+        <item>Header or footer message</item>
     </string-array>
 
     <string name="pref_kds_caption_enable_cap2">启用订单头第二行</string>
