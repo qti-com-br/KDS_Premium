@@ -999,22 +999,22 @@ public class PrepSorts {
 //        return arWillShowingCategory;
 //    }
 
-    public float getCategoryDelay(String category)
-    {
-        for (int i=0; i< m_arItems.size(); i++)
-        {
-            if (m_arItems.get(i).Category.equals(category))
-            {
-                return m_arItems.get(i).CategoryDelay;
-            }
-        }
-        return 0;
-    }
-    /**
-     * according give category to check all same delay categories
-     * @param sampleCategory
-     * @return
-     */
+//    public float getCategoryDelay(String category)
+//    {
+//        for (int i=0; i< m_arItems.size(); i++)
+//        {
+//            if (m_arItems.get(i).Category.equals(category))
+//            {
+//                return m_arItems.get(i).CategoryDelay;
+//            }
+//        }
+//        return 0;
+//    }
+//    /**
+//     * according give category to check all same delay categories
+//     * @param sampleCategory
+//     * @return
+//     */
 //    public ArrayList<String> runnerGetAllSameCatDelayCategories(String sampleCategory)
 //    {
 //        if (sampleCategory.isEmpty())
@@ -1078,7 +1078,9 @@ public class PrepSorts {
      */
     static private boolean isAllSameCatDelayItemsLocalBumped(KDSDataOrder order , PrepSorts smartItems,  PrepSorts.PrepItem smartItem)
     {
-        float delay = smartItems.getCategoryDelay(smartItem.Category);
+        //float delay = smartItems.getCategoryDelay(smartItem.Category);
+        //kp-61 Categories do not allow the use of different CatDelay times.
+        float delay = smartItem.CategoryDelay;// smartItems.getCategoryDelay(smartItem.Category);
 
         //String category = smartItem.Category;
         for (int i=0; i< smartItems.m_arItems.size(); i++)
