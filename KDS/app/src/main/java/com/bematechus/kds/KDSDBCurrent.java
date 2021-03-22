@@ -287,7 +287,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r3," +//26
                 "orders.r4," + //27
                 "orders.r5," + //28
-                "orders.r6 "; //29
+                "orders.r6," + //29
+                "orders.r7 "; //30
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -403,6 +404,8 @@ public class KDSDBCurrent extends KDSDBBase {
         c.getCustomer().setName(getString(sf, 28));
         //kpp1-75
         c.setKDSGuid(getString(sf, 29));
+
+        c.setHeaderFooterMessage(getString(sf, 30));
 
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
@@ -4135,7 +4138,7 @@ update the schedule item ready qty
             +"r4 text(16)," //2.1.15, for sms, save original order go to which stations.
             +"r5 text(16)," //for customer, same the customer name
             +"r6 text(16)," //kdsguid, identify same order in whole KDS.
-            +"r7 text(16),"
+            +"r7 text(16)," //kp-48, Allergen xml tags. <HeaderFooterMessage>
             +"r8 text(16),"
             +"r9 text(16),"
             + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),"

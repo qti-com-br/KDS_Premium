@@ -637,6 +637,7 @@ public class KDSSettings extends SettingsBase {
 
         OrderStatus,
         OrderIcon,
+        HeaderFooterMessage,
     }
 
     public enum ComponentFocusedMethod

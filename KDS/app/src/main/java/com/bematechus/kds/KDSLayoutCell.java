@@ -427,7 +427,12 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 if (n<0) return "";
                 return env.getSettings().getIcon(n);
             }
-
+            //break;
+            case HeaderFooterMessage:
+            {
+                return order.getHeaderFooterMessage();
+            }
+            //break;
             default:
                 return "";
         }
