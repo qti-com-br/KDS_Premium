@@ -4100,6 +4100,31 @@ update the schedule item ready qty
 
     }
 
+
+    /**
+     * KP-64 When adding items to an order- no catdelay
+     * we add smart items to table before do modifying.
+     *  So, change its guid to existed order after modifying.
+     * @param guidReceivedOrder
+     * @param orderExisted
+     */
+    public void prep_change_modify_order_guid_to_existed_guid(String guidReceivedOrder, KDSDataOrder orderExisted)
+    {
+
+        String sql = String.format( "update prepsort set orderguid='%s' where orderguid='%s'", orderExisted.getGUID(),
+                                        guidReceivedOrder);
+
+
+        this.executeDML(sql);
+        PrepSorts prepSorts = prep_get_sort_items(orderExisted.getGUID());
+        prep_save_sort_result(prepSorts);
+
+        orderExisted.prep_set_sorts(prepSorts);
+
+        //
+
+    }
+
     /***************************************************************************
      * SQL definitions
      *

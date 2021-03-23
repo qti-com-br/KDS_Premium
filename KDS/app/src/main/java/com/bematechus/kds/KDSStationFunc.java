@@ -736,6 +736,10 @@ public class KDSStationFunc {
 
             return;
         }
+        //kp-64 When adding items to an order- no catdelay
+        kdsuser.getCurrentDB().prep_change_modify_order_guid_to_existed_guid(order.getGUID(), orderExisted);
+
+
         int oldOrderStatus = orderExisted.getStatus();
 
         boolean bmodified = orderExisted.modify(order);
