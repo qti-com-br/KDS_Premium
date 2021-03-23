@@ -2009,8 +2009,10 @@ public class PreferenceFragmentStations
                     // It cause app crashed. So, check array size here.
                     if (arFuncStrings.size() > SettingsBase.StationFunc.Runner.ordinal())
                         m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
-                    if (arFuncStrings.size() > SettingsBase.StationFunc.Summary.ordinal())
-                        m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Summary.ordinal()), SettingsBase.StationFunc.Summary));
+                    if (KDSConst.SUMMARY_STATION_ENABLED) {
+                        if (arFuncStrings.size() > SettingsBase.StationFunc.Summary.ordinal())
+                            m_stationFuncSpinnerListHaveExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Summary.ordinal()), SettingsBase.StationFunc.Summary));
+                    }
                 }
                 list = m_stationFuncSpinnerListHaveExpo;
 
@@ -2032,8 +2034,10 @@ public class PreferenceFragmentStations
                     m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Queue_Expo.ordinal()), SettingsBase.StationFunc.Queue_Expo));
                     if (arFuncStrings.size() > SettingsBase.StationFunc.Runner.ordinal())
                         m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Runner.ordinal()), SettingsBase.StationFunc.Runner));
-                    if (arFuncStrings.size() > SettingsBase.StationFunc.Summary.ordinal())
-                        m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Summary.ordinal()), SettingsBase.StationFunc.Summary));
+                    if (KDSConst.SUMMARY_STATION_ENABLED) {
+                        if (arFuncStrings.size() > SettingsBase.StationFunc.Summary.ordinal())
+                            m_stationFuncSpinnerListNoExpo.add(new StationFunction(arFuncStrings.get(SettingsBase.StationFunc.Summary.ordinal()), SettingsBase.StationFunc.Summary));
+                    }
                 }
                 list = m_stationFuncSpinnerListNoExpo;
             }
