@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 package com.bematechus.kdslib;
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -48,6 +50,8 @@ public class KDSSocketTCPCommandBuffer {
     private ByteBuffer m_buffer = ByteBuffer.allocate(BUFFER_SIZE);// new ByteBuffer();
     static public final int BUFFER_SIZE = 102400; //100k
     private int m_fill = 0;
+
+    private byte[] m_textBuffer = new byte[BUFFER_SIZE];// new ByteBuffer();
     //
     public KDSSocketTCPCommandBuffer()
     {
@@ -742,5 +746,40 @@ public class KDSSocketTCPCommandBuffer {
         buf.put(ETX);
         buf.position(0);
         return buf;
+    }
+
+    /**
+     * while do search stx, save all unused bytes to textBuffer.
+     * They maybe are payload text.
+     * @param buffer
+     * @return
+     *  The length of text added.
+     */
+    public int skip_to_STX(byte[] buffer)
+    {
+        Arrays.fill(buffer, (byte)0);
+
+        if( m_fill != 0 && m_buffer.get(0) != STX )
+        {
+            int i = 0;
+            for( i=0; i< m_fill; i++)
+            {
+                byte b = m_buffer.get(i);
+
+                if (m_buffer.get(i) == STX)
+                    break;
+                else
+                    buffer[i] = b;
+            }
+            if (i >0)
+                remove( i );
+            return i;
+        }
+        return 0;
+    }
+
+    byte[] getTextBuffer()
+    {
+        return m_textBuffer;
     }
 }
