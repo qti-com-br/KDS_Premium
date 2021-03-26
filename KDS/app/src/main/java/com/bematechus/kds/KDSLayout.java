@@ -29,6 +29,7 @@ import com.bematechus.kdslib.KDSDataVoidItemIndicator;
 import com.bematechus.kdslib.KDSDataVoidItemQtyChanged;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSViewFontFace;
+import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 
@@ -1274,9 +1275,15 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             }
 
             //kp1-25
-            if (this.getEnv().getSettings().getStationFunc() == SettingsBase.StationFunc.Runner) {
+            if (this.getEnv().getSettings().getStationFunc() == SettingsBase.StationFunc.Runner || //runner
+                    PrepSorts.m_bSmartCategoryEnabled) //Runner's children
+            {
                 if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Runner_hide_finished_category)) {
-                    dressedOrder.smartRunnerHideFinishedCategory();
+                    dressedOrder.smartRunnerHideFinishedSameCatDelayItems();
+                    //check if focused item wwas hiden.
+                    String focusedItemGuid =  this.getEnv().getStateValues().getFocusedItemGUID();
+                    if (dressedOrder.getItems().getItemByGUID(focusedItemGuid) == null)
+                        this.getEnv().getStateValues().setFocusedItemGUID("");
                 }
             }
 
