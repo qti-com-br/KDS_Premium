@@ -95,6 +95,7 @@ import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
@@ -2085,6 +2086,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             String itemGuid = getSelectedItemGuid(userID);
 
             if (itemGuid.isEmpty()) {//bump order
+                if (PrepSorts.m_bSmartCategoryEnabled || //I am child of runner
+                    getKDS().isRunnerStation()  ) //I am a runner
+                {
+                    boolean bFinishItemByBumpOrder = getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_finish_items_by_bump_order);
+                    if (bFinishItemByBumpOrder)
+                    {
+                        if (runnerModeBumpItems(userID, orderGuid))
+                            return;
+                    }
+                }
                 //kpp1-343, allow expo bump itself items . So, move this check here.
                 if (checkExpoConfirmationBump(userID, orderGuid, false))
                     return;
@@ -7963,6 +7974,46 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().getCurrentDB().removeOrdersForSumStation(arRemovedOrders);
         arRemovedOrders.clear();
 
+    }
+
+    /**
+     * 1. Want to add an option where when using CatDelay can instead bump order to bring up next items based on CatDelay. This should be able to occur on any station.
+     *
+     * Scenario:
+     *
+     * Setup 3 Stations: 2 Preps, Runner and a Router.
+     *
+     * Client sends order item by item to the preps with set CatDelay
+     *
+     * User bumps order from prep station but only currently visible item is bumped.
+     *
+     * User bumps order from Runner but only the currently visible items are bumped.
+     *
+     * This brings up the next items based on the CatDelay.
+     *
+     * This will keep repeating until all items received have been bumped and from there the entire order can be bumped.
+     * @return
+     *
+     *  True: the bumping has been hold by this function.
+     *  false: pass to next functions.
+     */
+    private boolean runnerModeBumpItems(KDSUser.USER userID,  String orderGuid)
+    {
+        KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        boolean bAllFinished = order.isAllItemsBumpedInLocal();
+
+        for (int i=0; i< order.getItems().getCount(); i++) {
+            KDSDataItem item = order.getItems().getItem(i);
+            String itemName = item.getItemName();
+
+            if ( order.prep_get_sorts().is_cooking_time(itemName, order.getStartTime(), order.getOrderDelay()))
+            {
+                if (!item.getLocalBumped())
+                    itemBump(userID,orderGuid, item.getGUID() );
+            }
+        }
+
+        return (!bAllFinished);
     }
 }
 

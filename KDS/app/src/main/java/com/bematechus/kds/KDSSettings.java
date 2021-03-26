@@ -604,6 +604,7 @@ public class KDSSettings extends SettingsBase {
        SumStn_caption_font,
        SumStn_caption_prefix,
        Sumstn_right_qty,
+       Runner_finish_items_by_bump_order,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1402,6 +1403,9 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.SumStn_caption_prefix, "string_sumstn_caption_prefix", getResString(R.string.summary));
         init_option(ID.Sumstn_right_qty, "bool_sumstn_right_qty", false);
+
+        init_option(ID.Runner_finish_items_by_bump_order, "bool_runner_finish_items_by_bump_order", false);
+
 
     }
 
