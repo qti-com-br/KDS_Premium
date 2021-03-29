@@ -716,7 +716,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     }
 
     String mXmlReceived = "";
-    String START_TAG = "<Transaction>";
+    String START_TAG = "<Transaction";
     String END_TAG = "</Transaction>";
     /**
      * KP-62 As a reseller, I want to be able to send orders to Allee and Premium using the same format in TCP/IP so I don't need to change my POS
