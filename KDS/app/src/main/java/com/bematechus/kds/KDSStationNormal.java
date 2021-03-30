@@ -643,6 +643,9 @@ public class KDSStationNormal extends KDSStationFunc {
         sync_with_mirror(kds, command.getCode(), order, item);
         sync_with_backup(kds, command.getCode(), order, item);
 
+        //kp-67
+        sync_with_expo(kds, KDSXMLParserCommand.KDSCommand.Station_Unbump_Item, order, item);
+
         if (order != null)
             return order.getGUID();
         return "";
