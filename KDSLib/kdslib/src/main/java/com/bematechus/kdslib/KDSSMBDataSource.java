@@ -202,7 +202,9 @@ public class KDSSMBDataSource implements Runnable {
             if (m_thread != Thread.currentThread())
                 return;
             if (m_strRemoteFolder.isEmpty()) {
+                informSmbLostError();
                 sleep(1000);
+                //m_arExistedFiles.clear();
                 //m_timeDog.reset();
                 continue;
             }
@@ -222,12 +224,14 @@ public class KDSSMBDataSource implements Runnable {
                 if (KDSSmbFile.smb_isValidPath(m_strRemoteFolder)) {
                     //m_timeDog.reset();
                     if (isRemoteFolderPermissionError()) {
+                        //m_arExistedFiles.clear();
                         continue;
                     }
                     informSmbOK();
                 } else {
                     informSmbLostError();
                     sleep(500);
+                    m_arExistedFiles.clear();
                     continue;
                 }
                 //m_timeDog.reset();
@@ -235,7 +239,7 @@ public class KDSSMBDataSource implements Runnable {
 
                 //read data
                 //ArrayList<String> ar = KDSSmbFile.findAllXmlFiles(m_strRemoteFolder,MAX_ORDERS_COUNT);
-                ar.clear();
+                //ar.clear();
                 if (m_arExistedFiles.size() <=0) {
                     //m_arExistedFiles.clear();
 
@@ -263,10 +267,17 @@ public class KDSSMBDataSource implements Runnable {
                     continue;
                 }
                 //if (!KDSConst._DEBUG)
-                checkXmlFiles(ar);
+                int ndone = checkXmlFiles(ar);
+
                 //m_timeDog.reset();
                 if (!m_bThreadRunning) return;
-                ar.clear();
+                if (ndone != ar.size()) {
+                    m_arExistedFiles.clear();
+                    Log.d(TAG, "Reset buffered file names");
+                }
+                else
+                    ar.clear();
+
                 //m_timeDog.reset();
                 if (!m_bThreadRunning) return;
                 sleep(500); //slow down.
@@ -282,30 +293,31 @@ public class KDSSMBDataSource implements Runnable {
     }
 
     final int MAX_ORDERS_COUNT = 20;
-    private void checkXmlFiles(List<String> arFiles) {
+    private int checkXmlFiles(List<String> arFiles) {
 
         int ncount = arFiles.size();
 //        if (ncount >MAX_ORDERS_COUNT)
 //            ncount = MAX_ORDERS_COUNT;
         for (int i = 0; i < ncount; i++)
         {
-            if (!m_bThreadRunning) return;
+            if (!m_bThreadRunning) return i;
             String smbFileName = m_strRemoteFolder +arFiles.get(i);
             //smbFileName =  smbFileName;
-
+            if (m_strRemoteFolder.isEmpty()) return i;
             String text = readFileContent(smbFileName);
 
             if (text.isEmpty()) continue;
 
             doReceivedXmlText(smbFileName, text);
-            if (!m_bThreadRunning) return;
+            if (!m_bThreadRunning) return i;
             //remove this file.
             removeSmbFile(smbFileName);
-            if (!m_bThreadRunning) return;
+            if (!m_bThreadRunning) return i;
             if (i < ncount-1)
                 sleep(500); //delay, Too many orders will lock the router.
         }
         //arFiles.clear();
+        return ncount;
     }
 
     //byte[] m_readTextBuffer = new byte[1024*1024*5];
@@ -457,13 +469,21 @@ public class KDSSMBDataSource implements Runnable {
                     synchronized (m_locker) {
                         d = m_arData.get(i);
                     }
+                    String remoteRootFolder = d.m_strRemoteFolder;
+                    if (remoteRootFolder.isEmpty())
+                        remoteRootFolder = KDSSMBDataSource.this.m_strRemoteFolder;
 
-
-                    if (!checkRemoteSubfolder(d.m_strRemoteFolder, d.m_strSubFolder)) {
+                    if (remoteRootFolder.isEmpty()) {
                         d.m_bResult = false;
                         continue;
                     }
-                    String remoteFolder = d.m_strRemoteFolder + (d.m_strSubFolder +"/");;
+                    //if (!checkRemoteSubfolder(d.m_strRemoteFolder, d.m_strSubFolder)) {
+                    if (!checkRemoteSubfolder(remoteRootFolder, d.m_strSubFolder)) {
+                        d.m_bResult = false;
+                        continue;
+                    }
+                    //String remoteFolder = d.m_strRemoteFolder + (d.m_strSubFolder +"/");;
+                    String remoteFolder = remoteRootFolder + (d.m_strSubFolder +"/");;
 
                     boolean b = KDSSmbFile2.smbPut(remoteFolder, d.m_fileName, d.m_fileContent);
                     d.m_bResult = b;
