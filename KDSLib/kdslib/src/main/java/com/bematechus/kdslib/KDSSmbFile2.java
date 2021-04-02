@@ -102,6 +102,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
       //  m_bEnableSmbV2 = bEnabled;
 
         Properties prop = new Properties();
+        /*
         if (bEnabled) {
             prop.put("jcifs.smb.client.enableSMB2", "true");
             prop.put("jcifs.smb.client.disableSMB1", "true");
@@ -111,6 +112,8 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
             prop.put("jcifs.smb.client.enableSMB2", "false");
             prop.put("jcifs.smb.client.disableSMB1", "false");
         }
+        */
+         
         prop.setProperty( "jcifs.smb.client.responseTimeout", "3000");//default 30000
         prop.setProperty( "jcifs.smb.client.soTimeout", "3500" );// //default 35000
 //        prop.setProperty("jcifs.smb.client.useExtendedSecurity", "false");
