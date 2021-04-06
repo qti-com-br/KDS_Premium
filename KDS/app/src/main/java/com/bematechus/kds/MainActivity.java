@@ -2849,8 +2849,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (PrepSorts.m_bSmartCategoryEnabled || //I am child of runner
                     getKDS().isRunnerStation()  ) //I am a runner
             {
-                if (onUnbumpRunnerItems(userID))
-                    return;
+                if (getSettings().getBoolean(KDSSettings.ID.Runner_finish_items_by_bump_order)) {
+                    if (onUnbumpRunnerItems(userID))
+                        return;
+                }
             }
         }
         if (isLineItemsMode())
