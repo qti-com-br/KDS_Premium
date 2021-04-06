@@ -2844,6 +2844,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         String itemGuid = getSelectedItemGuid(userID);
 
+        if (itemGuid.isEmpty())
+        {
+            if (PrepSorts.m_bSmartCategoryEnabled || //I am child of runner
+                    getKDS().isRunnerStation()  ) //I am a runner
+            {
+                if (onUnbumpRunnerItems(userID))
+                    return;
+            }
+        }
         if (isLineItemsMode())
         {
             onUnbumpOrder(userID);
@@ -8014,6 +8023,42 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
 
         return (!bAllFinished);
+    }
+
+    /**
+     *
+     * @return
+     *  true: runnder mode hold this bump operation
+     *
+     */
+    private boolean onUnbumpRunnerItems(KDSUser.USER userID)
+    {
+        String orderGuid = getSelectedOrderGuid(userID);
+        KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        //find out max catdelay in bumped items
+        float maxBumpedCatDelay = 0;
+        for (int i=0; i< order.getItems().getCount(); i++) {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getLocalBumped())
+            {
+                if (item.getCategoryDelay() > maxBumpedCatDelay)
+                    maxBumpedCatDelay = item.getCategoryDelay();
+            }
+
+        }
+        //unbump
+        int nUnbumpedCount = 0;
+        for (int i=0; i< order.getItems().getCount(); i++) {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getLocalBumped()) {
+                if (item.getCategoryDelay() == maxBumpedCatDelay) {
+                    unbumpItem(userID, orderGuid, item.getGUID());
+                    nUnbumpedCount ++;
+                }
+            }
+        }
+        return (nUnbumpedCount >0);
+
     }
 }
 
