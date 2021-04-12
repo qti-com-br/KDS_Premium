@@ -5635,13 +5635,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String message = str;
         if (message.equals(KDSSMBDataSource.PATH_LOST))
         {
-            String s = this.getString(R.string.smb_folder_lost);
-            String folder = this.getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
-            KDSSMBPath path = KDSSMBPath.parseString(folder);
-            folder = path.toDisplayString();
-            s = s.replace("#", folder);
-            showToastMessage(s);
+            int n= (getSettings().getInt(KDSSettings.ID.KDS_Data_Source));
+            KDSSettings.KDSDataSource srcType = KDSSettings.KDSDataSource.values()[n];
+
+            if (srcType == SettingsBase.KDSDataSource.Folder) {
+                String s = this.getString(R.string.smb_folder_lost);
+                String folder = this.getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
+                KDSSMBPath path = KDSSMBPath.parseString(folder);
+                folder = path.toDisplayString();
+                s = s.replace("#", folder);
+                showToastMessage(s);
+            }
+
             return true;
+
 
         }
         else if (message.equals(KDSSMBDataSource.PATH_PERMISSION))
