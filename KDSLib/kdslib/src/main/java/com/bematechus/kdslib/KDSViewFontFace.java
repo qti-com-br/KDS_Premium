@@ -14,10 +14,15 @@ public class KDSViewFontFace {
 
 
     static public final int FONT_SIZE_SMALL = 12;
-    static public final int FONT_SIZE_NORMAL = 14;
-    static public final int FONT_SIZE_MIDDLE = 17;
-    static public final int FONT_SIZE_LARGE = 20;
+    static public final int FONT_SIZE_NORMAL = 16;
+    static public final int FONT_SIZE_MIDDLE = 18;
+    static public final int FONT_SIZE_LARGE = 22;
     static public final int DEFAULT_FONT_SIZE = FONT_SIZE_NORMAL;
+
+    static public final int DEFAULT_FONT_SIZE_HEADER_FOOTER = 32;
+    static public final int DEFAULT_FONT_SIZE_PREMESSAGE = 28;
+	static public final int DEFAULT_FONT_SIZE_ITEM = 28;
+    static public final int DEFAULT_FONT_SIZE_CONDIMENT = 28;
 
     static public final int DEFAULT_BG = Color.WHITE;
     static public final int DEFAULT_FG = Color.BLACK;

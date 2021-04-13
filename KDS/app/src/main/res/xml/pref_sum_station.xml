@@ -20,7 +20,7 @@
         android:title="@string/pref_kds_panels_viewer_bg" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="sumstn_caption_font"
-        android:defaultValue="default_font,@color/caption_bg,@color/caption_fg,normal_size"
+        android:defaultValue="default_font,@color/settings_light_bg,@color/caption_fg,normal_size"
         android:title="@string/pref_order_caption_normal_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSPreferenceFontPicker

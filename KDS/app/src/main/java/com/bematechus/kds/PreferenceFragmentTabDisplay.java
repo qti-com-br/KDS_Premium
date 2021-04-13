@@ -609,7 +609,7 @@ public class PreferenceFragmentTabDisplay extends KDSPreferenceFragment implemen
         m_arDataDest.clear();
         m_arDataDest.addAll(arDest);
 
-        s = pref.getString(TABDISP_KEY_BG, "-1,-16777216");
+        s = pref.getString(TABDISP_KEY_BG, KDSBGFG.toDefaultString(getResources().getColor(R.color.tab_display_bg), getResources().getColor(R.color.tab_display_fg)));
         m_valueBGFG = KDSBGFG.parseString(s);
 
         m_btnBG.setTextColor(m_valueBGFG.getFG());

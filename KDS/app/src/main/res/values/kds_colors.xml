@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
         <!--  aarrggbb or rrggbb -->
-    <color name="view_bg">#f2f2f2</color>
-    <color name="panel_bg">#ffffffff</color>
-    <color name="panel_fg">#ff000000</color>
-    <color name="border_bg">#E6E6E6</color>
+    <color name="view_bg">#0C1222</color>
+    <color name="panel_bg">#232A40</color>
+    <color name="panel_fg">#ffffffff</color>
+    <color name="border_bg">#FFA6A6A6</color>
     <color name="panelnum_bg">#414141</color>
     <color name="panelnum_fg">#fff1f1e8</color>
-    <color name="caption_bg">#bbbbbb</color>
-    <color name="caption_fg">#000000</color>
-    <color name="focus_bg">#414141</color>
-    <color name="focus_fg">#ff000000</color>
-    <color name="stage0_bg">#fed04e</color>
-    <color name="stage1_bg">#f0750f</color>
+    <color name="caption_bg">#0C1222</color>
+    <color name="caption_fg">#ffffffff</color>
+    <color name="focus_bg">#FFFCC600</color>
+    <color name="focus_fg">#FFFCC600</color>
+    <color name="stage0_bg">#C89503</color>
+    <color name="stage1_bg">#BF5700</color>
     <color name="stage2_bg">#e62d05</color>
-    <color name="item_bg">#FFFFFF</color>
-    <color name="item_fg">#ff000000</color>
-    <color name="condiment_bg">#FFFFFF</color>
-    <color name="condiment_fg">#ff000000</color>
-    <color name="premsg_bg">#ffffffff</color>
-    <color name="premsg_fg">#ff000000</color>
-    <color name="footer_bg">#ffffffff</color>
-    <color name="footer_fg">#ff000000</color>
+    <color name="item_bg">#232A40</color>
+    <color name="item_fg">#ffffffff</color>
+    <color name="condiment_bg">#232A40</color>
+    <color name="condiment_fg">#ffffffff</color>
+    <color name="premsg_bg">#232A40</color>
+    <color name="premsg_fg">#ffffffff</color>
+    <color name="footer_bg">#0C1222</color>
+    <color name="footer_fg">#ffffffff</color>
+
+	<color name="tab_display_fg">#ffffff</color>
+	<color name="tab_display_bg">#232A40</color>
+
+	<color name="settings_light_bg">#ffcdcdcd</color>
 
     <color name="rush_bg">#c00000</color>
     <color name="rush_fg">#ff000000</color>
@@ -39,7 +44,7 @@
     <color name="relations_headers_fg">#f8fafc</color>
 
     <!--<color name="kds_title_bg">#21abae</color>-->
-    <color name="kds_title_fg">#000000</color>
+    <color name="kds_title_fg">#FFFFFFFF</color>
     <color name="listview_focus_bg">@android:color/holo_blue_light</color>
 
     <!--<color name="settings_headers_bg">#ccc9bb</color>-->
@@ -99,8 +104,8 @@
     <color name="touch_button_down_text_color">#666666</color>
     <!--<color name="touch_button_up_color">#21abae</color>-->
 
-    <color name="touch_button_bg">#ffffff</color>
-    <color name="touch_button_fg">#21ABAE</color>
+    <color name="touch_button_bg">#1f2840</color>
+    <color name="touch_button_fg">#ffffff</color>
     <color name="lineitems_viewer_bg">#0e0e0e</color>
     <color name="grid_line_color">#B8B8B8</color>
 

@@ -303,7 +303,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 KDSViewFontFace ff = getOrderContentFont(env, content, ftDef);
                 if (order.isDimColor()) ff.setBG(KDSConst.DIM_BG);
                 Rect rc = new Rect(rcAbsolute);
-                rc.inset(4, 0);
+                rc.inset(8, 8);
                 CanvasDC.drawText(g, ff, rc, str, align);
             }
         }
@@ -1500,8 +1500,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //            //CanvasDC.drawText(g, this.getFont(), rcAbsolute, s, Paint.Align.LEFT);
         this.getFont().setBG(noldbg);
         this.getFont().setFG(noldfg);
-        if (!block.isFirstItemDataRow(this))
-            drawItemLine(g, rcAbsolute, color);
+        // Apr'21 Premium Facelift: Removed Line between items
+//        if (!block.isFirstItemDataRow(this))
+//            drawItemLine(g, rcAbsolute, color);
 //        Paint paint = new Paint();
 //        paint.setColor(Color.LTGRAY);
 //        paint.setStrokeWidth(0);
