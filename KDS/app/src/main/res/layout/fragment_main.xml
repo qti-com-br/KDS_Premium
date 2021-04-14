@@ -1,6 +1,5 @@
 <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
 
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,25 +9,23 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:showDividers="middle"
-
+        android:weightSum="2"
         android:id="@+id/layoutKdsViews"
 
         android:layout_weight="1">
-
+        <!--android:layout_above="@+id/lstInfo"-->
         <ListView
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:id="@+id/lstTouchPadSideA" />
-
-
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:showDividers="middle"
-            android:layout_weight="3"
+            android:layout_weight="1"
             android:animateLayoutChanges="true"
             android:id="@+id/linearA"
             android:weightSum="1">
@@ -99,40 +96,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-
+                android:weightSum="1"
                 android:id="@+id/layoutScrABG">
-                <FrameLayout
-                    android:id="@+id/fragmentlayout_sumA"
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1">
-
-                    <fragment
-                        android:id="@+id/fragmentSummaryA"
-                        android:name="com.bematechus.kds.MainActivityFragmentSum"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:layout="@layout/fragment_summary" />
-                </FrameLayout>
                 <com.bematechus.kds.KDSIOSView
-                    android:layout_width="0dp"
+                    android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:id="@+id/viewOrdersA"
 
-                    android:layout_weight="3" />
-                <FrameLayout
-                    android:id="@+id/fragmentlayout_sum"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <fragment
-                        android:id="@+id/fragmentSummary"
-                        android:name="com.bematechus.kds.MainActivityFragmentSum"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:layout="@layout/fragment_summary" />
-                </FrameLayout>
+                    android:layout_weight="1" />
             <!--<com.bematechus.kds.KDSIOSView-->
                 <!--android:layout_width="fill_parent"-->
                 <!--android:layout_height="wrap_content"-->
@@ -157,74 +128,74 @@
                 android:paddingRight="2dp" />
 
         </LinearLayout>
-
+        <!--android:layout_above="@+id/lstInfo" -->
 
         <LinearLayout
-            android:id="@+id/linearB"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:animateLayoutChanges="true"
             android:orientation="vertical"
-            android:paddingLeft="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:showDividers="middle"
+            android:layout_weight="1"
+             android:id="@+id/linearB"
             android:visibility="visible"
-            android:weightSum="1">
+            android:animateLayoutChanges="true"
+            android:weightSum="1"
+            android:paddingLeft="2dp">
 
             <LinearLayout
-                android:id="@+id/layoutScrBTitle"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:weightSum="10">
+                android:weightSum="10"
+                android:id="@+id/layoutScrBTitle">
 
                 <TextView
-                    android:id="@+id/txtScrBPrev"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center|center_vertical|center_horizontal"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="8888 &lt;&lt;"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:id="@+id/txtScrBPrev"
+                    android:layout_weight="1"
+                    android:gravity="center|center_vertical|center_horizontal" />
 
                 <TextView
-                    android:id="@+id/txtScrBAvgPrep"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/title_views_margin"
-                    android:layout_marginRight="@dimen/title_views_margin"
-                    android:gravity="center_vertical"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="AVG:00:00"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/txtScrBTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="7"
-                    android:gravity="center|center_vertical|center_horizontal"
-                    android:text="Screen B"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/txtScrBParked"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/title_views_margin"
+                    android:id="@+id/txtScrBAvgPrep"
                     android:layout_marginRight="@dimen/title_views_margin"
-                    android:layout_weight="1"
-                    android:gravity="center|center_vertical|center_horizontal"
-                    android:text="Parked: 8888"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:layout_marginLeft="@dimen/title_views_margin"
+                    android:gravity="center_vertical" />
 
                 <TextView
-                    android:id="@+id/txtScrBNext"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Screen B"
+                    android:id="@+id/txtScrBTitle"
+                    android:layout_weight="7"
+                    android:gravity="center|center_vertical|center_horizontal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Parked: 8888"
+                    android:id="@+id/txtScrBParked"
                     android:layout_weight="1"
                     android:gravity="center|center_vertical|center_horizontal"
+                    android:layout_marginLeft="@dimen/title_views_margin"
+                    android:layout_marginRight="@dimen/title_views_margin" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text=">> 8888"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:id="@+id/txtScrBNext"
+                    android:layout_weight="1"
+                    android:gravity="center|center_vertical|center_horizontal" />
             </LinearLayout>
 
             <com.bematechus.kds.AutoGridView
@@ -234,34 +205,20 @@
                 android:background="@drawable/top_sum_border"
                 android:numColumns="@integer/top_sum_cols"
                 android:visibility="visible" />
-
             <LinearLayout
-                android:id="@+id/layoutScrBBG"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                >
-
+                android:weightSum="1"
+                android:id="@+id/layoutScrBBG">
                 <com.bematechus.kds.KDSIOSView
-                    android:id="@+id/viewOrdersB"
-                    android:layout_width="0dp"
+                    android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:layout_weight="3" />
-                <FrameLayout
-                    android:id="@+id/fragmentlayout_sumB"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:id="@+id/viewOrdersB"
 
-                    <fragment
-                        android:id="@+id/fragmentSummaryB"
-                        android:name="com.bematechus.kds.MainActivityFragmentSum"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:layout="@layout/fragment_summary" />
-                </FrameLayout>
-                <!--<com.bematechus.kds.KDSIOSView-->
+                    android:layout_weight="1" />
+            <!--<com.bematechus.kds.KDSIOSView-->
                 <!--android:layout_width="fill_parent"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:id="@+id/viewOrdersB"-->
@@ -270,24 +227,21 @@
                 <!--android:layout_alignParentStart="true"-->
                 <!--android:layout_weight="1" />-->
             </LinearLayout>
-
-            <com.bematechus.kds.KDSScreenFocusIndicator
-                android:id="@+id/viewUserBFocus"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/user_focused_header_height"
-                android:background="#e71212" />
+             <com.bematechus.kds.KDSScreenFocusIndicator
+                 android:layout_width="fill_parent"
+                 android:layout_height="@dimen/user_focused_header_height"
+                 android:background="#e71212"
+                 android:id="@+id/viewUserBFocus" />
 
             <com.bematechus.kds.HorizontalListView
                 android:id="@+id/touchPadB"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_alignParentTop="true"
+                android:visibility="gone"
                 android:background="@drawable/textview_border"
-                android:paddingLeft="4dp"
-                android:visibility="gone" />
+                android:paddingLeft="4dp" />
         </LinearLayout>
-
-
 
         <ListView
             android:layout_width="50dp"
@@ -311,3 +265,146 @@
         android:transcriptMode="alwaysScroll"
         android:padding="2dp" />
 </LinearLayout>
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingTop="@dimen/activity_vertical_margin"-->
+    <!--android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivityFragment"-->
+    <!--android:padding="0dp">-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/linearLayout"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true">-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Next"-->
+            <!--android:id="@+id/btnNext"-->
+            <!--android:onClick="onBtnNextClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Prev"-->
+            <!--android:id="@+id/btnPrev"-->
+            <!--android:onClick="onBtnPrevClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Up"-->
+            <!--android:id="@+id/btnUp"-->
+            <!--android:onClick="onBtnUpClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Down"-->
+            <!--android:id="@+id/btnDown"-->
+            <!--android:onClick="onBtnDownClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Bump"-->
+            <!--android:id="@+id/btnBump"-->
+            <!--android:onClick="onBtnBumpClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Unbump"-->
+            <!--android:id="@+id/btnUnbump"-->
+            <!--android:onClick="onBtnUnbumpClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Sum"-->
+            <!--android:id="@+id/btnSum"-->
+            <!--android:onClick="onBtnSumClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Transfer"-->
+            <!--android:id="@+id/btnTransfer"-->
+            <!--android:onClick="onBtnTransferClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Sort"-->
+            <!--android:id="@+id/btnSort"-->
+            <!--android:onClick="onBtnSortClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Test"-->
+            <!--android:id="@+id/btnMore"-->
+            <!--android:onClick="onBtnMoreClicked" />-->
+
+        <!--<Button-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Active Stations"-->
+            <!--android:id="@+id/btnActiveStations"-->
+            <!--android:onClick="onBtnActiveStationsClicked" />-->
+    <!--</LinearLayout>-->
+    <!--<ListView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="80dp"-->
+        <!--android:id="@+id/lstInfo"-->
+        <!--android:headerDividersEnabled="true"-->
+        <!--android:choiceMode="singleChoice"-->
+        <!--android:divider="#1c72ff"-->
+        <!--android:drawSelectorOnTop="true"-->
+        <!--android:textSize="8dp"-->
+        <!--android:footerDividersEnabled="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:stackFromBottom="true"-->
+        <!--android:transcriptMode="alwaysScroll"-->
+        <!--android:padding="2dp" />-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:showDividers="beginning|middle|end">-->
+        <!--&lt;!&ndash;android:layout_above="@+id/lstInfo"&ndash;&gt;-->
+
+
+        <!--<com.bematechus.kds.KDSView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/viewOrdersA"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginRight="1dp" />-->
+        <!--&lt;!&ndash;android:layout_above="@+id/lstInfo" &ndash;&gt;-->
+        <!--<com.bematechus.kds.KDSView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/viewOrdersB"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginLeft="1dp" />-->
+    <!--</LinearLayout>-->
+
+
+
+<!--</RelativeLayout>-->
