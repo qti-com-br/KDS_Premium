@@ -2,6 +2,7 @@ package com.bematechus.kdslib;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.DisplayMetrics;
 
 /**
  * Created by Administrator on 2015/8/13 0013.
@@ -13,18 +14,18 @@ public class KDSViewFontFace {
     static public final String DEFULT_FONT_FILE =  "/system/fonts/Roboto-Regular.ttf";
 
 
-    static public final int FONT_SIZE_SMALL = 12;
-    static public final int FONT_SIZE_NORMAL = 16;
-    static public final int FONT_SIZE_MIDDLE = 18;
-    static public final int FONT_SIZE_LARGE = 22;
-    static public final int DEFAULT_FONT_SIZE = FONT_SIZE_NORMAL;
+    static public int FONT_SIZE_SMALL = 12;
+    static public int FONT_SIZE_NORMAL = 16;
+    static public int FONT_SIZE_MIDDLE = 18;
+    static public int FONT_SIZE_LARGE = 22;
+    static public int DEFAULT_FONT_SIZE = FONT_SIZE_NORMAL;
 
-    static public final int DEFAULT_BASE = 32;
+    static public int DEFAULT_BASE = 32;
 
-    static public final int DEFAULT_FONT_SIZE_HEADER_FOOTER = DEFAULT_BASE + 6;
-    static public final int DEFAULT_FONT_SIZE_PREMESSAGE = DEFAULT_BASE;
-	static public final int DEFAULT_FONT_SIZE_ITEM = DEFAULT_BASE;
-    static public final int DEFAULT_FONT_SIZE_CONDIMENT = DEFAULT_BASE;
+    static public int DEFAULT_FONT_SIZE_HEADER_FOOTER = DEFAULT_BASE + 6;
+    static public int DEFAULT_FONT_SIZE_PREMESSAGE = DEFAULT_BASE;
+	static public int DEFAULT_FONT_SIZE_ITEM = DEFAULT_BASE;
+    static public int DEFAULT_FONT_SIZE_CONDIMENT = DEFAULT_BASE;
 
     static public String FLAG_DEFAULT_FONT = "default_font";
     static public String FLAG_SIZE_NORMAL = "normal_size";
@@ -53,12 +54,39 @@ public class KDSViewFontFace {
             m_strFontFilePath = strFontFilePath;
         //setFont(tf);
         m_nFontSize = nFontSize;
+
+		DisplayMetrics displayMetrics = KDSApplication.getContext().getResources().getDisplayMetrics();
+		switch(displayMetrics.densityDpi){
+			case DisplayMetrics.DENSITY_LOW:
+				DEFAULT_BASE = 12;
+				FONT_SIZE_SMALL = 12;
+				break;
+			case DisplayMetrics.DENSITY_MEDIUM:
+				DEFAULT_BASE = 18;
+				FONT_SIZE_SMALL = 12;
+				break;
+			case DisplayMetrics.DENSITY_HIGH:
+				DEFAULT_BASE = 32;
+				FONT_SIZE_SMALL = 12;
+				break;
+		}
+
+		FONT_SIZE_NORMAL = FONT_SIZE_SMALL + 4;
+		FONT_SIZE_MIDDLE = FONT_SIZE_SMALL + 8;
+		FONT_SIZE_LARGE = FONT_SIZE_SMALL + 10;
+		DEFAULT_FONT_SIZE = FONT_SIZE_NORMAL;
+
+		DEFAULT_FONT_SIZE_HEADER_FOOTER = DEFAULT_BASE + 6;
+		DEFAULT_FONT_SIZE_PREMESSAGE = DEFAULT_BASE;
+		DEFAULT_FONT_SIZE_ITEM = DEFAULT_BASE;
+		DEFAULT_FONT_SIZE_CONDIMENT = DEFAULT_BASE;
     }
 
     public KDSViewFontFace()
     {
 
-    }
+
+	}
     @Override
     public String toString()
     {

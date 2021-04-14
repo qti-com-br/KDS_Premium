@@ -233,8 +233,6 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         fontDef.copyFrom(this.getFont());
         fontDef.setBG(nBG);
 
-
-
         if (order.getCookState() == KDSDataOrder.CookState.Started
                 && this.getCellSubType() == CellSubType.Unknown ) {//just first caption line show started icon
 

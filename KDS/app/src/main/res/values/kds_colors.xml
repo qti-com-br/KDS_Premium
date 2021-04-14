@@ -24,8 +24,8 @@
 	<!--#FCC600-->
     <color name="focus_bg">@color/lci_peripherals</color>
     <color name="focus_fg">@color/lci_peripherals</color>
-    <color name="stage0_bg">#DCA600</color>
-    <color name="stage1_bg">#BF5700</color>
+    <color name="stage0_bg">#C1AD00</color>
+    <color name="stage1_bg">#C85700</color>
     <color name="stage2_bg">#e62d05</color>
     <color name="item_bg">@color/lci_background_darkish</color>
     <color name="item_fg">@color/white</color>

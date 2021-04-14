@@ -267,7 +267,7 @@
         <com.bematechus.kdslib.KDSEditTextPreference
             android:key="panel_text_line_height"
             android:title= "@string/pref_kds_panels_row_height"
-            android:defaultValue="40"
+            android:defaultValue="36"
             android:selectAllOnFocus="true"
             android:inputType= "number"
             android:capitalize="words"
