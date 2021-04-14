@@ -11,6 +11,7 @@
 	<color name="lci_cpu">#f15b40</color>
 	<color name="lci_background_dark">#0C1222</color>
 	<color name="lci_background_darkish">#232A40</color>
+	<color name="transparent">#00FFFFFF</color>
 
     <color name="view_bg">@color/lci_background_dark</color>
     <color name="panel_bg">@color/lci_background_darkish</color>
@@ -120,7 +121,7 @@
     <color name="cleaning_button_bg">#902625</color>
     <color name="cleaning_pinchout_color">#80000000</color>
 
-    <color name="sum_bg">@color/white</color>
+    <color name="sum_bg">@color/lci_background_dark</color>
     <color name="sum_fg">@color/white</color>
 
 </resources>
