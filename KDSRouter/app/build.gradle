@@ -26,8 +26,8 @@ android {
         applicationId "com.bematechus.kdsrouter"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 2420
-        versionName '2.4.2.0'
+        versionCode 2500
+        versionName '2.5.0.0'
     }
     buildTypes {
         release {
@@ -74,8 +74,8 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2420
-            versionName '2.4.2.0'
+            versionCode 2500
+            versionName '2.5.0.0'
             dimension "default"
 			buildConfigField "String", "WEBSOCKET_URL", "\"ws://dev.kdsgo.com:9205\""
         }
@@ -83,8 +83,8 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2420
-            versionName '2.4.2.0'
+            versionCode 2500
+            versionName '2.5.0.0'
             dimension "default"
 			buildConfigField "String", "WEBSOCKET_URL", "\"ws://stage.kdsgo.com:9205\""
         }
@@ -92,8 +92,8 @@ android {
             minSdkVersion 19
             applicationId 'com.bematechus.kdsrouter'
             targetSdkVersion 22
-            versionCode 2420
-            versionName '2.4.2.0'
+            versionCode 2500
+            versionName '2.5.0.0'
             dimension "default"
 			buildConfigField "String", "WEBSOCKET_URL", "\"ws://kdsgo.com:9205\""
         }
