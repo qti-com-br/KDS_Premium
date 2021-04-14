@@ -23,8 +23,8 @@
     <color name="footer_bg">#0C1222</color>
     <color name="footer_fg">#ffffffff</color>
 
-	<color name="tab_display_fg">#ffffff</color>
-	<color name="tab_display_bg">#232A40</color>
+	<color name="tab_display_fg">#7F000000</color>
+	<color name="tab_display_bg">#7FFFFFFF</color>
 
 	<color name="settings_light_bg">#ffcdcdcd</color>
 
