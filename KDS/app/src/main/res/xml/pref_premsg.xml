@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="message_font"
-        android:defaultValue="default_font,@color/premsg_bg,@color/premsg_fg,normal_size"
+        android:defaultValue="default_font,@color/premsg_bg,@color/premsg_fg,msg_size"
         android:title="@string/pref_premsg_font"
         app:supportsColor="true"/>
 <!--   kpp1-402 -->

@@ -1045,7 +1045,7 @@ public class LineItemViewer {
 
     class LineItemGrid
     {
-        private int ITEM_AVERAGE_HEIGHT = 30;
+        private int ITEM_AVERAGE_HEIGHT = 50;
         private ArrayList<LineItemGridRow> m_arRows = new ArrayList<>();
         private ArrayList<Integer> m_arColSizePercent = new ArrayList<>();
         private int m_nCols = 0;
@@ -1353,7 +1353,7 @@ public class LineItemViewer {
 
 
 
-        final int CAPTION_HEIGHT = 30;
+        int CAPTION_HEIGHT = 30;
 
         private Rect getCaptionRect()
         {
@@ -1677,6 +1677,8 @@ public class LineItemViewer {
             //ITEM_AVERAGE_HEIGHT = settings.getInt(KDSSettings.ID.Panels_Row_Height);
             ITEM_AVERAGE_HEIGHT = settings.getInt(KDSSettings.ID.LineItems_line_height);
             ITEM_AVERAGE_HEIGHT = getBestRowHeight();
+			TITLE_HEIGHT = ITEM_AVERAGE_HEIGHT;
+			CAPTION_HEIGHT = TITLE_HEIGHT;
             if (ITEM_AVERAGE_HEIGHT<MIN_ROW_HEIGHT)
                 ITEM_AVERAGE_HEIGHT = MIN_ROW_HEIGHT;
 

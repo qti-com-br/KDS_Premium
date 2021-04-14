@@ -21,7 +21,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="lineitems_default_font"
-        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,normal_size"
+        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,item_size"
         android:title="@string/screen_default_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>
@@ -40,14 +40,14 @@
         android:maxLines="1" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="lineitems_caption_font"
-        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,normal_size"
+        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,hfooter_size"
         android:title="@string/lineitems_caption_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSListPreference
         android:key="lineitems_line_height"
         android:title="@string/lineitems_line_height"
-        android:defaultValue="30"
+        android:defaultValue="50"
         android:dependency="lineitems_enabled"
         android:entries="@array/pref_kds_lineitems_line_height_titles"
         android:entryValues="@array/pref_kds_lineitems_line_height_values"

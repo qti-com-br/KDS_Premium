@@ -219,7 +219,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     KDSTimer m_timer = new KDSTimer();
     FrameLayout m_flSummary = null;
     FrameLayout m_flSummaryA = null;
-    FrameLayout m_flSummaryB = null;
 
     boolean m_bPaused = false;
 
@@ -354,11 +353,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         ImageView imgState = (ImageView) this.findViewById(R.id.imgState);
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
+			imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
-
+			imgState.setColorFilter(null);
             if (isKDSValid() && getKDS().isNetworkRunning())
                 onNetworkLost();
 
@@ -509,14 +509,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_layoutKdsViews = (LinearLayout) this.findViewById(R.id.layoutKdsViews);
 
-        //debug kp-70
+
         m_flSummary = (FrameLayout) this.findViewById(R.id.fragmentlayout_sum);
         m_flSummary.setVisibility(View.GONE);
-        //debug kp-70
+
         m_flSummaryA = (FrameLayout) this.findViewById(R.id.fragmentlayout_sumA);
         m_flSummaryA.setVisibility(View.GONE);
-        m_flSummaryB = (FrameLayout) this.findViewById(R.id.fragmentlayout_sumB);
-        m_flSummaryB.setVisibility(View.GONE);
 
         View vTabLinear =  this.findViewById(R.id.linearTab);
         m_tabDisplay.setLinearLayout(vTabLinear);
@@ -867,11 +865,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //2.0.25
             //m_uiUserA.setAvgPrepTimeView(m_txtAvgTimeA);
             m_uiUserA.setAvgPrepTimeView(null);
-            //debug kp-70
+
             MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummaryA));
             m_uiUserA.setSumFragment(fm);
-            //kp-70
-            m_flSummary.setVisibility(View.GONE);
 
             m_uiUserA.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_A));
             m_uiUserA.enableFocusIndicator(true);
@@ -902,12 +898,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //2.0.25
             //m_uiUserA.setAvgPrepTimeView(m_txtAvgTimeA);
             m_uiUserA.setAvgPrepTimeView(getTextView(R.id.txtAvgTime));
-            //debug kp-70
+
             MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummary));
             m_uiUserA.setSumFragment(fm);
-            //kp-70
-            m_flSummaryA.setVisibility(View.GONE);
-
             m_uiUserA.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_A));
             m_uiUserA.enableFocusIndicator(false);
 
@@ -936,7 +929,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_uiUserB.setLinear(getLinear(KDSUser.USER.USER_B));
             m_uiUserB.setTopSum(getTopSum(KDSUser.USER.USER_B));
             //m_uiUserB.setLayout(getLayout(KDSUser.USER.USER_B));
-            m_uiUserB.setSumFrame(m_flSummaryB); //kp-70
+            m_uiUserB.setSumFrame(m_flSummary);
             MainActivityFragment f = (MainActivityFragment) (getFragmentManager().findFragmentById(R.id.fragmentMain));
             //m_uiUserB.setTouchFragment(m_flTouchPad);
             m_uiUserB.setTouchHorizontalList(f.getTouchPad(KDSUser.USER.USER_B));
@@ -957,8 +950,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_uiUserB.setAvgPrepTimeView(null);//getTextView(R.id.txtAvgTimeB));
             //MainActivityTouchPadFragment f =(MainActivityTouchPadFragment) (getFragmentManager().findFragmentById(R.id.fragmentTouchpad));
             // f.setUserID(KDSUser.USER.USER_B);
-            //debug kp-70
-            MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummaryB));
+
+            MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummary));
             m_uiUserB.setSumFragment(fm);
 
             m_uiUserB.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_B));
@@ -993,11 +986,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //2.0.25
             //m_uiUserB.setAvgPrepTimeView(m_txtAvgTimeB);
             m_uiUserB.setAvgPrepTimeView(null);//getTextView(R.id.txtAvgTimeB));
-            //debug kp-70
+
             MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummaryA));
             m_uiUserB.setSumFragment(fm);
-            m_flSummaryB.setVisibility(View.GONE);
-
             m_uiUserB.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_B));
 
         }
@@ -3082,7 +3073,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         if (orderGuid.isEmpty()) return;
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
-        
+
         //kpp1-439, just auto sort enabled, we set focus to unbumped order. Otherwise, keep current focus order.
         //           This is for preventing page changed issue.
         KDSSettings.OrdersSort ordersSort = KDSSettings.OrdersSort.values()[  getSettings().getInt(KDSSettings.ID.Order_Sort)];
@@ -3778,10 +3769,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private MainActivityFragmentSum getSummaryFragment() {
 
-        //debug kp-70
         MainActivityFragmentSum f = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummary));
         return f;
-        //return null;
     }
 
     private KDSLayout getLayout(KDSUser.USER userID) {
@@ -4675,7 +4664,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_bPaused = true;
         super.onPause();
         //showInfo("Paused");
-        
+
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
 
         //if(isApplicationSentToBackground(getContext())) {
@@ -5607,7 +5596,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public boolean isMacMatch2() {
         if (KDSConst.ENABLE_FEATURE_ACTIVATION)
             return true;
-        
+
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         String strMac = "";
 
