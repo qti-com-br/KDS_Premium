@@ -48,6 +48,8 @@
         android:paddingRight="3dp"
         android:gravity="center"
         android:textAlignment="center"
+		android:singleLine="true"
+		android:ellipsize="end"
         android:layout_below="@+id/imgTouch" />
 
 

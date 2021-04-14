@@ -24,7 +24,7 @@
     <string name="touchpad_down">Down</string>
     <string name="touchpad_bump">Bump</string>
     <string name="touchpad_unbump">Unbump</string>
-    <string name="touchpad_unbump_last">Unbump Last</string>
+    <string name="touchpad_unbump_last">Unb. Last</string>
     <string name="touchpad_sum">Sum</string>
     <string name="touchpad_transfer">Transfer</string>
     <string name="touchpad_sort">Sort</string>
