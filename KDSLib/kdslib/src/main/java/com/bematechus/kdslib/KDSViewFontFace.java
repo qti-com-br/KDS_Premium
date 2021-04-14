@@ -24,6 +24,17 @@ public class KDSViewFontFace {
 	static public final int DEFAULT_FONT_SIZE_ITEM = 28;
     static public final int DEFAULT_FONT_SIZE_CONDIMENT = 28;
 
+    static public String FLAG_DEFAULT_FONT = "default_font";
+    static public String FLAG_SIZE_NORMAL = "normal_size";
+    static public String FLAG_SIZE_MIDDLE = "middle_size";
+    static public String FLAG_SIZE_LARGE = "large_size";
+    static public String FLAG_SIZE_SMALL = "small_size";
+
+    static public String FLAG_SIZE_HF = "hfooter_size";//header/footer size, default=32
+    static public String FLAG_SIZE_PREMESSAGE = "msg_size";//header/footer size, default=32
+    static public String FLAG_SIZE_ITEM = "item_size";//header/footer size, default=32
+    static public String FLAG_SIZE_CONDIMENT = "condiment_size";//header/footer size, default=32
+
     static public final int DEFAULT_BG = Color.WHITE;
     static public final int DEFAULT_FG = Color.BLACK;
     ////////////////////////////////////////////////////////////////////
@@ -65,16 +76,20 @@ public class KDSViewFontFace {
             s += FLAG_SIZE_LARGE;
         else if (m_nFontSize == FONT_SIZE_SMALL)
             s += FLAG_SIZE_SMALL;
+        else if (m_nFontSize == DEFAULT_FONT_SIZE_HEADER_FOOTER)
+            s += FLAG_SIZE_PREMESSAGE;
+        else if (m_nFontSize == DEFAULT_FONT_SIZE_ITEM)
+            s += FLAG_SIZE_ITEM;
+        else if (m_nFontSize == DEFAULT_FONT_SIZE_PREMESSAGE)
+            s += FLAG_SIZE_PREMESSAGE;
+        else if (m_nFontSize == DEFAULT_FONT_SIZE_CONDIMENT)
+            s += FLAG_SIZE_CONDIMENT;
         else
             s +=  Integer.toString(m_nFontSize);
         return s;
     }
 
-    static public String FLAG_DEFAULT_FONT = "default_font";
-    static public String FLAG_SIZE_NORMAL = "normal_size";
-    static public String FLAG_SIZE_MIDDLE = "middle_size";
-    static public String FLAG_SIZE_LARGE = "large_size";
-    static public String FLAG_SIZE_SMALL = "small_size";
+
 
     /**
      *
@@ -115,6 +130,14 @@ public class KDSViewFontFace {
             ff.m_nFontSize = FONT_SIZE_LARGE;
         else if (s.indexOf(FLAG_SIZE_SMALL) >=0)
             ff.m_nFontSize = FONT_SIZE_SMALL;
+        else if (s.indexOf(FLAG_SIZE_HF) >= 0)
+            ff.m_nFontSize = DEFAULT_FONT_SIZE_HEADER_FOOTER;
+        else if (s.indexOf(FLAG_SIZE_PREMESSAGE) >= 0)
+            ff.m_nFontSize = DEFAULT_FONT_SIZE_PREMESSAGE;
+        else if (s.indexOf(FLAG_SIZE_ITEM) >= 0)
+            ff.m_nFontSize = DEFAULT_FONT_SIZE_ITEM;
+        else if (s.indexOf(FLAG_SIZE_CONDIMENT) >= 0)
+            ff.m_nFontSize = DEFAULT_FONT_SIZE_CONDIMENT;
         else
             ff.m_nFontSize = KDSUtil.convertStringToInt(s, FONT_SIZE_NORMAL);
 
