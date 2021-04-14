@@ -9,6 +9,8 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2016/3/1 0001.
@@ -120,5 +122,41 @@ public class KDSDataOrdersDynamic extends KDSDataOrders {
         order.setTag(order.getItems().getCount());
         order.getItems().clear();
 
+    }
+
+    /**
+     * clear the order that its all items have been bumped in prep station.
+     * This is for summary station.
+     *
+     * @return
+     *  All removed order guid. We will use it to remove data in database.
+     */
+    public Vector<Object > removeForSumStation(long timeout)
+    {
+
+        //synchronized (m_locker) {
+        Vector<Object> arWillRemoved = new Vector<>();
+
+        //Vector ar = this.getComponents();
+        if (this.getComponents().size() <= 0) return arWillRemoved;
+        int ncount = this.getComponents().size();
+        for (int i = 0; i < ncount; i++) {
+
+            KDSDataOrder c = (KDSDataOrder) this.get(i);
+            Date dt = c.getStartTime();
+            long l = System.currentTimeMillis() - dt.getTime();
+            if (l >= timeout) {
+                if (c.isAllItemsFinishedForSumStation()) {
+                    arWillRemoved.add(c);
+
+                }
+            }
+        }
+        int n = arWillRemoved.size();
+        if (n>0)
+            this.getComponents().removeAll(arWillRemoved);
+
+        return arWillRemoved;
+        //}
     }
 }

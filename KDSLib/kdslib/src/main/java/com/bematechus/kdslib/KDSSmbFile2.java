@@ -102,6 +102,7 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
       //  m_bEnableSmbV2 = bEnabled;
 
         Properties prop = new Properties();
+        /*
         if (bEnabled) {
             prop.put("jcifs.smb.client.enableSMB2", "true");
             prop.put("jcifs.smb.client.disableSMB1", "true");
@@ -111,6 +112,11 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
             prop.put("jcifs.smb.client.enableSMB2", "false");
             prop.put("jcifs.smb.client.disableSMB1", "false");
         }
+        */
+         
+        prop.setProperty( "jcifs.smb.client.responseTimeout", "6000");//default 30000
+        prop.setProperty( "jcifs.smb.client.soTimeout", "7000" );// //default 35000
+
 //        prop.setProperty("jcifs.smb.client.useExtendedSecurity", "false");
 //        prop.setProperty("jcifs.smb.client.forceExtendedSecurity", "false");
 //        prop.setProperty("jcifs.smb.useRawNTLM", "true");
@@ -120,6 +126,9 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
 //        prop.setProperty("jcifs.smb.client.useNtStatus", "false");
 //        prop.setProperty("jcifs.smb.client.useNTSmbs", "false");
         //prop.setProperty("jcifs.smb.lmCompatibility", "0");
+        //        jcifs.Config.setProperty( "jcifs.smb.client.responseTimeout", "3000" );//default 30000
+//        //this must set
+//        jcifs.Config.setProperty( "jcifs.smb.client.soTimeout", "3500" );// //default 35000
         try {
             m_config = new PropertyConfiguration(prop);
         }

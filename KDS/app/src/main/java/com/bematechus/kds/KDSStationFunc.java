@@ -20,6 +20,7 @@ import com.bematechus.kdslib.KDSStationsConnection;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.ScheduleProcessOrder;
+import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
@@ -735,6 +736,10 @@ public class KDSStationFunc {
 
             return;
         }
+        //kp-64 When adding items to an order- no catdelay
+        kdsuser.getCurrentDB().prep_change_modify_order_guid_to_existed_guid(order.getGUID(), orderExisted);
+
+
         int oldOrderStatus = orderExisted.getStatus();
 
         boolean bmodified = orderExisted.modify(order);
@@ -824,12 +829,16 @@ public class KDSStationFunc {
                 kdsuser.getOrders().sortOrders();
         }
         kdsuser.refreshView();
-        if (kdsuser.getKDS().isExpeditorStation() ||
-                kdsuser.getKDS().isTrackerStation() ||
-                kdsuser.getKDS().isQueueExpo())
+//        if (kdsuser.getKDS().isExpeditorStation() ||
+//                kdsuser.getKDS().isTrackerStation() ||
+//                kdsuser.getKDS().isQueueExpo() ||
+//                kdsuser.getKDS().isRunnerStation())
+        if (isExpoTypeStation(kdsuser.getKDS().getStationFunction()))
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Bump_Item, order, item, "");
         else
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Bump_Item, order, item, "");
+
+
         return true;
     }
 
@@ -853,8 +862,10 @@ public class KDSStationFunc {
         }
         kdsuser.refreshView();
 
-        if (kdsuser.getKDS().isExpeditorStation() ||
-                kdsuser.getKDS().isQueueExpo())
+//        if (kdsuser.getKDS().isExpeditorStation() ||
+//                kdsuser.getKDS().isQueueExpo() ||
+//                kdsuser.getKDS().isRunnerStation())
+        if (isExpoTypeStation(kdsuser.getKDS().getStationFunction()))
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Unbump_Item, order, item, "");
         else
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Unbump_Item, order, item, "");
@@ -886,8 +897,10 @@ public class KDSStationFunc {
             kdsuser.refreshView();
         //td.debug_print_Duration("func-1");
         //TimeDog td = new TimeDog();
-        if (kdsuser.getKDS().isExpeditorStation()||
-                kdsuser.getKDS().isQueueExpo()) {
+//        if (kdsuser.getKDS().isExpeditorStation()||
+//                kdsuser.getKDS().isQueueExpo())
+        if (isExpoTypeStation(kdsuser.getKDS().getStationFunction()))
+        {
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Bump_Order, order, null, "");
             //kpp1-202
             sync_with_stations_use_me_as_expo(kdsuser.getKDS(),KDSXMLParserCommand.KDSCommand.Expo_Bump_Order, order, null, "" );
@@ -963,8 +976,9 @@ public class KDSStationFunc {
         kdsuser.refreshView();
 
 
-        if (kdsuser.getKDS().isExpeditorStation() ||
-                kdsuser.getKDS().isQueueExpo())
+//        if (kdsuser.getKDS().isExpeditorStation() ||
+//                kdsuser.getKDS().isQueueExpo())
+        if (isExpoTypeStation(kdsuser.getKDS().getStationFunction()))
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Bump_Order, order, null, "");
         else
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Bump_Order, order, null, "");
@@ -983,8 +997,9 @@ public class KDSStationFunc {
         //update the statistic database
         kdsuser.getStatisticDB().orderDelete(orderGuid);
         //kdsuser.refreshView();
-        if (kdsuser.getKDS().isExpeditorStation() ||
-                kdsuser.getKDS().isQueueExpo())
+//        if (kdsuser.getKDS().isExpeditorStation() ||
+//                kdsuser.getKDS().isQueueExpo())
+        if (isExpoTypeStation(kdsuser.getKDS().getStationFunction()))
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Expo_Unbump_Order, order, null, "");
         else
             sync_with_stations(kdsuser.getKDS(), KDSXMLParserCommand.KDSCommand.Station_Unbump_Order, order, null, "");
@@ -1165,6 +1180,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 return KDSStationExpeditor.exp_sync_item_bumped(kds, command, arChangedItems);
 
             case Mirror:
@@ -1193,6 +1210,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_schedule_item_ready_qty_changed(kds, command);
                 break;
             case Mirror:
@@ -1227,6 +1246,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 return KDSStationExpeditor.exp_sync_item_unbumped(kds, command, arChangedItems);
 
             case Mirror:
@@ -1255,6 +1276,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_item_modified(kds, command);
                 break;
             case Mirror:
@@ -1290,6 +1313,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 String s = KDSStationExpeditor.exp_sync_order_bumped(kds, command, arChangedItems);
                 return s;
 
@@ -1316,11 +1341,14 @@ public class KDSStationFunc {
 
             case Prep:
                 KDSStationNormal.normal_sync_order_bumped(kds, command);//kpp1-202.
+
                 break;
             case Expeditor:
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 //KDSStationExpeditor.exp_sync_station_cook_started(kds, command); //why
                 KDSStationExpeditor.exp_sync_expo_order_bumped(kds, command);
                 break;
@@ -1351,6 +1379,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_station_cook_started(kds, command);
                 break;
             case Mirror:
@@ -1377,6 +1407,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationNormal.orderTrackerBump(kds.getUsers().getUserA(),strOrderName);
                 break;
             case Mirror:
@@ -1405,6 +1437,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_expo_order_unbumped(kds, command);
                 break;
             case Mirror:
@@ -1432,6 +1466,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_expo_item_bumped(kds, command);
                 break;
             case Mirror:
@@ -1459,6 +1495,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_expo_item_unbumped(kds, command);
                 break;
             case Mirror:
@@ -1486,6 +1524,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.queue_sync_expo_order_ready_unready(kds, command);
                 break;
             case Mirror:
@@ -1513,6 +1553,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.queue_sync_expo_order_ready_unready(kds, command);
                 break;
             case Mirror:
@@ -1546,6 +1588,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_order_canceled(kds, command);
                 break;
             case Mirror:
@@ -1572,6 +1616,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_order_modified(kds, command);
                 break;
             case Mirror:
@@ -1607,6 +1653,8 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSDataOrder order = KDSStationExpeditor.exp_sync_order_new(kds, command, ordersExisted, ordersChanged);
                 kds.refreshView();
                 return order;
@@ -1651,8 +1699,10 @@ public class KDSStationFunc {
             case Queue:
             case TableTracker:
             case Queue_Expo:
+            case Runner:
+            case Summary:
                 KDSStationExpeditor.exp_sync_order_unbumped(kds, command);
-                //break;
+                break;
             case Mirror:
                 break;
             case Backup:
@@ -2308,6 +2358,17 @@ public class KDSStationFunc {
                 kds.getStationsConnections().writeToTT(kds.getStationID(), strXml);
             }
         }
+
+        //kpp1-449, KP-13 Bumped Item on expo doesn't show on prep station
+        //KP-41, Expo and Runner - orders going to incorrect station
+        if (isCommandNeedBroadcastToExpoChildren(syncMode)) {
+            if (kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID()).size() > 0) {
+                if (strXml.isEmpty())
+                    strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, xmlData);
+                kds.getStationsConnections().writeToPrimaryOfExpo(kds.getStationID(), strXml);
+            }
+        }
+
         //if the backup station find its primary is offline, send data to primary's mirror.
         if (kds.getStationsConnections().isBackupOfOthers())
         {
@@ -2347,7 +2408,11 @@ public class KDSStationFunc {
      */
     static public void sync_with_stations_use_me_as_expo(KDS kds,KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item, String xmlData)
     {
-        if (!kds.isExpeditorStation()) return;
+//        if (!kds.isExpeditorStation() &&
+//                (!kds.isRunnerStation()) &&
+//                (!kds.isSummaryStation())) return;
+        if (!isExpoTypeStation(kds.getStationFunction()))
+            return;
         String strXml = "";
 
         ArrayList<KDSStationIP> arPrepStations = kds.getStationsConnections().getRelations().getPrepStationsWhoUseMeAsExpo(kds.getStationID());
@@ -2357,6 +2422,55 @@ public class KDSStationFunc {
         }
 
 
+
+    }
+
+    /**
+     * kpp1-456
+     * @param func
+     * @return
+     */
+    static public boolean isExpoTypeStation(SettingsBase.StationFunc func)
+    {
+        if (func == SettingsBase.StationFunc.Expeditor ||
+                func == SettingsBase.StationFunc.Queue_Expo ||
+                func == SettingsBase.StationFunc.Runner ||
+                func == SettingsBase.StationFunc.Summary
+        )
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * KP-41 Expo and Runner - orders going to incorrect station
+     * Solution:
+     *  Expo will just send two command to prep station.
+     *
+     * @param command
+     * @return
+     */
+    static public boolean isCommandNeedBroadcastToExpoChildren(KDSXMLParserCommand.KDSCommand command)
+    {
+        if (command == KDSXMLParserCommand.KDSCommand.Expo_Bump_Item ||
+            command == KDSXMLParserCommand.KDSCommand.Expo_Unbump_Item)
+            return true;
+        return false;
+    }
+
+    /**
+     * summary station is expo type
+     * @param kds
+     * @param syncMode
+     * @param order
+     * @param item
+     */
+    static public void sync_with_expo(KDS kds, KDSXMLParserCommand.KDSCommand syncMode, KDSDataOrder order, KDSDataItem item )
+    {
+        if (kds.getStationsConnections().getRelations().getExpStations().size() <=0)
+            return;//for speed
+        String strXml = KDSXMLCommandFactory.sync_with_others(kds.getStationID(), kds.getLocalIpAddress(), "", syncMode, order, item, "");
+        kds.getStationsConnections().writeToExps(kds.getStationID(), strXml);
 
     }
 }

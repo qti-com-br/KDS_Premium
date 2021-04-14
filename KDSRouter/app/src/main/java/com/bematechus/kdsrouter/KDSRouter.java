@@ -1186,6 +1186,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     }
 
     /**
+     * rev.:
+     *  kpp1-363, router send a id to premium. That will tell station router is existed.
      * tcp client connect to server
      * @param sock
      */
@@ -1193,6 +1195,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     {
 
         //if (m_eventReceiver != null) {
+        //kpp1-363
+        if (sock instanceof KDSSocketTCPSideClient)
+        {
+            KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
+            c.writeXmlTextCommand(buildAppSockIDCommandXml());
+        }
+        //
         String ip = getSocketIP(sock);
         KDSStationConnection conn = getSocketConnection(sock);
         //KDSSocketTCPSideClient c = (KDSSocketTCPSideClient)sock;
@@ -2409,7 +2418,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         for (int i=0; i< ncount; i++) {
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() != KDSRouterSettings.StationFunc.Expeditor &&
-                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo )
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Summary
+            )
                 continue;
             String stationID = stationRelation.getID();
             if (!isActivedStation(stationID)) {
@@ -2556,7 +2568,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         {
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() != KDSRouterSettings.StationFunc.Expeditor &&
-                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo)
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Queue_Expo &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Runner &&
+                    stationRelation.getFunction() != KDSRouterSettings.StationFunc.Summary
+            )
                 continue;
             String stationID = stationRelation.getID();
 
@@ -2836,7 +2851,6 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
 
 
-
                 //build cards
                 String xmlBuildCards = xml.getSubGrouValue(KDSXMLParserOrder.DBXML_ELEMENT_BUILD_CARD, "");
                 xmlBuildCards = xmlBuildCards.trim();
@@ -3066,7 +3080,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * 2015-12-26
      * load the preparation time from database.
      * set the item delay tag
-     *
+     * Rev.
+     *    20210220, KP-27, add delay/preparation for both category and item.
      * @param order
      * @param xmlData
      */
@@ -3082,7 +3097,14 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             String description = item.getDescription();
 
             float flt = this.getRouterDB().itemGetPreparationTime(description);
-            item.setPreparationTime(flt);
+            if (flt >0) {
+                item.setPreparationTime(flt);
+                continue;
+            }
+            //kp-27
+            flt = this.getRouterDB().categoryGetPreparationTime(description);
+            if (flt >0)
+                item.setPreparationTime(flt);
 
 
         }
@@ -3106,7 +3128,27 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             // It is the wrong concept, please change it so the <PreparationTime> doesn’t limit to same category but work for all categories.
 
             //item.setItemDelay(categoryDelay); //just for smart order, the normal smart mode is removed, just keep advanced.
-            item.setCategoryDelay(categoryDelay);//for preparation time mode.
+            if (categoryDelay >0)
+                item.setCategoryDelay(categoryDelay);//for preparation time mode.
+            //
+
+        }
+
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getItemType() == KDSDataItem.ITEM_TYPE.Exp)
+                continue;
+            //if (item.getItemDelay() > 0)//KPP1-410, bug here.
+            if (item.getItemDelay() > 0)//KPP1-410, xml data in high priority.
+                continue;
+
+            float delay = this.getRouterDB().itemGetDelay(item.getDescription());
+
+            if (delay >0)
+                item.setItemDelay(delay);//for preparation time mode.
+            //
+
         }
     }
 
@@ -3542,7 +3584,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
             if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor ||
                     stationRelation.getFunction() == KDSRouterSettings.StationFunc.Queue_Expo ||
-                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker )
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Runner ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Summary
+            )
             {
                 KDSToStation toStation = new KDSToStation();
                 toStation.setPrimaryStation(stationRelation.getID());
@@ -3946,5 +3991,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
         showMessage(msg);
 
+    }
+
+    private String buildAppSockIDCommandXml()
+    {
+        return KDSConst.APP_ID_START + KDSConst.ROUTER_SOCKET_ID + KDSConst.APP_ID_END;
     }
 }

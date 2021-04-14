@@ -54,6 +54,7 @@ import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.PreferenceFragmentStations;
+import com.bematechus.kdslib.SettingsBase;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -144,8 +145,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
         editor.commit();
     }
 
+	private static final int MIN_HEADER_WIDTH = 380;
 
-    static final private int HEADERS_WIDTH = 200;
     @Override
     public void onResume()
     {
@@ -168,6 +169,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
             LinearLayout layoutHeaders = (LinearLayout) this.findViewById(id);//com.android.internal. R.id.headers);// com.android.internal.R.id.headers);
             layoutHeaders.setBackgroundColor(this.getResources().getColor(R.color.settings_headers_bg));
+
+			int HEADERS_WIDTH = (int) Math.max(MIN_HEADER_WIDTH, dm.widthPixels * 0.2);
 
             layoutHeaders.setLayoutParams(new LinearLayout.LayoutParams(HEADERS_WIDTH, LinearLayout.LayoutParams.MATCH_PARENT));
             id = mResources.getIdentifier("prefs_frame", "id", "android");
@@ -434,19 +437,19 @@ public class KDSUIConfiguration extends PreferenceActivity {
         //kpp1-386
         public void onTime()
         {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
-            String s = prefs.getString("clear_db_schedule", "-1");
-            int nScheduleHour = KDSUtil.convertStringToInt(s, -1);
-            if (nScheduleHour <0) {
-                enableClearDbPreference(true);
-                return; //any time
-            }
-            Calendar c = Calendar.getInstance();
-            int nHour = c.get(Calendar.HOUR_OF_DAY);
-            if (nHour - nScheduleHour == 0)
-                enableClearDbPreference(true);
-            else
-                enableClearDbPreference(false);
+//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+//            String s = prefs.getString("clear_db_schedule", "-1");
+//            int nScheduleHour = KDSUtil.convertStringToInt(s, -1);
+//            if (nScheduleHour <0) {
+//                enableClearDbPreference(true);
+//                return; //any time
+//            }
+//            Calendar c = Calendar.getInstance();
+//            int nHour = c.get(Calendar.HOUR_OF_DAY);
+//            if (nHour - nScheduleHour == 0)
+//                enableClearDbPreference(true);
+//            else
+//                enableClearDbPreference(false);
 
         }
 
@@ -1740,7 +1743,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
                 {
                     if (r.getFunction() == KDSSettings.StationFunc.Expeditor ||
                             r.getFunction() == KDSSettings.StationFunc.Queue ||
-                            r.getFunction() == KDSSettings.StationFunc.Queue_Expo)
+                            r.getFunction() == KDSSettings.StationFunc.Queue_Expo ||
+                            r.getFunction() == KDSSettings.StationFunc.Runner)
                         return true;
                 }
             }
@@ -2432,5 +2436,48 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
         }
     }
+
+    /**
+     * This fragment shows data and sync preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class RunnerPreferenceFragment extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_runner);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+
+
+
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class PreferenceFragmentSumStation extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_sum_station);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+            bindPreferenceSummaryToValue(findPreference("sumstn_sum_type"));
+
+            bindPreferenceSummaryToValue(findPreference("sumstn_panels"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_panel_items"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_order_by"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_caption_prefix"));
+
+
+
+
+        }
+    }
+
+
 
 }

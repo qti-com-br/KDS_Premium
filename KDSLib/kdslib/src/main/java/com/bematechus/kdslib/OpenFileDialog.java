@@ -70,6 +70,7 @@ public class OpenFileDialog extends KDSUIDialogBase implements AdapterView.OnIte
      * @param listener
      */
     public OpenFileDialog(final Context context, String strExtension, KDSDialogBaseListener listener, Mode nMode) {
+        this.setUseCtrlEnterKey(true);
         this.int_dialog(context, listener, R.layout.kdsui_dlg_explorer, "");
         this.setTitle(context.getString(R.string.open_file));//"Open file");
         //m_bJustFolder = bFolder;

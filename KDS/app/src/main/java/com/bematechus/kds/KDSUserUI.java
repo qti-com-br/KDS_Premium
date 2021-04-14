@@ -3,6 +3,7 @@ package com.bematechus.kds;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
@@ -457,6 +458,7 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
         if (txtView != null) {
             if (!strCount.isEmpty()) {
                 Drawable imgPrev = KDSApplication.getContext().getResources().getDrawable(R.drawable.prevcount);
+				imgPrev.setColorFilter(txtView.getContext().getResources().getColor(R.color.caption_fg), PorterDuff.Mode.SRC_ATOP);
                 imgPrev.setBounds(0, 0, imgPrev.getMinimumWidth()/2, imgPrev.getMinimumHeight()/2);//必须设置图片大小，否则不显示
                 txtView.setCompoundDrawables(null,null, imgPrev, null);
             }
@@ -476,6 +478,7 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
             if (!strCount.isEmpty()) {
 
                 Drawable imgNext = KDSApplication.getContext().getResources().getDrawable(R.drawable.nextcount);
+                imgNext.setColorFilter(txtView.getContext().getResources().getColor(R.color.caption_fg), PorterDuff.Mode.SRC_ATOP);
                 imgNext.setBounds(0, 0, imgNext.getMinimumWidth()/2, imgNext.getMinimumHeight()/2);//必须设置图片大小，否则不显示
                 txtView.setCompoundDrawables(imgNext, null, null, null);
             }

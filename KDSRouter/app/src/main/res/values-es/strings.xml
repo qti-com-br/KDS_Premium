@@ -43,7 +43,7 @@
 	<string name='printable'>Imprimible</string>
 	<string name='add_new'>Nuevo</string>
 	<string name='preptime'>Retraso/Prep(mins)</string>
-	<string name='delayprep'>Retraso/Prep(mins)</string>
+	<string name='delayprep'>Retraso(mins)</string>
 	<string name='error_isnot_unique_id'>El # ID ha sido utilizado por otra estación. Por favor realizar el cambio.</string>
 	<string name='error_id_out_range'>Ingrese el valor de ID entre 1 y 99.</string>
 	<string name='error_id_is_empty'>Por favor ingrese el ID</string>
@@ -58,7 +58,7 @@
 	<string name='error_relations_backup_dead_loop'>Estaciones # función apoyo \&#x27;dead loop\&#x27;.</string>
 	<string name='network_lost'>Red perdida</string>
 	<string name='network_restore'>Red restaurada </string>
-	<string name='input_internet_file'>Entrada de Archivo de Internet</string>
+<!--	<string name='input_internet_file'>Entrada de Archivo de Internet</string>-->
 	<string name='remove'>Eliminar</string>
 	<string name='local'>Local</string>
 	<string name='ethernet'>Red</string>
@@ -191,4 +191,5 @@
 	<string name="enable_3rd_party_order">Enable 3rd party order</string>
 	<string name="get_fcm_order">Get order # from FCM</string>
     <string name="modifers">Modificadores</string>
+    <string name="preparation_time">Preparation(mins)</string>
 </resources>

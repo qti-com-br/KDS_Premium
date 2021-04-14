@@ -43,6 +43,9 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
     TextView m_txtStation = null;
     TextView m_txtScreen = null;
     TextView m_txtDelay = null;
+
+    TextView m_txtPreparation = null;
+
     CheckBox m_chkPrintable = null;
 
     TextView m_txtItemsTitle = null;
@@ -98,6 +101,10 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
 
         m_txtDelay =(TextView) view.findViewById(R.id.txtDelay);
         m_txtDelay.addTextChangedListener(new MyTextWatcher() );
+
+        m_txtPreparation =(TextView) view.findViewById(R.id.txtPrep);
+        m_txtPreparation.addTextChangedListener(new MyTextWatcher() );
+
         m_chkPrintable = (CheckBox) view.findViewById(R.id.chkPrintable);
         m_chkPrintable.setOnClickListener(new View.OnClickListener() {
               @Override
@@ -357,6 +364,7 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
             ((TextView) convertView.findViewById(R.id.txtToStation)).setText(r.getToStation());
             ((TextView) convertView.findViewById(R.id.txtToScreen)).setText(r.getToScreen());
             ((TextView) convertView.findViewById(R.id.txtPrepTime)).setText(r.getPreparationTimeFormated());// KDSUtil.convertFloatToString(r.getPreparationTime()));
+            ((TextView) convertView.findViewById(R.id.txtDelayTime)).setText(r.getDelayTimeFormated());
             ((CheckBox) convertView.findViewById(R.id.chkPrintable)).setChecked(r.getPrintable());
             ((CheckBox) convertView.findViewById(R.id.chkPrintable)).setEnabled(false);
 
@@ -430,6 +438,12 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
             m_txtDelay.setText("");
         else
             m_txtDelay.setText( KDSUtil.convertFloatToString(category.getDelay()));
+
+        if (category.getPreparationTime() <=0)
+            m_txtPreparation.setText("");
+        else
+            m_txtPreparation.setText( KDSUtil.convertFloatToString(category.getPreparationTime()));
+
         m_chkPrintable.setChecked(category.getPrintable());
         m_bStartEdit = true;
 
@@ -444,7 +458,8 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
 
         m_txtScreen.setText("");
 
-            m_txtDelay.setText("");
+        m_txtDelay.setText("");
+        m_txtPreparation.setText("");
 
         m_chkPrintable.setChecked(true);
     }
@@ -457,6 +472,11 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
         String s = m_txtDelay.getText().toString();
         float flt = KDSUtil.convertStringToFloat(s, 0);
         m_categoryInfo.setDelay(flt);
+
+        s = m_txtPreparation.getText().toString();
+        flt = KDSUtil.convertStringToFloat(s, 0);
+        m_categoryInfo.setPreparationTime(flt);
+
         m_categoryInfo.setPrintable(m_chkPrintable.isChecked());
         return true;
     }
@@ -473,10 +493,17 @@ public class FoodItemFragment extends Fragment implements KDSUIDlgFoodItem.KDSDi
         s = m_txtScreen.getText().toString();
         if (!s.equals(m_categoryInfo.getToScreen()))
             bChanged = true;
+
         s = m_txtDelay.getText().toString();
         float flt = KDSUtil.convertStringToFloat(s, 0);
         if (flt != m_categoryInfo.getDelay())
             bChanged = true;
+
+        s = m_txtPreparation.getText().toString();
+        flt = KDSUtil.convertStringToFloat(s, 0);
+        if (flt != m_categoryInfo.getPreparationTime())
+            bChanged = true;
+
         if (m_chkPrintable.isChecked() != m_categoryInfo.getPrintable())
             bChanged = true;
 

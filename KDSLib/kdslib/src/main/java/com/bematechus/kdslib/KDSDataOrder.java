@@ -1,6 +1,8 @@
 
 package com.bematechus.kdslib;
 
+import android.util.Log;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
@@ -135,6 +137,7 @@ public class KDSDataOrder extends KDSData {
     protected String m_kdsGUID = KDSUtil.createNewGUID();; //for backoffice. KPP1-75. Use it to identify same order in all stations.
 
 
+    protected String mHeaderFooterMessage = ""; //KP-48 Allergen xml tags.
 
     public enum VALID_ORDER_XML_FIELD
     {
@@ -154,6 +157,7 @@ public class KDSDataOrder extends KDSData {
         Queue_Message,
         TrackerID,
         PagerID,
+        HeaderFooterMessage,
         //2.0.50
 //        SMS_Customer_ID,
 //        SMS_Customer_Phone,
@@ -512,6 +516,8 @@ public class KDSDataOrder extends KDSData {
         this.getCustomer().copyTo(obj.getCustomer());
 
         obj.m_kdsGUID = m_kdsGUID;
+        obj.mHeaderFooterMessage = mHeaderFooterMessage;
+
     }
     /***************************************************************************
      * 
@@ -544,7 +550,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6,r7)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -579,6 +585,7 @@ public class KDSDataOrder extends KDSData {
             + ",'" + m_smsOriginalOrderGoToStations +"'" //r4
             +",'" + m_customer.getName() + "'" //r5
             +",'" + getKDSGuid() + "'" //r6
+            + ",'" + getHeaderFooterMessage() + "'"
             +  ")";
         return sql;
          
@@ -720,10 +727,14 @@ public class KDSDataOrder extends KDSData {
         if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.Status))
             sql +=  "Status="+ KDSUtil.convertIntToString(getStatus()) +",";
 
-        if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.Waiter_Name))
-            sql +=  "DBTimeStamp=" + KDSUtil.convertDateToString(getTimeStamp());
+        //if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.Waiter_Name))
+            sql +=  "DBTimeStamp='" + KDSUtil.convertDateToString(getTimeStamp()) + "',";
+
+        if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.HeaderFooterMessage))
+            sql +=  "r7='" + getHeaderFooterMessage() + "', ";
         //add the station number to it, just for last ",".
         sql +=  " Station='" + fixSqliteSingleQuotationIssue(  getPCKDSNumber()) + "' ";
+
         sql +=  " where name='" + getOrderName() + "'";
         return sql;
 
@@ -1373,6 +1384,11 @@ public class KDSDataOrder extends KDSData {
             this.setToTable(orderReceived.getToTable());
             bResult =true;
         }
+        if (orderReceived.getXmlFieldValid((VALID_ORDER_XML_FIELD.HeaderFooterMessage)))
+        {
+            this.setHeaderFooterMessage(orderReceived.getHeaderFooterMessage());
+            bResult = true;
+        }
         return bResult;
     }
 
@@ -1438,6 +1454,9 @@ public class KDSDataOrder extends KDSData {
             //
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ID,this.getOrderName(), false);
             pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_GUID,this.getGUID(), false);
+
+            pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_HEADERFOOTERMESSAGE,this.getHeaderFooterMessage(), false);
+
             String s;
             
             s =this.getFromPOSNumber();
@@ -2979,7 +2998,7 @@ get the total qty of all found items
         c.setStartTime(new Date());
         c.setStatus(0);
         c.setToTable("Tbl #4");
-        c.setTrackerID("2");
+        //c.setTrackerID("2");
         c.setPagerID("12");
         c.setIconIdx(1);
 
@@ -3071,4 +3090,139 @@ get the total qty of all found items
         return true;
     }
 
+
+    /**
+     * kp1-25
+     * @param category
+     * @return
+     */
+    public boolean smartCategoryItemsLocalFinished(String category)
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!item.getCategory().equals(category)) continue;
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
+    }
+
+    public boolean smartCategoryItemsLocalFinished(ArrayList<String> categories)
+    {
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!KDSUtil.isExistedInArray(categories, item.getCategory()))
+                continue;
+            //if (!item.getCategory().equals(category)) continue;
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @param category
+     * @return
+     */
+    public boolean smartCategoryItemsRemoteFinished(String category)
+    {
+
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (!item.getCategory().equals(category)) continue;
+            if (item.getBumpedStationsString().isEmpty() )
+               return false;
+        }
+        return true;
+    }
+
+    public boolean smartCategoryItemsRemoteFinished(ArrayList<String> categories)
+    {
+
+        int ncount = this.getItems().getCount();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            //if (!item.getCategory().equals(category)) continue;
+            if (!KDSUtil.isExistedInArray(categories, item.getCategory()))
+                continue;;
+            if (item.getBumpedStationsString().isEmpty() )
+                return false;
+        }
+        return true;
+    }
+
+    public ArrayList<String> getAllCategories()
+    {
+        ArrayList<String> ar = new ArrayList<>();
+
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            if (KDSUtil.isExistedInArray(ar, m_items.getItem(i).getCategory() ) )
+                continue;
+            else
+                ar.add(m_items.getItem(i).getCategory());
+        }
+
+        return ar;
+    }
+
+    public boolean isAllItemsFinishedForSumStation()
+    {
+        int ncount = this.getItems().getCount();
+//        if (ncount<=0)
+//        {
+//            if (this.getTag() instanceof Integer)
+//            {
+//                ncount =(int) this.getTag();
+//            }
+//           // Log.d("Order", "Items count =0");
+//
+//        }
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (item.getLocalBumped() ||
+                    (!item.getBumpedStationsString().isEmpty()) )
+                continue;
+
+            return false;
+        }
+        return true;
+    }
+
+    public boolean smartRunnerSameCatDelayItemsLocalFinished(ArrayList<PrepSorts.PrepItem> smartItems)
+    {
+        int ncount = smartItems.size();
+        for (int i=0; i< ncount; i++)
+        {
+            PrepSorts.PrepItem smartItem = smartItems.get(i);
+            KDSDataItem item =  this.getItems().getItemByName(smartItem.ItemName);
+            if (item == null ) continue;
+            if (!item.getLocalBumped())
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * kp-48 Allergen xml tags.
+     * @param s
+     */
+    public void setHeaderFooterMessage(String s)
+    {
+        mHeaderFooterMessage = s;
+    }
+
+    public String getHeaderFooterMessage()
+    {
+        return mHeaderFooterMessage;
+    }
 }

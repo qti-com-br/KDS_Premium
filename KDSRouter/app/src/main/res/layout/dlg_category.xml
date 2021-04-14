@@ -133,7 +133,7 @@
                 <EditText
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/txtDelay"
+                    android:id="@+id/txtDelayMins"
                     android:selectAllOnFocus="true"
                     android:inputType="number"
 
@@ -145,8 +145,8 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text=":"
-                    android:layout_toRightOf="@id/txtDelay"
-                    android:layout_toEndOf="@id/txtDelay"
+                    android:layout_toRightOf="@id/txtDelayMins"
+                    android:layout_toEndOf="@id/txtDelayMins"
                     android:id="@+id/txtDot"
 
                     />
@@ -156,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:ems="10"
-                    android:id="@+id/txtSecs"
+                    android:id="@+id/txtDelaySecs"
                     android:selectAllOnFocus="true"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/txtDot"
@@ -165,6 +165,62 @@
             </RelativeLayout>
 
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/preparation_time"
+                android:id="@+id/textViewPrepTime"
+
+                android:layout_column="0"
+                android:layout_weight="1" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_span="2">
+
+                <EditText
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtPrepMins"
+                    android:selectAllOnFocus="true"
+                    android:inputType="number"
+
+
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text=":"
+                    android:layout_toRightOf="@id/txtPrepMins"
+                    android:layout_toEndOf="@id/txtPrepMins"
+                    android:id="@+id/txtPrepDot"
+
+                    />
+
+                <EditText
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/txtPrepSecs"
+                    android:selectAllOnFocus="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/txtPrepDot"
+                    android:layout_toEndOf="@+id/txtPrepDot"
+                    android:singleLine="true" />
+            </RelativeLayout>
+
+        </TableRow>
+
 
         <!--<TableRow-->
             <!--android:layout_width="match_parent"-->

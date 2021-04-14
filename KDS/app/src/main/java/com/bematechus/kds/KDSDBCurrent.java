@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Vector;
 
 /**
  * Created by Administrator on 2015/7/29 0029.
@@ -286,7 +287,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r3," +//26
                 "orders.r4," + //27
                 "orders.r5," + //28
-                "orders.r6 "; //29
+                "orders.r6," + //29
+                "orders.r7 "; //30
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -402,6 +404,8 @@ public class KDSDBCurrent extends KDSDBBase {
         c.getCustomer().setName(getString(sf, 28));
         //kpp1-75
         c.setKDSGuid(getString(sf, 29));
+
+        c.setHeaderFooterMessage(getString(sf, 30));
 
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
@@ -1674,7 +1678,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
 
     /************************************************************************/
-    public ArrayList<KDSSummaryItem> summaryItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bCheckCondiments, boolean bAscend)//, boolean bEnableSummaryTranslation)
+    public ArrayList<KDSSummaryItem> summaryItems(String stationID, int nUser, boolean bSummaryStation, boolean bCheckCondiments, boolean bAscend)//, boolean bEnableSummaryTranslation)
     {
         //TimeDog t = new TimeDog();
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
@@ -1684,7 +1688,7 @@ public class KDSDBCurrent extends KDSDBBase {
         if (bCheckCondiments) {
             //return summaryItemsWithCondiments(stationID, nUser, arValidOrderGUID, bAscend);//bEnableSummaryTranslation);
             //kpp1-415
-            return summaryItemsWithCondiments(stationID, nUser, null, bAscend);//bEnableSummaryTranslation);
+            return summaryItemsWithCondiments(stationID, nUser, bSummaryStation, bAscend);//bEnableSummaryTranslation);
         }
         String sql = "";
 
@@ -1693,7 +1697,10 @@ public class KDSDBCurrent extends KDSDBBase {
         //20160712 CHANGED, add qtychanged field.
         sql = String.format( "select a.description, sum(a.qty+ifnull(a.qtychanged,0)) as s from items as a, orders as b where LocalBumped=0 and hiden=0 and b.parked<>1 and b.bumped<>1 and a.orderguid=b.guid and screen=%d group by description order by s DESC",
                             nUser);
-
+        if (bSummaryStation)
+            sql = "select description, sum(qty+ifnull(qtychanged,0)) as s from items where LocalBumped=0 and hiden=0 and bumpedstations='' group by description order by s DESC";
+            //sql = String.format( "select a.description, sum(a.qty+ifnull(a.qtychanged,0)) as s from items as a, orders as b where LocalBumped=0 and hiden=0 and b.parked<>1 and b.bumped<>1 and a.orderguid=b.guid and screen=%d and a.bumpedstations='' group by description order by s DESC",
+//                    nUser);
 
         Cursor c = getDB().rawQuery(sql, null);
 
@@ -1943,12 +1950,12 @@ public class KDSDBCurrent extends KDSDBBase {
 /*                                                                      */
 
     /************************************************************************/
-    private ArrayList<KDSSummaryItem> summaryItemsWithCondiments(String stationID, int nUser, ArrayList<String> arValidOrderGUID, boolean bAscend) {
+    private ArrayList<KDSSummaryItem> summaryItemsWithCondiments(String stationID, int nUser, boolean bSummaryStation, boolean bAscend) {
         ArrayList<KDSSummaryItem> arSums = new ArrayList<>();
         ArrayList<String> arUniqueItems = new ArrayList<>();
         //TimeDog td = new TimeDog();
 
-        arUniqueItems = getAllUniqueItems(stationID, nUser, arValidOrderGUID);
+        arUniqueItems = getAllUniqueItems(stationID, nUser, bSummaryStation);
         if (arUniqueItems.size() <= 0) return arSums;
         String itemDescription = "";
 //        td.debug_print_Duration(" sum with condiments ------------------------------------- ");
@@ -1958,6 +1965,9 @@ public class KDSDBCurrent extends KDSDBBase {
         //String sql = " and (";
         String sql =String.format(" and items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and orders.screen=%d)",
                                     nUser);
+//        if (bSummaryStation)
+//            sql =String.format(" and items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and orders.screen=%d)",
+//                    nUser);
         //kpp1-415, use new code for orderguid
 
 //        String s = "";
@@ -1979,7 +1989,7 @@ public class KDSDBCurrent extends KDSDBBase {
             itemDescription = arUniqueItems.get(i);
             if (itemDescription.isEmpty()) continue;
             if (sql.isEmpty()) continue;
-            Cursor c = getSameItems(stationID, nUser, arValidOrderGUID, itemDescription, sql);
+            Cursor c = getSameItems(stationID, nUser, bSummaryStation, itemDescription, sql);
 //            td.debug_print_Duration("sum with condiments 101=");
 //            td.reset();
             if (c == null) continue;
@@ -2396,7 +2406,7 @@ return:
                                                                      */
 
     /************************************************************************/
-    Cursor getSameItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID, String itemDescription, String sqlOrdersGuid) {
+    Cursor getSameItems(String stationID, int nUser, boolean bSummaryStation, String itemDescription, String sqlOrdersGuid) {
 
 
         itemDescription = replaceSingleQuotation(itemDescription);
@@ -2413,6 +2423,9 @@ return:
         //sql = String.format("select items.guid,items.qty,items.qtychanged from items,orders where description='%s' and marked=0 and orders.screen=%d and orders.guid=items.orderguid ",  itemDescription, nUser);
         sql = String.format("select guid,qty,qtychanged from items where LocalBumped=0 and marked=0 and description='%s' ",  itemDescription);
         sql += sqlOrdersGuid;
+        if (bSummaryStation)
+            sql = String.format("select guid,qty,qtychanged from items where LocalBumped=0 and bumpedstations='' and marked=0 and description='%s' ",  itemDescription);
+
 //        sql += " and (";
 //        String s = "";
 //        int count = arValidOrderGUID.size();
@@ -2433,12 +2446,13 @@ return:
     }
 
     /**
+     *
      * @param stationID
      * @param nUser
-     * @param arValidOrderGUID
+     * @param bSummaryStation
      * @return
      */
-    private ArrayList<String> getAllUniqueItems(String stationID, int nUser, ArrayList<String> arValidOrderGUID) {
+    private ArrayList<String> getAllUniqueItems(String stationID, int nUser, boolean bSummaryStation) {
 
         ArrayList<String> arItems = new ArrayList<>();
 
@@ -2447,7 +2461,9 @@ return:
         String sql = "";
 //        sql = String.format("select items.description from items,orders where items.hiden=0 and items.LocalBumped=0 and ( items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.screen=%d) ) group by items.description",
 //                            nUser);
-        sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0 group by items.description");
+        sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0  group by items.description");
+        if (bSummaryStation)
+            sql = String.format("select items.description from items  where items.hiden=0 and items.LocalBumped=0 and items.bumpedstations='' group by items.description");
 
 //        //3.1.0.18 add hide
 //        sql = String.format("select description from items where hiden=0 ", stationID, nUser);//3.1.0.18
@@ -3279,6 +3295,8 @@ update the schedule item ready qty
      *      The itemdelay value is wrong. It put the categorydelay and max prep item time together.
      *          this is for smart order.
      *      But, in preparation mode, we don't need to do this. So, will add new items, I use category delay to replace item delay value.
+     * rev.
+     *  Above notice revmoed: Save item/category delay independently.
      * @param order
      */
     public void prep_add_order_items(KDSDataOrder order)
@@ -3288,7 +3306,7 @@ update the schedule item ready qty
         for (int i = 0; i< ncount; i++)
         {
             KDSDataItem item = order.getItems().getItem(i);
-            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay) values(" ;
+            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0) values(" ;
             sql += "'" + order.getGUID() +"'";
             sql += ",'" + KDSUtil.fixSqliteSingleQuotationIssue(item.getItemName()) +"'";
             sql += ",'" + item.getCategory() + "'";
@@ -3296,7 +3314,9 @@ update the schedule item ready qty
             sql += ",''";
             sql += ",0";
             sql += ",-1";
-            sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //See notice
+            //sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //See notice
+            sql += "," + KDSUtil.convertFloatToString(item.getItemDelay()); //
+            sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //
             sql += ")";
             this.executeDML(sql);
         }
@@ -3307,9 +3327,53 @@ update the schedule item ready qty
 
         order.prep_set_sorts(prepSorts);
 
+        //
+
     }
 
+    /**
+     * Rev.
+     *  20200308:
+     *      KP-50, In runner mode, we allow same catdelay value in different cateogry.
+     *             Same catdelay will show in same time.
+     *
+     * kp1-25
+     * @param order
+     * @param smartItems
+     */
+//    public void smart_runner_category_init2(KDSDataOrder order, PrepSorts smartItems)
+//    {
+//        //kpp1-456, we init the first category here.
+//        PrepSorts.PrepItem smartMaxItem = smartItems.findNextShowingItem(smartItems.m_arItems);
+//        if (smartMaxItem == null) return;
+//        //String category = smartMaxItem.Category;
+//        String orderguid = order.getGUID();
+//
+//        //kp-50, same catdelay
+//
+//        ArrayList<String> arWillShowingCategory = smartItems.runnerGetAllSameCatDelayCategories(smartMaxItem.CategoryDelay);
+//
+//        smartRunnerCategoryAddShowingCategories(orderguid, arWillShowingCategory);
+//        //
+//        smartItems.runnerSetShowingCategory( smartCategoryGetShowingCategories(orderguid));
+//    }
 
+    public void smart_runner_category_init(KDSDataOrder order, PrepSorts smartItems)
+    {
+        //kpp1-456, we init the first category here.
+        PrepSorts.PrepItem smartMaxItem = smartItems.findNextShowingItem(smartItems.m_arItems);
+        if (smartMaxItem == null) return;
+        //String category = smartMaxItem.Category;
+        String orderguid = order.getGUID();
+
+        //kp-50, same catdelay
+
+        //ArrayList<String> arWillShowingCategory = smartItems.runnerGetAllSameCatDelayCategories(smartMaxItem.CategoryDelay);
+
+        runnerSetLastShowingCatDelay(orderguid, smartMaxItem.CategoryDelay);
+        //
+        smartItems.runnerSetLastShowingCatDelay( smartMaxItem.CategoryDelay);
+    }
 
     public void prep_set_real_started_time(String orderGuid, String itemName, float seconds)
     {
@@ -3322,11 +3386,11 @@ update the schedule item ready qty
         this.executeDML(sql);
     }
 
-    public PrepSorts prep_get_sort_items(String orderGuid)
+    public PrepSorts prep_get_sort_items2(String orderGuid)
     {
         String sql = "";
 
-        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay from prepsort where orderguid='" + orderGuid +"'";
+        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
 
 
         PrepSorts prep = new PrepSorts();
@@ -3344,12 +3408,50 @@ update the schedule item ready qty
             item.finished = (getInt(c,5)==1);
             item.RealStartTime = getInt(c,6);
             item.ItemDelay = getFloat(c,7);
+            item.CategoryDelay = getFloat(c,8);
 
             prep.add(item);
 
         }
         c.close();
         prep.sort();
+        //kpp1-456
+        //prep.runnerSetShowingCategory(smartCategoryGetShowingCategories(orderGuid));
+        prep.runnerSetLastShowingCatDelay(runnerGetLastShowingCatDelay(orderGuid));
+        return prep;
+    }
+
+    public PrepSorts prep_get_sort_items(String orderGuid)
+    {
+        String sql = "";
+
+        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
+
+
+        PrepSorts prep = new PrepSorts();
+        Cursor c = getDB().rawQuery(sql, null);
+
+        while (c.moveToNext())
+        {
+            PrepSorts.PrepItem item = new PrepSorts.PrepItem();
+            item.orderguid = getString(c,0);
+            item.ItemName = getString(c,1);
+            item.Category = getString(c,2);
+            item.PrepTime = getFloat(c,3);
+            item.MaxItemName = getString(c,4);
+            //item.WaitSecsToStart = c.getInt(5);
+            item.finished = (getInt(c,5)==1);
+            item.RealStartTime = getInt(c,6);
+            item.ItemDelay = getFloat(c,7);
+            item.CategoryDelay = getFloat(c,8);
+
+            prep.add(item);
+
+        }
+        c.close();
+        prep.sort();
+        //kpp1-456
+        prep.runnerSetLastShowingCatDelay(smartRunnerGetCatDelay(orderGuid));
         return prep;
     }
 
@@ -3823,7 +3925,7 @@ update the schedule item ready qty
      * @param bAscend
      * @return
      */
-    public ArrayList<KDSSummaryItem> summaryOnlyCondiments(int nUser, boolean bAscend)//, boolean bEnableSummaryTranslation)
+    public ArrayList<KDSSummaryItem> summaryOnlyCondiments(int nUser, boolean bAscend, boolean bSummaryStation)//, boolean bEnableSummaryTranslation)
     {
 
         String sql = String.format("select condiments.description,sum(ifnull(condiments.qty,1)*(items.qty+ifnull(items.qtychanged,0))) as q,count(condiments.description) as samecount " +
@@ -3832,7 +3934,13 @@ update the schedule item ready qty
                 "group by condiments.description " +
                 "order by condiments.description %s ",
                 nUser,  bAscend?"asc":"desc");
-
+        if (bSummaryStation)
+            sql = String.format("select condiments.description,sum(ifnull(condiments.qty,1)*(items.qty+ifnull(items.qtychanged,0))) as q,count(condiments.description) as samecount " +
+                            "from condiments,items " +
+                            "where condiments.itemguid=items.guid and items.localbumped=0 and items.bumpedstations='' and items.marked=0 "+//and condiments.itemguid in (select items.guid from items where items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and screen=%d)) " +
+                            "group by condiments.description " +
+                            "order by condiments.description %s ",
+                            bAscend?"asc":"desc");
 
         ArrayList<KDSSummaryItem> ar = new ArrayList<>();
 
@@ -3853,6 +3961,168 @@ update the schedule item ready qty
         }
         c.close();
         return ar;
+    }
+
+//    final String SMART_CATEGORY_SEPERATOR = "\n";
+//    /**
+//     * kpp1-456
+//     * @param orderGuid
+//     * @param categoryName
+//     */
+//    public void smartRunnerCategoryAddShowingCategory(String orderGuid, String categoryName)
+//    {
+//        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+//        if (KDSUtil.isExistedInArray(ar, categoryName))
+//            return;
+//        ar.add(categoryName);
+//        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
+//        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+//        this.executeDML(sql);
+//
+//    }
+
+//    /**
+//     * kpp1-456
+//     * @param orderGuid
+//     * @return
+//     */
+//    public ArrayList<String> smartCategoryGetShowingCategories(String orderGuid)
+//    {
+//        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+//        ArrayList<String> ar = new ArrayList<>();
+//
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        String s = "";
+//
+//
+//        while (c.moveToNext()) {
+//            s = c.getString(0);
+//        }
+//        c.close();
+//        if (s.isEmpty()) return ar;
+//        ar = KDSUtil.spliteString(s, SMART_CATEGORY_SEPERATOR);
+//
+//        return ar;
+//    }
+
+    public float runnerGetLastShowingCatDelay(String orderGuid)
+    {
+        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+        ArrayList<String> ar = new ArrayList<>();
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        String s = "";
+
+
+        while (c.moveToNext()) {
+            s = c.getString(0);
+        }
+        c.close();
+        if (s.isEmpty()) return 0;
+        return KDSUtil.convertStringToFloat(s, 0);
+//        ar = KDSUtil.spliteString(s, SMART_CATEGORY_SEPERATOR);
+//
+//        return ar;
+    }
+
+//
+//    /**
+//     * KP-50
+//     * @param orderGuid
+//     * @param categoriesName
+//     */
+//    public void smartRunnerCategoryAddShowingCategories(String orderGuid, ArrayList<String> categoriesName)
+//    {
+//        ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+//        boolean bChanged = false;
+//        for (int i=0; i< categoriesName.size(); i++) {
+//            if (KDSUtil.isExistedInArray(ar, categoriesName.get(i)))
+//                continue;
+//            ar.add(categoriesName.get(i));
+//            bChanged = true;
+//        }
+//        if (!bChanged) return;
+//
+//        String s = KDSUtil.stringArrayToString(ar, SMART_CATEGORY_SEPERATOR);
+//        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+//        this.executeDML(sql);
+//
+//    }
+
+    public int removeOrdersForSumStation(Vector<Object> arRemovedOrders)
+    {
+        if (arRemovedOrders.size() <=0) return 0;
+        //boolean b = this.startTransaction();
+        for (int i=0; i< arRemovedOrders.size(); i++)
+        {
+            this.orderDeleteQuick( ((KDSDataOrder)arRemovedOrders.get(i)).getGUID());
+
+        }
+        //this.commitTransaction(b);
+        return arRemovedOrders.size();
+    }
+
+    public float smartRunnerGetCatDelay(String orderGuid)
+    {
+        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+        //ArrayList<String> ar = new ArrayList<>();
+
+        Cursor c = getDB().rawQuery(sql, null);
+
+        String s = "";
+
+
+        while (c.moveToNext()) {
+            s = c.getString(0);
+        }
+        c.close();
+        if (s.isEmpty()) return 0;
+        return KDSUtil.convertStringToFloat(s, 0);
+
+    }
+    public void runnerSetLastShowingCatDelay(String orderGuid, float fltCatDelay)
+    {
+        //ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
+        //boolean bChanged = false;
+        //for (int i=0; i< categoriesName.size(); i++) {
+//        //    if (KDSUtil.isExistedInArray(ar, categoriesName.get(i)))
+//                continue;
+//            ar.add(categoriesName.get(i));
+//            bChanged = true;
+//        }
+//        if (!bChanged) return;
+
+        String s = KDSUtil.convertFloatToString(fltCatDelay);
+        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+        this.executeDML(sql);
+
+    }
+
+
+    /**
+     * KP-64 When adding items to an order- no catdelay
+     * we add smart items to table before do modifying.
+     *  So, change its guid to existed order after modifying.
+     * @param guidReceivedOrder
+     * @param orderExisted
+     */
+    public void prep_change_modify_order_guid_to_existed_guid(String guidReceivedOrder, KDSDataOrder orderExisted)
+    {
+
+        String sql = String.format( "update prepsort set orderguid='%s' where orderguid='%s'", orderExisted.getGUID(),
+                                        guidReceivedOrder);
+
+
+        this.executeDML(sql);
+        PrepSorts prepSorts = prep_get_sort_items(orderExisted.getGUID());
+        prep_save_sort_result(prepSorts);
+
+        orderExisted.prep_set_sorts(prepSorts);
+
+        //
+
     }
 
     /***************************************************************************
@@ -3893,12 +4163,12 @@ update the schedule item ready qty
             +"r4 text(16)," //2.1.15, for sms, save original order go to which stations.
             +"r5 text(16)," //for customer, same the customer name
             +"r6 text(16)," //kdsguid, identify same order in whole KDS.
-            +"r7 text(16),"
+            +"r7 text(16)," //kp-48, Allergen xml tags. <HeaderFooterMessage>
             +"r8 text(16),"
             +"r9 text(16),"
             + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),"
             + "QueueMsg text(256), "// )";
-            + "TrackerID text(16),"
+            + "TrackerID text(16)," //As TT was removed, I use this to do kpp1-456, "Runner" station. Save showing cateogry name.
             + "PagerID text(16),"//for table-tracker
             + "CookState int default 0,"
             + "SosReady int default 0 ";
@@ -4062,7 +4332,7 @@ update the schedule item ready qty
             "MaxItemName text(256)," + //the maxitem name
             "finished int," + //identify if this item finihsed
             "RealStartTime int," +//the real time that this item start to cook. (seconds from order started).
-            "r0 text(20)," +
+            "r0 text(20)," + //Save category delay here.
             "r1 text(20), " +
             "r2 text(20)," +
             "r3 text(20), " +

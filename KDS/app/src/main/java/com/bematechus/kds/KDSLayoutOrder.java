@@ -11,6 +11,7 @@ import com.bematechus.kdslib.KDSDataMessage;
 import com.bematechus.kdslib.KDSDataMessages;
 import com.bematechus.kdslib.KDSDataMoreIndicator;
 import com.bematechus.kdslib.KDSDataOrder;
+import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 
 import java.util.ArrayList;
@@ -264,7 +265,8 @@ public class KDSLayoutOrder extends KDSDataOrder {
     {
         //2.0.11, enable prep queue
         if (!KDSGlobalVariables.getKDS().isExpeditorStation() && (!KDSGlobalVariables.getKDS().isQueueExpo())
-                && (!KDSGlobalVariables.getKDS().isPrepStation()))
+                && (!KDSGlobalVariables.getKDS().isPrepStation()) &&
+                (!KDSGlobalVariables.getKDS().isRunnerStation()) )
             return ;
         if (!KDSGlobalVariables.getKDS().getSettings().getBoolean(KDSSettings.ID.Queue_double_bump_expo_order))
             return ;
@@ -446,4 +448,116 @@ public class KDSLayoutOrder extends KDSDataOrder {
         return null;
     }
 
+    /**
+     * kpp1-428
+     * remove the hidden items in dressed order.
+     *
+     * @return
+     *  The hidden items
+     */
+    public int removeHiddenItems()
+    {
+        int ncount = this.getItems().getCount();
+
+        ArrayList<KDSDataItem> arWillHide = new ArrayList<>();
+
+        for (int i=0; i< ncount; i++)
+        {
+            KDSDataItem item = this.getItems().getItem(i);
+            if (item.getHidden())
+            {
+                arWillHide.add(item);
+            }
+        }
+
+        ncount =  arWillHide.size();
+        for (int i=0; i< ncount; i++)
+        {
+            this.getItems().removeComponent(arWillHide.get(i));
+        }
+        arWillHide.clear();
+        return ncount;
+    }
+
+//    /**
+//     * kp1-25
+//     */
+//    public void smartRunnerHideFinishedCategories()
+//    {
+//
+//        ArrayList<String> arCategories = getAllCategories();
+//        ArrayList<String> arHide = new ArrayList<>();
+//        for (int i=0; i< arCategories.size(); i++)
+//        {
+//            if (smartCategoryItemsLocalFinished(arCategories.get(i)))
+//            {
+//                arHide.add(arCategories.get(i));
+//            }
+//        }
+//
+//        for (int i=0; i< arHide.size(); i++)
+//        {
+//            smartHideCategory(arHide.get(i));
+//        }
+//        arHide.clear();
+//
+//    }
+
+    /**
+     * KP-66 Runner hide finished category group -> Hide finished CatDelays
+     */
+    public void smartRunnerHideFinishedSameCatDelayItems()
+    {
+        ArrayList<KDSDataItem> arHide = new ArrayList<>();
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            KDSDataItem item = m_items.getItem(i);
+            if (item.getLocalBumped())
+            {
+                if (isAllSameCatDelayItemsFinished(item.getCategoryDelay()))
+                    arHide.add(item);
+            }
+        }
+
+        for (int i=0; i< arHide.size(); i++)
+        {
+            m_items.removeComponent(arHide.get(i));
+        }
+        arHide.clear();
+
+    }
+
+    private boolean isAllSameCatDelayItemsFinished(float catDelay)
+    {
+        ArrayList<PrepSorts.PrepItem> allSameCatDelayItems = prep_get_sorts().runnerGetAllSameCatDelayItems(catDelay);
+        boolean bFinihsed = this.prep_get_sorts().allSameCatDelayItemsFinished(allSameCatDelayItems);
+        if (bFinihsed)//Other station bumped it, but we need to check if local bumped too.
+        {//check if local bumped. This is for Runner station.
+            for (int i=0; i< allSameCatDelayItems.size(); i++)
+            {
+                String itemName = allSameCatDelayItems.get(i).ItemName;
+                KDSDataItem item = this.m_items.getItemByName(itemName);
+                if (item == null) continue;
+                if (!item.getLocalBumped())
+                    return false;
+            }
+        }
+        return bFinihsed;
+    }
+
+//    private void smartHideCategory(String category)
+//    {
+//        ArrayList<KDSDataItem> arHide = new ArrayList<>();
+//        for (int i=0; i< m_items.getCount(); i++)
+//        {
+//            if (m_items.getItem(i).getCategory().equals(category))
+//                arHide.add(m_items.getItem(i));
+//        }
+//
+//        for (int i=0; i< arHide.size(); i++)
+//        {
+//            m_items.removeComponent(arHide.get(i));
+//        }
+//        arHide.clear();
+//    }
 }

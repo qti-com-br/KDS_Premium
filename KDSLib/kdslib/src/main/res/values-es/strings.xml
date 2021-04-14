@@ -179,5 +179,33 @@
 	<string name='agreement_text'>Al usar esta aplicación, confirma que ha leído y aceptado el EULA https://kdsgo.com/eula.html y la Política de privacidad https://logiccontrols.com/privacy-policy/</string>
 	<string name="domain">Domain:</string>
 	<string name="domain_name_can_be_empty">El nombre de domain puede estar vacío</string>
+	<string-array name='station_function'>
+		<item>Prep</item>
+		<item>Expedidor</item>
+		<item>Fila</item>
+		<item>Espejo</item>
+		<item>Apoyo</item>
+		<item>Distribuidor</item>
+		<item>Duplicado</item>
+		<item>Rastreador</item>
+		<item>Fila-Expo</item>
+		<item>Runner</item>
+		<item>Summary</item>
+	</string-array>
+	<string-array name='station_status'>
+		<item>Habilitar</item>
+		<item>Inhabilitar</item>
+	</string-array>
+	<string-array name='slave_function'>
+		<item>No Propiedad</item>
+		<item>Apoyo</item>
+		<item>Espejo</item>
+		<item>Distribución automática de la carga de trabajo</item>
+		<item>Estación Duplicado</item>
+		<item>Visualización de fila de pedidos</item>
+	</string-array>
+
+
 	<string name="quantity">Quantity</string>
+	<string name='input_internet_file'>Entrada de Archivo de Internet</string>
 </resources>

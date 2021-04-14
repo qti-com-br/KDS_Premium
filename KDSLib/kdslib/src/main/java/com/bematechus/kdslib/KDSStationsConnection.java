@@ -2339,6 +2339,25 @@ public class KDSStationsConnection {
     {
         return m_buffersForWaitingConnection.stationHasOfflineData(stationID);
     }
+
+    /**
+     * kpp1-449,
+     * @param myStationID
+     * @param strXml
+     * @return
+     */
+    public boolean writeToPrimaryOfExpo(String myStationID,String strXml)
+    {
+        ArrayList<KDSStationIP> arPrep =m_stationsRelations.getPrepStationsWhoUseMeAsExpo(myStationID);
+
+        for (int i=0; i< arPrep.size(); i++)
+        {
+            KDSStationIP station =  arPrep.get(i);
+            if (station.getID().equals(myStationID)) continue;
+            writeDataToStationOrItsBackup(station, strXml);
+        }
+        return true;
+    }
 }
 
 

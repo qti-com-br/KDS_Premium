@@ -304,7 +304,7 @@ public class KDSViewBlock {
 //    {
 //        m_viewerEnv = env;
 //    }
-//    
+//
     public Vector<KDSViewBlockCell> getCells() {
         return m_arCells;
     }
@@ -929,7 +929,7 @@ public class KDSViewBlock {
         //draw_border(g,rect, m_borderStyleRightSide, false );
         draw_border2(g,rect, m_borderStyleRightSide, false, true );
 
-        
+
     }
     private Rect getTopBorderAbsoluteRect(boolean bFocused)
     {
@@ -1009,13 +1009,13 @@ public class KDSViewBlock {
 
 
     }
-    
+
     /***************************************************************************
-     * Split this panel to two panels, 
+     * Split this panel to two panels,
      * From nStart
      */
     /***************************************************************************
-     * 
+     *
      * @param nStartCol
      * from this col index, previous will kept, others will create new panel
      * and return new panel
@@ -1023,7 +1023,7 @@ public class KDSViewBlock {
      * NOTICE: Please notice, this panel size and position don't set.
      * ???????????????????????????????????????????????????
      *  TODO: the coordinate is wrong !!
-     * @return 
+     * @return
      * return split new panel
      */
     public KDSViewBlock split(int nStartCol)
@@ -1046,10 +1046,10 @@ public class KDSViewBlock {
         nCols = this.getCols() - nCols;
         this.setCols( nCols);
         return p;
-        
+
     }
 
-    
+
     public boolean setCellData(int nIndex, Object obj)
     {
         return getCell(nIndex).setData(obj);

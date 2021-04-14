@@ -233,8 +233,6 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         fontDef.copyFrom(this.getFont());
         fontDef.setBG(nBG);
 
-
-
         if (order.getCookState() == KDSDataOrder.CookState.Started
                 && this.getCellSubType() == CellSubType.Unknown ) {//just first caption line show started icon
 
@@ -303,7 +301,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 KDSViewFontFace ff = getOrderContentFont(env, content, ftDef);
                 if (order.isDimColor()) ff.setBG(KDSConst.DIM_BG);
                 Rect rc = new Rect(rcAbsolute);
-                rc.inset(4, 0);
+                rc.inset(8, 8);
                 CanvasDC.drawText(g, ff, rc, str, align);
             }
         }
@@ -427,7 +425,12 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 if (n<0) return "";
                 return env.getSettings().getIcon(n);
             }
-
+            //break;
+            case HeaderFooterMessage:
+            {
+                return order.getHeaderFooterMessage();
+            }
+            //break;
             default:
                 return "";
         }
@@ -1110,7 +1113,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             ItemMark itemMark = ItemMark.parseString(s);
             itemMark.setMarkType(ItemMark.MarkType.Station_bumped_for_expo);
             //2.0.14
-            if (env.getSettings().isExpeditorStation()) {
+            if (env.getSettings().isExpeditorStation() ||
+                    env.getSettings().isRunnerStation()
+                    ) {
 
                 ArrayList<String> arExpo = KDSGlobalVariables.getKDS().getStationsConnections().getRelations().getAllExpoStations();
                 if (!item.isAllStationBumpedInExp(arExpo)) {
@@ -1493,8 +1498,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //            //CanvasDC.drawText(g, this.getFont(), rcAbsolute, s, Paint.Align.LEFT);
         this.getFont().setBG(noldbg);
         this.getFont().setFG(noldfg);
-        if (!block.isFirstItemDataRow(this))
-            drawItemLine(g, rcAbsolute, color);
+        // Apr'21 Premium Facelift: Removed Line between items
+//        if (!block.isFirstItemDataRow(this))
+//            drawItemLine(g, rcAbsolute, color);
 //        Paint paint = new Paint();
 //        paint.setColor(Color.LTGRAY);
 //        paint.setStrokeWidth(0);

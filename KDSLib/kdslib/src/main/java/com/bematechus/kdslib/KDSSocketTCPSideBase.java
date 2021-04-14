@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -38,6 +39,8 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     protected  KDSSocketMessageHandler m_eventHandler = null;
 
     protected Object m_attachedObj = null; //in multiple transfering, we need this to identify each stations.
+
+    protected String m_appSocketID = ""; //if it is from router. kpp1-363
 
     public KDSSocketTCPSideBase()
     {
@@ -281,7 +284,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
 
     }
 
-    protected  boolean write(String strText)
+    public   boolean write(String strText)
     {
 
 
@@ -484,7 +487,7 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
     /**
      *
      */
-    protected void doCommand()
+    protected void doCommand_backup()
     {
         synchronized (m_bufferLocker) {
             while (true) {
@@ -494,6 +497,60 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
                 byte command = m_commandBuffer.command();
                 if (command == 0)
                     return;
+                switch (command) {
+                    case KDSSocketTCPCommandBuffer.XML_COMMAND: {//the command send by xml format
+                        //1. parse the xml text
+                        int ncommand_end = m_commandBuffer.command_end();
+                        if (ncommand_end == 0)
+                            return; //need more data
+
+                        byte[] bytes = m_commandBuffer.xml_command_data();
+                        m_commandBuffer.remove(ncommand_end);
+                        String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
+                        doXmlCommand(utf8);
+
+                    }
+                    break;
+                    case KDSSocketTCPCommandBuffer.XML_COMMAND_WIN_KDS://STX, Command, LEN0,LEN1,d0,d1,d2 ... ETX
+                    {
+                        int ncommand_end = m_commandBuffer.command_end();
+                        if (ncommand_end == 0)
+                            return; //need more data
+
+                        byte[] bytes = m_commandBuffer.xml_winkds_command_data();
+                        m_commandBuffer.remove(ncommand_end);
+                        String utf8 = KDSUtil.convertUtf8BytesToString(bytes);
+                        doXmlCommand(utf8);
+                    }
+                    break;
+                    default: {
+                        m_commandBuffer.remove(1);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    protected void doCommand()
+    {
+        synchronized (m_bufferLocker) {
+            while (true) {
+                //kp-64 we wanted to make it work with both (TCP/IP only):
+                //1) STX 0x02 + COMMAND 0x05 + DATA_LEN_HIGH + DATA_LEN_LOW + PAYLOAD + ETX 0x03
+                //2) PAYLOAD
+                int nTextLength = m_commandBuffer.skip_to_STX(m_commandBuffer.getTextBuffer());
+                if (nTextLength >0)
+                {
+                    doOriginalXmlCommand(m_commandBuffer.getTextBuffer(), nTextLength);
+                }
+                //
+                if (m_commandBuffer.fill() <= 1)
+                    return;
+                byte command = m_commandBuffer.command();
+                if (command == 0)
+                    return;
+
                 switch (command) {
                     case KDSSocketTCPCommandBuffer.XML_COMMAND: {//the command send by xml format
                         //1. parse the xml text
@@ -640,5 +697,66 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
         return isBufferTooManyWritingData(MAX_WRITE_BUFFER_SIZE);
     }
 
+    /**
+     * kpp1-363
+     * @param id
+     */
+    public void setAppSocketID(String id)
+    {
+        m_appSocketID = id;
+    }
+
+    /**
+     * kpp1-363
+     * @return
+     */
+    public String getAppSocketID()
+    {
+        return m_appSocketID;
+    }
+
+    String mXmlReceived = "";
+    String START_TAG = "<Transaction";
+    String END_TAG = "</Transaction>";
+    /**
+     * KP-62 As a reseller, I want to be able to send orders to Allee and Premium using the same format in TCP/IP so I don't need to change my POS
+     * User will send original xml file text to here.
+     * Just need to change text to utf8.
+     * It is no header (STX) and end tag (ETX).
+     * @param buffer
+     * @param nlen
+     */
+    private void doOriginalXmlCommand(byte[] buffer, int nlen)
+    {
+        byte[] bytes = buffer;// buffer.array();
+        String utf8 = KDSUtil.convertUtf8BytesToString(bytes, 0, nlen);
+        //Log.d(TAG, "-----------------------");
+        //Log.d(TAG, utf8);
+        mXmlReceived += utf8;
+
+        //buffer.clear();
+        String start = START_TAG;// "<" + KDSXMLParserOrder.DBXML_ELEMENT_TRANSACTION + ">";
+        String end = END_TAG;// "</" + KDSXMLParserOrder.DBXML_ELEMENT_TRANSACTION + ">";
+
+        for (int i=0; i< 50; i++) {
+            int nstart = mXmlReceived.indexOf(start);
+            int nend = mXmlReceived.indexOf(end);
+            if (nstart >= 0 && nend > 0) {
+                String xmlOrder = mXmlReceived.substring(nstart, nend + end.length());
+                //Log.d(TAG, "-----------------------");
+                //Log.d(TAG, xmlOrder);
+                mXmlReceived = mXmlReceived.substring(nend + end.length());
+                doXmlCommand(xmlOrder);
+                try {
+                    Thread.sleep(10);
+                }
+                catch (Exception e)
+                {}
+            } else
+                break;
+        }
+
+
+    }
 }
 

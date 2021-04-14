@@ -164,7 +164,7 @@ public class KDSRouterSettings extends SettingsBase {
         init_option(ID.Order_ack,"bool_notification_order_acknowledgement",false);
         init_option(ID.notification_minutes,"string_notification_minutes","10");
 
-        init_option(ID.Enable_smbv2,"bool_general_enable_smbv2",false);
+        init_option(ID.Enable_smbv2,"bool_general_enable_smbv2",true);
         init_option(ID.Enable_3rd_party_order,"bool_general_enable_3rd_order",true);
 
     }

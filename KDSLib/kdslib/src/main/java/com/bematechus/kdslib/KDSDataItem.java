@@ -696,6 +696,9 @@ public class KDSDataItem extends KDSData {
             }
 
         }
+        //kp-17
+        pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_CATEGORY_DELAY,KDSUtil.convertFloatToString(this.getCategoryDelay()), false);
+        //
         pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_ITEM_DELAY,KDSUtil.convertFloatToString(this.getItemDelay()), false);
         pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_BUILD_CARD,this.getBuildCard().toCSV(), false);
         pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRAINING_VIDEO,this.getTrainingVideo().toCSV(), false);

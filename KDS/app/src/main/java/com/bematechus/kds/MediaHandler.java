@@ -1,5 +1,6 @@
 package com.bematechus.kds;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 
@@ -15,7 +16,7 @@ public class MediaHandler extends Handler {
     {
 
         public void medaievent_onSmbFileDownloaded(String localFileName);
-        public void medaievent_onHttpBitmapFileDownloaded();
+        public void medaievent_onHttpBitmapFileDownloaded(Bitmap bmp);
 
     }
     MediaEventReceiver m_receiver = null;
@@ -24,7 +25,10 @@ public class MediaHandler extends Handler {
         m_receiver = receiver;
     }
 
-
+    public void setReceiver(MediaEventReceiver r)
+    {
+        m_receiver = r;
+    }
 
     public void sendSmbDownloadedMessage(String localFileName)
     {
@@ -34,11 +38,11 @@ public class MediaHandler extends Handler {
 
         this.sendMessage(m);
     }
-    public void sendHttpBitmapDownloadedMessage()
+    public void sendHttpBitmapDownloadedMessage(Bitmap bmp)
     {
         Message m = new Message();
         m.what =  EVENT_HTTP_BITMAP_DOWNLOADED;
-
+        m.obj = bmp;
         this.sendMessage(m);
     }
     @Override
@@ -56,7 +60,9 @@ public class MediaHandler extends Handler {
             break;
             case EVENT_HTTP_BITMAP_DOWNLOADED:
             {
-                m_receiver.medaievent_onHttpBitmapFileDownloaded();
+                Object obj = msg.obj;
+                if (obj != null)
+                    m_receiver.medaievent_onHttpBitmapFileDownloaded((Bitmap) obj);
             }
             break;
         }

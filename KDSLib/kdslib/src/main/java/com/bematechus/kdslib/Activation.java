@@ -60,7 +60,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      *
      * Management
      * Web domain: http://kitchengous.com
-     Login: bematech@kitchengous.com
+     Login: bematech@kitchengous.com (unused).
+     logiccontrols@kitchengous.com
      Password:098765
 
      //test store
@@ -1810,6 +1811,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         ActivationRequest r = ActivationRequest.requestOrderSync(m_storeGuid,  order, state);
         r.setSyncDataFromOperation(fromOperation);
         ActivationRequest.SyncDataFromOperation syncOp = fromOperation;
+        boolean bExpoTypeStation = false;
+        bExpoTypeStation = ( m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString()) ||
+                                m_stationFuncName.equals(SettingsBase.StationFunc.Runner.toString()) ||
+                                m_stationFuncName.equals(SettingsBase.StationFunc.Summary.toString())
+                );
         switch (syncOp)
         {
 
@@ -1824,19 +1830,19 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 r.getNextStepData().add( req );
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
 
-                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_new_order ));
+                r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,bExpoTypeStation, false, ItemJobFromOperations.Local_new_order ));
                 //postCustomerRequest(m_stationID, order);
                 r.getNextStepData().add(ActivationRequest.requestCustomerSync(m_storeGuid, order));
 
                 break;
             case Bump:
                 if (!order.isAllItemsBumpedInLocal())
-                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true, ItemJobFromOperations.Local_bump_order ));
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,bExpoTypeStation, true, ItemJobFromOperations.Local_bump_order ));
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), true );
                 break;
             case Unbump:
                 if (!order.isAllItemsBumpedInLocal())
-                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false, ItemJobFromOperations.Local_unbump_order ));
+                    r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,bExpoTypeStation, false, ItemJobFromOperations.Local_unbump_order ));
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
                 break;
         }

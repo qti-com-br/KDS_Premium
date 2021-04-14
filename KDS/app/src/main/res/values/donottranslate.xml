@@ -93,6 +93,7 @@
         <item>8</item>
         <item>9</item>
         <item>10</item>
+        <item>11</item>
     </string-array>
 
     <string-array name="pref_kds_item_showing_method__values" translatable="false">
@@ -721,6 +722,18 @@ Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\
         <item>21:00</item>
         <item>22:00</item>
         <item>23:00</item>
+    </string-array>
+
+    <string-array name="pref_kds_sum_station_panels" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+
     </string-array>
 
 </resources>

@@ -7,7 +7,7 @@
         android:defaultValue="true" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="item_font"
-        android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
+        android:defaultValue="default_font,@color/item_bg,@color/item_fg,item_size"
         android:title="@string/item_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSListPreference
@@ -32,6 +32,11 @@
         android:title="@string/category_font"
         android:dependency = "item_group_category"
         app:supportsColor="true"/>
+
+    <CheckBoxPreference
+        android:key="hiddenstation_hide_whole_item"
+        android:title="@string/hiddenstation_item_hide_all"
+        android:defaultValue="true" />
 
 <!--         -->
     <PreferenceCategory android:title="@string/item_mark_setting">

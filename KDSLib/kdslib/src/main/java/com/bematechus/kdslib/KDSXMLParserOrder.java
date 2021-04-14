@@ -105,6 +105,8 @@ public class KDSXMLParserOrder {
 
     public final static String DBXML_ELEMENT_KDSGUID = "KDSGUID";
 
+    public final static String DBXML_ELEMENT_HEADERFOOTERMESSAGE = "HeaderFooterMessage";
+
     /************************************************************************/
     /* 
     <CatDelay> 
@@ -329,6 +331,12 @@ public class KDSXMLParserOrder {
             case DBXML_ELEMENT_KDSGUID:
             { //kpp1-75
                 order.setKDSGuid(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_HEADERFOOTERMESSAGE:
+            {
+                order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.HeaderFooterMessage);
+                order.setHeaderFooterMessage(strVal);
             }
             break;
         }

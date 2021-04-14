@@ -1,5 +1,6 @@
 package com.bematechus.kds;
 
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -46,17 +47,16 @@ public class ScreenLogoDraw {
         boolean bEnabled = settings.getBoolean(KDSSettings.ID.Screen_logo_enabled);
         if (!bEnabled) {
             m_logoFileName = "";
-            m_logoImage = null;
+			m_logoImage = ((BitmapDrawable) view.getContext().getApplicationContext().getResources().getDrawable(R.drawable.lci_logo_bg)).getBitmap();
             m_lciLogo = null;
-            return;
         }
-
-
 
         String fileName = settings.getString(KDSSettings.ID.Screen_logo_file);
         if (fileName.isEmpty()) {
-            drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
-            return;
+            if (bEnabled) {
+            	drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
+				return;
+			}
         }
         if (!m_logoFileName.equals(fileName))
         {
@@ -66,13 +66,13 @@ public class ScreenLogoDraw {
                 m_logoFileName = fileName;
             }
             else {
-                drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
+				if (bEnabled) drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
                 return;
             }
         }
 
         if (m_logoImage == null) {
-            drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
+			if (bEnabled) drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
             return;
         }
 
@@ -86,7 +86,7 @@ public class ScreenLogoDraw {
         pt.setAlpha(getLogoAlpha(bScreenEmpty));
         canvas.drawBitmap(m_logoImage, offsetX, offsetY, pt);
 
-        drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
+		if (bEnabled) drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
 
 
     }
@@ -124,15 +124,6 @@ public class ScreenLogoDraw {
         ((BitmapDrawable)m_lciLogo).getPaint().setAlpha(getLogoAlpha(bScreenEmpty));
 
         m_lciLogo.draw(canvas);
-
-        KDSViewFontFace ff = new KDSViewFontFace();
-        ff.setFontSize(w/10);
-        ff.setFG(Color.rgb(35,31,32));
-
-        Rect rtText = new Rect(x, y - h*3/2- nLciLogoBottomOffset, rtBG.width(), rtBG.height());
-        String text = view.getResources().getString(R.string.powered_by);
-        CanvasDC.drawText_without_clear_bg_for_draw_logo(canvas, ff, rtText, text, Paint.Align.CENTER, true, getLogoAlpha(bScreenEmpty));
-
     }
 
     static private int getLogoAlpha(boolean bScreenEmpty)

@@ -46,6 +46,10 @@ public class KDSBGFG {
         return KDSUtil.convertIntToString2(m_bg) + "," + KDSUtil.convertIntToString2(m_fg);
     }
 
+    static public String toDefaultString(int bg, int fg) {
+    	return KDSUtil.convertIntToString2(bg) + "," + KDSUtil.convertIntToString2(fg);
+	}
+
     public void copyFrom(KDSBGFG bf)
     {
         m_bg = bf.getBG();

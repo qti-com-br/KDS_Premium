@@ -197,6 +197,8 @@ public class LineItemViewer {
             //fromItemIndex = grid.getDataRows() - focusedItemIndex - 1;
             fromItemIndex =  nCurrentShowingRows - focusedItemIndex - 1;
             fromOrderIndex = focusedOrderIndex;
+            //kp-25
+            if (fromItemIndex <0) fromItemIndex = 0;
         }
         else
         {
@@ -829,9 +831,16 @@ public class LineItemViewer {
     private void setFocusToRow(LineItemGrid grid, int nRow)
     {
         grid.setFocusedRowIndex(nRow);
-        LineItemGridRow r = grid.getRow(nRow);
-        getEnv().getStateValues().setFocusedOrderGUID(r.getOrderGuid());
-        getEnv().getStateValues().setFocusedItemGUID(r.getItemGuid());
+        if (nRow >=0) {
+            LineItemGridRow r = grid.getRow(nRow);
+            getEnv().getStateValues().setFocusedOrderGUID(r.getOrderGuid());
+            getEnv().getStateValues().setFocusedItemGUID(r.getItemGuid());
+        }
+        else
+        {
+            getEnv().getStateValues().setFocusedOrderGUID("");
+            getEnv().getStateValues().setFocusedItemGUID("");
+        }
     }
     public void onTouchXY(int x, int y)
     {
@@ -1036,7 +1045,7 @@ public class LineItemViewer {
 
     class LineItemGrid
     {
-        private int ITEM_AVERAGE_HEIGHT = 30;
+        private int ITEM_AVERAGE_HEIGHT = 50;
         private ArrayList<LineItemGridRow> m_arRows = new ArrayList<>();
         private ArrayList<Integer> m_arColSizePercent = new ArrayList<>();
         private int m_nCols = 0;
@@ -1127,10 +1136,12 @@ public class LineItemViewer {
         public void setFocusedRowIndex(int nIndex)
         {
             //if (getEnv().getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
-            if (isTextWrap() || isEachLineCondimentModifier()){
-                if (m_gridTop.isCombinedRow(m_gridTop.getRow(nIndex))) {
-                    LineItemGridRow combineToRow = m_gridTop.getCombinedToWhichRow(m_gridTop.getRow(nIndex));
-                    nIndex = m_gridTop.getRowIndex(combineToRow);
+            if (nIndex >=0) {
+                if (isTextWrap() || isEachLineCondimentModifier()) {
+                    if (m_gridTop.isCombinedRow(m_gridTop.getRow(nIndex))) {
+                        LineItemGridRow combineToRow = m_gridTop.getCombinedToWhichRow(m_gridTop.getRow(nIndex));
+                        nIndex = m_gridTop.getRowIndex(combineToRow);
+                    }
                 }
             }
 
@@ -1342,7 +1353,7 @@ public class LineItemViewer {
 
 
 
-        final int CAPTION_HEIGHT = 30;
+        int CAPTION_HEIGHT = 30;
 
         private Rect getCaptionRect()
         {
@@ -1666,6 +1677,8 @@ public class LineItemViewer {
             //ITEM_AVERAGE_HEIGHT = settings.getInt(KDSSettings.ID.Panels_Row_Height);
             ITEM_AVERAGE_HEIGHT = settings.getInt(KDSSettings.ID.LineItems_line_height);
             ITEM_AVERAGE_HEIGHT = getBestRowHeight();
+			TITLE_HEIGHT = ITEM_AVERAGE_HEIGHT;
+			CAPTION_HEIGHT = TITLE_HEIGHT;
             if (ITEM_AVERAGE_HEIGHT<MIN_ROW_HEIGHT)
                 ITEM_AVERAGE_HEIGHT = MIN_ROW_HEIGHT;
 
@@ -2537,6 +2550,27 @@ public class LineItemViewer {
     public KDSDataItem smartSortGetFirstItem()
     {
         return m_smartItemsRows.getFirstItem();
+    }
+
+    /**
+     * kp-25
+     * @param orderGuid
+     * @return
+     */
+    public KDSDataItem smartSortGetFirstItemOfOrder(String orderGuid)
+    {
+
+        return m_smartItemsRows.getFirstItemOfOrder(orderGuid);
+    }
+
+    /**
+     * KP-25,
+     */
+    public void resetGridInternalFocus()
+    {
+        setFocusToRow(m_gridTop, -1);
+        setFocusToRow(m_gridBottom, -1);
+
     }
 
 }

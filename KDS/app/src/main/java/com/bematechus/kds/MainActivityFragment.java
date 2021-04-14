@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -696,15 +697,17 @@ public class MainActivityFragment extends Fragment {
         TextView t = (TextView) v.findViewById(R.id.txtText);
         if (t == null) return;
 
+		KDSViewFontFace ff = KDSGlobalVariables.getKDS().getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface);
+		int font_color = ff.getFG();
         if (btn.m_bIsDown) {
             img.setImageResource((int) map.get("icondown"));
             t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
+			img.setColorFilter(Color.argb(48, Color.red(font_color), Color.green(font_color), Color.blue(font_color)));
         }
         else {
             img.setImageResource((int) map.get("icon"));
-            KDSViewFontFace ff = KDSGlobalVariables.getKDS().getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface);
-            //t.setTextColor( getResources().getColor( R.color.touch_button_fg));
-            t.setTextColor( ff.getFG() );
+            t.setTextColor(font_color);
+            img.setColorFilter(font_color);
         }
     }
 
@@ -742,12 +745,9 @@ public class MainActivityFragment extends Fragment {
             TextView t = (TextView) convertView.findViewById(R.id.txtText);
 
             GradientDrawable drawable = (GradientDrawable)convertView.getBackground();
-            drawable.setStroke(1,kds.getSettings().getInt(KDSSettings.ID.Panels_BG)) ;
-
+            drawable.setStroke(0,kds.getSettings().getInt(KDSSettings.ID.Panels_BG)) ;
             KDSViewFontFace ff = kds.getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface);
 
-           // convertView.setBackgroundColor(ff.getBG());
-            //t.setTextColor(ff.getFG());
             t.setTextColor(ff.getFG());
             t.setTypeface(ff.getTypeFace());
             t.setTextSize(ff.getFontSize());
@@ -755,16 +755,6 @@ public class MainActivityFragment extends Fragment {
             KDSTouchPadButton btn = (KDSTouchPadButton) map.get("btn");
             t.setText( btn.getText());
             setButtonStateImageColor(convertView, btn, map);
-//            ImageView img = (ImageView) convertView.findViewById(R.id.imgTouch);
-//            if (btn.m_bIsDown) {
-//                img.setImageResource((int) map.get("icondown"));
-//                t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
-//            }
-//            else {
-//                img.setImageResource((int) map.get("icon"));
-//                //t.setTextColor( getResources().getColor( R.color.touch_button_fg));
-//                t.setTextColor( ff.getFG() );
-//            }
 
             return convertView;
         }

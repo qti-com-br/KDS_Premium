@@ -9,6 +9,7 @@ package com.bematechus.kdslib;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -523,12 +524,14 @@ public class KDSDataOrders extends KDSDataArray {
                             public int compare(Object o1, Object o2) {
                                 KDSDataOrder c1 = (KDSDataOrder) o1;
                                 KDSDataOrder c2 = (KDSDataOrder) o2;
-                                int count1 = c1.getItems().getCount();//
+                                //int count1 = c1.getItems().getCount();//
+                                int count1 = (int)c1.getItems().getTotalQty();// kp-6
                                 if (count1<=0) {
                                    if ( c1.getTag() !=null)
                                        count1 = (int)c1.getTag();
                                 }
-                                int count2 = c2.getItems().getCount();
+                                //int count2 = c2.getItems().getCount();
+                                int count2 = (int)c2.getItems().getTotalQty(); //kp-6
                                 if (count2<=0) {
                                     if ( c2.getTag() !=null)
                                         count2 = (int)c2.getTag();
@@ -551,12 +554,14 @@ public class KDSDataOrders extends KDSDataArray {
                             public int compare(Object o1, Object o2) {
                                 KDSDataOrder c1 = (KDSDataOrder) o1;
                                 KDSDataOrder c2 = (KDSDataOrder) o2;
-                                int count1 = c1.getItems().getCount();//
+                                //int count1 = c1.getItems().getCount();//
+                                int count1 = (int) c1.getItems().getTotalQty();// KP-6
                                 if (count1<=0) {
                                     if ( c1.getTag() !=null)
                                         count1 = (int)c1.getTag();
                                 }
-                                int count2 = c2.getItems().getCount();
+                                //int count2 = c2.getItems().getCount();
+                                int count2 = (int)c2.getItems().getTotalQty(); //kp-6
                                 if (count2<=0) {
                                     if ( c2.getTag() !=null)
                                         count2 = (int)c2.getTag();
@@ -1123,4 +1128,6 @@ public class KDSDataOrders extends KDSDataArray {
         }
 
     }
+
+
 }

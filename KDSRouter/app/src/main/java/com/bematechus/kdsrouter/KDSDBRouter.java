@@ -227,7 +227,7 @@ public class KDSDBRouter extends KDSDBBase {
     public KDSRouterDataCategory categoryGetInfo(String guid) {
 
         String sql = "select GUID, Description,bg,"
-                + " fg, tostation,toscreen,printable,delay,"
+                + " fg, tostation,toscreen,printable,delay,r0,"
                 + "DBTimeStamp from category where guid='" + guid + "'";// Common.KDSUtil.ConvertIntToString(nID);
         Cursor c = getDB().rawQuery(sql, null);
 
@@ -248,7 +248,8 @@ public class KDSDBRouter extends KDSDBBase {
         c.setToScreen(getString(sf,5));
         c.setPrintable((getInt(sf,6) == 1));
         c.setDelay(getFloat(sf,7));
-        c.setTimeStamp(getDate(sf, 8));
+        c.setPreparationTime(getFloat(sf,8));
+        c.setTimeStamp(getDate(sf, 9));
 
         return c;
 
@@ -1480,6 +1481,48 @@ public class KDSDBRouter extends KDSDBBase {
         return (!s.isEmpty());
     }
 
+    /**
+     * KP-27, add preparation time and delay time to category
+     * @param categoryDescription
+     * @return
+     */
+    public float categoryGetPreparationTime(String categoryDescription)
+    {
+        String s = categoryDescription;
+        s = KDSUtil.fixSqliteSingleQuotationIssue(s);
+        String sql = "select r0 from Category where description='" + s + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        float flt = 0;
+        if (c.moveToNext()) {
+            flt  =  getFloat(c,0);
+            c.close();
+        }
+
+        return flt;
+
+    }
+
+    /**
+     * KP-17,
+     * @param itemDescription
+     * @return
+     */
+    public float itemGetDelay(String itemDescription)
+    {
+        String s = itemDescription;
+        s = KDSUtil.fixSqliteSingleQuotationIssue(s);
+        String sql = "select delay from items where description='" + s + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        float flt = 0;
+        if (c.moveToNext()) {
+            flt  =  getFloat(c,0);
+            c.close();
+        }
+
+        return flt;
+
+    }
+
     /***************************************************************************
      * SQL definitions
      */
@@ -1494,7 +1537,7 @@ public class KDSDBRouter extends KDSDBBase {
             + "ToScreen text(64),"
             + "Printable int default 0,"
             + "Delay float,"
-            +"r0 text(16),"
+            +"r0 text(16)," //Use it to save preparation time.
             +"r1 text(16),"
             +"r2 text(16),"
             +"r3 text(16),"

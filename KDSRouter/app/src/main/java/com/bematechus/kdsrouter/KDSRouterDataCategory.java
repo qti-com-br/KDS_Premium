@@ -23,6 +23,9 @@ public class KDSRouterDataCategory extends KDSData {
     String m_strToScreen="";
     boolean m_bPrintable = true;
     float m_fltDelay = 0;
+
+    float m_fltPreparation = 0;
+
     KDSRouterDataItems m_items = null;
 
 
@@ -64,16 +67,18 @@ public class KDSRouterDataCategory extends KDSData {
 
     public int getDelayMins()
     {
-        float f = m_fltDelay  *60;
-        int m =(int)( f/60);
-        return m;
+        return KDSUtil.getMinutesFromMinsFloat(m_fltDelay);
+//        float f = m_fltDelay  *60;
+//        int m =(int)( f/60);
+//        return m;
     }
     public int getDelaySecs()
     {
-        float f = m_fltDelay  *60;
-        int m =(int)( f/60);
-        int sec =Math.round( f % 60);
-        return sec;
+        return KDSUtil.getSecondsFromMinsFloat(m_fltDelay);
+//        float f = m_fltDelay  *60;
+//        int m =(int)( f/60);
+//        int sec =Math.round( f % 60);
+//        return sec;
     }
     public String getDelayFormated()
     {
@@ -194,7 +199,7 @@ public class KDSRouterDataCategory extends KDSData {
 
         String sql = "insert into category("
                 + "GUID,Description,bg,fg,ToStation,"
-                + "ToScreen,Printable,Delay) "
+                + "ToScreen,Printable,Delay,r0) "
                 + " values ("
                 + "'" + getGUID() + "','"
                 + fixSqliteSingleQuotationIssue( getDescription()) + "',"
@@ -204,6 +209,7 @@ public class KDSRouterDataCategory extends KDSData {
                 + fixSqliteSingleQuotationIssue(  getToScreen()) +"',"
                 + KDSUtil.convertBoolToString(getPrintable()) +","
                 + KDSUtil.convertFloatToString(getDelay())
+                + "," + KDSUtil.convertFloatToString(getPreparationTime())
                 + ")";
         return sql;
     }
@@ -217,9 +223,37 @@ public class KDSRouterDataCategory extends KDSData {
                 + "ToScreen='"+  fixSqliteSingleQuotationIssue(getToScreen()) +"',"
                 + "Printable=" + KDSUtil.convertBoolToString(getPrintable()) +","
                 + "Delay="  + KDSUtil.convertFloatToString(getDelay())  +","
+                + "r0="  + KDSUtil.convertFloatToString(getPreparationTime())  +","
                 + "DBTimeStamp='" + KDSUtil.convertDateToString(getTimeStamp())
                 + "' where guid='" + getGUID() + "'";
         return sql;
+    }
+
+    public void setPreparationTime(float fltPreparation)
+    {
+        m_fltPreparation = fltPreparation;
+    }
+
+    public float getPreparationTime()
+    {
+        return m_fltPreparation;
+    }
+
+    public int getPreparationMins()
+    {
+        return KDSUtil.getMinutesFromMinsFloat(m_fltPreparation);
+//        float f = m_fltPreparation  *60;
+//        int m =(int)( f/60);
+//        return m;
+    }
+    public int getPreparationSecs()
+    {
+
+        return KDSUtil.getSecondsFromMinsFloat(m_fltPreparation);
+//        float f = m_fltPreparation  *60;
+//        int m =(int)( f/60);
+//        int sec =Math.round( f % 60);
+//        return sec;
     }
 
 }

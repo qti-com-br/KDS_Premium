@@ -262,12 +262,12 @@
     <PreferenceCategory android:title="@string/pref_kds_panels_font">
         <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="panel_bg"
-            android:defaultValue="0xffffffff"
+            android:defaultValue="@color/panel_bg"
             android:title="@string/pref_kds_panels_bg" />
         <com.bematechus.kdslib.KDSEditTextPreference
             android:key="panel_text_line_height"
             android:title= "@string/pref_kds_panels_row_height"
-            android:defaultValue="16"
+            android:defaultValue="36"
             android:selectAllOnFocus="true"
             android:inputType= "number"
             android:capitalize="words"
@@ -311,7 +311,7 @@
     <CheckBoxPreference
     android:key="panels_show_number"
     android:title="@string/pref_kds_panels_show_number"
-    android:defaultValue="true" />
+    android:defaultValue="false" />
 
     <!--<CheckBoxPreference-->
         <!--android:key="bumpbar_panelnum_focus"-->

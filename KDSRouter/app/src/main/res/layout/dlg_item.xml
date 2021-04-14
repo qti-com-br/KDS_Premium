@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_column="0"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginLeft="5dp"
                     android:gravity="center"
                     android:text="@string/screen"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -125,6 +125,51 @@
                     android:layout_span="2"
                     android:textSize="@dimen/dlg_item_text_size"
                     android:singleLine="true" />
+
+<!--                -->
+                <TextView
+                    android:id="@+id/textDelay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_column="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/delayprep"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="@dimen/dlg_item_text_size" />
+                <EditText
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtDelayMins"
+                    android:selectAllOnFocus="true"
+                    android:inputType="number"
+                    android:textSize="@dimen/dlg_item_text_size"
+
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text=":"
+                    android:layout_toRightOf="@id/txtPrepTime"
+                    android:layout_toEndOf="@id/txtPrepTime"
+                    android:id="@+id/txtDelayDot"
+                    android:textSize="@dimen/dlg_item_text_size"
+                    />
+
+                <EditText
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/txtDelaySecs"
+                    android:selectAllOnFocus="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/txtDot"
+                    android:layout_toEndOf="@+id/txtDot"
+                    android:textSize="@dimen/dlg_item_text_size"
+                    android:singleLine="true" />
+<!--                -->
             </LinearLayout>
 
         </TableRow>
@@ -140,7 +185,7 @@
                 android:layout_column="0"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="@string/delayprep"
+                android:text="@string/preparation_time"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="@dimen/dlg_item_text_size" />
 
@@ -152,7 +197,7 @@
                 <EditText
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/txtPrepTime"
+                    android:id="@+id/txtPrepMins"
                     android:selectAllOnFocus="true"
                     android:inputType="number"
                     android:textSize="@dimen/dlg_item_text_size"
@@ -164,8 +209,8 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text=":"
-                    android:layout_toRightOf="@id/txtPrepTime"
-                    android:layout_toEndOf="@id/txtPrepTime"
+                    android:layout_toRightOf="@id/txtPrepMins"
+                    android:layout_toEndOf="@id/txtPrepMins"
                     android:id="@+id/txtDot"
                     android:textSize="@dimen/dlg_item_text_size"
                     />
@@ -175,7 +220,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:ems="10"
-                    android:id="@+id/txtSecs"
+                    android:id="@+id/txtPrepSecs"
                     android:selectAllOnFocus="true"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/txtDot"
@@ -191,8 +236,8 @@
                     android:layout_weight="1"
                     android:layout_span="2"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/txtSecs"
-                    android:layout_toEndOf="@+id/txtSecs"
+                    android:layout_toRightOf="@+id/txtPrepSecs"
+                    android:layout_toEndOf="@+id/txtPrepSecs"
                     android:text="@string/printable"
                     android:textSize="@dimen/dlg_item_text_size"
                     android:layout_marginLeft="50dp" />

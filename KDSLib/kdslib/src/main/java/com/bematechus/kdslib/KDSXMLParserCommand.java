@@ -107,6 +107,8 @@ public class KDSXMLParserCommand {
         Prep_sync_to_queue,
         Queue_ask_sync_new_orders_from_prep,
         Prep_sync_new_order_to_queue,
+        //kp1-25
+        Runner_show_category,
     }
     private static final String COMMAND = "KDSCommand";
     private static final String CODE = "Code";
@@ -677,6 +679,26 @@ public class KDSXMLParserCommand {
         return s;
 
 
+
+    }
+
+    /**
+     * kp1-25, tell runner child the new category is showing.
+     * @param strStationID
+     * @param ipAddress
+     * @param macAddress
+     * @param categoryDescription
+     * @return
+     */
+    static public String createRunnerUpdateCategory(String strStationID, String ipAddress, String macAddress, String orderName, String categoryDescription)
+    {
+
+        java.util.ArrayList ar = new java.util.ArrayList();
+        ar.add(orderName);
+        ar.add(categoryDescription);
+        return createShortCommandXmlString(KDSCommand.Runner_show_category.ordinal(), strStationID, ipAddress, macAddress, ar);
+
+        
 
     }
 }

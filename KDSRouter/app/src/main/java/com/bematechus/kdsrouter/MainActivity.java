@@ -1143,13 +1143,28 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         else if (message.equals(KDSSMBDataSource.PATH_LOST))
         {
+
             if (m_txtError != null) {
+                int n= (getSettings().getInt(KDSRouterSettings.ID.KDSRouter_Data_Source));
+                KDSRouterSettings.KDSDataSource srcType = KDSRouterSettings.KDSDataSource.values()[n];
+
                 String s = this.getString(R.string.smb_folder_lost);
-                String folder = this.getKDSRouter().getSettings().getString(KDSRouterSettings.ID.KDSRouter_Data_Folder);
-                KDSSMBPath path = KDSSMBPath.parseString(folder);
-                folder = path.toDisplayString();
-                s = s.replace("#", folder);
-                m_txtError.setText(s);
+                if (srcType == SettingsBase.KDSDataSource.Folder) {
+                    String folder = this.getKDSRouter().getSettings().getString(KDSRouterSettings.ID.KDSRouter_Data_Folder);
+                    KDSSMBPath path = KDSSMBPath.parseString(folder);
+                    folder = path.toDisplayString();
+                    s = s.replace("#", folder);
+                    m_txtError.setText(s);
+                }
+                else
+                {
+                    s = s.replace("#", "");
+                    if (m_txtError.getText().toString().indexOf(s)>=0)
+                        m_txtError.setText("");
+                }
+
+
+
             }
 
         }

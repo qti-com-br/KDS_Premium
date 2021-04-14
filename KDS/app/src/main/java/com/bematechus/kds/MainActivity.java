@@ -45,6 +45,7 @@ import android.view.View;
 //import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 
 import android.widget.ImageView;
@@ -94,6 +95,7 @@ import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.KDSXMLParserCommand;
+import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
@@ -106,9 +108,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 import static com.bematechus.kdslib.KDSApplication.getContext;
 import static com.bematechus.kdslib.KDSUtil.showMsg;
@@ -323,6 +327,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_cleaning.checkCleaningHabits();
 
+        checkAutoClearDB();
+
+        removeSumStationTimeoutData();
+
     }
 
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -345,11 +353,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         ImageView imgState = (ImageView) this.findViewById(R.id.imgState);
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
+			imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
-
+			imgState.setColorFilter(null);
             if (isKDSValid() && getKDS().isNetworkRunning())
                 onNetworkLost();
 
@@ -1009,6 +1018,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             strTitle += " - " + getVersionName();
         if (getKDS().getStationFunction() == KDSSettings.StationFunc.Expeditor)
             strTitle += " (EXPO)";
+        if (getKDS().getStationFunction() == KDSSettings.StationFunc.Runner)
+            strTitle += " ("+getString(R.string.runner)+ ")";
+        if (getKDS().getStationFunction() == KDSSettings.StationFunc.Summary)
+            strTitle += " ("+getString(R.string.summary) + ")";
         //strTitle = "[#"+strID +"] "+ strTitle;
         if (getKDS().getStationsConnections().getRelations().isBackupStation())
         {
@@ -1073,13 +1086,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         getTextView(R.id.txtTitle).setText(strTitle);
 
-        String strID = this.getSettings().getString(KDSSettings.ID.KDS_ID);
-        String s = "#" + strID;
+        //kp-26
+        if (this.getSettings().getBoolean(KDSSettings.ID.Hide_store_name))
+        {
+            getTextView(R.id.imgLCI).setVisibility(View.GONE);
+            getTextView(R.id.imgLCI).setText("");
+        }
+        else {
 
-        if (!Activation.getStoreName().isEmpty())
-            s = Activation.getStoreName() + "-" + s;
-        //m_imgLogo.setText(s);
-        getTextView(R.id.imgLCI).setText(s);
+            String strID = this.getSettings().getString(KDSSettings.ID.KDS_ID);
+            String s = "#" + strID;
+
+            if (!Activation.getStoreName().isEmpty())
+                s = Activation.getStoreName() + "-" + s;
+            //m_imgLogo.setText(s);
+            getTextView(R.id.imgLCI).setVisibility(View.VISIBLE);
+            getTextView(R.id.imgLCI).setText(s);
+        }
         //KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -1606,7 +1629,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opFocusNext(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isUserLayoutReady(userID)) return;
-
+        if (isSummaryStationMode()) return;
         getUserUI(userID).getLayout().focusNext();
         //getUserUI(userID).refreshPrevNext(); //roll back code.
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -1626,6 +1649,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     private void opFocusPrev(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         MainActivityFragment f = getMainFragment();
         if (f != null)
             f.focusPrev(userID);
@@ -1636,6 +1660,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opSummary(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         int n = getKDS().getSettings().getInt(KDSSettings.ID.Sum_position);
         KDSSettings.SumPosition pos = KDSSettings.SumPosition.values()[n];
         showSummary(userID,  !this.getUserUI(userID).isVisibleSum(pos));
@@ -1668,6 +1693,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             opFocusPrev(userID);
             return;
         }
+        else if (isSummaryStationMode())
+            return;
 
         String guid = getPrevItemGuid(userID);
 
@@ -1811,6 +1838,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             opFocusNext(userID);
             return;
         }
+        else if (isSummaryStationMode())
+            return;
         // String guid = getKDS().getNextItemGuid(userID, getSelectedOrderGuid(userID), getSelectedItemGuid(userID));
         String guid = getNextItemGuid(userID);
         // if (guid.isEmpty()) return;
@@ -1829,7 +1858,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void opPrint(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
-
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (orderGuid.isEmpty()) return;
         KDSDataOrder order = getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
@@ -1850,7 +1879,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (order == null) return;
         String orderName = order.getOrderName();
         String strBump = getString(R.string.confirm_bump_normal);
-        if (getKDS().getStationFunction() == KDSSettings.StationFunc.Expeditor) {
+        if (getKDS().getStationFunction() == KDSSettings.StationFunc.Expeditor ||
+                getKDS().getStationFunction() == KDSSettings.StationFunc.Runner) {
             if (!order.isItemsAllBumpedInExp()) {
                 strBump = getString(R.string.confirm_bump_expo_outstanding);
             }
@@ -1913,6 +1943,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opSwitchUser() {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         getKDS().getUsers().switchUser();
 
         focusUser(getKDS().getUsers().getFocusedUserID());
@@ -1942,7 +1973,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private boolean isDoubleBumpForQueue()
     {
         //2.0.11
-        if ( (this.getKDS().isExpeditorStation() || this.getKDS().isPrepStation() ) &&
+        if ( (this.getKDS().isExpeditorStation() || this.getKDS().isPrepStation() ||this.getKDS().isRunnerStation() ) &&
                 getKDS().getSettings().getBoolean(KDSSettings.ID.Queue_double_bump_expo_order) &&
                 getKDS().getStationsConnections().isMyQueueDisplayStationsExisted())
         {
@@ -1974,8 +2005,26 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private boolean checkExpoConfirmationBump(KDSUser.USER userID,String orderGuid, boolean bForAutoBumping)
     {
 
-        if (!getKDS().isExpeditorStation())
+        if (!getKDS().isExpeditorStation() &&
+                (!getKDS().isRunnerStation()))
             return false;
+
+        //kp-44, runner confirm bump
+        if (getKDS().isRunnerStation())
+        {
+            if (getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
+            {
+                KDSDataOrder order =  getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
+                if (!order.isExpoAllItemsFinished(getKDS().getStationID()))
+                {
+                    showToastMessage(getString(R.string.runner_confirm_bump_unless_prep_bumped));
+                    return true;
+                }
+            }
+            else
+                return false;
+        }
+        //
         if (!getSettings().getBoolean(KDSSettings.ID.Bumping_expo_confirmation))
             return false;
 
@@ -2019,6 +2068,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opBump(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         if (orderGuid.isEmpty()) return;
 
@@ -2037,6 +2087,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             String itemGuid = getSelectedItemGuid(userID);
 
             if (itemGuid.isEmpty()) {//bump order
+                if (PrepSorts.m_bSmartCategoryEnabled || //I am child of runner
+                    getKDS().isRunnerStation()  ) //I am a runner
+                {
+                    boolean bFinishItemByBumpOrder = getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_finish_items_by_bump_order);
+                    if (bFinishItemByBumpOrder)
+                    {
+                        if (runnerModeBumpItems(userID, orderGuid))
+                            return;
+                    }
+                }
                 //kpp1-343, allow expo bump itself items . So, move this check here.
                 if (checkExpoConfirmationBump(userID, orderGuid, false))
                     return;
@@ -2056,7 +2116,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     onBumpOrder(userID);
             } else {
                 if (checkExpoCanBumpItem(userID, orderGuid, itemGuid))
-                onBumpItem(userID);
+                    onBumpItem(userID);
             }
         }
         getKDS().schedule_process_update_to_be_prepare_qty(true);
@@ -2126,7 +2186,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                  * Please change it to expo guest_paging the pager at its first bump as the food is already ready.
                  */
             //2.0.11, enable prep queue
-                if (getKDS().isExpeditorStation() || getKDS().isPrepStation())
+                if (getKDS().isExpeditorStation() || getKDS().isPrepStation() ||getKDS().isRunnerStation())
                 {
                     notifyPOSOrderBump(userID, order);//2.0.21, please make sure when double bump is enable for queue display,  the expo first bump sends out notification instead of the 2nd one.
                     if (getSettings().getBoolean(KDSSettings.ID.Queue_double_bump_expo_order)) //20180313
@@ -2180,7 +2240,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //notification
         if (!isKDSValid()) return ;
-        if (getKDS().isExpeditorStation())
+        if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
             getKDS().firePOSNotification(order, null, KDSPosNotificationFactory.BumpUnbumpType.BUMP_EXPEDITOR_ORDER );
         else
             getKDS().firePOSNotification(order, null,KDSPosNotificationFactory.BumpUnbumpType.BUMP_ORDER );
@@ -2414,7 +2474,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 getKDS().refreshView();
             //refreshView(); //20180314
             //2.0.11, enable prep queue
-            if (getKDS().isExpeditorStation() || getKDS().isPrepStation())
+            if (getKDS().isExpeditorStation() || getKDS().isPrepStation() || getKDS().isRunnerStation())
             {
                 if (!getSettings().getBoolean(KDSSettings.ID.Queue_double_bump_expo_order)) //20180313
                     getKDS().getPagerManager().addPagerID(order.getPagerID());
@@ -2597,6 +2657,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
+    public boolean isSummaryStationMode()
+    {
+        return (getKDS().getSettings().getStationFunc() == SettingsBase.StationFunc.Summary);
+    }
+
+
     private void lineItemsFocusNextAfterBump(KDSUser.USER userID,String focusedOrderGuid, String focusedItemGuid)
     {
         if (!getKDS().getSettings().getLineItemsViewEnabled())//.getBoolean(KDSSettings.ID.LineItems_Enabled))
@@ -2635,50 +2701,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void onBumpItem(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         itemBump(userID,getSelectedOrderGuid(userID), getSelectedItemGuid(userID) );
-//        if (!isKDSValid()) return ;
-//
-//        //prevent queue stuck
-//        if (suspendBumpWhenQueueRecovering()) {
-//            getKDS().showToastMessage(getString(R.string.suspend_bump_while_queue_recover));
-//            return;
-//        }
-//
-//        String orderGuid = getSelectedOrderGuid(userID);//
-//        if (orderGuid.isEmpty()) return;
-//
-//        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);//KPP1-129, keep order here
-//
-//        String itemGuid = getSelectedItemGuid(userID);
-//        if (itemGuid.isEmpty()) return;
-//
-//        if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
-//            return;
-//
-//        onRefreshSummary(userID);
-//        //this.getSummaryFragment().refreshSummary();
-//        //notification
-//        notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
-//        if (getKDS().isExpeditorStation())
-//        {
-//            if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
-//                getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
-//        }
-//
-//        lineItemsFocusNextAfterBump(userID, orderGuid, itemGuid);
-//        refreshView(userID);
-//
-//        getKDS().checkSMS(orderGuid, false); //2.1.10, fix KPP1-23
-//        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid); //KPP1-129, move it to above
-//        if (order != null) {
-//            getKDS().checkBroadcastSMSStationStateChanged(orderGuid, "",order.isAllItemsFinished(), false);
-//        }
-//        //
-//        //https://bematech.atlassian.net/browse/KPP1-62
-//        if (order != null) { //if I continue bump order, show crash, KPP1-129
-//            KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
-//            getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
-//        }
-//        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
 
     }
     private void notifyPOSItemBumpUnbump(KDSUser.USER userID,  String orderGuid, String itemGuid)
@@ -2690,14 +2713,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (item == null) return;
         KDSPosNotificationFactory.BumpUnbumpType t = KDSPosNotificationFactory.BumpUnbumpType.BUMP_ITEM;
         if (item.getLocalBumped()) {
-            if (getKDS().isExpeditorStation())
+            if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
                 t = KDSPosNotificationFactory.BumpUnbumpType.BUMP_EXPEDITOR_ITEM;
             else
                 t = KDSPosNotificationFactory.BumpUnbumpType.BUMP_ITEM;
         }
         else
         {
-            if (getKDS().isExpeditorStation())
+            if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
                 t = KDSPosNotificationFactory.BumpUnbumpType.UNBUMP_EXPEDITOR_ITEM;
             else
                 t = KDSPosNotificationFactory.BumpUnbumpType.UNBUMP_ITEM;
@@ -2715,14 +2738,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
         KDSPosNotificationFactory.BumpUnbumpType t = KDSPosNotificationFactory.BumpUnbumpType.BUMP_ITEM;
         if (item.getLocalBumped()) {
-            if (getKDS().isExpeditorStation())
+            if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
                 t = KDSPosNotificationFactory.BumpUnbumpType.BUMP_EXPEDITOR_ITEM;
             else
                 t = KDSPosNotificationFactory.BumpUnbumpType.BUMP_ITEM;
         }
         else
         {
-            if (getKDS().isExpeditorStation())
+            if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
                 t = KDSPosNotificationFactory.BumpUnbumpType.UNBUMP_EXPEDITOR_ITEM;
             else
                 t = KDSPosNotificationFactory.BumpUnbumpType.UNBUMP_ITEM;
@@ -2816,14 +2839,30 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opUnbump(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);// f.getLayout().getEnv().getStateValues().getFocusedOrderGUID();
         //if (orderGuid.isEmpty()) return;
 
         String itemGuid = getSelectedItemGuid(userID);
 
+        if (itemGuid.isEmpty())
+        {
+            if (PrepSorts.m_bSmartCategoryEnabled || //I am child of runner
+                    getKDS().isRunnerStation()  ) //I am a runner
+            {
+                if (getSettings().getBoolean(KDSSettings.ID.Runner_finish_items_by_bump_order)) {
+                    if (onUnbumpRunnerItems(userID))
+                        return;
+                }
+            }
+        }
         if (isLineItemsMode())
         {
             onUnbumpOrder(userID);
+        }
+        else if (isSummaryStationMode())
+        {
+            return;
         }
         else {
             if (itemGuid.isEmpty() || orderGuid.isEmpty()) {
@@ -2838,6 +2877,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void opUnbumpLast(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         onUnbumpLastOrder(userID);
         getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_unbump_order);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -2954,6 +2994,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                         int screen = data.getIntExtra("screen", 0);
                         unbumpItem(KDSUser.USER.values()[screen], guid, itemguid);
                     }
+                    else if (isSummaryStationMode())
+                    {
+                        break;
+                    }
                     else
                         restoreOrder(guid);
                     getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_unbump_order);
@@ -3029,7 +3073,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         if (orderGuid.isEmpty()) return;
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
-        
+
         //kpp1-439, just auto sort enabled, we set focus to unbumped order. Otherwise, keep current focus order.
         //           This is for preventing page changed issue.
         KDSSettings.OrdersSort ordersSort = KDSSettings.OrdersSort.values()[  getSettings().getInt(KDSSettings.ID.Order_Sort)];
@@ -3058,7 +3102,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         if (!isKDSValid()) return ;
         KDSDataOrder order = getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid);
-        if (getKDS().isExpeditorStation())
+        if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
             getKDS().firePOSNotification(order, null, KDSPosNotificationFactory.BumpUnbumpType.UNBUMP_EXPEDITOR_ORDER);
         else
             getKDS().firePOSNotification(order, null, KDSPosNotificationFactory.BumpUnbumpType.UNBUMP_ORDER);
@@ -3458,6 +3502,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opTransfer(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         if (!isAnyOrderSelected(userID)) {
             showToastMessage(getString(R.string.transfer_select_order_warn));
             return;
@@ -3528,6 +3573,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opSort(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         if (this.getSettings().getInt(KDSSettings.ID.Order_Sort) != KDSSettings.OrdersSort.Manually.ordinal())
             return;
         KDSConst.OrderSortBy sortBy = getKDS().getUsers().getUser(userID).getOrders().getSortBy();
@@ -3546,6 +3592,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);
         if (orderGuid.isEmpty()) return;
         KDSUser user = getKDS().getUsers().getUser(userID);
@@ -3560,6 +3607,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opPark(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);
         if (orderGuid.isEmpty()) return;
         KDSUser user = getKDS().getUsers().getUser(userID);
@@ -3582,6 +3630,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opUnpark(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
+        if (isSummaryStationMode()) return;
         Intent intent = new Intent(MainActivity.this, KDSActivityUnbump.class);
         String stations = getKDS().getStationID();
 
@@ -3651,6 +3700,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void opMore(KDSUser.USER userID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         KDSUIDialogMore d = new KDSUIDialogMore(this, getFocusedUserID(), this);
         d.show();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -3687,7 +3737,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().getCurrentDB().prep_add_order_items(order);
 
 
-        getKDS().doOrderFilter(order, "",false,true, true);
+        getKDS().doOrderFilter(null, order, "",false,true, true);
         //t.debug_print_Duration("opAddNewOrder2");
         getKDS().refreshView(KDSUser.USER.USER_A, KDS.RefreshViewParam.None);
         getKDS().refreshView(KDSUser.USER.USER_B, KDS.RefreshViewParam.None);
@@ -4378,7 +4428,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshView(int  nUserID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
 
+
         KDSUser.USER userID = KDSUser.USER.values()[nUserID];
+
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
         //if (getKDS().isQueueStation() || getKDS().isQueueExpo())
         if (funcView == SettingsBase.StationFunc.Queue ||
@@ -4389,6 +4441,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (funcView == SettingsBase.StationFunc.TableTracker)//(getKDS().isTrackerStation())
         {
             refreshTTView();
+        }
+        else if (funcView == SettingsBase.StationFunc.Summary)
+        {
+            if (isUserLayoutReady(userID)) {
+                // TimeDog t = new TimeDog();
+                this.getUserUI(userID).getLayout().showOrders(orders);
+            }
         }
         else {
             //if (this.getUserUI(userID).getLayout() != null) {
@@ -4605,7 +4664,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_bPaused = true;
         super.onPause();
         //showInfo("Paused");
-        
+
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
 
         //if(isApplicationSentToBackground(getContext())) {
@@ -5101,7 +5160,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     doMoreFunc_Training_Video(getFocusedUserID());
                 break;
             case Bumpbar_Page:
-                if (getKDS().isExpeditorStation())
+                if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
                 {
                     opPageOrder(getFocusedUserID());
                 }
@@ -5300,6 +5359,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void opFocusPanel(KDSUser.USER userID, int nPanel) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isUserLayoutReady(userID)) return;
+        if (isSummaryStationMode()) return;
         getUserUI(userID).getLayout().focusPanel(nPanel);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
@@ -5464,6 +5524,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void  doMoreFunc_BuildCard(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         KDSDataItem item = getSelectItem(userID);
         if (item == null) return;
         CSVStrings files = item.getBuildCard();
@@ -5488,7 +5549,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public void  doMoreFunc_Training_Video(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
-
+        if (isSummaryStationMode()) return;
         KDSDataItem item = getSelectItem(userID);
         if (item == null) return;
         CSVStrings files = item.getTrainingVideo();
@@ -5535,7 +5596,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public boolean isMacMatch2() {
         if (KDSConst.ENABLE_FEATURE_ACTIVATION)
             return true;
-        
+
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         String strMac = "";
 
@@ -5575,13 +5636,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String message = str;
         if (message.equals(KDSSMBDataSource.PATH_LOST))
         {
-            String s = this.getString(R.string.smb_folder_lost);
-            String folder = this.getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
-            KDSSMBPath path = KDSSMBPath.parseString(folder);
-            folder = path.toDisplayString();
-            s = s.replace("#", folder);
-            showToastMessage(s);
+            int n= (getSettings().getInt(KDSSettings.ID.KDS_Data_Source));
+            KDSSettings.KDSDataSource srcType = KDSSettings.KDSDataSource.values()[n];
+
+            if (srcType == SettingsBase.KDSDataSource.Folder) {
+                String s = this.getString(R.string.smb_folder_lost);
+                String folder = this.getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
+                KDSSMBPath path = KDSSMBPath.parseString(folder);
+                folder = path.toDisplayString();
+                s = s.replace("#", folder);
+                showToastMessage(s);
+            }
+
             return true;
+
 
         }
         else if (message.equals(KDSSMBDataSource.PATH_PERMISSION))
@@ -6462,6 +6530,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opTabNextDisplayMode()
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return;
         TabDisplay.TabButtonData data = m_tabDisplay.getNextTabDisplayMode();
         if (data == null)
             return;
@@ -6481,6 +6550,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private boolean opNextPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return false;
         if (!isUserLayoutReady(userID)) return false;
         int ncount = getUserUI(userID).getLayout().getNextCount();
         getUserUI(userID).getLayout().focusNextPage();
@@ -6497,6 +6567,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private boolean opPrevPage(KDSUser.USER userID)
     {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
+        if (isSummaryStationMode()) return false;
         if (!isUserLayoutReady(userID)) return false;
         int ncount = getUserUI(userID).getLayout().getPrevCount();
         getUserUI(userID).getLayout().focusPrevPage();
@@ -6717,6 +6788,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         MainActivity.this.getKDS().clearAll();
         getKDS().clearStatisticData();
+        getKDS().clearRelationshipSettings(); //kp-57
         SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(getContext());
         //pre.registerOnSharedPreferenceChangeListener(this);
         setToDefaultSettings();
@@ -7432,6 +7504,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //String itemGuid = getSelectedItemGuid(userID);
         if (itemGuid.isEmpty()) return;
 
+        //kpp1-25, runner confirm bump
+        if (getKDS().isRunnerStation())
+        {
+            if (getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
+            {
+                KDSDataItem item =  order.getItems().getItemByGUID(itemGuid);
+                if (item == null) return;
+                if (item.getBumpedStationsString().isEmpty())
+                {
+                    showToastMessage(getString(R.string.runner_confirm_bump_unless_prep_bumped));
+                    return;
+                }
+            }
+        }
         if (!KDSStationFunc.itemBump(getKDS().getUsers().getUser(userID), orderGuid, itemGuid))
             return;
 
@@ -7439,7 +7525,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //this.getSummaryFragment().refreshSummary();
         //notification
         notifyPOSItemBumpUnbump(userID, orderGuid, itemGuid);
-        if (getKDS().isExpeditorStation())
+        if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
         {
             if (getKDS().getUsers().getUser(userID).getOrders().getOrderByGUID(orderGuid).isItemsAllBumpedInExp())
                 getKDS().getSoundManager().playSound(KDSSettings.ID.Sound_expo_order_complete);
@@ -7569,7 +7655,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         getKDS().clearStatisticData();
         */
 
-        getKDS().clearRelationshipSettings(); //kpp1-299-1
+        //KP-57, the relationship will been checked in onactivationSuccess()->checkRemovedStationsFromBackofficeAfterRegister
+        //getKDS().clearRelationshipSettings(); //kpp1-299-1
 
         onDoActivationExplicit();
     }
@@ -7634,6 +7721,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
             }
             break;
+            case Runner_LineItems_Show_New_Category:
+            {
+                String orderGuid = (String) arParams.get(0);
+                onRunnerLineItemShowNewCategory(orderGuid);
+            }
+            break;
             default:
             {
                 break;
@@ -7692,7 +7785,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private boolean checkExpoCanBumpItem(KDSUser.USER userID,String orderGuid, String itemGuid)
     {
 
-        if (!getKDS().isExpeditorStation())
+        if (!getKDS().isExpeditorStation() && (!getKDS().isRunnerStation()))
             return true;
         if (!getSettings().getBoolean(KDSSettings.ID.Bumping_expo_confirmation))
             return true;
@@ -7829,6 +7922,153 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //  m_activation.setMacAddress("BEMA0000011");//test
         //Log.i(TAG, "reg: doActivation,bSlient="+ (bSilent?"true":"false"));
         m_activation.startActivationNoEmptyUserNameAllowed(bSilent,bForceShowNamePwdDlg, this, showErrorMessage);
+    }
+
+
+    private void onRunnerLineItemShowNewCategory(String orderGuid)
+    {
+
+        getUserUI(KDSUser.USER.USER_A).getLayout().focusLineItemOrderFirstItem(orderGuid);
+        if (getKDS().isMultpleUsersMode())
+            getUserUI(KDSUser.USER.USER_B).getLayout().focusLineItemOrderFirstItem(orderGuid);
+    }
+
+    static public boolean m_bAutoClearDBDone = false;
+    private void checkAutoClearDB()
+    {
+        String s = getSettings().getString(KDSSettings.ID.Clear_db_schedule);
+        if (s.isEmpty()) return;
+        if (s.indexOf(":") <0) return;
+        String[] ar = s.split(":");
+        int hour =Integer.parseInt(ar[0]);//
+        int minutes = Integer.parseInt(ar[1]);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minutes);
+        cal.set(Calendar.SECOND, 0);
+        Date dt =  cal.getTime();
+        TimeDog td = new TimeDog(dt);
+        if (td.is_timeout(60000)) //1 minutes later, do nothing.
+        {
+            m_bAutoClearDBDone = false;
+            return;
+        }
+
+        if (td.is_timeout(1))
+        {
+            if (!m_bAutoClearDBDone)
+            {
+                doClearDB(true);
+                m_bAutoClearDBDone = true;
+            }
+
+        }
+
+
+    }
+
+    final int SUM_STATION_KEEP_DATA_TIMEOUT = 28800000; //8 hours
+    //final int SUM_STATION_KEEP_DATA_TIMEOUT = 10000; //for test
+    final int SUM_STATION_AUTO_CLEAR_TIMEOUT = 300000; //5 mins
+    //final int SUM_STATION_AUTO_CLEAR_TIMEOUT = 5000; //for test
+    TimeDog m_tdSumStation = new TimeDog();
+
+    private void removeSumStationTimeoutData()
+    {
+        if (!isSummaryStationMode()) return;
+        if (!m_tdSumStation.is_timeout(SUM_STATION_AUTO_CLEAR_TIMEOUT)) //10mins
+            return;
+        m_tdSumStation.reset();
+        //Here, we need to check if all items was bumped by other station.
+        // then remove this order from orders array.
+        //Otherwise, the orders will always kept in memory.
+        //remove two finished 2 hours order. For bump/unbump, otherwise, the unbumping get wrong data.
+        long timeout = SUM_STATION_KEEP_DATA_TIMEOUT;/// 8 * 60* 60 * 1000;
+        Vector<Object > arRemovedOrders = getKDS().getUsers().getUserA().getOrders().removeForSumStation(timeout);
+        if (arRemovedOrders.size() >0)
+        {
+            Log.d(TAG, "remove orders for summary station");
+        }
+        getKDS().getCurrentDB().removeOrdersForSumStation(arRemovedOrders);
+        arRemovedOrders.clear();
+
+    }
+
+    /**
+     * 1. Want to add an option where when using CatDelay can instead bump order to bring up next items based on CatDelay. This should be able to occur on any station.
+     *
+     * Scenario:
+     *
+     * Setup 3 Stations: 2 Preps, Runner and a Router.
+     *
+     * Client sends order item by item to the preps with set CatDelay
+     *
+     * User bumps order from prep station but only currently visible item is bumped.
+     *
+     * User bumps order from Runner but only the currently visible items are bumped.
+     *
+     * This brings up the next items based on the CatDelay.
+     *
+     * This will keep repeating until all items received have been bumped and from there the entire order can be bumped.
+     * @return
+     *
+     *  True: the bumping has been hold by this function.
+     *  false: pass to next functions.
+     */
+    private boolean runnerModeBumpItems(KDSUser.USER userID,  String orderGuid)
+    {
+        KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        boolean bAllFinished = order.isAllItemsBumpedInLocal();
+
+        for (int i=0; i< order.getItems().getCount(); i++) {
+            KDSDataItem item = order.getItems().getItem(i);
+            String itemName = item.getItemName();
+
+            if ( order.prep_get_sorts().is_cooking_time(itemName, order.getStartTime(), order.getOrderDelay()))
+            {
+                if (!item.getLocalBumped())
+                    itemBump(userID,orderGuid, item.getGUID() );
+            }
+        }
+
+        return (!bAllFinished);
+    }
+
+    /**
+     *
+     * @return
+     *  true: runnder mode hold this bump operation
+     *
+     */
+    private boolean onUnbumpRunnerItems(KDSUser.USER userID)
+    {
+        String orderGuid = getSelectedOrderGuid(userID);
+        KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        //find out max catdelay in bumped items
+        float maxBumpedCatDelay = 0;
+        for (int i=0; i< order.getItems().getCount(); i++) {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getLocalBumped())
+            {
+                if (item.getCategoryDelay() > maxBumpedCatDelay)
+                    maxBumpedCatDelay = item.getCategoryDelay();
+            }
+
+        }
+        //unbump
+        int nUnbumpedCount = 0;
+        for (int i=0; i< order.getItems().getCount(); i++) {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getLocalBumped()) {
+                if (item.getCategoryDelay() == maxBumpedCatDelay) {
+                    unbumpItem(userID, orderGuid, item.getGUID());
+                    nUnbumpedCount ++;
+                }
+            }
+        }
+        return (nUnbumpedCount >0);
+
     }
 }
 

@@ -2051,4 +2051,33 @@ just 16bits value
         else
             return KDSConst.INT_FALSE;
     }
+
+    static public String stringArrayToString(ArrayList<String> ar, String seperator)
+    {
+
+            String s = "";
+            for (int i=0; i< ar.size(); i++)
+            {
+                if (!s.isEmpty())
+                    s += seperator;
+                s += ar.get(i);
+
+            }
+            return s;
+    }
+
+    static public int getMinutesFromMinsFloat(float mins)
+    {
+        float f = mins  *60;
+        int m =(int)( f/60);
+        return m;
+    }
+
+    static public int getSecondsFromMinsFloat(float mins)
+    {
+        float f = mins  *60;
+        int m =(int)( f/60);
+        int sec =Math.round( f % 60);
+        return sec;
+    }
 }

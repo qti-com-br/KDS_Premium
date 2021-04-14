@@ -14,7 +14,7 @@
         kdstextview:leftcolor="@color/grid_border_color"
         kdstextview:rightcolor="@color/grid_border_color"
         kdstextview:bottomcolor="@android:color/transparent"
-        android:layout_weight="3.73"
+        android:layout_weight="2.73"
         android:textColor="@android:color/black"
         android:id="@+id/txtDescription"
         android:paddingLeft="@dimen/text_indentation"
@@ -52,6 +52,18 @@
         android:paddingLeft="3dp"
         android:background="@drawable/textview_border"
         android:gravity="center" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="2.6"
+        android:background="@drawable/textview_border"
+        android:layout_weight="1"
+        android:textColor="@android:color/black"
+        android:id="@+id/txtDelayTime"
+        android:gravity="center"
+        android:paddingLeft="3dp" />
 
     <TextView
         android:layout_width="0dp"

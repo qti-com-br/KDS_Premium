@@ -37,6 +37,7 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
+import com.bematechus.kdslib.SettingsBase;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -87,6 +88,7 @@ public class KDSView extends View {
     {
         Normal,
         LineItems,
+        Summary
 
     }
 
@@ -112,14 +114,22 @@ public class KDSView extends View {
 
     LineItemViewer m_lineItemsViewer = new LineItemViewer(this);
 
+    //summary station feature, kp-21
+    KDSViewSumStation m_sumStationViewer = new KDSViewSumStation(this);
+
+    /***************************************************************************************/
     public OrdersViewMode getOrdersViewMode()
     {
         if (isLineItemsDisplayMode())
             return OrdersViewMode.LineItems;
+        else if (isSummaryStationMode())
+            return OrdersViewMode.Summary;
         else
             return OrdersViewMode.Normal;
 
     }
+
+
 
     public boolean isLineItemsDisplayMode()
     {
@@ -128,6 +138,15 @@ public class KDSView extends View {
     public LineItemViewer getLineItemsViewer()
     {
         return m_lineItemsViewer;
+    }
+
+    public boolean isSummaryStationMode()
+    {
+        return (this.getEnv().getSettings().getStationFunc() == SettingsBase.StationFunc.Summary);
+    }
+    public KDSViewSumStation getSumStnViewer()
+    {
+        return m_sumStationViewer;
     }
     /*********************************************************************************************/
 
@@ -584,9 +603,15 @@ public class KDSView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         if (this.getEventReceiver() != null)
             this.getEventReceiver().onSizeChanged();
-        if (isLineItemsDisplayMode()) {
+        OrdersViewMode mode =  getOrdersViewMode();
+        if (mode == OrdersViewMode.LineItems) {
             m_lineItemsViewer.updateSettings(getSettings());
             m_lineItemsViewer.buildGrids();
+        }
+        else if (mode == OrdersViewMode.Summary)
+        {
+            m_sumStationViewer.updateSettings(getSettings());
+
         }
 
     }
@@ -626,7 +651,8 @@ public class KDSView extends View {
 //        m_canvasOld = canvas;
 //        if (m_bJustRedrawTimer) return;
                 //drawMe_DoubleBuffer(canvas);
-                if (getOrdersViewMode() == OrdersViewMode.Normal) {
+                OrdersViewMode mode = getOrdersViewMode();
+                if (mode == OrdersViewMode.Normal) {
                     if (m_bJustRedrawTimer && (!m_bForceFullDrawing)) {
 
                         Canvas g = get_double_buffer();
@@ -648,10 +674,16 @@ public class KDSView extends View {
                         drawMe_DoubleBuffer(canvas);
                         m_bForceFullDrawing = false;
                     }
-                } else {
+                } else if (mode == OrdersViewMode.LineItems ){
                     Canvas g = get_double_buffer();
                     m_lineItemsViewer.onDraw(g);
                     //redrawAllPanelNumberInReverseSequence(g); //remove it. kpp1-353
+                    commit_double_buffer(canvas);
+                }
+                else if (mode == OrdersViewMode.Summary)
+                {
+                    Canvas g = get_double_buffer();
+                    m_sumStationViewer.onDraw(g);
                     commit_double_buffer(canvas);
                 }
             } catch (Exception err) {
@@ -753,7 +785,8 @@ public class KDSView extends View {
     }
     protected boolean touchXY(int x, int y)
     {
-        if (getOrdersViewMode() == OrdersViewMode.Normal) {
+        OrdersViewMode mode = getOrdersViewMode();
+        if (mode == OrdersViewMode.Normal) {
             firePanelClicked(null, null, null);
             int ncount = m_arPanels.size();
             for (int i = 0; i < ncount; i++) {
@@ -767,21 +800,31 @@ public class KDSView extends View {
             }
             return false;
         }
-        else if (getOrdersViewMode() == OrdersViewMode.LineItems){
+        else if (mode == OrdersViewMode.LineItems){
 
             m_lineItemsViewer.onTouchXY(x, y);
+        }
+        else if (mode == OrdersViewMode.Summary)
+        {
+
         }
         return false;
     }
 
     public void updateSettings(KDSSettings settings)
     {
-        if (isLineItemsDisplayMode())
+        OrdersViewMode mode = getOrdersViewMode();
+        if (mode == OrdersViewMode.LineItems)
             m_lineItemsViewer.updateSettings(settings);
+        else if (mode == OrdersViewMode.Summary)
+        {
+            m_sumStationViewer.updateSettings(settings);
+        }
     }
     private boolean doubleClickXY(int x, int y)
     {
-        if (getOrdersViewMode() == OrdersViewMode.Normal) {
+        OrdersViewMode mode = getOrdersViewMode();
+        if (mode == OrdersViewMode.Normal) {
             int ncount = m_arPanels.size();
             for (int i = 0; i < ncount; i++) {
                 KDSViewPanel panel = m_arPanels.get(i);
@@ -794,10 +837,14 @@ public class KDSView extends View {
             }
             return false;
         }
-        else if (getOrdersViewMode() == OrdersViewMode.LineItems)
+        else if (mode == OrdersViewMode.LineItems)
         {
             m_lineItemsViewer.onDoubleClickXY(x, y);
             return true;
+        }
+        else if (mode == OrdersViewMode.Summary)
+        {
+
         }
         return false;
     }
@@ -971,7 +1018,8 @@ public class KDSView extends View {
         //get the background color according to the time.
         int nBG = env.getSettings().getOrderTimeColorAccordingWaitingTime(order.getStartToCookTime(), font.getBG());
         //exp alert
-        if (env.getSettings().isExpeditorStation())
+        if (env.getSettings().isExpeditorStation() ||
+                env.getSettings().isRunnerStation())
         { //the exp aler color
             if (env.getSettings().getBoolean(KDSSettings.ID.Exp_Alert_Enabled)) { //20190723, there is bug here, I add this "if" condition.
                 if (order.isItemsAllBumpedInExp()) {
@@ -1224,6 +1272,18 @@ public class KDSView extends View {
     {
         ScreenLogoDraw.drawScreenLogo(this, this.getBounds(), canvas, getSettings(), isScreenEmpty(), 0);
     }
+
+    /**
+     * kp-2. Vertical Expand-Going to previous page takes you to the first page.
+     * @return
+     */
+    public int getBlockBorderOccupyHeight()
+    {
+        int nValidHeight = getBlockAverageValidHeight();
+        int nFullHeight = this.getBlockAverageHeight();
+        return nFullHeight - nValidHeight;
+    }
+
 
 }
 

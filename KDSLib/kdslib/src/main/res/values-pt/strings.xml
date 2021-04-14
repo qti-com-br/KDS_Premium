@@ -193,6 +193,8 @@
 		<item>Duplicado</item>
 		<item>Rastreador</item>
 		<item>Fila-Expedidor</item>
+		<item>Runner</item>
+		<item>Summary</item>
 	</string-array>
 	<string-array name="slave_function">
 		<item>Sem função secundária</item>
@@ -203,4 +205,5 @@
 		<item>Exibir fila de pedidos</item>
 	</string-array>
 	<string name="quantity">Quantity</string>
+	<string name="input_internet_file">Entre com o arquivo da Internet</string>
 </resources>

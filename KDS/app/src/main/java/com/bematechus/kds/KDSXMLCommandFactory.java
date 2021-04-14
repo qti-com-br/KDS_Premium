@@ -78,6 +78,11 @@ public class KDSXMLCommandFactory {
                 return KDSXMLParserCommand.createOrderNotification(syncCmd, strStationID, ip, mac, order.getOrderName());
             }
 
+            case Runner_show_category:
+            {
+                return KDSXMLParserCommand.createRunnerUpdateCategory(strStationID, ip, mac, order.getOrderName(),xmlData);
+            }
+
             default:
                 return "";
         }
