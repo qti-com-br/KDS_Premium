@@ -19,10 +19,12 @@ public class KDSViewFontFace {
     static public final int FONT_SIZE_LARGE = 22;
     static public final int DEFAULT_FONT_SIZE = FONT_SIZE_NORMAL;
 
-    static public final int DEFAULT_FONT_SIZE_HEADER_FOOTER = 32;
-    static public final int DEFAULT_FONT_SIZE_PREMESSAGE = 28;
-	static public final int DEFAULT_FONT_SIZE_ITEM = 28;
-    static public final int DEFAULT_FONT_SIZE_CONDIMENT = 28;
+    static public final int DEFAULT_BASE = 32;
+
+    static public final int DEFAULT_FONT_SIZE_HEADER_FOOTER = DEFAULT_BASE + 6;
+    static public final int DEFAULT_FONT_SIZE_PREMESSAGE = DEFAULT_BASE;
+	static public final int DEFAULT_FONT_SIZE_ITEM = DEFAULT_BASE;
+    static public final int DEFAULT_FONT_SIZE_CONDIMENT = DEFAULT_BASE;
 
     static public String FLAG_DEFAULT_FONT = "default_font";
     static public String FLAG_SIZE_NORMAL = "normal_size";

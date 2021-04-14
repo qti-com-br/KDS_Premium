@@ -1354,7 +1354,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Transfer_by_double_click,"bool_transfer_by_double_click",false);//
         init_option(ID.LineItems_view_bg,"int_lineitems_viewer_bg",getResColor( R.color.lineitems_viewer_bg));
         init_option(ID.Log_orders,"bool_log_orders",false);
-        init_option(ID.LineItems_line_height,"string_lineitems_line_height","30");
+        init_option(ID.LineItems_line_height,"string_lineitems_line_height","50");
         init_option(ID.Printer_logo,"string_printer_logo","");
         //cleaning habits
         init_option(ID.cleaning_enable_alert,"bool_cleaning_enable_alerts",false);
@@ -1779,9 +1779,9 @@ public class KDSSettings extends SettingsBase {
 
 
         set(ID.LineItems_Enabled,false);
-        set(ID.LineItems_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
+        set(ID.LineItems_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
         set(ID.LineItems_caption_text,getResString(R.string.line_items_display));
-        set(ID.LineItems_caption_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
+        set(ID.LineItems_caption_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
         set(ID.LineItems_cols,KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");
 
         set(ID.LineItems_col0_text,getResString(R.string.str_id));

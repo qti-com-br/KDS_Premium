@@ -353,11 +353,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         ImageView imgState = (ImageView) this.findViewById(R.id.imgState);
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
+			imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
-
+			imgState.setColorFilter(null);
             if (isKDSValid() && getKDS().isNetworkRunning())
                 onNetworkLost();
 
@@ -3072,7 +3073,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         if (orderGuid.isEmpty()) return;
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
-        
+
         //kpp1-439, just auto sort enabled, we set focus to unbumped order. Otherwise, keep current focus order.
         //           This is for preventing page changed issue.
         KDSSettings.OrdersSort ordersSort = KDSSettings.OrdersSort.values()[  getSettings().getInt(KDSSettings.ID.Order_Sort)];
@@ -4663,7 +4664,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_bPaused = true;
         super.onPause();
         //showInfo("Paused");
-        
+
         KDSLog.d(TAG, KDSLog._FUNCLINE_()+"Exit");
 
         //if(isApplicationSentToBackground(getContext())) {
@@ -5595,7 +5596,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     public boolean isMacMatch2() {
         if (KDSConst.ENABLE_FEATURE_ACTIVATION)
             return true;
-        
+
         ArrayList<String> ar = KDSSocketManager.getLocalAllMac();
         String strMac = "";
 

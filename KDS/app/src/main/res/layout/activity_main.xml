@@ -193,7 +193,6 @@
                 android:id="@+id/imgState"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-				android:tint="@color/kds_title_fg"
                 android:layout_marginLeft="@dimen/title_views_margin"
                 android:layout_toLeftOf="@+id/imgMenu"
                 android:clickable="false" />
