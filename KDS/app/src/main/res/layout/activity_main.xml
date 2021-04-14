@@ -1,14 +1,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
 
     <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:weightSum="1"
         android:orientation="vertical">
 
         <LinearLayout
@@ -237,33 +238,34 @@
         <LinearLayout
             android:id="@+id/main_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:animateLayoutChanges="true"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <FrameLayout
+<!--            <FrameLayout-->
 
-                android:id="@+id/fragmentlayout_sumA"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
+<!--                android:id="@+id/fragmentlayout_sumA"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="2">-->
 
-                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/fragmentSummaryA"
-                    android:name="com.bematechus.kds.MainActivityFragmentSum"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:layout="@layout/fragment_summary" />
-            </FrameLayout>
+<!--                <fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--                    xmlns:tools="http://schemas.android.com/tools"-->
+<!--                    android:id="@+id/fragmentSummaryA"-->
+<!--                    android:name="com.bematechus.kds.MainActivityFragmentSum"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    tools:layout="@layout/fragment_summary" />-->
+<!--            </FrameLayout>-->
 
 
             <FrameLayout
 
                 android:id="@+id/fragment_orders"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="6">
+                >
 
 
                 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -280,21 +282,21 @@
                 <!--android:layout_width="match_parent" android:layout_height="match_parent" />-->
             </FrameLayout>
 
-            <FrameLayout
+<!--            <FrameLayout-->
 
-                android:id="@+id/fragmentlayout_sum"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
+<!--                android:id="@+id/fragmentlayout_sum"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="2">-->
 
-                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/fragmentSummary"
-                    android:name="com.bematechus.kds.MainActivityFragmentSum"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:layout="@layout/fragment_summary" />
-            </FrameLayout>
+<!--                <fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--                    xmlns:tools="http://schemas.android.com/tools"-->
+<!--                    android:id="@+id/fragmentSummary"-->
+<!--                    android:name="com.bematechus.kds.MainActivityFragmentSum"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    tools:layout="@layout/fragment_summary" />-->
+<!--            </FrameLayout>-->
 
         </LinearLayout>
 

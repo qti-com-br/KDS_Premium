@@ -114,8 +114,9 @@ public class KDSSmbFile2 extends KDSSmbFile implements Runnable {
         }
         */
          
-        prop.setProperty( "jcifs.smb.client.responseTimeout", "3000");//default 30000
-        prop.setProperty( "jcifs.smb.client.soTimeout", "3500" );// //default 35000
+        prop.setProperty( "jcifs.smb.client.responseTimeout", "6000");//default 30000
+        prop.setProperty( "jcifs.smb.client.soTimeout", "7000" );// //default 35000
+
 //        prop.setProperty("jcifs.smb.client.useExtendedSecurity", "false");
 //        prop.setProperty("jcifs.smb.client.forceExtendedSecurity", "false");
 //        prop.setProperty("jcifs.smb.useRawNTLM", "true");

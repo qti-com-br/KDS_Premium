@@ -178,6 +178,11 @@ public class KDSSMBDataSource implements Runnable {
 
     }
 
+    /**
+     * if the remote folder is empty, this function was called too.
+     * But, while use tcp/ip datasource, I set remote folder value to empty.
+     * So, we need check the data source type in message receiver.
+     */
     private void informSmbLostError()
     {
         if (this.m_sockEventsMessageHandler != null)

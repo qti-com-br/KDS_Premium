@@ -219,6 +219,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     KDSTimer m_timer = new KDSTimer();
     FrameLayout m_flSummary = null;
     FrameLayout m_flSummaryA = null;
+    FrameLayout m_flSummaryB = null;
 
     boolean m_bPaused = false;
 
@@ -509,12 +510,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_layoutKdsViews = (LinearLayout) this.findViewById(R.id.layoutKdsViews);
 
-
+        //debug kp-70
         m_flSummary = (FrameLayout) this.findViewById(R.id.fragmentlayout_sum);
         m_flSummary.setVisibility(View.GONE);
-
+        //debug kp-70
         m_flSummaryA = (FrameLayout) this.findViewById(R.id.fragmentlayout_sumA);
         m_flSummaryA.setVisibility(View.GONE);
+        m_flSummaryB = (FrameLayout) this.findViewById(R.id.fragmentlayout_sumB);
+        m_flSummaryB.setVisibility(View.GONE);
 
         View vTabLinear =  this.findViewById(R.id.linearTab);
         m_tabDisplay.setLinearLayout(vTabLinear);
@@ -865,9 +868,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //2.0.25
             //m_uiUserA.setAvgPrepTimeView(m_txtAvgTimeA);
             m_uiUserA.setAvgPrepTimeView(null);
-
+            //debug kp-70
             MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummaryA));
             m_uiUserA.setSumFragment(fm);
+            //kp-70
+            m_flSummary.setVisibility(View.GONE);
 
             m_uiUserA.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_A));
             m_uiUserA.enableFocusIndicator(true);
@@ -898,9 +903,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //2.0.25
             //m_uiUserA.setAvgPrepTimeView(m_txtAvgTimeA);
             m_uiUserA.setAvgPrepTimeView(getTextView(R.id.txtAvgTime));
-
+            //debug kp-70
             MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummary));
             m_uiUserA.setSumFragment(fm);
+            //kp-70
+            m_flSummaryA.setVisibility(View.GONE);
+
             m_uiUserA.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_A));
             m_uiUserA.enableFocusIndicator(false);
 
@@ -929,7 +937,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_uiUserB.setLinear(getLinear(KDSUser.USER.USER_B));
             m_uiUserB.setTopSum(getTopSum(KDSUser.USER.USER_B));
             //m_uiUserB.setLayout(getLayout(KDSUser.USER.USER_B));
-            m_uiUserB.setSumFrame(m_flSummary);
+            m_uiUserB.setSumFrame(m_flSummaryB); //kp-70
             MainActivityFragment f = (MainActivityFragment) (getFragmentManager().findFragmentById(R.id.fragmentMain));
             //m_uiUserB.setTouchFragment(m_flTouchPad);
             m_uiUserB.setTouchHorizontalList(f.getTouchPad(KDSUser.USER.USER_B));
@@ -950,8 +958,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_uiUserB.setAvgPrepTimeView(null);//getTextView(R.id.txtAvgTimeB));
             //MainActivityTouchPadFragment f =(MainActivityTouchPadFragment) (getFragmentManager().findFragmentById(R.id.fragmentTouchpad));
             // f.setUserID(KDSUser.USER.USER_B);
-
-            MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummary));
+            //debug kp-70
+            MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummaryB));
             m_uiUserB.setSumFragment(fm);
 
             m_uiUserB.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_B));
@@ -986,9 +994,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //2.0.25
             //m_uiUserB.setAvgPrepTimeView(m_txtAvgTimeB);
             m_uiUserB.setAvgPrepTimeView(null);//getTextView(R.id.txtAvgTimeB));
-
+            //debug kp-70
             MainActivityFragmentSum fm = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummaryA));
             m_uiUserB.setSumFragment(fm);
+            m_flSummaryB.setVisibility(View.GONE);
+
             m_uiUserB.setFocusIndicator(getFocusIndicator(KDSUser.USER.USER_B));
 
         }
@@ -3769,8 +3779,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private MainActivityFragmentSum getSummaryFragment() {
 
+        //debug kp-70
         MainActivityFragmentSum f = (MainActivityFragmentSum) (getFragmentManager().findFragmentById(R.id.fragmentSummary));
         return f;
+        //return null;
     }
 
     private KDSLayout getLayout(KDSUser.USER userID) {
@@ -5636,13 +5648,20 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         String message = str;
         if (message.equals(KDSSMBDataSource.PATH_LOST))
         {
-            String s = this.getString(R.string.smb_folder_lost);
-            String folder = this.getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
-            KDSSMBPath path = KDSSMBPath.parseString(folder);
-            folder = path.toDisplayString();
-            s = s.replace("#", folder);
-            showToastMessage(s);
+            int n= (getSettings().getInt(KDSSettings.ID.KDS_Data_Source));
+            KDSSettings.KDSDataSource srcType = KDSSettings.KDSDataSource.values()[n];
+
+            if (srcType == SettingsBase.KDSDataSource.Folder) {
+                String s = this.getString(R.string.smb_folder_lost);
+                String folder = this.getKDS().getSettings().getString(KDSSettings.ID.KDS_Data_Folder);
+                KDSSMBPath path = KDSSMBPath.parseString(folder);
+                folder = path.toDisplayString();
+                s = s.replace("#", folder);
+                showToastMessage(s);
+            }
+
             return true;
+
 
         }
         else if (message.equals(KDSSMBDataSource.PATH_PERMISSION))
