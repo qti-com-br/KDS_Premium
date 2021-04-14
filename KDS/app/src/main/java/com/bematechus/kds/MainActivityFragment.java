@@ -745,11 +745,8 @@ public class MainActivityFragment extends Fragment {
 
             GradientDrawable drawable = (GradientDrawable)convertView.getBackground();
             drawable.setStroke(0,kds.getSettings().getInt(KDSSettings.ID.Panels_BG)) ;
-
             KDSViewFontFace ff = kds.getSettings().getKDSViewFontFace(KDSSettings.ID.Touch_fontface);
 
-           // convertView.setBackgroundColor(ff.getBG());
-            //t.setTextColor(ff.getFG());
             t.setTextColor(ff.getFG());
             t.setTypeface(ff.getTypeFace());
             t.setTextSize(ff.getFontSize());
@@ -757,16 +754,6 @@ public class MainActivityFragment extends Fragment {
             KDSTouchPadButton btn = (KDSTouchPadButton) map.get("btn");
             t.setText( btn.getText());
             setButtonStateImageColor(convertView, btn, map);
-//            ImageView img = (ImageView) convertView.findViewById(R.id.imgTouch);
-//            if (btn.m_bIsDown) {
-//                img.setImageResource((int) map.get("icondown"));
-//                t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
-//            }
-//            else {
-//                img.setImageResource((int) map.get("icon"));
-//                //t.setTextColor( getResources().getColor( R.color.touch_button_fg));
-//                t.setTextColor( ff.getFG() );
-//            }
 
             return convertView;
         }

@@ -7,7 +7,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="caption_normal"
-        android:defaultValue="default_font,@color/settings_light_bg,@color/caption_fg,hfooter_size"
+        android:defaultValue="default_font,@color/caption_bg,@color/caption_fg,hfooter_size"
         android:title="@string/pref_order_caption_normal_font"
         app:supportsColor="true"/>
 
