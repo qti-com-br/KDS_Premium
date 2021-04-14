@@ -12,12 +12,12 @@
         android:weightSum="1"
         android:orientation="vertical">
 
-
         <LinearLayout
             android:id="@+id/layoutTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/kds_title_bg"
+			android:padding="8dp"
             android:orientation="horizontal">
 
             <TextView
@@ -207,6 +207,7 @@
                 android:layout_alignParentRight="true"
                 android:clickable="true"
                 android:focusable="false"
+				android:tint="@color/kds_title_fg"
                 android:onClick="onBtnLogoClicked"
                 android:src="@drawable/ic_menu" />
         </LinearLayout>

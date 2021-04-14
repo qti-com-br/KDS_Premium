@@ -541,31 +541,16 @@ public class TabDisplay {
 
             TextView t = ((TextView) v.findViewById(android.R.id.text1));
             t.setPadding(25, 0, 25, 0);
-            //t.setText(r.toString());
             t.setText(r.getShowingText());
 
-            //t.setBackground(null);
-
-            if (r == m_selected)
-            {
-                t.setBackgroundColor(m_bgfg.getFG());
-                t.setTextColor(m_bgfg.getBG());
-
-                //t.setBackgroundColor(Color.RED);
-//                GradientDrawable d= (GradientDrawable) ContextCompat.getDrawable(getContext(), R.drawable.tab_button_selected);
-//                d.setColors(new int[] {m_bgfg.getBG(),m_bgfg.getFG()});
-//                t.setBackground(d);
-                //t.invalidate();
-            }
-            else
-            {
+            if (r == m_selected) {
+                t.setBackgroundColor(changeAlpha(Color.WHITE, 24));
                 t.setTextColor(m_bgfg.getFG());
-                t.setBackgroundColor(m_bgfg.getBG());
-//                t.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.tab_button_normal));
-                //t.invalidate();
             }
-            //t.setText(r.getShowingText());
-            //t.setTextColor(m_bgfg.getFG());
+            else {
+                t.setTextColor(m_bgfg.getFG());
+                t.setBackgroundColor(changeAlpha(Color.BLACK, 96));
+            }
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -579,6 +564,10 @@ public class TabDisplay {
 
             return v;
         }
+
+        private int changeAlpha(int color, int newAlpha) {
+        	return Color.argb(newAlpha, Color.red(color), Color.green(color), Color.blue(color));
+		}
 
     }
 

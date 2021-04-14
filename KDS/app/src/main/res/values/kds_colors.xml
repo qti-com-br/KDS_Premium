@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
         <!--  aarrggbb or rrggbb -->
-    <color name="view_bg">#f2f2f2</color>
-    <color name="panel_bg">#ffffffff</color>
-    <color name="panel_fg">#ff000000</color>
-    <color name="border_bg">#E6E6E6</color>
-    <color name="panelnum_bg">#414141</color>
-    <color name="panelnum_fg">#fff1f1e8</color>
-    <color name="caption_bg">#bbbbbb</color>
-    <color name="caption_fg">#000000</color>
-    <color name="focus_bg">#414141</color>
-    <color name="focus_fg">#ff000000</color>
-    <color name="stage0_bg">#fed04e</color>
-    <color name="stage1_bg">#f0750f</color>
+	<color name="black">#202020</color>
+	<color name="white">#ffffff</color>
+	<color name="gray">#a6a6a6</color>
+	<color name="lci_logic_blue">#2cace3</color>
+	<color name="lci_logic_deep">#414964</color>
+	<color name="lci_kds">#07a9ac</color>
+	<color name="lci_peripherals">#f6cd10</color>
+	<color name="lci_cpu">#f15b40</color>
+	<color name="lci_background_dark">#0C1222</color>
+	<color name="lci_background_darkish">#232A40</color>
+
+    <color name="view_bg">@color/lci_background_dark</color>
+    <color name="panel_bg">@color/lci_background_darkish</color>
+    <color name="panel_fg">@color/white</color>
+    <color name="border_bg">@color/gray</color>
+    <color name="panelnum_bg">@color/lci_background_darkish</color>
+    <color name="panelnum_fg">@color/white</color>
+    <color name="caption_bg">@color/lci_background_dark</color>
+    <color name="caption_fg">@color/white</color>
+	<!--#FCC600-->
+    <color name="focus_bg">@color/lci_peripherals</color>
+    <color name="focus_fg">@color/lci_peripherals</color>
+    <color name="stage0_bg">#DCA600</color>
+    <color name="stage1_bg">#BF5700</color>
     <color name="stage2_bg">#e62d05</color>
-    <color name="item_bg">#FFFFFF</color>
-    <color name="item_fg">#ff000000</color>
-    <color name="condiment_bg">#FFFFFF</color>
-    <color name="condiment_fg">#ff000000</color>
-    <color name="premsg_bg">#ffffffff</color>
-    <color name="premsg_fg">#ff000000</color>
-    <color name="footer_bg">#ffffffff</color>
-    <color name="footer_fg">#ff000000</color>
+    <color name="item_bg">@color/lci_background_darkish</color>
+    <color name="item_fg">@color/white</color>
+    <color name="condiment_bg">@color/lci_background_darkish</color>
+    <color name="condiment_fg">@color/lci_peripherals</color>
+    <color name="premsg_bg">@color/lci_logic_blue</color>
+    <color name="premsg_fg">@color/black</color>
+    <color name="footer_bg">@color/lci_background_dark</color>
+    <color name="footer_fg">@color/white</color>
+
+	<color name="tab_display_fg">@color/white</color>
+	<color name="tab_display_bg">@color/lci_background_darkish</color>
+
+	<color name="settings_light_bg">#ffcdcdcd</color>
 
     <color name="rush_bg">#c00000</color>
     <color name="rush_fg">#ff000000</color>
@@ -38,11 +55,9 @@
     <color name="relations_headers_bg">#888f94</color>
     <color name="relations_headers_fg">#f8fafc</color>
 
-    <!--<color name="kds_title_bg">#21abae</color>-->
-    <color name="kds_title_fg">#000000</color>
+    <color name="kds_title_fg">#FFFFFFFF</color>
     <color name="listview_focus_bg">@android:color/holo_blue_light</color>
 
-    <!--<color name="settings_headers_bg">#ccc9bb</color>-->
     <color name="settings_headers_bg">#d7d7d7</color>
 
     <color name="settings_page_bg">#E5E1D2</color>
@@ -86,28 +101,26 @@
     <color name="tracker_alert_bg">#f90011</color>
     <color name="tracker_alert_fg">#000000</color>
 
-
     <color name="subtitle_bg">#0228a3</color>
     <color name="subtitle_fg">#ffffff</color>
 
-    <color name="lineitems_bg">#000000</color>
-    <color name="lineitems_fg">#ffffff</color>
+    <color name="lineitems_bg">@color/lci_background_dark</color>
+    <color name="lineitems_fg">@color/white</color>
 
     <color name="item_focused_bg">#bcf1f2</color>
     <color name="item_focused_fg">#000000</color>
 
-    <color name="touch_button_down_text_color">#666666</color>
-    <!--<color name="touch_button_up_color">#21abae</color>-->
+    <color name="touch_button_down_text_color">@color/gray</color>
 
-    <color name="touch_button_bg">#ffffff</color>
-    <color name="touch_button_fg">#21ABAE</color>
+    <color name="touch_button_bg">#1f2840</color>
+    <color name="touch_button_fg">#ffffff</color>
     <color name="lineitems_viewer_bg">#0e0e0e</color>
     <color name="grid_line_color">#B8B8B8</color>
 
     <color name="cleaning_button_bg">#902625</color>
     <color name="cleaning_pinchout_color">#80000000</color>
 
-    <color name="sum_bg">#A8A6A6</color>
-    <color name="sum_fg">#000000</color>
+    <color name="sum_bg">@color/white</color>
+    <color name="sum_fg">@color/white</color>
 
 </resources>

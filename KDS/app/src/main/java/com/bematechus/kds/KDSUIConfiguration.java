@@ -145,8 +145,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
         editor.commit();
     }
 
+	private static final int MIN_HEADER_WIDTH = 380;
 
-    static final private int HEADERS_WIDTH = 200;
     @Override
     public void onResume()
     {
@@ -169,6 +169,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
             LinearLayout layoutHeaders = (LinearLayout) this.findViewById(id);//com.android.internal. R.id.headers);// com.android.internal.R.id.headers);
             layoutHeaders.setBackgroundColor(this.getResources().getColor(R.color.settings_headers_bg));
+
+			int HEADERS_WIDTH = (int) Math.max(MIN_HEADER_WIDTH, dm.widthPixels * 0.2);
 
             layoutHeaders.setLayoutParams(new LinearLayout.LayoutParams(HEADERS_WIDTH, LinearLayout.LayoutParams.MATCH_PARENT));
             id = mResources.getIdentifier("prefs_frame", "id", "android");
