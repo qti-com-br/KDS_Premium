@@ -577,10 +577,12 @@ public class CanvasDC {
     static public  int drawText(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
     {
 
+        int bestFontSize = getBestMaxFontSizeHeight_decrease(rect, ff, text);
         TextPaint paint = new TextPaint();
         paint.setColor(ff.getFG());
         paint.setTypeface(ff.getTypeFace());
-        paint.setTextSize(ff.getFontSize());
+        //paint.setTextSize(ff.getFontSize());
+        paint.setTextSize(bestFontSize); //kp-76,
         paint.setAntiAlias(true);
         paint.setFakeBoldText(bBold);
 
@@ -657,5 +659,37 @@ public class CanvasDC {
         return getTextPixelsWidth(paint, text);
     }
 
+
+    /**
+     * KP-76 Font size, line height and cut off for different screen resolutions
+     * @param rc
+     * @param ff
+     * @param str
+     * @return
+     */
+    public static int getBestMaxFontSizeHeight_decrease(Rect rc, KDSViewFontFace ff, String str)
+    {
+        Paint p = createPaint(ff);
+        Rect r = new Rect();
+        int maxH = rc.height();
+        int maxW = rc.width();
+        int minSize = 8;
+        for (int i=ff.getFontSize(); i>= minSize; i--)
+        {
+            p.getTextBounds(str, 0, str.length(), r);
+            //int w = r.width();
+            int h = r.height()*2;
+            if ( h < maxH)
+                return (int)p.getTextSize();
+            else
+                p.setTextSize(p.getTextSize() - 1);
+            if (i == minSize)
+                return (int)minSize;
+        }
+
+        return ff.getFontSize();
+
+
+    }
 
 }
