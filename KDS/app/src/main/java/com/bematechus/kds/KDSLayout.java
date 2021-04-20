@@ -299,27 +299,29 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         float fltBorder = (float) nBlockBorderSize/(float) nRowHeight;
 
         //
+        KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
 
         for (int i = nStartOrderIndex; i < ncount; i++) {
             // t.debug_print_Duration("showOrders1");
             KDSDataOrder order = orders.get(i);
             // t.debug_print_Duration("showOrders2");
-            int nNeeded= checkOrderShowing(order, nBlockRows);
+            int nNeeded= checkOrderShowing(order, nBlockRows);//get the blocks/rows, this order needs.
 
             Log.d(TAG, "Order #" + order.getOrderName() + ", rows=" + nNeeded);
 
             if (nNeeded<=0) return false;
-            if ((float)(nCounter + nNeeded)>nMax)
-            {
+            if ((float) (nCounter + nNeeded) > nMax) {
                 Log.d(TAG, "Order invisible #" + order.getOrderName());
                 return false;
-            }
-            else {
+            } else {
                 nCounter += nNeeded;
-                nCounter += fltBorder; //kp-2
-                if ( order.getGUID().equals(focusedOrderGuid))
+                if (layoutFormat== KDSSettings.LayoutFormat.Vertical)
+                    nCounter += fltBorder; //kp-2
+                if (order.getGUID().equals(focusedOrderGuid))
                     return true;
             }
+
+
         }
 
         return false;
@@ -403,6 +405,14 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
     }
 
+    /**
+     *
+     * @param order
+     * @param nBlockRows
+     * @return
+     *  Horizontal: How many blocks this order needs.
+     *  Vertical: How many rows this order needs.
+     */
     private int checkOrderShowing(KDSDataOrder order, int nBlockRows) {
 
         //TimeDog t = new TimeDog();
@@ -433,7 +443,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 if ((n % nBlockDataRows) > 0)
                     nBlocks++;
             }
-            return nBlocks;
+            return nBlocks ;
 
 
         } else if (layoutFormat == KDSSettings.LayoutFormat.Vertical) {
@@ -2853,13 +2863,13 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
      * KPP1-323
      * for page up feature.
      *
-     * @param orderGuid
+     * @param currentFirstOrderGuid
      *  current first order guid.
      * @return
      */
-    public String getPrevPageOrderGuid2(String orderGuid)
+    public String getPrevPageOrderGuid2(String currentFirstOrderGuid)
     {
-        String guid =  orderGuid;
+        String guid =  currentFirstOrderGuid;
         if (m_orders == null)
             return "";
         int nindex = m_orders.getIndex(guid);
@@ -2868,7 +2878,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         KDSDataOrder prev = m_orders.get(nindex);
         if (prev == null)
             return "";
-        orderGuid = prev.getGUID();
+        String lastOrderGuidInPrePage = prev.getGUID();
         //
         int nPanelsCount = m_view.getMaxPanelsCount();
 
@@ -2889,7 +2899,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         {//return to first
             guid = order.getGUID();
             //kpp1-324
-            if (this.checkOrdersCanShowFocus(m_orders, guid, orderGuid))
+            if (this.checkOrdersCanShowFocus(m_orders, guid, lastOrderGuidInPrePage))
             {//this estimated one is visible, move prev again, until invisible.
                 String prevGuid = "";
                 for (int i=nindex-1; i>=0; i--)
@@ -2897,7 +2907,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     order = getOrderAccordingToShowingMethod(itemShowingMethod, i);
                     if (order != null)
                     {
-                        if (this.checkOrdersCanShowFocus(m_orders, order.getGUID(), orderGuid)) {
+                        if (this.checkOrdersCanShowFocus(m_orders, order.getGUID(), lastOrderGuidInPrePage)) {
                             if (i !=0)
                                 continue;
                             else
@@ -2933,7 +2943,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                     order = getOrderAccordingToShowingMethod(itemShowingMethod, i);
                     if (order != null)
                     {
-                        if (!this.checkOrdersCanShowFocus(m_orders, order.getGUID(), orderGuid)) {
+                        if (!this.checkOrdersCanShowFocus(m_orders, order.getGUID(), lastOrderGuidInPrePage)) {
                             if (i != (m_orders.getCount()-1))
                                 continue;
                             else
