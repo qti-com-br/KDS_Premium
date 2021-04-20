@@ -672,13 +672,13 @@ public class CanvasDC {
         Paint p = createPaint(ff);
         Rect r = new Rect();
         int maxH = rc.height();
-        int maxW = rc.width();
+        //int maxW = rc.width();
         int minSize = 8;
         for (int i=ff.getFontSize(); i>= minSize; i--)
         {
             p.getTextBounds(str, 0, str.length(), r);
             //int w = r.width();
-            int h = r.height()*2;
+            int h = (int)(r.height()*1.2);
             if ( h < maxH)
                 return (int)p.getTextSize();
             else
