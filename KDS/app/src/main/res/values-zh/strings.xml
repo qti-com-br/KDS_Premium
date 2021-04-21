@@ -1289,4 +1289,5 @@
     <string name="show_quantity_at_right">Show quantity at right</string>
     <string name="finish_item_by_bump_order">Finish items by [bump order]</string>
     <string name="bump_order_will_bring_up_next_items">[Bump order] will bring up next items based on CatDelay value.</string>
+    <string name="title_runner_confirmation_bump">Runner confirmation bump</string>
 </resources>
