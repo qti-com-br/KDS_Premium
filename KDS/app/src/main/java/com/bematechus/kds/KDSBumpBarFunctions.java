@@ -48,12 +48,13 @@ public class KDSBumpBarFunctions {
                 KDSSettings.ID.Bumpbar_More,//15
                 KDSSettings.ID.Bumpbar_BuildCard,
                 KDSSettings.ID.Bumpbar_Training,
-                KDSSettings.ID.Bumpbar_Page,
+                //KDSSettings.ID.Bumpbar_Page,//unused.
                 KDSSettings.ID.Bumpbar_Menu,
                 KDSSettings.ID.Bumpbar_QExpo_Pickup,//20
                 KDSSettings.ID.Bumpbar_QExpo_Unpickup,
                 KDSSettings.ID.Bumpbar_tab_next,
                 KDSSettings.ID.Bumpbar_Clean, //kpp1-339
+                KDSSettings.ID.Bumpbar_move, //kp-78, move order feature.
                 //Add new function here !!!!!!!
 
                 KDSSettings.ID.Bumpbar_Switch_User, //must keep this at last position
