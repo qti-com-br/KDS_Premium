@@ -56,6 +56,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         public void onViewLongPressed(KDSLayout layout);
         //public boolean onViewSlipUpDown(KDSLayout layout, boolean bSlipToUp, boolean bInBorder);
         public boolean onViewSlipping( KDSLayout layout,MotionEvent e1, MotionEvent e2,KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder);
+
+        public void onViewClickOrder(KDSLayout layout, String orderGuid);
     }
 
     private KDSLayoutDrawingDoneEvent m_eventsFinishedDrawing = null;
@@ -1423,6 +1425,8 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             this.showOrders(m_orders);
 
 
+        if (m_eventsReceiver != null)
+            m_eventsReceiver.onViewClickOrder(this, order.getGUID());
     }
 
     /**
