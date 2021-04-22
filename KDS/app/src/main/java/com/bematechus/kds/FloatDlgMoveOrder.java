@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSUIDialogBase;
 
 /**
  * show float information in screen bottom when move order.
@@ -29,6 +31,8 @@ public class FloatDlgMoveOrder {
 
         ImageView v = mView.findViewById(R.id.imgIcon);
         v.setImageResource(R.drawable.move);
+
+        ((TextView)mView.findViewById(R.id.txtCancel)).setText(context.getString(R.string.cancel) + KDSUIDialogBase.getBumpbarCancelKeyText(context));
 
         mView.findViewById(R.id.txtCancel).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,9 +118,10 @@ public class FloatDlgMoveOrder {
         return mMovingOrderGuid;
     }
 
-    public boolean keyPressed(int keyCode)
+    public boolean keyPressed(KeyEvent evt, int keyCode)
     {
-        if (keyCode == KeyEvent.KEYCODE_0)
+        KDSUIDialogBase.DialogEvent event = KDSUIDialogBase.checkDialogKeyboardEvent(evt);
+        if (event == KDSUIDialogBase.DialogEvent.Cancel)
         {
             hide();
             return true;

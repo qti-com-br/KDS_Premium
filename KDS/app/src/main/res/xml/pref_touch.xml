@@ -59,7 +59,7 @@
     <CheckBoxPreference
         android:key="touch_move_enabled"
         android:title="@string/enable_move_touch_button"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
 
     <CheckBoxPreference
         android:key="touch_transfer_enabled"

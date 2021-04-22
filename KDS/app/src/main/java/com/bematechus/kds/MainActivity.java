@@ -1265,6 +1265,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if (isMoveOrderMode())
+                return false;
             boolean bEnablePwd = this.getSettings().getBoolean(KDSSettings.ID.Settings_password_enabled);
             if (bEnablePwd)
             {
@@ -4749,7 +4751,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return false;
         if (isMoveOrderMode())
         {
-            if (moveOrderKeyPressed(keyCode))
+            if (moveOrderKeyPressed(event, keyCode))
                 return false;
         }
         // if (!m_kbdRecorder.isReadyForEvent()) {
@@ -8146,9 +8148,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
     }
 
-    private boolean moveOrderKeyPressed(int keyCode)
+    private boolean moveOrderKeyPressed(KeyEvent event, int keyCode)
     {
-        return mMoveOrderAlertDlg.keyPressed(keyCode);
+        return mMoveOrderAlertDlg.keyPressed(event, keyCode);
     }
 }
 

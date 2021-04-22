@@ -1414,8 +1414,8 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Runner_finish_items_by_bump_order, "bool_runner_finish_items_by_bump_order", false);
 
         //kp-78 move order
-        init_option(ID.Touch_move, "bool_touch_move", true);
-        init_option(ID.Bumpbar_move, "string_bumpbar_move", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_8, false, true, false));// "11,0,1,0"); //ctrl  + 8);
+        init_option(ID.Touch_move, "bool_touch_move_enabled", false);
+        init_option(ID.Bumpbar_move, "string_bumpbar_func_move", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_8, false, true, false));// "11,0,1,0"); //ctrl  + 8);
 
 
     }
