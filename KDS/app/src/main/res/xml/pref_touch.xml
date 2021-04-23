@@ -39,6 +39,11 @@
         android:title="@string/pref_kds_touch_down_enabled"
         android:defaultValue="true" />
     <CheckBoxPreference
+        android:key="touch_move_enabled"
+        android:title="@string/enable_move_touch_button"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
         android:key="touch_bump_enabled"
         android:title="@string/pref_kds_touch_bump_enabled"
         android:defaultValue="true" />
@@ -56,10 +61,7 @@
         android:title="@string/pref_kds_touch_sum_enabled"
         android:defaultValue="true" />
 
-    <CheckBoxPreference
-        android:key="touch_move_enabled"
-        android:title="@string/enable_move_touch_button"
-        android:defaultValue="false" />
+
 
     <CheckBoxPreference
         android:key="touch_transfer_enabled"
