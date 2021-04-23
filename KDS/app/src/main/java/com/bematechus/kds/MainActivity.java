@@ -8102,7 +8102,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opMove(KDSUser.USER userID, boolean byTouch)
     {
         Log.i(TAG, "Move order");
-
+        if (getSelectedOrderGuid(userID).isEmpty()) return;
         if (mMoveOrderAlertDlg.isVisible())
         {
             if (byTouch) {
@@ -8117,7 +8117,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
         mMoveOrderAlertDlg.setMovingOrderGuid(getSelectedOrderGuid(userID));
-        mMoveOrderAlertDlg.show();
+        mMoveOrderAlertDlg.show(m_uiUserA.isVisibleTouchPad(), this.findViewById(R.id.main_layout));
     }
 
     private boolean isMoveOrderMode()
@@ -8128,6 +8128,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void moveOrder(KDSUser.USER userID)
     {
         String targetOrderGuid = getSelectedOrderGuid(userID);
+
         String moveOrderGuid = mMoveOrderAlertDlg.getMovingOrderGuid();
         if (targetOrderGuid.equals(moveOrderGuid))
             return;

@@ -1297,5 +1297,6 @@
     <string name="bump_order_will_bring_up_next_items">[Bump order] will bring up next items based on CatDelay value.</string>
     <string name="enable_move_touch_button">Enable [move] touch button</string>
     <string name="move">Move</string>
+    <string name="select_the_desired_position_to_apply">Select the desired position to apply</string>
 
 </resources>
