@@ -730,4 +730,9 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
         this.refreshPrevNext();
 
     }
+
+    public int touchPadHeight() {
+
+        return (m_lstTouchPad.getHeight());
+    }
 }

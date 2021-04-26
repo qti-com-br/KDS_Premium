@@ -57,7 +57,7 @@ public class FloatDlgMoveOrder {
         return mView;
     }
 
-    final int DLG_HEIGHT = 60; //it is same as the touch bar height
+    final int DLG_HEIGHT = 60; //it is same as the touch bar height. dp
 
 //    private void showViewToTop(View v, boolean bTouchBarVisible)
 //    {
@@ -104,15 +104,17 @@ public class FloatDlgMoveOrder {
     private void showPopWindow(boolean bTouchBarVisible, View viewParent)
     {
 
+
         int w = viewParent.getWidth() - PADDING * 2;
-        int h = DLG_HEIGHT;
+        int h = DLG_HEIGHT; //dp
+        h = dip2px(KDSApplication.getContext(), h);
 
         mPopWindow = new PopupWindow(mView, w, h);
 
         int x = (viewParent.getWidth() - mPopWindow.getWidth())/2;
-        int y = viewParent.getHeight()-DLG_HEIGHT;
+        int y = viewParent.getHeight()-h;
         if (bTouchBarVisible)
-            y -= DLG_HEIGHT;
+            y -= h;
         mPopWindow.showAtLocation( viewParent, Gravity.NO_GRAVITY, x,y);
     }
     public void show(boolean bTouchBarVisible, View viewParent)
@@ -156,4 +158,10 @@ public class FloatDlgMoveOrder {
         }
         return false;
     }
+
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
 }
