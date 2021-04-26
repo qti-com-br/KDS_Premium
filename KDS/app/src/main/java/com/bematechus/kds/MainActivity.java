@@ -8102,6 +8102,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opMove(KDSUser.USER userID, boolean byTouch)
     {
         Log.i(TAG, "Move order");
+        if (isFixedSingleScreenView()) return; //just normal display can move
         if (getSelectedOrderGuid(userID).isEmpty()) return;
         if (mMoveOrderAlertDlg.isVisible())
         {
@@ -8127,17 +8128,35 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void moveOrder(KDSUser.USER userID)
     {
+
+
         String targetOrderGuid = getSelectedOrderGuid(userID);
 
         String moveOrderGuid = mMoveOrderAlertDlg.getMovingOrderGuid();
         if (targetOrderGuid.equals(moveOrderGuid))
             return;
+        String currentFirstOrderGuid = getUserUI(userID).getLayout().getEnv().getStateValues().getFirstShowingOrderGUID();
+        String nextOrderGuid = "";
+        if (currentFirstOrderGuid.equals(moveOrderGuid))
+        {//move the first showing order. Show next as first.
+            nextOrderGuid = getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(moveOrderGuid);
+
+        }
         boolean bResult = getKDS().getUsers().getUser(userID).getOrders().moveOrderTo(moveOrderGuid, targetOrderGuid);
         if (!bResult) return;
-
+        //after moving, reset the next order, just for keep screen state.
+        if (!nextOrderGuid.isEmpty())
+        {
+            getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(nextOrderGuid);
+        }
         mMoveOrderAlertDlg.hide();
-        getKDS().setFocusToOrder(moveOrderGuid);
+
+
+        //getKDS().setFocusToOrder(moveOrderGuid);
+        //
+        getUserUI(userID).getLayout().getEnv().getStateValues().setFocusedOrderGUID(moveOrderGuid);
         getKDS().refreshView();
+
 
     }
 
