@@ -929,4 +929,6 @@
     <string name="enable_move_touch_button">Enable [move] touch button</string>
 	<string name="move">Move</string>
     <string name="select_the_desired_position_to_apply">Select the desired position to apply</string>
+    <string name="show_qty_as_fraction">Show as fraction</string>
+	<string name="decimal_precision_for_qty">Decimal precision for item quantity</string>
 </resources>

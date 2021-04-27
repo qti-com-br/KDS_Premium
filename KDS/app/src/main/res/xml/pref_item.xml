@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="item_qty_precision"
+        android:title="@string/decimal_precision_for_qty"
+        android:defaultValue="1"
+        android:entries="@array/pref_kds_item_qty_precisions"
+        android:entryValues="@array/pref_kds_item_qty_precisions"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <CheckBoxPreference
+        android:key="item_qty_fraction"
+        android:title="@string/show_qty_as_fraction"
+        android:defaultValue="true" />
+
+
     <CheckBoxPreference
         android:key="item_consolidate"
         android:title="@string/pref_kds_item_enable_consolidate"
