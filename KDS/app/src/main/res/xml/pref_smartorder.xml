@@ -30,6 +30,10 @@
         android:positiveButtonText="@null" />
 
     <CheckBoxPreference
+        android:key="smartorder_hide_order"
+        android:title="Hide order if all items invisible."
+        android:defaultValue="false" />
+    <CheckBoxPreference
         android:key="smartorder_timer_from_item_visible"
         android:title="@string/smart_timer_from_item_visible"
         android:defaultValue="false"

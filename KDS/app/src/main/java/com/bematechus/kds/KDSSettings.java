@@ -612,6 +612,7 @@ public class KDSSettings extends SettingsBase {
 
        Touch_move, //kp-78
        Bumpbar_move, //kp-78
+       Smartorder_hide_order,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1416,6 +1417,8 @@ public class KDSSettings extends SettingsBase {
         //kp-78 move order
         init_option(ID.Touch_move, "bool_touch_move_enabled", false);
         init_option(ID.Bumpbar_move, "string_bumpbar_func_move", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_M, false, false, false));// "11,0,1,0"); //ctrl  + 8);
+        init_option(ID.Smartorder_hide_order, "bool_smartorder_hide_order", false);
+
 
 
     }
