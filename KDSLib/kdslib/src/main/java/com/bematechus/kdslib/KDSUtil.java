@@ -2139,4 +2139,11 @@ just 16bits value
         return (flt%1);
     }
 
+    static public String convertFloatToString(float fltVal, int nPrecision)
+    {
+
+        String s = String.format(Locale.ENGLISH, "%." + KDSUtil.convertIntToString(nPrecision) + "f", fltVal);
+        return s;
+    }
+
 }

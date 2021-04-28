@@ -1911,29 +1911,30 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         String strQty = "";
         int intValue = KDSUtil.floatIntPart(qty);
         float fltVal = KDSUtil.floatPart(qty);
-        if (fltVal == 0)
+        if (fltVal == 0 )
             strQty += Integer.toString((int) qty);
         else
         {
-            if (bEnableFraction)
-            {
-                if (isFractionFloat(fltVal))
-                {
-                    ArrayList<Integer> arVal = KDSUtil.convertFloatToFraction(fltVal, 3);
-                    if (intValue>0) {
-                        strQty += Integer.toString((int) intValue);
-                        strQty += "+";
-                    }
-                    strQty += arVal.get(0).toString() + "/" + arVal.get(1).toString();
-                }
-                else
-                {
-                    strQty +=String.format(Locale.ENGLISH,"%."+ KDSUtil.convertIntToString(nPrecision) + "f", qty);
-                }
+            if (intValue>0)
+            {//[>1] value, use decimal format.
+                return KDSUtil.convertFloatToString(qty, nPrecision);
             }
-            else
-            {
-                strQty +=String.format(Locale.ENGLISH,"%."+ KDSUtil.convertIntToString(nPrecision) + "f", qty);
+            else { //only {0, 1} float value need fraction.
+                if (bEnableFraction) {
+                    if (isFractionFloat(fltVal)) {
+                        strQty += makeFractionQty(fltVal);
+//                        ArrayList<Integer> arVal = KDSUtil.convertFloatToFraction(fltVal, 3);
+//                        if (intValue > 0) {
+//                            strQty += Integer.toString((int) intValue);
+//                            strQty += "+";
+//                        }
+//                        strQty += arVal.get(0).toString() + "/" + arVal.get(1).toString();
+                    } else {
+                        strQty += String.format(Locale.ENGLISH, "%." + KDSUtil.convertIntToString(nPrecision) + "f", qty);
+                    }
+                } else {
+                    strQty +=  KDSUtil.convertFloatToString(qty, nPrecision);
+                }
             }
 
 
@@ -1941,6 +1942,29 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return strQty;
     }
 
+    static final float ERROR_MARGIN = 0.005f;
+    static final float[] VALID_FRACTIONS = new float[]{
+            0.5f, //1/2
+            0.25f, // 1/4
+            0.333f, // 1/3
+            0.666f, // 2/3
+            0.75f,  // 3/4
+            //0.125f, // 1/8
+            0.375f, // 3/8
+            0.625f, // 5/8
+            0.875f // 7/8
+    };
+    static final String[] VALID_FRACTIONS_STRING = new String[]{
+            "1/2",
+            "1/4",
+            "1/3",
+            "2/3",
+            "3/4",
+            //"1/8",
+            "3/8",
+            "5/8",
+            "7/8"
+    };
     /**
      * kp-88,
      *  Just following float shows as fraction.
@@ -1949,28 +1973,26 @@ public class KDSLayoutCell extends KDSViewBlockCell {
      */
     static private boolean isFractionFloat(float flt)
     {
-        float[] ar = new float[]{
-                0.5f, //1/2
-                0.25f, // 1/4
-                0.333f, // 1/3
-                0.666f, // 2/3
-                0.75f,  // 3/4
-                0.125f, // 1/8
-                0.375f, // 3/8
-                0.625f, // 5/8
-                0.875f // 7/8
-        };
 
-        String fltString = String.format(Locale.ENGLISH,"%.3f", flt);
-        for (int i=0; i< ar.length; i++)
+
+        for (int i=0; i< VALID_FRACTIONS.length; i++)
         {
-            String s = String.format(Locale.ENGLISH,"%.3f", ar[i]);
-            if (s.equals(fltString))
+            if (Math.abs(flt - VALID_FRACTIONS[i]) < ERROR_MARGIN)
                 return true;
-
         }
         return false;
 
+    }
+
+    static private String makeFractionQty(float qty)
+    {
+        for (int i=0; i< VALID_FRACTIONS.length; i++)
+        {
+            if (Math.abs(qty - VALID_FRACTIONS[i]) < ERROR_MARGIN) {
+                return VALID_FRACTIONS_STRING[i];
+            }
+        }
+        return "";
     }
 
 }
