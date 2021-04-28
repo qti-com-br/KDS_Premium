@@ -8069,6 +8069,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         String orderGuid = getSelectedOrderGuid(userID);
         KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null) //kp-90, crashed.
+            return false;
         //find out max catdelay in bumped items
         float maxBumpedCatDelay = 0;
         for (int i=0; i< order.getItems().getCount(); i++) {
