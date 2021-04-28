@@ -1144,8 +1144,8 @@ public class KDSDataOrders extends KDSDataArray {
         if (nPosition <0) return false;
 
         m_arComponents.remove(orderMove);
-        if (nTarget>nPosition)
-            nTarget --;
+        //if (nTarget>nPosition) //kp-78-3, move after target order.
+        //    nTarget --;
         m_arComponents.insertElementAt(orderMove, nTarget);
         return true;
 
