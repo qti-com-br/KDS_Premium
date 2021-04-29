@@ -2358,6 +2358,22 @@ public class KDSStationsConnection {
         }
         return true;
     }
+
+    /**
+     * kp-96
+     * @param stationID
+     * @param nMaxCount
+     * @param nTimeout
+     * @return
+     */
+    public AckDataStation popupTimeoutAck(String stationID,  int nMaxCount ,int nTimeout)
+    {
+        AckDataStation data = m_ackManager.getTimeoutAck(stationID, nMaxCount, nTimeout);
+        for (int i=0; i< data.getData().size(); i++)
+            m_ackManager.removeAck(stationID, data.getData().get(i).getGuid());
+        return data;
+
+    }
 }
 
 

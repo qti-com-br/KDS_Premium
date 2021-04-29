@@ -135,4 +135,9 @@ public class AckManager {
     {
         m_ackDB.clearAck();
     }
+
+    public AckDataStation getTimeoutAck(String stationID, int nMaxCout, int nTimeout)
+    {
+        return m_ackDB.ackGetTimeout(stationID, nTimeout, nMaxCout);
+    }
 }
