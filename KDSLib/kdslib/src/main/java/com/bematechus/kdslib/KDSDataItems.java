@@ -246,17 +246,27 @@ public class KDSDataItems extends KDSDataArray {
      * find same item before get itselft in array.
      * it is for consolidate items
      * @param item
+     * @param bGroupCategory
+     *  if the group category enabled.
      * @return
      */
-    public KDSDataItem findSameItemBeforeIt(KDSDataItem item)
+    public KDSDataItem findSameItemBeforeIt(KDSDataItem item, boolean bGroupCategory)
     {
         synchronized (m_locker) {
             int ncount = this.getCount();
             for (int i = 0; i < ncount; i++) {
                 KDSDataItem c = this.getItem(i);
                 if (c == item) return null;
-                if (c.isSameShowingItem(item))
-                    return c;
+                if (c.isSameShowingItem(item)) {
+                    if (bGroupCategory)
+                    {//check category
+                        if (c.getCategory().equals(item.getCategory()))
+                            return c;
+                    }
+                    else {
+                        return c;
+                    }
+                }
 
 
             }
@@ -264,7 +274,13 @@ public class KDSDataItems extends KDSDataArray {
         }
     }
 
-    public boolean consolidateItems()
+    /**
+     *
+     * @param bGroupCategory
+     *  if the group category enabled.
+     * @return
+     */
+    public boolean consolidateItems(boolean bGroupCategory)
     {
         synchronized (m_locker) {
             int count = this.getCount();
@@ -278,7 +294,7 @@ public class KDSDataItems extends KDSDataArray {
                     nIndex++;
                     continue;
                 }
-                KDSDataItem findIt = findSameItemBeforeIt(c);
+                KDSDataItem findIt = findSameItemBeforeIt(c, bGroupCategory);
                 if (findIt == null) //keep it.
                 {
                     nIndex++;
