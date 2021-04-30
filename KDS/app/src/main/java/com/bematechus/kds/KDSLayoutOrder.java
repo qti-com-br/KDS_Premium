@@ -25,7 +25,7 @@ import java.util.Date;
  */
 public class KDSLayoutOrder extends KDSDataOrder {
 
-
+    public boolean mAllSmartItemsHidden = false; //kp-87, record if all items is in hidden state.
     public KDSDataOrder m_originalOrder = null;
     public void setOriginalOrder(KDSDataOrder order)
     {
@@ -545,6 +545,15 @@ public class KDSLayoutOrder extends KDSDataOrder {
         return bFinihsed;
     }
 
+    public void setAllSmartItemsWereHidden(boolean bAllHidden)
+    {
+        mAllSmartItemsHidden = bAllHidden;
+    }
+
+    public boolean getAllSmartItemsWereHidden()
+    {
+        return mAllSmartItemsHidden;
+    }
 //    private void smartHideCategory(String category)
 //    {
 //        ArrayList<KDSDataItem> arHide = new ArrayList<>();

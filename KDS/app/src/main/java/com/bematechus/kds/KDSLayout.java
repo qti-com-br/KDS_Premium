@@ -356,6 +356,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         if (dressedOrder == null)
             return 0; //"The "showing paid order" items showing method maybe return null
 
+        //kp-87 hide smart order
+        if (dressedOrder.getAllSmartItemsWereHidden()) {
+            if (getEnv().getSettings().getBoolean(KDSSettings.ID.Smartorder_hide_order))
+                return 0; //don't show it.
+        }
+
         KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
 
         //this.getEnv().getSettings().getBoolean()
@@ -1284,6 +1290,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             else if (m == KDSSettings.SmartOrderShowing.Hide)
             {
                 dressedOrder.prepOrderHideShowing();
+                //kp-87, hide order.
+                if (dressedOrder.getItems().getCount() ==0 ||
+                    dressedOrder.getItems().getItem(0) instanceof KDSDataMoreIndicator)
+                    dressedOrder.setAllSmartItemsWereHidden(true);
             }
 
             //kp1-25

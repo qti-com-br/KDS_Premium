@@ -4904,6 +4904,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "EventID=" +evID.toString());
         SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
 
+        //kp-93 Move- other actions can be performed while moving orders.
+        if (isMoveOrderMode())
+        {
+            if (!isValidBumpbarEventInMoveOrderMode(evID))
+                return;
+        }
+
         switch (evID) {
             //bump bar
             case Bumpbar_OK:
@@ -5270,6 +5277,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     //touch pad interface
     public void onFragmentInteraction(KDSUser.USER userID, KDSTouchPadButton.TouchPadID id) {
+        if (isMoveOrderMode())
+        {
+            if (!isValidTouchEventInMoveOrderMode(id))
+                return;
+        }
         switch (id) {
 
             case NULL:
@@ -5417,6 +5429,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     TimeDog m_doubleClickIntervalTimeout = new TimeDog(); //prevent the double click too quick.
     final int DOUBLE_CLICK_BUMP_TIMEOUT = 1000;
     public void onViewPanelDoubleClicked(KDSLayout layout) {
+        if (isMoveOrderMode())
+            return; //kp-93 lock all
         if (!m_doubleClickIntervalTimeout.is_timeout(DOUBLE_CLICK_BUMP_TIMEOUT))
             return;
         m_doubleClickIntervalTimeout.reset();
@@ -7293,6 +7307,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onViewLongPressed(KDSLayout layout)
     {
+        if (isMoveOrderMode())
+        { //kp-93
+            return;
+        }
         if (getSettings().getStationFunc() == SettingsBase.StationFunc.Queue ||
                 getSettings().getStationFunc() == SettingsBase.StationFunc.Queue_Expo ||
                 getSettings().getStationFunc() == SettingsBase.StationFunc.TableTracker
@@ -7445,6 +7463,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public boolean onViewSlipping(KDSLayout layout,MotionEvent e1, MotionEvent e2, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
+        if (isMoveOrderMode()) //kp-93, lock all.
+            return false;
         switch (slipDirection)
         {
 
@@ -8080,6 +8100,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         String orderGuid = getSelectedOrderGuid(userID);
         KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null) //kp-90, crashed.
+            return false;
         //find out max catdelay in bumped items
         float maxBumpedCatDelay = 0;
         for (int i=0; i< order.getItems().getCount(); i++) {
@@ -8183,5 +8205,63 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         return mMoveOrderAlertDlg.keyPressed(event, keyCode);
     }
+
+    /**
+     * kp-93
+     * @param evtID
+     * @return
+     */
+    private boolean isValidBumpbarEventInMoveOrderMode(KDSSettings.ID evtID)
+    {
+        switch (evtID)
+        {
+            case Bumpbar_Next:
+            case Bumpbar_Prev:
+            case Bumpbar_Down:
+            case Bumpbar_Up:
+            case Bumpbar_move:
+
+            case Bumpbar_Focus_0:
+            case Bumpbar_Focus_1:
+            case Bumpbar_Focus_2:
+            case Bumpbar_Focus_3:
+            case Bumpbar_Focus_4:
+            case Bumpbar_Focus_5:
+            case Bumpbar_Focus_6:
+            case Bumpbar_Focus_7:
+            case Bumpbar_Focus_8:
+            case Bumpbar_Focus_9:
+                return true;
+            default:
+                return false;
+
+        }
+
+    }
+
+    /**
+     * kp-93
+     * @param evtID
+     * @return
+     */
+    private boolean isValidTouchEventInMoveOrderMode(KDSTouchPadButton.TouchPadID evtID)
+    {
+        return false;
+//        switch (evtID)
+//        {
+//
+//            case Next:
+//            case Prev:
+//            case Up:
+//            case Down:
+//            case Next_Page:
+//            case Prev_Page:
+//            case Move:
+//                return true;
+//            default:
+//                return false;
+//        }
+    }
+
 }
 
