@@ -1311,8 +1311,10 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
         }
 
-        if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Item_Consolidate))
-            dressedOrder.consolidateItems();
+        if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Item_Consolidate)) {
+            boolean bGroupCategory = this.getEnv().getSettings().getBoolean(KDSSettings.ID.Item_group_category);
+            dressedOrder.consolidateItems(bGroupCategory);
+        }
 
 
         if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Queue_double_bump_expo_order))

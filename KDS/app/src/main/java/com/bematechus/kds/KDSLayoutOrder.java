@@ -94,10 +94,15 @@ public class KDSLayoutOrder extends KDSDataOrder {
     }
 
 
-    public boolean consolidateItems()
+    /**
+     * rev.:
+     *  KP-97, if group by category enabled while consolidate items we will just consolidate same category items
+     * @return
+     */
+    public boolean consolidateItems(boolean bGroupCategory)
     {
         KDSDataItems items = this.getItems();
-        return items.consolidateItems();
+        return items.consolidateItems(bGroupCategory);
 
     }
 
