@@ -993,6 +993,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("void_showing_method"));
             bindPreferenceSummaryToValue(findPreference("void_dcq_message"));
             bindPreferenceSummaryToValue(findPreference("void_addline_qty_mark"));
+            bindPreferenceSummaryToValue(findPreference("item_qty_precision"));//kp-88
 
             updateGUI(getShowingMethod(pref));
 

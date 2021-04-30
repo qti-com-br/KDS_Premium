@@ -612,6 +612,9 @@ public class KDSSettings extends SettingsBase {
 
        Touch_move, //kp-78
        Bumpbar_move, //kp-78
+
+       Qty_precision, //kp-88
+       Qty_as_fraction,
        Smartorder_hide_order,
     }
     /*
@@ -1419,6 +1422,8 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Bumpbar_move, "string_bumpbar_func_move", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_M, false, false, false));// "11,0,1,0"); //ctrl  + 8);
         init_option(ID.Smartorder_hide_order, "bool_smartorder_hide_order", false);
 
+        init_option(ID.Qty_precision, "string_item_qty_precision", "1");
+        init_option(ID.Qty_as_fraction, "bool_item_qty_fraction", true);
 
 
     }

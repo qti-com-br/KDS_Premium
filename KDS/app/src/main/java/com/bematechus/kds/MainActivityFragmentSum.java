@@ -74,6 +74,8 @@ public class MainActivityFragmentSum extends Fragment {
         boolean advSumEnabled = kds.getSettings().getBoolean(KDSSettings.ID.AdvSum_enabled);
         boolean bSmartEnabled = kds.getSettings().getBoolean(KDSSettings.ID.Smart_Order_Enabled);
         //boolean bSmartEnabled = (KDSSettings.SmartMode.values()[ kds.getSettings().getInt(KDSSettings.ID.Smart_mode)] == KDSSettings.SmartMode.Normal );
+        boolean bFraction = kds.getSettings().getBoolean(KDSSettings.ID.Qty_as_fraction);
+        int nPrecision = kds.getSettings().getInt(KDSSettings.ID.Qty_precision);
 
         ArrayList<KDSSummaryItem> arSumItems = kds.summary(userID);
         if (arSumItems == null) return;
@@ -81,9 +83,9 @@ public class MainActivityFragmentSum extends Fragment {
         {
             Map<String,Object> item = new HashMap<String,Object>();
             if (bSmartEnabled && advSumEnabled)
-                item.put("qty", arSumItems.get(i).getAdvSumQtyString()+"x");//kpp1-415, add x
+                item.put("qty", arSumItems.get(i).getAdvSumQtyString(bFraction, nPrecision)+"x");//kpp1-415, add x
             else
-                item.put("qty", arSumItems.get(i).getQtyString()+"x");//kpp1-415, add x
+                item.put("qty", arSumItems.get(i).getQtyString(bFraction, nPrecision)+"x");//kpp1-415, add x
             item.put("name", arSumItems.get(i).getDescription(false));
             m_arData.add(item);
         }

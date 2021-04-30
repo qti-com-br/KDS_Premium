@@ -2148,7 +2148,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
         //s += strDescription;
 //        Paint pt = new Paint();
 //        pt.setTypeface(getItemFF().getTypeFace());
-        int nPrefixWidth = KDSLayoutCell.getItemQtyPixelsWidth(getItemFF(), (int)qty);// CanvasDC.getTextPixelsWidth(pt, s);
+        int nPrefixWidth = KDSLayoutCell.getItemQtyPixelsWidth(getItemFF(), (int)qty, getEnv());// CanvasDC.getTextPixelsWidth(pt, s);
 //        int nDescriptionRoomWidth = nAverageBlockWidth - nPrefixWidth;
 //        int nDescriptionWidth = CanvasDC.getTextPixelsWidth(pt, item.getDescription());
         Rect rect = new Rect(0,0,nAverageBlockWidth - nPrefixWidth, nAverageBlockWidth * 10);//

@@ -396,15 +396,18 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
         if (arSumItems == null) return;
 
         boolean bSmartEnabled = kds.getSettings().getBoolean(KDSSettings.ID.Smart_Order_Enabled);
+        boolean bFraction = kds.getSettings().getBoolean(KDSSettings.ID.Qty_as_fraction);
+        int nPrecision = kds.getSettings().getInt(KDSSettings.ID.Qty_precision);
+
         //boolean bSmartEnabled = (KDSSettings.SmartMode.values()[ this.getKDS().getSettings().getInt(KDSSettings.ID.Smart_mode)] == KDSSettings.SmartMode.Normal );
         for (int i=0; i< arSumItems.size(); i++)
         {
             Map<String,Object> item = new HashMap<String,Object>();
             if (bSmartEnabled && advSumEnabled)
             //if (advSumEnabled)
-                item.put("qty", "x"+arSumItems.get(i).getAdvSumQtyString()); //kpp1-415, add x
+                item.put("qty", "x"+arSumItems.get(i).getAdvSumQtyString(bFraction, nPrecision)); //kpp1-415, add x
             else
-                item.put("qty", "x"+ arSumItems.get(i).getQtyString());//kpp1-415, add x
+                item.put("qty", "x"+ arSumItems.get(i).getQtyString(bFraction, nPrecision));//kpp1-415, add x
             item.put("name", arSumItems.get(i).getDescription(true));
             m_arTopSumData.add(item);
         }
