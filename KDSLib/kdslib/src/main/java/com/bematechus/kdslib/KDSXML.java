@@ -6,6 +6,7 @@
 package com.bematechus.kdslib;
 //package pckds;
 
+import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -182,7 +183,7 @@ public class KDSXML {
         }
         public boolean newGroup(String name, boolean bcurrent)
         {
-            
+
             Node node = m_doc.createElement(name);
             if (m_current != null)
                 node = m_current.appendChild(node) ;
@@ -598,6 +599,20 @@ public class KDSXML {
         KDSXML xml = new KDSXML();
         xml.loadString(xmlData);
         return xml.get_xml_string2();
+    }
+
+    /**
+     * KP-94 show all special characters in router ack file.
+     * @param data
+     * @return
+     */
+    public boolean newCDDATA(String data)
+    {
+        CDATASection section = m_doc.createCDATASection(data);
+
+        m_current.appendChild(section);
+
+        return true;
     }
 
 
