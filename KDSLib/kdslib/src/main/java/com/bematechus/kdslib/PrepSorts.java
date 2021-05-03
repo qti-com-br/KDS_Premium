@@ -40,6 +40,7 @@ public class PrepSorts {
 
     static public boolean m_bSmartCategoryEnabled = false; //for kp1-25
 
+
     /**
      *
      */

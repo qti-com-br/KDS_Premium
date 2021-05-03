@@ -2080,4 +2080,70 @@ just 16bits value
         int sec =Math.round( f % 60);
         return sec;
     }
+
+    /**
+     *
+     * @param flt
+     * @param nPrecision
+     *  the digit count after dot.
+     * @return
+     *  index 0:
+     *  index 1:
+     */
+    static public ArrayList<Integer> convertFloatToFraction(float flt, int nPrecision)
+    {
+        String s = String.format(Locale.ENGLISH,"%."+nPrecision + "f", flt);
+        String[] array = new String[2];
+        array = s.split("\\.");
+        int intVal = Integer.parseInt(array[0]);//获取整数部分
+        int decVal = Integer.parseInt(array[1]);//获取小数部分
+        int length = array[1].length();
+        int numerator = (int) (intVal * Math.pow(10, length) + decVal);
+        int denominator = (int) Math.pow(10, length);
+        int gcd = getGreatestCommonDivisor(numerator, denominator);
+
+        int a = numerator/gcd;
+        int b = denominator/gcd;
+
+        ArrayList<Integer> ar = new ArrayList<>();
+        ar.add(a);
+        ar.add(b);
+        return ar;
+
+    }
+
+    private static int getGreatestCommonDivisor(int a, int b) {//
+        int t = 0;
+        if(a < b){ //swap them.
+            t = a;
+            a = b;
+            b = t;
+        }
+        int c = a % b;
+        //if(c == 0){
+        int fault_tolerant = b/10;
+        if(c <=fault_tolerant ){
+            return b;
+        }else{
+            return getGreatestCommonDivisor(b, c);
+        }
+    }
+
+    public static int floatIntPart(float flt)
+    {
+        return (int)flt;
+    }
+
+    public static float floatPart(float flt)
+    {
+        return (flt%1);
+    }
+
+    static public String convertFloatToString(float fltVal, int nPrecision)
+    {
+
+        String s = String.format(Locale.ENGLISH, "%." + KDSUtil.convertIntToString(nPrecision) + "f", fltVal);
+        return s;
+    }
+
 }

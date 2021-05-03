@@ -158,19 +158,38 @@ public class KDSSummaryItem {
         return m_fltSmartHidenQty;
     }
 
-    public String getQtyString()
+//    public String getQtyString()
+//    {
+//        return KDSUtil.convertIntToString((int)getQty());
+//    }
+
+    public String getQtyString(boolean bFraction, int nPrecision)
     {
-        return KDSUtil.convertIntToString((int)getQty());
+        return KDSLayoutCell.makeQtyString(getQty(),bFraction, nPrecision );
+        //return KDSUtil.convertIntToString((int)getQty());
     }
 
-    public String getAdvSumQtyString()
+//    public String getAdvSumQtyString()
+//    {
+//        int n = (int)(m_fltQty-m_fltSmartHidenQty);
+//        if (n <0) n=0;
+//        String s = String.format("%d(%d)",n ,(int) m_fltSmartHidenQty);
+//        return s;
+//
+//    }
+
+    public String getAdvSumQtyString(boolean bFraction, int nPrecision)
     {
-        int n = (int)(m_fltQty-m_fltSmartHidenQty);
+        float n = (m_fltQty-m_fltSmartHidenQty);
         if (n <0) n=0;
-        String s = String.format("%d(%d)",n ,(int) m_fltSmartHidenQty);
+        String strQty = KDSLayoutCell.makeQtyString(n,bFraction, nPrecision );
+        String strHideQty = KDSLayoutCell.makeQtyString(m_fltSmartHidenQty,bFraction, nPrecision );
+
+        String s = String.format("%s(%s)",strQty ,strHideQty);
         return s;
 
     }
+
     public void setCategory(String str)
     {
         m_category = str;

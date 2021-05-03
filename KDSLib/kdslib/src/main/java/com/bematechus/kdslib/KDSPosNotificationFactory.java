@@ -124,7 +124,17 @@ file format see next function
 
     }
 
-
+    /**
+     * rev.:
+     *  KP-94, use CDDATA to save received xml file content.
+     *            It is for show all special characters.
+     * @param stationID
+     * @param orderXml
+     * @param orderID
+     * @param errorCode
+     * @param fileName
+     * @return
+     */
     static public String createOrderAcknowledgementNotification(String stationID, String orderXml, String orderID,String errorCode, String fileName)
     {
         KDSXML xml = new KDSXML();
@@ -133,8 +143,9 @@ file format see next function
         xml.newAttribute(STATION,stationID);
         xml.newAttribute(ORDER_ID,orderID);
         xml.newAttribute(NOTIFY_FILE_NAME, fileName);
-        xml.setGroupValue( orderXml);
-
+        //xml.setGroupValue( orderXml);
+        //kp-94
+        xml.newCDDATA(orderXml);
         return xml.get_xml_string();
 
 

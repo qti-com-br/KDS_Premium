@@ -337,4 +337,6 @@ public class KDSDlgOrderZoom implements KDSLayout.KDSLayoutEvents,
     {
         refresh();
     }
+    public void onViewClickOrder(KDSLayout layout, String orderGuid){}
+
 }

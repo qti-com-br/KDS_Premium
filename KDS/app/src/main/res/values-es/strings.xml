@@ -926,5 +926,13 @@
     <string name="show_quantity_at_right">Show quantity at right</string>
     <string name="finish_item_by_bump_order">Finish items by [bump order]</string>
 	<string name="bump_order_will_bring_up_next_items">[Bump order] will bring up next items based on CatDelay value.</string>
-    <string name="title_runner_confirmation_bump">Runner confirmation bump</string>
+
+  <string name="title_runner_confirmation_bump">Runner confirmation bump</string>
+  <string name="enable_move_touch_button">Enable [move] touch button</string>
+	<string name="move">Move</string>
+  <string name="select_the_desired_position_to_apply">Select the desired position to apply</string>
+  <string name="show_qty_as_fraction">Show as fraction</string>
+	<string name="decimal_precision_for_qty">Decimal precision for item quantity</string>
+  <string name="hide_smart_order">Hide order if all items invisible.</string>
+
 </resources>

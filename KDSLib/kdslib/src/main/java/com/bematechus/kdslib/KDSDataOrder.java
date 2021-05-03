@@ -3225,4 +3225,6 @@ get the total qty of all found items
     {
         return mHeaderFooterMessage;
     }
+
+
 }

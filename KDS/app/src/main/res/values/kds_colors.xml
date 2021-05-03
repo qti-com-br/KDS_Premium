@@ -124,4 +124,7 @@
     <color name="sum_bg">@color/lci_background_dark</color>
     <color name="sum_fg">@color/white</color>
 
+    <color name="move_alert_bg"> #CCFFFFFF</color>
+    <color name="move_alert_fg">#CC000000</color>
+    <color name="move_alert_cancel_fg">#B35252</color>
 </resources>

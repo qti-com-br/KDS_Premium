@@ -921,9 +921,18 @@
 	<string name="ethernet">Ethernet</string>
 	<string name="internet">Internet</string>
 	<string name="local">Local</string>
+  
 	<string name="summary_station">Estação Resumo</string>
-    <string name="show_quantity_at_right">Exibir quantidades à direita</string>
-    <string name="finish_item_by_bump_order">Finalizar os itens com [bumpar pedido]</string>
+  <string name="show_quantity_at_right">Exibir quantidades à direita</string>
+  <string name="finish_item_by_bump_order">Finalizar os itens com [bumpar pedido]</string>
 	<string name="bump_order_will_bring_up_next_items"><![CDATA[[Bumpar pedido] trará o próximo grupo de itens, baseado na tag <CatDelay>]]></string>
-	<string name="title_runner_confirmation_bump">Confirmação do Bump</string>
+	
+  <string name="title_runner_confirmation_bump">Confirmação do Bump</string>
+  <string name="enable_move_touch_button">Habilita o botão [Mover]</string>
+	<string name="move">Mover</string>
+  <string name="select_the_desired_position_to_apply">Selecione a posição desejada para mover</string>
+  <string name="show_qty_as_fraction">Exibir como fração</string>
+	<string name="decimal_precision_for_qty">Precisão decimal para quantidade do item</string>
+  <string name="hide_smart_order">Oculta o pedido se todos os itens não estiverem visíveis</string>
+
 </resources>

@@ -47,6 +47,7 @@ public class KDSContextMenu {
         order_unpark,
         order_print,
         order_sum,
+        order_move, //kp-78
         order_transfer,
         order_sort,
         order_more,
@@ -162,6 +163,11 @@ public class KDSContextMenu {
 
     private void init_menu_items(Context context,  KDSSettings settings)
     {
+
+        //kp-78, add move function.
+        if (settings.getBoolean(KDSSettings.ID.Touch_move))
+            addItem(m_arOrderMenuItems, context.getString(R.string.move), R.drawable.move, ContextMenuItemID.order_move);
+
         if (settings.getBoolean(KDSSettings.ID.Touch_bump))
             addItem(m_arOrderMenuItems, context.getString(R.string.touchpad_bump), R.drawable.bump, ContextMenuItemID.order_bump);
         if (settings.getBoolean(KDSSettings.ID.Touch_unbump_last))
@@ -170,6 +176,7 @@ public class KDSContextMenu {
             addItem(m_arOrderMenuItems, context.getString(R.string.touchpad_unbump), R.drawable.unbump, ContextMenuItemID.order_unbump);
         if (settings.getBoolean(KDSSettings.ID.Touch_sum))
             addItem(m_arOrderMenuItems, context.getString(R.string.touchpad_sum), R.drawable.summary, ContextMenuItemID.order_sum);
+
 
         if (settings.getBoolean(KDSSettings.ID.Touch_transfer))
             addItem(m_arOrderMenuItems, context.getString(R.string.touchpad_transfer), R.drawable.transfer, ContextMenuItemID.order_transfer);

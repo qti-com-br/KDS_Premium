@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bematechus.kdslib.AckDataStation;
 import com.bematechus.kdslib.Activation;
 import com.bematechus.kdslib.BuildVer;
 import com.bematechus.kdslib.ActivationRequest;
@@ -486,6 +487,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 getPagerManager().onTime();
         }
 
+        restoreWorkloadStationOfflineOrderBack();//kp-96
 //        //if (m_clearDbTimeDog.is_timeout(1800000)) //30x60x1000, 30mins
 //        if (m_clearDbTimeDog.is_timeout(18000)) //30x60x1000, 30mins //debug
 //        {
@@ -5665,5 +5667,56 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //kpp1-407
         mirrorStationSyncWebDatabase(code, command, myOrder, arUnbumpItems);
 
+    }
+
+    final int WORKLOAD_RESTORE_TIMEOUT = 5000;
+    /**
+     * if the workload station offline, and it don't restart in given seconds,
+     *      move workload offline order to my station.
+     */
+    private void restoreWorkloadStationOfflineOrderBack()
+    {
+        if (this.getStationsConnections().getRelations().getWorkLoadStations().size()<=0)
+            return;
+        for (int i=0; i< this.getStationsConnections().getRelations().getWorkLoadStations().size(); i++) {
+            KDSStationIP station = this.getStationsConnections().getRelations().getWorkLoadStations().get(i);
+            AckDataStation ackData = this.getStationsConnections().popupTimeoutAck(station.getID(),1,  WORKLOAD_RESTORE_TIMEOUT);
+            sendBackWorkloadStationOrders(ackData);
+
+        }
+    }
+
+    /**
+     * kp-96
+     * @param data
+     * @return
+     */
+    private boolean sendBackWorkloadStationOrders(AckDataStation data)
+    {
+        for (int i=0; i< data.getData().size(); i++)
+        {
+            String xml = data.getData().get(i).getXmlData();
+            KDSXMLParser.XMLType ntype = checkXmlType(xml);
+
+            switch (ntype)
+            {
+                case Unknown:
+                    break;
+                case Order: {
+                    KDSDataOrder order = (KDSDataOrder) KDSXMLParser.parseXml(getStationID(), xml);
+                    for (int j = 0; j < order.getItems().getCount(); j++) {
+                        order.getItems().getItem(j).setToStationsString(getStationID());
+                    }
+                    xml = order.createXml();
+                    doOrderXmlInThread(MESSAGE_TO_MAIN.Order, null, xml, "", false); //2.0.34
+                }
+                break;
+                case Command:
+                    break;
+                default:
+                    break;
+            }
+        }
+        return true;
     }
 }
