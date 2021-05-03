@@ -3,7 +3,7 @@
 
     <CheckBoxPreference
         android:key="runner_confirm_bump"
-        android:title="Runner confirmation bump"
+        android:title="@string/title_runner_confirmation_bump"
         android:summary="@string/runner_confirm_bump_summary"
         android:defaultValue="false" />
 
