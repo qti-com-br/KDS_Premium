@@ -192,7 +192,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 			payload.put("store_guid", getStoreGuid());
 			payload.put("manufacturer", Build.MANUFACTURER);
 			payload.put("model", Build.MODEL);
-			payload.put("serial", getMySerialNumber());
+			payload.put("serial", Build.SERIAL);
+			payload.put("mac_address", m_myMacAddress);
 
 			req.put(tok);
 			req.put(payload);
@@ -224,6 +225,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
+        sendHardwareInfo();
         //if (_DEBUG)
             //m_myMacAddress = "19.ABCdef";//test	000ec3310238
 

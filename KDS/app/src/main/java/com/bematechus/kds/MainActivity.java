@@ -585,7 +585,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         ///// Move login activity showing to end of this function.
         //Prevent login was overlapped by main activity.
         m_activation.setStationID(getKDS().getStationID());
-        m_activation.sendHardwareInfo();
+		m_activation.sendHardwareInfo();
+
         if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
             boolean bSilent = Activation.hasDoRegister();//2.1.2
             doActivation(bSilent, false, "");
