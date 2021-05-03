@@ -35,6 +35,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import static com.bematechus.kdslib.ActivationRequest.REQ;
+import static com.bematechus.kdslib.ActivationRequest.TOK;
+import static com.bematechus.kdslib.ActivationRequest.TOKEN;
+import static com.bematechus.kdslib.ActivationRequest.getJsonObj;
+
 /**
  * Created by David.Wong on 2018/7/10.
  * Rev:
@@ -176,6 +181,35 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         loadStoreName();
     }
 
+    public void sendHardwareInfo() {
+    	try {
+			JSONArray req = new JSONArray();
+			JSONObject tok = new JSONObject();
+			JSONObject payload = new JSONObject();
+
+			tok.put(TOK, TOKEN);
+			payload.put(REQ, "HARDWARE");
+			payload.put("store_guid", getStoreGuid());
+			payload.put("manufacturer", Build.MANUFACTURER);
+			payload.put("model", Build.MODEL);
+			payload.put("serial", Build.SERIAL);
+			payload.put("mac_address", m_myMacAddress);
+
+			req.put(tok);
+			req.put(payload);
+
+			ActivationRequest r = new ActivationRequest();
+			r.setParams(req.toString());
+			r.setCommand(ActivationRequest.COMMAND.Hardware);
+			m_http.request(r);
+
+			//Log.d("HW", req.toString());
+
+		} catch (Exception e) {
+    		e.printStackTrace();
+		}
+	}
+
     public void setStationID(String stationID)
     {
         m_stationID = stationID;
@@ -191,6 +225,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
+        sendHardwareInfo();
         //if (_DEBUG)
             //m_myMacAddress = "19.ABCdef";//test	000ec3310238
 
@@ -278,6 +313,14 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 case Get_server_time:
                     onActivationResponseServerTime(http, request);
                     break;
+
+//				case Hardware:
+//					if (isResponseError(request.m_result)) {
+//						Log.e("HW", "Error " + request.m_result);
+//					} else {
+//						Log.d("HW", request.m_result);
+//					}
+//					break;
 
             }
         }
