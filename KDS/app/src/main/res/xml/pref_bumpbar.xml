@@ -203,7 +203,16 @@
             android:positiveButtonText="@string/ok"
             android:negativeButtonText="@string/cancel"
             />
-
+        <!-- ctrl+8 , it is same as page function. But, page is unused. -->
+        <!-- use "m" as default       -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/move"
+            android:key="bumpbar_func_move"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="41,0,0,0"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            />
 
     </PreferenceCategory>
 

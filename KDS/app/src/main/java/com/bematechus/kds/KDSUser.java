@@ -299,7 +299,7 @@ public class KDSUser {
             getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
         }
         getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
-
+        if (maxItem == null) return ; //kp-90
         //kp1-25, notify runner's child, a new category started.
         if (getKDS().isRunnerStation()) //I am a Runner
         {

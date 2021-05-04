@@ -47,6 +47,7 @@ public class KDSTouchPadButton {
         //2.0.25 Add two more button to touch button, Next guest_paging/ Prev guest_paging which go to next guest_paging directory; also apply this to Bumpbar key assignment.
         Next_Page,
         Prev_Page,
+        Move, //kp-78 move order feature.
     }
 
     String m_strText = "";

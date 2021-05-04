@@ -26,10 +26,12 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataVoidItemIndicator;
 import com.bematechus.kdslib.KDSDataVoidItemQtyChanged;
 import com.bematechus.kdslib.KDSStationIP;
+import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  *  For order view panel cell(row).
@@ -1360,10 +1362,20 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return getSpaces(1);
     }
 
-    static public int getItemQtyPixelsWidth(KDSViewFontFace ff,  int nQty)
+//    static public int getItemQtyPixelsWidth(KDSViewFontFace ff,  int nQty)
+//    {
+//        String strQty = getItemPrefix();// getSpaces(2);
+//        strQty += Integer.toString((int) nQty);
+//        strQty += getItemQtySuffix() ;
+//        return CanvasDC.getTextPixelsWidth(ff, "" + strQty +"x");
+//    }
+    static public int getItemQtyPixelsWidth(KDSViewFontFace ff,  float fltQty, KDSViewSettings env)
     {
         String strQty = getItemPrefix();// getSpaces(2);
-        strQty += Integer.toString((int) nQty);
+        strQty += makeQtyString( fltQty ,
+                                env.getSettings().getBoolean(KDSSettings.ID.Qty_as_fraction),
+                                env.getSettings().getInt(KDSSettings.ID.Qty_precision));
+
         strQty += getItemQtySuffix() ;
         return CanvasDC.getTextPixelsWidth(ff, "" + strQty +"x");
     }
@@ -1444,14 +1456,16 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         float qty = item.getShowingQty();
 
         String strQty = getItemPrefix();// getSpaces(2);
-        strQty += Integer.toString((int) qty);
+        //strQty += Integer.toString((int) qty);
+        strQty += makeQtyString(qty, env.getSettings().getBoolean(KDSSettings.ID.Qty_as_fraction), env.getSettings().getInt(KDSSettings.ID.Qty_precision));
+
         strQty += "x";
         strQty += getItemQtySuffix() ;
         if (item.getAlign() == Paint.Align.RIGHT)
         {
             Rect rc = new Rect(rcAbsolute);
 
-            rc.left = rc.right - getItemQtyPixelsWidth(getFont(), (int)qty);// CanvasDC.getTextPixelsWidth(this.getFont(), strQty);
+            rc.left = rc.right - getItemQtyPixelsWidth(getFont(), qty, env);// CanvasDC.getTextPixelsWidth(this.getFont(), strQty);
             if (m_nTextWrapRowIndex ==0)
                 CanvasDC.drawWrapString(g, this.getFont(), rc, strQty, align, true);
             rcAbsolute.right = rc.left;
@@ -1470,7 +1484,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
             paint.setTypeface(getFont().getTypeFace());
             paint.setTextSize(getFont().getFontSize());
-            rc.right = rc.left + getItemQtyPixelsWidth(getFont(),(int)qty) ;//  CanvasDC.getTextPixelsWidth(paint, "!" + strQty + "!");
+            rc.right = rc.left + getItemQtyPixelsWidth(getFont(),qty, env) ;//  CanvasDC.getTextPixelsWidth(paint, "!" + strQty + "!");
             if (item.m_tempShowMeNeedBlockLines.size() >0)
                 rc.bottom = rc.top + rc.height()/item.m_tempShowMeNeedBlockLines.size();
             if (m_nTextWrapRowIndex ==0)
@@ -1643,6 +1657,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         if (c.getQty() >1)
         {
             s += Integer.toString((int) c.getQty());
+            //s += makeQtyString(c.getQty());// Integer.toString((int) c.getQty()); //kp-88
             s += "x ";
         }
         s += strDescription;
@@ -1886,5 +1901,98 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return m_attachedObj;
     }
 
+    /**
+     * kp-88, fraction qty
+     * @param qty
+     * @return
+     */
+    static public String makeQtyString(float qty, boolean bEnableFraction, int nPrecision)
+    {
+        String strQty = "";
+        int intValue = KDSUtil.floatIntPart(qty);
+        float fltVal = KDSUtil.floatPart(qty);
+        if (fltVal == 0 )
+            strQty += Integer.toString((int) qty);
+        else
+        {
+            if (intValue>0)
+            {//[>1] value, use decimal format.
+                return KDSUtil.convertFloatToString(qty, nPrecision);
+            }
+            else { //only {0, 1} float value need fraction.
+                if (bEnableFraction) {
+                    if (isFractionFloat(fltVal)) {
+                        strQty += makeFractionQty(fltVal);
+//                        ArrayList<Integer> arVal = KDSUtil.convertFloatToFraction(fltVal, 3);
+//                        if (intValue > 0) {
+//                            strQty += Integer.toString((int) intValue);
+//                            strQty += "+";
+//                        }
+//                        strQty += arVal.get(0).toString() + "/" + arVal.get(1).toString();
+                    } else {
+                        strQty += String.format(Locale.ENGLISH, "%." + KDSUtil.convertIntToString(nPrecision) + "f", qty);
+                    }
+                } else {
+                    strQty +=  KDSUtil.convertFloatToString(qty, nPrecision);
+                }
+            }
+
+
+        }
+        return strQty;
+    }
+
+    static final float ERROR_MARGIN = 0.005f;
+    static final float[] VALID_FRACTIONS = new float[]{
+            0.5f, //1/2
+            0.25f, // 1/4
+            0.333f, // 1/3
+            0.666f, // 2/3
+            0.75f,  // 3/4
+            //0.125f, // 1/8
+            0.375f, // 3/8
+            0.625f, // 5/8
+            0.875f // 7/8
+    };
+    static final String[] VALID_FRACTIONS_STRING = new String[]{
+            "1/2",
+            "1/4",
+            "1/3",
+            "2/3",
+            "3/4",
+            //"1/8",
+            "3/8",
+            "5/8",
+            "7/8"
+    };
+    /**
+     * kp-88,
+     *  Just following float shows as fraction.
+     * @param flt
+     * @return
+     */
+    static private boolean isFractionFloat(float flt)
+    {
+
+
+        for (int i=0; i< VALID_FRACTIONS.length; i++)
+        {
+            if (Math.abs(flt - VALID_FRACTIONS[i]) < ERROR_MARGIN)
+                return true;
+        }
+        return false;
+
+    }
+
+    static private String makeFractionQty(float qty)
+    {
+        for (int i=0; i< VALID_FRACTIONS.length; i++)
+        {
+            if (Math.abs(qty - VALID_FRACTIONS[i]) < ERROR_MARGIN) {
+                return VALID_FRACTIONS_STRING[i];
+            }
+        }
+        return "";
+    }
 
 }

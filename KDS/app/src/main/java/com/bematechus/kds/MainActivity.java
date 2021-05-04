@@ -267,6 +267,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     Activation m_activation = new Activation(this);
 
     CleaningHabitsManager m_cleaning = new CleaningHabitsManager();
+
+    FloatDlgMoveOrder mMoveOrderAlertDlg = new FloatDlgMoveOrder();
     /**
      * the interface of timer
      */
@@ -583,12 +585,25 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         ///// Move login activity showing to end of this function.
         //Prevent login was overlapped by main activity.
         m_activation.setStationID(getKDS().getStationID());
+		m_activation.sendHardwareInfo();
+
         if (KDSConst.ENABLE_FEATURE_ACTIVATION) {
             boolean bSilent = Activation.hasDoRegister();//2.1.2
             doActivation(bSilent, false, "");
         }
         forceAgreementAgreed();
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
+        //1/2, 1/4, 1/3, 2/3, 3/4, 1/8, 3/8, 5/8, 7/8
+//        ArrayList<Integer> ar = KDSUtil.convertFloatToFraction(0.33f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.5f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.25f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.333f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.666f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.75f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.125f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.375f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.625f, 3);
+//        ar = KDSUtil.convertFloatToFraction(0.875f, 3);
     }
 
     public static final String ACTION_USB_PERMISSION = "com.bematechus.kds.USB_PERMISSION";
@@ -1263,6 +1278,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if (isMoveOrderMode())
+                return false;
             boolean bEnablePwd = this.getSettings().getBoolean(KDSSettings.ID.Settings_password_enabled);
             if (bEnablePwd)
             {
@@ -4336,6 +4353,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
             }
         }
+
+
     }
 
     public void queueSetFocusToOrder(String orderGuid)
@@ -4743,6 +4762,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private boolean keyPressed(int keyCode, KeyEvent event) {
         if (!isKDSValid()) return false;
+        if (isMoveOrderMode())
+        {
+            if (moveOrderKeyPressed(event, keyCode))
+                return false;
+        }
         // if (!m_kbdRecorder.isReadyForEvent()) {
         if (!m_kbdRecorder.isAnyKeyDown()) {
 //            if (m_kbdRecorder.isKeyupTimeout())
@@ -4881,6 +4905,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void doKbdEvent(KDSSettings.ID evID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "EventID=" +evID.toString());
         SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
+
+        //kp-93 Move- other actions can be performed while moving orders.
+        if (isMoveOrderMode())
+        {
+            if (!isValidBumpbarEventInMoveOrderMode(evID))
+                return;
+        }
 
         switch (evID) {
             //bump bar
@@ -5159,12 +5190,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 else
                     doMoreFunc_Training_Video(getFocusedUserID());
                 break;
-            case Bumpbar_Page:
-                if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
-                {
-                    opPageOrder(getFocusedUserID());
-                }
-                break;
+//            case Bumpbar_Page: //kp-78, this feature is unused.
+//                if (getKDS().isExpeditorStation() || getKDS().isRunnerStation())
+//                {
+//                    opPageOrder(getFocusedUserID());
+//                }
+//                break;
             case Bumpbar_Menu:
                 opToggleMenu();
                 break;
@@ -5225,6 +5256,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case Bumpbar_Clean: //kpp1-339
                 opCleanByBumpbar();
                 break;
+            case Bumpbar_move: //kp-78 move order feature.
+            {
+                opMove(getFocusedUserID(), false);
+            }
+            break;
             default:
                 break;
 
@@ -5243,6 +5279,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     //touch pad interface
     public void onFragmentInteraction(KDSUser.USER userID, KDSTouchPadButton.TouchPadID id) {
+        if (isMoveOrderMode())
+        {
+            if (!isValidTouchEventInMoveOrderMode(id))
+                return;
+        }
         switch (id) {
 
             case NULL:
@@ -5350,6 +5391,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 opPrevPage(userID);
             }
             break;
+            case Move:
+            {
+                opMove(userID, true);
+            }
+            break;
         }
     }
 
@@ -5385,6 +5431,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     TimeDog m_doubleClickIntervalTimeout = new TimeDog(); //prevent the double click too quick.
     final int DOUBLE_CLICK_BUMP_TIMEOUT = 1000;
     public void onViewPanelDoubleClicked(KDSLayout layout) {
+        if (isMoveOrderMode())
+            return; //kp-93 lock all
         if (!m_doubleClickIntervalTimeout.is_timeout(DOUBLE_CLICK_BUMP_TIMEOUT))
             return;
         m_doubleClickIntervalTimeout.reset();
@@ -7261,6 +7309,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onViewLongPressed(KDSLayout layout)
     {
+        if (isMoveOrderMode())
+        { //kp-93
+            return;
+        }
         if (getSettings().getStationFunc() == SettingsBase.StationFunc.Queue ||
                 getSettings().getStationFunc() == SettingsBase.StationFunc.Queue_Expo ||
                 getSettings().getStationFunc() == SettingsBase.StationFunc.TableTracker
@@ -7336,6 +7388,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case item_training:
                 doMoreFunc_Training_Video(getFocusedUserID());
                 break;
+            case order_move:
+                opMove(getFocusedUserID(), true);
+                break;
 
         }
     }
@@ -7410,6 +7465,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public boolean onViewSlipping(KDSLayout layout,MotionEvent e1, MotionEvent e2, KDSView.SlipDirection slipDirection, KDSView.SlipInBorder slipInBorder)
     {
+        if (isMoveOrderMode()) //kp-93, lock all.
+            return false;
         switch (slipDirection)
         {
 
@@ -8045,6 +8102,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         String orderGuid = getSelectedOrderGuid(userID);
         KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null) //kp-90, crashed.
+            return false;
         //find out max catdelay in bumped items
         float maxBumpedCatDelay = 0;
         for (int i=0; i< order.getItems().getCount(); i++) {
@@ -8070,5 +8129,141 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         return (nUnbumpedCount >0);
 
     }
+
+    /**
+     * kp-78 move order feature.
+     * @param userID
+     */
+    private void opMove(KDSUser.USER userID, boolean byTouch)
+    {
+        Log.i(TAG, "Move order");
+        if (isFixedSingleScreenView()) return; //just normal display can move
+        if (getSelectedOrderGuid(userID).isEmpty()) return;
+        if (mMoveOrderAlertDlg.isVisible())
+        {
+            if (byTouch) {
+                return;
+            }
+            else
+            {
+                moveOrder(userID);
+                return;
+            }
+        }
+
+
+        mMoveOrderAlertDlg.setMovingOrderGuid(getSelectedOrderGuid(userID));
+        mMoveOrderAlertDlg.show(m_uiUserA.isVisibleTouchPad(), this.findViewById(R.id.main_layout));
+    }
+
+    private boolean isMoveOrderMode()
+    {
+        return mMoveOrderAlertDlg.isVisible();
+    }
+
+    private void moveOrder(KDSUser.USER userID)
+    {
+
+
+        String targetOrderGuid = getSelectedOrderGuid(userID);
+
+        String moveOrderGuid = mMoveOrderAlertDlg.getMovingOrderGuid();
+        if (targetOrderGuid.equals(moveOrderGuid))
+            return;
+        String currentFirstOrderGuid = getUserUI(userID).getLayout().getEnv().getStateValues().getFirstShowingOrderGUID();
+        String nextOrderGuid = "";
+        if (currentFirstOrderGuid.equals(moveOrderGuid))
+        {//move the first showing order. Show next as first.
+            nextOrderGuid = getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(moveOrderGuid);
+
+        }
+        boolean bResult = getKDS().getUsers().getUser(userID).getOrders().moveOrderTo(moveOrderGuid, targetOrderGuid);
+        if (!bResult) return;
+        //after moving, reset the next order, just for keep screen state.
+        if (!nextOrderGuid.isEmpty())
+        {
+            getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(nextOrderGuid);
+        }
+        mMoveOrderAlertDlg.hide();
+
+
+        //getKDS().setFocusToOrder(moveOrderGuid);
+        //
+        getUserUI(userID).getLayout().getEnv().getStateValues().setFocusedOrderGUID(moveOrderGuid);
+        getKDS().refreshView();
+
+
+    }
+
+    public void onViewClickOrder(KDSLayout layout, String orderGuid)
+    {
+        if (isMoveOrderMode())
+        {
+            moveOrder(getFocusedUserID());
+        }
+    }
+
+    private boolean moveOrderKeyPressed(KeyEvent event, int keyCode)
+    {
+        return mMoveOrderAlertDlg.keyPressed(event, keyCode);
+    }
+
+    /**
+     * kp-93
+     * @param evtID
+     * @return
+     */
+    private boolean isValidBumpbarEventInMoveOrderMode(KDSSettings.ID evtID)
+    {
+        switch (evtID)
+        {
+            case Bumpbar_Next:
+            case Bumpbar_Prev:
+            case Bumpbar_Down:
+            case Bumpbar_Up:
+            case Bumpbar_move:
+
+            case Bumpbar_Focus_0:
+            case Bumpbar_Focus_1:
+            case Bumpbar_Focus_2:
+            case Bumpbar_Focus_3:
+            case Bumpbar_Focus_4:
+            case Bumpbar_Focus_5:
+            case Bumpbar_Focus_6:
+            case Bumpbar_Focus_7:
+            case Bumpbar_Focus_8:
+            case Bumpbar_Focus_9:
+                return true;
+            default:
+                return false;
+
+        }
+
+    }
+
+    /**
+     * kp-93
+     * @param evtID
+     * @return
+     */
+    private boolean isValidTouchEventInMoveOrderMode(KDSTouchPadButton.TouchPadID evtID)
+    {
+        return false;
+//        switch (evtID)
+//        {
+//
+//            case Next:
+//            case Prev:
+//            case Up:
+//            case Down:
+//            case Next_Page:
+//            case Prev_Page:
+//            case Move:
+//                return true;
+//            default:
+//                return false;
+//        }
+    }
+
 }
 

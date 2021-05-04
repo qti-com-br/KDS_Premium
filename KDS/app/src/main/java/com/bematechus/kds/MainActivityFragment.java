@@ -122,6 +122,11 @@ public class MainActivityFragment extends Fragment {
             addButton(KDSTouchPadButton.TouchPadID.Up, R.string.touchpad_up, R.drawable.up_arrow, R.drawable.up_arrow_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_down))
             addButton(KDSTouchPadButton.TouchPadID.Down, R.string.touchpad_down,R.drawable.down_arrow,R.drawable.down_arrow_us);
+
+        if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_move)) //kp-78 move order feature
+            addButton(KDSTouchPadButton.TouchPadID.Move, R.string.move, R.drawable.move, R.drawable.move_us);
+
+
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_bump))
             addButton(KDSTouchPadButton.TouchPadID.Bump, R.string.touchpad_bump,R.drawable.bump,R.drawable.bump_us);
 
@@ -134,6 +139,8 @@ public class MainActivityFragment extends Fragment {
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_sum))
             addButton(KDSTouchPadButton.TouchPadID.Sum, R.string.touchpad_sum, R.drawable.summary, R.drawable.summary_us);
+
+
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_transfer))
             addButton(KDSTouchPadButton.TouchPadID.Transfer, R.string.touchpad_transfer,R.drawable.transfer,R.drawable.transfer_us);
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_sort))

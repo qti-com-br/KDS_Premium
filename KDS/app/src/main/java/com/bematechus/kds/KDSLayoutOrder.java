@@ -25,7 +25,7 @@ import java.util.Date;
  */
 public class KDSLayoutOrder extends KDSDataOrder {
 
-
+    public boolean mAllSmartItemsHidden = false; //kp-87, record if all items is in hidden state.
     public KDSDataOrder m_originalOrder = null;
     public void setOriginalOrder(KDSDataOrder order)
     {
@@ -94,10 +94,15 @@ public class KDSLayoutOrder extends KDSDataOrder {
     }
 
 
-    public boolean consolidateItems()
+    /**
+     * rev.:
+     *  KP-97, if group by category enabled while consolidate items we will just consolidate same category items
+     * @return
+     */
+    public boolean consolidateItems(boolean bGroupCategory)
     {
         KDSDataItems items = this.getItems();
-        return items.consolidateItems();
+        return items.consolidateItems(bGroupCategory);
 
     }
 
@@ -545,6 +550,15 @@ public class KDSLayoutOrder extends KDSDataOrder {
         return bFinihsed;
     }
 
+    public void setAllSmartItemsWereHidden(boolean bAllHidden)
+    {
+        mAllSmartItemsHidden = bAllHidden;
+    }
+
+    public boolean getAllSmartItemsWereHidden()
+    {
+        return mAllSmartItemsHidden;
+    }
 //    private void smartHideCategory(String category)
 //    {
 //        ArrayList<KDSDataItem> arHide = new ArrayList<>();

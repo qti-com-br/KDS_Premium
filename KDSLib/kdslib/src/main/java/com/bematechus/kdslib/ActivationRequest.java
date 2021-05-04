@@ -119,6 +119,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Cleaning,
         Get_orders,
         Get_server_time,
+		Hardware,
     }
 
     public enum ErrorType
