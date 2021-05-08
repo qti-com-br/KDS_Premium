@@ -2479,6 +2479,22 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class POSInfoPreferenceFragment extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_notification);
+            suspendOnSharedPreferencesChangedEvent(false);
+
+            bindPreferenceSummaryToValue(findPreference("posinfo_position"));
+            bindPreferenceSummaryToValue(findPreference("posinfo_scroll_speed"));
+
+            bindPreferenceSummaryToValue(findPreference("posinfo_scroll_speed"));
+
+        }
+    }
 
 
 }

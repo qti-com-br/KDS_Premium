@@ -238,9 +238,21 @@
             android:id="@+id/main_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:animateLayoutChanges="true"
             android:orientation="horizontal">
-
+            <ListView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:id="@+id/lstPosMsgLeft"
+                android:headerDividersEnabled="true"
+                android:choiceMode="singleChoice"
+                android:divider="#1c72ff"
+                android:drawSelectorOnTop="true"
+                android:footerDividersEnabled="true"
+                android:stackFromBottom="true"
+                android:transcriptMode="alwaysScroll"
+                android:padding="2dp" />
             <FrameLayout
 
                 android:id="@+id/fragmentlayout_sumA"
@@ -302,6 +314,7 @@
             android:id="@+id/queuelayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -324,7 +337,31 @@
                 android:layout_height="match_parent" />
 
         </LinearLayout>
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:id="@+id/lstPosMsg"
+            android:headerDividersEnabled="true"
+            android:choiceMode="singleChoice"
+            android:divider="#1c72ff"
+            android:drawSelectorOnTop="true"
+            android:footerDividersEnabled="true"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll"
+            android:padding="2dp" />
+<!--        <LinearLayout-->
+<!--            android:id="@+id/posMsgBottom"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="80dp"-->
+<!--            android:orientation="vertical"-->
+<!--            android:visibility="visible">-->
 
+<!--            <ListView-->
+<!--                android:id="@+id/posBottom"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent" />-->
+
+<!--        </LinearLayout>-->
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

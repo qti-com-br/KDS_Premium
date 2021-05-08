@@ -616,6 +616,13 @@ public class KDSSettings extends SettingsBase {
        Qty_precision, //kp-88
        Qty_as_fraction,
        Smartorder_hide_order,
+
+       //pos message
+       PosInfo_position,
+       PosInfo_font,
+       PosInfo_scroll_speed,
+       PosInfo_auto_remove,
+       PosInfo_remove_seconds,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -838,6 +845,25 @@ public class KDSSettings extends SettingsBase {
         ShowDialog,
         CleanScreen,
     }
+   //kp-102
+    public enum POSMsgPosition
+    {
+       Hide,
+       Left,
+       Bottom,
+    }
+
+    public enum POSMsgScrollSpeed
+    {
+      No_scroll,
+      Very_slow,
+      Slow, //default
+      Normal,
+      Fast,
+      Very_fast,
+    }
+
+
 //    public enum SmartMode
 //    {
 //        Disabled,
@@ -1425,6 +1451,12 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Qty_precision, "string_item_qty_precision", "1");
         init_option(ID.Qty_as_fraction, "bool_item_qty_fraction", true);
 
+
+        init_option(ID.PosInfo_position,"string_posinfo_position", KDSUtil.convertIntToString(POSMsgPosition.Hide.ordinal() ));
+        init_option(ID.PosInfo_font,"fontface_posinfo_font", new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
+        init_option(ID.PosInfo_scroll_speed,"string_posinfo_scroll_speed", KDSUtil.convertIntToString( POSMsgScrollSpeed.Slow.ordinal() ));
+        init_option(ID.PosInfo_auto_remove,"bool_posinfo_auto_remove", false);
+        init_option(ID.PosInfo_remove_seconds,"string_posinfo_remove_seconds", "30");
 
     }
 
