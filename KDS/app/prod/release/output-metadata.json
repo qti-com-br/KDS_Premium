@@ -10,9 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 2420,
-      "versionName": "2.4.2.0",
-      "outputFile": "KDS-prod-release-2.4.2.0.apk"
+      "versionCode": 2600,
+      "versionName": "2.6.0.0",
+      "outputFile": "KDS-prod-release-2.6.0.0.apk"
     }
   ]
 }
