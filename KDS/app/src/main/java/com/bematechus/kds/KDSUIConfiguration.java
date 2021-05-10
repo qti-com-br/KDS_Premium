@@ -2485,13 +2485,13 @@ public class KDSUIConfiguration extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             suspendOnSharedPreferencesChangedEvent(true);
-            addPreferencesFromResource(R.xml.pref_notification);
+            addPreferencesFromResource(R.xml.pref_pos_info);
             suspendOnSharedPreferencesChangedEvent(false);
 
             bindPreferenceSummaryToValue(findPreference("posinfo_position"));
             bindPreferenceSummaryToValue(findPreference("posinfo_scroll_speed"));
 
-            bindPreferenceSummaryToValue(findPreference("posinfo_scroll_speed"));
+            bindPreferenceSummaryToValue(findPreference("posinfo_remove_seconds"));
 
         }
     }

@@ -23,6 +23,7 @@ import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSLogOrderFile;
+import com.bematechus.kdslib.KDSPOSMessage;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSmbFile;
@@ -1560,6 +1561,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             case Unknown:
                 return;
             case Order:
+            case POS_Info:
                 doOrderXmlInThread(sock, "",xmlData, null);
                 break;
 
@@ -1585,6 +1587,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                 doOrderAcknowledgement(sock, xmlData);
             }
             break;
+//            case POS_Info:
+//            {
+//                doPOSMessage(xmlData);
+//            }
+//            break;
             default:
                 break;
         }
@@ -3688,8 +3695,15 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                                     }
                                     if (data.m_fcmOrders != null)
                                         doReceivedFCMOrders(data.m_fcmOrders);
-                                    else
-                                        doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                    else {
+                                        KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
+                                        if (ntype == KDSXMLParser.XMLType.Order)
+                                            doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                        else if (ntype == KDSXMLParser.XMLType.POS_Info)
+                                        {
+                                            doPOSMessage(data.m_xmlData);
+                                        }
+                                    }
                                     data.clear();
                                     Thread.sleep(200);
                                 } catch (Exception e) {
@@ -3996,5 +4010,16 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     private String buildAppSockIDCommandXml()
     {
         return KDSConst.APP_ID_START + KDSConst.ROUTER_SOCKET_ID + KDSConst.APP_ID_END;
+    }
+
+    private void doPOSMessage(String xmlData)
+    {
+        KDSPOSMessage msg = (KDSPOSMessage) KDSXMLParser.parseXml("", xmlData);
+        if (msg == null) return;
+        String station = msg.getStation();
+        ArrayList<String> stations = new ArrayList<>();
+        stations.add(station);
+        this.writeToAllStations(xmlData, stations);
+
     }
 }

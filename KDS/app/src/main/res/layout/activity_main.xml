@@ -340,7 +340,7 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:id="@+id/lstPosMsg"
+            android:id="@+id/lstPosMsgBottom"
             android:headerDividersEnabled="true"
             android:choiceMode="singleChoice"
             android:divider="#1c72ff"

@@ -61,6 +61,8 @@ public class KDSXMLParser  {
             else
              return XMLType.Order;
         }
+        if (strText.indexOf("</" + KDSXMLParserPOSMessage.DBXML_ELEMENT_STATIONINFO + ">") >=0)
+            return XMLType.POS_Info;
         return XMLType.Unknown;
 
 //        KDSXML x = new KDSXML();
@@ -71,6 +73,7 @@ public class KDSXMLParser  {
     
     protected static XMLType checkXmlType(KDSXML x)
     {
+        x.back_to_root();
         String strName = x.getCurrentName();
         if (strName.equals(KDSXMLParserPOSMessage.DBXML_ELEMENT_STATIONINFO))
             return XMLType.POS_Info;

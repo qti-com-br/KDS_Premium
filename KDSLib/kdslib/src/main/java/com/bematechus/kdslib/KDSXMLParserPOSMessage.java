@@ -13,6 +13,7 @@ package com.bematechus.kdslib;
  * @author David.Wong
  * 
  * <StationInfo>
+ *  <ID>123</ID>
 	<StationID>1</StationID>
 	<!-- 0...200 station number -->
 	<!-- "-1" all stations -->
@@ -28,12 +29,18 @@ package com.bematechus.kdslib;
 </StationInfo>
  */
 public class KDSXMLParserPOSMessage {
+
+
+
     public final static String DBXML_ELEMENT_STATIONINFO = ("StationInfo");
-    
+
+    protected final static String DBXML_ELEMENT_ID	= ("ID");
     protected final static String DBXML_ELEMENT_STATIONID	= ("StationID");
     protected final static String DBXML_ELEMENT_INFO	= ("Info");
     protected final static String DBXML_ELEMENT_USER	= ("User");
-    
+    protected final static String DBXML_ELEMENT_OPERATION	= ("operation");
+    protected final static String DBXML_ELEMENT_DELETE	= ("delete");
+
     static public KDSPOSMessage parsePOSMessage(KDSXML xml)
     {
         if (!xml.back_to_root())
@@ -42,7 +49,12 @@ public class KDSXMLParserPOSMessage {
 //        if (!xml.getFirstGroup(DBXML_ELEMENT_ORDER))
 //            return null;
         //go through the order xml file
-              
+
+        String s = xml.getAttribute("DBXML_ELEMENT_OPERATION", "");
+        if (s.equals(DBXML_ELEMENT_DELETE))
+            c.setDeleteMe(true);
+
+
         if (!xml.moveToFirstChild())
             return null;
         do
@@ -60,13 +72,20 @@ public class KDSXMLParserPOSMessage {
             String strVal = xml.getCurrentGroupValue();
             switch (grpName)
             {
-   
+
+                case DBXML_ELEMENT_ID:
+                {
+                    msg.setID(strVal);
+                    //msg.setXmlFieldValid(KDSPOSMessage.VALID_POSMSG_XML_FIELD.Message);
+                }
+                break;
                 case  DBXML_ELEMENT_STATIONID:
                 {
-                    int n = KDSUtil.convertStringToInt(strVal, -1);
-                    if (n >=0)
+                    //int n = KDSUtil.convertStringToInt(strVal, -1);
+                    //if (n >=0)
                     {
-                        msg.setStation(n);
+                        msg.setStation(strVal);
+                        if (!strVal.isEmpty())
                         msg.setXmlFieldValid(KDSPOSMessage.VALID_POSMSG_XML_FIELD.Station);
                         
                     }
@@ -75,10 +94,11 @@ public class KDSXMLParserPOSMessage {
                 break;
                 case  DBXML_ELEMENT_USER:
                 {
-                    int n = KDSUtil.convertStringToInt(strVal, -1);
-                    if (n >=0)
+                    //int n = KDSUtil.convertStringToInt(strVal, -1);
+                    //if (n >=0)
                     {
-                        msg.setScreen(n);
+                        msg.setScreen(strVal);
+                        if (!strVal.isEmpty())
                         msg.setXmlFieldValid(KDSPOSMessage.VALID_POSMSG_XML_FIELD.Screen);
                         
                     }

@@ -269,6 +269,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     CleaningHabitsManager m_cleaning = new CleaningHabitsManager();
 
     FloatDlgMoveOrder mMoveOrderAlertDlg = new FloatDlgMoveOrder();
+
+    POSMessagesView mPosMessageView = new POSMessagesView();
+
+
     /**
      * the interface of timer
      */
@@ -332,6 +336,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         checkAutoClearDB();
 
         removeSumStationTimeoutData();
+
+        mPosMessageView.on1sTimer();
 
     }
 
@@ -556,7 +562,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         // kpp1-325
         //forceAgreementAgreed();
 
-
+        mPosMessageView.setViews(getSettings(), this.findViewById(R.id.lstPosMsgLeft), this.findViewById(R.id.lstPosMsgBottom));
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -593,17 +599,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         forceAgreementAgreed();
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
-        //1/2, 1/4, 1/3, 2/3, 3/4, 1/8, 3/8, 5/8, 7/8
-//        ArrayList<Integer> ar = KDSUtil.convertFloatToFraction(0.33f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.5f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.25f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.333f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.666f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.75f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.125f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.375f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.625f, 3);
-//        ar = KDSUtil.convertFloatToFraction(0.875f, 3);
+
     }
 
     public static final String ACTION_USB_PERMISSION = "com.bematechus.kds.USB_PERMISSION";
@@ -3373,6 +3369,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_uiUserB.updateSettings(getSettings());
         refreshPrevNext(KDSUser.USER.USER_A);
         refreshPrevNext(KDSUser.USER.USER_B);
+
+        mPosMessageView.updateSettings(getSettings());
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -7782,6 +7781,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             {
                 String orderGuid = (String) arParams.get(0);
                 onRunnerLineItemShowNewCategory(orderGuid);
+            }
+            break;
+            case Refresh_pos_message:
+            {
+                mPosMessageView.refreshView(getKDS().getPOSMessages());
             }
             break;
             default:
