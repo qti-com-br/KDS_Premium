@@ -562,7 +562,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         // kpp1-325
         //forceAgreementAgreed();
 
-        mPosMessageView.setViews(getSettings(), this.findViewById(R.id.lstPosMsgLeft), this.findViewById(R.id.lstPosMsgBottom));
+        mPosMessageView.setViews(getSettings(), this.findViewById(R.id.main_layout),
+                                this.findViewById(R.id.lstPosMsgLeft),
+                                this.findViewById(R.id.lstPosMsgBottom));
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -4766,6 +4768,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (moveOrderKeyPressed(event, keyCode))
                 return false;
         }
+
+        mPosMessageView.onKeyPressed(keyCode, event);
+
+
         // if (!m_kbdRecorder.isReadyForEvent()) {
         if (!m_kbdRecorder.isAnyKeyDown()) {
 //            if (m_kbdRecorder.isKeyupTimeout())

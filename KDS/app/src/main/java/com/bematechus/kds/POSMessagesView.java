@@ -3,9 +3,11 @@ package com.bematechus.kds;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -14,16 +16,19 @@ import android.widget.TextView;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSPOSMessage;
 import com.bematechus.kdslib.KDSPOSMessages;
+import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSViewFontFace;
+import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 
 import javax.xml.transform.sax.TransformerHandler;
 
-public class POSMessagesView implements Runnable{
+public class POSMessagesView implements Runnable, POSMessageDlg.POSMsgDlgEvents {
 
     View mListLeft = null;
     View mListBottom = null;
@@ -36,9 +41,11 @@ public class POSMessagesView implements Runnable{
     int mRemoveTimeout = 30; //seconds
 
     KDSPOSMessages mPosMessages = null;
+    View mParent = null;
 
-    public void setViews(KDSSettings settings, View left, View bottom)
+    public void setViews(KDSSettings settings,View parent, View left, View bottom)
     {
+        mParent = parent;
         mListLeft = left;
         mListBottom = bottom;
         init(KDSApplication.getContext());
@@ -50,6 +57,42 @@ public class POSMessagesView implements Runnable{
     {
         ((ListView)mListLeft).setAdapter( new POSMsgAdapter(c,mData) );
         ((ListView)mListBottom).setAdapter( new POSMsgAdapter(c,mData) );
+        start();
+//        ((ListView) mListLeft).setOnScrollListener(new AbsListView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//                switch (scrollState) {
+//                    // 当不滚动时
+//                    case SCROLL_STATE_IDLE:
+//                        // 判断滚动到底部
+//                        if (lv.getLastVisiblePosition() == (lv.getCount() - 1)) {
+//                        }
+//                        // 判断滚动到顶部
+//
+//                        if(lv.getFirstVisiblePosition() == 0){
+//                        }
+//
+//                        break;
+//                }
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//
+//            }
+//        });
+//
+//        ((ListView) mListBottom).setOnScrollListener(new AbsListView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//
+//            }
+//        });
     }
 
     protected Thread m_Thread = null;
@@ -79,14 +122,59 @@ public class POSMessagesView implements Runnable{
         }
     }
 
+    final int SCROLL_CONST = 1000;
+    Date mLastScroll = new Date();
     /**
      * for scrolling
      */
     private void on100msTimer()
     {
+        if (msgPosition != KDSSettings.POSMsgPosition.Left &&
+            msgPosition != KDSSettings.POSMsgPosition.Bottom)
+        {
+            return;
+        }
+        if (mScrollSpeed == KDSSettings.POSMsgScrollSpeed.No_scroll)
+            return;
+
+        int ms = SCROLL_CONST;
+        int n = (KDSSettings.POSMsgScrollSpeed.Count.ordinal() - mScrollSpeed.ordinal());
+        ms *= n;
+        TimeDog td = new TimeDog(mLastScroll);
+        if (!td.is_timeout(ms))
+            return;
+        mLastScroll.setTime(System.currentTimeMillis());
+
+        if (msgPosition == KDSSettings.POSMsgPosition.Left)
+        {
+            scrollMessages((ListView) mListLeft, ms);
+        }
+        else if (msgPosition == KDSSettings.POSMsgPosition.Bottom)
+        {
+            scrollMessages((ListView) mListBottom, ms);
+        }
 
     }
 
+    private void scrollMessages(ListView lst, int ms)
+    {
+
+        int ncount = lst.getCount();
+        if (ncount==0) return;
+        if (lst.getLastVisiblePosition() == ncount -1)
+        {
+            if (!lst.canScrollList(1)) {
+                lst.smoothScrollToPosition(0);
+                return;
+            }
+        }
+        View v = lst.getChildAt(0);
+        int h = v.getHeight();
+        int distance = h;// * (ncount);
+        //float distance = v.getY();//.getHeight() / 5;
+        lst.smoothScrollBy((int)distance, ms);
+        //lst.smoothScrollToPositionFromTop(ncount, h * (ncount+2), ms);
+    }
 
     Handler mHander = new Handler(new Handler.Callback() {
         @Override
@@ -103,7 +191,7 @@ public class POSMessagesView implements Runnable{
         {
             try
             {
-                Thread.sleep(100);
+                Thread.sleep(500);
                 mHander.sendEmptyMessage(1);
             }
             catch (Exception e)
@@ -118,11 +206,17 @@ public class POSMessagesView implements Runnable{
         int n = settings.getInt(KDSSettings.ID.PosInfo_position);
         KDSSettings.POSMsgPosition position = KDSSettings.POSMsgPosition.values()[n];
         //position
+        if (position != msgPosition)
+        {
+            if (mPosMessages != null)
+                mPosMessages.getArray().clear();
+        }
         msgPosition = position;
         switch (position)
         {
 
-            case Hide:{
+            case Hide:
+            case Popup:{
                 mListLeft.setVisibility(View.GONE);
                 mListBottom.setVisibility(View.GONE);
             }
@@ -137,6 +231,7 @@ public class POSMessagesView implements Runnable{
                 mListBottom.setVisibility(View.VISIBLE);
             }
             break;
+
         }
         //font
         mFont = settings.getKDSViewFontFace(KDSSettings.ID.PosInfo_font);
@@ -198,8 +293,59 @@ public class POSMessagesView implements Runnable{
                 mData.addAll(messages.getArray());
                 ((POSMsgAdapter)((ListView)mListBottom).getAdapter()).notifyDataSetChanged();
             }
+            break;
+            case Popup:
+            {
+                for (int i=0; i< 5; i++) {
+                    KDSPOSMessage m = messages.pop();
+                    if (m == null)
+                        break;
+                    showPosMessageInDialog(m);
+                }
+
+            }
+            break;
+        }
+    }
+
+    ArrayList<POSMessageDlg> m_arPopupWindow = new ArrayList<>();
+    private void showPosMessageInDialog(KDSPOSMessage message)
+    {
+        POSMessageDlg dlg = new POSMessageDlg(mFont);
+        m_arPopupWindow.add(dlg);
+        dlg.setReceiver(this);
+        dlg.show( mParent, message);
+    }
+
+    public boolean onKeyPressed(int nKeyCode, KeyEvent keyEvent)
+    {
+        if (m_arPopupWindow.size()<=0)
+            return false;
+        KDSUIDialogBase.DialogEvent event = KDSUIDialogBase.checkDialogKeyboardEvent(keyEvent);
+        if (event == KDSUIDialogBase.DialogEvent.Cancel)
+        {
+            int ncount = m_arPopupWindow.size();
+            m_arPopupWindow.get(ncount-1).hide();
+            return true;
+        }
+        return false;
+    }
+
+    public void onPOSMsgDlgEvent(POSMessageDlg.POSMsgDlgEvent nEvent, ArrayList<Object> arParams)
+    {
+        switch (nEvent)
+        {
+            case Closed:
+            {
+                Object win = arParams.get(0);
+                m_arPopupWindow.remove(win);
+            }
+            break;
+            default:
                 break;
         }
+
+
     }
 
     public class POSMsgAdapter extends BaseAdapter {

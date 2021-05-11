@@ -250,7 +250,7 @@
                 android:divider="#1c72ff"
                 android:drawSelectorOnTop="true"
                 android:footerDividersEnabled="true"
-                android:stackFromBottom="true"
+                android:stackFromBottom="false"
                 android:transcriptMode="alwaysScroll"
                 android:padding="2dp" />
             <FrameLayout
@@ -346,7 +346,7 @@
             android:divider="#1c72ff"
             android:drawSelectorOnTop="true"
             android:footerDividersEnabled="true"
-            android:stackFromBottom="true"
+            android:stackFromBottom="false"
             android:transcriptMode="alwaysScroll"
             android:padding="2dp" />
 <!--        <LinearLayout-->

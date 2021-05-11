@@ -851,6 +851,7 @@ public class KDSSettings extends SettingsBase {
        Hide,
        Left,
        Bottom,
+       Popup,
     }
 
     public enum POSMsgScrollSpeed
@@ -861,6 +862,7 @@ public class KDSSettings extends SettingsBase {
       Normal,
       Fast,
       Very_fast,
+      Count,
     }
 
 

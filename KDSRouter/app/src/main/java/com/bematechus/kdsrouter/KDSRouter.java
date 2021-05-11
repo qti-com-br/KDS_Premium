@@ -4017,9 +4017,15 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         KDSPOSMessage msg = (KDSPOSMessage) KDSXMLParser.parseXml("", xmlData);
         if (msg == null) return;
         String station = msg.getStation();
-        ArrayList<String> stations = new ArrayList<>();
-        stations.add(station);
-        this.writeToAllStations(xmlData, stations);
+        if (station.equals("-1"))
+        {
+            this.writeToAllStations(xmlData);
+        }
+        else {
+            ArrayList<String> stations = new ArrayList<>();
+            stations.add(station);
+            this.writeToAllStations(xmlData, stations);
+        }
 
     }
 }

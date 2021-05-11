@@ -32,5 +32,15 @@ public class KDSPOSMessages {
         return null;
     }
 
+    public KDSPOSMessage pop()
+    {
+        if (mMessages.size() >0)
+        {
+            KDSPOSMessage m = mMessages.get(0);
+            mMessages.remove(m);
+            return m;
+        }
+        return null;
+    }
 
 }
