@@ -8,23 +8,30 @@ package com.bematechus.kdslib;
 /**
  *  >>>>>>> SAME AS KDS APP FILE <<<<<<<
  */
+
+import java.util.Date;
+
 /**
  *
  * @author David.Wong
  */
 public class KDSPOSMessage {
-    private int m_nStation = -1;
-    private int m_nScreen = -1;
+    private boolean mDeleteIt = false;
+    private String mID = "";
+    private String mStation = "";
+    private String mScreen = "";
     private String m_strMessage = "";
-    
-     public enum VALID_POSMSG_XML_FIELD
+    private Date mCreatedDate = new Date();
+
+
+    public enum VALID_POSMSG_XML_FIELD
     {
         Station,
         Screen,
         Message,        
         Count
     };
-    protected boolean[] m_arValidFields;
+    protected boolean[] m_arValidFields = new boolean[VALID_POSMSG_XML_FIELD.Count.ordinal()];
     
     public KDSPOSMessage()
     {
@@ -47,21 +54,21 @@ public class KDSPOSMessage {
     {
         return m_arValidFields[field.ordinal()];
     }
-    public int getStation()
+    public String getStation()
     {
-        return m_nStation;
+        return mStation;
     }
-    public void setStation(int nStation)
+    public void setStation(String station)
     {
-        m_nStation = nStation;
+        mStation = station;
     }
-    public int getScreen()
+    public String getScreen()
     {
-        return m_nScreen;
+        return mScreen;
     }
-    public void setScreen(int nScreen)
+    public void setScreen(String strScreen)
     {
-        m_nScreen = nScreen;
+        mScreen = strScreen;
     }
     public String getMessage()
     {
@@ -70,5 +77,40 @@ public class KDSPOSMessage {
     public void setMessage(String strMsg)
     {
         m_strMessage = strMsg;
+    }
+
+    public void setID(String id)
+    {
+        mID = id;
+    }
+    public String getID()
+    {
+        return mID;
+    }
+
+    public void setDeleteMe(boolean bDelete)
+    {
+        mDeleteIt = bDelete;
+    }
+    public boolean getDeleteMe()
+    {
+        return mDeleteIt;
+    }
+
+    public Date getDate()
+    {
+        return mCreatedDate;
+    }
+
+    /**
+     *
+     * @param timeout
+     *  ms
+     * @return
+     */
+    public boolean isTimeout(int timeout)
+    {
+        TimeDog t = new TimeDog(getDate());
+        return t.is_timeout(timeout);
     }
 }

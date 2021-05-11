@@ -34,6 +34,7 @@ public class KDSBase {
         TCP_listen_port_error, //params: 0: error message.
         Order_Bumped_By_Other_Expo_Or_Station, //kpp1-286
         Runner_LineItems_Show_New_Category,
+        Refresh_pos_message,
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);

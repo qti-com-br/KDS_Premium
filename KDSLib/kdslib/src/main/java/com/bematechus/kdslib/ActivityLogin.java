@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,9 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bematechus.kdslib.Activation;
-import com.bematechus.kdslib.ActivationRequest;
 
 import java.util.ArrayList;
 
@@ -407,7 +403,7 @@ public class ActivityLogin extends Activity implements  Activation.ActivationEve
     }
     public void showErrorMessage(String str)
     {
-        TextView t = (TextView) this.findViewById(R.id.txtMsg);
+        TextView t = (TextView) this.findViewById(R.id.txtInfo);
         t.setText(str);
 
     }

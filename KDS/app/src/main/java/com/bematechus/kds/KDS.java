@@ -27,6 +27,8 @@ import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSLogOrderFile;
+import com.bematechus.kdslib.KDSPOSMessage;
+import com.bematechus.kdslib.KDSPOSMessages;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSmbFile;
@@ -56,6 +58,7 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
+import com.bematechus.kdslib.KDSXMLParserPOSMessage;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
@@ -186,6 +189,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     Broadcaster m_broadcaster = new Broadcaster(this);
 
     Activation m_activationHTTP = null; //sms feature. 2.1.10
+
+            //kp-102
+    KDSPOSMessages mPOSMessages = new KDSPOSMessages();
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -1725,7 +1731,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         }
         else {
-            doOrderXmlInThread(MESSAGE_TO_MAIN.Order, null, xmlData,smbFileName, true); //2.0.34
+            KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
+            if (ntype == KDSXMLParser.XMLType.Order)
+                doOrderXmlInThread(MESSAGE_TO_MAIN.Order, null, xmlData,smbFileName, true); //2.0.34
+            else if (ntype == KDSXMLParser.XMLType.POS_Info)
+                doPOSMessage(xmlData);
         }
         //Log.d("SMB Text", xmlData);
     }
@@ -1786,9 +1796,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 setAppSocketID(sock, xmlData);
             }
             break;
-            case Order:
+            case Order: {
                 //doOrderXml(sock, xmlData);
-                doOrderXmlInThread(MESSAGE_TO_MAIN.Order, sock, xmlData, "",false); //2.0.34
+                doOrderXmlInThread(MESSAGE_TO_MAIN.Order, sock, xmlData, "", false); //2.0.34
 //                Message msgOrder = new Message();
 //                msgOrder.what = MESSAGE_TO_MAIN.Order.ordinal();
 //                MessageParam paramOrder = new MessageParam();
@@ -1801,9 +1811,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //
 
 //                m_refreshHandler.sendMessage(msgOrder);
-                break;
-            case Command:
-                if (!doCommandXmlInMainUI(sock, xmlData) )
+            }
+            break;
+            case Command: {
+                if (!doCommandXmlInMainUI(sock, xmlData))
                     doOrderXmlInThread(MESSAGE_TO_MAIN.COMMAND_XML, sock, xmlData, "", false); //2.0.34
 
 //                Message msg = new Message();
@@ -1814,7 +1825,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //                msg.obj = p;
 //                m_refreshHandler.sendMessage(msg);
                 //doCommandXml(sock, xmlData); //20170612
-                break;
+            }
+            break;
+            case POS_Info: //kp-102
+            {
+                doPOSMessage(xmlData);
+            }
+            break;
         }
 //        try {
 //            Thread.sleep(500);
@@ -1953,6 +1970,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         Order,
         Reset_Focus_after_new_order, //20190403, as the reset focus will calculate all items, it is slow. I move it out of doxml thread.
         Toast_msg,
+        Refresh_POS_messages,
     }
 
     Handler m_refreshHandler = new Handler(){
@@ -2011,6 +2029,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 {
                     String s = (String) msg.obj;
                     KDSToast.showMessage(KDSApplication.getContext(), s); //for test
+                }
+                break;
+                case Refresh_POS_messages:
+                {
+                    for (int i=0;i< m_arKdsEventsReceiver.size(); i++)
+                    {
+                        m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Refresh_pos_message, null);
+                    }
                 }
                 break;
 
@@ -5718,5 +5744,19 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             }
         }
         return true;
+    }
+
+    private void doPOSMessage(String xmlData)
+    {
+        KDSPOSMessage posmsg =(KDSPOSMessage) KDSXMLParser.parseXml("", xmlData);
+        if (posmsg == null)
+            return;
+        mPOSMessages.doMessage(posmsg);
+        m_refreshHandler.sendEmptyMessage(MESSAGE_TO_MAIN.Refresh_POS_messages.ordinal());
+    }
+
+    public KDSPOSMessages getPOSMessages()
+    {
+        return mPOSMessages;
     }
 }
