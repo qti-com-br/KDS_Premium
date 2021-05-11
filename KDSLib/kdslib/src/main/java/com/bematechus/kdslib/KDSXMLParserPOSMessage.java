@@ -50,7 +50,7 @@ public class KDSXMLParserPOSMessage {
 //            return null;
         //go through the order xml file
 
-        String s = xml.getAttribute("DBXML_ELEMENT_OPERATION", "");
+        String s = xml.getAttribute(DBXML_ELEMENT_OPERATION, "");
         if (s.equals(DBXML_ELEMENT_DELETE))
             c.setDeleteMe(true);
 
