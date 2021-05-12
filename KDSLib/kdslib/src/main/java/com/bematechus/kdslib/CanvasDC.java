@@ -541,6 +541,18 @@ public class CanvasDC {
         canvas.drawPath(path, p);
     }
 
+    /**
+     * rev.:
+     *  kp-101 Text cut off (Item).
+     *           check the rt if it can hold all text. If not, change font size to small one.
+     *
+     * @param g
+     * @param ft
+     * @param rt
+     * @param string
+     * @param align
+     * @param bBold
+     */
     static public  void drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align, boolean bBold )
     {
         g.save();
@@ -559,6 +571,20 @@ public class CanvasDC {
             al = Layout.Alignment.ALIGN_NORMAL;
         //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
         StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+        //kp-101 Text cut off (Item).
+
+        if (sl.getHeight() > rt.height())
+        {
+            int nsize = (int) textPaint.getTextSize() + 2;
+            for (int i=0; i< nsize; i++)
+            {
+                textPaint.setTextSize( textPaint.getTextSize()-1);
+
+                sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+                if (sl.getHeight() <= rt.height())
+                    break;
+            }
+        }
 //        int n = sl.getLineCount();
 //        for (int i=0; i< n; i++)
 //        {
