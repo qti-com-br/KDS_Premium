@@ -2989,7 +2989,7 @@ get the total qty of all found items
         c.setDestination("Fast food");
         c.setFromPOSNumber("5");
         c.setOrderName(orderName);
-        c.setOrderType("RUSH");
+        //c.setOrderType("RUSH");
         c.setPCKDSNumber("1");
         c.setPreparationStartTime(new Date());
         c.setScreen(toScreen);

@@ -7752,9 +7752,22 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 /* arParams:
                     The orders added to users. Index 0: userA, index 1: userB order.
                  */
-                getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
-                if (arParams.size() >1)
-                    getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+                //kp-105 Rush orders-not showing on front of queue.
+                //        reset first order to index 0,then calculate.
+                KDSDataOrders ordersA = getKDS().getUsers().getUserA().getOrders();
+                if (ordersA.getCount() >0) {
+                    KDSDataOrder orderA = ordersA.get(0);// KDSDataOrder) arParams.get(0);
+                    getUserUI(KDSUser.USER.USER_A).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(orderA.getGUID());
+                    getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+                }
+                if (arParams.size() >1) {
+                    KDSDataOrders ordersB = getKDS().getUsers().getUserB().getOrders();
+                    if (ordersB.getCount() >0) {
+                        KDSDataOrder orderB = ordersB.get(0);// (KDSDataOrder) arParams.get(1);
+                        getUserUI(KDSUser.USER.USER_B).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(orderB.getGUID());
+                        getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
+                    }
+                }
 
 
             }
