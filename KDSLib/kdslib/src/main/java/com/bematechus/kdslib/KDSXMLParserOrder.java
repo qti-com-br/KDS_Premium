@@ -107,6 +107,8 @@ public class KDSXMLParserOrder {
 
     public final static String DBXML_ELEMENT_HEADERFOOTERMESSAGE = "HeaderFooterMessage";
 
+    public final static String DBXML_ELEMENT_AUTOUNPARK = "UnparkAt"; //kp-103 auto unpark feature.
+
     /************************************************************************/
     /* 
     <CatDelay> 
@@ -337,6 +339,17 @@ public class KDSXMLParserOrder {
             {
                 order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.HeaderFooterMessage);
                 order.setHeaderFooterMessage(strVal);
+            }
+            break;
+            case DBXML_ELEMENT_AUTOUNPARK:
+            {
+                if (KDSUtil.isDigitalString(strVal))
+                    order.getAutoUnparkDate().setTime(KDSUtil.convertStringToLong(strVal, KDSUtil.createInvalidDate().getTime()));
+                else {
+                    Date dt = KDSUtil.convertStringToDate(strVal, KDSUtil.createInvalidDate());
+                    order.setAutoUnparkDate(dt);
+                }
+                order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.AutoUnpark);
             }
             break;
         }

@@ -406,4 +406,15 @@ public class KDSUser {
     {
         m_ordersDynamic.clear();
     }
+
+    public ArrayList<String> getAutoUnparkOrdersGuid()
+    {
+        ArrayList<String> ar = new ArrayList<>();
+        for(int i=0; i< getParkedOrders().getCount(); i++)
+        {
+            if (getParkedOrders().get(i).isUnparkTime())
+                ar.add(getParkedOrders().get(i).getGUID());
+        }
+        return ar;
+    }
 }

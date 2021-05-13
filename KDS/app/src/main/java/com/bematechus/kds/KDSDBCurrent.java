@@ -250,7 +250,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    final int ORDER_FIELDS_COUNT = 30; //it should equal field in following function.
+    final int ORDER_FIELDS_COUNT = 31; //it should equal field in following function.
 
     /**
      * see function #orderGet() and  #ordersLoadAllJustInfo
@@ -288,7 +288,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r4," + //27
                 "orders.r5," + //28
                 "orders.r6," + //29
-                "orders.r7 "; //30
+                "orders.r7," + //30
+                "orders.r8 " ; //31, auto unpark.
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -407,6 +408,12 @@ public class KDSDBCurrent extends KDSDBBase {
 
         c.setHeaderFooterMessage(getString(sf, 30));
 
+        //kp-103
+        String s = getString(sf, 31);
+        Date dt = KDSUtil.createInvalidDate();
+        if (!s.isEmpty())
+            dt = KDSUtil.convertStringToDate(s, dt);
+        c.setAutoUnparkDate(dt);
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
         if (sf.getColumnCount() > ORDER_FIELDS_COUNT) //save the items count.,for :ordersLoadAllJustInfo function
@@ -4164,7 +4171,7 @@ update the schedule item ready qty
             +"r5 text(16)," //for customer, same the customer name
             +"r6 text(16)," //kdsguid, identify same order in whole KDS.
             +"r7 text(16)," //kp-48, Allergen xml tags. <HeaderFooterMessage>
-            +"r8 text(16),"
+            +"r8 text(16)," //kp-103, auto unpark order date value
             +"r9 text(16),"
             + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),"
             + "QueueMsg text(256), "// )";
