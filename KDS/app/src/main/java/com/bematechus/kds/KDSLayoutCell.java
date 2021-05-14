@@ -1781,15 +1781,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //        int nStarting = env.getSettings().getInt(KDSSettings.ID.Condiment_Starting_Position);
 //        if (nStarting <0)
 //            nStarting = KDSSettings.COMDIMENT_LEADING_POSITION;
-        String s = getCondimentPrefix(env);//getSpaces(nStarting);
+        String qtyText = getCondimentPrefix(env);
+        //String s = getCondimentPrefix(env);//getSpaces(nStarting);
         //kpp1-414
         if (c.getQty() >1)
         {
-            s += Integer.toString((int) c.getQty());
+            qtyText += Integer.toString((int) c.getQty());
             //s += makeQtyString(c.getQty());// Integer.toString((int) c.getQty()); //kp-88
-            s += "x ";
+            qtyText += "x ";
         }
-        s += strDescription;
+        String s = qtyText + strDescription;
+
         if (c.getFocusTag() != null) { //for hide item, show focus
             Object obj = c.getFocusTag();
             if (obj instanceof KDSDataItem) {
@@ -1816,7 +1818,25 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             rcAbsolute.left += getCondimentPrefixPixelsWidth(getFont(), env);
             int nTextWrapRows = getTextWrapRowsInSameBlockCol(block, nColInBlock);
             String strTextWrap = getTextWrapRowsDescription(c,c.getDescription(), this.m_nTextWrapRowIndex, nTextWrapRows);
-            CanvasDC.drawWrapString(g, this.getFont(), rcAbsolute, strTextWrap, Paint.Align.LEFT);
+            //String strTextWrap = getTextWrapRowsDescription(c,s, this.m_nTextWrapRowIndex, nTextWrapRows);
+            Point ptReturn = CanvasDC.drawWrapString(g, this.getFont(), rcAbsolute, strTextWrap, Paint.Align.LEFT, false);
+            if (c.getQty()>1)
+            {
+                if (this.m_nTextWrapRowIndex ==0) {
+                    int oldFontSize = this.getFont().getFontSize();
+                    this.getFont().setFontSize(ptReturn.x);
+//                    String strQty = Integer.toString((int) c.getQty());
+//                    strQty += "x ";
+                    int w = CanvasDC.getTextPixelsWidth(this.getFont(), "" + qtyText + "|");
+                    Rect rcQty = new Rect(rcAbsolute);
+                    rcQty.top = ptReturn.y;
+                    rcQty.left -= w;
+                    rcQty.right = rcAbsolute.left;
+                    rcQty.bottom = rcQty.top +  block.getCalculatedAverageRowHeight();
+                    CanvasDC.drawQtyWrapText(g, this.getFont(), rcQty, qtyText, Paint.Align.LEFT, false);
+                    this.getFont().setFontSize(oldFontSize);
+                }
+            }
         }
         else
             CanvasDC.drawText(g, this.getFont(), rcAbsolute, s, Paint.Align.LEFT);
