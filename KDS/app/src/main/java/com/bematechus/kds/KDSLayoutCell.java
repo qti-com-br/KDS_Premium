@@ -1409,7 +1409,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return true;
     }
     /**
-     *
+     * rev.:
+     *      kp-99, if the text wrap enabled, the qty can not align with the text.
+     *              I draw the qty and state icon after description drawing.
      * @param g
      * @param rcAbsolute
      *  My cell rect, include the combined cells
@@ -1420,6 +1422,129 @@ public class KDSLayoutCell extends KDSViewBlockCell {
      * @return
      */
     protected boolean drawDataItem(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block)
+    {
+        if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
+        //if (m_prevCell != null) return true; //I am combined to prev
+
+        KDSDataItem item =(KDSDataItem) this.getData();
+
+        KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
+        int nbg = color.getBG();//getOriginalBG();
+//        if ( nbg == this.getFont().getBG())
+//            nbg = Color.TRANSPARENT;
+//        else
+//            nbg = color.getBG();
+        int panelBG = env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+        if ( nbg == panelBG)
+            nbg = Color.TRANSPARENT;
+
+        CanvasDC.fillRect(g, nbg, rcAbsolute);
+        //CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
+        Rect rcState = new Rect(rcAbsolute);//we need to draw again if text wrap enabled.
+        rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight(), this.getFont());
+        rcState.right = rcAbsolute.left; //save it.
+        //reset font bg.
+        int noldbg = this.getFont().getBG();
+        int noldfg = this.getFont().getFG();
+
+        this.getFont().setFG(color.getFG());
+        //this.getFont().setBG(color.getBG());
+        this.getFont().setBG(nbg);
+
+        Paint.Align align = Paint.Align.LEFT;
+        if (item.getAlign() == Paint.Align.RIGHT)
+            align = Paint.Align.RIGHT;
+
+        //draw qty first
+        float qty = item.getShowingQty();
+
+        String strQty = getItemPrefix();// getSpaces(2);
+        //strQty += Integer.toString((int) qty);
+        strQty += makeQtyString(qty, env.getSettings().getBoolean(KDSSettings.ID.Qty_as_fraction), env.getSettings().getInt(KDSSettings.ID.Qty_precision));
+
+        strQty += "x";
+        strQty += getItemQtySuffix() ;
+
+        Rect rcQty = new Rect(rcAbsolute);
+
+        if (item.getAlign() == Paint.Align.RIGHT)
+        {
+            //Rect rc = new Rect(rcAbsolute);
+
+            rcQty.left = rcQty.right - getItemQtyPixelsWidth(getFont(), qty, env);// CanvasDC.getTextPixelsWidth(this.getFont(), strQty);
+            //if (m_nTextWrapRowIndex ==0)//move to below
+            //    CanvasDC.drawWrapString(g, this.getFont(), rcQty, strQty, align, true);
+            rcAbsolute.right = rcQty.left;
+        }
+        else {
+            //Rect rc = new Rect(rcAbsolute);
+            Paint paint = new Paint();
+
+            paint.setTypeface(getFont().getTypeFace());
+            paint.setTextSize(getFont().getFontSize());
+            rcQty.right = rcQty.left + getItemQtyPixelsWidth(getFont(),qty, env) ;//  CanvasDC.getTextPixelsWidth(paint, "!" + strQty + "!");
+            //Bug here! KP-99
+            if (item.m_tempShowMeNeedBlockLines.size() >0) {
+                if (!isLastBlockColDataRow(block, nColInBlock))//kp-99, add this condition.
+                    rcQty.bottom = rcQty.top + rcQty.height() / item.m_tempShowMeNeedBlockLines.size();
+            }
+            //if (m_nTextWrapRowIndex ==0)//move to below.
+            //    CanvasDC.drawText(g, this.getFont(), rcQty, strQty, align, true);
+           // rc.right = rc.left + CanvasDC.getTextPixelsWidth(paint, strQty);
+            rcAbsolute.left = rcQty.right;
+
+        }
+
+        //draw description
+        String strDescription = item.getDescription();
+
+        if (env.getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
+            int nTextWrapRows = getTextWrapRowsInSameBlockCol(block, nColInBlock);
+            String strTextWrap = getTextWrapRowsDescription(item, strDescription,this.m_nTextWrapRowIndex, nTextWrapRows);
+            //kp-99, as the text was wrapped, I have to move qty and icon to correct position.
+            //          draw them here, after description finished.
+            Point ptReturn = CanvasDC.drawWrapString(g, this.getFont(), rcAbsolute, strTextWrap, align, true);
+            //ptReturn: x = font size in description drawing. y: the description start point.
+            if (m_nTextWrapRowIndex ==0) { //draw qty
+                int fontSize = ptReturn.x;
+                int y = ptReturn.y;
+                //int h = rcAbsolute.height();
+                rcQty.top = y;
+                rcQty.bottom =rcAbsolute.bottom;// rcQty.top + h;
+                int size = this.getFont().getFontSize();
+                this.getFont().setFontSize(fontSize);
+                CanvasDC.drawQtyWrapText(g, this.getFont(), rcQty, strQty, align, true);
+                this.getFont().setFontSize(size);
+            }
+            //draw state icon again after change position.
+            CanvasDC.fillRect(g, nbg, rcState);//clear old image.
+            //if (!isLastBlockColDataRow(block, nColInBlock) && //it is not la
+            if ( rcState.height() != block.getCalculatedAverageRowHeight())//it is not single row.
+                rcState.top = ptReturn.y-KDSConst.IMAGE_GAP;
+            rcState.bottom = rcState.top + block.getCalculatedAverageRowHeight();//limit the icon size to one row.
+            drawItemState(g,item, rcState, env, color, block.getCalculatedAverageRowHeight(), this.getFont());
+        }
+        else {
+            CanvasDC.drawText(g, this.getFont(), rcAbsolute, strDescription, align, true);
+            CanvasDC.drawText(g, this.getFont(), rcQty, strQty, align, true);
+        }
+        this.getFont().setBG(noldbg);
+        this.getFont().setFG(noldfg);
+
+
+        return true;
+    }
+
+    /**
+     *
+     * @param g
+     * @param rcAbsolute
+     * @param env
+     * @param nColInBlock
+     * @param block
+     * @return
+     */
+    protected boolean drawDataItem2_old(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block)
     {
         if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
         //if (m_prevCell != null) return true; //I am combined to prev
@@ -1485,11 +1610,14 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             paint.setTypeface(getFont().getTypeFace());
             paint.setTextSize(getFont().getFontSize());
             rc.right = rc.left + getItemQtyPixelsWidth(getFont(),qty, env) ;//  CanvasDC.getTextPixelsWidth(paint, "!" + strQty + "!");
-            if (item.m_tempShowMeNeedBlockLines.size() >0)
-                rc.bottom = rc.top + rc.height()/item.m_tempShowMeNeedBlockLines.size();
+            //Bug here! KP-99
+            if (item.m_tempShowMeNeedBlockLines.size() >0) {
+                if (!isLastBlockColDataRow(block, nColInBlock))//kp-99, add this condition.
+                    rc.bottom = rc.top + rc.height() / item.m_tempShowMeNeedBlockLines.size();
+            }
             if (m_nTextWrapRowIndex ==0)
                 CanvasDC.drawText(g, this.getFont(), rc, strQty, align, true);
-           // rc.right = rc.left + CanvasDC.getTextPixelsWidth(paint, strQty);
+            // rc.right = rc.left + CanvasDC.getTextPixelsWidth(paint, strQty);
             rcAbsolute.left = rc.right;
 
         }
@@ -1527,6 +1655,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         return true;
     }
+
 
     private void drawItemLine(Canvas g, Rect rcAbsolute, KDSBGFG color)
     {
@@ -1993,6 +2122,20 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             }
         }
         return "";
+    }
+
+    /**
+     * check if thsi cell is the last cell in block.
+     * @param block
+     * @param nBlockCol
+     * @return
+     */
+    private  boolean isLastBlockColDataRow(KDSViewBlock block,int nBlockCol)
+    {
+        int nIndex = block.getCellIndex(this);
+        int nMin = (nBlockCol+1) * block.getColTotalRows();
+        return (nIndex == nMin-1);
+
     }
 
 }
