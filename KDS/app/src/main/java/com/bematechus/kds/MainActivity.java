@@ -339,6 +339,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         mPosMessageView.on1sTimer();
 
+        checkAutoUnpark();
     }
 
     SimpleDateFormat m_formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -3576,6 +3577,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         for (int i = 0; i < TEST_COUNT; i++)
             opAddNewOrder(userID);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+
+//        KDSDataOrder order =  KDSDataOrder.createTestOrder2("abc", 2,"1",0);
+//        String s = order.createXml();
+//        Log.i(TAG, s);
+
 
         //test
         //getKDS().getStatisticDB().outputOrdersTableDataSql(getKDS().getStatisticDB(), "orders", "");
@@ -8288,5 +8294,32 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 //        }
     }
 
+    /**
+     * kp-103 auto unpark.
+     */
+    private void checkAutoUnpark()
+    {
+        ArrayList<String> ar = getKDS().getUsers().getUserA().getAutoUnparkOrdersGuid();
+        if (ar.size() >0)
+        {
+            for (int i=0; i< ar.size(); i++)
+            {
+                unparkOrder( KDSUser.USER.USER_A, ar.get(i));
+            }
+        }
+
+        if (getKDS().isMultpleUsersMode())
+        {
+            ar = getKDS().getUsers().getUserB().getAutoUnparkOrdersGuid();
+            if (ar.size() >0)
+            {
+                for (int i=0; i< ar.size(); i++)
+                {
+                    unparkOrder( KDSUser.USER.USER_B, ar.get(i));
+                }
+            }
+        }
+
+    }
 }
 
