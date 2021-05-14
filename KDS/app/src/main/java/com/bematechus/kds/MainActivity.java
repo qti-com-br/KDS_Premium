@@ -3578,6 +3578,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             opAddNewOrder(userID);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
+//        KDSDataOrder order =  KDSDataOrder.createTestOrder2("abc", 2,"1",0);
+//        String s = order.createXml();
+//        Log.i(TAG, s);
+
+
         //test
         //getKDS().getStatisticDB().outputOrdersTableDataSql(getKDS().getStatisticDB(), "orders", "");
         //kpp1-335

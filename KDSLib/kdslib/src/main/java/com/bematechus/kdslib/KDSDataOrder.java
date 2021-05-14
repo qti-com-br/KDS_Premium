@@ -822,6 +822,9 @@ public class KDSDataOrder extends KDSData {
         c.setTrackerID("2");
         c.setPagerID("12");
         c.setIconIdx(1);
+        //
+        c.setParked(true);
+        c.setAutoUnparkDate(new Date());
 
         KDSDataMessages msg = new KDSDataMessages();
         for (int n=0; n<1; n++)
@@ -1511,9 +1514,13 @@ public class KDSDataOrder extends KDSData {
                 pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_USERINFO,this.getCustomMsg(), false);
             if (!this.getQueueMessage().isEmpty())//kpp1-425
                 pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_QUEUEMSG,this.getQueueMessage(), false);
+            if (getParked() == 1) {
 
-            if (!KDSUtil.isInvalidDate(m_autoUnparkDate))
-                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_AUTOUNPARK,KDSUtil.convertDateToString(this.getAutoUnparkDate()), false);
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PARKED,KDSUtil.convertIntToString( this.getParked()), true);
+                if (!KDSUtil.isInvalidDate(m_autoUnparkDate))
+                    pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_AUTOUNPARK, KDSUtil.convertDateToString(this.getAutoUnparkDate()));
+                pxml.back_to_parent();
+            }
             //remove these feature.
             //pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRACKERID,this.getTrackerID(), false);
             //pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PAGERID,this.getPagerID(), false);
