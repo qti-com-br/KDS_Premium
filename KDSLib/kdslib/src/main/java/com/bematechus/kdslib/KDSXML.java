@@ -282,10 +282,17 @@ public class KDSXML {
                 //root=xmldoc.getDocumentElement();
                 
                 //m_doc.LoadXml(txtXml);
-                if (m_doc.getFirstChild().getNodeType() == Node.NOTATION_NODE)// XmlNodeType.XmlDeclaration)
+                if (m_doc.getFirstChild().getNodeType() == Node.NOTATION_NODE ||
+                        m_doc.getFirstChild().getNodeType() == Node.COMMENT_NODE)// XmlNodeType.XmlDeclaration)
                 {
                     Node node = m_doc.getFirstChild();
-                    m_root = (Element)node.getNextSibling();
+                    for (int i=0; i< 100; i++) {
+                        m_root = (Element) node.getNextSibling();
+                        if (m_root.getNodeType() != Node.COMMENT_NODE &&
+                            m_root.getNodeType() != Node.NOTATION_NODE)
+                            break;
+                        node = m_root;
+                    }
                     
                 }
                 else

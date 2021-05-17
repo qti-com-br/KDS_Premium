@@ -3696,7 +3696,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                                     if (data.m_fcmOrders != null)
                                         doReceivedFCMOrders(data.m_fcmOrders);
                                     else {
-                                        KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
+                                        KDSXMLParser.XMLType ntype = checkXmlType(data.m_xmlData);
                                         if (ntype == KDSXMLParser.XMLType.Order)
                                             doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
                                         else if (ntype == KDSXMLParser.XMLType.POS_Info)

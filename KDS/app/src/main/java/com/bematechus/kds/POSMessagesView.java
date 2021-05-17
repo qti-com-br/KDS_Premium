@@ -258,6 +258,7 @@ public class POSMessagesView implements Runnable, POSMessageDlg.POSMsgDlgEvents 
 
     private void checkAutoRemove()
     {
+        if (mPosMessages == null) return;
         ArrayList<KDSPOSMessage> ar = new ArrayList<>();
         for (int i=0;i< mPosMessages.getArray().size(); i++)
         {
@@ -389,7 +390,7 @@ public class POSMessagesView implements Runnable, POSMessageDlg.POSMsgDlgEvents 
         {
             t.setTypeface(mFont.getTypeFace());
             t.setTextSize(mFont.getFontSize());
-            t.setBackgroundColor( mFont.getBG());
+           // t.setBackgroundColor( mFont.getBG());
             t.setTextColor(mFont.getFG());
         }
     }
