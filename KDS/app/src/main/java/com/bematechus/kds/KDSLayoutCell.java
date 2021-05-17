@@ -1734,8 +1734,6 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     {
         if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
 
-
-
         KDSDataCondiment c =(KDSDataCondiment) this.getData();
 
         int bg = c.getBG();
@@ -1813,13 +1811,14 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         this.getFont().setBG(bg);
         this.getFont().setFG(fg); //use this text color
+        Rect rtCondiment = new Rect(rcAbsolute);
 
         if (env.getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
-            rcAbsolute.left += getCondimentPrefixPixelsWidth(getFont(), env);
+            rtCondiment.left += getCondimentPrefixPixelsWidth(getFont(), env);
             int nTextWrapRows = getTextWrapRowsInSameBlockCol(block, nColInBlock);
             String strTextWrap = getTextWrapRowsDescription(c,c.getDescription(), this.m_nTextWrapRowIndex, nTextWrapRows);
             //String strTextWrap = getTextWrapRowsDescription(c,s, this.m_nTextWrapRowIndex, nTextWrapRows);
-            Point ptReturn = CanvasDC.drawWrapString(g, this.getFont(), rcAbsolute, strTextWrap, Paint.Align.LEFT, false);
+            Point ptReturn = CanvasDC.drawWrapString(g, this.getFont(), rtCondiment, strTextWrap, Paint.Align.LEFT, false);
             if (c.getQty()>1)
             {
                 if (this.m_nTextWrapRowIndex ==0) {
@@ -1827,19 +1826,24 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                     this.getFont().setFontSize(ptReturn.x);
 //                    String strQty = Integer.toString((int) c.getQty());
 //                    strQty += "x ";
+                    qtyText = qtyText.trim();
+                    qtyText += " ";
                     int w = CanvasDC.getTextPixelsWidth(this.getFont(), "" + qtyText + "|");
-                    Rect rcQty = new Rect(rcAbsolute);
+                    Rect rcQty = new Rect(rtCondiment);
                     rcQty.top = ptReturn.y;
                     rcQty.left -= w;
-                    rcQty.right = rcAbsolute.left;
+                    rcQty.left = rcQty.left<rcAbsolute.left?rcAbsolute.left:rcQty.left;
+                    rcQty.right = rtCondiment.left;
                     rcQty.bottom = rcQty.top +  block.getCalculatedAverageRowHeight();
+                    rcQty.bottom = rcQty.bottom >rcAbsolute.bottom?rcAbsolute.bottom:rcQty.bottom;
+
                     CanvasDC.drawQtyWrapText(g, this.getFont(), rcQty, qtyText, Paint.Align.LEFT, false);
                     this.getFont().setFontSize(oldFontSize);
                 }
             }
         }
         else
-            CanvasDC.drawText(g, this.getFont(), rcAbsolute, s, Paint.Align.LEFT);
+            CanvasDC.drawText(g, this.getFont(), rtCondiment, s, Paint.Align.LEFT);
 
 
         this.getFont().setBG(noldbg);

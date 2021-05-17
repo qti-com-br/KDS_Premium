@@ -211,6 +211,18 @@
                 android:src="@drawable/ic_menu" />
         </LinearLayout>
 
+        <ListView
+            android:id="@+id/lstPosMsgLeft"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:choiceMode="singleChoice"
+            android:divider="#1c72ff"
+            android:drawSelectorOnTop="true"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="true"
+            android:padding="2dp"
+            android:stackFromBottom="false"
+            android:transcriptMode="alwaysScroll" />
         <LinearLayout
             android:id="@+id/linearTab"
             android:layout_width="match_parent"
@@ -241,18 +253,18 @@
             android:layout_weight="1"
             android:animateLayoutChanges="true"
             android:orientation="horizontal">
-            <ListView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:id="@+id/lstPosMsgLeft"
-                android:headerDividersEnabled="true"
-                android:choiceMode="singleChoice"
-                android:divider="#1c72ff"
-                android:drawSelectorOnTop="true"
-                android:footerDividersEnabled="true"
-                android:stackFromBottom="false"
-                android:transcriptMode="alwaysScroll"
-                android:padding="2dp" />
+<!--            <ListView-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:id="@+id/lstPosMsgLeft"-->
+<!--                android:headerDividersEnabled="true"-->
+<!--                android:choiceMode="singleChoice"-->
+<!--                android:divider="#1c72ff"-->
+<!--                android:drawSelectorOnTop="true"-->
+<!--                android:footerDividersEnabled="true"-->
+<!--                android:stackFromBottom="false"-->
+<!--                android:transcriptMode="alwaysScroll"-->
+<!--                android:padding="2dp" />-->
             <FrameLayout
 
                 android:id="@+id/fragmentlayout_sumA"

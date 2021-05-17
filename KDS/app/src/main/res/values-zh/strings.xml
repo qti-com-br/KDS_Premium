@@ -1299,7 +1299,7 @@
 
     <string-array name="pref_posinfo_position_titles">
         <item>Hide</item>
-        <item>Left</item>
+        <item>Top</item>
         <item>Bottom</item>
         <item>Popup window</item>
     </string-array>
