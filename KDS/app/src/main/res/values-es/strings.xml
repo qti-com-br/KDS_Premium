@@ -957,4 +957,5 @@
 	<string name="enable_auto_removal">Auto-removal</string>
 	<string name="auto_removal_secs">Auto-removal (seconds)</string>
 	<string name="pos_messages">POS messages</string>
+
 </resources>
