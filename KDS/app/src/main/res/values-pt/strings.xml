@@ -44,7 +44,7 @@
 	<string name='sort_preptime_descend'>Tempo de preparo maior p/ menor</string>
 	<string name='restore'>Restaurar</string>
 	<string name='unpark'>Desestacionar</string>
-	<string name='addon'>Complemento</string>
+	<string name='addon'>Adicional</string>
 	<string name='str_default'>Padrão</string>
 	<string name='order_state_waiting'>Aguardando</string>
 	<string name='order_state_processing'>Processando</string>

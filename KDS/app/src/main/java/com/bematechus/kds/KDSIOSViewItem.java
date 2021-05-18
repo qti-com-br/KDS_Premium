@@ -10,6 +10,7 @@ import android.text.TextPaint;
 
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataItem;
@@ -220,7 +221,7 @@ public class KDSIOSViewItem {
     private Rect drawAddon(Canvas g, KDSViewSettings env, Rect rect, KDSViewFontFace ff )
     {
         //show add-on
-        String addon = "Add-on";
+        String addon = KDSApplication.getContext().getString(R.string.addon);// "Add-on";
         rect.bottom = rect.top + m_messageHeight;
         drawString(g, ff, rect,addon, false);
         rect.top = rect.bottom;

@@ -10,6 +10,7 @@ import com.bematechus.bemaLibrary.BemaPrinter;
 import com.bematechus.bemaLibrary.PrinterStatus;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
@@ -675,7 +676,7 @@ return whole line tags
     private  String getAddonString(KDSDataOrder pOrder)
     {
         if (pOrder.isVoidOrder()) return (""); //maybe void the addon items
-        if (pOrder.isAddonOrder()) 	return ("ADD-ON");
+        if (pOrder.isAddonOrder()) 	return (KDSApplication.getContext().getString(R.string.addon).toUpperCase());// "ADD-ON");
 
         return ("");
     }
