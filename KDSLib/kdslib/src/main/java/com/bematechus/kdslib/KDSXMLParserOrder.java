@@ -280,8 +280,14 @@ public class KDSXMLParserOrder {
                 //check unparkat attribute.
                 String s = xml.getAttribute(DBXML_ELEMENT_AUTOUNPARK, "");
                 if (!s.isEmpty()) {
-                    if (KDSUtil.isDigitalString(s))
-                        order.getAutoUnparkDate().setTime(KDSUtil.convertStringToLong(s, KDSUtil.createInvalidDate().getTime()));
+                    if (KDSUtil.isDigitalString(s)) { //it is a UNIX timestamp, UNIT is SECONDS!!!!!
+                         //we need convert it to milliseconds.
+                        long l = KDSUtil.convertStringToLong(s, 0) *1000; //
+                        if (l == 0)
+                            l = KDSUtil.createInvalidDate().getTime();
+
+                        order.getAutoUnparkDate().setTime(l);//KDSUtil.convertStringToLong(s, KDSUtil.createInvalidDate().getTime()));
+                    }
                     else {
                         Date dt = KDSUtil.convertStringToDate(s, KDSUtil.createInvalidDate());
                         order.setAutoUnparkDate(dt);
