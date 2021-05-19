@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 //import android.content.ComponentName;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -482,7 +483,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //kpp1-337, remove language settings, just use os language settings.
         //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
         //KDSUtil.setLanguage(this.getApplicationContext(), language);
+        //this.getApplicationContext().setTheme(R.style.AppTheme_Light);
 
+        Context c = getApplicationContext();
+
+        KDSGlobalVariables.createKDS(c);
+        KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
+
+        KDSGlobalVariables.setMainActivity(this);
+
+        //KDSSettings settings = new KDSSettings(this.getApplicationContext());
+        //settings.loadSettings(this.getApplicationContext());
+        ThemeUtil tu = new ThemeUtil();
+        tu.changeTheme(this.getApplicationContext(), ThemeUtil.KDSTheme.Light, getSettings());
 
         setContentView(R.layout.activity_main);
         //m_txtPrev = (TextView) this.findViewById(R.id.txtPrev);
@@ -530,12 +543,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_tabDisplay.setEventsReceiver(this);
 
 
-        Context c = getApplicationContext();
-
-        KDSGlobalVariables.createKDS(c);
-        KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
-
-        KDSGlobalVariables.setMainActivity(this);
+//        Context c = getApplicationContext();
+//
+//        KDSGlobalVariables.createKDS(c);
+//        KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
+//
+//        KDSGlobalVariables.setMainActivity(this);
 
         KDSBeeper.setMaxVol(c);
 

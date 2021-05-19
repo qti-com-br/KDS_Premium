@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="windowActionBar">false</item>
+
+        <!-- Define all theme color attr here, then call style file color       -->
+        <!-- define all name in theme_attrs.xml first       -->
+        <item name="kds_title_bg">@color/kds_title_bg</item>
+
+        <!--  ************************      -->
+    </style>
+</resources>

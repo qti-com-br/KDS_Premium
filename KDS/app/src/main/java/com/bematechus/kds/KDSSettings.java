@@ -3041,13 +3041,32 @@ public class KDSSettings extends SettingsBase {
        return true;
    }
 
- /**
-  * kpp1-299-1
-  */
- public void clearRelationshipData()
+   /**
+    * kpp1-299-1
+    */
+   public void clearRelationshipData()
    {
      SettingsBase.saveStationsRelation(KDSApplication.getContext(), "");
 
+   }
+
+   public void savePrefValue(SharedPreferences pref, ID id, Object val)
+   {
+
+      String key = m_mapPrefID.get(id);
+      setPrefValue(pref, key, val);
+      m_mapSettings.put(id, val);
+
+   }
+
+   public String getTypeString(ID id)
+   {
+     String key = m_mapPrefID.get(id);
+     String s = key;
+     int n = s.indexOf("_", 0);
+     s = s.substring(0, n);
+     return s;
+     //String tag = key.substring(n + 1);
    }
 
 }
