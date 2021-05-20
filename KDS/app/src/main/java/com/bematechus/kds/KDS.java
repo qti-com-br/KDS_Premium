@@ -3476,7 +3476,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             }
 
             m_stationsConnection.connectAllStations();
-
+            //check dirty offline data.
+            checkDirtyOfflineData();
             //m_printer.onPing();
 
             try {
@@ -5758,5 +5759,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     public KDSPOSMessages getPOSMessages()
     {
         return mPOSMessages;
+    }
+
+    /**
+     * data saved in offline db, but there are connection existed.
+     */
+    public void checkDirtyOfflineData()
+    {
+        m_stationsConnection.checkDirtyOfflineData(this);
     }
 }
