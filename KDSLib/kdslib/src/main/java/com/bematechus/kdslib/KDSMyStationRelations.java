@@ -696,4 +696,23 @@ public class KDSMyStationRelations {
         }
         return arReturn;
     }
+
+    /**
+     *
+     * @param offlineStations
+     *  stations ID.
+     * @return
+     */
+    public ArrayList<KDSStationIP> getStations(ArrayList<String> offlineStations)
+    {
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+
+        for (int i=0; i< offlineStations.size(); i++)
+        {
+            KDSStationsRelation r = KDSStationsRelation.findStation(m_arStationsRelations,offlineStations.get(i));
+            if (r != null)
+                ar.add(r);
+        }
+        return ar;
+    }
 }

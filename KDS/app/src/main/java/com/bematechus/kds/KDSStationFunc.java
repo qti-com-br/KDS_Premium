@@ -1110,7 +1110,7 @@ public class KDSStationFunc {
         KDSDataOrder transferOrder = new KDSDataOrder();
         order.copyTo(transferOrder);
         transferOrder.setScreen(toScreen);
-
+        Log.i(TAG, "start transfer");
         //transferOrder.setAllItemsToScreen(toStationID, toScreen);
 
         String strXml = KDSXMLCommandFactory.createOrderTransferXml(kdsuser.getKDS().getStationID(), kdsuser.getKDS().getLocalIpAddress(), "", transferOrder);
