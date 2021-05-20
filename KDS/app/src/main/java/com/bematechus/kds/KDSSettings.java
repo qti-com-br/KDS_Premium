@@ -623,6 +623,7 @@ public class KDSSettings extends SettingsBase {
        PosInfo_scroll_speed,
        PosInfo_auto_remove,
        PosInfo_remove_seconds,
+       Theme_mode, //kp-113 theme
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1459,6 +1460,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.PosInfo_scroll_speed,"string_posinfo_scroll_speed", KDSUtil.convertIntToString( POSMsgScrollSpeed.Slow.ordinal() ));
         init_option(ID.PosInfo_auto_remove,"bool_posinfo_auto_remove", false);
         init_option(ID.PosInfo_remove_seconds,"string_posinfo_remove_seconds", "30");
+        init_option(ID.Theme_mode,"string_theme_mode", "0");
 
     }
 

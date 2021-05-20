@@ -103,6 +103,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
        // requestWindowFeature(Window.FEATURE_LEFT_ICON);
         super.onCreate(savedInstanceState);
+        this.setTheme(ThemeUtil.loadTheme(this.getApplicationContext()));
+
         int color = this.getResources().getColor(R.color.settings_page_bg);//.getDrawable(R.drawable.bkcolor);
         ColorDrawable c = new ColorDrawable(color);
         this.getWindow().setBackgroundDrawable(c);
@@ -1453,6 +1455,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("real_time_period"));
             bindPreferenceSummaryToValue(findPreference("kds_general_title"));
+            bindPreferenceSummaryToValue(findPreference("theme_mode"));
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
             pref.registerOnSharedPreferenceChangeListener(this);
         }

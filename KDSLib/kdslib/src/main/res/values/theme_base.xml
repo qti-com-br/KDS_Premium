@@ -7,7 +7,7 @@
 
         <!-- Define all theme color attr here, then call style file color       -->
         <!-- define all name in theme_attrs.xml first       -->
-        <item name="kds_title_bg">@color/kds_title_bg</item>
+<!--        <item name="kds_title_bg">@color/kds_title_bg</item>-->
 
         <!--  ************************      -->
     </style>

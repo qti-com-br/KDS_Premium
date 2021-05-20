@@ -486,6 +486,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //this.getApplicationContext().setTheme(R.style.AppTheme_Light);
 
         Context c = getApplicationContext();
+        this.setTheme(ThemeUtil.loadTheme(c));
 
         KDSGlobalVariables.createKDS(c);
         KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
@@ -494,8 +495,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         //KDSSettings settings = new KDSSettings(this.getApplicationContext());
         //settings.loadSettings(this.getApplicationContext());
-        ThemeUtil tu = new ThemeUtil();
-        tu.changeTheme(this.getApplicationContext(), ThemeUtil.KDSTheme.Light, getSettings());
+        //ThemeUtil tu = new ThemeUtil();
+        //tu.changeTheme(this.getApplicationContext(), ThemeUtil.KDSTheme.Light, getSettings());
 
         setContentView(R.layout.activity_main);
         //m_txtPrev = (TextView) this.findViewById(R.id.txtPrev);
@@ -3962,6 +3963,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (key.equals("clear_db_schedule")) //kpp1-386
         { //
             return;
+        }
+        else if (key.equals("theme_mode"))
+        {
+            String s = prefs.getString(key, "0");
+            String oldSetting =  getSettings().getString(KDSSettings.ID.Theme_mode);
+            if (!s.equals(oldSetting)) {
+                getSettings().set(KDSSettings.ID.Theme_mode, s);
+                int n = KDSUtil.convertStringToInt(s, 0);
+                ThemeUtil.KDSTheme theme = ThemeUtil.KDSTheme.values()[n];
+                changeTheme(theme);
+            }
+
         }
         else {
 
@@ -8332,6 +8345,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
             }
         }
+
+    }
+
+    private void changeTheme(ThemeUtil.KDSTheme theme)
+    {
+        m_bSuspendChangedEvent = true;
+        ThemeUtil tu = new ThemeUtil();
+        tu.changeTheme(this.getApplicationContext(), theme, getSettings());
+        this.recreate();
+        m_bSuspendChangedEvent = false;
 
     }
 }

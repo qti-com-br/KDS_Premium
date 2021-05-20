@@ -6,5 +6,5 @@
     <color name="relations_headers_fg">#f8fafc</color>
     <color name="grid_border_color">#b6b6b6</color>
     <color name="kds_title_bg">#1F2840</color>
-	<color name="kds_bg">#2a334c</color>
+<!--	<color name="kds_bg">#2a334c</color>-->
 </resources>

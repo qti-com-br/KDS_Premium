@@ -51,4 +51,13 @@
         android:dependency="show_avg_prep_time"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
+
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="theme_mode"
+        android:title="Theme"
+        android:defaultValue="0"
+        android:entries="@array/pref_themes_titles"
+        android:entryValues="@array/pref_themes_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
 </PreferenceScreen>

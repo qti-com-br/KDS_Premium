@@ -6,15 +6,16 @@
     <attr name="gray" format="color" />
     <attr name="dark_gray" format="color"/>
     <attr name="lci_logic_blue" format="color" />
-    <attr name="lci_logic_deep" format="color" />
-    <attr name="lci_kds" format="color" />
+<!--    <attr name="lci_logic_deep" format="color" />-->
+<!--    <attr name="lci_kds" format="color" />-->
     <attr name="lci_peripherals" format="color" />
-    <attr name="lci_cpu" format="color" />
+<!--    <attr name="lci_cpu" format="color" />-->
     <attr name="lci_background_dark" format="color" />
     <attr name="lci_background_darkish" format="color" />
     <attr name="transparent" format="color" />
 
     <attr name="kds_title_bg" format="color" />
+    <attr name="kds_title_fg" format="color" />
     <attr name="view_bg" format="color" />
     <attr name="panel_bg" format="color" />
 <!--    <attr name="panel_fg" format="color" />-->
@@ -25,7 +26,7 @@
     <attr name="caption_fg" format="color" />
     <!--#FCC600-->
     <attr name="focus_bg" format="color" />
-    <attr name="focus_fg" format="color" />
+<!--    <attr name="focus_fg" format="color" />-->
     <attr name="stage0_bg" format="color" />
     <attr name="stage1_bg" format="color" />
     <attr name="stage2_bg" format="color" />
@@ -46,8 +47,8 @@
     <attr name="rush_bg" format="color" />
     <attr name="rush_fg" format="color" />
 
-    <attr name="rush_bg1" format="color" />
-    <attr name="rush_fg1" format="color" />
+<!--    <attr name="rush_bg1" format="color" />-->
+<!--    <attr name="rush_fg1" format="color" />-->
 
     <attr name="fire_bg" format="color" />
     <attr name="fire_fg" format="color" />
@@ -58,7 +59,7 @@
     <attr name="relations_headers_bg" format="color" />
     <attr name="relations_headers_fg" format="color" />
 
-    <attr name="kds_title_fg" format="color" />
+
     <attr name="listview_focus_bg" format="color" />
 
     <attr name="settings_headers_bg" format="color" />
@@ -94,15 +95,15 @@
     <attr name="queue_order_status_pickup_fg" format="color" />
 
     <attr name="queue_view_bg" format="color" />
-    <attr name="queue_separator_attr" format="color" />
+    <attr name="queue_separator_color" format="color" />
 
-    <attr name="tracker_view_bg" format="color" />
-    <attr name="tracker_order_name_bg" format="color" />
-    <attr name="tracker_order_name_fg" format="color" />
-    <attr name="tracker_table_name_bg" format="color" />
-    <attr name="tracker_table_name_fg" format="color" />
-    <attr name="tracker_alert_bg" format="color" />
-    <attr name="tracker_alert_fg" format="color" />
+<!--    <attr name="tracker_view_bg" format="color" />-->
+<!--    <attr name="tracker_order_name_bg" format="color" />-->
+<!--    <attr name="tracker_order_name_fg" format="color" />-->
+<!--    <attr name="tracker_table_name_bg" format="color" />-->
+<!--    <attr name="tracker_table_name_fg" format="color" />-->
+<!--    <attr name="tracker_alert_bg" format="color" />-->
+<!--    <attr name="tracker_alert_fg" format="color" />-->
 
     <attr name="subtitle_bg" format="color" />
     <attr name="subtitle_fg" format="color" />
@@ -118,10 +119,11 @@
     <attr name="touch_button_bg" format="color" />
     <attr name="touch_button_fg" format="color" />
     <attr name="lineitems_viewer_bg" format="color" />
-    <attr name="grid_line_attr" format="color" />
+<!--    <attr name="grid_line_color" format="color" />-->
 
     <attr name="cleaning_button_bg" format="color" />
-    <attr name="cleaning_pinchout_attr" format="color" />
+<!--   ? -->
+    <attr name="cleaning_pinchout_color" format="color" />
 
     <attr name="sum_bg" format="color" />
     <attr name="sum_fg" format="color" />
