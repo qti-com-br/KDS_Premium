@@ -27,7 +27,7 @@
 
     </style>
     <style name="settingsWindowTitleBackgroundStyle">
-        <item name="android:background">@color/kds_title_bg</item>
+        <item name="android:background">?attr/kds_title_bg</item>
     </style>
     <style name="settings_style" parent="AppTheme">
         <item name="android:windowTitleSize">30dp</item>

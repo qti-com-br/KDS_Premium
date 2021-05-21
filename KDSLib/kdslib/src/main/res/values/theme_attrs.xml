@@ -65,9 +65,8 @@
     <attr name="settings_headers_bg" format="color" />
 
     <attr name="settings_page_bg" format="color" />
-<!--    <attr name="settings_page_bg" format="color" />-->
 
-    <!--<attr name="grid_border_attr" #b6b6b6 format="color" />-->
+    <attr name="grid_border_color" format="color" />
     <attr name="grid_inside_cell_border" format="color" />
 
     <attr name="queue_order_id_bg" format="color" />
@@ -131,4 +130,7 @@
     <attr name="move_alert_bg" format="color" />
     <attr name="move_alert_fg" format="color" />
     <attr name="move_alert_cancel_fg" format="color" />
+
+    <attr name="cleaning_text_color" format="color" />
+
  </resources>

@@ -1,8 +1,12 @@
 package com.bematechus.kdslib;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
+
+import java.lang.reflect.Field;
 
 /**
  * Created by Administrator on 2015/8/13 0013.
@@ -182,6 +186,10 @@ public class KDSViewFontFace {
             int nBgID = KDSApplication.getContext().getResources().getIdentifier(strColor, "color", KDSApplication.getContext().getPackageName());
             ncolor = KDSApplication.getContext().getResources().getColor(nBgID);
         }
+        else if (strColor.indexOf("?attr/") >=0)
+        {
+            ncolor = getThemeColorFromAttrString(KDSApplication.getContext(), strColor);
+        }
         else
         {
             ncolor = Integer.parseInt(strColor);
@@ -255,6 +263,49 @@ public class KDSViewFontFace {
     public void setTypeFace(Typeface tf)
     {
         m_tfFont = tf;
+    }
+
+    /**
+     *
+     * @param c
+     * @param strAttr
+     *  ?attr/kds_title_bg, format color.
+     * @return
+     */
+    static public int getThemeColorFromAttrString(Context c, String strAttr)
+    {
+        int nResID = getAttrResourceID(c, strAttr);
+        TypedValue tv = new TypedValue();
+        boolean b = c.getTheme().resolveAttribute(nResID, tv, true);
+        int n = tv.data;
+        return n;
+    }
+
+    /**
+     *
+     * @param context
+     * @param name
+     *   ?attr/kds_title_bg
+     * @return
+     */
+    public static int getAttrResourceID(Context context, String name) {
+        try {
+            name = name.replace("?attr/", "");
+            Field[] fields = Class.forName(context.getPackageName() + ".R$attr").getFields();//.与$ difference,$表示R的子类
+            for (Field field : fields) {
+                String fieldName = field.getName();
+                if (fieldName.equals(name)) {
+                    int n =(int) field.get(null);
+                    return n;
+
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return 0;
+
+        }
+        return 0;
     }
 }
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="settings_page_bg">#E5E1D2</color>
-    <color name="listview_focus_bg">@android:color/holo_blue_light</color>
-    <color name="relations_headers_bg">#888f94</color>
-    <color name="relations_headers_fg">#f8fafc</color>
-    <color name="grid_border_color">#b6b6b6</color>
-    <color name="kds_title_bg">#1F2840</color>
+<!--    <color name="settings_page_bg">#E5E1D2</color>-->
+<!--    <color name="listview_focus_bg">@android:color/holo_blue_light</color>-->
+<!--    <color name="relations_headers_bg">#888f94</color>-->
+<!--    <color name="relations_headers_fg">#f8fafc</color>-->
+<!--    <color name="grid_border_color">#b6b6b6</color>-->
+<!--    <color name="kds_title_bg">#1F2840</color>-->
 <!--	<color name="kds_bg">#2a334c</color>-->
 </resources>

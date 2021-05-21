@@ -10,10 +10,10 @@
         android:id="@+id/txtTitle"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:background="@color/kds_title_bg"
+        android:background="?attr/kds_title_bg"
         android:gravity="center"
         android:text="@string/pos_messages"
-        android:textColor="@color/kds_title_fg"
+        android:textColor="?attr/kds_title_fg"
         android:textSize="18sp" />
 
     <LinearLayout

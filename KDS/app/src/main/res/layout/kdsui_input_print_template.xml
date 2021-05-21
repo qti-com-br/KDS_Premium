@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:weightSum="2"
             android:showDividers="middle"
-            android:divider="@color/border_bg"
+            android:divider="?attr/border_bg"
             style="?android:attr/buttonBarStyle">
 
             <Button

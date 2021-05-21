@@ -9,13 +9,13 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-		android:background="@color/lci_background_dark"
+		android:background="?attr/lci_background_dark"
         android:weightSum="1"
         android:layout_margin="2dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/caption_fg"
+            android:textColor="?attr/caption_fg"
             android:text="Summary"
             android:id="@+id/txtSumTitle"
             android:layout_alignTop="@+id/txtSum"

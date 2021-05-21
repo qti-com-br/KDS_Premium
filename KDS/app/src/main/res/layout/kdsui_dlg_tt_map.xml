@@ -20,8 +20,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/holder_id"
                 android:id="@+id/textView8"
-                android:background="@color/relations_headers_bg"
-                android:textColor="@color/relations_headers_fg" />
+                android:background="?attr/relations_headers_bg"
+                android:textColor="?attr/relations_headers_fg" />
             <View
                 android:layout_width="@dimen/relations_headers_separator"
                 android:layout_height="fill_parent"
@@ -33,8 +33,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/table_name"
                 android:id="@+id/textView9"
-                android:background="@color/relations_headers_bg"
-                android:textColor="@color/relations_headers_fg" />
+                android:background="?attr/relations_headers_bg"
+                android:textColor="?attr/relations_headers_fg" />
         </LinearLayout>
 
         <ListView

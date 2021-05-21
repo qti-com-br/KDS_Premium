@@ -21,7 +21,7 @@ public class KDSPreferenceFragment extends PreferenceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup root, Bundle savedInstanceState){
         View v = super.onCreateView(inflater, root, savedInstanceState);
 
-        v.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+        v.setBackgroundColor( ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg));//this.getResources().getColor(R.color.settings_page_bg));
         v.setPadding(0,0,0,0);
 
 

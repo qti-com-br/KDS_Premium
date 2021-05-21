@@ -5,7 +5,7 @@
         <shape>
             <!-- 渐变 -->
             <gradient
-                android:startColor="@color/kds_title_bg"
+                android:startColor="@color/btn_selector_startcolor"
                 android:endColor="#FFFFFF"
                 android:type="radial"
                 android:gradientRadius="50" />
@@ -34,7 +34,7 @@
     <item android:state_focused="true" >
         <shape>
             <gradient
-                android:startColor="@color/kds_title_bg"
+                android:startColor="@color/btn_selector_startcolor"
                 android:endColor="#FFFFFF"
                 android:angle="270" />
             <stroke

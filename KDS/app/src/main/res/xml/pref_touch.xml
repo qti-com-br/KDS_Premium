@@ -4,7 +4,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="touch_font"
-        android:defaultValue="default_font,@color/touch_button_bg,@color/touch_button_fg,small_size"
+        android:defaultValue="default_font,?attr/touch_button_bg,?attr/touch_button_fg,small_size"
         android:title="@string/pref_kds_touch_font"
         app:supportsColor="true"/>
 

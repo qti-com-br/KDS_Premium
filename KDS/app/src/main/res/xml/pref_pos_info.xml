@@ -14,7 +14,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="posinfo_font"
-        android:defaultValue="default_font,@color/caption_bg,@color/caption_fg,hfooter_size"
+        android:defaultValue="default_font,?attr/caption_bg,?attr/caption_fg,hfooter_size"
         android:title="@string/pos_message_font"
         app:supportsColor="true"/>
 

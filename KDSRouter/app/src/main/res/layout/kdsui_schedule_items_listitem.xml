@@ -19,7 +19,7 @@
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="match_parent"
-        android:background="@color/relations_headers_bg"
+        android:background="?attr/relations_headers_bg"
         android:visibility="visible" />
 
 
@@ -35,7 +35,7 @@
     <View
         android:layout_width="@dimen/relations_headers_separator"
         android:layout_height="match_parent"
-        android:background="@color/relations_headers_bg"
+        android:background="?attr/relations_headers_bg"
         android:visibility="visible" />
 
     <EditText

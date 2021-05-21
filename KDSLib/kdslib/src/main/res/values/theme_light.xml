@@ -64,7 +64,7 @@
 
         <item name="settings_page_bg">#E5E1D2</item>
 
-        <!--<item name="grid_border_color">#b6b6b6</item>-->
+        <item name="grid_border_color">#b6b6b6</item>
         <item name="grid_inside_cell_border">#d7d7d7</item>
 
         <item name="queue_order_id_bg">#000000</item>
@@ -117,9 +117,6 @@
         <item name="touch_button_fg">?attr/lci_logic_blue</item>
         <item name="lineitems_viewer_bg">#0e0e0e</item>
 <!--        <item name="grid_line_color">#B8B8B8</item>-->
-
-        <item name="cleaning_button_bg">#902625</item>
-        <item name="cleaning_pinchout_color">#80000000</item>
 
         <item name="sum_bg">?attr/white</item>
         <item name="sum_fg">?attr/black</item>

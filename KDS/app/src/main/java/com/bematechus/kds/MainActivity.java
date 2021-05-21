@@ -99,6 +99,7 @@ import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 import com.bematechus.kdslib.TimeDog;
 import com.bematechus.kdslib.UpdateManager;
 //import com.google.android.gms.appindexing.Action;
@@ -363,7 +364,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         ImageView imgState = (ImageView) this.findViewById(R.id.imgState);
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
-			imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
+			//imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
+            imgState.setColorFilter(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.caption_fg));
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
@@ -483,10 +485,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //kpp1-337, remove language settings, just use os language settings.
         //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
         //KDSUtil.setLanguage(this.getApplicationContext(), language);
-        //this.getApplicationContext().setTheme(R.style.AppTheme_Light);
+        //this.getApplicationContext().setTheme(R.style.AppTheme);
 
         Context c = getApplicationContext();
-        this.setTheme(ThemeUtil.loadTheme(c));
+        c.setTheme(KDSTheme.loadTheme(c));
+        //c.setTheme(R.style.AppTheme_Dark);
 
         KDSGlobalVariables.createKDS(c);
         KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
@@ -3971,7 +3974,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (!s.equals(oldSetting)) {
                 getSettings().set(KDSSettings.ID.Theme_mode, s);
                 int n = KDSUtil.convertStringToInt(s, 0);
-                ThemeUtil.KDSTheme theme = ThemeUtil.KDSTheme.values()[n];
+                KDSTheme.MyTheme theme = KDSTheme.MyTheme.values()[n];
                 changeTheme(theme);
             }
 
@@ -8348,10 +8351,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
-    private void changeTheme(ThemeUtil.KDSTheme theme)
+    private void changeTheme(KDSTheme.MyTheme theme)
     {
         m_bSuspendChangedEvent = true;
-        ThemeUtil tu = new ThemeUtil();
+        KDSTheme tu = new KDSTheme();
         tu.changeTheme(this.getApplicationContext(), theme, getSettings());
         this.recreate();
         m_bSuspendChangedEvent = false;

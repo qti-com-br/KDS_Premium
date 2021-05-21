@@ -59,6 +59,7 @@ import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 import com.bematechus.kdslib.TimeDog;
 
 import java.io.DataOutputStream;
@@ -271,6 +272,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //kpp1-337
         //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
         //KDSUtil.setLanguage(this.getApplicationContext(), language);
+        this.getApplicationContext().setTheme(R.style.kds_style);
 
         setContentView(R.layout.activity_main);
         explicitStartService();
@@ -561,7 +563,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         if (bEnabled)
         {
-            m_txtTitle.setTextColor(this.getResources().getColor(R.color.kds_title_fg));
+            //m_txtTitle.setTextColor(this.getResources().getColor(R.color.kds_title_fg));
+            m_txtTitle.setTextColor(ThemeUtil.getAttrColor(this.getApplicationContext(), R.attr.kds_title_fg));
             String title = getString(R.string.main_title);
             if (bBackupMode) {
                 String str = getString(R.string.backup_of);

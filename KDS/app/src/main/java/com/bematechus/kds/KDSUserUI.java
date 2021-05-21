@@ -21,6 +21,7 @@ import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -461,7 +462,8 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
         if (txtView != null) {
             if (!strCount.isEmpty()) {
                 Drawable imgPrev = KDSApplication.getContext().getResources().getDrawable(R.drawable.prevcount);
-				imgPrev.setColorFilter(txtView.getContext().getResources().getColor(R.color.caption_fg), PorterDuff.Mode.SRC_ATOP);
+				//imgPrev.setColorFilter(txtView.getContext().getResources().getColor(R.color.caption_fg), PorterDuff.Mode.SRC_ATOP);
+                imgPrev.setColorFilter(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.caption_fg), PorterDuff.Mode.SRC_ATOP);
                 imgPrev.setBounds(0, 0, imgPrev.getMinimumWidth()/2, imgPrev.getMinimumHeight()/2);//必须设置图片大小，否则不显示
                 txtView.setCompoundDrawables(null,null, imgPrev, null);
             }
@@ -481,7 +483,8 @@ public class KDSUserUI implements KDSLayout.KDSLayoutDrawingDoneEvent{
             if (!strCount.isEmpty()) {
 
                 Drawable imgNext = KDSApplication.getContext().getResources().getDrawable(R.drawable.nextcount);
-                imgNext.setColorFilter(txtView.getContext().getResources().getColor(R.color.caption_fg), PorterDuff.Mode.SRC_ATOP);
+                //imgNext.setColorFilter(txtView.getContext().getResources().getColor(R.color.caption_fg), PorterDuff.Mode.SRC_ATOP);
+                imgNext.setColorFilter(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.caption_fg), PorterDuff.Mode.SRC_ATOP);
                 imgNext.setBounds(0, 0, imgNext.getMinimumWidth()/2, imgNext.getMinimumHeight()/2);//必须设置图片大小，否则不显示
                 txtView.setCompoundDrawables(imgNext, null, null, null);
             }

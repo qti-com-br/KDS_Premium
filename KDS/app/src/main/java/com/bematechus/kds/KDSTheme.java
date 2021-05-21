@@ -9,11 +9,8 @@ import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 
-import java.util.prefs.Preferences;
-
-public class ThemeUtil {
-
-    enum KDSTheme
+public class KDSTheme {
+    enum MyTheme
     {
         Default,
         Dark,
@@ -25,11 +22,11 @@ public class ThemeUtil {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         String s = prefs.getString("theme_mode", "0");
         int n = KDSUtil.convertStringToInt(s, 0);
-        KDSTheme t = KDSTheme.values()[n];
+        MyTheme t = MyTheme.values()[n];
         return convertKDSThemeValue(t);
     }
 
-    static public int convertKDSThemeValue(KDSTheme theme)
+    static public int convertKDSThemeValue(MyTheme theme)
     {
         int nStyle = R.style.AppTheme_Dark;
         switch (theme)
@@ -44,7 +41,7 @@ public class ThemeUtil {
         }
         return  nStyle;
     }
-    public void changeTheme(Context context, KDSTheme theme, KDSSettings settings)
+    public void changeTheme(Context context, MyTheme theme, KDSSettings settings)
     {
         int nStyle = convertKDSThemeValue(theme);
         context.setTheme(nStyle);
@@ -67,6 +64,10 @@ public class ThemeUtil {
 
     }
 
+
+
+
+
     static int THEME_AUTO = 0;
     static int THEME_FONT_FG = 1;
     static int THEME_FONT_BG = 2;
@@ -77,9 +78,9 @@ public class ThemeUtil {
 
     class ThemeItem
     {
-       int mFlag = 0;
-       KDSSettings.ID mID = KDSSettings.ID.NULL;
-       int mAttrID = 0;
+        int mFlag = 0;
+        KDSSettings.ID mID = KDSSettings.ID.NULL;
+        int mAttrID = 0;
         /**
          *
          * @param id
@@ -87,12 +88,12 @@ public class ThemeUtil {
          * @param flag
          *  Change what
          */
-       public ThemeItem(KDSSettings.ID id, int attrID , int flag)
-       {
-           mID = id;
-           mAttrID = attrID;
-           mFlag = flag;
-       }
+        public ThemeItem(KDSSettings.ID id, int attrID , int flag)
+        {
+            mID = id;
+            mAttrID = attrID;
+            mFlag = flag;
+        }
         public ThemeItem(KDSSettings.ID id, int attrID )
         {
             mID = id;
@@ -100,40 +101,40 @@ public class ThemeUtil {
             mFlag = THEME_AUTO;
         }
 
-       public void doThemeChange(Context c, SharedPreferences prefs,KDSSettings settings)
-       {
-           String s =  settings.getTypeString(mID);
-           if (s.equals("int"))
-           {
-               changeInt(c, prefs, settings);
-           }
-           else if (s.equals("string"))
-           {
-               changeString(c, prefs, settings);
+        public void doThemeChange(Context c, SharedPreferences prefs,KDSSettings settings)
+        {
+            String s =  settings.getTypeString(mID);
+            if (s.equals("int"))
+            {
+                changeInt(c, prefs, settings);
+            }
+            else if (s.equals("string"))
+            {
+                changeString(c, prefs, settings);
 
-           }
-           else if (s.equals("bool"))
-           {
-               changeBool(c, prefs, settings);
+            }
+            else if (s.equals("bool"))
+            {
+                changeBool(c, prefs, settings);
 
 
-           }
-           else if (s.equals("fontface"))
-           {
-               changeFontColor(c, prefs, settings);
+            }
+            else if (s.equals("fontface"))
+            {
+                changeFontColor(c, prefs, settings);
 
-           }
-       }
+            }
+        }
 
-       private void changeInt(Context c, SharedPreferences prefs, KDSSettings settings)
-       {
-           TypedValue tv = new TypedValue();
-           boolean b = c.getTheme().resolveAttribute(mAttrID, tv, true );
-           int n = tv.data;
+        private void changeInt(Context c, SharedPreferences prefs, KDSSettings settings)
+        {
+            TypedValue tv = new TypedValue();
+            boolean b = c.getTheme().resolveAttribute(mAttrID, tv, true );
+            int n = tv.data;
 
-           settings.savePrefValue(prefs,mID, n );
+            settings.savePrefValue(prefs,mID, n );
 
-       }
+        }
         private void changeString(Context c, SharedPreferences prefs, KDSSettings settings)
         {
             TypedValue tv = new TypedValue();
@@ -244,7 +245,7 @@ public class ThemeUtil {
             new ThemeItem(KDSSettings.ID.Queue_customer_name_font,R.attr.queue_cusomer_name_bg, THEME_FONT_BG),
             new ThemeItem(KDSSettings.ID.Queue_customer_name_font,R.attr.queue_cusomer_name_fg, THEME_FONT_FG),
 
-            new ThemeItem(KDSSettings.ID.Queue_custom_message_font,R.attr.queue_cusom_message_fg, THEME_FONT_BG),
+            new ThemeItem(KDSSettings.ID.Queue_custom_message_font,R.attr.queue_cusom_message_bg, THEME_FONT_BG),
             new ThemeItem(KDSSettings.ID.Queue_custom_message_font,R.attr.queue_cusom_message_fg, THEME_FONT_FG),
 
             new ThemeItem(KDSSettings.ID.Queue_order_received_font,R.attr.queue_order_status_received_bg, THEME_FONT_BG),
@@ -258,9 +259,6 @@ public class ThemeUtil {
 
             new ThemeItem(KDSSettings.ID.Queue_order_pickup_font, R.attr.queue_order_status_pickup_bg, THEME_FONT_BG),
             new ThemeItem(KDSSettings.ID.Queue_order_pickup_font,R.attr.queue_order_status_pickup_fg, THEME_FONT_FG),
-
-            new ThemeItem(KDSSettings.ID.Queue_custom_message_font,R.attr.queue_cusom_message_fg, THEME_FONT_BG),
-            new ThemeItem(KDSSettings.ID.Queue_custom_message_font,R.attr.queue_cusom_message_fg, THEME_FONT_FG),
 
             new ThemeItem(KDSSettings.ID.Queue_view_bg,R.attr.queue_view_bg),
 

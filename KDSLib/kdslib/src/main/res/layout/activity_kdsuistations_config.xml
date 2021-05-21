@@ -14,12 +14,12 @@
         <View
             android:layout_width="68dp"
             android:layout_height="fill_parent"
-            android:background="@color/relations_headers_bg"
+            android:background="?attr/relations_headers_bg"
             android:visibility="visible" />
         <View
             android:layout_width="@dimen/relations_headers_separator"
             android:layout_height="fill_parent"
-            android:background="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_fg"
             android:visibility="visible" />
         <TextView
             android:layout_width="0dp"
@@ -29,8 +29,8 @@
             android:layout_weight="1"
             android:id="@+id/txtID"
             android:gravity="center"
-            android:background="@color/relations_headers_bg"
-            android:textColor="@color/relations_headers_fg" />
+            android:background="?attr/relations_headers_bg"
+            android:textColor="?attr/relations_headers_fg" />
         <!--<View-->
             <!--android:layout_width="0.5px"-->
             <!--android:layout_height="fill_parent"-->
@@ -60,22 +60,22 @@
         <View
             android:layout_width="@dimen/relations_headers_separator"
             android:layout_height="fill_parent"
-            android:background="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_fg"
             android:visibility="visible" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/func"
-            android:background="@color/relations_headers_bg"
+            android:background="?attr/relations_headers_bg"
             android:layout_weight="3.1"
             android:id="@+id/txtFunc"
             android:gravity="center"
-            android:textColor="@color/relations_headers_fg" />
+            android:textColor="?attr/relations_headers_fg" />
         <View
             android:layout_width="@dimen/relations_headers_separator"
             android:layout_height="fill_parent"
-            android:background="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_fg"
             android:visibility="visible" />
         <TextView
             android:layout_width="0dp"
@@ -84,14 +84,14 @@
             android:text="@string/expo"
             android:id="@+id/txtExp"
             android:layout_weight="1"
-            android:background="@color/relations_headers_bg"
+            android:background="?attr/relations_headers_bg"
             android:gravity="center"
-            android:textColorHighlight="@color/relations_headers_fg"
-            android:textColor="@color/relations_headers_fg" />
+            android:textColorHighlight="?attr/relations_headers_fg"
+            android:textColor="?attr/relations_headers_fg" />
         <View
             android:layout_width="@dimen/relations_headers_separator"
             android:layout_height="fill_parent"
-            android:background="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_fg"
             android:visibility="visible" />
 
         <TextView
@@ -99,15 +99,15 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/slave_func"
-            android:background="@color/relations_headers_bg"
+            android:background="?attr/relations_headers_bg"
             android:layout_weight="4.2"
             android:id="@+id/txtBck"
             android:gravity="center"
-            android:textColor="@color/relations_headers_fg" />
+            android:textColor="?attr/relations_headers_fg" />
         <View
             android:layout_width="@dimen/relations_headers_separator"
             android:layout_height="fill_parent"
-            android:background="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_fg"
             android:visibility="visible" />
 
         <TextView
@@ -115,27 +115,27 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/slave"
-            android:background="@color/relations_headers_bg"
+            android:background="?attr/relations_headers_bg"
             android:layout_weight="1.7"
             android:id="@+id/txtMirror"
             android:gravity="center"
-            android:textColor="@color/relations_headers_fg" />
+            android:textColor="?attr/relations_headers_fg" />
 
         <View
             android:layout_width="@dimen/relations_headers_separator"
             android:layout_height="fill_parent"
-            android:background="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_fg"
             android:visibility="visible" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/status"
-            android:background="@color/relations_headers_bg"
+            android:background="?attr/relations_headers_bg"
             android:layout_weight="2"
             android:id="@+id/txtStatus"
             android:gravity="center"
-            android:textColor="@color/relations_headers_fg" />
+            android:textColor="?attr/relations_headers_fg" />
         <!--<View-->
             <!--android:layout_width="0.5px"-->
             <!--android:layout_height="fill_parent"-->

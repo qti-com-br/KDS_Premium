@@ -29,7 +29,7 @@
                 android:clickable="false"
                 android:enabled="true"
                 android:gravity="center|center_vertical"
-                android:textColor="@color/kds_title_fg"
+                android:textColor="?attr/kds_title_fg"
                 android:textStyle="bold" />
 
 
@@ -51,31 +51,7 @@
                 android:layout_toRightOf="@+id/imgLCI"
                 android:gravity="center_vertical|right"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/kds_title_fg" />
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="fill_parent"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:id="@+id/txtPrevB"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_toRightOf="@+id/txtPrev"-->
-            <!--android:layout_toEndOf="@+id/txtPrev"-->
-            <!--android:gravity="center_vertical|left"-->
-            <!--android:textColor="@color/kds_title_fg"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="fill_parent"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:id="@+id/txtParkedA"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_toRightOf="@+id/txtPrevB"-->
-            <!--android:layout_toEndOf="@+id/txtPrevB"-->
-            <!--android:gravity="center_vertical|right"-->
-            <!--android:textColor="@color/kds_title_fg"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
+                android:textColor="?attr/kds_title_fg" />
 
             <TextView
                 android:id="@+id/txtAvgTime"
@@ -84,7 +60,7 @@
                 android:layout_marginLeft="@dimen/title_views_margin"
                 android:gravity="center_vertical|right"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/kds_title_fg" />
+                android:textColor="?attr/kds_title_fg" />
 
             <TextView
                 android:id="@+id/txtTitle"
@@ -100,17 +76,8 @@
                 android:maxLines="1"
                 android:text="@string/main_title"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/kds_title_fg"
+                android:textColor="?attr/kds_title_fg"
                 android:textStyle="bold" />
-
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:id="@+id/txtAvgTimeB"-->
-            <!--android:textColor="@color/kds_title_fg"-->
-            <!--android:gravity="center_vertical|right"-->
-            <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
 
             <TextView
                 android:id="@+id/txtParked"
@@ -121,21 +88,8 @@
                 android:layout_toLeftOf="@+id/txtNextB"
                 android:gravity="center_vertical"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/kds_title_fg" />
+                android:textColor="?attr/kds_title_fg" />
 
-            <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="fill_parent"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:id="@+id/txtNextB"-->
-            <!--android:gravity="center_vertical|center_horizontal|right"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_toLeftOf="@+id/txtNext"-->
-            <!--android:textColor="@color/kds_title_fg"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_marginLeft="@dimen/title_views_margin" />-->
-
-            <!--&lt;!&ndash;android:drawableLeft="@drawable/nextcount"&ndash;&gt;-->
             <TextView
                 android:id="@+id/txtNext"
                 android:layout_width="wrap_content"
@@ -145,7 +99,7 @@
                 android:layout_toLeftOf="@+id/linearTime"
                 android:gravity="center_vertical|center_horizontal|left"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/kds_title_fg" />
+                android:textColor="?attr/kds_title_fg" />
 
 
             <!--&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;-->
@@ -171,7 +125,7 @@
 
                     android:text="12:30"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/kds_title_fg"
+                    android:textColor="?attr/kds_title_fg"
                     android:textSize="12dp" />
 
                 <TextView
@@ -183,12 +137,10 @@
 
                     android:text="2016/3/7"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/kds_title_fg"
+                    android:textColor="?attr/kds_title_fg"
                     android:textSize="12dp" />
             </LinearLayout>
-            <!--&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_alignParentRight="true"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_alignParentEnd="true"&ndash;&gt;-->
+
             <ImageView
                 android:id="@+id/imgState"
                 android:layout_width="30dp"
@@ -206,7 +158,7 @@
                 android:layout_alignParentRight="true"
                 android:clickable="true"
                 android:focusable="false"
-				android:tint="@color/kds_title_fg"
+				android:tint="?attr/kds_title_fg"
                 android:onClick="onBtnLogoClicked"
                 android:src="@drawable/ic_menu" />
         </LinearLayout>
@@ -385,5 +337,5 @@
         android:clickable="true"
         android:src="@android:drawable/ic_dialog_alert"
         android:visibility="gone"
-        app:backgroundTint="@color/cleaning_button_bg" />
+        app:backgroundTint="?attr/cleaning_button_bg" />
 </FrameLayout>
