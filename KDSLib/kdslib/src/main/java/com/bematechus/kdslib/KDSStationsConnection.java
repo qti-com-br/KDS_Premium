@@ -1102,6 +1102,7 @@ public class KDSStationsConnection {
      */
     public boolean writeDataToStationOrItsSlave(KDSStationIP station, String strXml)
     {
+        Log.i(TAG, "writeDataToStationOrItsSlave");
         return writeDataToStationOrItsSlave(station, strXml, -1);
 //
 //        KDSStationConnection connection = getConnection(station);
@@ -1795,16 +1796,22 @@ public class KDSStationsConnection {
         KDSStationConnection connection = getConnection(station);
         if (connection == null)
         {//this station is closed
+            Log.i(TAG, "connection == null");
             if (this.isActiveStation(station )
                     && m_stationsRelations.isEnabled(station.getID())) //for enable
             { //this station is active, but don't connect
+                Log.i(TAG, "connectStationWithData");
                 connectStationWithData(station, strXml,nMaxBufferCount);
             }
             else
             {//this station is not active, check its backup station.
+                Log.i(TAG, "it is not active station");
                 String stationID = station.getID();
                 KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
-                if (backupStation == null) return false;
+                if (backupStation == null) {
+                    m_buffersForWaitingConnection.add(backupStation.getID(), strXml, nMaxBufferCount);
+                    return false;
+                }
                 if (!m_stationsRelations.isEnabled(backupStation.getID() ) )
                     return false;
                 //find out its backup station and it is actived.
@@ -1831,13 +1838,16 @@ public class KDSStationsConnection {
         }
         else if (connection.getSock().isConnected())
         {
+            Log.i(TAG, "connection.getSock().isConnected()");
             if (m_stationsRelations.isEnabled(station.getID() ) ) {
+                Log.i(TAG, "connection != null 1");
                 String withAckXml = m_ackManager.add(station.getID(), strXml);
                 connection.getSock().writeXmlTextCommand(withAckXml);
                 //connection.getSock().writeXmlTextCommand(strXml);
             }
             else
             {
+                Log.i(TAG, "connection != null 2");
                 String stationID = station.getID();
                 KDSStationIP backupStation = getFirstActiveSlaveStation(stationID);
                 if (backupStation == null) return false;
@@ -1865,6 +1875,7 @@ public class KDSStationsConnection {
         }
         else if (!connection.getSock().isConnected())
         {
+            Log.i(TAG, "(!connection.getSock().isConnected())");
             m_buffersForWaitingConnection.add(station.getID(), strXml, nMaxBufferCount);
             //connection.addBufferedData(strXml);
         }
@@ -2373,6 +2384,32 @@ public class KDSStationsConnection {
             m_ackManager.removeAck(stationID, data.getData().get(i).getGuid());
         return data;
 
+    }
+
+    /**
+     *
+     * @param kds
+     */
+    public void checkDirtyOfflineData(KDSBase kds)
+    {
+        ArrayList<String> arOffline = m_buffersForWaitingConnection.getStationsOffline();//.getStationsOfflineAndAck();
+        if (arOffline.size() <=0) return;
+        ArrayList<KDSStationIP> ar =m_stationsRelations.getStations(arOffline);
+
+        int ncount = ar.size();
+        for (int i=0; i< ncount; i++)
+        {
+            if (ar.get(i) != null) //I find here can get null station. just filter it.
+            {
+                KDSStationConnection tcp = getConnection(ar.get(i).getIP());
+                if (tcp == null)
+                    continue;
+                if (tcp.isConnected()) {
+                    Log.i(TAG, "dirty offline data");
+                    startRestoreDataThread(kds, tcp, tcp.getIP());
+                }
+            }
+        }
     }
 }
 
