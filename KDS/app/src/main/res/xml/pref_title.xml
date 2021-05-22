@@ -52,7 +52,8 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
-    <com.bematechus.kdslib.KDSListPreference
+<!--    <com.bematechus.kdslib.KDSListPreference-->
+    <com.bematechus.kds.KDSPreferenceTheme
         android:key="theme_mode"
         android:title="Theme"
         android:defaultValue="0"

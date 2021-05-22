@@ -3089,4 +3089,13 @@ public class KDSSettings extends SettingsBase {
     String s = String.format("%d,%d", bg, fg);
     return s;
    }
+
+   public void savePrefValue(SharedPreferences.Editor editor, ID id, Object val)
+   {
+
+       String key = m_mapPrefID.get(id);
+       setPrefValue(editor, key, val);
+       m_mapSettings.put(id, val);
+
+   }
 }

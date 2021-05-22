@@ -2,6 +2,10 @@ package com.bematechus.kds;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 
 import com.bematechus.kdslib.KDSLog;
@@ -245,4 +249,15 @@ public class ImageUtil {
         return outStream.toByteArray();
     }
 
+
+    public static Bitmap changeBitmapColor(Bitmap sourceBitmap, int color)
+    {
+        Bitmap resultBitmap = sourceBitmap.copy(sourceBitmap.getConfig(),true);
+        Paint paint = new Paint();
+        ColorFilter filter = new LightingColorFilter(color, color);
+        paint.setColorFilter(filter);
+        Canvas canvas = new Canvas(resultBitmap);
+        canvas.drawBitmap(resultBitmap, 0, 0, paint);
+        return resultBitmap;
+    }
 }

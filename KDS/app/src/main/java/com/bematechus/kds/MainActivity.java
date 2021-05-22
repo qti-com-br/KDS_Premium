@@ -17,7 +17,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
 import android.content.pm.PackageInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
@@ -489,12 +492,24 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         Context c = getApplicationContext();
         c.setTheme(KDSTheme.loadTheme(c));
+
         //c.setTheme(R.style.AppTheme_Dark);
 
         KDSGlobalVariables.createKDS(c);
         KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
 
         KDSGlobalVariables.setMainActivity(this);
+        //Log.i(TAG, "oncreate");
+        if (KDSTheme.loadChangeSettingsFlag(getApplicationContext()))
+        {
+          //  Log.i(TAG, "oncreate-> m_updateSettings = true");
+            KDSTheme theme = new KDSTheme();
+            m_bSuspendChangedEvent = true;
+            theme.changeTheme(c,KDSTheme.loadMyThemeValue(c), getSettings()  );
+            KDSTheme.saveChangeSettingsFlag(getApplicationContext(), false);
+            m_bSuspendChangedEvent = false;
+            //KDSTheme.m_updateSettings = false;
+        }
 
         //KDSSettings settings = new KDSSettings(this.getApplicationContext());
         //settings.loadSettings(this.getApplicationContext());
@@ -502,6 +517,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //tu.changeTheme(this.getApplicationContext(), ThemeUtil.KDSTheme.Light, getSettings());
 
         setContentView(R.layout.activity_main);
+        changeMenuIconColorAccoringToTheme();
         //m_txtPrev = (TextView) this.findViewById(R.id.txtPrev);
         //m_txtNext = (TextView) this.findViewById(R.id.txtNext);
         //m_txtTitle = (TextView) this.findViewById(R.id.txtTitle);
@@ -8351,13 +8367,35 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
-    private void changeTheme(KDSTheme.MyTheme theme)
+    private void changeTheme2(KDSTheme.MyTheme theme)
     {
         m_bSuspendChangedEvent = true;
         KDSTheme tu = new KDSTheme();
+        this.getApplicationContext().setTheme(KDSTheme.convertKDSThemeValue(theme));
         tu.changeTheme(this.getApplicationContext(), theme, getSettings());
         this.recreate();
         m_bSuspendChangedEvent = false;
+
+    }
+    private void changeTheme(KDSTheme.MyTheme theme)
+    {
+        m_bSuspendChangedEvent = true;
+        //KDSTheme.m_updateSettings  =true;
+
+        this.getApplicationContext().setTheme(KDSTheme.convertKDSThemeValue(theme));
+        KDSTheme.saveChangeSettingsFlag(this.getApplicationContext(), true);
+        this.recreate();
+        m_bSuspendChangedEvent = false;
+
+    }
+
+    private void changeMenuIconColorAccoringToTheme()
+    {
+        ImageView v  = (ImageView) this.findViewById(R.id.imgMenu);
+        KDSViewFontFace ff = getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+
+        v.setColorFilter(ff.getFG(), PorterDuff.Mode.SRC_ATOP);
+
 
     }
 }

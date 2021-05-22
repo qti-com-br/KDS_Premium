@@ -2,6 +2,7 @@ package com.bematechus.kds;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
 
@@ -17,12 +18,27 @@ public class KDSTheme {
         Light
     }
 
-    static public int loadTheme(Context c)
+    //record if need to update settings after change theme.
+    static public boolean m_updateSettings = false;
+
+    static public MyTheme loadMyThemeValue(Context c)
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         String s = prefs.getString("theme_mode", "0");
         int n = KDSUtil.convertStringToInt(s, 0);
         MyTheme t = MyTheme.values()[n];
+        return t;
+
+    }
+
+    static public int loadTheme(Context c)
+    {
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+//        String s = prefs.getString("theme_mode", "0");
+//        int n = KDSUtil.convertStringToInt(s, 0);
+//        MyTheme t = MyTheme.values()[n];
+        MyTheme t = loadMyThemeValue(c);
+
         return convertKDSThemeValue(t);
     }
 
@@ -56,14 +72,33 @@ public class KDSTheme {
     public void changeSettingsAfterNewTheme( Context c, KDSSettings settings )
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor editor =  prefs.edit();
         for (int i=0; i< mThemeItems.length; i++)
         {
-            mThemeItems[i].doThemeChange(c, prefs, settings);
+            mThemeItems[i].doThemeChange(c, editor, settings);
         }
+        editor.commit();
+        editor.apply();
 
 
     }
 
+    static final String FLAG_KEY ="theme_update_setting";
+    static public void saveChangeSettingsFlag(Context c, boolean bUpdate)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor editor =  prefs.edit();
+        editor.putBoolean(FLAG_KEY, bUpdate);
+        editor.commit();
+        editor.apply();
+
+
+    }
+    static public boolean loadChangeSettingsFlag(Context c)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        return prefs.getBoolean(FLAG_KEY, false );
+    }
 
 
 
@@ -101,87 +136,89 @@ public class KDSTheme {
             mFlag = THEME_AUTO;
         }
 
-        public void doThemeChange(Context c, SharedPreferences prefs,KDSSettings settings)
+        public void doThemeChange(Context c, SharedPreferences.Editor editor, KDSSettings settings)
         {
             String s =  settings.getTypeString(mID);
             if (s.equals("int"))
             {
-                changeInt(c, prefs, settings);
+                changeInt(c, editor, settings);
             }
             else if (s.equals("string"))
             {
-                changeString(c, prefs, settings);
+                changeString(c, editor, settings);
 
             }
             else if (s.equals("bool"))
             {
-                changeBool(c, prefs, settings);
+                changeBool(c, editor, settings);
 
 
             }
             else if (s.equals("fontface"))
             {
-                changeFontColor(c, prefs, settings);
+                changeFontColor(c, editor, settings);
 
             }
         }
 
-        private void changeInt(Context c, SharedPreferences prefs, KDSSettings settings)
+        private void changeInt(Context c, SharedPreferences.Editor editor, KDSSettings settings)
         {
             TypedValue tv = new TypedValue();
             boolean b = c.getTheme().resolveAttribute(mAttrID, tv, true );
             int n = tv.data;
 
-            settings.savePrefValue(prefs,mID, n );
+            settings.savePrefValue(editor,mID, n );
 
         }
-        private void changeString(Context c, SharedPreferences prefs, KDSSettings settings)
+        private void changeString(Context c, SharedPreferences.Editor editor, KDSSettings settings)
         {
             TypedValue tv = new TypedValue();
             boolean b = c.getTheme().resolveAttribute(mAttrID, tv, true );
 
             if (mFlag == THEME_AUTO) {
                 String s = tv.string.toString();
-                settings.savePrefValue(prefs, mID, s);
+                settings.savePrefValue(editor, mID, s);
             }
             else if (mFlag == THEME_COLOR_BG)
             {
                 String strSettings =  settings.getString(mID);
                 KDSBGFG bf = KDSBGFG.parseString(strSettings);
                 bf.setBG(tv.data);
-                settings.savePrefValue(prefs,mID, bf.toString() );
+                settings.savePrefValue(editor,mID, bf.toString() );
             }
             else if (mFlag == THEME_COLOR_FG)
             {
                 String strSettings =  settings.getString(mID);
                 KDSBGFG bf = KDSBGFG.parseString(strSettings);
                 bf.setFG(tv.data);
-                settings.savePrefValue(prefs,mID, bf.toString() );
+                settings.savePrefValue(editor,mID, bf.toString() );
             }
 
         }
-        private void changeBool(Context c, SharedPreferences prefs, KDSSettings settings)
+        private void changeBool(Context c, SharedPreferences.Editor editor, KDSSettings settings)
         {
             TypedValue tv = new TypedValue();
             boolean b = c.getTheme().resolveAttribute(mAttrID, tv, true );
             String s = tv.string.toString();
             boolean bool = Boolean.parseBoolean(s);
 
-            settings.savePrefValue(prefs,mID, bool );
+            settings.savePrefValue(editor,mID, bool );
 
         }
 
-        private void changeFontColor(Context c, SharedPreferences prefs, KDSSettings settings)
+        private void changeFontColor(Context c, SharedPreferences.Editor editor, KDSSettings settings)
         {
             KDSViewFontFace ff = settings.getKDSViewFontFace(mID);
             TypedValue tv = new TypedValue();
+            //Resources.Theme t = c.getTheme();
+
             boolean b = c.getTheme().resolveAttribute(mAttrID, tv, true );
             int color = tv.data;
             if (mFlag == THEME_FONT_BG)
                 ff.setBG(color);
             else if (mFlag == THEME_FONT_FG)
                 ff.setFG(color);
-            settings.savePrefValue(prefs,mID, ff );
+            settings.savePrefValue(editor,mID, ff );
 
         }
     }

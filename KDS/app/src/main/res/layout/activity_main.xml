@@ -149,6 +149,7 @@
                 android:layout_toLeftOf="@+id/imgMenu"
                 android:clickable="false" />
             <!--android:src="@drawable/ic_launcher"-->
+<!--            android:src="@drawable/ic_menu"-->
             <ImageView
                 android:id="@+id/imgMenu"
                 android:layout_width="30dp"
@@ -160,7 +161,8 @@
                 android:focusable="false"
 				android:tint="?attr/kds_title_fg"
                 android:onClick="onBtnLogoClicked"
-                android:src="@drawable/ic_menu" />
+                android:src="@drawable/ic_menu"
+               />
         </LinearLayout>
 
         <ListView
