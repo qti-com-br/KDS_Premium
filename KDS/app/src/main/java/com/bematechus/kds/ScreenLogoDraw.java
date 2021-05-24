@@ -5,15 +5,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSViewFontFace;
+import com.bematechus.kdslib.ThemeUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,6 +53,8 @@ public class ScreenLogoDraw {
         if (!bEnabled) {
             m_logoFileName = "";
 			m_logoImage = ((BitmapDrawable) view.getContext().getApplicationContext().getResources().getDrawable(R.drawable.lci_logo_bg)).getBitmap();
+            int overlayColor = ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.focus_bg);//.getResources().getColor(R.color.focus_bg);
+            m_logoImage = changeBitmapColor(m_logoImage, overlayColor);
             m_lciLogo = null;
         }
 
@@ -120,7 +127,8 @@ public class ScreenLogoDraw {
         int y = rtBG.height() - h - nLciLogoBottomOffset;
 
         m_lciLogo.setBounds(x, y, rtBG.width(), rtBG.height()- nLciLogoBottomOffset);
-
+        int overlayColor = ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.focus_bg);//.getResources().getColor(R.color.focus_bg);
+        m_lciLogo.setColorFilter(overlayColor, PorterDuff.Mode.SRC_ATOP);
         ((BitmapDrawable)m_lciLogo).getPaint().setAlpha(getLogoAlpha(bScreenEmpty));
 
         m_lciLogo.draw(canvas);
@@ -133,5 +141,15 @@ public class ScreenLogoDraw {
             nAlpha = 255;
         return nAlpha;
 
+    }
+    public static Bitmap changeBitmapColor(Bitmap sourceBitmap, int color)
+    {
+        Bitmap resultBitmap = sourceBitmap.copy(sourceBitmap.getConfig(),true);
+        Paint paint = new Paint();
+        ColorFilter filter = new LightingColorFilter(color, 1);
+        paint.setColorFilter(filter);
+        Canvas canvas = new Canvas(resultBitmap);
+        canvas.drawBitmap(resultBitmap, 0, 0, paint);
+        return resultBitmap;
     }
 }

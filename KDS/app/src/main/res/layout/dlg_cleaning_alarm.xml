@@ -16,7 +16,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/kds_title_bg" />
+        android:background="?attr/cleaning_text_color" />
 
     <TextView
         android:id="@+id/textView10"
@@ -34,7 +34,7 @@
         android:paddingBottom="5dp"
         android:text="@string/clean_freeze_screen_now"
         android:textAlignment="viewEnd"
-        android:textColor="@color/kds_title_bg"
+        android:textColor="?attr/cleaning_text_color"
         android:textSize="14sp" />
 
     <TextView
@@ -44,7 +44,7 @@
         android:paddingBottom="5dp"
         android:text="@string/remind_me_in_minutes"
         android:textAlignment="viewEnd"
-        android:textColor="@color/kds_title_bg"
+        android:textColor="?attr/cleaning_text_color"
         android:textSize="14sp" />
 
     <TextView
@@ -54,6 +54,6 @@
         android:paddingBottom="5dp"
         android:text="@string/dismiss_clert"
         android:textAlignment="viewEnd"
-        android:textColor="@color/cleaning_button_bg"
+        android:textColor="?attr/cleaning_button_bg"
         android:textSize="14sp" />
 </LinearLayout>

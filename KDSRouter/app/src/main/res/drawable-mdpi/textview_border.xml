@@ -10,6 +10,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android" >
     <stroke
         android:width="1dp"
-        android:color="@color/grid_border_color"
+        android:color="@color/textview_border_color"
         />
 </shape>

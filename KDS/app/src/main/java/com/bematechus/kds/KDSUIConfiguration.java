@@ -55,6 +55,7 @@ import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.PreferenceFragmentStations;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -103,7 +104,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
        // requestWindowFeature(Window.FEATURE_LEFT_ICON);
         super.onCreate(savedInstanceState);
-        int color = this.getResources().getColor(R.color.settings_page_bg);//.getDrawable(R.drawable.bkcolor);
+
+        int color = ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg);// this.getResources().getColor(R.color.settings_page_bg);//.getDrawable(R.drawable.bkcolor);
         ColorDrawable c = new ColorDrawable(color);
         this.getWindow().setBackgroundDrawable(c);
 
@@ -168,7 +170,8 @@ public class KDSUIConfiguration extends PreferenceActivity {
             int id = mResources.getIdentifier("headers", "id", "android");
 
             LinearLayout layoutHeaders = (LinearLayout) this.findViewById(id);//com.android.internal. R.id.headers);// com.android.internal.R.id.headers);
-            layoutHeaders.setBackgroundColor(this.getResources().getColor(R.color.settings_headers_bg));
+            //layoutHeaders.setBackgroundColor(this.getResources().getColor(R.color.settings_headers_bg));
+            layoutHeaders.setBackgroundColor(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_headers_bg));
 
 			int HEADERS_WIDTH = (int) Math.max(MIN_HEADER_WIDTH, dm.widthPixels * 0.2);
 
@@ -176,7 +179,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             id = mResources.getIdentifier("prefs_frame", "id", "android");
             LinearLayout layoutPrefs = (LinearLayout) this.findViewById(id);//com.android.internal.R.id.prefs_frame);
             layoutPrefs.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            layoutPrefs.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+            layoutPrefs.setBackgroundColor( ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg));// this.getResources().getColor(R.color.settings_page_bg));
         }
         this.getListView().setScrollBarFadeDuration(0);
         this.getListView().setScrollbarFadingEnabled(false);
@@ -1453,6 +1456,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference("real_time_period"));
             bindPreferenceSummaryToValue(findPreference("kds_general_title"));
+            bindPreferenceSummaryToValue(findPreference("theme_mode"));
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
             pref.registerOnSharedPreferenceChangeListener(this);
         }

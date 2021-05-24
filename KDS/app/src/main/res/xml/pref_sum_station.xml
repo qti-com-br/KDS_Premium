@@ -16,16 +16,16 @@
 
     <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="sumstn_screen_bg"
-        android:defaultValue="@color/view_bg"
+        android:defaultValue="?attr/view_bg"
         android:title="@string/pref_kds_panels_viewer_bg" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="sumstn_caption_font"
-        android:defaultValue="default_font,@color/settings_light_bg,@color/caption_fg,normal_size"
+        android:defaultValue="default_font,?attr/settings_light_bg,?attr/caption_fg,normal_size"
         android:title="@string/pref_order_caption_normal_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="sumstn_item_font"
-        android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
+        android:defaultValue="default_font,?attr/item_bg,?attr/item_fg,normal_size"
         android:title="@string/panel_font"
         app:supportsColor="true"/>
 

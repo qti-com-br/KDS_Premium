@@ -18,8 +18,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUIDialogConfirm;
+import com.bematechus.kdslib.ThemeUtil;
 import com.bematechus.kdsrouter.dummy.DummyContent;
 import com.bematechus.kdsrouter.dummy.DummyContent.DummyItem;
 
@@ -321,7 +323,7 @@ public class CategoryFragment extends Fragment implements KDSUIDlgCategory.KDSDi
             ((TextView) convertView.findViewById(R.id.txtDescription)).setText(r.getDescription());
             if (m_selected == r)
             {
-                convertView.setBackgroundColor(getResources().getColor( R.color.listview_focus_bg));
+                convertView.setBackgroundColor(ThemeUtil.getAttrColor(KDSApplication.getContext(),R.attr.listview_focus_bg ));// getResources().getColor( R.color.listview_focus_bg));
             }
             else {
                 convertView.setBackgroundColor(Color.TRANSPARENT);

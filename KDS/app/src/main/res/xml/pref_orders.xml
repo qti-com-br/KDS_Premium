@@ -9,11 +9,11 @@
         <!--app:supportsColor="true"/>-->
     <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="focus_bg"
-        android:defaultValue="@color/focus_bg"
+        android:defaultValue="?attr/focus_bg"
         android:title="@string/pref_order_focus_color" />
     <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="block_border_bg"
-        android:defaultValue="@color/border_bg"
+        android:defaultValue="?attr/border_bg"
         android:title="@string/pref_order_border_color" />
     <CheckBoxPreference
         android:key="blink_focus"
@@ -27,7 +27,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="viewer_bg"
-        android:defaultValue="@color/view_bg"
+        android:defaultValue="?attr/view_bg"
         android:title="@string/pref_kds_panels_viewer_bg" />
     <!--<CheckBoxPreference-->
         <!--android:key="hide_navigation_bar"-->
@@ -262,7 +262,7 @@
     <PreferenceCategory android:title="@string/pref_kds_panels_font">
         <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="panel_bg"
-            android:defaultValue="@color/panel_bg"
+            android:defaultValue="?attr/panel_bg"
             android:title="@string/pref_kds_panels_bg" />
         <com.bematechus.kdslib.KDSEditTextPreference
             android:key="panel_text_line_height"
@@ -393,7 +393,7 @@
             />
         <com.bematechus.kdslib.KDSPreferenceFontPicker
             android:key="from_primary_font"
-            android:defaultValue="default_font,@color/item_bg,@color/item_fg,normal_size"
+            android:defaultValue="default_font,?attr/item_bg,?attr/item_fg,normal_size"
             android:title="@string/pref_from_primary_font"
             app:supportsColor="true"/>
     </PreferenceCategory>

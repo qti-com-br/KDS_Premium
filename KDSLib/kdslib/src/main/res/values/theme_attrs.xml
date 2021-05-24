@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="black" format="color" />
+    <attr name="white" format="color" />
+    <attr name="gray" format="color" />
+    <attr name="dark_gray" format="color"/>
+    <attr name="lci_logic_blue" format="color" />
+<!--    <attr name="lci_logic_deep" format="color" />-->
+<!--    <attr name="lci_kds" format="color" />-->
+    <attr name="lci_peripherals" format="color" />
+<!--    <attr name="lci_cpu" format="color" />-->
+    <attr name="lci_background_dark" format="color" />
+    <attr name="lci_background_darkish" format="color" />
+    <attr name="transparent" format="color" />
+
+    <attr name="kds_title_bg" format="color" />
+    <attr name="kds_title_fg" format="color" />
+    <attr name="view_bg" format="color" />
+    <attr name="panel_bg" format="color" />
+<!--    <attr name="panel_fg" format="color" />-->
+    <attr name="border_bg" format="color" />
+    <attr name="panelnum_bg" format="color" />
+    <attr name="panelnum_fg" format="color" />
+    <attr name="caption_bg" format="color" />
+    <attr name="caption_fg" format="color" />
+    <!--#FCC600-->
+    <attr name="focus_bg" format="color" />
+<!--    <attr name="focus_fg" format="color" />-->
+    <attr name="stage0_bg" format="color" />
+    <attr name="stage1_bg" format="color" />
+    <attr name="stage2_bg" format="color" />
+    <attr name="item_bg" format="color" />
+    <attr name="item_fg" format="color" />
+    <attr name="condiment_bg" format="color" />
+    <attr name="condiment_fg" format="color" />
+    <attr name="premsg_bg" format="color" />
+    <attr name="premsg_fg" format="color" />
+    <attr name="footer_bg" format="color" />
+    <attr name="footer_fg" format="color" />
+
+    <attr name="tab_display_fg" format="color" />
+    <attr name="tab_display_bg" format="color" />
+
+    <attr name="settings_light_bg" format="color" />
+
+    <attr name="rush_bg" format="color" />
+    <attr name="rush_fg" format="color" />
+
+<!--    <attr name="rush_bg1" format="color" />-->
+<!--    <attr name="rush_fg1" format="color" />-->
+
+    <attr name="fire_bg" format="color" />
+    <attr name="fire_fg" format="color" />
+    <attr name="dest_bg" format="color" />
+    <attr name="dest_fg" format="color" />
+
+    <attr name="expalert_bg" format="color" />
+    <attr name="relations_headers_bg" format="color" />
+    <attr name="relations_headers_fg" format="color" />
+
+
+    <attr name="listview_focus_bg" format="color" />
+
+    <attr name="settings_headers_bg" format="color" />
+
+    <attr name="settings_page_bg" format="color" />
+
+    <attr name="grid_border_color" format="color" />
+    <attr name="grid_inside_cell_border" format="color" />
+
+    <attr name="queue_order_id_bg" format="color" />
+    <attr name="queue_order_id_fg" format="color" />
+
+    <attr name="queue_order_timer_bg" format="color" />
+    <attr name="queue_order_timer_fg" format="color" />
+
+    <attr name="queue_cusomer_name_bg" format="color" />
+    <attr name="queue_cusomer_name_fg" format="color" />
+
+    <attr name="queue_cusom_message_bg" format="color" />
+    <attr name="queue_cusom_message_fg" format="color" />
+
+    <attr name="queue_order_status_received_bg" format="color" />
+    <attr name="queue_order_status_received_fg" format="color" />
+
+    <attr name="queue_order_status_preparation_bg" format="color" />
+    <attr name="queue_order_status_preparation_fg" format="color" />
+
+    <attr name="queue_order_status_ready_bg" format="color" />
+    <attr name="queue_order_status_ready_fg" format="color" />
+
+    <attr name="queue_order_status_pickup_bg" format="color" />
+    <attr name="queue_order_status_pickup_fg" format="color" />
+
+    <attr name="queue_view_bg" format="color" />
+    <attr name="queue_separator_color" format="color" />
+
+<!--    <attr name="tracker_view_bg" format="color" />-->
+<!--    <attr name="tracker_order_name_bg" format="color" />-->
+<!--    <attr name="tracker_order_name_fg" format="color" />-->
+<!--    <attr name="tracker_table_name_bg" format="color" />-->
+<!--    <attr name="tracker_table_name_fg" format="color" />-->
+<!--    <attr name="tracker_alert_bg" format="color" />-->
+<!--    <attr name="tracker_alert_fg" format="color" />-->
+
+    <attr name="subtitle_bg" format="color" />
+    <attr name="subtitle_fg" format="color" />
+
+    <attr name="lineitems_bg" format="color" />
+    <attr name="lineitems_fg" format="color" />
+
+    <attr name="item_focused_bg" format="color" />
+    <attr name="item_focused_fg" format="color" />
+
+    <attr name="touch_button_down_text_color" format="color" />
+
+    <attr name="touch_button_bg" format="color" />
+    <attr name="touch_button_fg" format="color" />
+    <attr name="lineitems_viewer_bg" format="color" />
+<!--    <attr name="grid_line_color" format="color" />-->
+
+    <attr name="cleaning_button_bg" format="color" />
+<!--   ? -->
+    <attr name="cleaning_pinchout_color" format="color" />
+
+    <attr name="sum_bg" format="color" />
+    <attr name="sum_fg" format="color" />
+
+    <attr name="move_alert_bg" format="color" />
+    <attr name="move_alert_fg" format="color" />
+    <attr name="move_alert_cancel_fg" format="color" />
+
+    <attr name="cleaning_text_color" format="color" />
+
+ </resources>

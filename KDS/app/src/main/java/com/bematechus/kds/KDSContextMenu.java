@@ -145,6 +145,7 @@ public class KDSContextMenu {
                 if(view instanceof ImageView && data instanceof Drawable){
                     ImageView iv=(ImageView)view;
                     iv.setImageDrawable((Drawable)data);
+                    iv.setColorFilter(m_nFG);
                     return true;
                 }
                 else if (view instanceof TextView)

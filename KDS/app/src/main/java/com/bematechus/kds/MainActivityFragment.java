@@ -19,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSViewFontFace;
+import com.bematechus.kdslib.ThemeUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -708,7 +710,8 @@ public class MainActivityFragment extends Fragment {
 		int font_color = ff.getFG();
         if (btn.m_bIsDown) {
             img.setImageResource((int) map.get("icondown"));
-            t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
+            //t.setTextColor( getResources().getColor( R.color.touch_button_down_text_color));
+            t.setTextColor(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.touch_button_down_text_color));
 			img.setColorFilter(Color.argb(48, Color.red(font_color), Color.green(font_color), Color.blue(font_color)));
         }
         else {

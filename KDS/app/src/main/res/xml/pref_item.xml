@@ -22,7 +22,7 @@
         android:defaultValue="true" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="item_font"
-        android:defaultValue="default_font,@color/item_bg,@color/item_fg,item_size"
+        android:defaultValue="default_font,?attr/item_bg,?attr/item_fg,item_size"
         android:title="@string/item_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSListPreference
@@ -43,7 +43,7 @@
 <!--  kpp1-420, add category font  -->
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="category_group_font"
-        android:defaultValue="default_font,@color/item_bg,@color/item_fg,middle_size"
+        android:defaultValue="default_font,?attr/item_bg,?attr/item_fg,middle_size"
         android:title="@string/category_font"
         android:dependency = "item_group_category"
         app:supportsColor="true"/>

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="condiment_font"
-        android:defaultValue="default_font,@color/condiment_bg,@color/condiment_fg,condiment_size"
+        android:defaultValue="default_font,?attr/condiment_bg,?attr/condiment_fg,condiment_size"
         android:title="@string/pref_kds_condiment_default_font"
         app:supportsColor="true"/>
     <com.bematechus.kdslib.KDSEditTextPreference
@@ -18,12 +18,5 @@
         android:positiveButtonText="@string/ok"
         android:negativeButtonText="@string/cancel"
         android:maxLines="1" />
-    <!--<com.bematechus.kdslib.KDSPreferenceColorPicker-->
-        <!--android:key="condiment_bg"-->
-        <!--android:defaultValue="0xff99cc00"-->
-        <!--android:title="Item background color" />-->
-    <!--<com.bematechus.kdslib.KDSPreferenceColorPicker-->
-        <!--android:key="condiment_fg"-->
-        <!--android:defaultValue="0xff99cc00"-->
-        <!--android:title="Item text color" />-->
+
 </PreferenceScreen>

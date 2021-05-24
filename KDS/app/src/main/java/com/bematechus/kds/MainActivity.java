@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 //import android.content.ComponentName;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -16,7 +17,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 //import android.graphics.drawable.GradientDrawable;
 import android.content.pm.PackageInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
@@ -98,6 +102,7 @@ import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 import com.bematechus.kdslib.TimeDog;
 import com.bematechus.kdslib.UpdateManager;
 //import com.google.android.gms.appindexing.Action;
@@ -362,7 +367,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         ImageView imgState = (ImageView) this.findViewById(R.id.imgState);
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
-			imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
+			//imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
+            imgState.setColorFilter(this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface).getFG(), PorterDuff.Mode.SRC_ATOP);
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
@@ -482,9 +488,36 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //kpp1-337, remove language settings, just use os language settings.
         //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
         //KDSUtil.setLanguage(this.getApplicationContext(), language);
+        //this.getApplicationContext().setTheme(R.style.AppTheme);
 
+        Context c = getApplicationContext();
+        c.setTheme(KDSTheme.loadTheme(c));
+
+        //c.setTheme(R.style.AppTheme_Dark);
+
+        KDSGlobalVariables.createKDS(c);
+        KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
+
+        KDSGlobalVariables.setMainActivity(this);
+        //Log.i(TAG, "oncreate");
+        if (KDSTheme.loadChangeSettingsFlag(getApplicationContext()))
+        {
+          //  Log.i(TAG, "oncreate-> m_updateSettings = true");
+            KDSTheme theme = new KDSTheme();
+            m_bSuspendChangedEvent = true;
+            theme.changeTheme(c,KDSTheme.loadMyThemeValue(c), getSettings()  );
+            KDSTheme.saveChangeSettingsFlag(getApplicationContext(), false);
+            m_bSuspendChangedEvent = false;
+            //KDSTheme.m_updateSettings = false;
+        }
+
+        //KDSSettings settings = new KDSSettings(this.getApplicationContext());
+        //settings.loadSettings(this.getApplicationContext());
+        //ThemeUtil tu = new ThemeUtil();
+        //tu.changeTheme(this.getApplicationContext(), ThemeUtil.KDSTheme.Light, getSettings());
 
         setContentView(R.layout.activity_main);
+
         //m_txtPrev = (TextView) this.findViewById(R.id.txtPrev);
         //m_txtNext = (TextView) this.findViewById(R.id.txtNext);
         //m_txtTitle = (TextView) this.findViewById(R.id.txtTitle);
@@ -530,12 +563,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_tabDisplay.setEventsReceiver(this);
 
 
-        Context c = getApplicationContext();
-
-        KDSGlobalVariables.createKDS(c);
-        KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
-
-        KDSGlobalVariables.setMainActivity(this);
+//        Context c = getApplicationContext();
+//
+//        KDSGlobalVariables.createKDS(c);
+//        KDSGlobalVariables.getKDS().setDBEventsReceiver(this);
+//
+//        KDSGlobalVariables.setMainActivity(this);
 
         KDSBeeper.setMaxVol(c);
 
@@ -1187,6 +1220,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             SetTitleVisible(false);
         }
+
+        changeMenuIconColorAccoringToTheme();
     }
 
 
@@ -3949,6 +3984,18 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         else if (key.equals("clear_db_schedule")) //kpp1-386
         { //
             return;
+        }
+        else if (key.equals("theme_mode"))
+        {
+            String s = prefs.getString(key, "0");
+            String oldSetting =  getSettings().getString(KDSSettings.ID.Theme_mode);
+            if (!s.equals(oldSetting)) {
+                getSettings().set(KDSSettings.ID.Theme_mode, s);
+                int n = KDSUtil.convertStringToInt(s, 0);
+                KDSTheme.MyTheme theme = KDSTheme.MyTheme.values()[n];
+                changeTheme(theme);
+            }
+
         }
         else {
 
@@ -8319,6 +8366,39 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
             }
         }
+
+    }
+
+    private void changeTheme2(KDSTheme.MyTheme theme)
+    {
+        m_bSuspendChangedEvent = true;
+        KDSTheme tu = new KDSTheme();
+        this.getApplicationContext().setTheme(KDSTheme.convertKDSThemeValue(theme));
+        tu.changeTheme(this.getApplicationContext(), theme, getSettings());
+        this.recreate();
+        m_bSuspendChangedEvent = false;
+
+    }
+    private void changeTheme(KDSTheme.MyTheme theme)
+    {
+        m_bSuspendChangedEvent = true;
+        //KDSTheme.m_updateSettings  =true;
+
+        this.getApplicationContext().setTheme(KDSTheme.convertKDSThemeValue(theme));
+        KDSTheme.saveChangeSettingsFlag(this.getApplicationContext(), true);
+        this.recreate();
+        m_bSuspendChangedEvent = false;
+
+    }
+
+    private void changeMenuIconColorAccoringToTheme()
+    {
+        ImageView v  = (ImageView) this.findViewById(R.id.imgMenu);
+        KDSViewFontFace ff = getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
+
+        v.setColorFilter(ff.getFG(), PorterDuff.Mode.SRC_ATOP);
+
+
 
     }
 }

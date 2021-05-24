@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
@@ -18,6 +19,7 @@ import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.ThemeUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -57,6 +59,8 @@ public class ScheduleActivity extends Activity implements WeekEvtView.WeekEventV
         m_evtView.setItems(m_arEvents);
         m_evtView.refresh();
 
+        ImageView imgMenu =  this.findViewById(R.id.imgMenu);
+        imgMenu.setColorFilter(ThemeUtil.getAttrColor(this.getApplicationContext(), R.attr.kds_title_fg));
         checkViewPortForMore();
     }
 

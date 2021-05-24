@@ -957,5 +957,12 @@
 	<string name="enable_auto_removal">Auto-removal</string>
 	<string name="auto_removal_secs">Auto-removal (seconds)</string>
 	<string name="pos_messages">POS messages</string>
-
+    <string name="str_continue">Continue</string>
+	<string name="theme_confirm">App will restart, and settings will be overwritten.\nDo you want to continue?</string>
+	<string-array name="pref_themes_titles">
+<!--		<item>Default</item>-->
+		<item>Dark</item>
+		<item>Light</item>
+	</string-array>
+	<string name="theme">Theme</string>
 </resources>

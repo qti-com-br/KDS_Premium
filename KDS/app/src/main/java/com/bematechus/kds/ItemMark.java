@@ -8,6 +8,7 @@ import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
+import com.bematechus.kdslib.ThemeUtil;
 
 import java.util.ArrayList;
 
@@ -115,7 +116,9 @@ public class ItemMark {
                 return new KDSBGFG(0,0);
 
             case Focused:
-                return new KDSBGFG(KDSApplication.getContext().getResources().getColor(R.color.item_focused_bg),KDSApplication.getContext().getResources().getColor(R.color.item_focused_fg));
+                return new KDSBGFG(ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.item_focused_bg),
+                                    ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.item_focused_fg));
+                //return new KDSBGFG(KDSApplication.getContext().getResources().getColor(R.color.item_focused_bg),KDSApplication.getContext().getResources().getColor(R.color.item_focused_fg));
 
             case Local_bumped:
                 return new KDSBGFG(Color.LTGRAY ,Color.GRAY);

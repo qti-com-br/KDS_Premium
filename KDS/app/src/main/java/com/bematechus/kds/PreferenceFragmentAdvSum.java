@@ -20,6 +20,7 @@ import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 
 import java.util.ArrayList;
 
@@ -51,7 +52,7 @@ public class PreferenceFragmentAdvSum extends KDSPreferenceFragment implements  
     {
         super.onCreateView(inflater, container, savedInstanceState);
         View view =  inflater.inflate(R.layout.prefui_advanced_sum_filter, container, false);
-        view.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+        view.setBackgroundColor(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg));// this.getResources().getColor(R.color.settings_page_bg));
         init_variables(view);
 
         return view;

@@ -16,8 +16,8 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/categories"
             android:id="@+id/textView28"
-            android:background="@color/relations_headers_bg"
-            android:textColor="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_bg"
+            android:textColor="?attr/relations_headers_fg"
             android:textAlignment="center"
             android:gravity="center" />
 
@@ -45,8 +45,8 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/items"
             android:id="@+id/textView29"
-            android:background="@color/relations_headers_bg"
-            android:textColor="@color/relations_headers_fg"
+            android:background="?attr/relations_headers_bg"
+            android:textColor="?attr/relations_headers_fg"
             android:textAlignment="center"
             android:gravity="center" />
 

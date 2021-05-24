@@ -8,7 +8,9 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.ThemeUtil;
 
 /**
  * Created by Administrator on 2016/3/14 0014.
@@ -47,7 +49,8 @@ public class KDSPreferenceColsSize extends Preference implements ColSizeView.Col
             m_strValues = s;
             m_colSizeView.setColsPercentString(m_strValues);
 
-            m_colSizeView.setBkColor(getContext().getResources().getColor(R.color.settings_page_bg));
+            //m_colSizeView.setBkColor(getContext().getResources().getColor(R.color.settings_page_bg));
+            m_colSizeView.setBkColor(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg));
             m_colSizeView.invalidate();
         }
 

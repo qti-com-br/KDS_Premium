@@ -3,9 +3,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android" >
     <stroke
         android:width="2dp"
-        android:color="@color/touch_button_bg"
+        android:color="@color/move_alert_border_stroke"
         />
-    <solid android:color="@color/move_alert_bg" />
+    <solid android:color="@color/move_alert_border_solid" />
     <padding
 
         android:bottom="4dp"

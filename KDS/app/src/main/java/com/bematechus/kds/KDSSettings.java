@@ -22,6 +22,7 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSViewFontFace;
 import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
@@ -623,6 +624,7 @@ public class KDSSettings extends SettingsBase {
        PosInfo_scroll_speed,
        PosInfo_auto_remove,
        PosInfo_remove_seconds,
+       Theme_mode, //kp-113 theme
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1387,7 +1389,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Auto_refresh_screen_freq,"string_kds_general_auto_refresh_screen","0");//
 
         init_option(ID.Transfer_by_double_click,"bool_transfer_by_double_click",false);//
-        init_option(ID.LineItems_view_bg,"int_lineitems_viewer_bg",getResColor( R.color.lineitems_viewer_bg));
+        init_option(ID.LineItems_view_bg,"int_lineitems_viewer_bg",getAttrColor( R.attr.lineitems_viewer_bg));
         init_option(ID.Log_orders,"bool_log_orders",false);
         init_option(ID.LineItems_line_height,"string_lineitems_line_height","50");
         init_option(ID.Printer_logo,"string_printer_logo","");
@@ -1409,12 +1411,12 @@ public class KDSSettings extends SettingsBase {
         //kpp1-377
         init_option(ID.Hide_station_title,"bool_hide_station_title",false);
        //kp1-391
-        init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
+        init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getAttrColor(R.attr.sum_bg), getAttrColor(R.attr.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
 
         //kpp1-386
         init_option(ID.Clear_db_schedule,"string_clear_db_schedule","-1");
         //kpp1-420
-        init_option(ID.Category_group_font,"fontface_category_group_font",new KDSViewFontFace(getResColor(R.color.item_bg), getResColor(R.color.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_MIDDLE));
+        init_option(ID.Category_group_font,"fontface_category_group_font",new KDSViewFontFace(getAttrColor(R.attr.item_bg), getAttrColor(R.attr.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_MIDDLE));
         //kp1-25
         init_option(ID.Runner_confirm_bump,"bool_runner_confirm_bump",false);
         init_option(ID.Runner_hide_finished_category,"bool_runner_hide_finished_category",false);
@@ -1429,7 +1431,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.SumStn_filters,"string_sumstn_filters","");
         init_option(ID.SumStn_alerts,"string_sumstn_alerts","");
 
-        init_option(ID.SumStn_font,"fontface_sumstn_item_font",new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
+        init_option(ID.SumStn_font,"fontface_sumstn_item_font",new KDSViewFontFace(getAttrColor(R.attr.sum_bg), getAttrColor(R.attr.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
         init_option(ID.SumStn_sum_method,"string_sumstn_sum_type", "0");
         init_option(ID.SumStn_panels_count,"string_sumstn_panels", "4");
         init_option(ID.SumStn_items_count,"string_sumstn_panel_items", "10");
@@ -1437,8 +1439,8 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.SumStn_alert_enabled,"bool_sumstn_enable_alert", false);
         init_option(ID.Sumstn_order_by,"string_sumstn_order_by", "0");
 
-        init_option(ID.SumStn_screen_bg,"int_sumstn_screen_bg",getResColor(R.color.view_bg));
-        init_option(ID.SumStn_caption_font,"fontface_sumstn_caption_font",new KDSViewFontFace(getResColor(R.color.caption_bg), getResColor(R.color.caption_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
+        init_option(ID.SumStn_screen_bg,"int_sumstn_screen_bg",getAttrColor(R.attr.view_bg));
+        init_option(ID.SumStn_caption_font,"fontface_sumstn_caption_font",new KDSViewFontFace(getAttrColor(R.attr.caption_bg), getAttrColor(R.attr.caption_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
 
         init_option(ID.SumStn_caption_prefix, "string_sumstn_caption_prefix", getResString(R.string.summary));
         init_option(ID.Sumstn_right_qty, "bool_sumstn_right_qty", false);
@@ -1455,10 +1457,11 @@ public class KDSSettings extends SettingsBase {
 
 
         init_option(ID.PosInfo_position,"string_posinfo_position", KDSUtil.convertIntToString(POSMsgPosition.Hide.ordinal() ));
-        init_option(ID.PosInfo_font,"fontface_posinfo_font", new KDSViewFontFace(getResColor(R.color.sum_bg), getResColor(R.color.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
+        init_option(ID.PosInfo_font,"fontface_posinfo_font", new KDSViewFontFace(getAttrColor(R.attr.sum_bg), getAttrColor(R.attr.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
         init_option(ID.PosInfo_scroll_speed,"string_posinfo_scroll_speed", KDSUtil.convertIntToString( POSMsgScrollSpeed.Slow.ordinal() ));
         init_option(ID.PosInfo_auto_remove,"bool_posinfo_auto_remove", false);
         init_option(ID.PosInfo_remove_seconds,"string_posinfo_remove_seconds", "30");
+        init_option(ID.Theme_mode,"string_theme_mode", "0");
 
     }
 
@@ -1480,6 +1483,16 @@ public class KDSSettings extends SettingsBase {
     {
         return m_contextTmp.getResources().getColor(nID);
     }
+
+    int getAttrColor(int nResID)
+    {
+       return ThemeUtil.getAttrColor(m_contextTmp, nResID);
+//      TypedValue tv = new TypedValue();
+//      boolean b = m_contextTmp.getTheme().resolveAttribute(nResID, tv, true);
+//      int n = tv.data;
+//      return n;
+    }
+
     String getResString(int nResID)
     {
         return m_contextTmp.getResources().getString(nResID);
@@ -1516,14 +1529,14 @@ public class KDSSettings extends SettingsBase {
 
         set(ID.View_Margin, 8);
         set(ID.Panels_Layout_Format, LayoutFormat.Horizontal.ordinal());
-        set(ID.Panels_View_BG, getResColor(R.color.view_bg));
-        //KDSViewFontFace ff =  new KDSViewFontFace(getResColor(R.color.panel_bg), getResColor(R.color.panel_fg), KDSViewFontFace.DEFULT_FONT_FILE, 14);
-        //set(ID.Panels_Default_FontFace, new KDSViewFontFace(getResColor(R.color.panel_bg), getResColor(R.color.panel_fg), KDSViewFontFace.DEFULT_FONT_FILE, 14));
-        set(ID.Panels_BG, getResColor(R.color.panel_bg));
+        set(ID.Panels_View_BG, getAttrColor(R.attr.view_bg));
+
+
+        set(ID.Panels_BG, getAttrColor(R.attr.panel_bg));
         //set(ID.Panels_Row_Height, 14);
 
         set(ID.Panels_Show_Number, false);
-        set(ID.Panels_Panel_Number_BGFG, buildBGFG(R.color.panelnum_bg, -1));// "-16769076,-1");// getResColor(R.color.panelnum_bg));
+        set(ID.Panels_Panel_Number_BGFG, buildAttrBGFG(R.attr.panelnum_bg, R.attr.panelnum_fg));//-1));// "-16769076,-1");//
         //set(ID.Panels_Panel_Number_FG, getResColor(R.color.panelnum_fg));
         set(ID.Panels_Panel_Number_Base, "0");
         set(ID.Panels_Blocks_Rows, 2);
@@ -1531,15 +1544,15 @@ public class KDSSettings extends SettingsBase {
         set(ID.Panels_Block_Zone_Gap, 0); //the gap between zone and zone. title and data rows.
         set(ID.Panels_Block_Border_Inset,DEFAULT_BLOCK_BORDER_INSET); //for draw borders.
         set(ID.Panels_Block_Inset,DEFAULT_BLOCK_INSET); //for gap between blocks.
-        set(ID.Panels_Block_Border_Color,getResColor(R.color.border_bg));
+        set(ID.Panels_Block_Border_Color,getAttrColor(R.attr.border_bg));
 
 
 
         set(ID.Order_Title_Rows,1);
         set(ID.Order_Footer_Rows,0);
-        set(ID.Order_Normal_FontFace, new KDSViewFontFace(getResColor(R.color.caption_bg), getResColor(R.color.caption_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_HEADER_FOOTER));
-       // set(ID.Order_Focused_FontFace, new KDSViewFontFace(getResColor(R.color.focus_bg), getResColor(R.color.focus_fg), KDSViewFontFace.DEFULT_FONT_FILE, 12));
-        //set(ID.Order_Focused_FontFace, new KDSViewFontFace(Color.YELLOW,Color.BLACK, KDSViewFontFace.DEFULT_FONT_FILE, 12));
+        set(ID.Order_Normal_FontFace, new KDSViewFontFace(getAttrColor(R.attr.caption_bg), getAttrColor(R.attr.caption_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_HEADER_FOOTER));
+
+
         set(ID.Order_Title0_Content_Left, TitleContents.Name.ordinal());
         set(ID.Order_Title0_Content_Center, TitleContents.ToTable.ordinal());
         set(ID.Order_Title0_Content_Right, TitleContents.Timer.ordinal());
@@ -1549,20 +1562,20 @@ public class KDSSettings extends SettingsBase {
         set(ID.Order_Footer_Content_Left, TitleContents.NULL.ordinal());
         set(ID.Order_Footer_Content_Center, TitleContents.NULL.ordinal());
         set(ID.Order_Footer_Content_Right, TitleContents.NULL.ordinal());
-        set(ID.Order_Footer_FontFace, new KDSViewFontFace(getResColor(R.color.footer_bg), getResColor(R.color.footer_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_HEADER_FOOTER));
+        set(ID.Order_Footer_FontFace, new KDSViewFontFace(getAttrColor(R.attr.footer_bg), getAttrColor(R.attr.footer_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_HEADER_FOOTER));
         set(ID.Order_Timer_Stage0_Time, 1);
-        set(ID.Order_Timer_Stage0_Color, getResColor(R.color.stage0_bg));
+        set(ID.Order_Timer_Stage0_Color, getAttrColor(R.attr.stage0_bg));
         set(ID.Order_Timer_Stage1_Time, 2);
-        set(ID.Order_Timer_Stage1_Color, getResColor(R.color.stage1_bg));
+        set(ID.Order_Timer_Stage1_Color, getAttrColor(R.attr.stage1_bg));
         set(ID.Order_Timer_Stage2_Time, 3);
-        set(ID.Order_Timer_Stage2_Color, getResColor(R.color.stage2_bg));
+        set(ID.Order_Timer_Stage2_Color, getAttrColor(R.attr.stage2_bg));
         set(ID.Order_Timer_Stage0_Enabled,true);
         set(ID.Order_Timer_Stage1_Enabled,true);
         set(ID.Order_Timer_Stage2_Enabled,true);
 
         // Items showing settings
         set(ID.Item_Consolidate, false);
-        set(ID.Item_Default_FontFace, new KDSViewFontFace(getResColor(R.color.item_bg), getResColor(R.color.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_ITEM));
+        set(ID.Item_Default_FontFace, new KDSViewFontFace(getAttrColor(R.attr.item_bg), getAttrColor(R.attr.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_ITEM));
 
         //set(ID.Item_Focused_Showing_Method, ComponentFocusedMethod.Add_Previous_String.ordinal());
         //set(ID.Item_Focused_FontFace, new KDSViewFontFace(Color.WHITE, Color.BLACK, KDSViewFontFace.DEFULT_FONT_FILE, 12));
@@ -1573,9 +1586,9 @@ public class KDSSettings extends SettingsBase {
         //set(ID.Item_mark_with_char,false);
         set(ID.Item_showing_method, ItemShowingMethod.On_the_fly.ordinal()); //20160706
         //condiments
-        set(ID.Condiment_Default_FontFace, new KDSViewFontFace(getResColor(R.color.condiment_bg), getResColor(R.color.condiment_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_CONDIMENT));
+        set(ID.Condiment_Default_FontFace, new KDSViewFontFace(getAttrColor(R.attr.condiment_bg), getAttrColor(R.attr.condiment_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_CONDIMENT));
         set(ID.Condiment_Starting_Position, KDSUtil.convertIntToString(COMDIMENT_LEADING_POSITION));
-        set(ID.Message_Default_FontFace, new KDSViewFontFace(getResColor(R.color.premsg_bg), getResColor(R.color.premsg_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_PREMESSAGE));
+        set(ID.Message_Default_FontFace, new KDSViewFontFace(getAttrColor(R.attr.premsg_bg), getAttrColor(R.attr.premsg_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.DEFAULT_FONT_SIZE_PREMESSAGE));
 
         set(ID.Bumpbar_Kbd_Type, "0");
         set(ID.Bumpbar_OK,          KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_1, false, false, false));// "8,0,0,0"); //'1' //format: key + alt+ctrl+shift
@@ -1628,27 +1641,27 @@ public class KDSSettings extends SettingsBase {
 
         //highlight
         set(ID.Highlight_rush_enabled, false);
-        set(ID.Highlight_rush_bgfg,buildBGFG(R.color.rush_bg, 0));// "-39424,0");// getResColor(R.color.rush_bg));
+        set(ID.Highlight_rush_bgfg,buildAttrBGFG(R.attr.rush_bg, R.attr.rush_fg));// "-39424,0");// getResColor(R.color.rush_bg));
         //set(ID.Highlight_rush_fg, getResColor(R.color.rush_fg));
         set(ID.Highlight_fire_enabled, false);
-        set(ID.Highlight_fire_bgfg, buildBGFG(R.color.fire_bg, 0));// "-4521814,0");//getResColor(R.color.fire_bg));
+        set(ID.Highlight_fire_bgfg, buildAttrBGFG(R.attr.fire_bg, R.attr.fire_fg));// "-4521814,0");//getResColor(R.color.fire_bg));
         //set(ID.Highlight_fire_fg, getResColor(R.color.fire_fg));
         set(ID.Highlight_dest_enabled, false);
-        set(ID.Highlight_dest_bgfg, buildBGFG(R.color.dest_bg, 0));// "-5636045,0");//getResColor(R.color.dest_bg));
+        set(ID.Highlight_dest_bgfg, buildAttrBGFG(R.attr.dest_bg, R.attr.dest_fg));// "-5636045,0");//getResColor(R.color.dest_bg));
         //set(ID.Highlight_dest_fg, getResColor(R.color.fire_fg));
 
         //set(ID.Bumping_Days, "3");
 
         set(ID.Exp_Alert_Enabled, false);
         set(ID.Exp_Alert_Change_Whole_Panel_Color, false);
-        set(ID.Exp_Alert_Color_BG, getResColor(R.color.expalert_bg));
+        set(ID.Exp_Alert_Color_BG, getAttrColor(R.attr.expalert_bg));
 
         set(ID.Sum_Type, "0");
         set(ID.Information_List_Enabled, false);
         set(ID.Order_Sort, "0");
 
         //KDSViewFontFace ff = new KDSViewFontFace(Color.WHITE.TRANSPARENT, Color.DKGRAY, KDSViewFontFace.DEFULT_FONT_FILE, 12);
-        set(ID.Touch_fontface,new KDSViewFontFace(getResColor(R.color.touch_button_bg),getResColor(R.color.touch_button_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
+        set(ID.Touch_fontface,new KDSViewFontFace(getAttrColor(R.attr.touch_button_bg),getAttrColor(R.attr.touch_button_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
         set(ID.Touch_next,true);
         set(ID.Touch_prev,true);
         set(ID.Touch_up,true);
@@ -1668,18 +1681,18 @@ public class KDSSettings extends SettingsBase {
         set(ID.Touch_test, true);
         set(ID.Touch_page,true);
        // KDSViewFontFace ff =  new KDSViewFontFace( getResColor(R.color.kds_title_bg),getResColor( R.color.kds_title_fg), KDSViewFontFace.DEFULT_FONT_FILE, 14);
-        set(ID.Screen_title_fontface, new KDSViewFontFace( getResColor(R.color.kds_title_bg),getResColor( R.color.kds_title_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
+        set(ID.Screen_title_fontface, new KDSViewFontFace( getAttrColor(R.attr.kds_title_bg),getAttrColor(R.attr.kds_title_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
 
         set(ID.Sum_position, "0");
         set(ID.Sum_order_by, "0");
 
         set(ID.Bumping_confirm, false);
-        set(ID.Focused_BG, getResColor(R.color.focus_bg) );
+        set(ID.Focused_BG, getAttrColor(R.attr.focus_bg) );
         set(ID.Screen_Show_Time, true);
 
         set(ID.Bumping_PanelNum_Mode, "0");
         set(ID.From_primary_text, getResString(R.string.from_primary_default_text));
-        set(ID.From_primary_font,new KDSViewFontFace(getResColor(R.color.item_bg), getResColor(R.color.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
+        set(ID.From_primary_font,new KDSViewFontFace(getAttrColor(R.attr.item_bg), getAttrColor(R.attr.item_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
         set(ID.Hide_navigation_bar, false);
         set(ID.Settings_password_enabled, false);
         set(ID.Settings_password, "");
@@ -1702,18 +1715,18 @@ public class KDSSettings extends SettingsBase {
         set(ID.Queue_show_order_ID,true);
         int normalsize = KDSViewFontFace.FONT_SIZE_NORMAL;
         int nlargesize = KDSViewFontFace.FONT_SIZE_LARGE;
-        set(ID.Queue_order_ID_font, new KDSViewFontFace( getResColor(R.color.queue_order_id_bg),getResColor( R.color.queue_order_id_fg), KDSViewFontFace.DEFULT_FONT_FILE,nlargesize ));
+        set(ID.Queue_order_ID_font, new KDSViewFontFace( getAttrColor(R.attr.queue_order_id_bg),getAttrColor( R.attr.queue_order_id_fg), KDSViewFontFace.DEFULT_FONT_FILE,nlargesize ));
         set(ID.Queue_show_customer_name,false);
-        set(ID.Queue_customer_name_font, new KDSViewFontFace( getResColor(R.color.queue_cusomer_name_bg),getResColor( R.color.queue_cusomer_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, normalsize));
+        set(ID.Queue_customer_name_font, new KDSViewFontFace( getAttrColor(R.attr.queue_cusomer_name_bg),getAttrColor( R.attr.queue_cusomer_name_fg), KDSViewFontFace.DEFULT_FONT_FILE, normalsize));
         set(ID.Queue_show_order_timer,false);
-        set(ID.Queue_order_timer_font, new KDSViewFontFace( getResColor(R.color.queue_order_timer_bg),getResColor( R.color.queue_order_timer_fg), KDSViewFontFace.DEFULT_FONT_FILE, normalsize));
+        set(ID.Queue_order_timer_font, new KDSViewFontFace( getAttrColor(R.attr.queue_order_timer_bg),getAttrColor( R.attr.queue_order_timer_fg), KDSViewFontFace.DEFULT_FONT_FILE, normalsize));
         set(ID.Queue_show_custom_message,false);
-        set(ID.Queue_custom_message_font, new KDSViewFontFace( getResColor(R.color.queue_cusom_message_bg),getResColor( R.color.queue_cusom_message_fg), KDSViewFontFace.DEFULT_FONT_FILE, normalsize));
+        set(ID.Queue_custom_message_font, new KDSViewFontFace( getAttrColor(R.attr.queue_cusom_message_bg),getAttrColor( R.attr.queue_cusom_message_fg), KDSViewFontFace.DEFULT_FONT_FILE, normalsize));
 
-        set(ID.Queue_order_received_font, new KDSViewFontFace( getResColor(R.color.queue_order_status_received_bg),getResColor( R.color.queue_order_status_received_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+        set(ID.Queue_order_received_font, new KDSViewFontFace( getAttrColor(R.attr.queue_order_status_received_bg),getAttrColor( R.attr.queue_order_status_received_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
 
-        set(ID.Queue_order_preparation_font, new KDSViewFontFace( getResColor(R.color.queue_order_status_preparation_bg),getResColor( R.color.queue_order_status_preparation_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
-        set(ID.Queue_order_ready_font, new KDSViewFontFace( getResColor(R.color.queue_order_status_ready_bg),getResColor( R.color.queue_order_status_ready_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+        set(ID.Queue_order_preparation_font, new KDSViewFontFace( getAttrColor(R.attr.queue_order_status_preparation_bg),getAttrColor( R.attr.queue_order_status_preparation_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+        set(ID.Queue_order_ready_font, new KDSViewFontFace( getAttrColor(R.attr.queue_order_status_ready_bg),getAttrColor( R.attr.queue_order_status_ready_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
 
         set(ID.Queue_move_ready_to_front,true);
         set(ID.Queue_flash_ready_order,true);
@@ -1721,9 +1734,9 @@ public class KDSSettings extends SettingsBase {
 
         //set(ID.Queue_double_bump_expo_order,true);
 
-        set(ID.Queue_order_pickup_font, new KDSViewFontFace( getResColor(R.color.queue_order_status_pickup_bg),getResColor( R.color.queue_order_status_pickup_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
+        set(ID.Queue_order_pickup_font, new KDSViewFontFace( getAttrColor(R.attr.queue_order_status_pickup_bg),getAttrColor( R.attr.queue_order_status_pickup_fg), KDSViewFontFace.DEFULT_FONT_FILE, nlargesize));
 
-        set(ID.Queue_view_bg,getResColor( R.color.queue_view_bg));
+        set(ID.Queue_view_bg,getAttrColor( R.attr.queue_view_bg));
 
         set(ID.Queue_received_status, getResString(R.string.queue_status_received));
         set(ID.Queue_preparation_status,getResString(R.string.queue_status_preparation));
@@ -1757,7 +1770,7 @@ public class KDSSettings extends SettingsBase {
         //set(ID.Queue_simple_show_preparation_col,true);
         //set(ID.Queue_simple_show_ready_col,true);
         //set(ID.Queue_simple_show_pickup_col,true);
-        set(ID.Queue_separator_color,getResColor( R.color.queue_separator_color));
+        set(ID.Queue_separator_color,getAttrColor( R.attr.queue_separator_color));
 
         //set(ID.Tracker_enabled,false);
 //        set(ID.Tracker_IP,"");
@@ -1814,7 +1827,7 @@ public class KDSSettings extends SettingsBase {
         set(ID.General_screens_ratio,"0");
         set(ID.Screen_subtitle_a_text,KDSApplication.getContext().getString(R.string.screen_a));
         set(ID.Screen_subtitle_b_text,KDSApplication.getContext().getString(R.string.screen_b));
-        set(ID.Screen_subtitle_font, new KDSViewFontFace(getResColor(R.color.subtitle_bg), getResColor(R.color.subtitle_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
+        set(ID.Screen_subtitle_font, new KDSViewFontFace(getAttrColor(R.attr.subtitle_bg), getAttrColor(R.attr.subtitle_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_SMALL));
 
 
         set(ID.Screen1_Panels_Layout_Format,LayoutFormat.Horizontal.ordinal());
@@ -1828,9 +1841,9 @@ public class KDSSettings extends SettingsBase {
 
 
         set(ID.LineItems_Enabled,false);
-        set(ID.LineItems_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
+        set(ID.LineItems_font,new KDSViewFontFace(getAttrColor(R.attr.lineitems_bg), getAttrColor(R.attr.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
         set(ID.LineItems_caption_text,getResString(R.string.line_items_display));
-        set(ID.LineItems_caption_font,new KDSViewFontFace(getResColor(R.color.lineitems_bg), getResColor(R.color.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
+        set(ID.LineItems_caption_font,new KDSViewFontFace(getAttrColor(R.attr.lineitems_bg), getAttrColor(R.attr.lineitems_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_LARGE));
         set(ID.LineItems_cols,KDSConst.LINE_ITEMS_DEFAULT_COLS);//"25,25,25,25");
 
         set(ID.LineItems_col0_text,getResString(R.string.str_id));
@@ -3041,13 +3054,48 @@ public class KDSSettings extends SettingsBase {
        return true;
    }
 
- /**
-  * kpp1-299-1
-  */
- public void clearRelationshipData()
+   /**
+    * kpp1-299-1
+    */
+   public void clearRelationshipData()
    {
      SettingsBase.saveStationsRelation(KDSApplication.getContext(), "");
 
    }
 
+   public void savePrefValue(SharedPreferences pref, ID id, Object val)
+   {
+
+      String key = m_mapPrefID.get(id);
+      setPrefValue(pref, key, val);
+      m_mapSettings.put(id, val);
+
+   }
+
+   public String getTypeString(ID id)
+   {
+     String key = m_mapPrefID.get(id);
+     String s = key;
+     int n = s.indexOf("_", 0);
+     s = s.substring(0, n);
+     return s;
+     //String tag = key.substring(n + 1);
+   }
+
+   String buildAttrBGFG(int nBGID, int nFGID)
+   {
+    int bg = getAttrColor(nBGID);
+    int fg = getAttrColor(nFGID);
+    String s = String.format("%d,%d", bg, fg);
+    return s;
+   }
+
+   public void savePrefValue(SharedPreferences.Editor editor, ID id, Object val)
+   {
+
+       String key = m_mapPrefID.get(id);
+       setPrefValue(editor, key, val);
+       m_mapSettings.put(id, val);
+
+   }
 }
