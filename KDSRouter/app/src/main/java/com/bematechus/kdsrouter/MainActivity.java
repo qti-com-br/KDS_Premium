@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -280,7 +281,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_txtError = (TextView)findViewById(R.id.txtError);
         m_imgMenu  = (ImageView)findViewById(R.id.imgMenu);
+        m_imgMenu.setColorFilter(ThemeUtil.getAttrColor(this.getApplicationContext(), R.attr.kds_title_fg), PorterDuff.Mode.SRC_ATOP);
+
         m_imgState= (ImageView)this.findViewById(R.id.imgState);
+        m_imgState.setColorFilter(ThemeUtil.getAttrColor(this.getApplicationContext(), R.attr.kds_title_fg), PorterDuff.Mode.SRC_ATOP);
+
         m_txtTime = (TextView)this.findViewById(R.id.txtTime);
         m_txtDate = (TextView)this.findViewById(R.id.txtDate);
         m_txtTitle = (TextView)this.findViewById(R.id.txtTitle);
@@ -294,6 +299,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_lstInfo.setAdapter(m_infoAdapter);
 
         m_lstInfo.setFocusable(false);
+
+
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         pref.registerOnSharedPreferenceChangeListener(this);

@@ -368,7 +368,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
             imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
 			//imgState.setColorFilter(getResources().getColor(R.color.caption_fg));
-            imgState.setColorFilter(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.caption_fg));
+            imgState.setColorFilter(this.getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface).getFG(), PorterDuff.Mode.SRC_ATOP);
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
@@ -517,7 +517,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //tu.changeTheme(this.getApplicationContext(), ThemeUtil.KDSTheme.Light, getSettings());
 
         setContentView(R.layout.activity_main);
-        changeMenuIconColorAccoringToTheme();
+
         //m_txtPrev = (TextView) this.findViewById(R.id.txtPrev);
         //m_txtNext = (TextView) this.findViewById(R.id.txtNext);
         //m_txtTitle = (TextView) this.findViewById(R.id.txtTitle);
@@ -1220,6 +1220,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             SetTitleVisible(false);
         }
+
+        changeMenuIconColorAccoringToTheme();
     }
 
 
@@ -8395,6 +8397,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         KDSViewFontFace ff = getSettings().getKDSViewFontFace(KDSSettings.ID.Screen_title_fontface);
 
         v.setColorFilter(ff.getFG(), PorterDuff.Mode.SRC_ATOP);
+
 
 
     }

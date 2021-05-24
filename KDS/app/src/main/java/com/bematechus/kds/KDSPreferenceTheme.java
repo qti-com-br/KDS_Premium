@@ -31,15 +31,15 @@ public class KDSPreferenceTheme extends ListPreference {
     {
         AlertDialog d = new AlertDialog.Builder(this.getContext())
                 .setTitle(this.getContext().getApplicationContext().getString(R.string.confirm))
-                .setMessage("theme changed, all existed will been overwrite")
-                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                .setMessage(getContext().getString(R.string.theme_confirm))
+                .setPositiveButton(getContext().getString(R.string.str_continue), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 KDSPreferenceTheme.super.setValue(m_newValue);
                             }
                         }
                 )
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }

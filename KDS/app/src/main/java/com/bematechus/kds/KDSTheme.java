@@ -13,7 +13,7 @@ import com.bematechus.kdslib.KDSViewFontFace;
 public class KDSTheme {
     enum MyTheme
     {
-        Default,
+        //Default,
         Dark,
         Light
     }
@@ -47,7 +47,7 @@ public class KDSTheme {
         int nStyle = R.style.AppTheme_Dark;
         switch (theme)
         {
-            case Default:
+            //case Default:
             case Dark:
                 nStyle = R.style.AppTheme_Dark;
                 break;

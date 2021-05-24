@@ -55,7 +55,7 @@
 <!--    <com.bematechus.kdslib.KDSListPreference-->
     <com.bematechus.kds.KDSPreferenceTheme
         android:key="theme_mode"
-        android:title="Theme"
+        android:title="@string/theme"
         android:defaultValue="0"
         android:entries="@array/pref_themes_titles"
         android:entryValues="@array/pref_themes_values"
