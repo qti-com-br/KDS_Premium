@@ -16,25 +16,25 @@
 
         <item name="kds_title_bg">#21ABAE</item>
         <item name="kds_title_fg">?attr/black</item>
-        <item name="view_bg">?attr/lci_background_dark</item>
-        <item name="panel_bg">?attr/lci_background_darkish</item>
+        <item name="view_bg">#f2f2f2</item>
+        <item name="panel_bg">?attr/white</item>
 <!--        <item name="panel_fg">?attr/white</item>-->
         <item name="border_bg">?attr/gray</item>
-        <item name="panelnum_bg">?attr/dark_gray</item>
-        <item name="panelnum_fg">?attr/white</item>
+        <item name="panelnum_bg">?attr/lci_background_darkish</item>
+        <item name="panelnum_fg">?attr/black</item>
         <item name="caption_bg">?attr/gray</item>
         <item name="caption_fg">?attr/black</item>
         <!--#FCC600-->
-        <item name="focus_bg">?attr/lci_peripherals</item>
+        <item name="focus_bg">?attr/dark_gray</item>
 <!--        <item name="focus_fg">?attr/lci_peripherals</item>-->
-        <item name="stage0_bg">#FFC107</item>
-        <item name="stage1_bg">#C85700</item>
+        <item name="stage0_bg">#fed04e</item>
+        <item name="stage1_bg">#f0750f</item>
         <item name="stage2_bg">#e62d05</item>
         <item name="item_bg">?attr/white</item>
         <item name="item_fg">?attr/black</item>
         <item name="condiment_bg">?attr/white</item>
         <item name="condiment_fg">?attr/black</item>
-        <item name="premsg_bg">?attr/lci_logic_blue</item>
+        <item name="premsg_bg">?attr/white</item>
         <item name="premsg_fg">?attr/black</item>
         <item name="footer_bg">?attr/white</item>
         <item name="footer_fg">?attr/black</item>
