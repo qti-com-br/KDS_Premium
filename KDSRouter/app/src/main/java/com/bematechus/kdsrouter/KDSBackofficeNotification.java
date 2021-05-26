@@ -14,6 +14,7 @@ import com.bematechus.kdslib.KDSDataMessages;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.TimeDog;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
@@ -85,6 +86,9 @@ public class KDSBackofficeNotification extends Handler{
     }
 
     BackofficeNotification_Event m_receiver = null;
+
+    //kp-119, Stations Not Receiving Orders
+    static public Date m_dateHeartbeat = new Date();
 
     public KDSBackofficeNotification(BackofficeNotification_Event receiver)
     {
@@ -1528,6 +1532,8 @@ public class KDSBackofficeNotification extends Handler{
 
         @Override
         public void onOpen(ServerHandshake serverHandshake) {
+            //kp-119
+            m_dateHeartbeat.setTime(System.currentTimeMillis());
 
             //sendStoreGuid();
             log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onOpen: " + serverHandshake.toString());
@@ -1608,5 +1614,19 @@ public class KDSBackofficeNotification extends Handler{
             //    return;
             sendStoreGuid(Activation.getStoreGuid());
         }
+    }
+
+    static final int TIMEOUT_HEARTBEAT_LOST = 8000;
+    /**
+     * Every 5 seconds, websock get one beat.
+     *
+     * @return
+     *
+     */
+    static public boolean isHeartbeatLost()
+    {
+        TimeDog td = new TimeDog(m_dateHeartbeat);
+
+        return td.is_timeout(TIMEOUT_HEARTBEAT_LOST);
     }
 }

@@ -335,14 +335,18 @@ public class KDSSocketManager implements Runnable {
         return (m_threadSocket != null);
     }
 
+    static public long m_nLostNetworkCount = 0; // use it to limit the network sensitive.
     static public boolean isNetworkActived(Context context) {
         String service = Context.CONNECTIVITY_SERVICE;
         ConnectivityManager cm = (ConnectivityManager) (context.getSystemService(service));
         NetworkInfo ni = cm.getActiveNetworkInfo();
         // showMsg(ni.toString());
 
-        if (ni != null && ni.isConnectedOrConnecting())
+        if (ni != null && ni.isConnectedOrConnecting()) {
+            m_nLostNetworkCount = 0;
             return true;
+        }
+        m_nLostNetworkCount ++;
         return false;
     }
 

@@ -179,10 +179,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             m_imgState.setTag(1);
         }
         else{
-            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
-            if (m_imgState.getTag() == null ||
-                    (int) m_imgState.getTag() == 1)
-            m_imgState.setTag(0);
+            if (KDSSocketManager.m_nLostNetworkCount >4) {
+                if (KDSBackofficeNotification.isHeartbeatLost()) {
+                    m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
+                    if (m_imgState.getTag() == null ||
+                            (int) m_imgState.getTag() == 1)
+                        m_imgState.setTag(0);
+                }
+            }
         }
     }
 

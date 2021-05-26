@@ -372,10 +372,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (isKDSValid() && (!getKDS().isNetworkRunning()))
                 onNetworkRestored();
         } else {
-            imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
-			imgState.setColorFilter(null);
-            if (isKDSValid() && getKDS().isNetworkRunning())
-                onNetworkLost();
+            if (KDSSocketManager.m_nLostNetworkCount >3) {
+                imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
+                imgState.setColorFilter(null);
+                if (isKDSValid() && getKDS().isNetworkRunning())
+                    onNetworkLost();
+            }
 
         }
     }

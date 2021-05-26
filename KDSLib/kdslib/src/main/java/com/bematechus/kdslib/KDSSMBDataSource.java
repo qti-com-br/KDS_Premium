@@ -135,9 +135,9 @@ public class KDSSMBDataSource implements Runnable {
             this.m_sockEventsMessageHandler.sendInformation(PATH_OK);
     }
 
-    TimeDog m_tdLastCheckPermission = new TimeDog();
+    TimeDog m_tdLastCheckPermission = new TimeDog(KDSUtil.createInvalidDate());
     boolean m_bPermissionError = false;
-    final int CHECK_PERMISSION_TIMEOUT_NO_ERROR = 15000;
+    final int CHECK_PERMISSION_TIMEOUT_NO_ERROR = 3600000;//60 minutes
     final int CHECK_PERMISSION_TIMEOUT_HAVE_ERROR = 3000;
     private boolean isRemoteFolderPermissionError()
     {
@@ -150,7 +150,7 @@ public class KDSSMBDataSource implements Runnable {
                 m_tdLastCheckPermission.reset();
             }
         }
-        else {//if all is ok, 5 mins check once.
+        else {//if all is ok, 60 mins check once.
             if (m_tdLastCheckPermission.is_timeout(CHECK_PERMISSION_TIMEOUT_NO_ERROR)) {
                 bIsTimeForCheckPermission = true;
                 m_tdLastCheckPermission.reset();
