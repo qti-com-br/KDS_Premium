@@ -339,10 +339,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             m_bNetworkActived = true;
         }
         else{
-
-            if (m_bNetworkActived)
-                onNetworkLost();
-            m_bNetworkActived = false;
+            if (KDSSocketManager.m_nLostNetworkCount >4) {
+                if (KDSBackofficeNotification.isHeartbeatLost()) {
+                    if (m_bNetworkActived)
+                        onNetworkLost();
+                    m_bNetworkActived = false;
+                }
+            }
         }
     }
 
