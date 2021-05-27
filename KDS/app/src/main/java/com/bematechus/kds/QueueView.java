@@ -1307,7 +1307,8 @@ public class QueueView  extends View {
     {
 
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_customer_name)){
-            rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftCustomerName, order.getToTable(), false,bReverseReadyColorForFlash);
+            //fix bug, kp-117 Customer Name  in Customer Display
+            rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftCustomerName, order.getCustomer().getName(), false,bReverseReadyColorForFlash);
         }
         //if (m_bShowCustomMessage)
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_custom_message))
