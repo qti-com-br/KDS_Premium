@@ -47,9 +47,10 @@ public class KDSDBCurrent extends KDSDBBase {
      *      20171030, please notice, the sosread is for queue-ready.
      * 18: add prepsort table, for preparation time mode.
      * 19: add modifiers table
+     * 20: add inputmsg, and r10 -- r19
      */
 
-    static public final int DB_VERSION = 19;//20180131
+    static public final int DB_VERSION = 20;//20210527
     //static public final int DB_VERSION = 6;//20160407
     static public final String DB_NAME = "current.db";
     static public final String TAG = "KDSDBCurrent";
@@ -250,7 +251,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    final int ORDER_FIELDS_COUNT = 31; //it should equal field in following function.
+    final int ORDER_FIELDS_COUNT = 32; //it should equal field in following function.
 
     /**
      * see function #orderGet() and  #ordersLoadAllJustInfo
@@ -289,7 +290,8 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r5," + //28
                 "orders.r6," + //29
                 "orders.r7," + //30
-                "orders.r8 " ; //31, auto unpark.
+                "orders.r8," + //31, auto unpark.
+                "orders.inputmsg ";//32 //input message, kp-114
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -414,6 +416,10 @@ public class KDSDBCurrent extends KDSDBBase {
         if (!s.isEmpty())
             dt = KDSUtil.convertStringToDate(s, dt);
         c.setAutoUnparkDate(dt);
+
+        s = getString(sf,32);//kp-114 input message
+        c.setInputMessage(s);
+
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
         if (sf.getColumnCount() > ORDER_FIELDS_COUNT) //save the items count.,for :ordersLoadAllJustInfo function
@@ -4132,6 +4138,29 @@ update the schedule item ready qty
 
     }
 
+    public void orderSetInputMessage(String orderGuid, String msg)
+    {
+        String sql = String.format("update orders set inputmsg='%s' where guid='%s'", msg, orderGuid);
+        this.executeDML(sql);
+        updateDbTimeStamp();
+    }
+
+    public String orderGetInputMessage(String orderGuid)
+    {
+        String sql = "select inputmsg from orders where guid='" + orderGuid +"'";
+
+        if (getDB() == null) return "";
+
+        Cursor c = getDB().rawQuery(sql, null);
+        String msg = "";
+        if (c.moveToNext()) {
+            msg = getString(c,0);
+
+        }
+        c.close();
+        return msg;
+    }
+
     /***************************************************************************
      * SQL definitions
      *
@@ -4178,7 +4207,19 @@ update the schedule item ready qty
             + "TrackerID text(16)," //As TT was removed, I use this to do kpp1-456, "Runner" station. Save showing cateogry name.
             + "PagerID text(16),"//for table-tracker
             + "CookState int default 0,"
-            + "SosReady int default 0 ";
+            + "SosReady int default 0, "
+            + "inputmsg text(16)," //kp-114 add fields
+            + "r10 text(16),"
+            + "r11 text(16),"
+            + "r12 text(16),"
+            + "r13 text(16),"
+            + "r14 text(16),"
+            + "r15 text(16),"
+            + "r16 text(16),"
+            + "r17 text(16),"
+            + "r18 text(16),"
+            + "r19 text(16)";
+
 
 
     private static final String Table_Orders = Table_Orders_Fields + ")";

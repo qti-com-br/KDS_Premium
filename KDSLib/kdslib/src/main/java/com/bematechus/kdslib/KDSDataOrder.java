@@ -171,6 +171,8 @@ public class KDSDataOrder extends KDSData {
 
     Date m_autoUnparkDate = KDSUtil.createInvalidDate();
 
+    String m_strInputMessage = ""; //kp-114, Input a number in Order
+
     /***************************************************************************/
     
     public KDSDataOrder()
@@ -522,6 +524,7 @@ public class KDSDataOrder extends KDSData {
 
         obj.m_kdsGUID = m_kdsGUID;
         obj.mHeaderFooterMessage = mHeaderFooterMessage;
+        obj.m_strInputMessage = m_strInputMessage;//kp-114
 
     }
     /***************************************************************************
@@ -3271,6 +3274,20 @@ get the total qty of all found items
 
 
 
+    }
+
+    /**
+     * kp-114, Input a number in Order
+     * @param msg
+     */
+    public void setInputMessage(String msg)
+    {
+        m_strInputMessage = msg;
+    }
+
+    public String getInputMessage()
+    {
+        return m_strInputMessage;
     }
 
 }

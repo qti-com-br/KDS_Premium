@@ -433,6 +433,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 return order.getHeaderFooterMessage();
             }
             //break;
+            case InputMsg:
+            {
+                return order.getInputMessage();
+            }
             default:
                 return "";
         }

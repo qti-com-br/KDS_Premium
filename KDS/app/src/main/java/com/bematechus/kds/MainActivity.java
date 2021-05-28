@@ -24,6 +24,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbManager;
 //import android.net.Uri;
+import android.net.wifi.hotspot2.pps.Credential;
 import android.os.AsyncTask;
 //import android.os.Environment;
 import android.os.Build;
@@ -3349,6 +3350,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             KDSUIDlgAgreement.setAgreementAgreed(true);
         }
+        else if (dlg instanceof KDSUIDlgInputMessage)
+        {
+            KDSUIDlgInputMessage d = (KDSUIDlgInputMessage)dlg;
+            String orderGuid = d.getOrderGuid();
+            String msg = (String)d.getResult();
+            setOrderInputMessage(orderGuid, msg);
+
+        }
         else if (dlg instanceof KDSUIDialogBase) {
             if (dlg.getTag() == null) return;
             Confirm_Dialog confirm = (Confirm_Dialog) dlg.getTag();
@@ -5321,6 +5330,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 opMove(getFocusedUserID(), false);
             }
             break;
+            case Bumpbar_inputmsg:
+            {
+                opInputMessage(getFocusedUserID());
+            }
+            break;
             default:
                 break;
 
@@ -5454,6 +5468,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case Move:
             {
                 opMove(userID, true);
+            }
+            break;
+            case InputMsg:
+            {
+                opInputMessage(userID);
             }
             break;
         }
@@ -8402,6 +8421,27 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
 
 
+    }
+
+    private void opInputMessage(KDSUser.USER userID)
+    {
+        KDSUIDlgInputMessage dlg = new KDSUIDlgInputMessage(this, this);
+        dlg.setUserID(this.getFocusedUserID());
+        String guid = this.getFocusedOrderGUID(this.getFocusedUserID());
+        if (guid.isEmpty()) return;
+
+        dlg.setOrderGuid(guid);
+        dlg.show();
+    }
+
+    private void setOrderInputMessage(String orderGuid,String msg)
+    {
+        KDSDataOrder order =  this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null)
+            return;
+        order.setInputMessage(msg);
+        this.getKDS().getCurrentDB().orderSetInputMessage(orderGuid, msg);
+        this.getKDS().refreshView();
     }
 }
 

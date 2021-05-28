@@ -343,6 +343,7 @@
         <item>Order status</item>
         <item>Order icon</item>
         <item>Header or footer message</item>
+        <item>Input message</item>
 
     </string-array>
 
@@ -1334,5 +1335,7 @@
     </string-array>
 
     <string name="theme">Theme</string>
+    <string name="enable_input_touch_button">Enable [input] touch button</string>
+    <string name="input_msg">Input MSG</string>
 
 </resources>

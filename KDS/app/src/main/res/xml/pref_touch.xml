@@ -44,6 +44,12 @@
         android:defaultValue="false" />
 
     <CheckBoxPreference
+        android:key="touch_input_enabled"
+        android:title="@string/enable_input_touch_button"
+        android:defaultValue="false" />
+
+
+    <CheckBoxPreference
         android:key="touch_bump_enabled"
         android:title="@string/pref_kds_touch_bump_enabled"
         android:defaultValue="true" />

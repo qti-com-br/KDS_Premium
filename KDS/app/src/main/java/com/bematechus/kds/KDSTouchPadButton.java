@@ -48,6 +48,7 @@ public class KDSTouchPadButton {
         Next_Page,
         Prev_Page,
         Move, //kp-78 move order feature.
+        InputMsg,
     }
 
     String m_strText = "";
