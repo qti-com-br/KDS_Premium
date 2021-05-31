@@ -129,7 +129,7 @@ public class MainActivityFragment extends Fragment {
             addButton(KDSTouchPadButton.TouchPadID.Move, R.string.move, R.drawable.move, R.drawable.move_us);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_input)) //kp-78 move order feature
-            addButton(KDSTouchPadButton.TouchPadID.InputMsg, R.string.input_msg, R.drawable.move, R.drawable.move_us);
+            addButton(KDSTouchPadButton.TouchPadID.InputMsg, R.string.input_msg, R.drawable.msg, R.drawable.msg_us);
 
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_bump))
