@@ -433,6 +433,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 return order.getHeaderFooterMessage();
             }
             //break;
+            case CustomerName:
+            {
+                return order.getCustomer().getName();
+            }
             case InputMsg:
             {
                 return order.getInputMessage();
@@ -456,6 +460,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             case CustMessage:
             case OrderStatus:
             case OrderIcon:
+            case HeaderFooterMessage:
+            case CustomerName:
 
                 return ffDefault;
             case OrderType:

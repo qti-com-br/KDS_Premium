@@ -678,6 +678,7 @@
 		<item>Estado del Pedido</item>
 		<item>Icono de Orden</item>
 		<item>Header or footer message</item>
+		<item>Customer name</item>
 		<item>Input message</item>
 	</string-array>
 	<string-array name='pref_kds_item_showing_method_titles'>

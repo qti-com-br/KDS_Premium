@@ -335,6 +335,7 @@
         <item>订单状态</item>
         <item>订单图标</item>
         <item>Header or footer message</item>
+        <item>Customer name</item>
         <item>Input message</item>
     </string-array>
 
