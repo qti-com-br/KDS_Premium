@@ -3127,20 +3127,31 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         if (orderGuid.isEmpty()) return;
         KDSUser.USER userID = getKDS().getUsers().orderUnbump(orderGuid);
+        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
 
         //kpp1-439, just auto sort enabled, we set focus to unbumped order. Otherwise, keep current focus order.
         //           This is for preventing page changed issue.
         KDSSettings.OrdersSort ordersSort = KDSSettings.OrdersSort.values()[  getSettings().getInt(KDSSettings.ID.Order_Sort)];
-        if (ordersSort != KDSSettings.OrdersSort.Manually) {
+        if (ordersSort != KDSSettings.OrdersSort.Manually)
+        {
             //kpp1-389-1,
             this.getUserUI(userID).getLayout().getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
+        }
+        else if (order.isRush())
+        {//kp-105, rush order moved to prev page issue.
+            if (getSettings().getBoolean(KDSSettings.ID.Orders_sort_rush_front))
+            {
+                //String firstOrderGuid =  getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
+                //this.getUserUI(userID).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(firstOrderGuid);
+                this.getUserUI(userID).getLayout().getEnv().getStateValues().setFocusedOrderGUID(orderGuid);
+            }
         }
         //refreshWithNewDbDataAndFocusFirst(); //kpp1-251, use below line code
         this.getUserUI(userID).getLayout().adjustFocusOrderLayoutFirstShowingOrder(false);
 
         notifiyPOSOrderUnbump(userID, orderGuid);
         //KPP1-41
-        KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
+        //KDSDataOrder order = getKDS().getUsers().getOrderByGUID(orderGuid);
         if (order != null) {
             ActivationRequest.iOSOrderState iosstate = ActivationRequest.iOSOrderState.New;
             if (order.getFinishedItemsCount()>0)
