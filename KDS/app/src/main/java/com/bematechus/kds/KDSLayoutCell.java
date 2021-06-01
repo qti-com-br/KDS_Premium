@@ -437,6 +437,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             {
                 return order.getCustomer().getName();
             }
+            case InputMsg:
+            {
+                return order.getInputMessage();
+            }
             default:
                 return "";
         }

@@ -625,6 +625,8 @@ public class KDSSettings extends SettingsBase {
        PosInfo_auto_remove,
        PosInfo_remove_seconds,
        Theme_mode, //kp-113 theme
+       Touch_input, //kp-114, input message
+       Bumpbar_inputmsg,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -660,6 +662,7 @@ public class KDSSettings extends SettingsBase {
         OrderIcon,
         HeaderFooterMessage,
         CustomerName,
+        InputMsg,
     }
 
     public enum ComponentFocusedMethod
@@ -1463,6 +1466,9 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.PosInfo_auto_remove,"bool_posinfo_auto_remove", false);
         init_option(ID.PosInfo_remove_seconds,"string_posinfo_remove_seconds", "30");
         init_option(ID.Theme_mode,"string_theme_mode", "0");
+
+        init_option(ID.Touch_input,"bool_touch_input_enabled", false);
+        init_option(ID.Bumpbar_inputmsg, "string_bumpbar_func_inputmsg", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_I, false, false, false));// "i"
 
     }
 

@@ -336,6 +336,7 @@
         <item>订单图标</item>
         <item>Header or footer message</item>
         <item>Customer name</item>
+        <item>Input message</item>
     </string-array>
 
     <string name="pref_kds_caption_enable_cap2">启用订单头第二行</string>
@@ -1328,4 +1329,6 @@
         <item>Light</item>
     </string-array>
     <string name="theme">Theme</string>
+    <string name="enable_input_touch_button">Enable [input] touch button</string>
+    <string name="input_msg">Input MSG</string>
 </resources>
