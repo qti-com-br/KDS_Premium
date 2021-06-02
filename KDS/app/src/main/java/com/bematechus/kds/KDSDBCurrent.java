@@ -3319,7 +3319,7 @@ update the schedule item ready qty
         for (int i = 0; i< ncount; i++)
         {
             KDSDataItem item = order.getItems().getItem(i);
-            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0) values(" ;
+            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0,r1) values(" ;
             sql += "'" + order.getGUID() +"'";
             sql += ",'" + KDSUtil.fixSqliteSingleQuotationIssue(item.getItemName()) +"'";
             sql += ",'" + item.getCategory() + "'";
@@ -3330,6 +3330,7 @@ update the schedule item ready qty
             //sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //See notice
             sql += "," + KDSUtil.convertFloatToString(item.getItemDelay()); //
             sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //
+            sql += ",0";//started manullay: false
             sql += ")";
             this.executeDML(sql);
         }
@@ -3438,7 +3439,7 @@ update the schedule item ready qty
     {
         String sql = "";
 
-        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
+        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0,r1 from prepsort where orderguid='" + orderGuid +"'";
 
 
         PrepSorts prep = new PrepSorts();
@@ -3457,7 +3458,7 @@ update the schedule item ready qty
             item.RealStartTime = getInt(c,6);
             item.ItemDelay = getFloat(c,7);
             item.CategoryDelay = getFloat(c,8);
-
+            item.ItemStartedManually = (getInt(c, 9) == 1);
             prep.add(item);
 
         }
@@ -4161,6 +4162,12 @@ update the schedule item ready qty
         return msg;
     }
 
+    public void smart_set_item_started(String orderGuid, String itemName, boolean bStarted)
+    {
+        String sql = String.format("update prepsort set r1=%d where orderguid='%s' and itemname='%s'", bStarted?1:0, orderGuid, itemName);
+        this.executeDML(sql);
+    }
+
     /***************************************************************************
      * SQL definitions
      *
@@ -4381,7 +4388,7 @@ update the schedule item ready qty
             "finished int," + //identify if this item finihsed
             "RealStartTime int," +//the real time that this item start to cook. (seconds from order started).
             "r0 text(20)," + //Save category delay here.
-            "r1 text(20), " +
+            "r1 text(20), " + //kp-121, runner start it manually.
             "r2 text(20)," +
             "r3 text(20), " +
             "r4 text(20) )";

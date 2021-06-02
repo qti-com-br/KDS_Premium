@@ -2151,6 +2151,17 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                             return;
                     }
                 }
+
+                if ( getKDS().isRunnerStation()  ) //I am a runner
+                {//manually start cook.
+                    boolean bStartItemByBumpOrder = getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_start_item_manually);
+                    if (bStartItemByBumpOrder)
+                    {
+                        if (getKDS().getUsers().getUser(userID).runnerStartItemManually( orderGuid, ""))
+                            return;
+                    }
+                }
+
                 //kpp1-343, allow expo bump itself items . So, move this check here.
                 if (checkExpoConfirmationBump(userID, orderGuid, false))
                     return;
@@ -2169,6 +2180,15 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 else
                     onBumpOrder(userID);
             } else {
+                if ( getKDS().isRunnerStation()  ) //I am a runner
+                {
+                    boolean bStartItemByBumpOrder = getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_start_item_manually);
+                    if (bStartItemByBumpOrder)
+                    {
+                        if (getKDS().getUsers().getUser(userID).runnerStartItemManually( orderGuid, itemGuid))
+                            return;
+                    }
+                }
                 if (checkExpoCanBumpItem(userID, orderGuid, itemGuid))
                     onBumpItem(userID);
             }
@@ -8185,19 +8205,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
         boolean bAllFinished = order.isAllItemsBumpedInLocal();
-
+        boolean bChanged = false;
         for (int i=0; i< order.getItems().getCount(); i++) {
             KDSDataItem item = order.getItems().getItem(i);
             String itemName = item.getItemName();
 
             if ( order.prep_get_sorts().is_cooking_time(itemName, order.getStartTime(), order.getOrderDelay()))
             {
-                if (!item.getLocalBumped())
-                    itemBump(userID,orderGuid, item.getGUID() );
+                if (!item.getLocalBumped()) {
+                    itemBump(userID, orderGuid, item.getGUID());
+                    bChanged = true;
+                }
             }
         }
-
-        return (!bAllFinished);
+        if (PrepSorts.m_bStartItemManually)
+            return bChanged;
+        else
+            return (!bAllFinished);
     }
 
     /**
@@ -8454,5 +8478,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         this.getKDS().getCurrentDB().orderSetInputMessage(orderGuid, msg);
         this.getKDS().refreshView();
     }
+
+
 }
 

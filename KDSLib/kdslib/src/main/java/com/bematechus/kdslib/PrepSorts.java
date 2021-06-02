@@ -40,6 +40,7 @@ public class PrepSorts {
 
     static public boolean m_bSmartCategoryEnabled = false; //for kp1-25
 
+    static public boolean m_bStartItemManually = false; //kp-121, manually start item cooking.
 
     /**
      *
@@ -151,7 +152,10 @@ public class PrepSorts {
         {
             PrepItem item = items.get(i);
             if (item.finished) continue;
-
+            if (m_bStartItemManually)
+            {
+                if (item.ItemStartedManually) continue;
+            }
             if (maxPrepTime == null) {
                 maxPrepTime = item;
                 continue;
@@ -832,7 +836,13 @@ public class PrepSorts {
         PrepItem prep = findItem(itemName);
         if (prep == null) return 0;
         if (prep.finished) return 0; //kpp1-431-1, finished item should cooked.
-
+        if (m_bStartItemManually)
+        {
+            if (prep.ItemStartedManually)
+                return 0;
+            else
+                return Integer.MAX_VALUE - 999999999;
+        }
         //String lastCatDelay = "";
         //if (m_arSmartShowingCategory.size() >0)
         //    lastCatDelay = m_arSmartShowingCategory.get(0);
@@ -1174,6 +1184,8 @@ public class PrepSorts {
         public boolean finished = false;
         public int RealStartTime= 0; //seconds from order started
         public float CategoryDelay = 0;
+        public boolean ItemStartedManually = false;
+
         public void setFinished(boolean bFinished)//, int nStartedSeconds)
         {
             finished = bFinished;
@@ -1196,7 +1208,7 @@ public class PrepSorts {
         public String sqlNew()
         {
 
-            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0) values(" ;
+            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0,r1) values(" ;
             sql += "'" + orderguid +"'";
             sql += ",'" + KDSUtil.fixSqliteSingleQuotationIssue( ItemName) +"'";
             sql += ",'" + Category + "'";
@@ -1207,6 +1219,7 @@ public class PrepSorts {
             sql += "," + KDSUtil.convertIntToString(RealStartTime);
             sql += "," + KDSUtil.convertFloatToString( ItemDelay);
             sql += "," + KDSUtil.convertFloatToString( CategoryDelay);
+            sql += "," + KDSUtil.convertIntToString( ItemStartedManually?1:0 );
             sql += ")";
             return sql;
         }
