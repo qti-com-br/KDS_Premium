@@ -95,6 +95,7 @@
         <item>10</item>
         <item>11</item>
         <item>12</item>
+        <item>13</item>
     </string-array>
 
     <string-array name="pref_kds_item_showing_method__values" translatable="false">
