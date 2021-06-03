@@ -2147,8 +2147,28 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     boolean bFinishItemByBumpOrder = getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_finish_items_by_bump_order);
                     if (bFinishItemByBumpOrder)
                     {
-                        if (runnerModeBumpItems(userID, orderGuid))
-                            return;
+                        ArrayList<Boolean> arResult = new ArrayList<>();
+                        runnerModeBumpItems(userID, orderGuid ,arResult);
+                        boolean bAllItemsBumpedBeforeThisOperation = arResult.get(0);
+                        boolean bIsAnyItemStateChanged = arResult.get(1);
+                        if (PrepSorts.m_bStartItemManually)
+                        {
+                            if (!getKDS().isRunnerStation()) {
+                                if (bIsAnyItemStateChanged || !bAllItemsBumpedBeforeThisOperation)
+                                    return;
+                            }
+                            else
+                            {
+                                if (bIsAnyItemStateChanged)
+                                    return;
+                            }
+                        }
+                        else
+                        {
+                            if (!bAllItemsBumpedBeforeThisOperation)
+                                return;
+                        }
+                        //    return;
                     }
                 }
 
@@ -8196,15 +8216,19 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      * This brings up the next items based on the CatDelay.
      *
      * This will keep repeating until all items received have been bumped and from there the entire order can be bumped.
+     * @param arResult
+     *  index: 0: if all item were bumped.
+     *         1: If changed any item state in this bump operation.
      * @return
      *
      *  True: the bumping has been hold by this function.
      *  false: pass to next functions.
      */
-    private boolean runnerModeBumpItems(KDSUser.USER userID,  String orderGuid)
+    private boolean runnerModeBumpItems(KDSUser.USER userID,  String orderGuid, ArrayList<Boolean> arResult)
     {
         KDSDataOrder order = this.getKDS().getUsers().getOrderByGUID(orderGuid);
         boolean bAllFinished = order.isAllItemsBumpedInLocal();
+        arResult.add(bAllFinished);
         boolean bChanged = false;
         for (int i=0; i< order.getItems().getCount(); i++) {
             KDSDataItem item = order.getItems().getItem(i);
@@ -8218,6 +8242,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 }
             }
         }
+        arResult.add(bChanged);
         if (PrepSorts.m_bStartItemManually)
             return bChanged;
         else

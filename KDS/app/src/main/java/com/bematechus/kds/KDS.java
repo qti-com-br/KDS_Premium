@@ -5791,8 +5791,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             String itemName = arItemNames.get(i);
             if (order.getItems().getItemByName(itemName) == null)
                 continue;
-            this.getCurrentDB().smart_set_item_started(guid, itemName, true);
-            order.prep_get_sorts().findItem(itemName).ItemStartedManually = true;
+
+            PrepSorts.PrepItem smartItem = order.prep_get_sorts().findItem(itemName);
+            if (smartItem!= null) {
+                smartItem.ItemStartedManually = true;
+                this.getCurrentDB().smart_set_item_started(guid, itemName, true);
+            }
         }
         //set the focus the just showing category.
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
