@@ -3,6 +3,7 @@ package com.bematechus.kds;
 import android.content.Context;
 import android.widget.TextView;
 
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
@@ -15,6 +16,7 @@ public class KDSUIDlgInputMessage   extends KDSUIDialogBase {
     //KDSDataOrder m_order = null;
     String mOrderGuid = "";
     KDSUser.USER m_userID = KDSUser.USER.USER_A;
+    KDSBumpBarKeyFunc.KeyboardType mKbdType = KDSBumpBarKeyFunc.KeyboardType.Standard;
 
     public void setOrderGuid(String orderGuid)
     {
@@ -45,6 +47,7 @@ public class KDSUIDlgInputMessage   extends KDSUIDialogBase {
 
     public void onOkClicked() {
         String s = m_txtText.getText().toString();
+        s = fixBumpbarOutputBug(s);
         m_strMessage = s;
 
     }
@@ -59,6 +62,43 @@ public class KDSUIDlgInputMessage   extends KDSUIDialogBase {
 
     }
 
+    /**
+     * The bumpbar output some unused string.
+     * We need to filter the input text.
+     * @param kbdType
+     */
+    public void setKeyboardType(KDSBumpBarKeyFunc.KeyboardType kbdType)
+    {
+        mKbdType = kbdType;
+    }
+
+    /**
+     * filter the input text, and remove bumpbar key name.
+     *
+     * @param strInput
+     * @return
+     */
+    private String fixBumpbarOutputBug(String strInput)
+    {
+        if (mKbdType == KDSBumpBarKeyFunc.KeyboardType.Standard)
+            return strInput;
+
+        String[] names = KDSBumpBarKeyFunc.getKeyNames(mKbdType);
+        if (names == null)
+            return strInput;
+        String s = strInput;
+        for (int i=0; i< names.length; i++)
+        {
+            String name = names[i];
+            if (KDSUtil.isDigitalString(name))
+                continue;
+            if (name.indexOf("/") >0) //0/10 string
+                continue;
+
+            s = s.replaceAll("(?i)"+name, "");
 
 
+        }
+        return s;
+    }
 }

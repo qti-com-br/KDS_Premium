@@ -69,6 +69,7 @@ import com.bematechus.kdslib.ActivityLogin;
 import com.bematechus.kdslib.CSVStrings;
 import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBase;
+import com.bematechus.kdslib.KDSBumpBarKeyFunc;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
@@ -8486,6 +8487,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     private void opInputMessage(KDSUser.USER userID)
     {
         KDSUIDlgInputMessage dlg = new KDSUIDlgInputMessage(this, this);
+        KDSBumpBarKeyFunc.KeyboardType kbdType =  KDSBumpBarKeyFunc.KeyboardType.values()[getSettings().getInt(KDSSettings.ID.Bumpbar_Kbd_Type)];
+        dlg.setKeyboardType(kbdType);
+
         dlg.setUserID(this.getFocusedUserID());
         String guid = this.getFocusedOrderGUID(this.getFocusedUserID());
         if (guid.isEmpty()) return;
