@@ -18,4 +18,10 @@
         android:summary="@string/bump_order_will_bring_up_next_items"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="runner_start_item_manually"
+        android:title="@string/start_item_manually"
+        android:summary="@string/use_bump_start_item_cook"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

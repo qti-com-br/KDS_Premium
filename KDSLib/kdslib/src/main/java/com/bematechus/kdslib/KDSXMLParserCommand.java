@@ -109,6 +109,8 @@ public class KDSXMLParserCommand {
         Prep_sync_new_order_to_queue,
         //kp1-25
         Runner_show_category,
+        //kp-121
+        Runner_start_cook_item,
     }
     private static final String COMMAND = "KDSCommand";
     private static final String CODE = "Code";
@@ -701,4 +703,13 @@ public class KDSXMLParserCommand {
         
 
     }
+
+    static public String createRunnerStartCookItem(String strStationID, String ipAddress, String macAddress, String orderName, String itemName, String itemNames)
+    {
+        java.util.ArrayList ar = new java.util.ArrayList();
+        ar.add(orderName);
+        ar.add(itemNames);
+        return createShortCommandXmlString(KDSCommand.Runner_start_cook_item.ordinal(), strStationID, ipAddress, macAddress, ar);
+    }
+
 }

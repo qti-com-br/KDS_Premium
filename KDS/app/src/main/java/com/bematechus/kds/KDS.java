@@ -419,6 +419,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 PrepSorts.m_bSmartCategoryEnabled = true;
             }
         }
+        //kp-121, manually start cooking.
+        PrepSorts.m_bStartItemManually =  settings.getBoolean(KDSSettings.ID.Runner_start_item_manually);
 
 
     }
@@ -2550,6 +2552,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Runner_show_category: //kp1-25
             {
                 onRunnerChangedCategory(this, command, xmlData);
+            }
+            break;
+            case Runner_start_cook_item:
+            {
+                onRunnerStartCookManually(this, command, xmlData);
             }
             break;
 
@@ -5767,5 +5774,38 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     public void checkDirtyOfflineData()
     {
         m_stationsConnection.checkDirtyOfflineData(this);
+    }
+
+    public void onRunnerStartCookManually(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    {
+        String orderName = command.getParam("P0", "");
+        String itemNames = command.getParam("P1", "");
+        ArrayList<String> arItemNames = KDSUtil.spliteString(itemNames, ",");
+        if (arItemNames.size() <=0) return;
+
+        KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        if (order == null) return; //kp-43 Prep stations crashing
+        String guid = order.getGUID();
+
+        for (int i=0; i< arItemNames.size(); i++) {
+            String itemName = arItemNames.get(i);
+            if (order.getItems().getItemByName(itemName) == null)
+                continue;
+
+            PrepSorts.PrepItem smartItem = order.prep_get_sorts().findItem(itemName);
+            if (smartItem!= null) {
+                smartItem.ItemStartedManually = true;
+                this.getCurrentDB().smart_set_item_started(guid, itemName, true);
+            }
+        }
+        //set the focus the just showing category.
+        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(guid);
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Runner_LineItems_Show_New_Category, ar);
+
+        }
+        this.refreshView();
     }
 }

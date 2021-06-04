@@ -627,6 +627,7 @@ public class KDSSettings extends SettingsBase {
        Theme_mode, //kp-113 theme
        Touch_input, //kp-114, input message
        Bumpbar_inputmsg,
+       Runner_start_item_manually,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1359,7 +1360,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Touch_prev_page,"bool_touch_prev_page_enabled", true);
         init_option(ID.Touch_next_page,"bool_touch_next_page_enabled", true);
 
-       //2.0.25
+        //2.0.25
         init_option(ID.Show_avg_prep_time,"bool_show_avg_prep_time", false);
         init_option(ID.Avg_prep_period,"string_real_time_period","60");//60secs
 
@@ -1414,7 +1415,7 @@ public class KDSSettings extends SettingsBase {
 
         //kpp1-377
         init_option(ID.Hide_station_title,"bool_hide_station_title",false);
-       //kp1-391
+        //kp1-391
         init_option(ID.Sum_font,"fontface_sum_font",new KDSViewFontFace(getAttrColor(R.attr.sum_bg), getAttrColor(R.attr.sum_fg), KDSViewFontFace.DEFULT_FONT_FILE, KDSViewFontFace.FONT_SIZE_NORMAL));
 
         //kpp1-386
@@ -1469,6 +1470,8 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.Touch_input,"bool_touch_input_enabled", false);
         init_option(ID.Bumpbar_inputmsg, "string_bumpbar_func_inputmsg", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_I, false, false, false));// "i"
+
+        init_option(ID.Runner_start_item_manually, "bool_runner_start_item_manually", false);
 
     }
 

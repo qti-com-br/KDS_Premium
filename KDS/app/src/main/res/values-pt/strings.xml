@@ -969,4 +969,6 @@
 	<string name="theme">Theme</string>
 	<string name="enable_input_touch_button">Enable [input] touch button</string>
 	<string name="input_msg">Input MSG</string>
+    <string name="start_item_manually">Start item manually</string>
+	<string name="use_bump_start_item_cook">Use [Bump item] to start focused item.</string>
 </resources>

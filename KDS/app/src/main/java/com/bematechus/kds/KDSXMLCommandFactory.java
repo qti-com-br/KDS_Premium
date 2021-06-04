@@ -82,7 +82,10 @@ public class KDSXMLCommandFactory {
             {
                 return KDSXMLParserCommand.createRunnerUpdateCategory(strStationID, ip, mac, order.getOrderName(),xmlData);
             }
-
+            case Runner_start_cook_item:
+            {
+                return KDSXMLParserCommand.createRunnerStartCookItem(strStationID, ip, mac, order.getOrderName(),item.getItemName(), xmlData);
+            }
             default:
                 return "";
         }

@@ -1,6 +1,7 @@
 package com.bematechus.kds;
 
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSDataItem;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSUtil;
@@ -416,5 +417,66 @@ public class KDSUser {
                 ar.add(getParkedOrders().get(i).getGUID());
         }
         return ar;
+    }
+
+    /**
+     * KP-121 manually start cook
+
+     * @param orderGuid
+     * @param itemGuid
+     * @return
+     *  True: item changed to cook.
+     *  false: do nothing.
+     */
+    public boolean runnerStartItemManually( String orderGuid,String itemGuid)
+    {
+        KDSDataOrder order =  this.getKDS().getUsers().getOrderByGUID(orderGuid);
+        if (order == null)
+            return false;
+        KDSDataItem item = null;
+        if (itemGuid.isEmpty())
+        {
+            PrepSorts.PrepItem smartNextItem = order.prep_get_sorts().sort();
+            if (smartNextItem != null)
+            {
+                item = order.getItems().getItemByName(smartNextItem.ItemName);
+            }
+            else
+                return false;
+        }
+        else {
+            item = order.getItems().getItemByGUID(itemGuid);
+            if (item == null) return false;
+        }
+        String itemName = item.getItemName();
+
+        PrepSorts.PrepItem smartItem = order.prep_get_sorts().findItem(itemName);
+        if (smartItem.ItemStartedManually)
+            return false;
+        String startedItemNames = "";
+        if (itemGuid.isEmpty()) {
+            //start next group
+            ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().runnerGetAllSameCatDelayItems(smartItem.CategoryDelay);
+
+            for (int i = 0; i < ar.size(); i++) {
+                smartItem = ar.get(i);
+                smartItem.ItemStartedManually = true;
+                this.getKDS().getCurrentDB().smart_set_item_started(orderGuid, smartItem.ItemName, true);
+                if (!startedItemNames.isEmpty())
+                    startedItemNames += ",";
+                startedItemNames += smartItem.ItemName;
+
+            }
+        }
+        else
+        {
+            smartItem.ItemStartedManually = true;
+            startedItemNames = smartItem.ItemName;
+        }
+        KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(),
+                KDSXMLParserCommand.KDSCommand.Runner_start_cook_item,
+                order, item, startedItemNames);
+
+        return true;
     }
 }
