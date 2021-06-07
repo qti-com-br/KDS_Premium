@@ -58,7 +58,10 @@ public class ScreenLogoDraw {
             m_lciLogo = null;
         }
 
-        String fileName = settings.getString(KDSSettings.ID.Screen_logo_file);
+        String fileName = "";//settings.getString(KDSSettings.ID.Screen_logo_file);
+        if (bEnabled)
+            fileName = settings.getString(KDSSettings.ID.Screen_logo_file);//custom log file.
+
         if (fileName.isEmpty()) {
             if (bEnabled) {
             	drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
@@ -66,7 +69,7 @@ public class ScreenLogoDraw {
 			}
         }
         if (!m_logoFileName.equals(fileName))
-        {
+        {//prevent load data every time.
             m_logoImage = loadLogoImage(fileName);
             if (m_logoImage != null)
             {
