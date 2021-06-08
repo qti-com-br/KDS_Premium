@@ -378,17 +378,32 @@ And the premodifiers strings will been delete with its unprintable item.
         String category = ("");
         //int i=0;
         KDSDataItem item = null;
+        ArrayList<KDSDataItem> arUnprintItems = new ArrayList<>();
+
         //while (i <nItemsCount) {
         for (int i=0; i< nItemsCount; i++){
             item = null;
             if (i >= items.getCount()) break;
             item = items.getItem(i);
             if (item == null) break;
+            if (!item.getPrintable()) {
+                arUnprintItems.add(item);
+                continue;
+            }
             if (!m_bPrintWithCondiments)
                 item.getCondiments().clear();
 
 
         }
+        //remove unprintable items
+        if (arUnprintItems.size()>0)
+        {
+            for (int i=0; i< arUnprintItems.size(); i++)
+            {
+                items.removeComponent(arUnprintItems.get(i));
+            }
+        }
+
 
     }
 

@@ -461,7 +461,7 @@ public class KDSDBCurrent extends KDSDBBase {
      */
     static private String ITEMS_FIELDS = "GUID,Name,Description,Qty,Category,BG,FG,Grp,Marked,DeleteByRemote,LocalBumped,BumpedStations," +
                                             "ToStations,Ready,Hiden,QtyChanged,ItemType,ItemDelay,PreparationTime,BuildCard,TrainingVideo," +
-                                            "SumTransEnable,SumTrans,r0,r1,r2,r3,r4 ";
+                                            "SumTransEnable,SumTrans,r0,r1,r2,r3,r4,r5 ";
 
     private KDSDataItems itemsGet(String orderGUID)// int nOrderID)
     {
@@ -572,6 +572,10 @@ public class KDSDBCurrent extends KDSDBBase {
         if (s ==null || s.isEmpty())
             s = "";
         c.setItemBumpGuid(s);
+
+        int n = getInt(sf, 28);
+        c.setPrintable((n !=0));
+
 
         return c;
     }
@@ -4301,7 +4305,7 @@ update the schedule item ready qty
             +"r4 text(16) ," //KPP1-64, item_bump_guid, 1. This is almost correct. The guid from item_bumps should be unique. This should be a random guid. This should not be the same guid as the items table guid.
                                 //2. The items guid should be a random guid. The item_bump table guid should be a random guid.
                                 //3. The random guid from the item_bumps table should be inserted into the correct Linked item in the items table column "item_bump_guid"
-            +"r5 text(16),"
+            +"r5 text(16)," //printable
             +"r6 text(16),"
             +"r7 text(16),"
             +"r8 text(16),"
