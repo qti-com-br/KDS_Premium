@@ -7883,12 +7883,29 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 KDSDataOrders ordersA = getKDS().getUsers().getUserA().getOrders();
                 if (ordersA.getCount() >0) {
                     KDSDataOrder orderA = ordersA.get(0);// KDSDataOrder) arParams.get(0);
+                    //if current focused order is not rush order, focus this new rush order.
+                    String focusedOrderGuid = getFocusedOrderGUID(KDSUser.USER.USER_A);
+                    KDSDataOrder focusedOrder =  getKDS().getUsers().getUserA().getOrders().getOrderByGUID(focusedOrderGuid);
+                    if (!focusedOrder.isRush()) {
+                        KDSDataOrder rushOrder = (KDSDataOrder) arParams.get(0);
+                        getUserUI(KDSUser.USER.USER_A).getLayout().getEnv().getStateValues().setFocusedOrderGUID(rushOrder.getGUID());
+                    }
+
                     getUserUI(KDSUser.USER.USER_A).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(orderA.getGUID());
                     getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);
                 }
                 if (arParams.size() >1) {
                     KDSDataOrders ordersB = getKDS().getUsers().getUserB().getOrders();
                     if (ordersB.getCount() >0) {
+
+                        //if current focused order is not rush order, focus this new rush order.
+                        String focusedOrderGuid = getFocusedOrderGUID(KDSUser.USER.USER_B);
+                        KDSDataOrder focusedOrder =  getKDS().getUsers().getUserB().getOrders().getOrderByGUID(focusedOrderGuid);
+                        if (!focusedOrder.isRush()) {
+                            KDSDataOrder rushOrder = (KDSDataOrder) arParams.get(1);
+                            getUserUI(KDSUser.USER.USER_B).getLayout().getEnv().getStateValues().setFocusedOrderGUID(rushOrder.getGUID());
+                        }
+
                         KDSDataOrder orderB = ordersB.get(0);// (KDSDataOrder) arParams.get(1);
                         getUserUI(KDSUser.USER.USER_B).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID(orderB.getGUID());
                         getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(true);

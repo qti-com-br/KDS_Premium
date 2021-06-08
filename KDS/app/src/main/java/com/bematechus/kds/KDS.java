@@ -5401,6 +5401,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     {
         if (!getSettings().getBoolean(KDSSettings.ID.Orders_sort_rush_front))
             return;
+
+        if (arOrdersAdded.size()<=0) return;
+
         for (int i=0; i< arOrdersAdded.size(); i++)
         {
             KDSDataOrder order = arOrdersAdded.get(i);
