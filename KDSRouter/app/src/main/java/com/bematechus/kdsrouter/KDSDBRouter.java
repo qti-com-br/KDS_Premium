@@ -1502,6 +1502,22 @@ public class KDSDBRouter extends KDSDBBase {
 
     }
 
+    public boolean categoryGetPrintable(String categoryDescription)
+    {
+        String s = categoryDescription;
+        s = KDSUtil.fixSqliteSingleQuotationIssue(s);
+        String sql = "select printable from Category where description='" + s + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        int n = 0;
+        if (c.moveToNext()) {
+            n  =  getInt(c,0);
+
+        }
+        c.close();
+        return (n!=0);
+
+    }
+
     /**
      * KP-17,
      * @param itemDescription
@@ -1521,6 +1537,33 @@ public class KDSDBRouter extends KDSDBBase {
 
         return flt;
 
+    }
+
+    public boolean itemGetPrintable(String category, String itemDescription)
+    {
+
+        String s = itemDescription;
+        s = KDSUtil.fixSqliteSingleQuotationIssue(s);
+
+        String guid = itemGetGuidFromDescription(category, itemDescription);
+
+        String sql = "";
+        int n = 0;
+        //check item
+        if (!guid.isEmpty()) {
+            sql = "select printable from items where guid='" + guid + "'";
+            Cursor c = getDB().rawQuery(sql, null);
+            if (c.moveToNext()) {
+
+                n = getInt(c, 0);
+                c.close();
+            }
+
+        }
+        boolean bPrintable = (n!=0);
+        boolean bCategoryPrintable = categoryGetPrintable(category);
+
+        return (bCategoryPrintable?bPrintable:bCategoryPrintable);
     }
 
     /***************************************************************************

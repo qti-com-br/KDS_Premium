@@ -109,6 +109,8 @@ public class KDSXMLParserOrder {
 
     public final static String DBXML_ELEMENT_AUTOUNPARK = "UnparkAt"; //kp-103 auto unpark feature.
 
+    public final static String DBXML_ELEMENT_PRINTABLE = "Printable"; //kp-103 auto unpark feature.
+    
     /************************************************************************/
     /* 
     <CatDelay> 
@@ -701,6 +703,12 @@ public class KDSXMLParserOrder {
                 item.setSumNamesEnabled(s.equals("1"));
                 item.setSumNames(KDSDataSumNames.parseString(strVal));
 
+            }
+            break;
+            case DBXML_ELEMENT_PRINTABLE:
+            {
+                boolean bPrintable = KDSUtil.convertStringToBool(strVal, true);
+                item.setPrintable(bPrintable);
             }
             break;
 

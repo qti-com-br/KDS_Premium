@@ -1460,6 +1460,9 @@ just 16bits value
         if (strVal.isEmpty()) return bDefault;
         if (strVal.equals("1"))
             return true;
+        if (Boolean.parseBoolean(strVal))
+            return true;
+
         return false;
 
 

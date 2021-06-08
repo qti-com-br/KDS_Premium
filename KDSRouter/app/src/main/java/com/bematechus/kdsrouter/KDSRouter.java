@@ -2365,6 +2365,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         assignSummaryTranslateToOrder(order, xmlData);
         assignModifierPreparationTime(order, xmlData);
         assignSmartTimeToOrder(order, xmlData);
+        assignItemsPrintable(order, xmlData);
+
         if (isAllItemsAssignedStation(order))
         {
             //String toStationWithScreen = this.getRouterDB().itemGetToStationWithScreen(category, description,strDefaultStationID);// m_strDefaultToStation);
@@ -2844,6 +2846,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                     }
                 }
 
+
                 //category delay tag
                 String xmlCategoryDelay = xml.getSubGrouValue(KDSXMLParserOrder.DBXML_ELEMENT_CATEGORY_DELAY, "");
                 xmlCategoryDelay = xmlCategoryDelay.trim();
@@ -2858,7 +2861,21 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                         xml.back_to_parent();
                     }
                 }
+                //item printable
+                String xmlItemPrintable = xml.getSubGrouValue(KDSXMLParserOrder.DBXML_ELEMENT_PRINTABLE, "");
+                xmlItemPrintable = xmlItemPrintable.trim();
+                if (xmlItemPrintable.isEmpty())
+                {
+                    xmlItemPrintable = (item.getPrintable()?"1":"0");
 
+                    if (!xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_PRINTABLE)){
+                        xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PRINTABLE, xmlItemPrintable, false);
+                    }
+                    else {
+                        xml.setGroupValue(xmlItemPrintable);
+                        xml.back_to_parent();
+                    }
+                }
 
 
                 //build cards
@@ -3069,6 +3086,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         for (int i=ncount-1; i>=0; i--)
         {
             KDSDataItem item = order.getItems().getItem(i);
+
             if (item.getItemType() == KDSDataItem.ITEM_TYPE.Exp)
                 continue;
             if (!item.getToStations().getString().isEmpty())
@@ -4029,6 +4047,22 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             stations.add(station);
             this.writeToAllStations(xmlData, stations);
         }
+
+    }
+
+    public void assignItemsPrintable(KDSDataOrder order, String xmlData)
+    {
+
+        int ncount = order.getItems().getCount();
+        for (int i=ncount-1; i>=0; i--)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            //set printable here
+            boolean bPrintable = getRouterDB().itemGetPrintable(item.getCategory(), item.getDescription());
+            item.setPrintable(bPrintable);
+
+        }
+
 
     }
 }
