@@ -395,7 +395,7 @@ And the premodifiers strings will been delete with its unprintable item.
 
 
         }
-        //remove unprintable items
+        //remove unprintable items, bug here.
         if (arUnprintItems.size()>0)
         {
             for (int i=0; i< arUnprintItems.size(); i++)
@@ -2153,6 +2153,12 @@ print order data to  buffer, socket will send this buffer to serial port
     }
 
 
+    /**
+     *
+     * @param order
+     *  This order is original one, it was showing on screen.
+     *  So, don't change anything in it when printing.
+     */
     public void printToBuffer(KDSDataOrder order)
     {
         if (order == null) return;
@@ -2162,16 +2168,19 @@ print order data to  buffer, socket will send this buffer to serial port
 
         if (len >= msz) return;
 
+        KDSDataOrder printOrder = new KDSDataOrder();
+        order.copyTo(printOrder);
+
         if (m_bGroupCategory)
         {
-            KDSDataOrder printOrder = new KDSDataOrder();
-            order.copyTo(printOrder);
+            //KDSDataOrder printOrder = new KDSDataOrder();
+            //order.copyTo(printOrder);
             KDSLayoutOrder.buildGroupCategory(printOrder);
-            order = printOrder;
+            //order = printOrder;
         }
 
-        rebuild_order_for_printable_options(order);
-        KDSDataItems items  = order.getItems();
+        rebuild_order_for_printable_options(printOrder);
+        KDSDataItems items  = printOrder.getItems();
         if (items.getCount() <=0) return; //don't print empty order
 
         ArrayList<String> arPrint = new ArrayList<String>();
@@ -2180,61 +2189,8 @@ print order data to  buffer, socket will send this buffer to serial port
         int lines = getLines();
         PrintOrderState state = new PrintOrderState();
 
-        printerOrderWithTemplete(state ,order, 0, lines, arPrint);
+        printerOrderWithTemplete(state ,printOrder, 0, lines, arPrint);
 
-//        String s = "";
-//        //String tag = "";
-//
-//        int i = 0;
-//        for ( i=0; i< lines; i++)
-//        {
-//
-//            ArrayList<String> arLineTags = new ArrayList<String>();
-//            //get all tags in given physcal printing line
-//            arLineTags =getCRLineTags(i);
-//            switch (getCRLineType(arLineTags))
-//            {
-//                case TAGS_LINE_NORMAL: {
-//                    s = makeTagsString(arLineTags, order,null, null, null);
-//                    addPrintLines(arPrint, s);
-//                    //arPrint.Add(s);
-//                }
-//                break;
-//                case TAGS_LINE_ITEM: { //<items> tag
-//                    ArrayList<String> arItemTags = new ArrayList<>();
-//                    ArrayList<String> arCondimentTags = new ArrayList<>();
-//                    ArrayList<String> arModifierTags = new ArrayList<>();
-//
-//                    arItemTags.addAll(arLineTags);
-//                    int nCondimentLineIndex = getCondimentTagsLineNumber();
-//                    if (nCondimentLineIndex >=0)
-//                    {
-//                        arCondimentTags = getCRLineTags(nCondimentLineIndex);
-//                    }
-//                    int nModifierLineIndex = getModifierTagsLineNumber();
-//                    if (nModifierLineIndex >=0)
-//                    {
-//                        arModifierTags = getCRLineTags(nModifierLineIndex);
-//                    }
-//
-//                    makeItemsStrings(arPrint, arItemTags, arCondimentTags, order, arModifierTags, nCondimentLineIndex, nModifierLineIndex);
-//                }
-//                break;
-//                case TAGS_LINE_CONDIMENT: //condiments
-//                case TAGS_LINE_MODIFIER: //modifiers
-//                {
-//                    continue;
-//                }
-//
-//                //break;
-//                default:
-//                {
-//                }
-//                break;
-//            }
-//
-//
-//        }
         //synchronized (m_locker)
         {
             String s = "";
