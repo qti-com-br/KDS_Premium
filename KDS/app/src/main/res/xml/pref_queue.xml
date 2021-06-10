@@ -87,6 +87,10 @@
         <!--android:title="@string/pref_kds_bumping_double_queue_enabled"-->
         <!--android:summary="@string/pref_kds_bumping_double_queue_enabled_sum"-->
         <!--android:defaultValue="true" />-->
+    <CheckBoxPreference
+        android:key="queue_only_auto_bump"
+        android:title="@string/queue_only_auto_bump"
+        android:defaultValue="false" />
 
     <CheckBoxPreference
         android:key="queue_show_order_id"

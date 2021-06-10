@@ -1669,6 +1669,10 @@ public class KDSStationExpeditor extends KDSStationNormal {
         String orderName = command.getParam(KDSConst.KDS_Str_Param, "");
         if (orderName.isEmpty())
             return;
+        if (kds.getSettings().getBoolean(KDSSettings.ID.Queue_only_auto_bump))
+        {//only the auto bumping can bump order in queue station.
+            return;
+        }
         String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
         String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
 
