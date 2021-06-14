@@ -628,6 +628,7 @@ public class KDSSettings extends SettingsBase {
        Touch_input, //kp-114, input message
        Bumpbar_inputmsg,
        Runner_start_item_manually,
+       Queue_only_auto_bump, //only the auto bumping can bump order in queue station.
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1472,6 +1473,8 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Bumpbar_inputmsg, "string_bumpbar_func_inputmsg", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_I, false, false, false));// "i"
 
         init_option(ID.Runner_start_item_manually, "bool_runner_start_item_manually", false);
+
+        init_option(ID.Queue_only_auto_bump, "bool_queue_only_auto_bump", false);
 
     }
 
