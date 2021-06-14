@@ -53,7 +53,8 @@ public class ScreenLogoDraw {
         if (!bEnabled) {
             m_logoFileName = "";
 			m_logoImage = ((BitmapDrawable) view.getContext().getApplicationContext().getResources().getDrawable(R.drawable.lci_logo_bg)).getBitmap();
-            int overlayColor = ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.focus_bg);//.getResources().getColor(R.color.focus_bg);
+            //int overlayColor = ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.border_bg);//.getResources().getColor(R.color.focus_bg);
+            int overlayColor = settings.getInt(KDSSettings.ID.Panels_Block_Border_Color);//  ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.border_bg);//.getResources().getColor(R.color.focus_bg);
             m_logoImage = changeBitmapColor(m_logoImage, overlayColor);
             m_lciLogo = null;
         }
