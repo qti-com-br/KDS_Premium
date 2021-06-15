@@ -191,6 +191,9 @@ public class KDSPrinter {
 
     String m_strLogoFile = "";
 
+    boolean m_bPrintItemIndividually = false;
+
+
     /**********************************************************************************************/
     /**
      *
@@ -1701,6 +1704,8 @@ print order data to  buffer, socket will send this buffer to serial port
             }
         }
 
+        m_bPrintItemIndividually = settings.getBoolean(KDSSettings.ID.Printer_item_individually);
+
 
     }
 
@@ -2183,32 +2188,49 @@ print order data to  buffer, socket will send this buffer to serial port
         KDSDataItems items  = printOrder.getItems();
         if (items.getCount() <=0) return; //don't print empty order
 
-        ArrayList<String> arPrint = new ArrayList<String>();
+        //ArrayList<String> arPrint = new ArrayList<String>();
 
         //return how many physical printing lines
         int lines = getLines();
         PrintOrderState state = new PrintOrderState();
-
-        printerOrderWithTemplete(state ,printOrder, 0, lines, arPrint);
-
-        //synchronized (m_locker)
+        if (m_bPrintItemIndividually)
         {
-            String s = "";
-            s += (CHAR_Start_Order);
-
-            m_printerData.add(s);
-            for (int i = 0; i < m_nCopies; i++) {
-                m_printerData.addAll(arPrint);
+            KDSDataItems originalItems  = new KDSDataItems();
+            items.copyTo(originalItems);
+            for (int i=0; i< originalItems.getCount(); i++)
+            {
+                KDSDataItem item = originalItems.getItem(i);
+                if (!item.getPrintable()) continue;
+                printOrder.getItems().clear();
+                printOrder.getItems().addComponent(item);
+                printDataToList(state, printOrder, 0, lines);
             }
-            s = "";
-            s += (CHAR_End_Order);
-            m_printerData.add(s);
         }
+        else
+        {
+            printDataToList(state, printOrder, 0, lines);
+        }
+
+//        printerOrderWithTemplete(state ,printOrder, 0, lines, arPrint);
+//
+//        //synchronized (m_locker)
+//        {
+//            String s = "";
+//            s += (CHAR_Start_Order);
+//
+//            m_printerData.add(s);
+//            for (int i = 0; i < m_nCopies; i++) {
+//                m_printerData.addAll(arPrint);
+//            }
+//            s = "";
+//            s += (CHAR_End_Order);
+//            m_printerData.add(s);
+//        }
         //output for debug
 //        for (int i=0;i < arPrint.size(); i++)
 //            Log.i(TAG, arPrint.get(i));
         ////////////////////////////////////////
-        arPrint.clear();
+        //arPrint.clear();
         //arrangeBuffer();
 
     }
@@ -2658,5 +2680,27 @@ print order data to  buffer, socket will send this buffer to serial port
             }
         }
         Log.i(TAG, "Print logo command here");
+    }
+
+    private void printDataToList(PrintOrderState state, KDSDataOrder printOrder, int nStartLineNumber, int lines)
+    {
+        ArrayList<String> arPrint = new ArrayList<>();
+
+        printerOrderWithTemplete(state ,printOrder, nStartLineNumber, lines, arPrint);
+
+        //synchronized (m_locker)
+        {
+            String s = "";
+            s += (CHAR_Start_Order);
+
+            m_printerData.add(s);
+            for (int i = 0; i < m_nCopies; i++) {
+                m_printerData.addAll(arPrint);
+            }
+            s = "";
+            s += (CHAR_End_Order);
+            m_printerData.add(s);
+        }
+        arPrint.clear();
     }
 }
