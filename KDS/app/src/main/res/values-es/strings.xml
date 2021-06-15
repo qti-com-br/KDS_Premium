@@ -972,4 +972,5 @@
     <string name="start_item_manually">Start item manually</string>
 	<string name="use_bump_start_item_cook">Use [Bump item] to start focused item.</string>
     <string name="queue_only_auto_bump">Only auto bumping can bump order</string>
+    <string name="print_item_individually">Print items individually</string>
 </resources>
