@@ -3123,6 +3123,21 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                         }
                     }
                 }
+                //check if all items hidden
+                //Hide order with no visible items
+                int nHiddenOrders = 0;
+                for (int i=0; i< ordersAdded.size(); i++)
+                {
+                    if (isAllItemsHidden(ordersAdded.get(i)))
+                    {
+                        this.getUsers().orderCancel(ordersAdded.get(i), false);
+                        nHiddenOrders ++;
+                    }
+                }
+                if (nHiddenOrders == ordersAdded.size())
+                    break;
+                /////////////////
+
                 if (getStationsConnections().isBackupOfOthers()) {
                     if (m_kdsState.getPrimaryOfBackupLost())
                         getSoundManager().playSound(KDSSettings.ID.Sound_backup_station_orders_received);
@@ -3138,6 +3153,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                         }
                     }
                 }
+
                 //t.debug_print_Duration("TRANSTYPE_ADD3");
                 if (bRefreshView)
                 {
@@ -5810,5 +5826,44 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         }
         this.refreshView();
+    }
+
+    private boolean isExpoTypeStation()
+    {
+        if (this.isQueueExpo() ||
+                this.isExpeditorStation()||
+                isRunnerStation() ||
+                isSummaryStation() )
+            return true;
+        return false;
+    }
+
+    /**
+     * whether all items were hidden in this station.
+     * The <HidenStation> </HidenStation> tag.
+     *  If all items were hidden, remove this order.
+     *
+     * @param order
+     * @return
+     */
+    private boolean isAllItemsHidden(KDSDataOrder order)
+    {
+        if (this.isExpoTypeStation()) return false;
+
+        String stationID = this.getStationID();
+        int ncounter = 0;
+        for (int i=0; i< order.getItems().getCount(); i++)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getToStations().findStation(stationID) != KDSToStations.PrimarySlaveStation.Unknown) {
+
+                if (item.isHiddenStation(stationID))
+                {
+                    ncounter ++;
+                }
+            }
+        }
+        return (ncounter == order.getItems().getCount());
+
     }
 }
