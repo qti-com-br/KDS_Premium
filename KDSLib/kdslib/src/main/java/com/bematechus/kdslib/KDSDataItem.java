@@ -1214,4 +1214,9 @@ public class KDSDataItem extends KDSData {
     {
         return m_bPrintable;
     }
+
+    public KDSToStations getHiddenStations()
+    {
+        return m_hiddenStations;
+    }
 }

@@ -347,38 +347,39 @@ public class KDSUsers {
 
     public void orderCancel( KDSDataOrder order)
     {
-        String orderName = order.getOrderName();
-        if (getUserA() != null) {
-            //kpp1-409
-            KDSDataOrder orderExisted = null;
-            if (orderName.isEmpty()) {
-                orderExisted = getUserA().getOrders().getOrderByGUID(order.getGUID());
-            }
-            else {
-                orderExisted = getUserA().getOrders().getOrderByName(orderName);
-            }
-
-            if (orderExisted != null) {
-
-                getUserA().getOrders().removeComponent(orderExisted);
-                getUserA().getCurrentDB().orderDelete(orderExisted.getGUID());
-            }
-        }
-        if (getUserB() != null) {
-            //kpp1-409
-            KDSDataOrder orderExisted = null;
-            if (orderName.isEmpty())
-                orderExisted = getUserB().getOrders().getOrderByGUID(order.getGUID());
-            else
-                orderExisted = getUserB().getOrders().getOrderByName(orderName);
-
-            if (orderExisted != null) {
-                getUserB().getOrders().removeComponent(orderExisted);
-                getUserB().getCurrentDB().orderDelete(orderExisted.getGUID());
-            }
-        }
-
-        KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null, "");
+        orderCancel(order, true);
+//        String orderName = order.getOrderName();
+//        if (getUserA() != null) {
+//            //kpp1-409
+//            KDSDataOrder orderExisted = null;
+//            if (orderName.isEmpty()) {
+//                orderExisted = getUserA().getOrders().getOrderByGUID(order.getGUID());
+//            }
+//            else {
+//                orderExisted = getUserA().getOrders().getOrderByName(orderName);
+//            }
+//
+//            if (orderExisted != null) {
+//
+//                getUserA().getOrders().removeComponent(orderExisted);
+//                getUserA().getCurrentDB().orderDelete(orderExisted.getGUID());
+//            }
+//        }
+//        if (getUserB() != null) {
+//            //kpp1-409
+//            KDSDataOrder orderExisted = null;
+//            if (orderName.isEmpty())
+//                orderExisted = getUserB().getOrders().getOrderByGUID(order.getGUID());
+//            else
+//                orderExisted = getUserB().getOrders().getOrderByName(orderName);
+//
+//            if (orderExisted != null) {
+//                getUserB().getOrders().removeComponent(orderExisted);
+//                getUserB().getCurrentDB().orderDelete(orderExisted.getGUID());
+//            }
+//        }
+//
+//        KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null, "");
 
 
     }
@@ -460,5 +461,43 @@ public class KDSUsers {
             if (order != null) return order;
         }
         return null;
+    }
+
+    public void orderCancel( KDSDataOrder order, boolean syncStations)
+    {
+        String orderName = order.getOrderName();
+        if (getUserA() != null) {
+            //kpp1-409
+            KDSDataOrder orderExisted = null;
+            if (orderName.isEmpty()) {
+                orderExisted = getUserA().getOrders().getOrderByGUID(order.getGUID());
+            }
+            else {
+                orderExisted = getUserA().getOrders().getOrderByName(orderName);
+            }
+
+            if (orderExisted != null) {
+
+                getUserA().getOrders().removeComponent(orderExisted);
+                getUserA().getCurrentDB().orderDelete(orderExisted.getGUID());
+            }
+        }
+        if (getUserB() != null) {
+            //kpp1-409
+            KDSDataOrder orderExisted = null;
+            if (orderName.isEmpty())
+                orderExisted = getUserB().getOrders().getOrderByGUID(order.getGUID());
+            else
+                orderExisted = getUserB().getOrders().getOrderByName(orderName);
+
+            if (orderExisted != null) {
+                getUserB().getOrders().removeComponent(orderExisted);
+                getUserB().getCurrentDB().orderDelete(orderExisted.getGUID());
+            }
+        }
+        if (syncStations)
+            KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null, "");
+
+
     }
 }
