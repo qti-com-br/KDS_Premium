@@ -715,4 +715,83 @@ public class KDSMyStationRelations {
         }
         return ar;
     }
+
+    /**
+     * save the real function name to backoffice.
+     * KP-128 Mirror, Duplicate, and Workload not showing in back office.
+     * @param stationID
+     * @return
+     */
+    public String getStationFunctionNameForBackoffice(String stationID)
+    {
+        SettingsBase.StationFunc func = SettingsBase.StationFunc.Prep;
+
+        int ncount =  m_arStationsRelations.size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationsRelation relation = m_arStationsRelations.get(i);
+            if (stationID.equals( relation.getID()))
+            {
+                func = relation.getFunction();
+            }
+
+        }
+
+        String parentStationID = "";
+        switch (func)
+        {
+
+            case Prep:
+            case Expeditor:
+            case Queue:
+            case Runner:
+                return func.toString();
+                //break;
+            case Mirror:
+                if (getPrimaryStationsWhoUseMeAsMirror().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsMirror().get(0).getID();
+                break;
+            case Backup:
+                if (getPrimaryStationsWhoUseMeAsBackup().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsBackup().get(0).getID();
+                break;
+            case Workload:
+                if (getPrimaryStationsWhoUseMeAsWorkLoad().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsWorkLoad().get(0).getID();
+                break;
+            case Duplicate:
+                if (getPrimaryStationsWhoUseMeAsDuplicated().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsDuplicated().get(0).getID();
+                break;
+
+        }
+        String name = func.toString();
+
+        if (!parentStationID.isEmpty())
+        {
+            name = name + "->" + parentStationID;
+        }
+        return name;
+    }
+
+    /**
+     * get real function value.
+     * KP-128 Mirror, Duplicate, and Workload not showing in back office.
+     * @param stationID
+     * @param stationSlaveID
+     * @return
+     */
+    public SettingsBase.StationFunc getStationFunctionForBackoffice(String stationID, String stationSlaveID) {
+        SettingsBase.StationFunc func = SettingsBase.StationFunc.Prep;
+
+        int ncount = m_arStationsRelations.size();
+        for (int i = 0; i < ncount; i++) {
+            KDSStationsRelation relation = m_arStationsRelations.get(i);
+            if (stationID.equals(relation.getID())) {
+                func = relation.getFunction();
+            }
+
+        }
+        return func;
+    }
 }

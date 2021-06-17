@@ -4130,7 +4130,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             if (!getKDS().getStationID().isEmpty()) { //kpp1-236. If station id is empty, backoffice will remove station.
 
                 String name = getKDS().getSettings().getString(KDSSettings.ID.General_customized_title);
-                m_activation.postNewStationInfoToWeb(getKDS().getStationID(), getKDS().getStationFunction().toString(), name);
+                String funcNameInbackoffice = Activation.getStationFunctionNameInBackoffice();
+                //m_activation.postNewStationInfoToWeb(getKDS().getStationID(), getKDS().getStationFunction().toString(), name);
+                m_activation.postNewStationInfoToWeb(getKDS().getStationID(), funcNameInbackoffice, name);
+                getKDS().updateStationFunction();//save station function to backoffice
 
                 //station id changed. Change the relation table at here.
                 changeRelationTableWithNewStationID(presentStationID, getKDS().getStationID());

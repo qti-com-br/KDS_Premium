@@ -136,6 +136,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static private String m_stationID = "1";
     static private String m_stationFuncName = SettingsBase.StationFunc.Prep.toString();
 
+    //fix: Mirror, Duplicate, and Workload not showing in back office.
+    static public String m_stationFunctionNameInBackoffice = SettingsBase.StationFunc.Prep.toString();
+
     private int m_nMaxLicenseCount = 0;
     ActivationEvents m_receiver = null;
 
@@ -154,6 +157,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     //for clear database when logout
     static public ActivationEvents m_globalEventsReceiver = null;
+
+
 
     static public void setGlobalEventsReceiver(ActivationEvents rec)
     {
@@ -2717,4 +2722,17 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
     }
 
+    /**
+     * fix: Mirror, Duplicate, and Workload not showing in back office.
+     * @param name
+     */
+    static public void setStationFunctionNameInBackoffice(String name)
+    {
+        m_stationFunctionNameInBackoffice = name;
+    }
+
+    static public String getStationFunctionNameInBackoffice()
+    {
+        return m_stationFunctionNameInBackoffice;
+    }
 }

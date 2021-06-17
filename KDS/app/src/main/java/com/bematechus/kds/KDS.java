@@ -426,14 +426,20 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     }
     public void updateStationFunction()
     {
-        KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
+        //KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
+        KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunctionForBackoffice(getStationID(), "");
+
         SettingsBase.StationFunc old = m_settings.getStationFunc();
         m_settings.setStationFunc(func);
         if (old != func)
         { //update the activation backoffice
             if (m_activationHTTP != null) {
                 if (!getStationID().isEmpty())//kpp1-309 Expeditor and Queue deleted at logout on premium
-                    m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+                {
+                    String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+                    //m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+                    m_activationHTTP.postNewStationInfo2Web(getStationID(), name);
+                }
             }
         }
 
@@ -5120,6 +5126,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         m_activationHTTP.setStationID(getStationID());
         m_activationHTTP.setStationFunc(getStationFunction());
 
+        String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+        Activation.setStationFunctionNameInBackoffice(name);
+
         m_activationHTTP.postOrderRequest(order, iosState, fromOperation);
         return true;
 
@@ -5132,6 +5141,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             return false;
         m_activationHTTP.setStationID(getStationID());
         m_activationHTTP.setStationFunc(getStationFunction());
+
+        String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+        Activation.setStationFunctionNameInBackoffice(name);
 
         if (item == null) return false;
         Activation.ItemJobFromOperations opt = Activation.ItemJobFromOperations.Local_bump_item;
@@ -5374,7 +5386,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             return ;
         m_activationHTTP.setStationID(getStationID());
         m_activationHTTP.setStationFunc(getStationFunction());
-
+        String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+        Activation.setStationFunctionNameInBackoffice(name);
 
 
         for (int i=0; i< arChangedItems.size(); i++) {
