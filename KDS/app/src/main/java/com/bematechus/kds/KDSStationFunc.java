@@ -1343,10 +1343,15 @@ public class KDSStationFunc {
                 KDSStationNormal.normal_sync_order_bumped(kds, command);//kpp1-202.
 
                 break;
-            case Expeditor:
             case Queue:
+            case Queue_Expo: {
+                if (kds.getSettings().getBoolean(KDSSettings.ID.Queue_only_auto_bump))
+                    return;
+                KDSStationExpeditor.exp_sync_expo_order_bumped(kds, command);
+            }
+                break;
+            case Expeditor:
             case TableTracker:
-            case Queue_Expo:
             case Runner:
             case Summary:
                 //KDSStationExpeditor.exp_sync_station_cook_started(kds, command); //why
