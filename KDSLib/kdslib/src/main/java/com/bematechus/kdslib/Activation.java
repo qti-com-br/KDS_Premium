@@ -66,9 +66,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      * Management
      * Web domain: http://kitchengous.com
      Login: bematech@kitchengous.com (unused).
-     logiccontrols@kitchengous.com
-     Password:098765
-
+    xx logiccontrols@kitchengous.com
+    xx Password:098765
+     Logiccontrols@kitchengous.com
+     Logic32809
      //test store
      user: david
      pwd: 123456
@@ -195,10 +196,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 			tok.put(TOK, TOKEN);
 			payload.put(REQ, "HARDWARE");
 			payload.put("store_guid", getStoreGuid());
-			payload.put("manufacturer","'" + Build.MANUFACTURER + "'");
-			payload.put("model", "'" + Build.MODEL + "'");
-			payload.put("serial", "'"+ Build.SERIAL+"'");
-			payload.put("mac_address", "'" + m_myMacAddress + "'");
+			payload.put("manufacturer",Build.MANUFACTURER );
+			payload.put("model", Build.MODEL );
+			payload.put("serial",  Build.SERIAL);
+			payload.put("mac_address", m_myMacAddress );
 
 			req.put(tok);
 			req.put(payload);
