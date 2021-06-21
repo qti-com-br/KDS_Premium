@@ -2565,6 +2565,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 onRunnerStartCookManually(this, command, xmlData);
             }
             break;
+            case Prep_expo_transfer_order:
+            {//kp-116 Transfer Prep -> Transfer Expo.
+                //The prep's expo receive this command.
+                onPrepOfExpoHasTransferOrder(this, command, xmlData, fromStationID);
+
+            }
+            break;
 
 
         }
@@ -4842,6 +4849,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Expo_Unbump_Order: //end for queue
             //case ACK_XML:
             case Prep_sync_to_queue://20190729, this can cause queue station freeze, so I move it to thread.
+            case Prep_expo_transfer_order:
                 return false;
             case ACK_XML:
             {
@@ -5878,5 +5886,24 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         }
         return (ncounter == order.getItems().getCount());
 
+    }
+
+    /**
+     * Expo receive this command xml after my prep transfered order.
+     * Remove all data in expo station.
+     * @param kds
+     * @param command
+     * @param strOrinalData
+     */
+    private void onPrepOfExpoHasTransferOrder(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
+    {
+//        String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
+//        if (strXml.isEmpty())
+//            return;
+//        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
+//        KDSUser.USER userID = KDSUser.USER.values()[ order.getScreen()];
+//        if (order == null)
+//            return;
+        KDSStationExpeditor.exp_sync_prep_transfer_order(kds, command, strOrinalData);
     }
 }

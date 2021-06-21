@@ -1118,6 +1118,15 @@ public class KDSStationFunc {
         if (activeStation == null)
             return TransferingStatus.Error_Station;
         kdsuser.getKDS().getStationsConnections().writeDataToStationOrItsSlave(activeStation, strXml);
+        //kp-116, Transfer Prep -> Transfer Expo
+        if (kdsuser.getKDS().getSettings().getBoolean(KDSSettings.ID.Transfer_prep_expo))
+        {//we need to tell my expo this order was transferred.
+            String tranferedXml = KDSXMLCommandFactory.createOrderTransferPrepExpoXml(kdsuser.getKDS().getStationID(),
+                                                                                        kdsuser.getKDS().getLocalIpAddress(),
+                                                                                        "", transferOrder);
+            kdsuser.getKDS().getStationsConnections().writeToExps(kdsuser.getKDS().getStationID(), tranferedXml);
+
+        }
 //        if (station == null) {
 //            KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
 //            if (activeStation == null)
@@ -1759,6 +1768,9 @@ public class KDSStationFunc {
         }
 
         //sync to others
+
+        sync_with_expo(kds, command.getCode(), order, null); //kp-116 Transfer Prep -> Transfer Expo
+        //
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
     }

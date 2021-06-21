@@ -23,4 +23,10 @@
         android:summary="@string/transfer_by_double_disable_bump"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="transfer_prep_expo"
+        android:title="Transferring order in prep will transfer same order in expo"
+        android:defaultValue="false" />
+
+
 </PreferenceScreen>

@@ -1712,4 +1712,88 @@ public class KDSStationExpeditor extends KDSStationNormal {
 //
 //    }
 
+    /**
+     *
+     * @param kds
+     * @param command
+     * @param strOriginalData
+     *
+     * @return
+     *  order guid.
+     */
+    static public String exp_sync_prep_transfer_order(KDS kds, KDSXMLParserCommand command, String strOriginalData )
+    {
+        String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
+        if (strXml.isEmpty())
+            return "";
+        String fromStationID = command.getParam(KDSConst.KDS_Str_Station, "");
+        String fromIP = command.getParam(KDSConst.KDS_Str_IP, "");
+        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);//It just contains ID
+
+        if (order == null)
+            return "";
+        //if (BuildVer.isDebug())
+        //    System.out.println("from="+fromStationID + ",orderid=" + order.getOrderName());
+        String orderGuid = "";
+        KDSDataOrder orderA = kds.getUsers().getUserA().getOrders().getOrderByName(order.getOrderName());
+        if (orderA != null)
+            exp_order_been_transferred(kds,kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), orderA);
+
+
+        KDSDataOrder orderB = kds.getUsers().getUserB().getOrders().getOrderByName(order.getOrderName());
+        if (orderB != null)
+            exp_order_been_transferred(kds,kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), orderB);
+
+        //sync to others
+        sync_with_mirror(kds, command.getCode(), order, null);
+        sync_with_backup(kds, command.getCode(), order, null);
+        sync_with_queue(kds, command.getCode(), order, null, strXml);
+
+        return orderGuid;
+    }
+
+    /**
+     *
+     * @param kds
+     * @param db
+     * @param orders
+     * @param fromStationID
+     * @param fromIP
+     * @param order
+     * @return
+     *  changed order guid.
+     */
+    static public String exp_order_been_transferred(KDS kds,KDSDBCurrent db,KDSDataOrders orders,
+                                                           KDSDataOrder order)
+    {
+        KDSDataOrder orderExisted = orders.getOrderByName(order.getOrderName());
+
+        if (orderExisted == null) {
+            return "";
+        }
+
+
+        int ncount = order.getItems().getCount();
+        boolean bStartedByMe = db.startTransaction();
+        for (int i=0; i< ncount; i++)
+        {
+            String itemName = order.getItems().getItem(i).getItemName();
+            KDSDataItem expItem =  orderExisted.getItems().getItemByName(itemName);
+            if (expItem == null) continue;
+            orderExisted.getItems().removeComponent(expItem);
+            db.itemDelete(expItem.getGUID());
+
+        }
+        if (orderExisted.getItems().getCount()<=0)
+        {
+            orders.removeComponent(orderExisted);
+            db.orderDelete(orderExisted.getGUID());
+        }
+        db.finishTransaction(bStartedByMe);//2.0.15
+
+
+        kds.refreshView();
+        return orderExisted.getGUID();
+    }
+
 }

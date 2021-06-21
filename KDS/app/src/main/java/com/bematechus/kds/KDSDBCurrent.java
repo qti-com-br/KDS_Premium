@@ -4172,6 +4172,22 @@ update the schedule item ready qty
         this.executeDML(sql);
     }
 
+    public boolean itemDelete(String itemGuid)
+    {
+        String sql = String.format("delete from items where guid='%s", itemGuid);
+        this.executeDML(sql);
+        sql = String.format("delete from condiments where itemguid='%s", itemGuid);
+        this.executeDML(sql);
+
+        sql = String.format("delete from messages where objguid='%s", itemGuid);
+        this.executeDML(sql);
+
+        sql = String.format("delete from modifiers where itemguid='%s", itemGuid);
+        this.executeDML(sql);
+
+        return true;
+
+    }
     /***************************************************************************
      * SQL definitions
      *
