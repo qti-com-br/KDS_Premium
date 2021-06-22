@@ -430,7 +430,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunctionForBackoffice(getStationID(), "");
 
         SettingsBase.StationFunc old = m_settings.getStationFunc();
-        m_settings.setStationFunc(func);
+        KDSSettings.StationFunc funcRealWorkFor =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
+        m_settings.setStationFunc(funcRealWorkFor);
         if (old != func)
         { //update the activation backoffice
             if (m_activationHTTP != null) {
