@@ -1739,10 +1739,11 @@ public class KDSStationExpeditor extends KDSStationNormal {
         if (orderA != null)
             exp_order_been_transferred(kds,kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), orderA);
 
-
-        KDSDataOrder orderB = kds.getUsers().getUserB().getOrders().getOrderByName(order.getOrderName());
-        if (orderB != null)
-            exp_order_been_transferred(kds,kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), orderB);
+        if (kds.isMultpleUsersMode()) {
+            KDSDataOrder orderB = kds.getUsers().getUserB().getOrders().getOrderByName(order.getOrderName());
+            if (orderB != null)
+                exp_order_been_transferred(kds, kds.getCurrentDB(), kds.getUsers().getUserB().getOrders(), orderB);
+        }
 
         //sync to others
         sync_with_mirror(kds, command.getCode(), order, null);
@@ -1775,15 +1776,21 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
         int ncount = order.getItems().getCount();
         boolean bStartedByMe = db.startTransaction();
+        ArrayList<KDSDataItem> arRemoved = new ArrayList<>();
         for (int i=0; i< ncount; i++)
         {
             String itemName = order.getItems().getItem(i).getItemName();
             KDSDataItem expItem =  orderExisted.getItems().getItemByName(itemName);
             if (expItem == null) continue;
-            orderExisted.getItems().removeComponent(expItem);
+            arRemoved.add(expItem);
+            //orderExisted.getItems().removeComponent(expItem);
             db.itemDelete(expItem.getGUID());
 
         }
+        for (int i=0; i< arRemoved.size(); i++) {
+            order.getItems().removeComponent(arRemoved.get(i));
+        }
+        arRemoved.clear();
         if (orderExisted.getItems().getCount()<=0)
         {
             orders.removeComponent(orderExisted);

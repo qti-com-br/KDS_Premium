@@ -25,7 +25,7 @@
 
     <CheckBoxPreference
         android:key="transfer_prep_expo"
-        android:title="Transferring order in prep will transfer same order in expo"
+        android:title="@string/transfer_prep_transfer_expo"
         android:defaultValue="false" />
 
 
