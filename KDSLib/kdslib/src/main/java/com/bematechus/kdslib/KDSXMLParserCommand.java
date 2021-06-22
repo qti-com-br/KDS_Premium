@@ -111,6 +111,7 @@ public class KDSXMLParserCommand {
         Runner_show_category,
         //kp-121
         Runner_start_cook_item,
+        Prep_expo_transfer_order, //kp-116 Transfer Prep -> Transfer Expo
     }
     private static final String COMMAND = "KDSCommand";
     private static final String CODE = "Code";
@@ -712,4 +713,9 @@ public class KDSXMLParserCommand {
         return createShortCommandXmlString(KDSCommand.Runner_start_cook_item.ordinal(), strStationID, ipAddress, macAddress, ar);
     }
 
+    static public String createOrderTransferPrepExpoNotification(String strStationID, String ipAddress, String macAddress, String orderXML)
+    {
+        return createCommandXmlString(KDSCommand.Prep_expo_transfer_order.ordinal(),
+                strStationID, ipAddress, macAddress, orderXML);
+    }
 }

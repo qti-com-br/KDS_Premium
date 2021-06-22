@@ -96,4 +96,17 @@ public class KDSXMLCommandFactory {
         return KDSXMLParserCommand.createOrderTransferNotification(strStationID, ip, mac, order.createXml());
     }
 
+    /**
+     * Transfer Prep -> Transfer Expo
+     * Send this xml to expo. Expo will delete this order's content.
+     * @param strStationID
+     * @param ip
+     * @param mac
+     * @param order
+     * @return
+     */
+    static String createOrderTransferPrepExpoXml(String strStationID, String ip, String mac, KDSDataOrder order)
+    {
+        return KDSXMLParserCommand.createOrderTransferPrepExpoNotification(strStationID, ip, mac, order.createXml());
+    }
 }
