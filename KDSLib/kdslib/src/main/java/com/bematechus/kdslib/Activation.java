@@ -198,7 +198,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 			payload.put("store_guid", getStoreGuid());
 			payload.put("manufacturer",Build.MANUFACTURER );
 			payload.put("model", Build.MODEL );
-			payload.put("serial",  Build.SERIAL);
+			payload.put("serial",  getMySerialNumber());//Build.SERIAL); //bug: kp-104 Model number in back office
 			payload.put("mac_address", m_myMacAddress );
 
 			req.put(tok);
