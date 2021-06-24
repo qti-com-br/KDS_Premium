@@ -461,7 +461,7 @@ public class KDSDBCurrent extends KDSDBBase {
      */
     static private String ITEMS_FIELDS = "GUID,Name,Description,Qty,Category,BG,FG,Grp,Marked,DeleteByRemote,LocalBumped,BumpedStations," +
                                             "ToStations,Ready,Hiden,QtyChanged,ItemType,ItemDelay,PreparationTime,BuildCard,TrainingVideo," +
-                                            "SumTransEnable,SumTrans,r0,r1,r2,r3,r4,r5 ";
+                                            "SumTransEnable,SumTrans,r0,r1,r2,r3,r4,r5,r6 ";
 
     private KDSDataItems itemsGet(String orderGUID)// int nOrderID)
     {
@@ -576,6 +576,8 @@ public class KDSDBCurrent extends KDSDBBase {
         int n = getInt(sf, 28);
         c.setPrintable((n !=0));
 
+        n = getInt(sf, 29);//printed when bump
+        c.setPrinted((n!=0));
 
         return c;
     }
@@ -4188,6 +4190,38 @@ update the schedule item ready qty
         return true;
 
     }
+
+    /**
+     * kp-126
+     * print item when item was bumped.
+     * Save its printed state.
+     * @param itemGuid
+     */
+    public void itemSetPrinted(String itemGuid, boolean bPrinted)
+    {
+        String sql = String.format("update items set r6=%d where guid='%s",bPrinted?1:0, itemGuid);
+        this.executeDML(sql);
+    }
+
+    /**
+     * kp-126 Print bumped item.
+     * @param itemGuid
+     * @return
+     */
+    public boolean itemGetPrinted(String itemGuid)
+    {
+        String sql = String.format("select r6 from items where guid='%s", itemGuid);
+        if (getDB() == null) return false;
+
+        Cursor c = getDB().rawQuery(sql, null);
+        int n = 0;
+        if (c.moveToNext()) {
+             n = getInt(c,0);
+
+        }
+        c.close();
+        return (n==1);
+    }
     /***************************************************************************
      * SQL definitions
      *
@@ -4322,7 +4356,7 @@ update the schedule item ready qty
                                 //2. The items guid should be a random guid. The item_bump table guid should be a random guid.
                                 //3. The random guid from the item_bumps table should be inserted into the correct Linked item in the items table column "item_bump_guid"
             +"r5 text(16)," //printable
-            +"r6 text(16),"
+            +"r6 text(16)," // save if item has been printed.
             +"r7 text(16),"
             +"r8 text(16),"
             +"r9 text(16) ,"
