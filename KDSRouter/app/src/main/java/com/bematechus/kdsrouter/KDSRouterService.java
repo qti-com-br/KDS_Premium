@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.bematechus.kdslib.KDSLog;
+
 public class KDSRouterService extends Service {
 
+    static final String TAG = "RouterService";
     KDSRouter m_kdsRouter = null;
     private final IBinder binder = new MyBinder();
 
@@ -45,6 +48,7 @@ public class KDSRouterService extends Service {
 
     public void updateSettings()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
         boolean bEnabledOld = m_kdsRouter.getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
         m_kdsRouter.updateSettings();
         boolean bEnabledNew = m_kdsRouter.getSettings().getBoolean(KDSRouterSettings.ID.KDSRouter_Enabled);
@@ -54,11 +58,16 @@ public class KDSRouterService extends Service {
             {
                 m_kdsRouter.start();
             }
-            else
+            else {
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "stop router 1");
                 m_kdsRouter.stop();
+            }
         }
-        if (!bEnabledNew)
+        if (!bEnabledNew) {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "stop router 2");
             m_kdsRouter.stop();
+        }
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
     }
 
     public void checkStationsSettingChanged()

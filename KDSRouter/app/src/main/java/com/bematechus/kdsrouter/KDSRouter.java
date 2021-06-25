@@ -3,6 +3,7 @@ package com.bematechus.kdsrouter;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -337,6 +338,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
           if (!m_bNetworkActived)
                 onNetworkRestored();
             m_bNetworkActived = true;
+            fireNetworkStateResult(true);
         }
         else{
             if (KDSSocketManager.m_nLostNetworkCount >4) {
@@ -346,22 +348,26 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                     m_bNetworkActived = false;
                 }
             }
+            fireNetworkStateResult(false);
         }
     }
 
     private void onNetworkRestored()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
         this.startNetwork();
         //KPP1-305, Remove license restriction from Router
         //let main ui know network restored.
         //I don't want to add new event function, just use unused one.
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
             m_arKdsEventsReceiver.get(i).onTTBumpOrder("");
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
     }
     private void onNetworkLost()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
         this.stopNetwork();
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
 
     }
 
@@ -411,6 +417,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
     public void stopNetwork()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"stopNetwork() enter");
         m_socksManager.stopThread();
         m_udpStationAnnouncer.close();
         stopPOSListener();;
@@ -421,12 +428,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         stopPingThread();
 
         m_smbDataSource.stop();
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"stopNetwork() exit");
     }
 
 
     public void startNetwork()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"startNetwork() enter");
         m_bHasShowRouterUniqueError = false;
         refreshIPandMAC();
 
@@ -458,13 +466,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         this.broadcastStationAnnounceInThread();
 
         broadcastAskRoutersInThread();
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"startNetwork() exit");
     }
 
 
     private void startRemoteFolderDataSource(KDSRouterSettings settings)
     {
-        KDSLog.d(TAG, "startRemoteFolderDataSource >> enter");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
 
         //if the datat source is SMB folder, start thread.
         KDSRouterSettings.KDSDataSource source =KDSRouterSettings.KDSDataSource.values ()[settings.getInt(KDSRouterSettings.ID.KDSRouter_Data_Source)];
@@ -482,7 +490,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         {
             m_smbDataSource.stop();
         }
-        KDSLog.d(TAG, "startRemoteFolderDataSource << exit ");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
     }
 
     private void stopRemoteFolderDataSource()
@@ -502,11 +510,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     }
     public boolean start()
     {
-        if (isRunning()) {
-            m_settings.loadSettings(m_context);
-            updateSettings(m_settings);
-            return true;
-        }
+//        if (isRunning()) {
+//            m_settings.loadSettings(m_context);
+//            updateSettings(m_settings);
+//            return true;
+//        }
         KDSLog.d(TAG, "start enter");
         refreshIPandMAC();
 
@@ -529,6 +537,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
     public void stop()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
         stopPingThread();
         synchronized (m_locker) {
             m_listenPOS.stop();
@@ -543,7 +552,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             m_errorToast.cancel();
         //20160319
         stopNetwork();
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
     }
     public boolean isRunning()
     {
@@ -4065,4 +4074,15 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
 
     }
+
+    private void fireNetworkStateResult(boolean bAvailable)
+    {
+        ArrayList<Object> arData = new ArrayList<>();
+        arData.add(bAvailable);
+        if (m_arKdsEventsReceiver != null) {
+            for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+                m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Network_state, arData);
+        }
+    }
+
 }

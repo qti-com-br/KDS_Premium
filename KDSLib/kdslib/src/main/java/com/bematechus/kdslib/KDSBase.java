@@ -35,6 +35,7 @@ public class KDSBase {
         Order_Bumped_By_Other_Expo_Or_Station, //kpp1-286
         Runner_LineItems_Show_New_Category,
         Refresh_pos_message,
+        Network_state,
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);

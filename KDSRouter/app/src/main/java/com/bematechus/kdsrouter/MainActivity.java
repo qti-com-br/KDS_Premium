@@ -171,23 +171,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void checkNetworkState()
     {
-        if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
-            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
-            if (m_imgState.getTag() != null &&
-                    (int) m_imgState.getTag() == 0)
-
-            m_imgState.setTag(1);
-        }
-        else{
-            if (KDSSocketManager.m_nLostNetworkCount >4) {
-                if (KDSBackofficeNotification.isHeartbeatLost()) {
-                    m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
-                    if (m_imgState.getTag() == null ||
-                            (int) m_imgState.getTag() == 1)
-                        m_imgState.setTag(0);
-                }
-            }
-        }
+//        if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
+//            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
+//            if (m_imgState.getTag() != null &&
+//                    (int) m_imgState.getTag() == 0)
+//
+//            m_imgState.setTag(1);
+//        }
+//        else{
+//            if (KDSSocketManager.m_nLostNetworkCount >4) {
+//                if (KDSBackofficeNotification.isHeartbeatLost()) {
+//                    m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
+//                    if (m_imgState.getTag() == null ||
+//                            (int) m_imgState.getTag() == 1)
+//                        m_imgState.setTag(0);
+//                }
+//            }
+//        }
     }
 
 
@@ -264,6 +264,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, ">>>>>>Enter mainactivity oncreate");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"enter");
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         m_activation.setEventsReceiver(this);
@@ -342,6 +343,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         catch (Exception e) {
             e.printStackTrace();
         }
+
+        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"exit");
     }
 
 
@@ -949,7 +952,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void bindKDSRouterService()
     {
-
+        if (m_serviceConn != null || m_service != null) return;
         m_serviceConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -964,7 +967,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         };
 
         Intent intent = new Intent(this, KDSRouterService.class);
-        bindService(intent, m_serviceConn, Context.BIND_AUTO_CREATE);
+        try {
+            bindService(intent, m_serviceConn, Context.BIND_AUTO_CREATE);
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "bindService multiple");
+        }
     }
     /**
      * interface implements
@@ -1712,6 +1721,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 showToastMessage(s);
             }
             break;
+            case Network_state:
+            {
+                boolean bAvailable = (boolean)arParams.get(0);
+                onNetworkStateRefreshed(bAvailable);
+            }
+            break;
         }
         return null;
     }
@@ -1803,6 +1818,36 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         //downloadBackofficeOrders(); //kpp1-409
         receiveBackofficeOrders(evt, data);
+    }
+
+    public void onNetworkStateRefreshed(boolean bAvailable)
+    {
+        if (bAvailable) {
+            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
+            if (m_imgState.getTag() != null &&
+                    (int) m_imgState.getTag() == 0)
+
+                m_imgState.setTag(1);
+        }
+        else{
+            if (KDSSocketManager.m_nLostNetworkCount >4) {
+                if (KDSBackofficeNotification.isHeartbeatLost()) {
+                    m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
+                    if (m_imgState.getTag() == null ||
+                            (int) m_imgState.getTag() == 1)
+                        m_imgState.setTag(0);
+                }
+            }
+        }
+    }
+
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        if (m_service!= null) {
+            if (m_service.getKDSRouter()!= null)
+                m_service.getKDSRouter().removeEventReceiver(this);
+        }
     }
 }
 
