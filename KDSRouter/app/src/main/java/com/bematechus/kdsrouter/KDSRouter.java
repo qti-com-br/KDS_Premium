@@ -3211,11 +3211,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * @return
      */
     public boolean startPingThread() {
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
 
         m_bRunning = true;
         m_threadPing = new Thread(this, "SocketPing");
         m_threadPing.start();
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
         return true;
 
     }
@@ -3225,6 +3226,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * @return
      */
     public boolean stopPingThread() {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
         if (m_threadPing != null) {
             m_bRunning = false;
             try {
@@ -3235,6 +3237,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             }
         }
         m_threadPing = null;
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
         return true;
     }
 

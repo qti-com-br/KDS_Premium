@@ -264,7 +264,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, ">>>>>>Enter mainactivity oncreate");
-        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"enter");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"enter, ip=" + KDSSocketManager.getLocalIpAddress() );
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         m_activation.setEventsReceiver(this);
@@ -798,8 +798,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void explicitStartService()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
         Intent intent = new Intent(this, KDSRouterService.class);
         startService(intent);
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
     }
     private void explicitStopService()
     {
@@ -952,6 +954,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void bindKDSRouterService()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
         if (m_serviceConn != null || m_service != null) return;
         m_serviceConn = new ServiceConnection() {
             @Override
@@ -974,6 +977,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         {
             KDSLog.e(TAG, KDSLog._FUNCLINE_() + "bindService multiple");
         }
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
     }
     /**
      * interface implements
@@ -1843,11 +1847,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     protected void onDestroy()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
         super.onDestroy();
         if (m_service!= null) {
             if (m_service.getKDSRouter()!= null)
                 m_service.getKDSRouter().removeEventReceiver(this);
         }
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
     }
 }
 
