@@ -669,11 +669,12 @@ public class KDSSocketTCPSideBase implements KDSSocketInterface{
                 str = str + "\r\n";
                 strInfo+=str;
             }
-            KDSLog.i(TAG,KDSLog._FUNCLINE_()+ strInfo);
+            //KDSLog.i(TAG,KDSLog._FUNCLINE_()+ strInfo);
             buf.close();
             ir.close();
             if (strInfo.indexOf("time=") >=0)
                 return true;
+            KDSLog.i(TAG,KDSLog._FUNCLINE_()+ strInfo);
             return false;//strInfo;
         }
         catch (Exception e)
