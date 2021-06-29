@@ -1536,7 +1536,7 @@ public class KDSBackofficeNotification extends Handler{
             m_dateHeartbeat.setTime(System.currentTimeMillis());
 
             //sendStoreGuid();
-            log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onOpen: " + serverHandshake.toString());
+            //log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onOpen: " + serverHandshake.toString());
         }
 
         @Override
@@ -1548,7 +1548,9 @@ public class KDSBackofficeNotification extends Handler{
                 this.close();
             }
             else {
-                log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onMessage: \n" + s);
+                //if (s.indexOf("\"upgrades\":[],\"pingInterval\":25000,\"pingTimeout\":60000") >=0)
+                //    return;
+                //log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onMessage: \n" + s);
                 Message m = new Message();
                 m.what = RECEIVED_NOTIFY;
                 m.obj = s;
@@ -1562,7 +1564,7 @@ public class KDSBackofficeNotification extends Handler{
 
         @Override
         public void onClose(int i, String s, boolean b) {
-            log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onClose:" + s);
+            //log2File(TAG + KDSLog._FUNCLINE_() + "BackOfficeWebSocketClient: onClose:" + s);
             this.setConnectedStoreGuid("");
             //I use mainactivity timer to check connection.
 //            if (!m_bStopMe) {

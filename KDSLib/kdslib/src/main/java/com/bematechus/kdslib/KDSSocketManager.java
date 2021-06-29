@@ -3,6 +3,7 @@ package com.bematechus.kdslib;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.util.Log;
 
@@ -309,14 +310,17 @@ public class KDSSocketManager implements Runnable {
 
 
     public boolean startThread() {
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "startThread enter");
         m_bRunning = true;
         m_threadSocket = new Thread(this, "SocketManager");
         m_threadSocket.start();
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "startThread exit");
         return true;
 
     }
 
     public boolean stopThread() {
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "stopThread enter");
         if (m_threadSocket != null) {
             m_bRunning = false;
             try {
@@ -327,6 +331,7 @@ public class KDSSocketManager implements Runnable {
             }
         }
         m_threadSocket = null;
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "stopThread exit");
         return true;
     }
 
