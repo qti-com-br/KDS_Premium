@@ -7736,6 +7736,21 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
             getKDS().syncItemBumpUnbumpToWebDatabase(order, item, true);
         }
+
+        //kp-129, print bumped item
+        if (getSettings().getBoolean(KDSSettings.ID.Printer_item_bumped))
+        {
+            if (order != null) { //if I continue bump order, show crash, KPP1-129
+                KDSDataItem item = order.getItems().getItemByGUID(itemGuid);
+                KDSDataOrder printOrder = new KDSDataOrder();
+                order.copyOrderInfoTo(printOrder);
+                printOrder.getItems().addComponent(item);
+                getKDS().getPrinter().printOrder(printOrder);
+                item.setPrinted(true);
+                getKDS().getCurrentDB().itemSetPrinted(itemGuid, true);
+            }
+        }
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }

@@ -1018,6 +1018,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         }
 
+        if (env.getSettings().getBoolean(KDSSettings.ID.Printer_item_bumped)) {
+            if (item.getPrinted()) {
+
+                String s = env.getSettings().getString(KDSSettings.ID.Item_mark_printed);
+                ItemMark itemMark = ItemMark.parseString(s);
+                if (itemMark.getFormat() == ItemMark.MarkFormat.Color) {
+                    color.setBG(itemMark.getMarkColor().getBG());
+                    color.setFG(itemMark.getMarkColor().getFG());
+                }
+            }
+        }
 
         if (env.getStateValues().isFocusedItemGUID(guid)) {//draw focused symble
 
@@ -1176,6 +1187,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //
 //            drawable.draw(g);
 //            rcAbsolute.left += rcAbsolute.height()+IMAGE_GAP;
+        }
+
+        if (item.getPrinted())
+        {
+            if ( env.getSettings().getBoolean(KDSSettings.ID.Printer_item_bumped)) {
+                String s = env.getSettings().getString(KDSSettings.ID.Item_mark_printed);
+                ItemMark itemMark = ItemMark.parseString(s);
+                itemMark.setMarkType(ItemMark.MarkType.Printed);
+                rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color, nSize, ff);
+            }
+
         }
         return rcAbsolute;
     }

@@ -4199,7 +4199,7 @@ update the schedule item ready qty
      */
     public void itemSetPrinted(String itemGuid, boolean bPrinted)
     {
-        String sql = String.format("update items set r6=%d where guid='%s",bPrinted?1:0, itemGuid);
+        String sql = String.format("update items set r6=%d where guid='%s'",bPrinted?1:0, itemGuid);
         this.executeDML(sql);
     }
 
@@ -4210,7 +4210,7 @@ update the schedule item ready qty
      */
     public boolean itemGetPrinted(String itemGuid)
     {
-        String sql = String.format("select r6 from items where guid='%s", itemGuid);
+        String sql = String.format("select r6 from items where guid='%s'", itemGuid);
         if (getDB() == null) return false;
 
         Cursor c = getDB().rawQuery(sql, null);

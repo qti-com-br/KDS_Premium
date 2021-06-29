@@ -127,9 +127,9 @@
         android:title="@string/print_item_individually"
         android:defaultValue="false" />
     <CheckBoxPreference
-        android:key="printer_item_bump"
+        android:key="printer_item_bumped"
         android:title="Print bumped item"
-        android:summary="Print item when it bump"
+        android:summary="Print item when it bumped"
         android:defaultValue="false" />
     <!--<EditTextPreference-->
         <!--android:key="printer_template"-->
