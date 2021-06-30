@@ -974,4 +974,7 @@
     <string name="queue_only_auto_bump">Only auto bumping can bump order</string>
     <string name="print_item_individually">Print items individually</string>
     <string name="transfer_prep_transfer_expo">Transferring prep order will transfer expo order</string>
+    <string name="print_bumped_item">Print bumped item</string>
+	<string name="print_item_when_bumped">Print item when it bumped</string>
+	<string name="item_was_printed">Item was printed</string>
 </resources>

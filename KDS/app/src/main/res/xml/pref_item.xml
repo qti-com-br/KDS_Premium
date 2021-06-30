@@ -106,7 +106,7 @@
             android:maxLines="1" />
         <com.bematechus.kds.KDSPreferenceItemMark
             android:key="item_mark_printed"
-            android:title= "Item was printed"
+            android:title= "@string/item_was_printed"
             android:defaultValue="0_7"
             android:selectAllOnFocus="true"
             android:positiveButtonText="@string/ok"
