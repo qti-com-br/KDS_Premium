@@ -631,6 +631,9 @@ public class KDSSettings extends SettingsBase {
        Queue_only_auto_bump, //only the auto bumping can bump order in queue station.
        Printer_item_individually,
        Transfer_prep_expo, //kp-116 Transfer Prep -> Transfer Expo
+       Printer_item_bumped, //printer item when it was bumped.
+       Item_mark_printed, //if item was printed.
+
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1481,6 +1484,9 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Printer_item_individually, "bool_printer_item_individually", false);
 
         init_option(ID.Transfer_prep_expo, "bool_transfer_prep_expo", false);
+        //print item when it was bumped.
+        init_option(ID.Printer_item_bumped, "bool_printer_item_bumped", false);
+        init_option(ID.Item_mark_printed, "string_item_mark_printed", "0_7");
 
     }
 

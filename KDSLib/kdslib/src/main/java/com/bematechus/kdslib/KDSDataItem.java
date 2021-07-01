@@ -85,6 +85,10 @@ public class KDSDataItem extends KDSData {
     protected String m_strItemBumpGUID = "";
     
     protected boolean m_bPrintable = true;
+
+    //print item when bump
+    protected boolean m_bPrinted = false; //don't output to xml
+
     /////////////////////
     //public ArrayList<Point> m_tempShowMeNeedBlockLines = new ArrayList<>();//1; //for text wrap, saveing it here is for  efficiency.
     /**
@@ -821,7 +825,8 @@ public class KDSDataItem extends KDSData {
         to.setTransferedFromStationID(this.getTransferedFromStationID()); //kpp1-53
         to.setItemBumpGuid(this.getItemBumpGuid()); //KPP1-64
         to.setPrintable(this.getPrintable());
-        
+        to.setPrinted(this.getPrinted());
+
         this.getModifiers().copyTo(to.getModifiers());
 
         this.getPreModifiers().copyTo(to.getPreModifiers());
@@ -1218,5 +1223,15 @@ public class KDSDataItem extends KDSData {
     public KDSToStations getHiddenStations()
     {
         return m_hiddenStations;
+    }
+
+    public void setPrinted(boolean bPrinted)
+    {
+        m_bPrinted = bPrinted;
+    }
+
+    public boolean getPrinted()
+    {
+        return m_bPrinted;
     }
 }

@@ -104,6 +104,14 @@
             android:positiveButtonText="@string/ok"
             android:negativeButtonText="@string/cancel"
             android:maxLines="1" />
+        <com.bematechus.kds.KDSPreferenceItemMark
+            android:key="item_mark_printed"
+            android:title= "@string/item_was_printed"
+            android:defaultValue="0_7"
+            android:selectAllOnFocus="true"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            android:maxLines="1" />
     </PreferenceCategory>
 
     <!-- void item -->

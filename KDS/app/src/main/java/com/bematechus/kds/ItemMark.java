@@ -33,7 +33,7 @@ public class ItemMark {
         Delete_by_xml,
         Qty_changed,
         Partial_bumped_in_expo,//2.0.14
-
+        Printed, //print item when bump
     }
 
 
@@ -103,6 +103,8 @@ public class ItemMark {
                 return "(E)";
             case Partial_bumped_in_expo://2.0.14
                 return "@";
+            case Printed:
+                return "$";
         }
         return "";
     }
@@ -115,9 +117,10 @@ public class ItemMark {
             case Null:
                 return new KDSBGFG(0,0);
 
-            case Focused:
-                return new KDSBGFG(ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.item_focused_bg),
-                                    ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.item_focused_fg));
+            case Focused: {
+                return new KDSBGFG(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.item_focused_bg),
+                        ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.item_focused_fg));
+            }
                 //return new KDSBGFG(KDSApplication.getContext().getResources().getColor(R.color.item_focused_bg),KDSApplication.getContext().getResources().getColor(R.color.item_focused_fg));
 
             case Local_bumped:
@@ -131,6 +134,11 @@ public class ItemMark {
                 return new KDSBGFG(Color.LTGRAY,Color.BLUE);
             case Partial_bumped_in_expo:
                 return new KDSBGFG(Color.GRAY,Color.BLACK);
+            case Printed:
+                {
+                return new KDSBGFG(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.item_focused_bg),
+                        ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.item_focused_fg));
+            }
         }
         return new KDSBGFG(0,0);
     }
@@ -149,7 +157,8 @@ public class ItemMark {
             return MarkType.Qty_changed;
         else if (prefKey.equals("item_mark_expo_partial_bumped"))
             return MarkType.Partial_bumped_in_expo;
-
+        else if (prefKey.equals("item_mark_printed"))
+            return MarkType.Printed;
         return MarkType.Null;
 
     }
@@ -275,7 +284,8 @@ public class ItemMark {
                 return com.bematechus.kdslib.R.drawable.edit_24px_16;
             case Partial_bumped_in_expo:
                 return R.drawable.partial_bumped;
-
+            case Printed:
+                return R.drawable.ticket_print;
         }
         return -1;
     }
@@ -345,6 +355,8 @@ public class ItemMark {
                 return env.getSettings().getItemChangedImage();
             case Partial_bumped_in_expo:
                 return env.getSettings().getExpoItemPartialBumpedImage();
+            case Printed:
+                return KDSApplication.getContext().getResources().getDrawable(R.drawable.ticket_print);
 
         }
         return null;
