@@ -291,7 +291,15 @@ public class KDSXMLParserOrder {
                         order.getAutoUnparkDate().setTime(l);//KDSUtil.convertStringToLong(s, KDSUtil.createInvalidDate().getTime()));
                     }
                     else {
-                        Date dt = KDSUtil.convertStringToDate(s, KDSUtil.createInvalidDate());
+                        Date dt = null;//new Date();
+                        if (KDSUtil.isISO8601TimeFormat(s))
+                        {
+                            dt = KDSUtil.convertIso8601Time2Date(s, KDSUtil.createInvalidDate());
+                        }
+                        else
+                            dt = KDSUtil.convertStringToDate(s, KDSUtil.createInvalidDate());
+                        if (dt == null)
+                            dt = new Date();
                         order.setAutoUnparkDate(dt);
                     }
                     order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.AutoUnpark);

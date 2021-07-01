@@ -2149,4 +2149,42 @@ just 16bits value
         return s;
     }
 
+    /**
+     * format: 2018-05-14T03:51:50.153Z
+     * @param tm
+     * @return
+     */
+    static boolean isISO8601TimeFormat(String tm)
+    {
+        tm = tm.toUpperCase();
+        if (tm.indexOf("T")>=0 &&
+            tm.indexOf("Z") >=0 &&
+            tm.indexOf(":") >=0)
+            return true;
+        return false;
+
+    }
+
+    /**
+     *
+     * @param s
+     * @param dtDefault
+     * @return
+     */
+    static Date convertIso8601Time2Date(String s, Date dtDefault)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        s = s.toUpperCase();
+        try
+        {
+            Date date = sdf.parse(s, new ParsePosition(0));// null).parse(s);
+            return date;
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),e);// + e.toString());
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return (dtDefault);
+        }
+    }
 }
