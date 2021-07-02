@@ -478,8 +478,16 @@ public class KDSMyStationRelations {
         {
 
             relation = m_arStationsRelations.get(i);
-            if ((relation.getFunction() != SettingsBase.StationFunc.Prep)  )
-                continue;
+            if ((relation.getFunction() != SettingsBase.StationFunc.Prep)  ) {
+                if (KDSBase.isExpoTypeStation(relation.getFunction()))
+                    continue;
+                else
+                { //kp-135
+                    SettingsBase.StationFunc parentFunc = getStationFunction(relation.getID(),relation.getSlaveStations() );
+                    if (parentFunc != SettingsBase.StationFunc.Prep)
+                        continue;
+                }
+            }
             if (relation.getID().equals(expoStationID))
                 continue;
             String expos = relation.getExpStations();

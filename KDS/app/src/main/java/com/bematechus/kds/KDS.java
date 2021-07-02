@@ -2706,7 +2706,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         bForceAcceptThisOrderNoStationIDItems = true;//2.0.36
         //if (bForceAcceptThisOrderNoStationIDItems)//2.0.36
-            assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
+        assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
 
         //save it for sms feature.
         ArrayList<KDSToStation> arTargetStations = KDSDataOrder.getOrderTargetStations(order);
@@ -2771,6 +2771,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             order.getItems().getItem(i).setToStationsString(workLoadStation.getID());
         }
         m_stationsConnection.writeDataToStationOrItsBackup(workLoadStation, order.createXml());
+        //kp-135,if the workload station has expo, remove this order in my expo station, here.
+        //
 
 
         return true;
@@ -2857,7 +2859,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     private KDSDataOrder keepExpoItemsAccordingToStationsSetting(KDSDataOrder order, ArrayList<KDSDataItem> removedItems)
     {
 
-        if (!this.isExpeditorStation() && !this.isQueueExpo() && !this.isRunnerStation() &&!this.isSummaryStation())
+        //if (!this.isExpeditorStation() && !this.isQueueExpo() && !this.isRunnerStation() &&!this.isSummaryStation())
+        if (!isExpoTypeStation())
             return order;
         //KKPP1-152
         if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||
@@ -2871,7 +2874,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //
         KDSStationIP myStation = new KDSStationIP();
         myStation.setID(getStationID());
-        arPrepWhoUseMeAsExpo.add(myStation);
+        arPrepWhoUseMeAsExpo.add(myStation);//add myself
 
         int ncount = order.getItems().getCount();
         for (int i=ncount-1; i>=0; i--) {
@@ -2922,20 +2925,23 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //Queue expo supports certain stations
         //just keep the items which target station uses I as expo/expo-queue.
         //For KPP1-37, I add queue-expo filter at here.
-        if (this.isExpeditorStation() || this.isQueueExpo() || this.isRunnerStation() || this.isSummaryStation()) //2.1.15.3, KPP1-37
+        //if (this.isExpeditorStation() || this.isQueueExpo() || this.isRunnerStation() || this.isSummaryStation()) //2.1.15.3, KPP1-37
+        if (isExpoTypeStation())
             keepExpoItemsAccordingToStationsSetting(order,removedItems);
 
 
         //20160418, keep all items if i am expo station
         //One bug I will need you to fix before moving to new project: Setup 2 station, 1 normal,
         // 1expo with router, send order to normal, both station get order, disconnect normal, expo will not receive any order(sample order attached).
-        if (this.isExpeditorStation() ||
-               // this.isQueueStation() ||
-                this.isTrackerStation() ||
-                this.isQueueExpo() ||
-                this.isRunnerStation()||
-                this.isSummaryStation()) return order;
 
+//        if (this.isExpeditorStation() ||
+//               // this.isQueueStation() ||
+//                this.isTrackerStation() ||
+//                this.isQueueExpo() ||
+//                this.isRunnerStation()||
+//                this.isSummaryStation()) return order;
+        if (this.isExpoTypeStation() || isTrackerStation())
+            return order;
         //2.0.18
         // If it is expo queue, accept this order.
         //if it is prep queue, check check its prep items
@@ -2955,9 +2961,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         {
             if (order.getItems().getItem(i).isExpitem())
             {
-                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) &&
-                        (!isRunnerStation()) &&
-                        (!isSummaryStation())) {
+//                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) &&
+//                        (!isRunnerStation()) &&
+//                        (!isSummaryStation()))
+                if (!isExpoTypeStation() && (!isTrackerStation()) && (!isQueueStation()))
+                {
                     removedItems.add(order.getItems().getItem(i));
                     order.getItems().removeComponent(i);
                 }
@@ -2975,7 +2983,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             //
             if (tostation == KDSToStations.PrimarySlaveStation.Unknown) {
                 //keep modify item. The expo station don't need these type items, as the stations will send items to it.
-                if ( (!this.isQueueExpo()) && (!this.isExpeditorStation()) &&(!isRunnerStation()) &&(!isSummaryStation())) {
+                //if ( (!this.isQueueExpo()) && (!this.isExpeditorStation()) &&(!isRunnerStation()) &&(!isSummaryStation()))
+                if (!isExpoTypeStation())
+                {
                     if (order.getItems().getItem(i).getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
                             order.getItems().getItem(i).getTransType() == KDSDataOrder.TRANSTYPE_DELETE)
                         continue;
@@ -5852,12 +5862,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     private boolean isExpoTypeStation()
     {
-        if (this.isQueueExpo() ||
-                this.isExpeditorStation()||
-                isRunnerStation() ||
-                isSummaryStation() )
-            return true;
-        return false;
+        return (KDSBase.isExpoTypeStation(getStationFunction()));
+//        if (this.isQueueExpo() ||
+//                this.isExpeditorStation()||
+//                isRunnerStation() ||
+//                isSummaryStation() )
+//
+//            return true;
+//        return false;
     }
 
     /**

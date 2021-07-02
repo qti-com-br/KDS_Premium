@@ -7904,7 +7904,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     //if current focused order is not rush order, focus this new rush order.
                     String focusedOrderGuid = getFocusedOrderGUID(KDSUser.USER.USER_A);
                     KDSDataOrder focusedOrder =  getKDS().getUsers().getUserA().getOrders().getOrderByGUID(focusedOrderGuid);
-                    if (!focusedOrder.isRush()) {
+
+                    if (focusedOrder!= null && (!focusedOrder.isRush())) {
                         KDSDataOrder rushOrder = (KDSDataOrder) arParams.get(0);
                         getUserUI(KDSUser.USER.USER_A).getLayout().getEnv().getStateValues().setFocusedOrderGUID(rushOrder.getGUID());
                     }
