@@ -63,7 +63,7 @@ public class KDSXMLParserCommand {
         DB_Return_Status, //return support database is empty status
         DB_Copy_Current_To_Support, //while just open/started app, backup can not find if main is running, so it copy all support to current,
         // if main and backup is same database, we just reverse it
-        Station_Add_New_Park_Order,
+        Station_Add_New_Park_Order,//25
         Station_Order_Parked,
         Station_Order_Unpark,
         ////////////////////
@@ -71,12 +71,12 @@ public class KDSXMLParserCommand {
         //for Router
         ROUTER_ASK_DB_STATUS,
         ROUTER_FEEDBACK_DB_STATUS,
-        ROUTER_DB_SQL,
+        ROUTER_DB_SQL,//30
         ROUTER_ASK_DB_DATA,
         ROUTER_UPDATE_CHANGES_FLAG,//2015-12-31
         ROUTER_SQL_SYNC, //sync router database in primary and backup routers.
 
-        Expo_Bump_Order, //expo and normal station has different steps, those are the expo operations and will inform to its backup/mirror
+        Expo_Bump_Order, //34 expo and normal station has different steps, those are the expo operations and will inform to its backup/mirror
         Expo_Unbump_Order,
         Expo_Bump_Item,
         Expo_Unbump_Item,

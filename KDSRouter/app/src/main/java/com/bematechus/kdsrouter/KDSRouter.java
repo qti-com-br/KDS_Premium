@@ -3629,6 +3629,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                     stationRelation.getFunction() == KDSRouterSettings.StationFunc.Summary
             )
             {
+                if (stationRelation.getFunction() == SettingsBase.StationFunc.Expeditor)
+                {//workload: prep and workload all with expo, we don't sen order to expo.
+                    //let the prep to handle this order.
+                    if (isExpoInPrepWithWorkload(stationRelation.getID()))
+                        continue;
+                }
                 KDSToStation toStation = new KDSToStation();
                 toStation.setPrimaryStation(stationRelation.getID());
                 ar.add(toStation);
@@ -4088,4 +4094,50 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         }
     }
 
+    /**
+     *
+     *
+     *   Workload -- expo
+     *    |
+     *   Prep     -- expo
+     *
+     * Check if expo is in above structure.
+     * If it is, don't send order to expo
+     * @return
+     */
+    private boolean isExpoInPrepWithWorkload(String expoStationID)
+    {
+        ArrayList<KDSStationIP> arPrep = m_stationsConnection.getRelations().getPrepStationsWhoUseMeAsExpo(expoStationID);
+        for (int i=0; i< arPrep.size(); i++)
+        {
+            KDSStationIP station = arPrep.get(i);
+            SettingsBase.StationFunc func = m_stationsConnection.getRelations().getStationFunctionForBackoffice(station.getID());
+            if (func == SettingsBase.StationFunc.Prep)
+            {
+                //check if its workload has expo
+                ArrayList<KDSStationIP> arWorkload = m_stationsConnection.getRelations().getItsWorkLoadStation(station.getID());
+                for (int j=0; j< arWorkload.size(); j++)
+                {
+                    if (m_stationsConnection.getRelations().getItsExpoStation(arWorkload.get(j).getID()).size()>0)
+                        return true;
+                }
+
+            }
+            else if (func == SettingsBase.StationFunc.Workload)
+            {
+                //check if its primary(prep) has expo
+                ArrayList<String> arPrimary = m_stationsConnection.getRelations().getStationsWhoUseMeAsWorkload(station.getID());
+                for (int j=0; j< arPrimary.size(); j++)
+                {
+                    if (m_stationsConnection.getRelations().getItsExpoStation(arPrimary.get(j)).size()>0)
+                        return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
 }

@@ -3,6 +3,7 @@ package com.bematechus.kds;
 import android.util.Log;
 
 import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCondiment;
@@ -2451,14 +2452,16 @@ public class KDSStationFunc {
      */
     static public boolean isExpoTypeStation(SettingsBase.StationFunc func)
     {
-        if (func == SettingsBase.StationFunc.Expeditor ||
-                func == SettingsBase.StationFunc.Queue_Expo ||
-                func == SettingsBase.StationFunc.Runner ||
-                func == SettingsBase.StationFunc.Summary
-        )
-            return true;
-        else
-            return false;
+        return KDSBase.isExpoTypeStation(func);
+
+//        if (func == SettingsBase.StationFunc.Expeditor ||
+//                func == SettingsBase.StationFunc.Queue_Expo ||
+//                func == SettingsBase.StationFunc.Runner ||
+//                func == SettingsBase.StationFunc.Summary
+//        )
+//            return true;
+//        else
+//            return false;
     }
 
     /**

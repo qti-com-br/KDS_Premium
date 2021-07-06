@@ -3152,14 +3152,16 @@ public class PreferenceFragmentStations
      */
     public boolean isExpoTypeStation(SettingsBase.StationFunc func)
     {
-        if (func == SettingsBase.StationFunc.Expeditor ||
-            func == SettingsBase.StationFunc.Queue_Expo ||
-                func == SettingsBase.StationFunc.Runner ||
-                func == SettingsBase.StationFunc.Summary
-            )
-            return true;
-        else
-            return false;
+        return KDSBase.isExpoTypeStation(func);
+        
+//        if (func == SettingsBase.StationFunc.Expeditor ||
+//            func == SettingsBase.StationFunc.Queue_Expo ||
+//                func == SettingsBase.StationFunc.Runner ||
+//                func == SettingsBase.StationFunc.Summary
+//            )
+//            return true;
+//        else
+//            return false;
     }
 }
 
