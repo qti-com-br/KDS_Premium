@@ -427,7 +427,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     public void updateStationFunction()
     {
         //KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
-        KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunctionForBackoffice(getStationID(), "");
+        KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunctionForBackoffice(getStationID());
 
         SettingsBase.StationFunc old = m_settings.getStationFunc();
         KDSSettings.StationFunc funcRealWorkFor =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
