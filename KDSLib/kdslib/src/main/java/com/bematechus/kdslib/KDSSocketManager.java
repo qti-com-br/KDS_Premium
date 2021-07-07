@@ -18,6 +18,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -342,6 +343,10 @@ public class KDSSocketManager implements Runnable {
 
     static public long m_nLostNetworkCount = 0; // use it to limit the network sensitive.
     static public boolean isNetworkActived(Context context) {
+
+        if (isWebsocketActived()) //KP-119 add this condition. getActiveNetworkInfo() seems not stable.
+            return true;
+
         String service = Context.CONNECTIVITY_SERVICE;
         ConnectivityManager cm = (ConnectivityManager) (context.getSystemService(service));
         NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -350,6 +355,18 @@ public class KDSSocketManager implements Runnable {
         if (ni != null && ni.isConnectedOrConnecting()) {
             m_nLostNetworkCount = 0;
             return true;
+        }
+        //log the error message.
+        if (ni == null)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "ni==null");
+        }
+        else
+        {
+            if (!ni.isConnectedOrConnecting())
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "isConnectedOrConnecting()=false");
+            else
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + ni.toString());
         }
         m_nLostNetworkCount ++;
         return false;
@@ -612,6 +629,25 @@ public class KDSSocketManager implements Runnable {
 
     }
 
+
+    static public Date m_dtLastTimeReceiveWebsocketMessage = KDSUtil.createInvalidDate();
+    static public void refreshWebsocketActiveTime()
+    {
+        m_dtLastTimeReceiveWebsocketMessage.setTime(System.currentTimeMillis());
+
+    }
+
+    static public Date getWebsocketActiveTime()
+    {
+        return m_dtLastTimeReceiveWebsocketMessage;
+    }
+
+    static private int WEBSOCKET_TIMEOUT = 5000; //every 4 seconds we receive websocket message.
+    static public boolean isWebsocketActived()
+    {
+        TimeDog tm = new TimeDog(m_dtLastTimeReceiveWebsocketMessage);
+        return (tm.is_timeout(WEBSOCKET_TIMEOUT));
+    }
 
 
 }
