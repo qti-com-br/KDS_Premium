@@ -4107,7 +4107,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      */
     private boolean isExpoInPrepWithWorkload(String expoStationID)
     {
-        ArrayList<KDSStationIP> arPrep = m_stationsConnection.getRelations().getPrepStationsWhoUseMeAsExpo(expoStationID);
+        ArrayList<KDSStationIP> arPrep = m_stationsConnection.getRelations().getStationsWhoUseMeAsExpo(expoStationID);
         for (int i=0; i< arPrep.size(); i++)
         {
             KDSStationIP station = arPrep.get(i);
