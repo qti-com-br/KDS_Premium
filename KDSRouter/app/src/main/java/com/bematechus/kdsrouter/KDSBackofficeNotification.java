@@ -14,6 +14,7 @@ import com.bematechus.kdslib.KDSDataMessages;
 import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSSocketManager;
 import com.bematechus.kdslib.TimeDog;
 
 import org.java_websocket.client.WebSocketClient;
@@ -1541,6 +1542,9 @@ public class KDSBackofficeNotification extends Handler{
 
         @Override
         public void onMessage(String s) {
+            //KP-119, record time.
+            KDSSocketManager.refreshWebsocketActiveTime();
+
             if (s.indexOf("Connected")>=0)
                 sendStoreGuid();
             else if (s.indexOf("error")>=0)
