@@ -433,6 +433,14 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 return order.getHeaderFooterMessage();
             }
             //break;
+            case CustomerName:
+            {
+                return order.getCustomer().getName();
+            }
+            case InputMsg:
+            {
+                return order.getInputMessage();
+            }
             default:
                 return "";
         }
@@ -452,6 +460,8 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             case CustMessage:
             case OrderStatus:
             case OrderIcon:
+            case HeaderFooterMessage:
+            case CustomerName:
 
                 return ffDefault;
             case OrderType:
@@ -1008,6 +1018,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         }
 
+        if (env.getSettings().getBoolean(KDSSettings.ID.Printer_item_bumped)) {
+            if (item.getPrinted()) {
+
+                String s = env.getSettings().getString(KDSSettings.ID.Item_mark_printed);
+                ItemMark itemMark = ItemMark.parseString(s);
+                if (itemMark.getFormat() == ItemMark.MarkFormat.Color) {
+                    color.setBG(itemMark.getMarkColor().getBG());
+                    color.setFG(itemMark.getMarkColor().getFG());
+                }
+            }
+        }
 
         if (env.getStateValues().isFocusedItemGUID(guid)) {//draw focused symble
 
@@ -1166,6 +1187,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //
 //            drawable.draw(g);
 //            rcAbsolute.left += rcAbsolute.height()+IMAGE_GAP;
+        }
+
+        if (item.getPrinted())
+        {
+            if ( env.getSettings().getBoolean(KDSSettings.ID.Printer_item_bumped)) {
+                String s = env.getSettings().getString(KDSSettings.ID.Item_mark_printed);
+                ItemMark itemMark = ItemMark.parseString(s);
+                itemMark.setMarkType(ItemMark.MarkType.Printed);
+                rcAbsolute = drawItemMark(g, item, rcAbsolute, env, itemMark, color, nSize, ff);
+            }
+
         }
         return rcAbsolute;
     }
@@ -1409,7 +1441,9 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         return true;
     }
     /**
-     *
+     * rev.:
+     *      kp-99, if the text wrap enabled, the qty can not align with the text.
+     *              I draw the qty and state icon after description drawing.
      * @param g
      * @param rcAbsolute
      *  My cell rect, include the combined cells
@@ -1420,6 +1454,129 @@ public class KDSLayoutCell extends KDSViewBlockCell {
      * @return
      */
     protected boolean drawDataItem(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block)
+    {
+        if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
+        //if (m_prevCell != null) return true; //I am combined to prev
+
+        KDSDataItem item =(KDSDataItem) this.getData();
+
+        KDSBGFG color = getStateColor(item, env, this.getFont().getBG(), this.getFont().getFG());
+        int nbg = color.getBG();//getOriginalBG();
+//        if ( nbg == this.getFont().getBG())
+//            nbg = Color.TRANSPARENT;
+//        else
+//            nbg = color.getBG();
+        int panelBG = env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+        if ( nbg == panelBG)
+            nbg = Color.TRANSPARENT;
+
+        CanvasDC.fillRect(g, nbg, rcAbsolute);
+        //CanvasDC.fillRect(g, color.getBG(), rcAbsolute);
+        Rect rcState = new Rect(rcAbsolute);//we need to draw again if text wrap enabled.
+        rcAbsolute = drawItemState(g,item, rcAbsolute, env, color, block.getCalculatedAverageRowHeight(), this.getFont());
+        rcState.right = rcAbsolute.left; //save it.
+        //reset font bg.
+        int noldbg = this.getFont().getBG();
+        int noldfg = this.getFont().getFG();
+
+        this.getFont().setFG(color.getFG());
+        //this.getFont().setBG(color.getBG());
+        this.getFont().setBG(nbg);
+
+        Paint.Align align = Paint.Align.LEFT;
+        if (item.getAlign() == Paint.Align.RIGHT)
+            align = Paint.Align.RIGHT;
+
+        //draw qty first
+        float qty = item.getShowingQty();
+
+        String strQty = getItemPrefix();// getSpaces(2);
+        //strQty += Integer.toString((int) qty);
+        strQty += makeQtyString(qty, env.getSettings().getBoolean(KDSSettings.ID.Qty_as_fraction), env.getSettings().getInt(KDSSettings.ID.Qty_precision));
+
+        strQty += "x";
+        strQty += getItemQtySuffix() ;
+
+        Rect rcQty = new Rect(rcAbsolute);
+
+        if (item.getAlign() == Paint.Align.RIGHT)
+        {
+            //Rect rc = new Rect(rcAbsolute);
+
+            rcQty.left = rcQty.right - getItemQtyPixelsWidth(getFont(), qty, env);// CanvasDC.getTextPixelsWidth(this.getFont(), strQty);
+            //if (m_nTextWrapRowIndex ==0)//move to below
+            //    CanvasDC.drawWrapString(g, this.getFont(), rcQty, strQty, align, true);
+            rcAbsolute.right = rcQty.left;
+        }
+        else {
+            //Rect rc = new Rect(rcAbsolute);
+            Paint paint = new Paint();
+
+            paint.setTypeface(getFont().getTypeFace());
+            paint.setTextSize(getFont().getFontSize());
+            rcQty.right = rcQty.left + getItemQtyPixelsWidth(getFont(),qty, env) ;//  CanvasDC.getTextPixelsWidth(paint, "!" + strQty + "!");
+            //Bug here! KP-99
+            if (item.m_tempShowMeNeedBlockLines.size() >0) {
+                if (!isLastBlockColDataRow(block, nColInBlock))//kp-99, add this condition.
+                    rcQty.bottom = rcQty.top + rcQty.height() / item.m_tempShowMeNeedBlockLines.size();
+            }
+            //if (m_nTextWrapRowIndex ==0)//move to below.
+            //    CanvasDC.drawText(g, this.getFont(), rcQty, strQty, align, true);
+           // rc.right = rc.left + CanvasDC.getTextPixelsWidth(paint, strQty);
+            rcAbsolute.left = rcQty.right;
+
+        }
+
+        //draw description
+        String strDescription = item.getDescription();
+
+        if (env.getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
+            int nTextWrapRows = getTextWrapRowsInSameBlockCol(block, nColInBlock);
+            String strTextWrap = getTextWrapRowsDescription(item, strDescription,this.m_nTextWrapRowIndex, nTextWrapRows);
+            //kp-99, as the text was wrapped, I have to move qty and icon to correct position.
+            //          draw them here, after description finished.
+            Point ptReturn = CanvasDC.drawWrapString(g, this.getFont(), rcAbsolute, strTextWrap, align, true);
+            //ptReturn: x = font size in description drawing. y: the description start point.
+            if (m_nTextWrapRowIndex ==0) { //draw qty
+                int fontSize = ptReturn.x;
+                int y = ptReturn.y;
+                //int h = rcAbsolute.height();
+                rcQty.top = y;
+                rcQty.bottom =rcAbsolute.bottom;// rcQty.top + h;
+                int size = this.getFont().getFontSize();
+                this.getFont().setFontSize(fontSize);
+                CanvasDC.drawQtyWrapText(g, this.getFont(), rcQty, strQty, align, true);
+                this.getFont().setFontSize(size);
+            }
+            //draw state icon again after change position.
+            CanvasDC.fillRect(g, nbg, rcState);//clear old image.
+            //if (!isLastBlockColDataRow(block, nColInBlock) && //it is not la
+            if ( rcState.height() != block.getCalculatedAverageRowHeight())//it is not single row.
+                rcState.top = ptReturn.y-KDSConst.IMAGE_GAP;
+            rcState.bottom = rcState.top + block.getCalculatedAverageRowHeight();//limit the icon size to one row.
+            drawItemState(g,item, rcState, env, color, block.getCalculatedAverageRowHeight(), this.getFont());
+        }
+        else {
+            CanvasDC.drawText(g, this.getFont(), rcAbsolute, strDescription, align, true);
+            CanvasDC.drawText(g, this.getFont(), rcQty, strQty, align, true);
+        }
+        this.getFont().setBG(noldbg);
+        this.getFont().setFG(noldfg);
+
+
+        return true;
+    }
+
+    /**
+     *
+     * @param g
+     * @param rcAbsolute
+     * @param env
+     * @param nColInBlock
+     * @param block
+     * @return
+     */
+    protected boolean drawDataItem2_old(Canvas g,Rect rcAbsolute,KDSViewSettings env, int nColInBlock, KDSViewBlock block)
     {
         if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
         //if (m_prevCell != null) return true; //I am combined to prev
@@ -1485,11 +1642,14 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             paint.setTypeface(getFont().getTypeFace());
             paint.setTextSize(getFont().getFontSize());
             rc.right = rc.left + getItemQtyPixelsWidth(getFont(),qty, env) ;//  CanvasDC.getTextPixelsWidth(paint, "!" + strQty + "!");
-            if (item.m_tempShowMeNeedBlockLines.size() >0)
-                rc.bottom = rc.top + rc.height()/item.m_tempShowMeNeedBlockLines.size();
+            //Bug here! KP-99
+            if (item.m_tempShowMeNeedBlockLines.size() >0) {
+                if (!isLastBlockColDataRow(block, nColInBlock))//kp-99, add this condition.
+                    rc.bottom = rc.top + rc.height() / item.m_tempShowMeNeedBlockLines.size();
+            }
             if (m_nTextWrapRowIndex ==0)
                 CanvasDC.drawText(g, this.getFont(), rc, strQty, align, true);
-           // rc.right = rc.left + CanvasDC.getTextPixelsWidth(paint, strQty);
+            // rc.right = rc.left + CanvasDC.getTextPixelsWidth(paint, strQty);
             rcAbsolute.left = rc.right;
 
         }
@@ -1527,6 +1687,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         return true;
     }
+
 
     private void drawItemLine(Canvas g, Rect rcAbsolute, KDSBGFG color)
     {
@@ -1605,8 +1766,6 @@ public class KDSLayoutCell extends KDSViewBlockCell {
     {
         if (m_nTextWrapRowIndex != 0 && (!isFirstBlockColDataRow(block, nColInBlock))) return true;
 
-
-
         KDSDataCondiment c =(KDSDataCondiment) this.getData();
 
         int bg = c.getBG();
@@ -1652,15 +1811,17 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 //        int nStarting = env.getSettings().getInt(KDSSettings.ID.Condiment_Starting_Position);
 //        if (nStarting <0)
 //            nStarting = KDSSettings.COMDIMENT_LEADING_POSITION;
-        String s = getCondimentPrefix(env);//getSpaces(nStarting);
+        String qtyText = getCondimentPrefix(env);
+        //String s = getCondimentPrefix(env);//getSpaces(nStarting);
         //kpp1-414
         if (c.getQty() >1)
         {
-            s += Integer.toString((int) c.getQty());
+            qtyText += Integer.toString((int) c.getQty());
             //s += makeQtyString(c.getQty());// Integer.toString((int) c.getQty()); //kp-88
-            s += "x ";
+            qtyText += "x ";
         }
-        s += strDescription;
+        String s = qtyText + strDescription;
+
         if (c.getFocusTag() != null) { //for hide item, show focus
             Object obj = c.getFocusTag();
             if (obj instanceof KDSDataItem) {
@@ -1682,15 +1843,39 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         this.getFont().setBG(bg);
         this.getFont().setFG(fg); //use this text color
+        Rect rtCondiment = new Rect(rcAbsolute);
 
         if (env.getSettings().getBoolean(KDSSettings.ID.Text_wrap)) {
-            rcAbsolute.left += getCondimentPrefixPixelsWidth(getFont(), env);
+            rtCondiment.left += getCondimentPrefixPixelsWidth(getFont(), env);
             int nTextWrapRows = getTextWrapRowsInSameBlockCol(block, nColInBlock);
             String strTextWrap = getTextWrapRowsDescription(c,c.getDescription(), this.m_nTextWrapRowIndex, nTextWrapRows);
-            CanvasDC.drawWrapString(g, this.getFont(), rcAbsolute, strTextWrap, Paint.Align.LEFT);
+            //String strTextWrap = getTextWrapRowsDescription(c,s, this.m_nTextWrapRowIndex, nTextWrapRows);
+            Point ptReturn = CanvasDC.drawWrapString(g, this.getFont(), rtCondiment, strTextWrap, Paint.Align.LEFT, false);
+            if (c.getQty()>1)
+            {
+                if (this.m_nTextWrapRowIndex ==0) {
+                    int oldFontSize = this.getFont().getFontSize();
+                    this.getFont().setFontSize(ptReturn.x);
+//                    String strQty = Integer.toString((int) c.getQty());
+//                    strQty += "x ";
+                    qtyText = qtyText.trim();
+                    qtyText += " ";
+                    int w = CanvasDC.getTextPixelsWidth(this.getFont(), "" + qtyText + "|");
+                    Rect rcQty = new Rect(rtCondiment);
+                    rcQty.top = ptReturn.y;
+                    rcQty.left -= w;
+                    rcQty.left = rcQty.left<rcAbsolute.left?rcAbsolute.left:rcQty.left;
+                    rcQty.right = rtCondiment.left;
+                    rcQty.bottom = rcQty.top +  block.getCalculatedAverageRowHeight();
+                    rcQty.bottom = rcQty.bottom >rcAbsolute.bottom?rcAbsolute.bottom:rcQty.bottom;
+
+                    CanvasDC.drawQtyWrapText(g, this.getFont(), rcQty, qtyText, Paint.Align.LEFT, false);
+                    this.getFont().setFontSize(oldFontSize);
+                }
+            }
         }
         else
-            CanvasDC.drawText(g, this.getFont(), rcAbsolute, s, Paint.Align.LEFT);
+            CanvasDC.drawText(g, this.getFont(), rtCondiment, s, Paint.Align.LEFT);
 
 
         this.getFont().setBG(noldbg);
@@ -1993,6 +2178,20 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             }
         }
         return "";
+    }
+
+    /**
+     * check if thsi cell is the last cell in block.
+     * @param block
+     * @param nBlockCol
+     * @return
+     */
+    private  boolean isLastBlockColDataRow(KDSViewBlock block,int nBlockCol)
+    {
+        int nIndex = block.getCellIndex(this);
+        int nMin = (nBlockCol+1) * block.getColTotalRows();
+        return (nIndex == nMin-1);
+
     }
 
 }

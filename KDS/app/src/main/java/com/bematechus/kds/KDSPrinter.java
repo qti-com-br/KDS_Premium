@@ -10,6 +10,7 @@ import com.bematechus.bemaLibrary.BemaPrinter;
 import com.bematechus.bemaLibrary.PrinterStatus;
 import com.bematechus.bemaUtils.PortInfo;
 import com.bematechus.bemaUtils.UsbPort;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
@@ -189,6 +190,9 @@ public class KDSPrinter {
     boolean m_bGroupCategory = false; //2.0.48
 
     String m_strLogoFile = "";
+
+    boolean m_bPrintItemIndividually = false;
+
 
     /**********************************************************************************************/
     /**
@@ -377,17 +381,32 @@ And the premodifiers strings will been delete with its unprintable item.
         String category = ("");
         //int i=0;
         KDSDataItem item = null;
+        ArrayList<KDSDataItem> arUnprintItems = new ArrayList<>();
+
         //while (i <nItemsCount) {
         for (int i=0; i< nItemsCount; i++){
             item = null;
             if (i >= items.getCount()) break;
             item = items.getItem(i);
             if (item == null) break;
+            if (!item.getPrintable()) {
+                arUnprintItems.add(item);
+                continue;
+            }
             if (!m_bPrintWithCondiments)
                 item.getCondiments().clear();
 
 
         }
+        //remove unprintable items, bug here.
+        if (arUnprintItems.size()>0)
+        {
+            for (int i=0; i< arUnprintItems.size(); i++)
+            {
+                items.removeComponent(arUnprintItems.get(i));
+            }
+        }
+
 
     }
 
@@ -675,7 +694,7 @@ return whole line tags
     private  String getAddonString(KDSDataOrder pOrder)
     {
         if (pOrder.isVoidOrder()) return (""); //maybe void the addon items
-        if (pOrder.isAddonOrder()) 	return ("ADD-ON");
+        if (pOrder.isAddonOrder()) 	return (KDSApplication.getContext().getString(R.string.addon).toUpperCase());// "ADD-ON");
 
         return ("");
     }
@@ -1685,6 +1704,8 @@ print order data to  buffer, socket will send this buffer to serial port
             }
         }
 
+        m_bPrintItemIndividually = settings.getBoolean(KDSSettings.ID.Printer_item_individually);
+
 
     }
 
@@ -2137,6 +2158,12 @@ print order data to  buffer, socket will send this buffer to serial port
     }
 
 
+    /**
+     *
+     * @param order
+     *  This order is original one, it was showing on screen.
+     *  So, don't change anything in it when printing.
+     */
     public void printToBuffer(KDSDataOrder order)
     {
         if (order == null) return;
@@ -2146,97 +2173,64 @@ print order data to  buffer, socket will send this buffer to serial port
 
         if (len >= msz) return;
 
+        KDSDataOrder printOrder = new KDSDataOrder();
+        order.copyTo(printOrder);
+
         if (m_bGroupCategory)
         {
-            KDSDataOrder printOrder = new KDSDataOrder();
-            order.copyTo(printOrder);
+            //KDSDataOrder printOrder = new KDSDataOrder();
+            //order.copyTo(printOrder);
             KDSLayoutOrder.buildGroupCategory(printOrder);
-            order = printOrder;
+            //order = printOrder;
         }
 
-        rebuild_order_for_printable_options(order);
-        KDSDataItems items  = order.getItems();
+        rebuild_order_for_printable_options(printOrder);
+        KDSDataItems items  = printOrder.getItems();
         if (items.getCount() <=0) return; //don't print empty order
 
-        ArrayList<String> arPrint = new ArrayList<String>();
+        //ArrayList<String> arPrint = new ArrayList<String>();
 
         //return how many physical printing lines
         int lines = getLines();
         PrintOrderState state = new PrintOrderState();
-
-        printerOrderWithTemplete(state ,order, 0, lines, arPrint);
-
-//        String s = "";
-//        //String tag = "";
-//
-//        int i = 0;
-//        for ( i=0; i< lines; i++)
-//        {
-//
-//            ArrayList<String> arLineTags = new ArrayList<String>();
-//            //get all tags in given physcal printing line
-//            arLineTags =getCRLineTags(i);
-//            switch (getCRLineType(arLineTags))
-//            {
-//                case TAGS_LINE_NORMAL: {
-//                    s = makeTagsString(arLineTags, order,null, null, null);
-//                    addPrintLines(arPrint, s);
-//                    //arPrint.Add(s);
-//                }
-//                break;
-//                case TAGS_LINE_ITEM: { //<items> tag
-//                    ArrayList<String> arItemTags = new ArrayList<>();
-//                    ArrayList<String> arCondimentTags = new ArrayList<>();
-//                    ArrayList<String> arModifierTags = new ArrayList<>();
-//
-//                    arItemTags.addAll(arLineTags);
-//                    int nCondimentLineIndex = getCondimentTagsLineNumber();
-//                    if (nCondimentLineIndex >=0)
-//                    {
-//                        arCondimentTags = getCRLineTags(nCondimentLineIndex);
-//                    }
-//                    int nModifierLineIndex = getModifierTagsLineNumber();
-//                    if (nModifierLineIndex >=0)
-//                    {
-//                        arModifierTags = getCRLineTags(nModifierLineIndex);
-//                    }
-//
-//                    makeItemsStrings(arPrint, arItemTags, arCondimentTags, order, arModifierTags, nCondimentLineIndex, nModifierLineIndex);
-//                }
-//                break;
-//                case TAGS_LINE_CONDIMENT: //condiments
-//                case TAGS_LINE_MODIFIER: //modifiers
-//                {
-//                    continue;
-//                }
-//
-//                //break;
-//                default:
-//                {
-//                }
-//                break;
-//            }
-//
-//
-//        }
-        //synchronized (m_locker)
+        if (m_bPrintItemIndividually)
         {
-            String s = "";
-            s += (CHAR_Start_Order);
-
-            m_printerData.add(s);
-            for (int i = 0; i < m_nCopies; i++) {
-                m_printerData.addAll(arPrint);
+            KDSDataItems originalItems  = new KDSDataItems();
+            items.copyTo(originalItems);
+            for (int i=0; i< originalItems.getCount(); i++)
+            {
+                KDSDataItem item = originalItems.getItem(i);
+                if (!item.getPrintable()) continue;
+                printOrder.getItems().clear();
+                printOrder.getItems().addComponent(item);
+                printDataToList(state, printOrder, 0, lines);
             }
-            s = "";
-            s += (CHAR_End_Order);
-            m_printerData.add(s);
         }
+        else
+        {
+            printDataToList(state, printOrder, 0, lines);
+        }
+
+//        printerOrderWithTemplete(state ,printOrder, 0, lines, arPrint);
+//
+//        //synchronized (m_locker)
+//        {
+//            String s = "";
+//            s += (CHAR_Start_Order);
+//
+//            m_printerData.add(s);
+//            for (int i = 0; i < m_nCopies; i++) {
+//                m_printerData.addAll(arPrint);
+//            }
+//            s = "";
+//            s += (CHAR_End_Order);
+//            m_printerData.add(s);
+//        }
         //output for debug
 //        for (int i=0;i < arPrint.size(); i++)
 //            Log.i(TAG, arPrint.get(i));
         ////////////////////////////////////////
-        arPrint.clear();
+        //arPrint.clear();
         //arrangeBuffer();
 
     }
@@ -2686,5 +2680,27 @@ print order data to  buffer, socket will send this buffer to serial port
             }
         }
         Log.i(TAG, "Print logo command here");
+    }
+
+    private void printDataToList(PrintOrderState state, KDSDataOrder printOrder, int nStartLineNumber, int lines)
+    {
+        ArrayList<String> arPrint = new ArrayList<>();
+
+        printerOrderWithTemplete(state ,printOrder, nStartLineNumber, lines, arPrint);
+
+        //synchronized (m_locker)
+        {
+            String s = "";
+            s += (CHAR_Start_Order);
+
+            m_printerData.add(s);
+            for (int i = 0; i < m_nCopies; i++) {
+                m_printerData.addAll(arPrint);
+            }
+            s = "";
+            s += (CHAR_End_Order);
+            m_printerData.add(s);
+        }
+        arPrint.clear();
     }
 }

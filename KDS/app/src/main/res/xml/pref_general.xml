@@ -198,11 +198,11 @@
         android:title="@string/sms_feature_enabled"
         android:defaultValue="false" />
 <!-- kpp1-363, premium can auto detect router app existed or not. So, remove this option  -->
-<!--    <CheckBoxPreference-->
-<!--        android:key="kds_general_deliver_new_order_to_slave_expo"-->
-<!--        android:title="@string/deliver_new_order_to_slave_expo"-->
-<!--        android:summary="@string/router_running_no_deliver_new_order"-->
-<!--        android:defaultValue="false" />-->
+    <CheckBoxPreference
+        android:key="kds_general_deliver_new_order_to_slave_expo"
+        android:title="@string/deliver_new_order_to_slave_expo"
+        android:summary="@string/router_running_no_deliver_new_order"
+        android:defaultValue="false" />
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="kds_general_auto_refresh_screen"
         android:title="@string/auto_refresh_screen"

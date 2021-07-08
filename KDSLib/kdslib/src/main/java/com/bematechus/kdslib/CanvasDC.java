@@ -541,7 +541,22 @@ public class CanvasDC {
         canvas.drawPath(path, p);
     }
 
-    static public  void drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align, boolean bBold )
+    /**
+     * rev.:
+     *  kp-101 Text cut off (Item).
+     *           check the rt if it can hold all text. If not, change font size to small one.
+     *
+     * @param g
+     * @param ft
+     * @param rt
+     * @param string
+     * @param align
+     * @param bBold
+     * @return
+     *  Point: x: the font size
+     *         y: the y point of drawing.
+     */
+    static public  Point drawWrapString(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align, boolean bBold )
     {
         g.save();
         TextPaint textPaint = new TextPaint();
@@ -551,6 +566,8 @@ public class CanvasDC {
         textPaint.setAntiAlias(true);
         textPaint.setFakeBoldText(bBold);
 
+        Point ptReturn = new Point();
+
         g.clipRect(rt);
         Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
         if (align == Paint.Align.RIGHT)
@@ -559,6 +576,20 @@ public class CanvasDC {
             al = Layout.Alignment.ALIGN_NORMAL;
         //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
         StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+        //kp-101 Text cut off (Item).
+
+        if (sl.getHeight() > rt.height())
+        {
+            int nsize = (int) textPaint.getTextSize() + 2;
+            for (int i=0; i< nsize; i++)
+            {
+                textPaint.setTextSize( textPaint.getTextSize()-1);
+
+                sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+                if (sl.getHeight() <= rt.height())
+                    break;
+            }
+        }
 //        int n = sl.getLineCount();
 //        for (int i=0; i< n; i++)
 //        {
@@ -572,6 +603,11 @@ public class CanvasDC {
         g.translate(x,y);
         sl.draw(g);
         g.restore();
+
+        ptReturn.x = (int)textPaint.getTextSize();
+        ptReturn.y = y;
+        return ptReturn;
+
     }
 
     static public  int drawText(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
@@ -690,6 +726,58 @@ public class CanvasDC {
         return ff.getFontSize();
 
 
+    }
+
+    /**
+     * top align
+     * @param g
+     * @param ff
+     * @param rect
+     * @param text
+     * @param align
+     * @param bBold
+     * @return
+     */
+    static public  int drawQtyWrapText(Canvas g, KDSViewFontFace ff, Rect rect, String text, Paint.Align align, boolean bBold)
+    {
+
+        //int bestFontSize = getBestMaxFontSizeHeight_decrease(rect, ff, text);
+        TextPaint paint = new TextPaint();
+        paint.setColor(ff.getFG());
+        paint.setTypeface(ff.getTypeFace());
+        //paint.setTextSize(ff.getFontSize());
+        paint.setTextSize(ff.getFontSize()); //kp-76,
+        paint.setAntiAlias(true);
+        paint.setFakeBoldText(bBold);
+
+        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+
+        int baseline = rect.top - fontMetrics.top;// + (rect.bottom - rect.top - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+        g.save();
+        g.clipRect(rect);
+        //
+        fillRect(g,ff.getBG(), getTextRectWithAlign(paint, rect, text, align));
+        //
+        paint.setColor(ff.getFG());
+        //
+        if (align == Paint.Align.CENTER)
+        { //horizontal center
+            paint.setTextAlign(Paint.Align.CENTER);
+            g.drawText(text, rect.centerX(), baseline, paint);
+        }
+        else if (align == Paint.Align.LEFT)
+        {
+            paint.setTextAlign(Paint.Align.LEFT);
+            g.drawText(text, rect.left, baseline, paint);
+        }
+        else if (align == Paint.Align.RIGHT)
+        {
+            paint.setTextAlign(Paint.Align.RIGHT);
+            g.drawText(text, rect.right, baseline, paint);
+        }
+
+        g.restore();
+        return getTextPixelsWidth(paint, text);
     }
 
 }

@@ -6,7 +6,7 @@
     tools:context="com.bematechus.kds.KDSActivityUnbump"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:background="@color/settings_page_bg">
+    android:background="?attr/settings_page_bg">
 
     <ListView
         android:layout_width="400dp"
@@ -18,7 +18,7 @@
         android:footerDividersEnabled="true"
         android:headerDividersEnabled="true"
         android:clickable="true"
-        android:background="@color/settings_headers_bg" />
+        android:background="?attr/settings_headers_bg" />
 
     <com.bematechus.kds.KDSIOSView
         android:layout_width="wrap_content"

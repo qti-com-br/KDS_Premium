@@ -25,6 +25,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSPreferenceFragment;
 import com.bematechus.kdslib.KDSUIBGFGPickerDialog;
 import com.bematechus.kdslib.KDSUIDialogBase;
+import com.bematechus.kdslib.ThemeUtil;
 
 import org.w3c.dom.Text;
 
@@ -63,7 +64,7 @@ public class PreferenceFragmentTabDisplay extends KDSPreferenceFragment implemen
 
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.preui_tab_display, container, false);
-        view.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+        view.setBackgroundColor( ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg));// this.getResources().getColor(R.color.settings_page_bg));
         init_variables(view);
 
         return view;
@@ -609,7 +610,9 @@ public class PreferenceFragmentTabDisplay extends KDSPreferenceFragment implemen
         m_arDataDest.clear();
         m_arDataDest.addAll(arDest);
 
-        s = pref.getString(TABDISP_KEY_BG, KDSBGFG.toDefaultString(getResources().getColor(R.color.tab_display_bg), getResources().getColor(R.color.tab_display_fg)));
+        s = pref.getString(TABDISP_KEY_BG,
+                KDSBGFG.toDefaultString(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.tab_display_bg),// getResources().getColor(R.color.tab_display_bg),
+                        ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.tab_display_fg )));//getResources().getColor(R.color.tab_display_fg)));
         m_valueBGFG = KDSBGFG.parseString(s);
 
         m_btnBG.setTextColor(m_valueBGFG.getFG());

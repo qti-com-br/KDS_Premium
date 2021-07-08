@@ -15,13 +15,13 @@
         android:defaultValue="false" />
     <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="lineitems_viewer_bg"
-        android:defaultValue="@color/lineitems_viewer_bg"
+        android:defaultValue="?attr/lineitems_viewer_bg"
         android:dependency="lineitems_enabled"
         android:title="@string/pref_kds_panels_viewer_bg" />
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="lineitems_default_font"
-        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,item_size"
+        android:defaultValue="default_font,?attr/lineitems_bg,?attr/lineitems_fg,item_size"
         android:title="@string/screen_default_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>
@@ -40,7 +40,7 @@
         android:maxLines="1" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="lineitems_caption_font"
-        android:defaultValue="default_font,@color/lineitems_bg,@color/lineitems_fg,hfooter_size"
+        android:defaultValue="default_font,?attr/lineitems_bg,?attr/lineitems_fg,hfooter_size"
         android:title="@string/lineitems_caption_font"
         android:dependency="lineitems_enabled"
         app:supportsColor="true"/>

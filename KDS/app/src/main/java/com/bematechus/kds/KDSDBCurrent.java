@@ -47,9 +47,10 @@ public class KDSDBCurrent extends KDSDBBase {
      *      20171030, please notice, the sosread is for queue-ready.
      * 18: add prepsort table, for preparation time mode.
      * 19: add modifiers table
+     * 20: add inputmsg, and r10 -- r19
      */
 
-    static public final int DB_VERSION = 19;//20180131
+    static public final int DB_VERSION = 20;//20210527
     //static public final int DB_VERSION = 6;//20160407
     static public final String DB_NAME = "current.db";
     static public final String TAG = "KDSDBCurrent";
@@ -250,7 +251,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    final int ORDER_FIELDS_COUNT = 30; //it should equal field in following function.
+    final int ORDER_FIELDS_COUNT = 32; //it should equal field in following function.
 
     /**
      * see function #orderGet() and  #ordersLoadAllJustInfo
@@ -288,7 +289,9 @@ public class KDSDBCurrent extends KDSDBBase {
                 "orders.r4," + //27
                 "orders.r5," + //28
                 "orders.r6," + //29
-                "orders.r7 "; //30
+                "orders.r7," + //30
+                "orders.r8," + //31, auto unpark.
+                "orders.inputmsg ";//32 //input message, kp-114
 
         //**********************************************************************
         //Please change ORDER_FIELDS_COUNT value, after add new field!!!!!
@@ -407,6 +410,16 @@ public class KDSDBCurrent extends KDSDBBase {
 
         c.setHeaderFooterMessage(getString(sf, 30));
 
+        //kp-103
+        String s = getString(sf, 31);
+        Date dt = KDSUtil.createInvalidDate();
+        if (!s.isEmpty())
+            dt = KDSUtil.convertStringToDate(s, dt);
+        c.setAutoUnparkDate(dt);
+
+        s = getString(sf,32);//kp-114 input message
+        c.setInputMessage(s);
+
         //15, if there are 15, it should been the items count
         //see ordersLoadAllJustInfo
         if (sf.getColumnCount() > ORDER_FIELDS_COUNT) //save the items count.,for :ordersLoadAllJustInfo function
@@ -448,7 +461,7 @@ public class KDSDBCurrent extends KDSDBBase {
      */
     static private String ITEMS_FIELDS = "GUID,Name,Description,Qty,Category,BG,FG,Grp,Marked,DeleteByRemote,LocalBumped,BumpedStations," +
                                             "ToStations,Ready,Hiden,QtyChanged,ItemType,ItemDelay,PreparationTime,BuildCard,TrainingVideo," +
-                                            "SumTransEnable,SumTrans,r0,r1,r2,r3,r4 ";
+                                            "SumTransEnable,SumTrans,r0,r1,r2,r3,r4,r5,r6 ";
 
     private KDSDataItems itemsGet(String orderGUID)// int nOrderID)
     {
@@ -559,6 +572,12 @@ public class KDSDBCurrent extends KDSDBBase {
         if (s ==null || s.isEmpty())
             s = "";
         c.setItemBumpGuid(s);
+
+        int n = getInt(sf, 28);
+        c.setPrintable((n !=0));
+
+        n = getInt(sf, 29);//printed when bump
+        c.setPrinted((n!=0));
 
         return c;
     }
@@ -3306,7 +3325,7 @@ update the schedule item ready qty
         for (int i = 0; i< ncount; i++)
         {
             KDSDataItem item = order.getItems().getItem(i);
-            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0) values(" ;
+            String sql = "insert into prepsort( orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay, r0,r1) values(" ;
             sql += "'" + order.getGUID() +"'";
             sql += ",'" + KDSUtil.fixSqliteSingleQuotationIssue(item.getItemName()) +"'";
             sql += ",'" + item.getCategory() + "'";
@@ -3317,6 +3336,7 @@ update the schedule item ready qty
             //sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //See notice
             sql += "," + KDSUtil.convertFloatToString(item.getItemDelay()); //
             sql += "," + KDSUtil.convertFloatToString(item.getCategoryDelay()); //
+            sql += ",0";//started manullay: false
             sql += ")";
             this.executeDML(sql);
         }
@@ -3425,7 +3445,7 @@ update the schedule item ready qty
     {
         String sql = "";
 
-        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
+        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0,r1 from prepsort where orderguid='" + orderGuid +"'";
 
 
         PrepSorts prep = new PrepSorts();
@@ -3444,7 +3464,7 @@ update the schedule item ready qty
             item.RealStartTime = getInt(c,6);
             item.ItemDelay = getFloat(c,7);
             item.CategoryDelay = getFloat(c,8);
-
+            item.ItemStartedManually = (getInt(c, 9) == 1);
             prep.add(item);
 
         }
@@ -4125,6 +4145,83 @@ update the schedule item ready qty
 
     }
 
+    public void orderSetInputMessage(String orderGuid, String msg)
+    {
+        String sql = String.format("update orders set inputmsg='%s' where guid='%s'", msg, orderGuid);
+        this.executeDML(sql);
+        updateDbTimeStamp();
+    }
+
+    public String orderGetInputMessage(String orderGuid)
+    {
+        String sql = "select inputmsg from orders where guid='" + orderGuid +"'";
+
+        if (getDB() == null) return "";
+
+        Cursor c = getDB().rawQuery(sql, null);
+        String msg = "";
+        if (c.moveToNext()) {
+            msg = getString(c,0);
+
+        }
+        c.close();
+        return msg;
+    }
+
+    public void smart_set_item_started(String orderGuid, String itemName, boolean bStarted)
+    {
+        String sql = String.format("update prepsort set r1=%d where orderguid='%s' and itemname='%s'", bStarted?1:0, orderGuid, itemName);
+        this.executeDML(sql);
+    }
+
+    public boolean itemDelete(String itemGuid)
+    {
+        String sql = String.format("delete from items where guid='%s", itemGuid);
+        this.executeDML(sql);
+        sql = String.format("delete from condiments where itemguid='%s", itemGuid);
+        this.executeDML(sql);
+
+        sql = String.format("delete from messages where objguid='%s", itemGuid);
+        this.executeDML(sql);
+
+        sql = String.format("delete from modifiers where itemguid='%s", itemGuid);
+        this.executeDML(sql);
+
+        return true;
+
+    }
+
+    /**
+     * kp-126
+     * print item when item was bumped.
+     * Save its printed state.
+     * @param itemGuid
+     */
+    public void itemSetPrinted(String itemGuid, boolean bPrinted)
+    {
+        String sql = String.format("update items set r6=%d where guid='%s'",bPrinted?1:0, itemGuid);
+        this.executeDML(sql);
+    }
+
+    /**
+     * kp-126 Print bumped item.
+     * @param itemGuid
+     * @return
+     */
+    public boolean itemGetPrinted(String itemGuid)
+    {
+        String sql = String.format("select r6 from items where guid='%s'", itemGuid);
+        if (getDB() == null) return false;
+
+        Cursor c = getDB().rawQuery(sql, null);
+        int n = 0;
+        if (c.moveToNext()) {
+             n = getInt(c,0);
+
+        }
+        c.close();
+        return (n==1);
+    }
     /***************************************************************************
      * SQL definitions
      *
@@ -4164,14 +4261,26 @@ update the schedule item ready qty
             +"r5 text(16)," //for customer, same the customer name
             +"r6 text(16)," //kdsguid, identify same order in whole KDS.
             +"r7 text(16)," //kp-48, Allergen xml tags. <HeaderFooterMessage>
-            +"r8 text(16),"
+            +"r8 text(16)," //kp-103, auto unpark order date value
             +"r9 text(16),"
             + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),"
             + "QueueMsg text(256), "// )";
             + "TrackerID text(16)," //As TT was removed, I use this to do kpp1-456, "Runner" station. Save showing cateogry name.
             + "PagerID text(16),"//for table-tracker
             + "CookState int default 0,"
-            + "SosReady int default 0 ";
+            + "SosReady int default 0, "
+            + "inputmsg text(16)," //kp-114 add fields
+            + "r10 text(16),"
+            + "r11 text(16),"
+            + "r12 text(16),"
+            + "r13 text(16),"
+            + "r14 text(16),"
+            + "r15 text(16),"
+            + "r16 text(16),"
+            + "r17 text(16),"
+            + "r18 text(16),"
+            + "r19 text(16)";
+
 
 
     private static final String Table_Orders = Table_Orders_Fields + ")";
@@ -4246,8 +4355,8 @@ update the schedule item ready qty
             +"r4 text(16) ," //KPP1-64, item_bump_guid, 1. This is almost correct. The guid from item_bumps should be unique. This should be a random guid. This should not be the same guid as the items table guid.
                                 //2. The items guid should be a random guid. The item_bump table guid should be a random guid.
                                 //3. The random guid from the item_bumps table should be inserted into the correct Linked item in the items table column "item_bump_guid"
-            +"r5 text(16),"
-            +"r6 text(16),"
+            +"r5 text(16)," //printable
+            +"r6 text(16)," // save if item has been printed.
             +"r7 text(16),"
             +"r8 text(16),"
             +"r9 text(16) ,"
@@ -4333,7 +4442,7 @@ update the schedule item ready qty
             "finished int," + //identify if this item finihsed
             "RealStartTime int," +//the real time that this item start to cook. (seconds from order started).
             "r0 text(20)," + //Save category delay here.
-            "r1 text(20), " +
+            "r1 text(20), " + //kp-121, runner start it manually.
             "r2 text(20)," +
             "r3 text(20), " +
             "r4 text(20) )";

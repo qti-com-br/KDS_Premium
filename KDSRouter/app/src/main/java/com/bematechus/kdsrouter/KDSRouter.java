@@ -3,6 +3,7 @@ package com.bematechus.kdsrouter;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.bematechus.kdslib.KDSDataSumNames;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSLogOrderFile;
+import com.bematechus.kdslib.KDSPOSMessage;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSmbFile;
@@ -336,28 +338,36 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
           if (!m_bNetworkActived)
                 onNetworkRestored();
             m_bNetworkActived = true;
+            fireNetworkStateResult(true);
         }
         else{
-
-            if (m_bNetworkActived)
-                onNetworkLost();
-            m_bNetworkActived = false;
+            if (KDSSocketManager.m_nLostNetworkCount >4) {
+                if (KDSBackofficeNotification.isHeartbeatLost()) {
+                    if (m_bNetworkActived)
+                        onNetworkLost();
+                    m_bNetworkActived = false;
+                }
+            }
+            fireNetworkStateResult(false);
         }
     }
 
     private void onNetworkRestored()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
         this.startNetwork();
         //KPP1-305, Remove license restriction from Router
         //let main ui know network restored.
         //I don't want to add new event function, just use unused one.
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
             m_arKdsEventsReceiver.get(i).onTTBumpOrder("");
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
     }
     private void onNetworkLost()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
         this.stopNetwork();
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
 
     }
 
@@ -407,6 +417,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
     public void stopNetwork()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"stopNetwork() enter");
         m_socksManager.stopThread();
         m_udpStationAnnouncer.close();
         stopPOSListener();;
@@ -417,12 +428,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         stopPingThread();
 
         m_smbDataSource.stop();
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"stopNetwork() exit");
     }
 
 
     public void startNetwork()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"startNetwork() enter");
         m_bHasShowRouterUniqueError = false;
         refreshIPandMAC();
 
@@ -454,13 +466,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         this.broadcastStationAnnounceInThread();
 
         broadcastAskRoutersInThread();
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +"startNetwork() exit");
     }
 
 
     private void startRemoteFolderDataSource(KDSRouterSettings settings)
     {
-        KDSLog.d(TAG, "startRemoteFolderDataSource >> enter");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
 
         //if the datat source is SMB folder, start thread.
         KDSRouterSettings.KDSDataSource source =KDSRouterSettings.KDSDataSource.values ()[settings.getInt(KDSRouterSettings.ID.KDSRouter_Data_Source)];
@@ -478,7 +490,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         {
             m_smbDataSource.stop();
         }
-        KDSLog.d(TAG, "startRemoteFolderDataSource << exit ");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
     }
 
     private void stopRemoteFolderDataSource()
@@ -498,11 +510,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     }
     public boolean start()
     {
-        if (isRunning()) {
-            m_settings.loadSettings(m_context);
-            updateSettings(m_settings);
-            return true;
-        }
+//        if (isRunning()) {
+//            m_settings.loadSettings(m_context);
+//            updateSettings(m_settings);
+//            return true;
+//        }
         KDSLog.d(TAG, "start enter");
         refreshIPandMAC();
 
@@ -525,6 +537,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
     public void stop()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "enter");
         stopPingThread();
         synchronized (m_locker) {
             m_listenPOS.stop();
@@ -539,7 +552,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             m_errorToast.cancel();
         //20160319
         stopNetwork();
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "exit");
     }
     public boolean isRunning()
     {
@@ -1560,6 +1573,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             case Unknown:
                 return;
             case Order:
+            case POS_Info:
                 doOrderXmlInThread(sock, "",xmlData, null);
                 break;
 
@@ -1585,6 +1599,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                 doOrderAcknowledgement(sock, xmlData);
             }
             break;
+//            case POS_Info:
+//            {
+//                doPOSMessage(xmlData);
+//            }
+//            break;
             default:
                 break;
         }
@@ -2355,6 +2374,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         assignSummaryTranslateToOrder(order, xmlData);
         assignModifierPreparationTime(order, xmlData);
         assignSmartTimeToOrder(order, xmlData);
+        assignItemsPrintable(order, xmlData);
+
         if (isAllItemsAssignedStation(order))
         {
             //String toStationWithScreen = this.getRouterDB().itemGetToStationWithScreen(category, description,strDefaultStationID);// m_strDefaultToStation);
@@ -2834,6 +2855,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                     }
                 }
 
+
                 //category delay tag
                 String xmlCategoryDelay = xml.getSubGrouValue(KDSXMLParserOrder.DBXML_ELEMENT_CATEGORY_DELAY, "");
                 xmlCategoryDelay = xmlCategoryDelay.trim();
@@ -2848,7 +2870,21 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                         xml.back_to_parent();
                     }
                 }
+                //item printable
+                String xmlItemPrintable = xml.getSubGrouValue(KDSXMLParserOrder.DBXML_ELEMENT_PRINTABLE, "");
+                xmlItemPrintable = xmlItemPrintable.trim();
+                if (xmlItemPrintable.isEmpty())
+                {
+                    xmlItemPrintable = (item.getPrintable()?"1":"0");
 
+                    if (!xml.getFirstGroup(KDSXMLParserOrder.DBXML_ELEMENT_PRINTABLE)){
+                        xml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PRINTABLE, xmlItemPrintable, false);
+                    }
+                    else {
+                        xml.setGroupValue(xmlItemPrintable);
+                        xml.back_to_parent();
+                    }
+                }
 
 
                 //build cards
@@ -3059,6 +3095,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         for (int i=ncount-1; i>=0; i--)
         {
             KDSDataItem item = order.getItems().getItem(i);
+
             if (item.getItemType() == KDSDataItem.ITEM_TYPE.Exp)
                 continue;
             if (!item.getToStations().getString().isEmpty())
@@ -3174,11 +3211,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * @return
      */
     public boolean startPingThread() {
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
 
         m_bRunning = true;
         m_threadPing = new Thread(this, "SocketPing");
         m_threadPing.start();
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
         return true;
 
     }
@@ -3188,6 +3226,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * @return
      */
     public boolean stopPingThread() {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
         if (m_threadPing != null) {
             m_bRunning = false;
             try {
@@ -3198,6 +3237,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             }
         }
         m_threadPing = null;
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
         return true;
     }
 
@@ -3589,6 +3629,12 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                     stationRelation.getFunction() == KDSRouterSettings.StationFunc.Summary
             )
             {
+                if (stationRelation.getFunction() == SettingsBase.StationFunc.Expeditor)
+                {//workload: prep and workload all with expo, we don't sen order to expo.
+                    //let the prep to handle this order.
+                    if (isExpoInPrepWithWorkload(stationRelation.getID()))
+                        continue;
+                }
                 KDSToStation toStation = new KDSToStation();
                 toStation.setPrimaryStation(stationRelation.getID());
                 ar.add(toStation);
@@ -3688,8 +3734,15 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                                     }
                                     if (data.m_fcmOrders != null)
                                         doReceivedFCMOrders(data.m_fcmOrders);
-                                    else
-                                        doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                    else {
+                                        KDSXMLParser.XMLType ntype = checkXmlType(data.m_xmlData);
+                                        if (ntype == KDSXMLParser.XMLType.Order)
+                                            doOrderXml(data.m_objSource, data.m_originalFileName, data.m_xmlData);
+                                        else if (ntype == KDSXMLParser.XMLType.POS_Info)
+                                        {
+                                            doPOSMessage(data.m_xmlData);
+                                        }
+                                    }
                                     data.clear();
                                     Thread.sleep(200);
                                 } catch (Exception e) {
@@ -3996,5 +4049,95 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     private String buildAppSockIDCommandXml()
     {
         return KDSConst.APP_ID_START + KDSConst.ROUTER_SOCKET_ID + KDSConst.APP_ID_END;
+    }
+
+    private void doPOSMessage(String xmlData)
+    {
+        KDSPOSMessage msg = (KDSPOSMessage) KDSXMLParser.parseXml("", xmlData);
+        if (msg == null) return;
+        String station = msg.getStation();
+        if (station.equals("-1"))
+        {
+            this.writeToAllStations(xmlData);
+        }
+        else {
+            ArrayList<String> stations = new ArrayList<>();
+            stations.add(station);
+            this.writeToAllStations(xmlData, stations);
+        }
+
+    }
+
+    public void assignItemsPrintable(KDSDataOrder order, String xmlData)
+    {
+
+        int ncount = order.getItems().getCount();
+        for (int i=ncount-1; i>=0; i--)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            //set printable here
+            boolean bPrintable = getRouterDB().itemGetPrintable(item.getCategory(), item.getDescription());
+            item.setPrintable(bPrintable);
+
+        }
+
+
+    }
+
+    private void fireNetworkStateResult(boolean bAvailable)
+    {
+        ArrayList<Object> arData = new ArrayList<>();
+        arData.add(bAvailable);
+        if (m_arKdsEventsReceiver != null) {
+            for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+                m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Network_state, arData);
+        }
+    }
+
+    /**
+     *
+     *
+     *   Workload -- expo
+     *    |
+     *   Prep     -- expo
+     *
+     * Check if expo is in above structure.
+     * If it is, don't send order to expo
+     * @return
+     */
+    private boolean isExpoInPrepWithWorkload(String expoStationID)
+    {
+        ArrayList<KDSStationIP> arPrep = m_stationsConnection.getRelations().getStationsWhoUseMeAsExpo(expoStationID);
+        for (int i=0; i< arPrep.size(); i++)
+        {
+            KDSStationIP station = arPrep.get(i);
+            SettingsBase.StationFunc func = m_stationsConnection.getRelations().getStationFunctionForBackoffice(station.getID());
+            if (func == SettingsBase.StationFunc.Prep)
+            {
+                //check if its workload has expo
+                ArrayList<KDSStationIP> arWorkload = m_stationsConnection.getRelations().getItsWorkLoadStation(station.getID());
+                for (int j=0; j< arWorkload.size(); j++)
+                {
+                    if (m_stationsConnection.getRelations().getItsExpoStation(arWorkload.get(j).getID()).size()>0)
+                        return true;
+                }
+
+            }
+            else if (func == SettingsBase.StationFunc.Workload)
+            {
+                //check if its primary(prep) has expo
+                ArrayList<String> arPrimary = m_stationsConnection.getRelations().getStationsWhoUseMeAsWorkload(station.getID());
+                for (int j=0; j< arPrimary.size(); j++)
+                {
+                    if (m_stationsConnection.getRelations().getItsExpoStation(arPrimary.get(j)).size()>0)
+                        return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 }

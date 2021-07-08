@@ -7,7 +7,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="caption_normal"
-        android:defaultValue="default_font,@color/caption_bg,@color/caption_fg,hfooter_size"
+        android:defaultValue="default_font,?attr/caption_bg,?attr/caption_fg,hfooter_size"
         android:title="@string/pref_order_caption_normal_font"
         app:supportsColor="true"/>
 
@@ -34,7 +34,7 @@
             android:maxLines="1" />
         <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="caption_stage0_color"
-            android:defaultValue="@color/stage0_bg"
+            android:defaultValue="?attr/stage0_bg"
             android:dependency="caption_enable_stage0"
             android:title="@string/pref_kds_caption_color" />
         <!-- stage 1-->
@@ -57,7 +57,7 @@
             android:maxLines="1" />
         <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="caption_stage1_color"
-            android:defaultValue="@color/stage1_bg"
+            android:defaultValue="?attr/stage1_bg"
             android:dependency="caption_enable_stage1"
             android:title="@string/pref_kds_caption_color" />
         <!-- stage 2 -->
@@ -80,7 +80,7 @@
             android:maxLines="1" />
         <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="caption_stage2_color"
-            android:defaultValue="@color/stage2_bg"
+            android:defaultValue="?attr/stage2_bg"
             android:dependency="caption_enable_stage2"
             android:title="@string/pref_kds_caption_color" />
     </PreferenceCategory>

@@ -26,9 +26,9 @@
             android:text="Cate"
             android:layout_weight="1"
             android:textColor="@android:color/black"
-            kdstextview:topcolor="@color/grid_border_color"
-            kdstextview:leftcolor="@color/grid_border_color"
-            kdstextview:rightcolor="@color/grid_border_color"
+            kdstextview:topcolor="?attr/grid_border_color"
+            kdstextview:leftcolor="?attr/grid_border_color"
+            kdstextview:rightcolor="?attr/grid_border_color"
             kdstextview:bottomcolor="@android:color/transparent"
 
             android:id="@+id/txtDescription"

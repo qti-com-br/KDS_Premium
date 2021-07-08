@@ -18,5 +18,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/item_image"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/touch_button_fg"></TextView>
+        android:textColor="?attr/touch_button_fg"></TextView>
 </RelativeLayout>

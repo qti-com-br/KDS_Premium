@@ -3,6 +3,7 @@ package com.bematechus.kdslib;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.util.Log;
 
@@ -17,6 +18,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -309,14 +311,17 @@ public class KDSSocketManager implements Runnable {
 
 
     public boolean startThread() {
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "startThread enter");
         m_bRunning = true;
         m_threadSocket = new Thread(this, "SocketManager");
         m_threadSocket.start();
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "startThread exit");
         return true;
 
     }
 
     public boolean stopThread() {
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "stopThread enter");
         if (m_threadSocket != null) {
             m_bRunning = false;
             try {
@@ -327,6 +332,7 @@ public class KDSSocketManager implements Runnable {
             }
         }
         m_threadSocket = null;
+        KDSLog.i(TAG, KDSLog._FUNCLINE_() + "stopThread exit");
         return true;
     }
 
@@ -335,14 +341,34 @@ public class KDSSocketManager implements Runnable {
         return (m_threadSocket != null);
     }
 
+    static public long m_nLostNetworkCount = 0; // use it to limit the network sensitive.
     static public boolean isNetworkActived(Context context) {
+
+        if (isWebsocketActived()) //KP-119 add this condition. getActiveNetworkInfo() seems not stable.
+            return true;
+
         String service = Context.CONNECTIVITY_SERVICE;
         ConnectivityManager cm = (ConnectivityManager) (context.getSystemService(service));
         NetworkInfo ni = cm.getActiveNetworkInfo();
         // showMsg(ni.toString());
 
-        if (ni != null && ni.isConnectedOrConnecting())
+        if (ni != null && ni.isConnectedOrConnecting()) {
+            m_nLostNetworkCount = 0;
             return true;
+        }
+        //log the error message.
+        if (ni == null)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "ni==null");
+        }
+        else
+        {
+            if (!ni.isConnectedOrConnecting())
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "isConnectedOrConnecting()=false");
+            else
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + ni.toString());
+        }
+        m_nLostNetworkCount ++;
         return false;
     }
 
@@ -603,6 +629,25 @@ public class KDSSocketManager implements Runnable {
 
     }
 
+
+    static public Date m_dtLastTimeReceiveWebsocketMessage = KDSUtil.createInvalidDate();
+    static public void refreshWebsocketActiveTime()
+    {
+        m_dtLastTimeReceiveWebsocketMessage.setTime(System.currentTimeMillis());
+
+    }
+
+    static public Date getWebsocketActiveTime()
+    {
+        return m_dtLastTimeReceiveWebsocketMessage;
+    }
+
+    static private int WEBSOCKET_TIMEOUT = 5000; //every 4 seconds we receive websocket message.
+    static public boolean isWebsocketActived()
+    {
+        TimeDog tm = new TimeDog(m_dtLastTimeReceiveWebsocketMessage);
+        return (tm.is_timeout(WEBSOCKET_TIMEOUT));
+    }
 
 
 }

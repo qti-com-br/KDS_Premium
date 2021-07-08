@@ -36,8 +36,8 @@
             android:layout_height="40dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/btnBG"
-            android:textColor="@color/tab_display_fg"
-			android:background="@color/tab_display_bg"
+            android:textColor="?attr/tab_display_fg"
+			android:background="?attr/tab_display_bg"
             android:layout_margin="3dp"
             android:text="@string/main_title"
             android:layout_gravity="center"
@@ -54,7 +54,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/settings_light_bg">
+        android:background="?attr/settings_light_bg">
 
         <TextView
             android:layout_width="wrap_content"
@@ -114,7 +114,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/settings_light_bg">
+        android:background="?attr/settings_light_bg">
 
         <TextView
             android:layout_width="wrap_content"
@@ -194,7 +194,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/settings_light_bg">
+        android:background="?attr/settings_light_bg">
 
         <TextView
             android:layout_width="wrap_content"

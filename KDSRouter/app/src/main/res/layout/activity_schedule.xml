@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:background="@color/kds_title_bg"
+        android:background="?attr/kds_title_bg"
         android:id="@+id/layoutTitle">
         <!--android:background="@drawable/lci"-->
         <TextView
@@ -17,7 +17,7 @@
             android:id="@+id/imgLCI"
             android:layout_centerVertical="true"
             android:gravity="center|center_vertical"
-            android:textColor="@color/kds_title_fg"
+            android:textColor="?attr/kds_title_fg"
             android:textStyle="bold"
             android:clickable="false"
             android:enabled="true"
@@ -37,54 +37,9 @@
             android:layout_toRightOf="@+id/imgLCI"
             android:layout_toLeftOf="@+id/linearTime"
             android:layout_toStartOf="@+id/linearTime"
-            android:textColor="@color/kds_title_fg"
+            android:textColor="?attr/kds_title_fg"
             android:paddingLeft="80dp" />
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:orientation="vertical"-->
-            <!--android:layout_width="80dp"-->
-            <!--android:layout_height="match_parent"-->
 
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_toLeftOf="@+id/imgState"-->
-            <!--android:id="@+id/linearTime"-->
-            <!--android:weightSum="2">-->
-            <!--<TextView-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-                <!--android:id="@+id/txtTime"-->
-                <!--android:gravity="center|center_vertical"-->
-
-                <!--android:textColor="@color/kds_title_fg"-->
-                <!--android:text="12:30"-->
-                <!--android:layout_weight="1"-->
-                <!--android:textSize="12dp" />-->
-            <!--<TextView-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-                <!--android:id="@+id/txtDate"-->
-                <!--android:gravity="center|center_vertical"-->
-
-                <!--android:textColor="@color/kds_title_fg"-->
-                <!--android:text="2016/3/7"-->
-                <!--android:layout_weight="1"-->
-                <!--android:textSize="12dp" />-->
-        <!--</LinearLayout>-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--<ImageView-->
-            <!--android:layout_width="30dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:id="@+id/imgState"-->
-            <!--android:src="@drawable/online"-->
-            <!--android:clickable="false"-->
-            <!--android:layout_toLeftOf="@+id/imgMenu"-->
-            <!--/>-->
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"

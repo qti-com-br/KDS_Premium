@@ -19,6 +19,9 @@
     <header android:fragment="com.bematechus.kdslib.PreferenceFragmentStations"
         android:title="@string/pref_kds_stations_title_relations" />
 
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$POSInfoPreferenceFragment"
+        android:title="@string/pos_messages" />
+
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$NotificationPreferenceFragment"
         android:title="@string/notification" />
 

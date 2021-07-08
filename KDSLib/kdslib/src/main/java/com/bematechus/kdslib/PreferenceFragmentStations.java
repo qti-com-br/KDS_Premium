@@ -122,7 +122,7 @@ public class PreferenceFragmentStations
     {
         super.onCreateView(inflater, container, savedInstanceState);
         View view =  inflater.inflate(R.layout.activity_kdsuistations_config, container, false);
-        view.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+        view.setBackgroundColor(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg));//this.getResources().getColor(R.color.settings_page_bg));
         init_variables(view);
         m_kdsCallback.call_setStationAnnounceEventsReceiver(this);
         //KDSGlobalVariables.getKDS().setStationAnnounceEventsReceiver(this);
@@ -3152,14 +3152,16 @@ public class PreferenceFragmentStations
      */
     public boolean isExpoTypeStation(SettingsBase.StationFunc func)
     {
-        if (func == SettingsBase.StationFunc.Expeditor ||
-            func == SettingsBase.StationFunc.Queue_Expo ||
-                func == SettingsBase.StationFunc.Runner ||
-                func == SettingsBase.StationFunc.Summary
-            )
-            return true;
-        else
-            return false;
+        return KDSBase.isExpoTypeStation(func);
+        
+//        if (func == SettingsBase.StationFunc.Expeditor ||
+//            func == SettingsBase.StationFunc.Queue_Expo ||
+//                func == SettingsBase.StationFunc.Runner ||
+//                func == SettingsBase.StationFunc.Summary
+//            )
+//            return true;
+//        else
+//            return false;
     }
 }
 

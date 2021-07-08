@@ -27,6 +27,8 @@ import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSLogOrderFile;
+import com.bematechus.kdslib.KDSPOSMessage;
+import com.bematechus.kdslib.KDSPOSMessages;
 import com.bematechus.kdslib.KDSPosNotificationFactory;
 import com.bematechus.kdslib.KDSSMBDataSource;
 import com.bematechus.kdslib.KDSSmbFile;
@@ -56,6 +58,7 @@ import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXML;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
+import com.bematechus.kdslib.KDSXMLParserPOSMessage;
 import com.bematechus.kdslib.NoConnectionDataBuffers;
 import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
@@ -186,6 +189,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     Broadcaster m_broadcaster = new Broadcaster(this);
 
     Activation m_activationHTTP = null; //sms feature. 2.1.10
+
+            //kp-102
+    KDSPOSMessages mPOSMessages = new KDSPOSMessages();
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -413,19 +419,28 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 PrepSorts.m_bSmartCategoryEnabled = true;
             }
         }
+        //kp-121, manually start cooking.
+        PrepSorts.m_bStartItemManually =  settings.getBoolean(KDSSettings.ID.Runner_start_item_manually);
 
 
     }
     public void updateStationFunction()
     {
-        KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
+        //KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
+        KDSSettings.StationFunc func =m_stationsConnection.getRelations().getStationFunctionForBackoffice(getStationID());
+
         SettingsBase.StationFunc old = m_settings.getStationFunc();
-        m_settings.setStationFunc(func);
+        KDSSettings.StationFunc funcRealWorkFor =m_stationsConnection.getRelations().getStationFunction(getStationID(), "");
+        m_settings.setStationFunc(funcRealWorkFor);
         if (old != func)
         { //update the activation backoffice
             if (m_activationHTTP != null) {
                 if (!getStationID().isEmpty())//kpp1-309 Expeditor and Queue deleted at logout on premium
-                    m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+                {
+                    String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+                    //m_activationHTTP.postNewStationInfo2Web(getStationID(), func.toString());
+                    m_activationHTTP.postNewStationInfo2Web(getStationID(), name);
+                }
             }
         }
 
@@ -1725,7 +1740,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         }
         else {
-            doOrderXmlInThread(MESSAGE_TO_MAIN.Order, null, xmlData,smbFileName, true); //2.0.34
+            KDSXMLParser.XMLType ntype = checkXmlType(xmlData);
+            if (ntype == KDSXMLParser.XMLType.Order)
+                doOrderXmlInThread(MESSAGE_TO_MAIN.Order, null, xmlData,smbFileName, true); //2.0.34
+            else if (ntype == KDSXMLParser.XMLType.POS_Info)
+                doPOSMessage(xmlData);
         }
         //Log.d("SMB Text", xmlData);
     }
@@ -1786,9 +1805,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 setAppSocketID(sock, xmlData);
             }
             break;
-            case Order:
+            case Order: {
                 //doOrderXml(sock, xmlData);
-                doOrderXmlInThread(MESSAGE_TO_MAIN.Order, sock, xmlData, "",false); //2.0.34
+                doOrderXmlInThread(MESSAGE_TO_MAIN.Order, sock, xmlData, "", false); //2.0.34
 //                Message msgOrder = new Message();
 //                msgOrder.what = MESSAGE_TO_MAIN.Order.ordinal();
 //                MessageParam paramOrder = new MessageParam();
@@ -1801,9 +1820,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //
 
 //                m_refreshHandler.sendMessage(msgOrder);
-                break;
-            case Command:
-                if (!doCommandXmlInMainUI(sock, xmlData) )
+            }
+            break;
+            case Command: {
+                if (!doCommandXmlInMainUI(sock, xmlData))
                     doOrderXmlInThread(MESSAGE_TO_MAIN.COMMAND_XML, sock, xmlData, "", false); //2.0.34
 
 //                Message msg = new Message();
@@ -1814,7 +1834,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //                msg.obj = p;
 //                m_refreshHandler.sendMessage(msg);
                 //doCommandXml(sock, xmlData); //20170612
-                break;
+            }
+            break;
+            case POS_Info: //kp-102
+            {
+                doPOSMessage(xmlData);
+            }
+            break;
         }
 //        try {
 //            Thread.sleep(500);
@@ -1953,6 +1979,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         Order,
         Reset_Focus_after_new_order, //20190403, as the reset focus will calculate all items, it is slow. I move it out of doxml thread.
         Toast_msg,
+        Refresh_POS_messages,
     }
 
     Handler m_refreshHandler = new Handler(){
@@ -2011,6 +2038,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 {
                     String s = (String) msg.obj;
                     KDSToast.showMessage(KDSApplication.getContext(), s); //for test
+                }
+                break;
+                case Refresh_POS_messages:
+                {
+                    for (int i=0;i< m_arKdsEventsReceiver.size(); i++)
+                    {
+                        m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Refresh_pos_message, null);
+                    }
                 }
                 break;
 
@@ -2526,6 +2561,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 onRunnerChangedCategory(this, command, xmlData);
             }
             break;
+            case Runner_start_cook_item:
+            {
+                onRunnerStartCookManually(this, command, xmlData);
+            }
+            break;
+            case Prep_expo_transfer_order:
+            {//kp-116 Transfer Prep -> Transfer Expo.
+                //The prep's expo receive this command.
+                onPrepOfExpoHasTransferOrder(this, command, xmlData, fromStationID);
+
+            }
+            break;
 
 
         }
@@ -2659,7 +2706,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         bForceAcceptThisOrderNoStationIDItems = true;//2.0.36
         //if (bForceAcceptThisOrderNoStationIDItems)//2.0.36
-            assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
+        assignStationIDAsOrderFromRemoteFolder(order, bForceAcceptThisOrderNoStationIDItems);
 
         //save it for sms feature.
         ArrayList<KDSToStation> arTargetStations = KDSDataOrder.getOrderTargetStations(order);
@@ -2724,6 +2771,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             order.getItems().getItem(i).setToStationsString(workLoadStation.getID());
         }
         m_stationsConnection.writeDataToStationOrItsBackup(workLoadStation, order.createXml());
+        //kp-135,if the workload station has expo, remove this order in my expo station, here.
+        //
 
 
         return true;
@@ -2810,7 +2859,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     private KDSDataOrder keepExpoItemsAccordingToStationsSetting(KDSDataOrder order, ArrayList<KDSDataItem> removedItems)
     {
 
-        if (!this.isExpeditorStation() && !this.isQueueExpo() && !this.isRunnerStation() &&!this.isSummaryStation())
+        //if (!this.isExpeditorStation() && !this.isQueueExpo() && !this.isRunnerStation() &&!this.isSummaryStation())
+        if (!isExpoTypeStation())
             return order;
         //KKPP1-152
         if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||
@@ -2824,7 +2874,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //
         KDSStationIP myStation = new KDSStationIP();
         myStation.setID(getStationID());
-        arPrepWhoUseMeAsExpo.add(myStation);
+        arPrepWhoUseMeAsExpo.add(myStation);//add myself
 
         int ncount = order.getItems().getCount();
         for (int i=ncount-1; i>=0; i--) {
@@ -2875,20 +2925,23 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //Queue expo supports certain stations
         //just keep the items which target station uses I as expo/expo-queue.
         //For KPP1-37, I add queue-expo filter at here.
-        if (this.isExpeditorStation() || this.isQueueExpo() || this.isRunnerStation() || this.isSummaryStation()) //2.1.15.3, KPP1-37
+        //if (this.isExpeditorStation() || this.isQueueExpo() || this.isRunnerStation() || this.isSummaryStation()) //2.1.15.3, KPP1-37
+        if (isExpoTypeStation())
             keepExpoItemsAccordingToStationsSetting(order,removedItems);
 
 
         //20160418, keep all items if i am expo station
         //One bug I will need you to fix before moving to new project: Setup 2 station, 1 normal,
         // 1expo with router, send order to normal, both station get order, disconnect normal, expo will not receive any order(sample order attached).
-        if (this.isExpeditorStation() ||
-               // this.isQueueStation() ||
-                this.isTrackerStation() ||
-                this.isQueueExpo() ||
-                this.isRunnerStation()||
-                this.isSummaryStation()) return order;
 
+//        if (this.isExpeditorStation() ||
+//               // this.isQueueStation() ||
+//                this.isTrackerStation() ||
+//                this.isQueueExpo() ||
+//                this.isRunnerStation()||
+//                this.isSummaryStation()) return order;
+        if (this.isExpoTypeStation() || isTrackerStation())
+            return order;
         //2.0.18
         // If it is expo queue, accept this order.
         //if it is prep queue, check check its prep items
@@ -2908,9 +2961,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         {
             if (order.getItems().getItem(i).isExpitem())
             {
-                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) &&
-                        (!isRunnerStation()) &&
-                        (!isSummaryStation())) {
+//                if ( (!isExpeditorStation()) && (!isQueueStation()) &&(!isTrackerStation())&&(!isQueueExpo()) &&
+//                        (!isRunnerStation()) &&
+//                        (!isSummaryStation()))
+                if (!isExpoTypeStation() && (!isTrackerStation()) && (!isQueueStation()))
+                {
                     removedItems.add(order.getItems().getItem(i));
                     order.getItems().removeComponent(i);
                 }
@@ -2928,7 +2983,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             //
             if (tostation == KDSToStations.PrimarySlaveStation.Unknown) {
                 //keep modify item. The expo station don't need these type items, as the stations will send items to it.
-                if ( (!this.isQueueExpo()) && (!this.isExpeditorStation()) &&(!isRunnerStation()) &&(!isSummaryStation())) {
+                //if ( (!this.isQueueExpo()) && (!this.isExpeditorStation()) &&(!isRunnerStation()) &&(!isSummaryStation()))
+                if (!isExpoTypeStation())
+                {
                     if (order.getItems().getItem(i).getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
                             order.getItems().getItem(i).getTransType() == KDSDataOrder.TRANSTYPE_DELETE)
                         continue;
@@ -3090,6 +3147,21 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                         }
                     }
                 }
+                //check if all items hidden
+                //Hide order with no visible items
+                int nHiddenOrders = 0;
+                for (int i=0; i< ordersAdded.size(); i++)
+                {
+                    if (isAllItemsHidden(ordersAdded.get(i)))
+                    {
+                        this.getUsers().orderCancel(ordersAdded.get(i), false);
+                        nHiddenOrders ++;
+                    }
+                }
+                if (nHiddenOrders == ordersAdded.size())
+                    break;
+                /////////////////
+
                 if (getStationsConnections().isBackupOfOthers()) {
                     if (m_kdsState.getPrimaryOfBackupLost())
                         getSoundManager().playSound(KDSSettings.ID.Sound_backup_station_orders_received);
@@ -3105,6 +3177,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                         }
                     }
                 }
+
                 //t.debug_print_Duration("TRANSTYPE_ADD3");
                 if (bRefreshView)
                 {
@@ -3450,7 +3523,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             }
 
             m_stationsConnection.connectAllStations();
-
+            //check dirty offline data.
+            checkDirtyOfflineData();
             //m_printer.onPing();
 
             try {
@@ -4786,6 +4860,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Expo_Unbump_Order: //end for queue
             //case ACK_XML:
             case Prep_sync_to_queue://20190729, this can cause queue station freeze, so I move it to thread.
+            case Prep_expo_transfer_order:
                 return false;
             case ACK_XML:
             {
@@ -5070,6 +5145,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         m_activationHTTP.setStationID(getStationID());
         m_activationHTTP.setStationFunc(getStationFunction());
 
+        String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+        Activation.setStationFunctionNameInBackoffice(name);
+
         m_activationHTTP.postOrderRequest(order, iosState, fromOperation);
         return true;
 
@@ -5082,6 +5160,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             return false;
         m_activationHTTP.setStationID(getStationID());
         m_activationHTTP.setStationFunc(getStationFunction());
+
+        String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+        Activation.setStationFunctionNameInBackoffice(name);
 
         if (item == null) return false;
         Activation.ItemJobFromOperations opt = Activation.ItemJobFromOperations.Local_bump_item;
@@ -5324,7 +5405,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             return ;
         m_activationHTTP.setStationID(getStationID());
         m_activationHTTP.setStationFunc(getStationFunction());
-
+        String name = m_stationsConnection.getRelations().getStationFunctionNameForBackoffice(getStationID());
+        Activation.setStationFunctionNameInBackoffice(name);
 
 
         for (int i=0; i< arChangedItems.size(); i++) {
@@ -5367,6 +5449,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
     {
         if (!getSettings().getBoolean(KDSSettings.ID.Orders_sort_rush_front))
             return;
+
+        if (arOrdersAdded.size()<=0) return;
+
         for (int i=0; i< arOrdersAdded.size(); i++)
         {
             KDSDataOrder order = arOrdersAdded.get(i);
@@ -5718,5 +5803,120 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             }
         }
         return true;
+    }
+
+    private void doPOSMessage(String xmlData)
+    {
+        KDSPOSMessage posmsg =(KDSPOSMessage) KDSXMLParser.parseXml("", xmlData);
+        if (posmsg == null)
+            return;
+        mPOSMessages.doMessage(posmsg);
+        m_refreshHandler.sendEmptyMessage(MESSAGE_TO_MAIN.Refresh_POS_messages.ordinal());
+    }
+
+    public KDSPOSMessages getPOSMessages()
+    {
+        return mPOSMessages;
+    }
+
+    /**
+     * data saved in offline db, but there are connection existed.
+     */
+    public void checkDirtyOfflineData()
+    {
+        m_stationsConnection.checkDirtyOfflineData(this);
+    }
+
+    public void onRunnerStartCookManually(KDS kds, KDSXMLParserCommand command, String strOrinalData)
+    {
+        String orderName = command.getParam("P0", "");
+        String itemNames = command.getParam("P1", "");
+        ArrayList<String> arItemNames = KDSUtil.spliteString(itemNames, ",");
+        if (arItemNames.size() <=0) return;
+
+        KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        if (order == null) return; //kp-43 Prep stations crashing
+        String guid = order.getGUID();
+
+        for (int i=0; i< arItemNames.size(); i++) {
+            String itemName = arItemNames.get(i);
+            if (order.getItems().getItemByName(itemName) == null)
+                continue;
+
+            PrepSorts.PrepItem smartItem = order.prep_get_sorts().findItem(itemName);
+            if (smartItem!= null) {
+                smartItem.ItemStartedManually = true;
+                this.getCurrentDB().smart_set_item_started(guid, itemName, true);
+            }
+        }
+        //set the focus the just showing category.
+        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            ArrayList<Object> ar = new ArrayList<>();
+            ar.add(guid);
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.Runner_LineItems_Show_New_Category, ar);
+
+        }
+        this.refreshView();
+    }
+
+    private boolean isExpoTypeStation()
+    {
+        return (KDSBase.isExpoTypeStation(getStationFunction()));
+//        if (this.isQueueExpo() ||
+//                this.isExpeditorStation()||
+//                isRunnerStation() ||
+//                isSummaryStation() )
+//
+//            return true;
+//        return false;
+    }
+
+    /**
+     * whether all items were hidden in this station.
+     * The <HidenStation> </HidenStation> tag.
+     *  If all items were hidden, remove this order.
+     *
+     * @param order
+     * @return
+     */
+    private boolean isAllItemsHidden(KDSDataOrder order)
+    {
+        if (this.isExpoTypeStation()) return false;
+
+        String stationID = this.getStationID();
+        int ncounter = 0;
+        for (int i=0; i< order.getItems().getCount(); i++)
+        {
+            KDSDataItem item = order.getItems().getItem(i);
+            if (item.getToStations().findStation(stationID) != KDSToStations.PrimarySlaveStation.Unknown) {
+
+                if (item.isHiddenStation(stationID))
+                {
+                    ncounter ++;
+                }
+            }
+        }
+        return (ncounter == order.getItems().getCount());
+
+    }
+
+    /**
+     * Expo receive this command xml after my prep transfered order.
+     * Remove all data in expo station.
+     * @param kds
+     * @param command
+     * @param strOrinalData
+     */
+    private void onPrepOfExpoHasTransferOrder(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
+    {
+//        String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
+//        if (strXml.isEmpty())
+//            return;
+//        KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
+//        KDSUser.USER userID = KDSUser.USER.values()[ order.getScreen()];
+//        if (order == null)
+//            return;
+        KDSStationExpeditor.exp_sync_prep_transfer_order(kds, command, strOrinalData);
     }
 }

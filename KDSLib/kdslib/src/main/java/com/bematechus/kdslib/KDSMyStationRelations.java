@@ -478,8 +478,16 @@ public class KDSMyStationRelations {
         {
 
             relation = m_arStationsRelations.get(i);
-            if ((relation.getFunction() != SettingsBase.StationFunc.Prep)  )
-                continue;
+            if ((relation.getFunction() != SettingsBase.StationFunc.Prep)  ) {
+                if (KDSBase.isExpoTypeStation(relation.getFunction()))
+                    continue;
+                else
+                { //kp-135
+                    SettingsBase.StationFunc parentFunc = getStationFunction(relation.getID(),relation.getSlaveStations() );
+                    if (parentFunc != SettingsBase.StationFunc.Prep)
+                        continue;
+                }
+            }
             if (relation.getID().equals(expoStationID))
                 continue;
             String expos = relation.getExpStations();
@@ -696,4 +704,165 @@ public class KDSMyStationRelations {
         }
         return arReturn;
     }
+
+    /**
+     *
+     * @param offlineStations
+     *  stations ID.
+     * @return
+     */
+    public ArrayList<KDSStationIP> getStations(ArrayList<String> offlineStations)
+    {
+        ArrayList<KDSStationIP> ar = new ArrayList<>();
+
+        for (int i=0; i< offlineStations.size(); i++)
+        {
+            KDSStationsRelation r = KDSStationsRelation.findStation(m_arStationsRelations,offlineStations.get(i));
+            if (r != null)
+                ar.add(r);
+        }
+        return ar;
+    }
+
+    /**
+     * save the real function name to backoffice.
+     * KP-128 Mirror, Duplicate, and Workload not showing in back office.
+     * @param stationID
+     * @return
+     */
+    public String getStationFunctionNameForBackoffice(String stationID)
+    {
+        SettingsBase.StationFunc func = SettingsBase.StationFunc.Prep;
+
+        int ncount =  m_arStationsRelations.size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationsRelation relation = m_arStationsRelations.get(i);
+            if (stationID.equals( relation.getID()))
+            {
+                func = relation.getFunction();
+            }
+
+        }
+
+        String parentStationID = "";
+        switch (func)
+        {
+
+            case Prep:
+            case Expeditor:
+            case Queue:
+            case Runner:
+                return func.toString();
+                //break;
+            case Mirror:
+                if (getPrimaryStationsWhoUseMeAsMirror().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsMirror().get(0).getID();
+                break;
+            case Backup:
+                if (getPrimaryStationsWhoUseMeAsBackup().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsBackup().get(0).getID();
+                break;
+            case Workload:
+                if (getPrimaryStationsWhoUseMeAsWorkLoad().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsWorkLoad().get(0).getID();
+                break;
+            case Duplicate:
+                if (getPrimaryStationsWhoUseMeAsDuplicated().size()>0)
+                    parentStationID = getPrimaryStationsWhoUseMeAsDuplicated().get(0).getID();
+                break;
+
+        }
+        String name = func.toString();
+
+        if (!parentStationID.isEmpty())
+        {
+            name = name + "->" + parentStationID;
+        }
+        return name;
+    }
+
+    /**
+     * get real function value.
+     * KP-128 Mirror, Duplicate, and Workload not showing in back office.
+     * @param stationID
+     *
+     * @return
+     */
+    public SettingsBase.StationFunc getStationFunctionForBackoffice(String stationID) {
+        SettingsBase.StationFunc func = SettingsBase.StationFunc.Prep;
+
+        int ncount = m_arStationsRelations.size();
+        for (int i = 0; i < ncount; i++) {
+            KDSStationsRelation relation = m_arStationsRelations.get(i);
+            if (stationID.equals(relation.getID())) {
+                func = relation.getFunction();
+            }
+
+        }
+        return func;
+    }
+
+    public ArrayList<KDSStationIP> getStationWorkload(String stationID)
+    {
+
+        ArrayList<KDSStationIP> workload = new ArrayList<>();
+        
+        int ncount = m_arStationsRelations.size();
+        for (int i = 0; i < ncount; i++) {
+            KDSStationsRelation relation = m_arStationsRelations.get(i);
+            if (stationID.equals(relation.getID())) {
+                if (relation.getSlaveFunc() == SettingsBase.SlaveFunc.Automatic_work_loan_distribution)
+                {
+                    
+                    KDSToStations stations = new KDSToStations();
+                    stations.parseString(relation.getSlaveStations());
+                    for (int j=0; j< stations.getCount(); j++)
+                    {
+                        KDSStationIP station = new KDSStationIP();
+                        station.setID(stations.getToStation(j).getPrimaryStation());
+                        workload.add(station);
+                    }
+                    
+                }
+            }
+
+        }
+        return workload;
+        
+    }
+
+    public ArrayList<String> getStationsWhoUseMeAsWorkload(String stationID)
+    {
+        ArrayList<String> arReturn = new ArrayList<>();
+
+        KDSStationsRelation relation = null;
+        KDSToStations toStations = new KDSToStations();
+        for (int i=0; i< m_arStationsRelations.size(); i++)
+        {
+
+            relation = m_arStationsRelations.get(i);
+            if ((relation.getFunction() != SettingsBase.StationFunc.Prep)   )
+                continue;
+            if (relation.getID().equals(stationID))
+                continue;
+            if (relation.getSlaveFunc() != SettingsBase.SlaveFunc.Automatic_work_loan_distribution)
+                continue;
+            String slaves = relation.getSlaveStations();
+            
+            toStations.parseString(slaves);
+            if (toStations.findStation(stationID) != KDSToStations.PrimarySlaveStation.Unknown) {
+                arReturn.add(relation.getID());
+            }
+        }
+        return arReturn;
+    }
+
+    public ArrayList<KDSStationIP> getItsExpoStation(String stationID)
+    {
+
+        return KDSStationsRelation.findExpOfStation(m_arStationsRelations, stationID);
+
+    }
+
 }

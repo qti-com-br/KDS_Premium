@@ -83,6 +83,12 @@ public class KDSDataItem extends KDSData {
 
     protected String m_strTransferedFromStationID = ""; //KPP1-53, use database r3 to save it.
     protected String m_strItemBumpGUID = "";
+    
+    protected boolean m_bPrintable = true;
+
+    //print item when bump
+    protected boolean m_bPrinted = false; //don't output to xml
+
     /////////////////////
     //public ArrayList<Point> m_tempShowMeNeedBlockLines = new ArrayList<>();//1; //for text wrap, saveing it here is for  efficiency.
     /**
@@ -398,7 +404,7 @@ public class KDSDataItem extends KDSData {
                 + "GUID,OrderGUID,Name,Description,Qty,QtyChanged,"
                 + "Category,BG,FG,Grp,Marked,"
                 + "LocalBumped,Ready,Hiden,ToStations,BumpedStations,ItemDelay,PreparationTime,DeleteByRemote,ItemType,"
-                + "BuildCard,TrainingVideo,SumTransEnable,SumTrans,r0,r1,r2,r3,r4) values ("
+                + "BuildCard,TrainingVideo,SumTransEnable,SumTrans,r0,r1,r2,r3,r4,r5) values ("
                 //+  getOrderID() + ","
                 + "'" + getGUID() + "',"
                 + "'" + getOrderGUID() + "'," //use order guid as id
@@ -430,6 +436,7 @@ public class KDSDataItem extends KDSData {
                 +"," + KDSUtil.convertIntToString(getCategoryPriority()) //2.0.47
                 +",'" + getTransferedFromStationID() +"'" //KPP1-53
                 +",'" + getItemBumpGuid() +"'" //KPP1-64
+                +"," + (getPrintable()?"1":"0")
                 +")";
         return sql;
 
@@ -817,6 +824,8 @@ public class KDSDataItem extends KDSData {
         to.setCategoryPriority(this.getCategoryPriority());
         to.setTransferedFromStationID(this.getTransferedFromStationID()); //kpp1-53
         to.setItemBumpGuid(this.getItemBumpGuid()); //KPP1-64
+        to.setPrintable(this.getPrintable());
+        to.setPrinted(this.getPrinted());
 
         this.getModifiers().copyTo(to.getModifiers());
 
@@ -1199,5 +1208,30 @@ public class KDSDataItem extends KDSData {
     public String getItemBumpGuid()
     {
         return m_strItemBumpGUID;
+    }
+    
+    public void setPrintable(boolean bPrintable)
+    {
+        m_bPrintable = bPrintable;
+    }
+    
+    public boolean getPrintable()
+    {
+        return m_bPrintable;
+    }
+
+    public KDSToStations getHiddenStations()
+    {
+        return m_hiddenStations;
+    }
+
+    public void setPrinted(boolean bPrinted)
+    {
+        m_bPrinted = bPrinted;
+    }
+
+    public boolean getPrinted()
+    {
+        return m_bPrinted;
     }
 }

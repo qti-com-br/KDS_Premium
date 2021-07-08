@@ -345,7 +345,8 @@ public class KDSUIRetriveConfig extends Activity implements StationAnnounceEvent
             txtIP.setText(m_listData.get(position).getIP());
 
             if (position == m_nSelected) {//
-                convertView.setBackgroundColor(minflater.getContext().getResources().getColor(R.color.listview_focus_bg));//
+                convertView.setBackgroundColor(ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.listview_focus_bg));//
+                //convertView.setBackgroundColor(minflater.getContext().getResources().getColor(R.color.listview_focus_bg));//
 
             }
             else {

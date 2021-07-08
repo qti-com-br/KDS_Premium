@@ -3,6 +3,7 @@ package com.bematechus.kds;
 import android.util.Log;
 
 import com.bematechus.kdslib.BuildVer;
+import com.bematechus.kdslib.KDSBase;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDBBase;
 import com.bematechus.kdslib.KDSDataCondiment;
@@ -1110,13 +1111,23 @@ public class KDSStationFunc {
         KDSDataOrder transferOrder = new KDSDataOrder();
         order.copyTo(transferOrder);
         transferOrder.setScreen(toScreen);
-
+        Log.i(TAG, "start transfer");
         //transferOrder.setAllItemsToScreen(toStationID, toScreen);
 
         String strXml = KDSXMLCommandFactory.createOrderTransferXml(kdsuser.getKDS().getStationID(), kdsuser.getKDS().getLocalIpAddress(), "", transferOrder);
         KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
         if (activeStation == null)
             return TransferingStatus.Error_Station;
+        //kdsuser.getKDS().getStationsConnections().writeDataToStationOrItsSlave(activeStation, strXml);
+        //kp-116, Transfer Prep -> Transfer Expo
+        if (kdsuser.getKDS().getSettings().getBoolean(KDSSettings.ID.Transfer_prep_expo))
+        {//we need to tell my expo this order was transferred.
+            String tranferedXml = KDSXMLCommandFactory.createOrderTransferPrepExpoXml(kdsuser.getKDS().getStationID(),
+                                                                                        kdsuser.getKDS().getLocalIpAddress(),
+                                                                                        "", transferOrder);
+            kdsuser.getKDS().getStationsConnections().writeToExps(kdsuser.getKDS().getStationID(), tranferedXml);
+
+        }
         kdsuser.getKDS().getStationsConnections().writeDataToStationOrItsSlave(activeStation, strXml);
 //        if (station == null) {
 //            KDSStationActived activeStation = kdsuser.getKDS().getStationsConnections().findActivedStationByID(toStationID);
@@ -1343,10 +1354,15 @@ public class KDSStationFunc {
                 KDSStationNormal.normal_sync_order_bumped(kds, command);//kpp1-202.
 
                 break;
-            case Expeditor:
             case Queue:
+            case Queue_Expo: {
+                if (kds.getSettings().getBoolean(KDSSettings.ID.Queue_only_auto_bump))
+                    return;
+                KDSStationExpeditor.exp_sync_expo_order_bumped(kds, command);
+            }
+                break;
+            case Expeditor:
             case TableTracker:
-            case Queue_Expo:
             case Runner:
             case Summary:
                 //KDSStationExpeditor.exp_sync_station_cook_started(kds, command); //why
@@ -1754,6 +1770,10 @@ public class KDSStationFunc {
         }
 
         //sync to others
+
+        if (kds.getSettings().getBoolean(KDSSettings.ID.Transfer_prep_expo))
+            sync_with_expo(kds, command.getCode(), order, null); //kp-116 Transfer Prep -> Transfer Expo
+        //
         sync_with_mirror(kds, command.getCode(), order, null);
         sync_with_backup(kds, command.getCode(), order, null);
     }
@@ -2432,14 +2452,16 @@ public class KDSStationFunc {
      */
     static public boolean isExpoTypeStation(SettingsBase.StationFunc func)
     {
-        if (func == SettingsBase.StationFunc.Expeditor ||
-                func == SettingsBase.StationFunc.Queue_Expo ||
-                func == SettingsBase.StationFunc.Runner ||
-                func == SettingsBase.StationFunc.Summary
-        )
-            return true;
-        else
-            return false;
+        return KDSBase.isExpoTypeStation(func);
+
+//        if (func == SettingsBase.StationFunc.Expeditor ||
+//                func == SettingsBase.StationFunc.Queue_Expo ||
+//                func == SettingsBase.StationFunc.Runner ||
+//                func == SettingsBase.StationFunc.Summary
+//        )
+//            return true;
+//        else
+//            return false;
     }
 
     /**

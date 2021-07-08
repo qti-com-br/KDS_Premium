@@ -34,6 +34,8 @@ public class KDSBase {
         TCP_listen_port_error, //params: 0: error message.
         Order_Bumped_By_Other_Expo_Or_Station, //kpp1-286
         Runner_LineItems_Show_New_Category,
+        Refresh_pos_message,
+        Network_state,
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);
@@ -302,6 +304,18 @@ public class KDSBase {
 //        }
 
 
+    }
+
+    static public boolean isExpoTypeStation(SettingsBase.StationFunc func)
+    {
+        if (func == SettingsBase.StationFunc.Expeditor ||
+                func == SettingsBase.StationFunc.Queue_Expo ||
+                func == SettingsBase.StationFunc.Runner ||
+                func == SettingsBase.StationFunc.Summary
+        )
+            return true;
+        else
+            return false;
     }
 
 

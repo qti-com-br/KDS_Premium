@@ -158,6 +158,7 @@ public class KDSDataOrder extends KDSData {
         TrackerID,
         PagerID,
         HeaderFooterMessage,
+        AutoUnpark,
         //2.0.50
 //        SMS_Customer_ID,
 //        SMS_Customer_Phone,
@@ -167,7 +168,11 @@ public class KDSDataOrder extends KDSData {
 
 
     protected boolean[] m_arValidFields;
-    
+
+    Date m_autoUnparkDate = KDSUtil.createInvalidDate();
+
+    String m_strInputMessage = ""; //kp-114, Input a number in Order
+
     /***************************************************************************/
     
     public KDSDataOrder()
@@ -512,11 +517,14 @@ public class KDSDataOrder extends KDSData {
         //
         obj.m_dtQueueStateTime = m_dtQueueStateTime;
 
+        obj.m_autoUnparkDate = m_autoUnparkDate;
+
         this.getOrderMessages().copyTo(obj.getOrderMessages());
         this.getCustomer().copyTo(obj.getCustomer());
 
         obj.m_kdsGUID = m_kdsGUID;
         obj.mHeaderFooterMessage = mHeaderFooterMessage;
+        obj.m_strInputMessage = m_strInputMessage;//kp-114
 
     }
     /***************************************************************************
@@ -550,7 +558,7 @@ public class KDSDataOrder extends KDSData {
             + "GUID,Name,Waiter,Start,ToTbl,"
             + "Station,Screen,POS,OrderType,Dest,"
             + "CustMsg,QueueMsg,TrackerID,PagerID,CookState,Parked,IconIdx,EvtFired,PrepStart,"
-            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6,r7)"
+            + "Status,SortIdx,OrderDelay,fromprimary,bumpedtime,r0,r1,r2,r3,r4,r5,r6,r7,r8)"
             + " values ("
             + "'" + getGUID() + "'"
             + ",'" + fixSqliteSingleQuotationIssue( getOrderName()) + "'"
@@ -586,6 +594,7 @@ public class KDSDataOrder extends KDSData {
             +",'" + m_customer.getName() + "'" //r5
             +",'" + getKDSGuid() + "'" //r6
             + ",'" + getHeaderFooterMessage() + "'"
+            + ",'" + getAutoUnparkDateString() + "'"
             +  ")";
         return sql;
          
@@ -732,6 +741,8 @@ public class KDSDataOrder extends KDSData {
 
         if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.HeaderFooterMessage))
             sql +=  "r7='" + getHeaderFooterMessage() + "', ";
+        if (this.getXmlFieldValid(VALID_ORDER_XML_FIELD.AutoUnpark))
+            sql +=  "r8='" + getAutoUnparkDateString() + "', ";
         //add the station number to it, just for last ",".
         sql +=  " Station='" + fixSqliteSingleQuotationIssue(  getPCKDSNumber()) + "' ";
 
@@ -814,6 +825,9 @@ public class KDSDataOrder extends KDSData {
         c.setTrackerID("2");
         c.setPagerID("12");
         c.setIconIdx(1);
+        //
+        c.setParked(true);
+        c.setAutoUnparkDate(new Date());
 
         KDSDataMessages msg = new KDSDataMessages();
         for (int n=0; n<1; n++)
@@ -1503,7 +1517,13 @@ public class KDSDataOrder extends KDSData {
                 pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_USERINFO,this.getCustomMsg(), false);
             if (!this.getQueueMessage().isEmpty())//kpp1-425
                 pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_QUEUEMSG,this.getQueueMessage(), false);
+            if (getParked() == 1) {
 
+                pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PARKED,KDSUtil.convertIntToString( this.getParked()), true);
+                if (!KDSUtil.isInvalidDate(m_autoUnparkDate))
+                    pxml.newAttribute(KDSXMLParserOrder.DBXML_ELEMENT_AUTOUNPARK, KDSUtil.convertDateToString(this.getAutoUnparkDate()));
+                pxml.back_to_parent();
+            }
             //remove these feature.
             //pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_TRACKERID,this.getTrackerID(), false);
             //pxml.newGroup(KDSXMLParserOrder.DBXML_ELEMENT_PAGERID,this.getPagerID(), false);
@@ -2989,7 +3009,7 @@ get the total qty of all found items
         c.setDestination("Fast food");
         c.setFromPOSNumber("5");
         c.setOrderName(orderName);
-        c.setOrderType("RUSH");
+        //c.setOrderType("RUSH");
         c.setPCKDSNumber("1");
         c.setPreparationStartTime(new Date());
         c.setScreen(toScreen);
@@ -3226,5 +3246,48 @@ get the total qty of all found items
         return mHeaderFooterMessage;
     }
 
+
+    public void setAutoUnparkDate(Date dt)
+    {
+        m_autoUnparkDate = dt;
+    }
+
+    public Date getAutoUnparkDate()
+    {
+        return m_autoUnparkDate;
+    }
+
+    public String getAutoUnparkDateString()
+    {
+        if (KDSUtil.isInvalidDate(m_autoUnparkDate))
+            return "";
+        return KDSUtil.convertDateToString(m_autoUnparkDate);
+    }
+
+    public boolean isUnparkTime()
+    {
+        if (getParked() != 1) return false;
+        if (KDSUtil.isInvalidDate( getAutoUnparkDate()))
+            return false;
+        TimeDog td = new TimeDog(getAutoUnparkDate());
+        return (td.is_timeout(1));
+
+
+
+    }
+
+    /**
+     * kp-114, Input a number in Order
+     * @param msg
+     */
+    public void setInputMessage(String msg)
+    {
+        m_strInputMessage = msg;
+    }
+
+    public String getInputMessage()
+    {
+        return m_strInputMessage;
+    }
 
 }

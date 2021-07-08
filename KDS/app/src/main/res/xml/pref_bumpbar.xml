@@ -213,6 +213,15 @@
             android:positiveButtonText="@string/ok"
             android:negativeButtonText="@string/cancel"
             />
+        <!-- use "i" as default key -->
+        <com.bematechus.kds.KDSPreferenceKeySelection
+            android:title="@string/input_msg"
+            android:key="bumpbar_func_inputmsg"
+            android:dialogMessage="bumpbar_type"
+            android:dialogTitle="37,0,0,0"
+            android:positiveButtonText="@string/ok"
+            android:negativeButtonText="@string/cancel"
+            />
 
     </PreferenceCategory>
 

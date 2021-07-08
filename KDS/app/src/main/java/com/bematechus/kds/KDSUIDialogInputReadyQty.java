@@ -1,12 +1,8 @@
 package com.bematechus.kds;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.view.KeyEvent;
 import android.widget.TextView;
 
-import com.bematechus.kdslib.KDSKbdRecorder;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.ScheduleProcessOrder;

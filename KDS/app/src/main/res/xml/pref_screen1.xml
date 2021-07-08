@@ -54,7 +54,7 @@
         android:maxLines="1" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="kds_general_subtitle_font"
-        android:defaultValue="default_font,@color/subtitle_bg,@color/subtitle_fg,normal_size"
+        android:defaultValue="default_font,?attr/subtitle_bg,?attr/subtitle_fg,normal_size"
         android:title="@string/pref_kds_general_subtitle_font"
         app:supportsColor="true"/>
 

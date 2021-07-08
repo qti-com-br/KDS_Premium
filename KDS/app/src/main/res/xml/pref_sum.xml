@@ -28,7 +28,7 @@
         android:positiveButtonText="@null" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="sum_font"
-        android:defaultValue="default_font,@color/sum_bg,@color/sum_fg,normal_size"
+        android:defaultValue="default_font,?attr/sum_bg,?attr/sum_fg,normal_size"
         android:title="@string/sum_font"
         app:supportsColor="true"/>
 <!--    <com.bematechus.kdslib.KDSPreferenceBGFGPicker-->

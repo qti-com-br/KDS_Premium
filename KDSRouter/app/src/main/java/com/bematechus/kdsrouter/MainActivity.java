@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -59,6 +60,7 @@ import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIIPSearchDialog;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.SettingsBase;
+import com.bematechus.kdslib.ThemeUtil;
 import com.bematechus.kdslib.TimeDog;
 
 import java.io.DataOutputStream;
@@ -169,19 +171,23 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void checkNetworkState()
     {
-        if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
-            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
-            if (m_imgState.getTag() != null &&
-                    (int) m_imgState.getTag() == 0)
-
-            m_imgState.setTag(1);
-        }
-        else{
-            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
-            if (m_imgState.getTag() == null ||
-                    (int) m_imgState.getTag() == 1)
-            m_imgState.setTag(0);
-        }
+//        if (KDSSocketManager.isNetworkActived(this.getApplicationContext())) {
+//            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
+//            if (m_imgState.getTag() != null &&
+//                    (int) m_imgState.getTag() == 0)
+//
+//            m_imgState.setTag(1);
+//        }
+//        else{
+//            if (KDSSocketManager.m_nLostNetworkCount >4) {
+//                if (KDSBackofficeNotification.isHeartbeatLost()) {
+//                    m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
+//                    if (m_imgState.getTag() == null ||
+//                            (int) m_imgState.getTag() == 1)
+//                        m_imgState.setTag(0);
+//                }
+//            }
+//        }
     }
 
 
@@ -258,6 +264,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, ">>>>>>Enter mainactivity oncreate");
+        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"enter, ip=" + KDSSocketManager.getLocalIpAddress() );
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         m_activation.setEventsReceiver(this);
@@ -271,6 +278,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //kpp1-337
         //KDSSettings.Language language =  KDSSettings.loadLanguageOption(this.getApplicationContext());
         //KDSUtil.setLanguage(this.getApplicationContext(), language);
+        this.getApplicationContext().setTheme(R.style.kds_style);
 
         setContentView(R.layout.activity_main);
         explicitStartService();
@@ -278,7 +286,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         m_txtError = (TextView)findViewById(R.id.txtError);
         m_imgMenu  = (ImageView)findViewById(R.id.imgMenu);
+        m_imgMenu.setColorFilter(ThemeUtil.getAttrColor(this.getApplicationContext(), R.attr.kds_title_fg), PorterDuff.Mode.SRC_ATOP);
+
         m_imgState= (ImageView)this.findViewById(R.id.imgState);
+        m_imgState.setColorFilter(ThemeUtil.getAttrColor(this.getApplicationContext(), R.attr.kds_title_fg), PorterDuff.Mode.SRC_ATOP);
+
         m_txtTime = (TextView)this.findViewById(R.id.txtTime);
         m_txtDate = (TextView)this.findViewById(R.id.txtDate);
         m_txtTitle = (TextView)this.findViewById(R.id.txtTitle);
@@ -292,6 +304,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         m_lstInfo.setAdapter(m_infoAdapter);
 
         m_lstInfo.setFocusable(false);
+
+
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         pref.registerOnSharedPreferenceChangeListener(this);
@@ -329,6 +343,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         catch (Exception e) {
             e.printStackTrace();
         }
+
+        KDSLog.e(TAG, KDSLog._FUNCLINE_()+"exit");
     }
 
 
@@ -561,7 +577,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         if (bEnabled)
         {
-            m_txtTitle.setTextColor(this.getResources().getColor(R.color.kds_title_fg));
+            //m_txtTitle.setTextColor(this.getResources().getColor(R.color.kds_title_fg));
+            m_txtTitle.setTextColor(ThemeUtil.getAttrColor(this.getApplicationContext(), R.attr.kds_title_fg));
             String title = getString(R.string.main_title);
             if (bBackupMode) {
                 String str = getString(R.string.backup_of);
@@ -781,8 +798,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void explicitStartService()
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
         Intent intent = new Intent(this, KDSRouterService.class);
         startService(intent);
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
     }
     private void explicitStopService()
     {
@@ -935,7 +954,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void bindKDSRouterService()
     {
-
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
+        if (m_serviceConn != null || m_service != null) return;
         m_serviceConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -950,7 +970,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         };
 
         Intent intent = new Intent(this, KDSRouterService.class);
-        bindService(intent, m_serviceConn, Context.BIND_AUTO_CREATE);
+        try {
+            bindService(intent, m_serviceConn, Context.BIND_AUTO_CREATE);
+        }
+        catch (Exception e)
+        {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "bindService multiple");
+        }
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
     }
     /**
      * interface implements
@@ -1698,6 +1725,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 showToastMessage(s);
             }
             break;
+            case Network_state:
+            {
+                boolean bAvailable = (boolean)arParams.get(0);
+                onNetworkStateRefreshed(bAvailable);
+            }
+            break;
         }
         return null;
     }
@@ -1789,6 +1822,38 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     {
         //downloadBackofficeOrders(); //kpp1-409
         receiveBackofficeOrders(evt, data);
+    }
+
+    public void onNetworkStateRefreshed(boolean bAvailable)
+    {
+        if (bAvailable) {
+            m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.online);
+            if (m_imgState.getTag() != null &&
+                    (int) m_imgState.getTag() == 0)
+
+                m_imgState.setTag(1);
+        }
+        else{
+            if (KDSSocketManager.m_nLostNetworkCount >4) {
+                if (KDSBackofficeNotification.isHeartbeatLost()) {
+                    m_imgState.setImageResource(com.bematechus.kdslib.R.drawable.offline);
+                    if (m_imgState.getTag() == null ||
+                            (int) m_imgState.getTag() == 1)
+                        m_imgState.setTag(0);
+                }
+            }
+        }
+    }
+
+    protected void onDestroy()
+    {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
+        super.onDestroy();
+        if (m_service!= null) {
+            if (m_service.getKDSRouter()!= null)
+                m_service.getKDSRouter().removeEventReceiver(this);
+        }
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
     }
 }
 

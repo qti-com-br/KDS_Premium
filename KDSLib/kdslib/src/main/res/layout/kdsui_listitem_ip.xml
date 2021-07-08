@@ -13,7 +13,7 @@
         android:layout_weight="1"
         android:textColor="@android:color/black"
 
-        kdstextview:rightcolor="@color/grid_border_color"
+        kdstextview:rightcolor="?attr/grid_border_color"
 
         android:id="@+id/txtID"
         android:paddingLeft="3dp" />
@@ -23,7 +23,7 @@
         android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="IP"
-        kdstextview:rightcolor="@color/grid_border_color"
+        kdstextview:rightcolor="?attr/grid_border_color"
         android:layout_weight="4"
         android:textColor="@android:color/black"
         android:id="@+id/txtIP"
@@ -35,7 +35,7 @@
         android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Port"
-        kdstextview:rightcolor="@color/grid_border_color"
+        kdstextview:rightcolor="?attr/grid_border_color"
         android:layout_weight="2"
         android:textColor="@android:color/black"
         android:id="@+id/txtPort"

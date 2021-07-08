@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.bematechus.kdslib.CanvasDC;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataCategoryIndicator;
@@ -739,7 +740,7 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     {
         KDSDataMessage m = new KDSDataMessage("");
         m.setForComponentType(KDSDataMessage.FOR_Order);
-        m.setMessage("Add-on");
+        m.setMessage(KDSApplication.getContext().getString(R.string.addon));//"Add-on");
 
         KDSViewBlockCell cell = addCellToPanel(panel, m);
         if (cell == null)

@@ -55,6 +55,7 @@ import com.bematechus.kdslib.KDSUIDlgInputPassword;
 import com.bematechus.kdslib.KDSUIRetriveConfig;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.PreferenceFragmentStations;
+import com.bematechus.kdslib.ThemeUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -213,14 +214,14 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 
             LinearLayout layoutHeaders = (LinearLayout) this.findViewById(id);//com.android.internal. R.id.headers);// com.android.internal.R.id.headers);
             layoutHeaders.setLayoutParams(new LinearLayout.LayoutParams(HEADERS_WIDTH, LinearLayout.LayoutParams.MATCH_PARENT));
-            layoutHeaders.setBackgroundColor(this.getResources().getColor(R.color.settings_headers_bg));
+            layoutHeaders.setBackgroundColor(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_headers_bg));// this.getResources().getColor(R.color.settings_headers_bg));
 
             id = mResources.getIdentifier("prefs_frame", "id", "android");
             LinearLayout layoutPrefs = (LinearLayout) this.findViewById(id);//com.android.internal.R.id.prefs_frame);
             layoutPrefs.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
 
 
-            layoutPrefs.setBackgroundColor(this.getResources().getColor(R.color.settings_page_bg));
+            layoutPrefs.setBackgroundColor(ThemeUtil.getAttrColor(KDSApplication.getContext(), R.attr.settings_page_bg));//this.getResources().getColor(R.color.settings_page_bg));
 
         }
         setupGui();

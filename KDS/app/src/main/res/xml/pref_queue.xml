@@ -35,7 +35,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceColorPicker
         android:key="queue_view_bg"
-        android:defaultValue="@color/queue_view_bg"
+        android:defaultValue="?attr/queue_view_bg"
         android:title="@string/pref_queue_bg" />
 
 
@@ -87,6 +87,10 @@
         <!--android:title="@string/pref_kds_bumping_double_queue_enabled"-->
         <!--android:summary="@string/pref_kds_bumping_double_queue_enabled_sum"-->
         <!--android:defaultValue="true" />-->
+    <CheckBoxPreference
+        android:key="queue_only_auto_bump"
+        android:title="@string/queue_only_auto_bump"
+        android:defaultValue="false" />
 
     <CheckBoxPreference
         android:key="queue_show_order_id"
@@ -104,7 +108,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_id_font"
-        android:defaultValue="default_font,@color/queue_order_id_bg,@color/queue_order_id_fg,large_size"
+        android:defaultValue="default_font,?attr/queue_order_id_bg,?attr/queue_order_id_fg,large_size"
         android:title="@string/queue_order_id_font"
         android:dependency="queue_show_order_id"
         app:supportsColor="true"/>
@@ -115,7 +119,7 @@
         android:defaultValue="false" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_customer_name_font"
-        android:defaultValue="default_font,@color/queue_cusomer_name_bg,@color/queue_cusomer_name_fg,middle_size"
+        android:defaultValue="default_font,?attr/queue_cusomer_name_bg,?attr/queue_cusomer_name_fg,middle_size"
         android:title="@string/queue_customer_name_font"
         android:dependency="queue_show_customer_name"
         app:supportsColor="true"/>
@@ -126,7 +130,7 @@
         android:defaultValue="false" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_timer_font"
-        android:defaultValue="default_font,@color/queue_order_timer_bg,@color/queue_order_timer_fg,middle_size"
+        android:defaultValue="default_font,?attr/queue_order_timer_bg,?attr/queue_order_timer_fg,middle_size"
         android:title="@string/queue_order_timer_font"
         android:dependency="queue_show_order_timer"
         app:supportsColor="true"/>
@@ -137,7 +141,7 @@
         android:defaultValue="false" />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_custome_message_font"
-        android:defaultValue="default_font,@color/queue_cusom_message_bg,@color/queue_cusom_message_fg,middle_size"
+        android:defaultValue="default_font,?attr/queue_cusom_message_bg,?attr/queue_cusom_message_fg,middle_size"
         android:title="@string/queue_custom_message_font"
         android:dependency="queue_show_custom_message"
         app:supportsColor="true"/>
@@ -157,7 +161,7 @@
 
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_received_font"
-        android:defaultValue="default_font,@color/queue_order_status_received_bg,@color/queue_order_status_received_fg,large_size"
+        android:defaultValue="default_font,?attr/queue_order_status_received_bg,?attr/queue_order_status_received_fg,large_size"
         android:title="@string/queue_order_received_font"
         app:supportsColor="true"/>
 
@@ -174,7 +178,7 @@
         />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_preparation_font"
-        android:defaultValue="default_font,@color/queue_order_status_preparation_bg,@color/queue_order_status_preparation_fg,large_size"
+        android:defaultValue="default_font,?attr/queue_order_status_preparation_bg,?attr/queue_order_status_preparation_fg,large_size"
         android:title="@string/queue_order_preparation_font"
         app:supportsColor="true"/>
 
@@ -191,7 +195,7 @@
         />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_ready_font"
-        android:defaultValue="default_font,@color/queue_order_status_ready_bg,@color/queue_order_status_ready_fg,large_size"
+        android:defaultValue="default_font,?attr/queue_order_status_ready_bg,?attr/queue_order_status_ready_fg,large_size"
         android:title="@string/queue_order_ready_font"
         app:supportsColor="true"/>
 
@@ -208,7 +212,7 @@
         />
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="queue_order_pickup_font"
-        android:defaultValue="default_font,@color/queue_order_status_pickup_bg,@color/queue_order_status_pickup_fg,large_size"
+        android:defaultValue="default_font,?attr/queue_order_status_pickup_bg,?attr/queue_order_status_pickup_fg,large_size"
         android:title="@string/queue_order_pickup_font"
         app:supportsColor="true"/>
 
@@ -259,7 +263,7 @@
         android:title="@string/queue_mode_simple">
         <com.bematechus.kdslib.KDSPreferenceColorPicker
             android:key="queue_simple_separator_color"
-            android:defaultValue="@color/queue_separator_color"
+            android:defaultValue="?attr/queue_separator_color"
             android:title="@string/pref_queue_id_mode_line_bg" />
 
         <!-- status 1 -->

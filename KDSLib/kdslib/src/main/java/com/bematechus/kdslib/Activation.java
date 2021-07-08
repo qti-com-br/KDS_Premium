@@ -66,9 +66,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      * Management
      * Web domain: http://kitchengous.com
      Login: bematech@kitchengous.com (unused).
-     logiccontrols@kitchengous.com
-     Password:098765
-
+    xx logiccontrols@kitchengous.com
+    xx Password:098765
+     Logiccontrols@kitchengous.com
+     Logic32809
      //test store
      user: david
      pwd: 123456
@@ -136,6 +137,9 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     static private String m_stationID = "1";
     static private String m_stationFuncName = SettingsBase.StationFunc.Prep.toString();
 
+    //fix: Mirror, Duplicate, and Workload not showing in back office.
+    static public String m_stationFunctionNameInBackoffice = SettingsBase.StationFunc.Prep.toString();
+
     private int m_nMaxLicenseCount = 0;
     ActivationEvents m_receiver = null;
 
@@ -154,6 +158,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
     //for clear database when logout
     static public ActivationEvents m_globalEventsReceiver = null;
+
+
 
     static public void setGlobalEventsReceiver(ActivationEvents rec)
     {
@@ -190,10 +196,10 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 			tok.put(TOK, TOKEN);
 			payload.put(REQ, "HARDWARE");
 			payload.put("store_guid", getStoreGuid());
-			payload.put("manufacturer", Build.MANUFACTURER);
-			payload.put("model", Build.MODEL);
-			payload.put("serial", Build.SERIAL);
-			payload.put("mac_address", m_myMacAddress);
+			payload.put("manufacturer",Build.MANUFACTURER );
+			payload.put("model", Build.MODEL );
+			payload.put("serial",  getMySerialNumber());//Build.SERIAL); //bug: kp-104 Model number in back office
+			payload.put("mac_address", m_myMacAddress );
 
 			req.put(tok);
 			req.put(payload);
@@ -225,7 +231,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void setMacAddress(String mac)
     {
         m_myMacAddress = mac;
-        sendHardwareInfo();
+        //sendHardwareInfo();
         //if (_DEBUG)
             //m_myMacAddress = "19.ABCdef";//test	000ec3310238
 
@@ -314,13 +320,13 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                     onActivationResponseServerTime(http, request);
                     break;
 
-//				case Hardware:
-//					if (isResponseError(request.m_result)) {
-//						Log.e("HW", "Error " + request.m_result);
-//					} else {
-//						Log.d("HW", request.m_result);
-//					}
-//					break;
+				case Hardware:
+					if (isResponseError(request.m_result)) {
+						Log.e("HW", "Error " + request.m_result);
+					} else {
+						Log.d("HW", request.m_result);
+					}
+					break;
 
             }
         }
@@ -420,6 +426,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
 
             //postSyncMac(m_licenseGuid, m_myMacAddress);
             postGetSettingsRequest();
+            sendHardwareInfo();
 
 
         }catch (Exception e)
@@ -458,6 +465,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 return;
             }
             postGetDevicesRequest();
+            sendHardwareInfo();
 //            JSONArray ar = new JSONArray(request.m_result);
 //            if (ar.length() <=0)
 //                return;
@@ -500,6 +508,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                     postNewStationInfo2Web((String)request.getNextStepData().get(0), m_stationID, m_stationFuncName); //kpp1-173
             }
             postGetDevicesRequest();
+            sendHardwareInfo();
 
         }
         catch (Exception e)
@@ -2714,4 +2723,17 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
     }
 
+    /**
+     * fix: Mirror, Duplicate, and Workload not showing in back office.
+     * @param name
+     */
+    static public void setStationFunctionNameInBackoffice(String name)
+    {
+        m_stationFunctionNameInBackoffice = name;
+    }
+
+    static public String getStationFunctionNameInBackoffice()
+    {
+        return m_stationFunctionNameInBackoffice;
+    }
 }

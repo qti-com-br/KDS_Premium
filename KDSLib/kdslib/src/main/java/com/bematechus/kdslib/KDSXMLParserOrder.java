@@ -107,6 +107,10 @@ public class KDSXMLParserOrder {
 
     public final static String DBXML_ELEMENT_HEADERFOOTERMESSAGE = "HeaderFooterMessage";
 
+    public final static String DBXML_ELEMENT_AUTOUNPARK = "UnparkAt"; //kp-103 auto unpark feature.
+
+    public final static String DBXML_ELEMENT_PRINTABLE = "Printable"; //kp-103 auto unpark feature.
+    
     /************************************************************************/
     /* 
     <CatDelay> 
@@ -262,7 +266,8 @@ public class KDSXMLParserOrder {
             }
             break;
             case DBXML_ELEMENT_PARKED:
-            {
+            { //format:
+                // <Parked UnparkAt='2021-05-06T21:13:32Z'>1</Parked>
                 int n = 0;
                 if (KDSUtil.isDigitalString(strVal)) //kpp1-393
                     n = KDSUtil.convertStringToInt(strVal, 0);
@@ -273,6 +278,33 @@ public class KDSXMLParserOrder {
 
                 order.setParked( (n==1));
                 order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.Parked);
+
+                //check unparkat attribute.
+                String s = xml.getAttribute(DBXML_ELEMENT_AUTOUNPARK, "");
+                if (!s.isEmpty()) {
+                    if (KDSUtil.isDigitalString(s)) { //it is a UNIX timestamp, UNIT is SECONDS!!!!!
+                         //we need convert it to milliseconds.
+                        long l = KDSUtil.convertStringToLong(s, 0) *1000; //
+                        if (l == 0)
+                            l = KDSUtil.createInvalidDate().getTime();
+
+                        order.getAutoUnparkDate().setTime(l);//KDSUtil.convertStringToLong(s, KDSUtil.createInvalidDate().getTime()));
+                    }
+                    else {
+                        Date dt = null;//new Date();
+                        if (KDSUtil.isISO8601TimeFormat(s))
+                        {
+                            dt = KDSUtil.convertIso8601Time2Date(s, KDSUtil.createInvalidDate());
+                        }
+                        else
+                            dt = KDSUtil.convertStringToDate(s, KDSUtil.createInvalidDate());
+                        if (dt == null)
+                            dt = new Date();
+                        order.setAutoUnparkDate(dt);
+                    }
+                    order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.AutoUnpark);
+                }
+
             }
             break;
             case DBXML_ELEMENT_ICON:
@@ -339,6 +371,17 @@ public class KDSXMLParserOrder {
                 order.setHeaderFooterMessage(strVal);
             }
             break;
+//            case DBXML_ELEMENT_AUTOUNPARK:
+//            {
+//                if (KDSUtil.isDigitalString(strVal))
+//                    order.getAutoUnparkDate().setTime(KDSUtil.convertStringToLong(strVal, KDSUtil.createInvalidDate().getTime()));
+//                else {
+//                    Date dt = KDSUtil.convertStringToDate(strVal, KDSUtil.createInvalidDate());
+//                    order.setAutoUnparkDate(dt);
+//                }
+//                order.setXmlFieldValid(KDSDataOrder.VALID_ORDER_XML_FIELD.AutoUnpark);
+//            }
+//            break;
         }
     }
     /***
@@ -668,6 +711,12 @@ public class KDSXMLParserOrder {
                 item.setSumNamesEnabled(s.equals("1"));
                 item.setSumNames(KDSDataSumNames.parseString(strVal));
 
+            }
+            break;
+            case DBXML_ELEMENT_PRINTABLE:
+            {
+                boolean bPrintable = KDSUtil.convertStringToBool(strVal, true);
+                item.setPrintable(bPrintable);
             }
             break;
 

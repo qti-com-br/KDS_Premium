@@ -86,4 +86,9 @@ public class NoConnectionDataBuffers {
     {
         return m_offlineDB.offlineContains(stationID);
     }
+
+    public ArrayList<String> getStationsOffline()
+    {
+        return m_offlineDB.offlineGetStations();
+    }
 }
