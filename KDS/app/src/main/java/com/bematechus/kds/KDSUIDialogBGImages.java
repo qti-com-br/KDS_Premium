@@ -60,23 +60,23 @@ public class KDSUIDialogBGImages extends KDSUIDialogBase implements  KDSUIDialog
             }
         });
 
-        btn = (Button) this.getView().findViewById(R.id.btnUp);
-        btn.setOnClickListener(new View.OnClickListener() {
+        ImageView img = (ImageView) this.getView().findViewById(R.id.btnUp);
+        img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listViewItemUp(m_lstFiles, m_arFiles);
             }
         });
-        btn = (Button) this.getView().findViewById(R.id.btnDown);
-        btn.setOnClickListener(new View.OnClickListener() {
+        img = (ImageView) this.getView().findViewById(R.id.btnDown);
+        img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listViewItemDown(m_lstFiles, m_arFiles);
             }
         });
 
-        btn = (Button) getView().findViewById(R.id.btnDel);
-        btn.setOnClickListener(new View.OnClickListener() {
+        img = (ImageView) getView().findViewById(R.id.btnDel);
+        img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listViewDel(m_lstFiles, m_arFiles);
@@ -190,18 +190,24 @@ public class KDSUIDialogBGImages extends KDSUIDialogBase implements  KDSUIDialog
     {
         int n = getListViewSelectedItemIndex(lv);
         if (!isValidListIndex(lv, n)) return;
+        if (n<=0) return;
         String s = arData.get(n);
         arData.remove(n);
         arData.add(n-1, s);
+        lv.setItemChecked(n, false);
+        lv.setItemChecked(n-1, true);
         notifyListViewChanged(lv);
     }
     private void listViewItemDown(ListView lv, List<String> arData)
     {
         int n = getListViewSelectedItemIndex(lv);
         if (!isValidListIndex(lv, n)) return;
+        if (n>=arData.size()-1) return;
         String s = arData.get(n);
         arData.remove(n);
         arData.add(n+1, s);
+        lv.setItemChecked(n, false);
+        lv.setItemChecked(n+1, true);
         notifyListViewChanged(lv);
     }
 
@@ -257,17 +263,18 @@ public class KDSUIDialogBGImages extends KDSUIDialogBase implements  KDSUIDialog
             // m_internetFile = fileName;
             //setPauseImageSlipTimer(true);
             m_internetBmp = null;
-            Object[] objs = new Object[]{fileName};
-            AsyncTask task = new AsyncTask() {
-                @Override
-                protected Object doInBackground(Object[] params) {
-                    String httpFileName = (String)params[0];
-                    m_internetBmp = ImageUtil.getHttpBitmap(httpFileName, KDSUIDialogBGImages.this);
-                    //m_handler.sendHttpBitmapDownloadedMessage(m_internetBmp);
-                    return null;
-                }
-            };
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, objs);
+            ImageUtil.downloadInternetBitmap(fileName, this);
+//            Object[] objs = new Object[]{fileName};
+//            AsyncTask task = new AsyncTask() {
+//                @Override
+//                protected Object doInBackground(Object[] params) {
+//                    String httpFileName = (String)params[0];
+//                    m_internetBmp = ImageUtil.getHttpBitmap(httpFileName, KDSUIDialogBGImages.this);
+//                    //m_handler.sendHttpBitmapDownloadedMessage(m_internetBmp);
+//                    return null;
+//                }
+//            };
+//            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, objs);
             return true;
         }
 

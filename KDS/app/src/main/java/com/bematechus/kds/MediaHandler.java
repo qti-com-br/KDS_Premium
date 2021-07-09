@@ -55,14 +55,17 @@ public class MediaHandler extends Handler {
             break;
             case EVENT_SMB_DOWNLOADED: {
                 Object obj = msg.obj;
-                m_receiver.medaievent_onSmbFileDownloaded((String)obj);
+                if (m_receiver!= null)
+                    m_receiver.medaievent_onSmbFileDownloaded((String)obj);
             }
             break;
             case EVENT_HTTP_BITMAP_DOWNLOADED:
             {
                 Object obj = msg.obj;
-                if (obj != null)
-                    m_receiver.medaievent_onHttpBitmapFileDownloaded((Bitmap) obj);
+                if (obj != null) {
+                    if (m_receiver != null)
+                        m_receiver.medaievent_onHttpBitmapFileDownloaded((Bitmap) obj);
+                }
             }
             break;
         }

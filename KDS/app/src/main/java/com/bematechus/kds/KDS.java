@@ -422,7 +422,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //kp-121, manually start cooking.
         PrepSorts.m_bStartItemManually =  settings.getBoolean(KDSSettings.ID.Runner_start_item_manually);
 
-
+        ScreenLogoDraw.m_logoFilesManager.updateSettings(settings);
     }
     public void updateStationFunction()
     {
@@ -509,6 +509,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //            remove_statistic_old_data();
 //            m_clearDbTimeDog.reset();
 //        }
+        checkBackgroundImagesAutoSwitch();
     }
 
     public boolean startPOSListener()
@@ -5918,5 +5919,13 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //        if (order == null)
 //            return;
         KDSStationExpeditor.exp_sync_prep_transfer_order(kds, command, strOrinalData);
+    }
+
+    private void checkBackgroundImagesAutoSwitch()
+    {
+        if (!ScreenLogoDraw.m_logoFilesManager.getNextFileName().equals(ScreenLogoDraw.m_logoCurrentFileName))
+        {
+            refreshView();
+        }
     }
 }

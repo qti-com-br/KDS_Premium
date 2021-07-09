@@ -3662,8 +3662,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     final static int TEST_COUNT = 1;
     private void opTest(KDSUser.USER userID) {
 
-        KDSUIDialogBGImages dlg = new KDSUIDialogBGImages(this, this, "");
-        dlg.show();
+//        KDSUIDialogBGImages dlg = new KDSUIDialogBGImages(this, this, "");
+//        dlg.show();
         //KDSPrintImage prn = new KDSPrintImage();
         //prn.test();
 
