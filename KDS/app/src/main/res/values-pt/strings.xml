@@ -977,4 +977,6 @@
     <string name="print_bumped_item">Print bumped item</string>
 	<string name="print_item_when_bumped">Print item when it bumped</string>
 	<string name="item_was_printed">Item was printed</string>
+    <string name="printer_ip_error">Print job could not be completed,please check IP address and ip port entered are correct.</string>
+	<string name="printer_not_open">Could not connect to printer.Error code=#</string>
 </resources>

@@ -172,7 +172,7 @@ public class NetworkPort extends CommunicationPort {
     @Override
     public boolean isOpen()
     {
-        return socket != null;
+        return (socket != null && socket.isConnected());
     }
     @Override
     public Integer read(byte[] data, int sizeToRead) throws CommunicationException {

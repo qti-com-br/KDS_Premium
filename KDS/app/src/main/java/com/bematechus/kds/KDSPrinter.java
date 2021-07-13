@@ -4,6 +4,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbManager;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.bematechus.bemaLibrary.BemaPrinter;
@@ -1643,13 +1645,32 @@ print order data to  buffer, socket will send this buffer to serial port
         }
         else
         {
-            if (!bFromThread) {
-                //showMsg("Printer open failed err=" + KDSUtil.convertIntToString(nResult));
+            if (portInfo.getType() == PortInfo.PortType.TCP)
+            {
+                Message m = new Message();
+                m.what = MSG_OPEN_ERROR;
+                String err = KDSApplication.getContext().getString(R.string.printer_ip_error);
+                m.obj = err;
+                m_openHandler.sendMessage(m);
             }
+            else
+            {
+                Message m = new Message();
+                m.what = MSG_OPEN_ERROR;
+                String err = KDSApplication.getContext().getString(R.string.printer_not_open);
+                err = err.replace("#", KDSUtil.convertIntToString(nResult));
+                m.obj = err;
+                m_openHandler.sendMessage(m);
+            }
+//            if (!bFromThread) {
+//                //showMsg("Printer open failed err=" + KDSUtil.convertIntToString(nResult));
+//            }
         }
         return bOpen;
 
     }
+
+
 
     final byte[] m_init_command = new byte[]{0x1b, 0x40} ;//reset printer
     public void init_printer_after_open()
@@ -1662,7 +1683,7 @@ print order data to  buffer, socket will send this buffer to serial port
 
     public  void showMsg(String msg)
     {
-        m_kds.showMessage(msg);
+        m_kds.showToastMessage(msg);
     }
     public boolean close()
     {
@@ -1902,25 +1923,26 @@ print order data to  buffer, socket will send this buffer to serial port
 
         } else {
 
-            if ((m_bemaPrinter.getCommunicationPort() != null) && m_bemaPrinter.getCommunicationPort().isOpen())
-                showMsg("Printer is opened");
-            else
-                showMsg("Printer is not opened");
-
-            if (isPrinterValid())
-                showMsg("Printer valid");
-            else
-                showMsg("Printer invalid");
+//            if ((m_bemaPrinter.getCommunicationPort() != null) && m_bemaPrinter.getCommunicationPort().isOpen())
+//                showMsg("Printer is opened");
+//            else
+//                showMsg("Printer is not opened");
+//
+//            if (isPrinterValid())
+//                showMsg("Printer valid");
+//            else
+//                showMsg("Printer invalid");
 
             this.printOrderToBuffer(order);
-            if (!isOpened()) {
-                this.open(false);
-            }
+//            if (!isOpened()) {
+//                this.open(false);
+//            }
             startPrintingThread();
-            if (isOpened()) {
-                showMsg("Write data to printer");
-                writeToPrinter();
-            }
+            //kp-136, remove following code, it maybe block main thread.
+//            if (isOpened()) {
+//                showMsg("Write data to printer");
+//                writeToPrinter();
+//            }
         }
     }
 
@@ -1945,6 +1967,11 @@ print order data to  buffer, socket will send this buffer to serial port
         //if (BuildVer.isDebug())
         //System.out.println("printer buffer lines=" + ncount);
         if (ncount <=0) return;
+        if (!isOpened()) {
+            m_openHandler.sendEmptyMessage(MSG_OPEN);
+            if (!isOpened())
+                return;
+        }
         //2.0.13
         int nWriteCount = ncount > MAX_WRITE_COUNT?MAX_WRITE_COUNT:ncount;
         synchronized (m_locker) {
@@ -1981,6 +2008,23 @@ print order data to  buffer, socket will send this buffer to serial port
             m_bemaPrinter.printText(willPrint);
     }
 
+    final int MSG_OPEN = 1;
+    final int MSG_OPEN_ERROR =2;
+
+    Handler m_openHandler = new Handler()
+    {
+        public void handleMessage(Message msg) {
+            if (msg.what == MSG_OPEN) {
+                KDSPrinter.this.open(false);
+            }
+            else if (msg.what == MSG_OPEN_ERROR)
+            {
+                String s = (String) msg.obj;
+
+                showMsg(s);
+            }
+        }
+    };
     Thread m_threadPrinting = null;
 
     /**
@@ -2004,6 +2048,7 @@ print order data to  buffer, socket will send this buffer to serial port
                                 return;
                             if (m_printerData.size() > 0)
                                 onPing();
+
                             writeToPrinter();
                             try {
                                 Thread.sleep(1000);
