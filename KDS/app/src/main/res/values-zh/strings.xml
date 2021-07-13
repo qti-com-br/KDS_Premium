@@ -1339,4 +1339,9 @@
     <string name="print_bumped_item">Print bumped item</string>
     <string name="print_item_when_bumped">Print item when it bumped</string>
     <string name="item_was_printed">Item was printed</string>
+    <string name="enable_multiple_bg">Enable multiple background images</string>
+    <string name="multiple_bg_images">Multiple background images</string>
+    <string name="click_to_edit_bg_images">Click me to edit background images</string>
+    <string name="bg_switch_time">Auto switch background images after x seconds</string>
+    <string name="background_images">Background images</string>
 </resources>
