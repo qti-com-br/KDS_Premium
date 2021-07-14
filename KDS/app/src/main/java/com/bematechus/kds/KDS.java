@@ -2574,6 +2574,11 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
             }
             break;
+            case Sync_input_message_with_queue:
+            {
+                onPrepSyncInputMessageWithQueue(this, command, xmlData, fromStationID);
+            }
+            break;
 
 
         }
@@ -4862,6 +4867,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             //case ACK_XML:
             case Prep_sync_to_queue://20190729, this can cause queue station freeze, so I move it to thread.
             case Prep_expo_transfer_order:
+            case Sync_input_message_with_queue:
                 return false;
             case ACK_XML:
             {
@@ -5927,5 +5933,29 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         {
             refreshView();
         }
+    }
+
+    public void syncInputMessageWithQueue(String orderName, String inputMessage )
+    {
+
+        String strXml = KDSXMLParserCommand.createSyncInputMessageWithQueue(this.getStationID(), this.getLocalIpAddress(),
+                                                                    "", orderName, inputMessage);
+        this.getStationsConnections().writeToQueue(this.getStationID(), strXml);
+
+
+
+    }
+    private void onPrepSyncInputMessageWithQueue(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
+    {
+        String orderName = command.getParam("P0", "");
+        String inputMessage = command.getParam("P1", "");
+
+
+        KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        if (order == null) return; //kp-43 Prep stations crashing
+        order.setInputMessage(inputMessage);
+        this.getCurrentDB().orderSetInputMessage(order.getGUID(), inputMessage);
+
+        this.refreshView();
     }
 }

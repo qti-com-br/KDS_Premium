@@ -1353,4 +1353,6 @@
     <string name="click_to_edit_bg_images">Click me to edit background images</string>
     <string name="bg_switch_time">Auto switch background images after x seconds</string>
     <string name="background_images">Background images</string>
+    <string name="queue_show_input_message">Show order input message</string>
+    <string name="queue_input_message_font">Order input message font</string>
 </resources>
