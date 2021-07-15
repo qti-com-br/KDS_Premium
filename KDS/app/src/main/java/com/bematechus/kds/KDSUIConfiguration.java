@@ -416,6 +416,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("statistic_db_keep")); //2.0.25
             bindPreferenceSummaryToValue(findPreference("kds_general_auto_refresh_screen")); //2.0.25
             bindPreferenceSummaryToValue(findPreference("clear_db_schedule")); //kp1-386
+            bindPreferenceSummaryToValue(findPreference("kds_general_multiple_bg_rotate_seconds")); //kp-132
 //
 //            bindPreferenceSummaryToValue(findPreference("kds_general_subtitle_a_title"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_subtitle_b_title"));

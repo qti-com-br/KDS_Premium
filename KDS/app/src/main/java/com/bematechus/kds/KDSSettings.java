@@ -634,6 +634,11 @@ public class KDSSettings extends SettingsBase {
        Printer_item_bumped, //printer item when it was bumped.
        Item_mark_printed, //if item was printed.
 
+       //background images
+       Background_enable_multiple_images,
+       Background_rotate_seconds,
+       Background_images,
+
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1487,6 +1492,11 @@ public class KDSSettings extends SettingsBase {
         //print item when it was bumped.
         init_option(ID.Printer_item_bumped, "bool_printer_item_bumped", false);
         init_option(ID.Item_mark_printed, "string_item_mark_printed", "0_7");
+
+
+        init_option(ID.Background_enable_multiple_images, "bool_kds_general_enable_multiple_bg", false);
+        init_option(ID.Background_rotate_seconds, "string_kds_general_multiple_bg_rotate_seconds", "60");
+        init_option(ID.Background_images, "string_general_bg_images", "");
 
     }
 

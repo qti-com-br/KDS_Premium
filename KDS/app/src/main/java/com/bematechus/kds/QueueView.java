@@ -1663,6 +1663,8 @@ public class QueueView  extends View {
             m_nAutoBumpTimeoutMs = -1;
 
 
+        //ScreenLogoDraw.m_logoFilesManager.updateSettings(settings);
+
     }
 
     private QueueOrders.QueueSort getStatusSort( QueueOrders.QueueStatus status)

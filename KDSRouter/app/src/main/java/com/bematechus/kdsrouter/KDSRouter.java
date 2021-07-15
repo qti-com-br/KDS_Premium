@@ -45,6 +45,7 @@ import com.bematechus.kdslib.KDSStationDataBuffered;
 import com.bematechus.kdslib.KDSStationIP;
 import com.bematechus.kdslib.KDSStationsConnection;
 import com.bematechus.kdslib.KDSStationsRelation;
+import com.bematechus.kdslib.KDSTimer;
 import com.bematechus.kdslib.KDSToStation;
 import com.bematechus.kdslib.KDSToStations;
 import com.bematechus.kdslib.KDSToast;
@@ -67,7 +68,8 @@ import java.util.List;
 public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         Runnable,
         KDSSMBDataSource.BufferStateChecker,
-        KDSCallback
+        KDSCallback,
+        KDSTimer.KDSTimerInterface
 {
 
     private final String TAG = "KDSRouter";
@@ -143,6 +145,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
     RouterAcks m_acks = new RouterAcks(); //2.0.15
 
+    KDSTimer m_timer = null;// new KDSTimer();
 
     public KDSStationsConnection getStationsConnections()
     {
@@ -301,6 +304,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
      * check connection in a loop
      */
     public void on1sTimer()
+    {
+
+    }
+    public void onTime()
     {
         checkNetworkState();
         if (m_schedule.isTimeToCheckEvent())
@@ -529,6 +536,11 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         startNetwork();
         refreshView();
         m_schedule.refresh();
+        if (m_timer == null) {
+            m_timer = new KDSTimer();
+            m_timer.start(null, this, 1000);
+        }
+
         KDSLog.d(TAG, "start exit");
         return true;
 

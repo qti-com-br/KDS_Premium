@@ -2187,4 +2187,21 @@ just 16bits value
             return (dtDefault);
         }
     }
+
+    public static boolean isArrayContainsSame(ArrayList<String> ar0, ArrayList<String> ar1)
+    {
+        if (ar0.size() != ar1.size()) return false;
+        for (int i=0; i< ar0.size(); i++)
+        {
+            if (!isExistedInArray(ar1, ar0.get(i)))
+                return false;
+        }
+
+        for (int i=0; i< ar1.size(); i++)
+        {
+            if (!isExistedInArray(ar0, ar1.get(i)))
+                return false;
+        }
+        return true;
+    }
 }

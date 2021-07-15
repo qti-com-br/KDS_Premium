@@ -16,8 +16,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -260,4 +262,54 @@ public class ImageUtil {
         canvas.drawBitmap(resultBitmap, 0, 0, paint);
         return resultBitmap;
     }
+
+    static public void downloadInternetBitmap(String fileName, MediaHandler.MediaEventReceiver r)
+    {
+        m_handler.setReceiver(r);
+        Object[] objs = new Object[]{fileName};
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                String httpFileName = (String)params[0];
+                ImageUtil.getHttpBitmap(httpFileName, m_handler.m_receiver);
+                return null;
+            }
+        };
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, objs);
+    }
+
+    public static String bitmap2PNGPath(Bitmap bitmap, String path) {
+        try {
+            OutputStream os = new FileOutputStream(path);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            os.flush();
+            os.close();
+
+        } catch (Exception e) {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_(), e);
+
+        }
+
+        return path;
+
+    }
+
+    static public String getSmbFile(String url, String targetFolder) {
+
+        try {
+            KDSUtil.createFolder(targetFolder);
+            // KDSSmbFile.readFromSmb()
+            KDSSmbFile.smb_setEnableSmbV2(true);
+            String filename = KDSSmbFile.smb_readFromSmbToLocal(url, targetFolder);
+            if (!filename.isEmpty())
+                m_handler.sendSmbDownloadedMessage(filename);
+            return filename;
+        } catch (Exception e) {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_() , e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+        }
+        return "";
+
+    }
+
 }

@@ -646,7 +646,7 @@ public class KDSSocketManager implements Runnable {
     static public boolean isWebsocketActived()
     {
         TimeDog tm = new TimeDog(m_dtLastTimeReceiveWebsocketMessage);
-        return (tm.is_timeout(WEBSOCKET_TIMEOUT));
+        return (!tm.is_timeout(WEBSOCKET_TIMEOUT));
     }
 
 

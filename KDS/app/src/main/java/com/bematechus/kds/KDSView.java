@@ -820,6 +820,8 @@ public class KDSView extends View {
         {
             m_sumStationViewer.updateSettings(settings);
         }
+
+        //ScreenLogoDraw.m_logoFilesManager.updateSettings(settings);
     }
     private boolean doubleClickXY(int x, int y)
     {

@@ -27,10 +27,13 @@ public class ScreenLogoDraw {
 
     static  final String TAG = "ScreenLogoDraw";
 
-    static String m_logoFileName = "";
+    static String m_logoCurrentFileName = "";
     static Bitmap m_logoImage = null;
     static Drawable m_lciLogo = null;
     static final int LOGO_TRANSPARENT = 30;
+
+    static public ScreenLogoFiles m_logoFilesManager = new ScreenLogoFiles();
+
     /**
      * KPP1-293
      * Draw screen logo image.
@@ -51,7 +54,7 @@ public class ScreenLogoDraw {
     static public void drawScreenLogo(View view,Rect rcBounds, Canvas canvas, KDSSettings settings, boolean bScreenEmpty, int nLciLogoBottomOffset) {
         boolean bEnabled = settings.getBoolean(KDSSettings.ID.Screen_logo_enabled);
         if (!bEnabled) {
-            m_logoFileName = "";
+            m_logoCurrentFileName = "";
 			m_logoImage = ((BitmapDrawable) view.getContext().getApplicationContext().getResources().getDrawable(R.drawable.lci_logo_bg)).getBitmap();
             //int overlayColor = ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.border_bg);//.getResources().getColor(R.color.focus_bg);
             int overlayColor = settings.getInt(KDSSettings.ID.Panels_Block_Border_Color);//  ThemeUtil.getAttrColor( KDSApplication.getContext(), R.attr.border_bg);//.getResources().getColor(R.color.focus_bg);
@@ -61,7 +64,8 @@ public class ScreenLogoDraw {
 
         String fileName = "";//settings.getString(KDSSettings.ID.Screen_logo_file);
         if (bEnabled)
-            fileName = settings.getString(KDSSettings.ID.Screen_logo_file);//custom log file.
+            fileName = m_logoFilesManager.getNextFileName();
+            //fileName = settings.getString(KDSSettings.ID.Screen_logo_file);//custom log file.
 
         if (fileName.isEmpty()) {
             if (bEnabled) {
@@ -69,12 +73,12 @@ public class ScreenLogoDraw {
 				return;
 			}
         }
-        if (!m_logoFileName.equals(fileName))
+        if (!m_logoCurrentFileName.equals(fileName))
         {//prevent load data every time.
-            m_logoImage = loadLogoImage(fileName);
+            m_logoImage = loadLogoImage2(fileName);
             if (m_logoImage != null)
             {
-                m_logoFileName = fileName;
+                m_logoCurrentFileName = fileName;
             }
             else {
 				if (bEnabled) drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
@@ -113,6 +117,22 @@ public class ScreenLogoDraw {
             return null;
         }
     }
+
+    static private Bitmap loadLogoImage2(String fileName)
+    {
+        String localFileName = m_logoFilesManager.getLocalFileName(fileName);
+        if (localFileName.isEmpty())
+            return null;
+        try {
+            FileInputStream fis = new FileInputStream(localFileName);
+            return BitmapFactory.decodeStream(fis);
+        } catch (FileNotFoundException e) {
+            KDSLog.e(TAG,KDSLog._FUNCLINE_(),  e);
+            //KDSLog.e(TAG, KDSUtil.error( e));
+            return null;
+        }
+    }
+
 //    static final int LCI_LOGO_W = 500;
 //    static final int LCI_LOGO_H = 100;
 
@@ -155,5 +175,56 @@ public class ScreenLogoDraw {
         Canvas canvas = new Canvas(resultBitmap);
         canvas.drawBitmap(resultBitmap, 0, 0, paint);
         return resultBitmap;
+    }
+
+    /**
+     *
+     * @param settings
+     * @return
+     *  true: image is not ready.
+     *  false: ready
+     */
+    static public boolean preparingImage(KDSSettings settings, MediaHandler.MediaEventReceiver receiver)
+    {
+        boolean bEnabled = settings.getBoolean(KDSSettings.ID.Screen_logo_enabled);
+        String fileName ="";
+        if (bEnabled)
+            fileName = m_logoFilesManager.getNextFileName();
+
+        if (m_logoCurrentFileName.equals(fileName)) {
+            if (m_logoImage != null)
+                return false;
+        }
+        if (ImageUtil.isLocalFile(fileName))
+        {
+            m_logoImage = loadLogoImage(fileName);
+            if (m_logoImage!=null)
+            {
+                m_logoCurrentFileName = fileName;
+                return false;
+            }
+            return false;
+        }
+        else if (ImageUtil.isSmbFile(fileName))
+        {
+            m_logoCurrentFileName = fileName;
+            ImageUtil.downloadSmbFile(fileName, receiver);
+            return true;
+        }
+        else if (ImageUtil.isInternetFile(fileName))
+        {
+            m_logoCurrentFileName = fileName;
+            ImageUtil.downloadInternetBitmap(fileName, receiver);
+            return true;
+        }
+        return false;
+    }
+    static void afterSmbFileDownload(String downloadFileNameSaveLocal)
+    {
+        m_logoImage = loadLogoImage(downloadFileNameSaveLocal);
+    }
+    static void afterInternetFileDownload(Bitmap bmp)
+    {
+        m_logoImage = bmp;
     }
 }
