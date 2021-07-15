@@ -25,6 +25,8 @@
     <header android:fragment="com.bematechus.kds.KDSUIConfiguration$NotificationPreferenceFragment"
         android:title="@string/notification" />
 
+    <header android:fragment="com.bematechus.kds.KDSUIConfiguration$BackgroundPreferenceFragment"
+        android:title="@string/background" />
 
 
     <header android:title="@string/pref_kds_category_orders" />

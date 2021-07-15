@@ -416,7 +416,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("statistic_db_keep")); //2.0.25
             bindPreferenceSummaryToValue(findPreference("kds_general_auto_refresh_screen")); //2.0.25
             bindPreferenceSummaryToValue(findPreference("clear_db_schedule")); //kp1-386
-            bindPreferenceSummaryToValue(findPreference("kds_general_multiple_bg_rotate_seconds")); //kp-132
+            //bindPreferenceSummaryToValue(findPreference("kds_general_multiple_bg_rotate_seconds")); //kp-132
 //
 //            bindPreferenceSummaryToValue(findPreference("kds_general_subtitle_a_title"));
 //            bindPreferenceSummaryToValue(findPreference("kds_general_subtitle_b_title"));
@@ -2501,5 +2501,23 @@ public class KDSUIConfiguration extends PreferenceActivity {
         }
     }
 
+    /**
+     * This fragment shows data and sync preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class BackgroundPreferenceFragment extends KDSPreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            suspendOnSharedPreferencesChangedEvent(true);
+            addPreferencesFromResource(R.xml.pref_background);
+            suspendOnSharedPreferencesChangedEvent(false);
+            bindPreferenceSummaryToValue(findPreference("kds_general_multiple_bg_rotate_seconds")); //kp-132
 
+
+
+
+        }
+    }
 }

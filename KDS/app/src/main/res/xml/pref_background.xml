@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="kds_general_enable_bg_logo"
+        android:title="@string/enable_bg_logo"
+        android:defaultValue="false" />
+    <com.bematechus.kds.KDSPreferenceIconPicker
+        android:key="kds_general_bg_logo"
+        android:defaultValue=""
+        android:title="@string/bg_logo_file"
+        android:dependency="kds_general_enable_bg_logo"
+        />
+
+    <CheckBoxPreference
+        android:key="kds_general_enable_multiple_bg"
+        android:title="@string/enable_multiple_bg"
+        android:dependency="kds_general_enable_bg_logo"
+        android:defaultValue="false" />
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="kds_general_multiple_bg_rotate_seconds"
+        android:title="Auto switch background images after x seconds"
+        android:defaultValue="60"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:dependency="kds_general_enable_bg_logo"
+        android:maxLines="1" />
+    <com.bematechus.kds.KDSPreferenceBackgrounds
+        android:key="general_bg_images"
+        android:title="@string/multiple_bg_images"
+        android:summary="@string/click_to_edit_bg_images"
+        android:defaultValue=""
+        android:dependency="kds_general_enable_bg_logo"
+
+        />
+    <com.bematechus.kdslib.KDSListPreference
+        android:key="bg_scale_type"
+        android:title="Image scale type"
+        android:defaultValue="0"
+        android:entries="@array/pref_bg_scale_titles"
+        android:entryValues="@array/pref_bg_scale_values"
+        android:dependency="kds_general_enable_bg_logo"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+</PreferenceScreen>

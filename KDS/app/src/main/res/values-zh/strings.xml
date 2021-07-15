@@ -1346,4 +1346,9 @@
     <string name="click_to_edit_bg_images">Click me to edit background images</string>
     <string name="bg_switch_time">Auto switch background images after x seconds</string>
     <string name="background_images">Background images</string>
+    <string-array name="pref_bg_scale_titles">
+        <item>Fit center</item>
+        <item>Full screen</item>
+        <item>Fit one side</item>
+    </string-array>
 </resources>
