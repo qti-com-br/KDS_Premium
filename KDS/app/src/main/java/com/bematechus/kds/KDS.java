@@ -5935,16 +5935,31 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         }
     }
 
+    /**
+     * KP-137
+     * send the input message to its queue stations.
+     * In queue, it has option to show this message.
+     * @param orderName
+     * @param inputMessage
+     */
     public void syncInputMessageWithQueue(String orderName, String inputMessage )
     {
-
         String strXml = KDSXMLParserCommand.createSyncInputMessageWithQueue(this.getStationID(), this.getLocalIpAddress(),
-                                                                    "", orderName, inputMessage);
+                "", orderName, inputMessage);
         this.getStationsConnections().writeToQueue(this.getStationID(), strXml);
 
-
-
     }
+
+    /**
+     *
+     * After prep input message, it will send message to queue,
+     * Queue station will enter this function.
+     *
+     * @param kds
+     * @param command
+     * @param strOrinalData
+     * @param fromStationID
+     */
     private void onPrepSyncInputMessageWithQueue(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
     {
         String orderName = command.getParam("P0", "");
@@ -5952,7 +5967,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
 
         KDSDataOrder order = this.getUsers().getOrderByName(orderName);
-        if (order == null) return; //kp-43 Prep stations crashing
+        if (order == null) return;
         order.setInputMessage(inputMessage);
         this.getCurrentDB().orderSetInputMessage(order.getGUID(), inputMessage);
 
