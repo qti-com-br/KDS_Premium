@@ -8543,7 +8543,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         order.setInputMessage(msg);
         this.getKDS().getCurrentDB().orderSetInputMessage(orderGuid, msg);
+        //we need send this message to its queue station.
+        this.getKDS().syncInputMessageWithQueue(order.getOrderName(), msg);
+        //
         this.getKDS().refreshView();
+
+
+
     }
 
 

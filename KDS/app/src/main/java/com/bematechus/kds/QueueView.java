@@ -1317,6 +1317,12 @@ public class QueueView  extends View {
         //if (m_bShowOrderTimer)
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_order_timer))
             rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeQueueDurationString(), false,bReverseReadyColorForFlash);
+
+        if (getSettings().getBoolean(KDSSettings.ID.Queue_show_input_message)) {
+            rt = drawTitleDetail(g, rt, m_paintOrderTitle, m_ftOrderTimer, order.getInputMessage(), false, bReverseReadyColorForFlash);
+
+        }
+
             //rt = drawTitleDetail(g, rt,m_paintOrderTitle, m_ftOrderTimer, order.makeDurationString(), false,bReverseReadyColorForFlash);
         //if (m_bShowOrderID)
         if (getSettings().getBoolean(KDSSettings.ID.Queue_show_order_ID)) {
