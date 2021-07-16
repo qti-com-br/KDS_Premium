@@ -2514,7 +2514,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             addPreferencesFromResource(R.xml.pref_background);
             suspendOnSharedPreferencesChangedEvent(false);
             bindPreferenceSummaryToValue(findPreference("kds_general_multiple_bg_rotate_seconds")); //kp-132
-
+            bindPreferenceSummaryToValue(findPreference("bg_scale_type")); //kp-132
 
 
 

@@ -37,7 +37,7 @@
         />
     <com.bematechus.kdslib.KDSListPreference
         android:key="bg_scale_type"
-        android:title="Image scale type"
+        android:title="@string/image_scale_type"
         android:defaultValue="0"
         android:entries="@array/pref_bg_scale_titles"
         android:entryValues="@array/pref_bg_scale_values"

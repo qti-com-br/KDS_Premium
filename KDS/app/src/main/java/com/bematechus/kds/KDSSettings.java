@@ -638,7 +638,7 @@ public class KDSSettings extends SettingsBase {
        Background_enable_multiple_images,
        Background_rotate_seconds,
        Background_images,
-
+       Background_image_scale_type,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -883,6 +883,13 @@ public class KDSSettings extends SettingsBase {
       Count,
     }
 
+    public enum BGScaleType
+    {
+       Original,
+       Stretch,
+       OneSide,
+       Center, //zoom to center
+    }
 
 //    public enum SmartMode
 //    {
@@ -1497,6 +1504,8 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Background_enable_multiple_images, "bool_kds_general_enable_multiple_bg", false);
         init_option(ID.Background_rotate_seconds, "string_kds_general_multiple_bg_rotate_seconds", "60");
         init_option(ID.Background_images, "string_general_bg_images", "");
+
+        init_option(ID.Background_image_scale_type, "string_bg_scale_type", "0");
 
     }
 
