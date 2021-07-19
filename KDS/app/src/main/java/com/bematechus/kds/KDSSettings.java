@@ -638,7 +638,7 @@ public class KDSSettings extends SettingsBase {
        Background_enable_multiple_images,
        Background_rotate_seconds,
        Background_images,
-
+       Background_image_scale_type,
        Queue_show_input_message,
        Queue_input_message_font,
     }
@@ -885,6 +885,13 @@ public class KDSSettings extends SettingsBase {
       Count,
     }
 
+    public enum BGScaleType
+    {
+       Original,
+       Stretch,
+       OneSide,
+       Center, //zoom to center
+    }
 
 //    public enum SmartMode
 //    {
@@ -1502,6 +1509,8 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.Queue_show_input_message, "bool_queue_show_input_message", false);
         init_option(ID.Queue_input_message_font, "fontface_queue_input_message_font", new KDSViewFontFace( getAttrColor(R.attr.queue_cusom_message_bg),getAttrColor( R.attr.queue_cusom_message_fg), KDSViewFontFace.DEFULT_FONT_FILE,  KDSViewFontFace.FONT_SIZE_NORMAL));
+
+        init_option(ID.Background_image_scale_type, "string_bg_scale_type", "0");
 
     }
 

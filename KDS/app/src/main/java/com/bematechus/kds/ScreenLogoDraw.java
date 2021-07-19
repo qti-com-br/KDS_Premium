@@ -92,14 +92,71 @@ public class ScreenLogoDraw {
         }
 
         Rect rc = rcBounds;
-        int imageW = m_logoImage.getWidth();
-        int imageH = m_logoImage.getHeight();
-        int offsetX = (rc.width() - imageW)/2;
-        int offsetY = (rc.height() - imageH)/2;
-
         Paint pt = new Paint();
         pt.setAlpha(getLogoAlpha(bScreenEmpty));
-        canvas.drawBitmap(m_logoImage, offsetX, offsetY, pt);
+
+        int imageW = m_logoImage.getWidth();
+        int imageH = m_logoImage.getHeight();
+        int n = settings.getInt(KDSSettings.ID.Background_image_scale_type);
+        KDSSettings.BGScaleType scaleType = KDSSettings.BGScaleType.values()[n];
+        switch (scaleType)
+        {
+
+            case Original:
+            {
+                int offsetX = (rc.width() - imageW)/2;
+                int offsetY = (rc.height() - imageH)/2;
+                canvas.drawBitmap(m_logoImage, offsetX, offsetY, pt);
+            }
+            break;
+            case Stretch:
+            {
+                canvas.drawBitmap(m_logoImage, null, rcBounds, pt);
+            }
+            break;
+            case OneSide:
+            {
+                if (imageH<=0 || imageW<=0)
+                    break;
+                float wzoom = (float)rcBounds.width()/(float)imageW;
+                float hzoom = (float)rcBounds.height()/(float) imageH;
+                float zoom = wzoom>hzoom?wzoom:hzoom;
+                int w = (int)(imageW * zoom);
+                int h = (int)(imageH * zoom);
+                int offsetX = (rc.width() - w)/2;
+                int offsetY = (rc.height() - h)/2;
+                int x = rc.left + offsetX;
+                int y = rc.top + offsetY;
+                Rect rcZoom = new Rect(x, y, x + w, y + h);
+                canvas.save();
+                canvas.clipRect(rcBounds);
+                canvas.drawBitmap(m_logoImage, null, rcZoom, pt);
+                canvas.restore();
+
+            }
+            break;
+            case Center:
+            {
+                if (imageH<=0 || imageW<=0)
+                    break;
+                float wzoom = (float)rcBounds.width()/(float)imageW;
+                float hzoom = (float)rcBounds.height()/(float) imageH;
+                float zoom = wzoom<hzoom?wzoom:hzoom;
+                int w = (int)(imageW * zoom);
+                int h = (int)(imageH * zoom);
+                int offsetX = (rc.width() - w)/2;
+                int offsetY = (rc.height() - h)/2;
+                int x = rc.left + offsetX;
+                int y = rc.top + offsetY;
+                Rect rcZoom = new Rect(x, y, x + w, y + h);
+                canvas.save();
+                canvas.clipRect(rcBounds);
+                canvas.drawBitmap(m_logoImage, null, rcZoom, pt);
+                canvas.restore();
+            }
+            break;
+        }
+
 
 		if (bEnabled) drawLciLogo(view, rcBounds, canvas,bScreenEmpty, nLciLogoBottomOffset);
 

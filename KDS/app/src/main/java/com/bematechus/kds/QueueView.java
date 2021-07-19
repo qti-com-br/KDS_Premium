@@ -832,10 +832,11 @@ public class QueueView  extends View {
     {
         if (nPagesCount<=1)
         {
-            Paint pt = new Paint();
-            pt.setAntiAlias(true);
-            pt.setColor(COLOR_VIEW_BG);
-            g.drawRect(rtPage, pt);
+            //the background has been cleared before this function.
+//            Paint pt = new Paint();
+//            pt.setAntiAlias(true);
+//            pt.setColor(COLOR_VIEW_BG);
+//            g.drawRect(rtPage, pt);
         }
         else {
 
@@ -1518,8 +1519,9 @@ public class QueueView  extends View {
         }
         if (bClearBG )
         {
-            m_paintOrderStatus.setColor(  COLOR_VIEW_BG );
-            g.drawRect(rt, m_paintOrderStatus);
+            //the background has been cleared by drawbackground
+            //m_paintOrderStatus.setColor(  COLOR_VIEW_BG );
+            //g.drawRect(rt, m_paintOrderStatus);
             return;
         }
         String pagesString = String.format("%d/%d", nCurrentPage, nPages);//

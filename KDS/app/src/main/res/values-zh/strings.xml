@@ -1348,4 +1348,11 @@
     <string name="background_images">Background images</string>
     <string name="queue_show_input_message">Show order input message</string>
     <string name="queue_input_message_font">Order input message font</string>
+    <string-array name="pref_bg_scale_titles">
+        <item>Original size</item>
+        <item>Full screen</item>
+        <item>Fit one side</item>
+        <item>Fit center</item>
+    </string-array>
+    <string name="image_scale_type">Image scale type</string>
 </resources>
