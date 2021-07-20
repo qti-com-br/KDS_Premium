@@ -146,6 +146,16 @@
         android:dependency="queue_show_custom_message"
         app:supportsColor="true"/>
 
+    <CheckBoxPreference
+        android:key="queue_show_input_message"
+        android:title="@string/queue_show_input_message"
+        android:defaultValue="false" />
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
+        android:key="queue_input_message_font"
+        android:defaultValue="default_font,?attr/queue_cusom_message_bg,?attr/queue_cusom_message_fg,middle_size"
+        android:title="@string/queue_input_message_font"
+        android:dependency="queue_show_input_message"
+        app:supportsColor="true"/>
 
     <com.bematechus.kdslib.KDSEditTextPreference
         android:key="queue_order_received_status"

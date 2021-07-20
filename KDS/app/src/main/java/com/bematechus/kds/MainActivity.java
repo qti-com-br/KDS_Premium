@@ -581,6 +581,10 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         init_user_screen_gui_variables();
 
+        mPosMessageView.setViews(getSettings(), this.findViewById(R.id.main_layout),
+                this.findViewById(R.id.lstPosMsgLeft),
+                this.findViewById(R.id.lstPosMsgBottom));
+
         startKDSWithoutService();
 
         checkRemoteFolderPermissionInThread();
@@ -600,9 +604,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         // kpp1-325
         //forceAgreementAgreed();
 
-        mPosMessageView.setViews(getSettings(), this.findViewById(R.id.main_layout),
-                                this.findViewById(R.id.lstPosMsgLeft),
-                                this.findViewById(R.id.lstPosMsgBottom));
+//        mPosMessageView.setViews(getSettings(), this.findViewById(R.id.main_layout),
+//                                this.findViewById(R.id.lstPosMsgLeft),
+//                                this.findViewById(R.id.lstPosMsgBottom));
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -8543,7 +8547,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             return;
         order.setInputMessage(msg);
         this.getKDS().getCurrentDB().orderSetInputMessage(orderGuid, msg);
+        //we need send this message to its queue station.
+        this.getKDS().syncInputMessageWithQueue(order.getOrderName(), msg);
+        //
         this.getKDS().refreshView();
+
+
+
     }
 
 

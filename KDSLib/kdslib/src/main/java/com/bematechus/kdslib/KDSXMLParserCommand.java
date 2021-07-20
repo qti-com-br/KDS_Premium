@@ -112,6 +112,8 @@ public class KDSXMLParserCommand {
         //kp-121
         Runner_start_cook_item,
         Prep_expo_transfer_order, //kp-116 Transfer Prep -> Transfer Expo
+
+        Sync_input_message_with_queue,
     }
     private static final String COMMAND = "KDSCommand";
     private static final String CODE = "Code";
@@ -717,5 +719,15 @@ public class KDSXMLParserCommand {
     {
         return createCommandXmlString(KDSCommand.Prep_expo_transfer_order.ordinal(),
                 strStationID, ipAddress, macAddress, orderXML);
+    }
+
+    static public String createSyncInputMessageWithQueue(String strStationID, String ipAddress, String macAddress, String orderName, String message)
+    {
+        java.util.ArrayList ar = new java.util.ArrayList();
+        ar.add(orderName);
+        ar.add(message);
+        return createShortCommandXmlString(KDSCommand.Sync_input_message_with_queue.ordinal(),
+                strStationID, ipAddress, macAddress, ar);
+
     }
 }
