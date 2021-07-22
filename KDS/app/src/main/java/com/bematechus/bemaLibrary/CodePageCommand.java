@@ -15,7 +15,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Created by b1107005 on 5/24/2015.
  */
-class CodePageCommand extends PrinterCommand {
+public class CodePageCommand extends PrinterCommand {
 
     private static final String DEFAULT_CHAR_SET = "";
     public CodePageCommand (byte code)

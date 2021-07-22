@@ -51,21 +51,21 @@ public class KDSPrinter {
     static final private String TAG_END_BOLD = "</B>";
     static final private String TAG_PAPER_CUT = "<PC>";
 
-    static final private char CMD_START_BOLD = 0x01;//"<B>";
-    static final private char CMD_END_BOLD = 0x02;//"</B>";
-    static final private char CMD_PAPER_CUT = 0x03;//"<PC>";
+    static final public char CMD_START_BOLD = 0x01;//"<B>";
+    static final public char CMD_END_BOLD = 0x02;//"</B>";
+    static final public char CMD_PAPER_CUT = 0x03;//"<PC>";
     //reverse printing
-    static final private char CMD_START_REVERSE = 0x04;//"<black>";
-    static final private char CMD_END_REVERSE = 0x05;//"</black>";
+    static final public char CMD_START_REVERSE = 0x04;//"<black>";
+    static final public char CMD_END_REVERSE = 0x05;//"</black>";
     //change font size
-    static final private char CMD_START_DBLW = 0x06;//"<dblw>";
-    static final private char CMD_END_DBLW = 0x07;//"</dblw>";
-    static final private char CMD_START_DBLH = 0x08;//"<dblh>";
-    static final private char CMD_END_DBLH = 0x09;//"</dblh>";
-    static final private char CMD_START_DBLWH = 0x10;//"<dblwh>";
-    static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
+    static final public char CMD_START_DBLW = 0x06;//"<dblw>";
+    static final public char CMD_END_DBLW = 0x07;//"</dblw>";
+    static final public char CMD_START_DBLH = 0x08;//"<dblh>";
+    static final public char CMD_END_DBLH = 0x09;//"</dblh>";
+    static final public char CMD_START_DBLWH = 0x10;//"<dblwh>";
+    static final public char CMD_END_DBLWH = 0x11;//"</dblwh>";
 
-    static final private char CMD_PRINT_LOGO = 0x380;//"</dblwh>";
+    static final public char CMD_PRINT_LOGO = 0x380;//"</dblwh>";
 
     static final private String TAG_CR = "<CR>";
     static final private String TAG_ITEMS = "<ITEMS>";
@@ -91,21 +91,21 @@ public class KDSPrinter {
 
     static final private String TAG_LOGO = "<LOGO>";
 
-    final byte ESC = 0x1b;
-    final byte GS = 0x1d;
+    static public final byte ESC = 0x1b;
+    static public final byte GS = 0x1d;
 
-    byte[] LR2000_START_BOLD = new byte[]{ESC, 0x45, 1};
-    byte[] LR2000_END_BOLD = new byte[]{ESC, 0x45, 0};
-    byte[] LR2000_PAPER_CUT = new byte[]{ESC, 0x6d};
-    byte[] LR2000_START_REVERSE = new byte[]{GS, 0x42, 1};
-    byte[] LR2000_END_REVERSE = new byte[]{GS, 0x42, 0};
+    static public byte[] LR2000_START_BOLD = new byte[]{ESC, 0x45, 1};
+    static public byte[] LR2000_END_BOLD = new byte[]{ESC, 0x45, 0};
+    static public byte[] LR2000_PAPER_CUT = new byte[]{ESC, 0x6d};
+    static public byte[] LR2000_START_REVERSE = new byte[]{GS, 0x42, 1};
+    static public byte[] LR2000_END_REVERSE = new byte[]{GS, 0x42, 0};
     //
-    byte[] LR2000_START_DBLW = new byte[]{GS, 0x21, 0x10};
+    static public byte[] LR2000_START_DBLW = new byte[]{GS, 0x21, 0x10};
 
-    byte[] LR2000_START_DBLH = new byte[]{GS, 0x21, 0x01};
+    static public byte[] LR2000_START_DBLH = new byte[]{GS, 0x21, 0x01};
 
-    byte[] LR2000_START_DBLWH = new byte[]{GS, 0x21, 0x11};
-    byte[] LR2000_END_DBLWH = new byte[]{GS, 0x21, 0};
+    static public byte[] LR2000_START_DBLWH = new byte[]{GS, 0x21, 0x11};
+    static public byte[] LR2000_END_DBLWH = new byte[]{GS, 0x21, 0};
 
     public enum PrinterPortType{
         USB,
@@ -1886,7 +1886,8 @@ print order data to  buffer, socket will send this buffer to serial port
                 sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
                 m_printerData.clear();
             }
-            UsbPrinterThread.start(sOrder);//use thread to print data.
+            //UsbPrinterThread.start(sOrder);//use thread to print data.
+            UsbPrinterThread.start(this, sOrder);//use thread to print data.
 
 //            Thread thread = new Thread() {
 //                @Override
@@ -2082,7 +2083,7 @@ print order data to  buffer, socket will send this buffer to serial port
         this.open(true);
     }
 
-    private boolean isPrinterCommandChar( char ch)
+    static public boolean isPrinterCommandChar( char ch)
     {
         switch (ch) {
             case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
@@ -2747,5 +2748,56 @@ print order data to  buffer, socket will send this buffer to serial port
             m_printerData.add(s);
         }
         arPrint.clear();
+    }
+
+    /**
+     * for usb printer
+     * @param usbPrinter
+     */
+    public void sendLogoDataToPrinter(boolean usbPrinter)
+    {
+
+        if (!isLogoDataReady()) {
+            if (!m_strLogoFile.isEmpty())
+                m_logoData.printPicture(m_strLogoFile, -1, KDSPrintImage.Image_Align_Center);
+        }
+        if (isLogoDataReady())
+        {
+            int nlen = m_logoData.getDataSize();
+            byte[] buffer = new byte[nlen];
+            m_logoData.getData(buffer);
+            int nloop = nlen / IMAGE_EACH_SIZE;
+            if ((nlen % IMAGE_EACH_SIZE) >0)
+                nloop ++;
+            int offset = 0;
+            int nsize = 0;
+            //slow down printing speed
+            for (int i=0; i< nloop; i++) {
+                offset = i * IMAGE_EACH_SIZE;
+                nsize = IMAGE_EACH_SIZE;
+                if (offset + nsize > nlen)
+                    nsize = nlen - offset;
+                if (!usbPrinter)
+                    m_bemaPrinter.write(buffer, offset, nsize);
+                else {
+                    byte[] databuffer = new byte[nsize];
+                    System.arraycopy(buffer,offset,databuffer,0,nsize);
+                    Printer.write(databuffer,"sendLogoDataToPrinter");
+                }
+                try {
+                    Thread.sleep(10);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+        Log.i(TAG, "Print logo command here");
+    }
+
+    BemaPrinter.CodePage getCodePage()
+    {
+        return m_codepage;
     }
 }
