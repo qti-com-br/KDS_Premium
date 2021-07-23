@@ -22,7 +22,9 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSocketTCPSideBase;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.TimeDog;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1955,6 +1957,8 @@ print order data to  buffer, socket will send this buffer to serial port
      */
     private final int MAX_WRITE_COUNT = 100;
 
+    private final int CONNECTION_TIMEOUT = 10000; //print nothing in 10 seconds, reconnect printer.
+    TimeDog m_printerLastWriteData = new TimeDog(KDSUtil.createInvalidDate());
     /**
      *
      */
@@ -1973,6 +1977,11 @@ print order data to  buffer, socket will send this buffer to serial port
             if (!isOpened())
                 return;
         }
+        else
+        {
+            if (m_printerLastWriteData.is_timeout(CONNECTION_TIMEOUT))
+                m_bemaPrinter.close();
+        }
         //2.0.13
         int nWriteCount = ncount > MAX_WRITE_COUNT?MAX_WRITE_COUNT:ncount;
         synchronized (m_locker) {
@@ -1982,6 +1991,7 @@ print order data to  buffer, socket will send this buffer to serial port
                 //debug
                 //Log.e(TAG, s);
                 m_printerData.remove(0); //2.0.13
+                m_printerLastWriteData.reset();
             }
         }
     }
