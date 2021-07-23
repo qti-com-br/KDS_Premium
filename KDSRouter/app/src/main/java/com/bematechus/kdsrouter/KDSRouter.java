@@ -4172,17 +4172,24 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
     public String buildOrderLog(String logTemplate,String ip,  KDSDataOrder order)
     {
         String msg = logTemplate;
-        msg = msg.replace("#", "#"+order.getOrderName());
-        msg = msg.replace("$", "[" + ip + "]");
-        ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
+        if (order != null)
+            msg = msg.replace("#", "#"+order.getOrderName());
+        if (!ip.isEmpty())
+            msg = msg.replace("$", "[" + ip + "]");
+
         String s = "";
-        if (ar.size()>0) {
-            for (int i=0; i< ar.size(); i++) {
-                if (!s.isEmpty())
-                    s += ",";
-                s += ar.get(i).getString();
+        if (order != null) {
+            ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
+
+            if (ar.size() > 0) {
+                for (int i = 0; i < ar.size(); i++) {
+                    if (!s.isEmpty())
+                        s += ",";
+                    s += ar.get(i).getString();
+                }
             }
         }
+        
         if (!s.isEmpty())
             msg += (",go to stations:[" + s + "]");
         return msg;
