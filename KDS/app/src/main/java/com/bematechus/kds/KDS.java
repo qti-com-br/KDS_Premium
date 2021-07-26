@@ -2400,9 +2400,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
                 break;
             case Station_Transfer_Order://order transfered to me
-                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, fromStationID);
+            {
+                KDSDataOrder orderTransferIn = KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, fromStationID);
                 setFocusAfterReceiveOrder();
                 getSoundManager().playSound(KDSSettings.ID.Sound_transfer_order);
+                //
+                if (orderTransferIn != null) {
+                    syncOrderToWebDatabase(orderTransferIn, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+                }
+            }
                 break;
             case Station_Transfer_Order_ACK:
                 break;
@@ -3752,12 +3758,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      */
     public void operationTransferSelectedOrder(KDSUser.USER userID, String toStationID,int nScreen, String orderGuid)
     {
+        KDSDataOrder order = this.getUsers().getOrderByGUID(orderGuid);
+
         KDSStationFunc.TransferingStatus result =  KDSStationFunc.orderTransfer(this.getUsers().getUser(userID), orderGuid, toStationID, nScreen);
         switch (result)
         {
-            case Success:
+            case Success: {
                 //the message was shown in  KDSStationFunc.orderTransfer
                 //showMessage("Transfer order done");
+                //sync with back office.
+                if (order != null)
+                    syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
+            }
                 break;
             case Connecting:
                 showMessage("Connecting target station");
