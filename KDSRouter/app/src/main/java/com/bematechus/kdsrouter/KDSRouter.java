@@ -1987,15 +1987,16 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         if (objSource == null)
         {
             msg = getContext().getString(R.string.get_order);
-            msg = msg.replace("#", order.getOrderName());
+            //msg = msg.replace("#", order.getOrderName());
             //msg += (" from schedule" );
         }
         else if (objSource instanceof KDSSocketTCPSideClient)
         {
             ip =((KDSSocketTCPSideClient) objSource).getConnectToWhatIP();
             msg = getContext().getString(R.string.get_order_from_client_ip);
-            msg = msg.replace("#", order.getOrderName());
-            msg = msg.replace("$", ip);
+            //msg = msg.replace("#", "#"+order.getOrderName());
+            //msg = msg.replace("$", "[" + ip + "]");
+
             //msg += (" from client ip=" + ip );
         }
         else if (objSource instanceof KDSSocketTCPSideServer)
@@ -2003,18 +2004,20 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             ip =((KDSSocketTCPSideServer) objSource).getSavedRemoteIP();
             //msg += (" from server ip=" + ip + ", " + ((KDSSocketTCPSideServer) objSource).getListenPort());
             msg = getContext().getString(R.string.get_order_from_server_ip);
-            msg = msg.replace("#", order.getOrderName());
-            msg = msg.replace("$", ip);
+
+            //msg = msg.replace("#", "#" + order.getOrderName());
+            //msg = msg.replace("$", "[" + ip + "]");
         }
         else if (objSource instanceof KDSSMBDataSource)
         {
             //msg += " from remote folder";
             msg = getContext().getString(R.string.get_order_from_remote_folder);
-            msg = msg.replace("#", order.getOrderName());
+            //msg = msg.replace("#", "#" + order.getOrderName());
+
         }
-
+        msg = buildOrderLog(msg, ip, order);
         showMessage(msg);
-
+        KDSLog.d(TAG, KDSLog._FUNCLINE_() +  msg);
     }
 
 
@@ -4151,5 +4154,44 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
             }
         }
         return false;
+    }
+
+    /**
+     *
+     * @param logTemplate
+     *  Contains #: order id
+     *           $: for ip.
+     *
+     * @param ip
+     *      For which ip. For tcp/ip data source.
+     * @param order
+     *      Received this order.
+     * @return
+     *  The new string with all parameters value.
+     */
+    public String buildOrderLog(String logTemplate,String ip,  KDSDataOrder order)
+    {
+        String msg = logTemplate;
+        if (order != null)
+            msg = msg.replace("#", "#"+order.getOrderName());
+        if (!ip.isEmpty())
+            msg = msg.replace("$", "[" + ip + "]");
+
+        String s = "";
+        if (order != null) {
+            ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
+
+            if (ar.size() > 0) {
+                for (int i = 0; i < ar.size(); i++) {
+                    if (!s.isEmpty())
+                        s += ",";
+                    s += ar.get(i).getString();
+                }
+            }
+        }
+        
+        if (!s.isEmpty())
+            msg += (",go to stations:[" + s + "]");
+        return msg;
     }
 }
