@@ -1880,7 +1880,8 @@ print order data to  buffer, socket will send this buffer to serial port
                 m_printerData.clear();
                 // Format order to print
                 printOrderToBuffer(order);
-                for (int i = 0; i < m_printerData.size() - 2; i++) {
+                //for (int i = 0; i < m_printerData.size() - 2; i++) {
+                for (int i = 0; i < m_printerData.size()-1 ; i++) {//don't contains last "end_order" char.
                     sOrder += m_printerData.get(i);
                 }
                 sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
