@@ -1362,4 +1362,5 @@
         <item>Fit center</item>
     </string-array>
     <string name="image_scale_type">Image scale type</string>
+    <string name="print_unprintable_item">Print item even that was set as not printable.</string>
 </resources>
