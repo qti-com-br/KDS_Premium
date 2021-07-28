@@ -197,6 +197,8 @@ public class KDSPrinter {
 
     boolean m_bPrintItemIndividually = false;
 
+    boolean m_bPrintUnprintableItem = false;// Want to make it so a station can print all items in an order,
+                                            // even those that are set as not printable from the router.
 
     /**********************************************************************************************/
     /**
@@ -394,8 +396,10 @@ And the premodifiers strings will been delete with its unprintable item.
             item = items.getItem(i);
             if (item == null) break;
             if (!item.getPrintable()) {
-                arUnprintItems.add(item);
-                continue;
+                if (!m_bPrintUnprintableItem) {
+                    arUnprintItems.add(item);
+                    continue;
+                }
             }
             if (!m_bPrintWithCondiments)
                 item.getCondiments().clear();
@@ -1729,6 +1733,8 @@ print order data to  buffer, socket will send this buffer to serial port
 
         m_bPrintItemIndividually = settings.getBoolean(KDSSettings.ID.Printer_item_individually);
 
+        m_bPrintUnprintableItem = settings.getBoolean(KDSSettings.ID.Printer_print_unprintable);
+
 
     }
 
@@ -2257,7 +2263,10 @@ print order data to  buffer, socket will send this buffer to serial port
             for (int i=0; i< originalItems.getCount(); i++)
             {
                 KDSDataItem item = originalItems.getItem(i);
-                if (!item.getPrintable()) continue;
+                if (!item.getPrintable()) {
+                    if (!m_bPrintUnprintableItem)
+                        continue;
+                }
                 printOrder.getItems().clear();
                 printOrder.getItems().addComponent(item);
                 printDataToList(state, printOrder, 0, lines);
