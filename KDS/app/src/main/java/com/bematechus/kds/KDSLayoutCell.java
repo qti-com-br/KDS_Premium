@@ -303,7 +303,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 KDSViewFontFace ff = getOrderContentFont(env, content, ftDef);
                 if (order.isDimColor()) ff.setBG(KDSConst.DIM_BG);
                 Rect rc = new Rect(rcAbsolute);
-                rc.inset(8, 8);
+                int nInset = rc.height()/10;
+                if (nInset >8) nInset = 8;
+                rc.inset(nInset, nInset);
+                //rc.inset(8, 8);
                 CanvasDC.drawText(g, ff, rc, str, align);
             }
         }
