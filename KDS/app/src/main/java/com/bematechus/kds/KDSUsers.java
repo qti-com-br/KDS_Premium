@@ -345,9 +345,9 @@ public class KDSUsers {
     }
 
 
-    public void orderCancel( KDSDataOrder order)
+    public ArrayList<KDSDataOrder> orderCancel(KDSDataOrder order)
     {
-        orderCancel(order, true);
+        return orderCancel(order, true);
 //        String orderName = order.getOrderName();
 //        if (getUserA() != null) {
 //            //kpp1-409
@@ -463,8 +463,16 @@ public class KDSUsers {
         return null;
     }
 
-    public void orderCancel( KDSDataOrder order, boolean syncStations)
+    /**
+     *
+     * @param order
+     * @param syncStations
+     * @return
+     *  The canceled orders.
+     */
+    public ArrayList<KDSDataOrder> orderCancel( KDSDataOrder order, boolean syncStations)
     {
+        ArrayList<KDSDataOrder> arReturn = new ArrayList<>();
         String orderName = order.getOrderName();
         if (getUserA() != null) {
             //kpp1-409
@@ -480,7 +488,9 @@ public class KDSUsers {
 
                 getUserA().getOrders().removeComponent(orderExisted);
                 getUserA().getCurrentDB().orderDelete(orderExisted.getGUID());
+                arReturn.add(orderExisted);
             }
+
         }
         if (getUserB() != null) {
             //kpp1-409
@@ -493,11 +503,13 @@ public class KDSUsers {
             if (orderExisted != null) {
                 getUserB().getOrders().removeComponent(orderExisted);
                 getUserB().getCurrentDB().orderDelete(orderExisted.getGUID());
+                arReturn.add(orderExisted);
             }
         }
         if (syncStations)
             KDSStationFunc.sync_with_stations(m_kds, KDSXMLParserCommand.KDSCommand.Station_Cancel_Order, order, null, "");
 
+        return arReturn;
 
     }
 }
