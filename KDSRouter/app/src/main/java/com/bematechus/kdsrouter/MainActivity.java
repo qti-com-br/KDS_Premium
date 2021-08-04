@@ -798,6 +798,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void explicitStartService()
     {
+
         KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Enter");
         Intent intent = new Intent(this, KDSRouterService.class);
         startService(intent);
@@ -971,7 +972,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         Intent intent = new Intent(this, KDSRouterService.class);
         try {
-            bindService(intent, m_serviceConn, Context.BIND_AUTO_CREATE);
+            getApplicationContext().bindService(intent, m_serviceConn, Context.BIND_AUTO_CREATE);
         }
         catch (Exception e)
         {
@@ -1852,6 +1853,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (m_service!= null) {
             if (m_service.getKDSRouter()!= null)
                 m_service.getKDSRouter().removeEventReceiver(this);
+            explicitStopService();
         }
         KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Exit");
     }
