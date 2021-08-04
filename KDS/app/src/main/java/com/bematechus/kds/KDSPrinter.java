@@ -22,7 +22,9 @@ import com.bematechus.kdslib.KDSDataOrder;
 import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSSocketTCPSideBase;
 import com.bematechus.kdslib.KDSUtil;
+import com.bematechus.kdslib.TimeDog;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,21 +53,21 @@ public class KDSPrinter {
     static final private String TAG_END_BOLD = "</B>";
     static final private String TAG_PAPER_CUT = "<PC>";
 
-    static final private char CMD_START_BOLD = 0x01;//"<B>";
-    static final private char CMD_END_BOLD = 0x02;//"</B>";
-    static final private char CMD_PAPER_CUT = 0x03;//"<PC>";
+    static final public char CMD_START_BOLD = 0x01;//"<B>";
+    static final public char CMD_END_BOLD = 0x02;//"</B>";
+    static final public char CMD_PAPER_CUT = 0x03;//"<PC>";
     //reverse printing
-    static final private char CMD_START_REVERSE = 0x04;//"<black>";
-    static final private char CMD_END_REVERSE = 0x05;//"</black>";
+    static final public char CMD_START_REVERSE = 0x04;//"<black>";
+    static final public char CMD_END_REVERSE = 0x05;//"</black>";
     //change font size
-    static final private char CMD_START_DBLW = 0x06;//"<dblw>";
-    static final private char CMD_END_DBLW = 0x07;//"</dblw>";
-    static final private char CMD_START_DBLH = 0x08;//"<dblh>";
-    static final private char CMD_END_DBLH = 0x09;//"</dblh>";
-    static final private char CMD_START_DBLWH = 0x10;//"<dblwh>";
-    static final private char CMD_END_DBLWH = 0x11;//"</dblwh>";
+    static final public char CMD_START_DBLW = 0x06;//"<dblw>";
+    static final public char CMD_END_DBLW = 0x07;//"</dblw>";
+    static final public char CMD_START_DBLH = 0x08;//"<dblh>";
+    static final public char CMD_END_DBLH = 0x09;//"</dblh>";
+    static final public char CMD_START_DBLWH = 0x10;//"<dblwh>";
+    static final public char CMD_END_DBLWH = 0x11;//"</dblwh>";
 
-    static final private char CMD_PRINT_LOGO = 0x380;//"</dblwh>";
+    static final public char CMD_PRINT_LOGO = 0x380;//"</dblwh>";
 
     static final private String TAG_CR = "<CR>";
     static final private String TAG_ITEMS = "<ITEMS>";
@@ -91,21 +93,21 @@ public class KDSPrinter {
 
     static final private String TAG_LOGO = "<LOGO>";
 
-    final byte ESC = 0x1b;
-    final byte GS = 0x1d;
+    static public final byte ESC = 0x1b;
+    static public final byte GS = 0x1d;
 
-    byte[] LR2000_START_BOLD = new byte[]{ESC, 0x45, 1};
-    byte[] LR2000_END_BOLD = new byte[]{ESC, 0x45, 0};
-    byte[] LR2000_PAPER_CUT = new byte[]{ESC, 0x6d};
-    byte[] LR2000_START_REVERSE = new byte[]{GS, 0x42, 1};
-    byte[] LR2000_END_REVERSE = new byte[]{GS, 0x42, 0};
+    static public byte[] LR2000_START_BOLD = new byte[]{ESC, 0x45, 1};
+    static public byte[] LR2000_END_BOLD = new byte[]{ESC, 0x45, 0};
+    static public byte[] LR2000_PAPER_CUT = new byte[]{ESC, 0x6d};
+    static public byte[] LR2000_START_REVERSE = new byte[]{GS, 0x42, 1};
+    static public byte[] LR2000_END_REVERSE = new byte[]{GS, 0x42, 0};
     //
-    byte[] LR2000_START_DBLW = new byte[]{GS, 0x21, 0x10};
+    static public byte[] LR2000_START_DBLW = new byte[]{GS, 0x21, 0x10};
 
-    byte[] LR2000_START_DBLH = new byte[]{GS, 0x21, 0x01};
+    static public byte[] LR2000_START_DBLH = new byte[]{GS, 0x21, 0x01};
 
-    byte[] LR2000_START_DBLWH = new byte[]{GS, 0x21, 0x11};
-    byte[] LR2000_END_DBLWH = new byte[]{GS, 0x21, 0};
+    static public byte[] LR2000_START_DBLWH = new byte[]{GS, 0x21, 0x11};
+    static public byte[] LR2000_END_DBLWH = new byte[]{GS, 0x21, 0};
 
     public enum PrinterPortType{
         USB,
@@ -195,6 +197,8 @@ public class KDSPrinter {
 
     boolean m_bPrintItemIndividually = false;
 
+    boolean m_bPrintUnprintableItem = false;// Want to make it so a station can print all items in an order,
+                                            // even those that are set as not printable from the router.
 
     /**********************************************************************************************/
     /**
@@ -392,8 +396,10 @@ And the premodifiers strings will been delete with its unprintable item.
             item = items.getItem(i);
             if (item == null) break;
             if (!item.getPrintable()) {
-                arUnprintItems.add(item);
-                continue;
+                if (!m_bPrintUnprintableItem) {
+                    arUnprintItems.add(item);
+                    continue;
+                }
             }
             if (!m_bPrintWithCondiments)
                 item.getCondiments().clear();
@@ -1727,6 +1733,8 @@ print order data to  buffer, socket will send this buffer to serial port
 
         m_bPrintItemIndividually = settings.getBoolean(KDSSettings.ID.Printer_item_individually);
 
+        m_bPrintUnprintableItem = settings.getBoolean(KDSSettings.ID.Printer_print_unprintable);
+
 
     }
 
@@ -1880,13 +1888,15 @@ print order data to  buffer, socket will send this buffer to serial port
                 m_printerData.clear();
                 // Format order to print
                 printOrderToBuffer(order);
-                for (int i = 0; i < m_printerData.size() - 2; i++) {
+                //for (int i = 0; i < m_printerData.size() - 2; i++) {
+                for (int i = 0; i < m_printerData.size()-1 ; i++) {//don't contains last "end_order" char.
                     sOrder += m_printerData.get(i);
                 }
                 sOrder = sOrder.replace(CHAR_Start_Order, ' ').replace(CHAR_End_Order, ' ');
                 m_printerData.clear();
             }
-            UsbPrinterThread.start(sOrder);//use thread to print data.
+            //UsbPrinterThread.start(sOrder);//use thread to print data.
+            UsbPrinterThread.start(this, sOrder);//use thread to print data.
 
 //            Thread thread = new Thread() {
 //                @Override
@@ -1954,6 +1964,8 @@ print order data to  buffer, socket will send this buffer to serial port
      */
     private final int MAX_WRITE_COUNT = 100;
 
+    private final int CONNECTION_TIMEOUT = 10000; //print nothing in 10 seconds, reconnect printer.
+    TimeDog m_printerLastWriteData = new TimeDog(KDSUtil.createInvalidDate());
     /**
      *
      */
@@ -1972,6 +1984,11 @@ print order data to  buffer, socket will send this buffer to serial port
             if (!isOpened())
                 return;
         }
+        else
+        {
+            if (m_printerLastWriteData.is_timeout(CONNECTION_TIMEOUT))
+                m_bemaPrinter.close();
+        }
         //2.0.13
         int nWriteCount = ncount > MAX_WRITE_COUNT?MAX_WRITE_COUNT:ncount;
         synchronized (m_locker) {
@@ -1981,6 +1998,7 @@ print order data to  buffer, socket will send this buffer to serial port
                 //debug
                 //Log.e(TAG, s);
                 m_printerData.remove(0); //2.0.13
+                m_printerLastWriteData.reset();
             }
         }
     }
@@ -2082,7 +2100,7 @@ print order data to  buffer, socket will send this buffer to serial port
         this.open(true);
     }
 
-    private boolean isPrinterCommandChar( char ch)
+    static public boolean isPrinterCommandChar( char ch)
     {
         switch (ch) {
             case CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
@@ -2245,7 +2263,10 @@ print order data to  buffer, socket will send this buffer to serial port
             for (int i=0; i< originalItems.getCount(); i++)
             {
                 KDSDataItem item = originalItems.getItem(i);
-                if (!item.getPrintable()) continue;
+                if (!item.getPrintable()) {
+                    if (!m_bPrintUnprintableItem)
+                        continue;
+                }
                 printOrder.getItems().clear();
                 printOrder.getItems().addComponent(item);
                 printDataToList(state, printOrder, 0, lines);
@@ -2747,5 +2768,56 @@ print order data to  buffer, socket will send this buffer to serial port
             m_printerData.add(s);
         }
         arPrint.clear();
+    }
+
+    /**
+     * for usb printer
+     * @param usbPrinter
+     */
+    public void sendLogoDataToPrinter(boolean usbPrinter)
+    {
+
+        if (!isLogoDataReady()) {
+            if (!m_strLogoFile.isEmpty())
+                m_logoData.printPicture(m_strLogoFile, -1, KDSPrintImage.Image_Align_Center);
+        }
+        if (isLogoDataReady())
+        {
+            int nlen = m_logoData.getDataSize();
+            byte[] buffer = new byte[nlen];
+            m_logoData.getData(buffer);
+            int nloop = nlen / IMAGE_EACH_SIZE;
+            if ((nlen % IMAGE_EACH_SIZE) >0)
+                nloop ++;
+            int offset = 0;
+            int nsize = 0;
+            //slow down printing speed
+            for (int i=0; i< nloop; i++) {
+                offset = i * IMAGE_EACH_SIZE;
+                nsize = IMAGE_EACH_SIZE;
+                if (offset + nsize > nlen)
+                    nsize = nlen - offset;
+                if (!usbPrinter)
+                    m_bemaPrinter.write(buffer, offset, nsize);
+                else {
+                    byte[] databuffer = new byte[nsize];
+                    System.arraycopy(buffer,offset,databuffer,0,nsize);
+                    Printer.write(databuffer,"sendLogoDataToPrinter");
+                }
+                try {
+                    Thread.sleep(10);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+        Log.i(TAG, "Print logo command here");
+    }
+
+    BemaPrinter.CodePage getCodePage()
+    {
+        return m_codepage;
     }
 }

@@ -14,6 +14,14 @@ import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.util.Log;
 
+//import com.bematechus.bemaLibrary.CodePageCommand;
+//import com.bematechus.bemaUtils.CommunicationException;
+
+import com.bematechus.bemaLibrary.BemaPrinter;
+//import com.bematechus.bemaLibrary.CodePageCommand;
+import com.bematechus.bemaLibrary.CodePageCommand;
+import com.bematechus.bemaUtils.CommunicationException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -182,7 +190,7 @@ public class Printer extends Activity {
         return false;
     }
 
-    private static boolean write(byte[] data, String fun) {
+    public static boolean write(byte[] data, String fun) {
         int result = -999;
         if(mConnection != null) {
             result = mConnection.bulkTransfer(mEndpoint, data, data.length, TIMEOUT);
@@ -194,5 +202,116 @@ public class Printer extends Activity {
     public void close() {
         isOpen = false;
     }
+
+    /**
+     * As the usb printer goes to this class,
+     *  David add this function for parsing printer command.
+     * @param data
+     * @return
+     */
+    public static boolean printerOrder(String data, KDSPrinter kdsPrinter)
+    {
+        setCodePage(kdsPrinter.getCodePage());
+
+        String willPrint = "";
+        char ch = 0;
+        for (int i=0; i< data.length(); i++)
+        {
+            ch = data.charAt(i);
+            if (KDSPrinter.isPrinterCommandChar(ch))
+            {
+                if (!willPrint.isEmpty())
+                    printText(willPrint, kdsPrinter);
+                willPrint = "";
+                writePrinterCommandByCommandChar(ch, kdsPrinter);
+            }
+            else
+            {
+                willPrint += ch;
+            }
+        }
+
+        if (!willPrint.isEmpty())
+            printText(willPrint, kdsPrinter);
+        return true;
+    }
+
+    static public boolean printText (String text, KDSPrinter kdsPrinter)
+    {
+        byte[] bytes = CodePageCommand.convertFromUnicode(kdsPrinter.getCodePage(), text);
+        return write(bytes, "printText");
+
+    }
+
+    static private void writePrinterCommandByCommandChar(char ch,KDSPrinter kdsPrinter)
+    {
+        switch (ch) {
+            case KDSPrinter.CMD_START_BOLD://) //fix a bug. Old code is cmd_end_bold. see kpp1-146
+            {
+                write(KDSPrinter.LR2000_START_BOLD, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_END_BOLD:
+            {
+                write(KDSPrinter.LR2000_END_BOLD, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_PAPER_CUT:
+            {
+                write(KDSPrinter.LR2000_PAPER_CUT, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_START_DBLW:
+            {
+                write(KDSPrinter.LR2000_START_DBLW, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_START_DBLH:
+            {
+                write(KDSPrinter.LR2000_START_DBLH, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_START_DBLWH:
+            {
+                write(KDSPrinter.LR2000_START_DBLWH, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_END_DBLW:
+            case KDSPrinter.CMD_END_DBLH:
+            case KDSPrinter.CMD_END_DBLWH:
+            {
+                write(KDSPrinter.LR2000_END_DBLWH, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_START_REVERSE:
+            {
+                write(KDSPrinter.LR2000_START_REVERSE, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_END_REVERSE:
+            {
+                write(KDSPrinter.LR2000_END_REVERSE, "printerCmd");
+            }
+            break;
+            case KDSPrinter.CMD_PRINT_LOGO:
+            {
+                if (kdsPrinter!= null)
+                    kdsPrinter.sendLogoDataToPrinter(true);
+            }
+            break;
+            default:
+            {
+            }
+            break;
+        }
+    }
+    static public boolean setCodePage(BemaPrinter.CodePage codePage) {
+
+        return write(new CodePageCommand(codePage.getValue()).getBytes(), "setCodePage");
+
+    }
+
+
+
 
 }

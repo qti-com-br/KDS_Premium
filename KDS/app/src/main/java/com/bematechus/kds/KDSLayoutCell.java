@@ -291,7 +291,7 @@ public class KDSLayoutCell extends KDSViewBlockCell {
 
         return true;
     }
-
+    final int MAX_TITLE_INSET = 8;
     public Rect drawOrderTitleContent(Canvas g,Rect rcAbsolute,KDSViewSettings env, KDSDataOrder order, Object objContent,KDSSettings.TitlePosition titlePosition,Paint.Align align,KDSViewFontFace ftDef   )
     {
         if (objContent == null)
@@ -303,7 +303,10 @@ public class KDSLayoutCell extends KDSViewBlockCell {
                 KDSViewFontFace ff = getOrderContentFont(env, content, ftDef);
                 if (order.isDimColor()) ff.setBG(KDSConst.DIM_BG);
                 Rect rc = new Rect(rcAbsolute);
-                rc.inset(8, 8);
+                int nInset = rc.height()/10;
+                if (nInset >MAX_TITLE_INSET) nInset = MAX_TITLE_INSET;
+                rc.inset(nInset, nInset);
+                //rc.inset(8, 8);
                 CanvasDC.drawText(g, ff, rc, str, align);
             }
         }

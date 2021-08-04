@@ -2400,9 +2400,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSStationFunc.doSyncCommandItemModified(this,command, xmlData);
                 break;
             case Station_Transfer_Order://order transfered to me
-                KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, fromStationID);
+            {
+                KDSDataOrder orderTransferIn = KDSStationFunc.doSyncCommandOrderTransfer(this, command, xmlData, fromStationID);
                 setFocusAfterReceiveOrder();
                 getSoundManager().playSound(KDSSettings.ID.Sound_transfer_order);
+                //
+                if (orderTransferIn != null) {
+                    syncOrderToWebDatabase(orderTransferIn, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+                }
+            }
                 break;
             case Station_Transfer_Order_ACK:
                 break;
@@ -2446,7 +2452,20 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Expo_Bump_Order: //expo and normal station has different steps, those are the expo operations and will inform to its backup/mirror
             {
 
+                //NCR
+                String strXml = command.getParam(KDSConst.KDS_Str_Param, "");
+                if (strXml.isEmpty())
+                    break;
+                KDSDataOrder bumpedOrder =(KDSDataOrder) KDSXMLParser.parseXml(getStationID(), strXml);
+                if (bumpedOrder == null) break;
+                KDSDataOrder myOrder =  this.getUsers().getOrderByName(bumpedOrder.getOrderName());
+                //
                 KDSStationFunc.doSyncCommandExpoOrderBumped(this, command, xmlData);
+                //NCR URGENT
+                if (myOrder != null)
+                {
+                    syncOrderToWebDatabase(myOrder, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
+                }
             }
             break;
             case Expo_Unbump_Order:
@@ -3212,10 +3231,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             break;
             case KDSDataOrder. TRANSTYPE_DELETE:{
                 //delete order by xml command
-                m_users.orderCancel(order);
+                ArrayList<KDSDataOrder> canceledOrders = m_users.orderCancel(order);
                 this.getCurrentDB().clearExpiredBumpedOrders( getSettings().getBumpReservedCount());
                 //KDSStationFunc.orderCancel(this, order);
                 getSoundManager().playSound(KDSSettings.ID.Sound_bump_order);
+                //NCR-URGENT
+                for (int i=0; i< canceledOrders.size(); i++)
+                    syncOrderToWebDatabase(canceledOrders.get(i), ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
+
                 break;
             }
             case KDSDataOrder. TRANSTYPE_MODIFY:{
@@ -3752,12 +3775,18 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      */
     public void operationTransferSelectedOrder(KDSUser.USER userID, String toStationID,int nScreen, String orderGuid)
     {
+        KDSDataOrder order = this.getUsers().getOrderByGUID(orderGuid);
+
         KDSStationFunc.TransferingStatus result =  KDSStationFunc.orderTransfer(this.getUsers().getUser(userID), orderGuid, toStationID, nScreen);
         switch (result)
         {
-            case Success:
+            case Success: {
                 //the message was shown in  KDSStationFunc.orderTransfer
                 //showMessage("Transfer order done");
+                //sync with back office.
+                if (order != null)
+                    syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
+            }
                 break;
             case Connecting:
                 showMessage("Connecting target station");

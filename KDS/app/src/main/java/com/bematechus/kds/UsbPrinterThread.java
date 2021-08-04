@@ -10,7 +10,7 @@ public class UsbPrinterThread {
 
     static String TAG = "USBPrinterThread";
     String mData = "";
-
+    KDSPrinter m_kdsPrinter = null;
     static Object m_locker = new Object();
 
     public static void start(String data)
@@ -20,19 +20,38 @@ public class UsbPrinterThread {
         t.startThread();
 
     }
+
+    /**
+     *
+     * @param kdsPrinter
+     *  Use it to print logo.
+     * @param data
+     */
+    public static void start(KDSPrinter kdsPrinter, String data)
+    {
+        UsbPrinterThread t = new UsbPrinterThread();
+        t.mData = data;
+        t.m_kdsPrinter = kdsPrinter;
+        t.startThread();
+
+    }
+
     public void startThread()
     {
         Thread thread = new Thread() {
             @Override
             public void run() {
                 while (true) {
-                    if (Printer.status == Printer.PRINTER_STATUS.OK) {
+                    //if (true)//TEST
+                    if (Printer.status == Printer.PRINTER_STATUS.OK)
+                    {
                         Log.d(TAG, "--->>>USB Printer start printing thread");
                         String sOrder = "";
                         sOrder = mData;
                         try {
                             synchronized (m_locker) {
-                                Printer.printOrder(sOrder.getBytes());
+                                //Printer.printOrder(sOrder.getBytes());
+                                Printer.printerOrder(sOrder, m_kdsPrinter);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -40,7 +59,8 @@ public class UsbPrinterThread {
 
                         Log.d(TAG, "<<<USB Printer exit printing thread");
                         break;
-                    } else {
+                    }
+                    else {
                         try {
                             Thread.sleep(1000);
                         } catch (Exception e) {
