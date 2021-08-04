@@ -10,9 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 2500,
-      "versionName": "2.5.0.0",
-      "outputFile": "KDS-Router-prod-release-2.5.0.0.apk"
+      "versionCode": 2730,
+      "versionName": "2.7.3.0",
+      "outputFile": "KDS-Router-prod-release-2.7.3.0.apk"
     }
   ]
 }
