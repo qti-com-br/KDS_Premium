@@ -125,5 +125,5 @@ public class KDSConst {
 
     //enable summary staiton feature or not
     //KP-63
-    static public boolean SUMMARY_STATION_ENABLED = false;
+    static public boolean SUMMARY_STATION_ENABLED = true;
 }
