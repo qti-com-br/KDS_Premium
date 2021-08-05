@@ -3290,4 +3290,9 @@ get the total qty of all found items
         return m_strInputMessage;
     }
 
+    public String recreateGUID()
+    {
+        m_strGUID = KDSUtil.createNewGUID();
+        return m_strGUID;
+    }
 }

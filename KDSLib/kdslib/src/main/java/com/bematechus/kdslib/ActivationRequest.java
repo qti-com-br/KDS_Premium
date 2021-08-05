@@ -97,7 +97,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         New,
         Bump,
         Unbump,
-
+        Transfer_go,
 
     }
 
@@ -915,10 +915,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @param order
      * @return
      */
-    static public ActivationRequest requestOrderSync( String store_guid,KDSDataOrder order, iOSOrderState state)
+    static public ActivationRequest requestOrderSync( String store_guid,KDSDataOrder order, iOSOrderState state, SyncDataFromOperation fromOperation)
     {
 
-        ActivationRequest r = createSyncRequest(COMMAND.Sync_orders,"orders",jsonOrder(store_guid, order,  state) );
+        ActivationRequest r = createSyncRequest(COMMAND.Sync_orders,"orders",jsonOrder(store_guid, order,  state, fromOperation) );
         r.setTag(order);
         r.setDbTarget();
         return r;
@@ -972,7 +972,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
      * @return
      * The order data json.
      */
-    static private JSONArray jsonOrder(String store_guid,  KDSDataOrder order, iOSOrderState state)
+    static private JSONArray jsonOrder(String store_guid,  KDSDataOrder order, iOSOrderState state, SyncDataFromOperation fromOperation)
     {
         JSONArray ar = new JSONArray();
 
@@ -1003,7 +1003,10 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
             json.put("create_time" ,Long.toString( getUTCTimeSeconds(order.getStartTime()))); //seconds
             json.put("update_time" ,Long.toString( utcNow)); //seconds
             json.put("upload_time" ,Long.toString( utcNow)); //seconds
-            json.put("is_deleted", "0");
+            if (fromOperation == SyncDataFromOperation.Transfer_go)
+                json.put("is_deleted", "1");
+            else
+                json.put("is_deleted", "0");
             //json.put("update_device" , "'"+Activation.getMySerialNumber() + "'"); //https://bematech.atlassian.net/browse/KPP1-63
             json.put("update_device" , "'"+Activation.getMyDeviceGuid() + "'");//kpp1-296  //https://bematech.atlassian.net/browse/KPP1-63
             json.put("phone", "'" + order.getCustomer().getPhone()+"'");
