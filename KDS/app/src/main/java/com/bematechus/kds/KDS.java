@@ -3785,7 +3785,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 //showMessage("Transfer order done");
                 //sync with back office.
                 if (order != null)
-                    syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.Done, ActivationRequest.SyncDataFromOperation.Bump);
+                    syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.Transfer_go);
             }
                 break;
             case Connecting:

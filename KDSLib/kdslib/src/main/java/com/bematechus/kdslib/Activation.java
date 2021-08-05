@@ -1860,7 +1860,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
      */
     public void postOrderRequest(KDSDataOrder order, ActivationRequest.iOSOrderState state, ActivationRequest.SyncDataFromOperation fromOperation)
     {
-        ActivationRequest r = ActivationRequest.requestOrderSync(m_storeGuid,  order, state);
+        ActivationRequest r = ActivationRequest.requestOrderSync(m_storeGuid,  order, state, fromOperation);
         r.setSyncDataFromOperation(fromOperation);
         ActivationRequest.SyncDataFromOperation syncOp = fromOperation;
         boolean bExpoTypeStation = false;
@@ -1897,6 +1897,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                     r.getNextStepData().add(ActivationRequest.requestItemBumpsSync(m_stationID, order,bExpoTypeStation, false, ItemJobFromOperations.Local_unbump_order ));
                 //postItemBumpsRequest(m_stationID, order,(m_stationFuncName.equals(SettingsBase.StationFunc.Expeditor.toString())), false );
                 break;
+            case Transfer_go: //this order was transfered to other station
+            {
+
+            }
+            break;
         }
 
         m_http.request(r);
