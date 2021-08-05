@@ -19,12 +19,14 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(ACTION)) {
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(context);
             boolean bEnabled = pre.getBoolean("general_router_enabled", false);
             if (!bEnabled) return;
 
             Intent mainActivityIntent = new Intent(context, MainActivity.class);  // 要启动的Activity
+            mainActivityIntent.setAction("android.intent.action.MAIN");
+            mainActivityIntent.addCategory("android.intent.category.LAUNCHER");
             mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(mainActivityIntent);
         }
