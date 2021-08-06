@@ -1356,4 +1356,10 @@
     </string-array>
     <string name="image_scale_type">Image scale type</string>
     <string name="print_unprintable_item">Print item even that was set as not printable.</string>
+    <string-array name="pref_kds_sumstation_mode_titles">
+        <item>Summary</item>
+        <item>Bin management</item>
+    </string-array>
+    <string name="display_mode">Display mode</string>
+
 </resources>

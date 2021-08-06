@@ -50,6 +50,8 @@ public class KDSViewSumStation //extends KDSView
     boolean mAlertEnabled = false;
     KDSSettings.SumOrderBy mOrderBy = KDSSettings.SumOrderBy.Ascend;
 
+    KDSSettings.SumStationMode m_nDisplayMode = KDSSettings.SumStationMode.Summary;
+
     /*************************************/
 
     static public final int INSET_DY = 5;
@@ -199,6 +201,51 @@ public class KDSViewSumStation //extends KDSView
 
     }
 
+    private boolean showBinSumGroup(KDSViewSumStnSumGroup group) {
+        if (m_arPanels.size() >= mMaxPanels)
+            return false;
+        Rect screenDataRect = getDataArea();
+        if (screenDataRect.width() <= 0) return false;
+
+        Rect rtPanel = getBinPanelRect(screenDataRect, m_arPanels.size());
+        if (rtPanel == null) return false;
+        //int nRowHeight = getTextPixelsHeight(mItemFont, "pPyYqQ");
+        //int nCaptionHeight = getTextPixelsHeight(mCaptionFont, "pPyYqQ") + mCaptionFont.getFontSize()/2;
+        //KDSViewSumStnPanel.m_orderCaptionHeight = nCaptionHeight;
+        KDSViewSumStnBinPanel panel = KDSViewSumStnBinPanel.createNew(group);
+        panel.setRect(rtPanel);
+        //panel.setRowHeight(nRowHeight);
+        //if (! KDSViewSumStnBinPanel.build( group, panel, rtPanel))
+        //    return false;
+        m_arPanels.add(panel);
+
+        return true;
+
+    }
+
+    final int MAX_PANELS = 10;
+    private Rect getBinPanelRect(Rect screenDataRect, int nPanelIndex)
+    {
+        int w = 0;
+        int h = 0;
+        int nrow = 0;
+        if (mMaxPanels != MAX_PANELS) {
+            w = screenDataRect.width() / mMaxPanels;
+            h = screenDataRect.height();
+        }
+        else
+        {
+            w = screenDataRect.width() / (mMaxPanels/2);
+            h = screenDataRect.height()/2;
+            nrow = nPanelIndex/(MAX_PANELS/2);
+        }
+
+        int x = screenDataRect.left + nPanelIndex * w;
+        int y = screenDataRect.top + nrow * h;
+        Rect rt = new Rect(x, y, x + w, y + h);
+        return rt;
+    }
+
 
     private SumStationFilterEntry filterCheck(KDSSummaryItem sumData)
     {
@@ -216,6 +263,24 @@ public class KDSViewSumStation //extends KDSView
      * @param arSummaryItems
      */
     private void showSummaryInSumStation(ArrayList<KDSSummaryItem> arSummaryItems)
+    {
+        switch (m_nDisplayMode)
+        {
+
+            case Summary:
+            {
+                showSummaryInSumStationSummaryMode(arSummaryItems);
+            }
+            break;
+            case Bin:
+            {
+                showSummaryInSumStationBinMode(arSummaryItems);
+            }
+            break;
+        }
+    }
+
+    private void showSummaryInSumStationSummaryMode(ArrayList<KDSSummaryItem> arSummaryItems)
     {
         this.clear();
         int ncount = 0;
@@ -247,14 +312,51 @@ public class KDSViewSumStation //extends KDSView
         refresh();
     }
 
+    private void showSummaryInSumStationBinMode(ArrayList<KDSSummaryItem> arSummaryItems)
+    {
+        this.clear();
+        int ncount = 0;
+        KDSViewSumStnSumGroup group = new KDSViewSumStnSumGroup();
+        for (int i = 0; i< arSummaryItems.size(); i++)
+        {
+            KDSSummaryItem sumData = arSummaryItems.get(i);
+            if (mFilterEnabled)
+            {//check filter
+                SumStationFilterEntry entry = filterCheck(sumData);
+                if (entry == null)
+                    continue;
+                if (!entry.getDisplayText().isEmpty())
+                    sumData.setDescription(entry.getDisplayText());
+            }
+            group.items().add(sumData);
+
+            showBinSumGroup(group);
+
+            group = new KDSViewSumStnSumGroup();
+
+        }
+        if (group.items().size() >0)
+        {
+            showBinSumGroup(group);
+        }
+        refresh();
+    }
+
     public void updateSettings(KDSSettings settings)
     {
         mCaptionFont = settings.getKDSViewFontFace(KDSSettings.ID.SumStn_caption_font);
         mItemFont = settings.getKDSViewFontFace(KDSSettings.ID.SumStn_font);
         mMaxPanels = settings.getInt(KDSSettings.ID.SumStn_panels_count);
         mMaxItemsEachPanel = settings.getInt(KDSSettings.ID.SumStn_items_count);
+
+
+
         int n = settings.getInt(KDSSettings.ID.SumStn_sum_method);
         mSumType = KDSSettings.SumType.values()[n];
+
+        n = settings.getInt(KDSSettings.ID.SumStn_mode);
+        m_nDisplayMode = KDSSettings.SumStationMode.values()[n];
+
         mFilterEnabled = settings.getBoolean(KDSSettings.ID.SumStn_filter_enabled);
         mAlertEnabled = settings.getBoolean(KDSSettings.ID.SumStn_alert_enabled);
         String s = settings.getString(KDSSettings.ID.SumStn_filters);
@@ -354,6 +456,25 @@ public class KDSViewSumStation //extends KDSView
 
     private void refreshSumStation(KDSDBCurrent db)
     {
+        switch (m_nDisplayMode)
+        {
+
+            case Summary:
+            {
+                refreshSumStationSummaryMode(db);
+            }
+                break;
+            case Bin:
+            {
+                refreshSumStationBinMode(db);
+            }
+                break;
+        }
+
+    }
+
+    private void refreshSumStationSummaryMode(KDSDBCurrent db)
+    {
         ArrayList<KDSSummaryItem> arData = null;
 
         boolean bAscend = (mOrderBy== KDSSettings.SumOrderBy.Ascend);
@@ -388,6 +509,23 @@ public class KDSViewSumStation //extends KDSView
 //            mSummaryData.clear();
 //            mSummaryData.addAll(arData);
 //        }
+    }
+
+    private void refreshSumStationBinMode(KDSDBCurrent db)
+    {
+        ArrayList<KDSSummaryItem> arData = null;
+
+        boolean bAscend = (mOrderBy== KDSSettings.SumOrderBy.Ascend);
+
+        arData = db.summaryItems("", 0, true, false, bAscend );
+        ArrayList<KDSSummaryItem> arCondimentsData = db.summaryOnlyCondiments(0, bAscend, true);
+        arData.addAll(arCondimentsData);
+
+        Message m = new Message();
+        m.obj = arData;
+        m.what = 1;
+        mRefreshHandler.sendMessage(m);
+
     }
 
     public void refreshSummaryInSumStation(KDSDBCurrent db)

@@ -645,6 +645,8 @@ public class KDSSettings extends SettingsBase {
        //
        Printer_print_unprintable,
 
+       SumStn_mode, //summary station display mode. Summary or Bin.
+
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -897,6 +899,11 @@ public class KDSSettings extends SettingsBase {
        Center, //zoom to center
     }
 
+    public enum SumStationMode //Summary station display mode.
+    {
+      Summary,
+      Bin,
+    }
 //    public enum SmartMode
 //    {
 //        Disabled,
@@ -1517,6 +1524,7 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Background_image_scale_type, "string_bg_scale_type", "0");
 
         init_option(ID.Printer_print_unprintable, "bool_printer_print_unprintable", false);
+        init_option(ID.SumStn_mode, "string_sumstn_mode", "0");
 
     }
 
