@@ -2166,7 +2166,7 @@ public class KDSDBCurrent extends KDSDBBase {
 
     }
 
-    boolean summaryItemsSortByQty(ArrayList<KDSSummaryItem> sumItems, boolean bDescend) {
+    public boolean summaryItemsSortByQty(ArrayList<KDSSummaryItem> sumItems, boolean bDescend) {
 
         if (bDescend) {
             //   Collections.sort(sumItems, new SortByQtyAscend());
@@ -4222,6 +4222,38 @@ update the schedule item ready qty
         c.close();
         return (n==1);
     }
+
+    /**
+     * find item's last color.
+     * @param itemDescription
+     * @return
+     */
+    public ArrayList<Integer> summaryItemGetColor(String itemDescription)
+    {
+
+        String sql = String.format("select bg,fg from items where description='%s' order by dbtimestamp desc",
+                                    itemDescription);
+
+        ArrayList<Integer> arColors = new ArrayList<>();
+
+        if (getDB() == null) return arColors;
+
+        Cursor c = getDB().rawQuery(sql, null);
+        int bg = 0;
+        int fg = 0;
+        if (c.moveToNext()) {
+            bg = getInt(c,0);
+            fg = getInt(c, 1);
+
+        }
+        c.close();
+
+        arColors.add(bg);
+        arColors.add(fg);
+        return arColors;
+    }
+
+
     /***************************************************************************
      * SQL definitions
      *

@@ -29,10 +29,10 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
     }
     public void onDraw(Canvas g, KDSViewSettings env, Rect screenDataRect,
                        int nOrderPanelIndex,
-                       KDSViewFontFace ffCaption, KDSViewFontFace ffItem,
+                       KDSViewFontFace ffHeader, KDSViewFontFace ffPanel,
                        int nRowHeight) {
         if (m_arRects.size() <= 0) return;
-        drawPanel(g, env, screenDataRect, nOrderPanelIndex, ffCaption, ffItem);
+        drawPanel(g, env, screenDataRect, nOrderPanelIndex, ffHeader, ffPanel);
 
 //        drawCaption(g, env, screenDataRect, nOrderPanelIndex, ffCaption, ffItem);
 //
@@ -41,26 +41,80 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
 //        }
     }
 
-    protected void drawPanel(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex, KDSViewFontFace ffCaption, KDSViewFontFace ffItem) {
-        if (m_arRects.size() <= 0) return;
-        int nbg = ffItem.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+    final int PANEL_TRANSPARENT = 50;
+    public void drawBackground(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow) {
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setColor(color);
+        p.setAlpha(PANEL_TRANSPARENT);
 
-        Rect rtReal =  m_arRects.get(0);//convertToAbsoluteRect(m_arRects.get(0), screenDataRect);
+        RectF rt = new RectF(rc);
+        if (bRoundCorner) {
+            if (bShadow) {
+
+                RectF rtShadow = new RectF(rt);
+                rtShadow.left += KDSViewSumStation.BORDER_INSET_DX;
+                rtShadow.right += KDSViewSumStation.BORDER_INSET_DX;
+                rtShadow.top += KDSViewSumStation.BORDER_INSET_DY;
+                rtShadow.bottom += KDSViewSumStation.BORDER_INSET_DY;
+                p.setColor(SHADOW_COLOR);//Color.LTGRAY);
+                g.drawRoundRect(rtShadow, CanvasDC.ROUND_CORNER_DX, CanvasDC.ROUND_CORNER_DY, p);
+                p.setColor(color);
+                //p.setShader(shader);
+                //p.setMaskFilter(filter);
+
+            }
+            g.drawRoundRect(rt, CanvasDC.ROUND_CORNER_DX, CanvasDC.ROUND_CORNER_DY, p);
+        } else
+            g.drawRect(rt, p);
+
+
+
+    }
+
+    final int BIN_BORDER_INSET = 2;
+    protected void drawPanel(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex,
+                             KDSViewFontFace ffHeader, KDSViewFontFace ffPanel) {
+        if (m_arRects.size() <= 0) return;
+        int nbg = ffPanel.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+
+        Rect rtReal = new Rect( m_arRects.get(0));//convertToAbsoluteRect(m_arRects.get(0), screenDataRect);
         //Rect rtReal = m_arRects.get(0);
-        rtReal.inset(KDSViewSumStation.BORDER_INSET_DX, KDSViewSumStation.BORDER_INSET_DY);
-        drawRoundRect(g, rtReal, nbg, false, false);
+
+        rtReal.inset(BIN_BORDER_INSET, BIN_BORDER_INSET);
+        drawBackground(g, rtReal, nbg, false, false);
 
         float nQty = 0;
         String text = "";
+        int nBG = 0;
+        int nFG = 0;
         if (m_sumGroup.items().size()>0) {
             nQty = m_sumGroup.items().get(0).getQty();
             text = m_sumGroup.items().get(0).getDescription(false);
+            nBG = m_sumGroup.getBG();
+            nFG = m_sumGroup.getFG();
+
         }
 
-        drawCount(g, getCountRect(rtReal),(int)nQty, ffItem );
-        drawItemText(g, ffItem, getTextRect(rtReal), text);
+        KDSViewFontFace ff = ffPanel;
 
+        int nOldBG = ff.getBG();
+        int nOldFG = ff.getFG();
 
+        if (nBG !=0 && nFG !=0)
+        {
+            if (nBG != nFG)
+            {
+                ff.setBG(nBG);
+                ff.setFG(nFG);
+            }
+        }
+
+        int nRadius = drawCount(g, getCountRect(rtReal),(int)nQty, ff );
+        drawItemText(g, ff, getTextRect(rtReal, nRadius), text);
+
+        ff.setBG(nOldBG);
+        ff.setFG(nOldFG);
     }
 
     private Rect getCountRect(Rect rtReal)
@@ -77,18 +131,24 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
 
     }
 
-    private Rect getTextRect(Rect rtReal)
+    final int TEXT_MARGIN = 5;
+
+    private Rect getTextRect(Rect rtReal, int nRadius)
     {
         Rect rc = new Rect();
-        rc.left = rtReal.left;
-        rc.right = rtReal.right;
-        rc.top = rtReal.top + rtReal.height()/20;
-        rc.bottom = rc.top + 50;
+        rc.left = rtReal.left  + TEXT_MARGIN;
+        rc.right = rtReal.right - TEXT_MARGIN;
+
+        int nMaxHeight = (rtReal.height() - nRadius)/2;
+        nMaxHeight -= (TEXT_MARGIN  *2);
+        rc.top = rtReal.top + TEXT_MARGIN;//rtReal.height()/20;
+        rc.bottom = rc.top + nMaxHeight;
         return rc;
     }
     private void drawItemText(Canvas canvas,KDSViewFontFace ff,  Rect rect, String text)
     {
-        CanvasDC.drawText(canvas, ff,rect, text, Paint.Align.CENTER );
+        //CanvasDC.drawText(canvas, ff,rect, text, Paint.Align.CENTER );
+        CanvasDC.drawWrapStringTopAlign(canvas, ff, rect, text, Paint.Align.CENTER, false);
     }
 
     final int BORDER_SIZE = 2;
@@ -105,7 +165,7 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
         int nMinSize = (rect.width()>rect.height()?rect.height():rect.width());
         int x = rect.left +  rect.width()/2;
         int y = rect.top + rect.height()/2;
-        int radius = nMinSize / 2 ;
+        int radius = nMinSize * 2/3 ;
 
         canvas.save();
 
@@ -136,7 +196,7 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
         drawCountTextInRound(canvas, rtPercent, KDSUtil.convertIntToString(nCount),ff );
 
         canvas.restore();
-        return (int)(radius - nInset);
+        return (int)(radius);
 
 
     }

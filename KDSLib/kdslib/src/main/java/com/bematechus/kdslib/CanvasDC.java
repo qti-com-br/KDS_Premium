@@ -780,4 +780,57 @@ public class CanvasDC {
         return getTextPixelsWidth(paint, text);
     }
 
+    static public  Point drawWrapStringTopAlign(Canvas g,KDSViewFontFace ft, Rect rt,String string, Paint.Align align, boolean bBold )
+    {
+        g.save();
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(ft.getFontSize());
+        textPaint.setTypeface(ft.getTypeFace());
+        textPaint.setColor( ft.getFG());
+        textPaint.setAntiAlias(true);
+        textPaint.setFakeBoldText(bBold);
+
+        Point ptReturn = new Point();
+
+        g.clipRect(rt);
+        Layout.Alignment al =  Layout.Alignment.ALIGN_CENTER;
+        if (align == Paint.Align.RIGHT)
+            al = Layout.Alignment.ALIGN_OPPOSITE;
+        else if (align == Paint.Align.LEFT)
+            al = Layout.Alignment.ALIGN_NORMAL;
+        //StaticLayout sl = new StaticLayout(data,textPaint,getWidth(), Layout.Alignment.ALIGN_NORMAL,1.0f,0.0f,true);
+        StaticLayout sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+        //kp-101 Text cut off (Item).
+
+        if (sl.getHeight() > rt.height())
+        {
+            int nsize = (int) textPaint.getTextSize() + 2;
+            for (int i=0; i< nsize; i++)
+            {
+                textPaint.setTextSize( textPaint.getTextSize()-1);
+
+                sl = new StaticLayout(string,textPaint,rt.width(), al,1.0f,0.0f,true);
+                if (sl.getHeight() <= rt.height())
+                    break;
+            }
+        }
+//        int n = sl.getLineCount();
+//        for (int i=0; i< n; i++)
+//        {
+//            int nstart = sl.getLineStart(i);
+//            int nend = sl.getLineEnd(i);
+////            Log.d("a", "b");
+//        }
+
+        int x = rt.left;
+        int y = rt.top;// + (rt.height() - sl.getHeight())/2;
+        g.translate(x,y);
+        sl.draw(g);
+        g.restore();
+
+        ptReturn.x = (int)textPaint.getTextSize();
+        ptReturn.y = y;
+        return ptReturn;
+
+    }
 }
