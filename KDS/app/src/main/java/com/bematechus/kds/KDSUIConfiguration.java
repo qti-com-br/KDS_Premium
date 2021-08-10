@@ -2479,6 +2479,7 @@ public class KDSUIConfiguration extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("sumstn_order_by"));
             bindPreferenceSummaryToValue(findPreference("sumstn_caption_prefix"));
             bindPreferenceSummaryToValue(findPreference("sumstn_mode"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_panel_transparency"));
 
             enableSummaryMode();
 
@@ -2510,12 +2511,22 @@ public class KDSUIConfiguration extends PreferenceActivity {
                     "sumstn_right_qty",
                     "sumstn_panel_items",
                     "sumstn_enable_alert",
-                    "sumstn_alert_settings"
+                    "sumstn_alert_settings",
+                    "sumstn_caption_font"
+            };
+
+            String arBinMode[] = new String[]{
+                    "sumstn_panel_transparency"
             };
 
             for (int i = 0; i < arSummaryMode.length; i++) {
                 findPreference(arSummaryMode[i]).setEnabled(bEnabled);
             }
+
+            for (int i = 0; i < arBinMode.length; i++) {
+                findPreference(arBinMode[i]).setEnabled(!bEnabled);
+            }
+
         }
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 

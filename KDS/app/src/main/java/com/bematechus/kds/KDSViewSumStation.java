@@ -367,20 +367,13 @@ public class KDSViewSumStation //extends KDSView
         this.clear();
         mDB.summaryItemsSortByQty(arSummaryItems, true);
 
-        int ncount = 0;
         KDSViewSumStnSumGroup group = new KDSViewSumStnSumGroup();
-        ArrayList<Integer> arColors = new ArrayList<>();
+
         for (int i = 0; i< arSummaryItems.size(); i++)
         {
             KDSSummaryItem sumData = arSummaryItems.get(i);
             String description = sumData.getDescription();
-            arColors.clear();;
-            arColors =  mDB.summaryItemGetColor(description);
-            if (arColors.size()>0)
-            {
-                group.setBG(arColors.get(0));
-                group.setFG(arColors.get(1));
-            }
+            setColors(description, group);
             group.items().add(sumData);
 
             showBinSumGroup(group);
@@ -395,6 +388,18 @@ public class KDSViewSumStation //extends KDSView
         refresh();
     }
 
+    private void setColors(String description, KDSViewSumStnSumGroup group)
+    {
+
+        ArrayList<Integer> arColors =  mDB.summaryGetColor(description, false);
+        if (arColors.size()<=0)
+            arColors =  mDB.summaryGetColor(description, true);
+        if (arColors.size()>0)
+        {
+            group.setBG(arColors.get(0));
+            group.setFG(arColors.get(1));
+        }
+    }
     private KDSSummaryItem findSumItem(ArrayList<KDSSummaryItem> arSummaryItems, String itemDescription)
     {
 
@@ -410,9 +415,9 @@ public class KDSViewSumStation //extends KDSView
     private void showSummaryInSumStationBinModeFilterEnabled(ArrayList<KDSSummaryItem> arSummaryItems)
     {
         this.clear();
-        int ncount = 0;
+        //int ncount = 0;
         KDSViewSumStnSumGroup group = new KDSViewSumStnSumGroup();
-        ArrayList<Integer> arColors = new ArrayList<>();
+        //ArrayList<Integer> arColors = new ArrayList<>();
 
         for (int i = 0; i< mFilters.size(); i++)
         {
@@ -427,13 +432,7 @@ public class KDSViewSumStation //extends KDSView
             }
 
             String description = sumData.getDescription();
-            arColors.clear();;
-            arColors =  mDB.summaryItemGetColor(description);
-            if (arColors.size()>0)
-            {
-                group.setBG(arColors.get(0));
-                group.setFG(arColors.get(1));
-            }
+            setColors(description, group);
 
             if (!entry.getDisplayText().isEmpty())
                 sumData.setDescription(entry.getDisplayText());

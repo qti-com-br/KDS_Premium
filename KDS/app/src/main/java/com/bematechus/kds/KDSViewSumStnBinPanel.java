@@ -41,12 +41,21 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
 //        }
     }
 
-    final int PANEL_TRANSPARENT = 50;
-    public void drawBackground(Canvas g, Rect rc, int color, boolean bRoundCorner, boolean bShadow) {
+    //final int PANEL_TRANSPARENT = 25;
+    public void drawBackground(Canvas g, KDSViewSettings env, Rect rc, int color, boolean bRoundCorner, boolean bShadow) {
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setColor(color);
-        p.setAlpha(PANEL_TRANSPARENT);
+
+        int nPercent = env.getSettings().getInt(KDSSettings.ID.Bin_panel_transparency);
+        if (nPercent>100)
+            nPercent = 100;
+        if (nPercent <0)
+            nPercent = 0;
+
+        int n = 255*(100-nPercent)/100;
+
+        p.setAlpha(n);//PANEL_TRANSPARENT);
 
         RectF rt = new RectF(rc);
         if (bRoundCorner) {
@@ -76,13 +85,13 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
     protected void drawPanel(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex,
                              KDSViewFontFace ffHeader, KDSViewFontFace ffPanel) {
         if (m_arRects.size() <= 0) return;
-        int nbg = ffPanel.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+        //int nbg = ffPanel.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
 
         Rect rtReal = new Rect( m_arRects.get(0));//convertToAbsoluteRect(m_arRects.get(0), screenDataRect);
         //Rect rtReal = m_arRects.get(0);
 
         rtReal.inset(BIN_BORDER_INSET, BIN_BORDER_INSET);
-        drawBackground(g, rtReal, nbg, false, false);
+//        drawBackground(g, rtReal, nbg, false, false);
 
         float nQty = 0;
         String text = "";
@@ -109,7 +118,8 @@ public class KDSViewSumStnBinPanel extends KDSViewSumStnPanel{
                 ff.setFG(nFG);
             }
         }
-
+        int nbg = ffPanel.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
+        drawBackground(g, env, rtReal, nbg, false, false);
         int nRadius = drawCount(g, getCountRect(rtReal),(int)nQty, ff );
         drawItemText(g, ff, getTextRect(rtReal, nRadius), text);
 

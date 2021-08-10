@@ -1361,5 +1361,6 @@
         <item>Bin management</item>
     </string-array>
     <string name="display_mode">Display mode</string>
+    <string name="panel_bg_transparency">Panel background transparency(0--100)</string>
 
 </resources>

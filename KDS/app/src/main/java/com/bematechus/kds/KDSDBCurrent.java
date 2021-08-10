@@ -4225,14 +4225,15 @@ update the schedule item ready qty
 
     /**
      * find item's last color.
-     * @param itemDescription
+     * @param description
      * @return
      */
-    public ArrayList<Integer> summaryItemGetColor(String itemDescription)
+    public ArrayList<Integer> summaryGetColor(String description, boolean bCondiment)
     {
-
-        String sql = String.format("select bg,fg from items where description='%s' order by dbtimestamp desc",
-                                    itemDescription);
+        description = KDSUtil.fixSqliteSingleQuotationIssue(description);
+        String sql = String.format("select bg,fg from %s where description='%s' order by dbtimestamp desc",
+                                    bCondiment?"condiments":"items",
+                                    description);
 
         ArrayList<Integer> arColors = new ArrayList<>();
 
@@ -4245,6 +4246,11 @@ update the schedule item ready qty
             bg = getInt(c,0);
             fg = getInt(c, 1);
 
+        }
+        else
+        {
+            c.close();
+            return arColors;
         }
         c.close();
 

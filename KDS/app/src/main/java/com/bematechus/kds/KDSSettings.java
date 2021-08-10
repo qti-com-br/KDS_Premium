@@ -646,7 +646,7 @@ public class KDSSettings extends SettingsBase {
        Printer_print_unprintable,
 
        SumStn_mode, //summary station display mode. Summary or Bin.
-
+       Bin_panel_transparency,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1525,6 +1525,7 @@ public class KDSSettings extends SettingsBase {
 
         init_option(ID.Printer_print_unprintable, "bool_printer_print_unprintable", false);
         init_option(ID.SumStn_mode, "string_sumstn_mode", "0");
+        init_option(ID.Bin_panel_transparency, "string_sumstn_panel_transparency", "80");
 
     }
 

@@ -18,11 +18,11 @@
         android:key="sumstn_screen_bg"
         android:defaultValue="?attr/view_bg"
         android:title="@string/pref_kds_panels_viewer_bg" />
-    <com.bematechus.kdslib.KDSPreferenceFontPicker
-        android:key="sumstn_caption_font"
-        android:defaultValue="default_font,?attr/settings_light_bg,?attr/caption_fg,normal_size"
-        android:title="@string/pref_order_caption_normal_font"
-        app:supportsColor="true"/>
+<!--    <com.bematechus.kdslib.KDSPreferenceFontPicker-->
+<!--        android:key="sumstn_caption_font"-->
+<!--        android:defaultValue="default_font,?attr/settings_light_bg,?attr/caption_fg,normal_size"-->
+<!--        android:title="@string/pref_order_caption_normal_font"-->
+<!--        app:supportsColor="true"/>-->
     <com.bematechus.kdslib.KDSPreferenceFontPicker
         android:key="sumstn_item_font"
         android:defaultValue="default_font,?attr/item_bg,?attr/item_fg,normal_size"
@@ -32,7 +32,7 @@
     <com.bematechus.kdslib.KDSListPreference
         android:key="sumstn_panels"
         android:title="@string/panels_count"
-        android:defaultValue="1"
+        android:defaultValue="4"
         android:entries="@array/pref_kds_sum_station_panels"
         android:entryValues="@array/pref_kds_sum_station_panels"
         android:negativeButtonText="@null"
@@ -58,6 +58,17 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <com.bematechus.kdslib.KDSEditTextPreference
+        android:key="sumstn_panel_transparency"
+        android:title="@string/panel_bg_transparency"
+        android:defaultValue="80"
+        android:selectAllOnFocus="true"
+        android:inputType= "number"
+        android:singleLine="true"
+        android:positiveButtonText="@string/ok"
+        android:negativeButtonText="@string/cancel"
+        android:maxLines="1" />
+
     <com.bematechus.kdslib.KDSListPreference
         android:key="sumstn_sum_type"
         android:title="@string/summary_method"
@@ -66,6 +77,14 @@
         android:entryValues="@array/pref_kds_sum_type_values"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
+
+
+
+    <com.bematechus.kdslib.KDSPreferenceFontPicker
+        android:key="sumstn_caption_font"
+        android:defaultValue="default_font,?attr/settings_light_bg,?attr/caption_fg,normal_size"
+        android:title="@string/pref_order_caption_normal_font"
+        app:supportsColor="true"/>
 
     <com.bematechus.kdslib.KDSListPreference
         android:key="sumstn_order_by"
