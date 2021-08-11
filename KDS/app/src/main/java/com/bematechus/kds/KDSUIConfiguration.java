@@ -2463,24 +2463,76 @@ public class KDSUIConfiguration extends PreferenceActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class PreferenceFragmentSumStation extends KDSPreferenceFragment {
+    public static class PreferenceFragmentSumStation extends KDSPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             suspendOnSharedPreferencesChangedEvent(true);
             addPreferencesFromResource(R.xml.pref_sum_station);
             suspendOnSharedPreferencesChangedEvent(false);
-
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+            pref.registerOnSharedPreferenceChangeListener(this);
             bindPreferenceSummaryToValue(findPreference("sumstn_sum_type"));
 
             bindPreferenceSummaryToValue(findPreference("sumstn_panels"));
             bindPreferenceSummaryToValue(findPreference("sumstn_panel_items"));
             bindPreferenceSummaryToValue(findPreference("sumstn_order_by"));
             bindPreferenceSummaryToValue(findPreference("sumstn_caption_prefix"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_mode"));
+            bindPreferenceSummaryToValue(findPreference("sumstn_panel_transparency"));
+
+            enableSummaryMode();
+
+        }
+
+        private KDSSettings.SumStationMode getDisplayMode()
+        {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+
+            String key = ("sumstn_mode");
+            String strMode = pref.getString(key, "0");
+
+            int n = KDSUtil.convertStringToInt(strMode, 0);
+            return KDSSettings.SumStationMode.values()[n];
 
 
 
 
+        }
+
+        private void enableSummaryMode()
+        {
+            KDSSettings.SumStationMode nMode = getDisplayMode();
+            boolean bEnabled =  (nMode == KDSSettings.SumStationMode.Summary);
+
+            String arSummaryMode[] = new String[]{
+                    "sumstn_sum_type",
+                    "sumstn_order_by",
+                    "sumstn_right_qty",
+                    "sumstn_panel_items",
+                    "sumstn_enable_alert",
+                    "sumstn_alert_settings",
+                    "sumstn_caption_font"
+            };
+
+            String arBinMode[] = new String[]{
+                    "sumstn_panel_transparency"
+            };
+
+            for (int i = 0; i < arSummaryMode.length; i++) {
+                findPreference(arSummaryMode[i]).setEnabled(bEnabled);
+            }
+
+            for (int i = 0; i < arBinMode.length; i++) {
+                findPreference(arBinMode[i]).setEnabled(!bEnabled);
+            }
+
+        }
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+
+            if (key.equals("sumstn_mode")) {
+                enableSummaryMode();
+            }
         }
     }
 

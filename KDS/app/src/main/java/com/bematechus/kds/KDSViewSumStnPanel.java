@@ -133,7 +133,7 @@ public class KDSViewSumStnPanel extends KDSViewPanelBase {
 
     }
 
-    private void drawPanel(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex, KDSViewFontFace ffCaption, KDSViewFontFace ffItem) {
+    protected void drawPanel(Canvas g, KDSViewSettings env, Rect screenDataRect, int nOrderPanelIndex, KDSViewFontFace ffCaption, KDSViewFontFace ffItem) {
         if (m_arRects.size() <= 0) return;
         int nbg = ffItem.getBG();// env.getSettings().getInt(KDSSettings.ID.Panels_BG);
 

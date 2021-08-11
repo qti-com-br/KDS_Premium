@@ -735,6 +735,8 @@ Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\
         <item>6</item>
         <item>7</item>
         <item>8</item>
+        <item>9</item>
+        <item>10</item>
 
     </string-array>
 
@@ -771,4 +773,10 @@ Station #: &lt;stationnumber&gt;&lt;r&gt;Table #: &lt;tablenumber&gt;&lt;cr&gt;\
         <item>2</item>
         <item>3</item>
     </string-array>
+
+    <string-array name="pref_kds_sumstation_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
 </resources>
