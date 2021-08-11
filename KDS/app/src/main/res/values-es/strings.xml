@@ -1001,5 +1001,7 @@
 	</string-array>
 	<string name="display_mode">Display mode</string>
 	<string name="panel_bg_transparency">Panel background transparency(0--100)</string>
+    <string name="set_color">Set Color</string>
+	<string name="default_color">Default Color</string>
 
 </resources>

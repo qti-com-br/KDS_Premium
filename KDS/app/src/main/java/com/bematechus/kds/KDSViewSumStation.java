@@ -433,6 +433,10 @@ public class KDSViewSumStation //extends KDSView
 
             String description = sumData.getDescription();
             setColors(description, group);
+            if (entry.isColorValid()) {
+                group.setBG(entry.getBG());
+                group.setFG(entry.getFG());
+            }
 
             if (!entry.getDisplayText().isEmpty())
                 sumData.setDescription(entry.getDisplayText());

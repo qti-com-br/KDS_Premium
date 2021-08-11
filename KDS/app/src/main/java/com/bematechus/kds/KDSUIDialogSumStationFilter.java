@@ -1,16 +1,21 @@
 package com.bematechus.kds;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSSMBPath;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -43,8 +48,9 @@ public class KDSUIDialogSumStationFilter extends KDSUIDialogBase implements  KDS
 
         m_lstData = (ListView)view.findViewById(R.id.lstData);
 
-        ArrayAdapter<SumStationFilterEntry> adapter = new ArrayAdapter<>(KDSApplication.getContext(),R.layout.array_sum_edit_adapter, m_arData);
+        //ArrayAdapter<SumStationFilterEntry> adapter = new ArrayAdapter<>(KDSApplication.getContext(),R.layout.array_sum_edit_adapter, m_arData);
 
+        MyAdapter adapter = new MyAdapter(KDSApplication.getContext(),R.layout.array_sum_edit_adapter, m_arData);
         m_lstData.setAdapter(adapter);
         m_lstData.setEnabled(true);
 
@@ -83,6 +89,13 @@ public class KDSUIDialogSumStationFilter extends KDSUIDialogBase implements  KDS
             }
         });
 
+        btn = (Button)view.findViewById(R.id.btnEdit);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onEdit();
+            }
+        });
         //load();
         //buildList();
         adapter.notifyDataSetChanged();
@@ -158,10 +171,15 @@ public class KDSUIDialogSumStationFilter extends KDSUIDialogBase implements  KDS
 
         KDSUIDlgInputSumStationFilterEntry dlg = (KDSUIDlgInputSumStationFilterEntry)dialog;
         SumStationFilterEntry s = (SumStationFilterEntry) dlg.getResult();
-        if (findItem(m_arData, s)) return;
-        //if (dlg.getEntryType() == SumStationEntry.EntryType.Condiment)
-        //    s.getDescription() += KDSSummaryItem.CONDIMENT_TAG;
-        m_arData.add(s);
+        if (findItem(m_arData, s)) {
+            //return;
+            SumStationFilterEntry entry = dlg.getOriginalEntry();
+            entry.setBG(s.getBG());
+            entry.setFG(s.getFG());
+            entry.setDisplayText(s.getDisplayText());
+        }
+        else
+            m_arData.add(s);
         ((ArrayAdapter)m_lstData.getAdapter()).notifyDataSetChanged();
         //save();
     }
@@ -318,6 +336,50 @@ public class KDSUIDialogSumStationFilter extends KDSUIDialogBase implements  KDS
 
 
     }
+
+    public void onEdit()
+    {
+
+        int nindex = m_lstData.getCheckedItemPosition();
+
+        if (nindex <0) return;
+        if (nindex>m_arData.size()-1) return;
+
+        SumStationFilterEntry entry =  m_arData.get(nindex);
+        KDSUIDlgInputSumStationFilterEntry dlg = new KDSUIDlgInputSumStationFilterEntry(this.getView().getContext(), this, entry);
+        dlg.show();
+
+
+
+    }
+
+    private class MyAdapter extends ArrayAdapter {
+        public MyAdapter(Context context, int resource, List<SumStationFilterEntry> objects) {
+            super(context, resource, 0, objects);
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View v = super.getView(position, convertView, parent);
+            TextView text = (TextView) v;
+            SumStationFilterEntry s = (SumStationFilterEntry) this.getItem(position);
+            text.setText(s.toString());
+            if (s.getBG() != s.getFG()) {
+                text.setBackgroundColor(s.getBG());
+                text.setTextColor(s.getFG());
+            }
+            else
+            {
+                text.setBackgroundColor(Color.TRANSPARENT);
+                text.setTextColor(Color.BLACK);
+            }
+
+
+            return v;
+        }
+
+    }
+
 
 }
 
