@@ -3,6 +3,10 @@ package com.bematechus.kds;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,7 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bematechus.kdslib.KDSApplication;
+import com.bematechus.kdslib.KDSBGFG;
 import com.bematechus.kdslib.KDSConst;
+import com.bematechus.kdslib.KDSUIBGFGPickerDialog;
+import com.bematechus.kdslib.KDSUIColorPickerDialog;
 import com.bematechus.kdslib.KDSUIDialogBase;
 import com.bematechus.kdslib.KDSUtil;
 
@@ -26,12 +33,16 @@ import java.util.Comparator;
 /**
  * Created by Administrator on 2017/9/21.
  */
-public class KDSUIDlgInputSumStationFilterEntry  extends KDSUIDialogBase  implements  KDSUIDialogBase.KDSDialogBaseListener{
+public class KDSUIDlgInputSumStationFilterEntry  extends KDSUIDialogBase
+        implements  KDSUIDialogBase.KDSDialogBaseListener,
+        KDSUIBGFGPickerDialog.OnBGFGPickerDlgListener{
 
     TextView m_txtText = null;
     SumStationFilterEntry mEntryOriginal = null;
     SumStationFilterEntry mEntryEdit = null;
 
+    int mOldBG = 0;
+    int mOldFG = 0;
 
     //String m_strDescription = "";
 
@@ -54,7 +65,8 @@ public class KDSUIDlgInputSumStationFilterEntry  extends KDSUIDialogBase  implem
     }
     public void onOkClicked()
     {
-        mEntryEdit = new SumStationFilterEntry();
+        if (mEntryEdit == null)
+            mEntryEdit = new SumStationFilterEntry();
         mEntryEdit.setDescription(m_txtText.getText().toString());
         String s = ((TextView)this.getView().findViewById(R.id.txtDisplay)).getText().toString();
         mEntryEdit.setDisplayText(s);
@@ -84,7 +96,8 @@ public class KDSUIDlgInputSumStationFilterEntry  extends KDSUIDialogBase  implem
         this.int_dialog(context, listener, R.layout.kdsui_dlg_input_sumstn_entry, "");
         //m_mode = mode;
         mEntryOriginal = entry;
-
+        if (entry != null)
+            mEntryEdit = entry.clone();
         this.setTitle(context.getString(R.string.input_item_description));
         //if (m_mode == SumStationEntry.EntryType.Condiment)
         //    this.setTitle(context.getString(R.string.input_condiment_description));
@@ -110,6 +123,28 @@ public class KDSUIDlgInputSumStationFilterEntry  extends KDSUIDialogBase  implem
                 onFindClicked();
             }
         });
+
+        btn =  (Button) this.getView().findViewById(R.id.btnColors);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onColorsClicked();
+            }
+        });
+
+        btn =  (Button) this.getView().findViewById(R.id.btnDefaultColor);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDefaultColorsClicked();
+            }
+        });
+
+        TextView t = ((TextView)this.getView().findViewById(R.id.txtInfo));
+        mOldBG = getViewBG(t);
+        mOldFG = getTextColor(t);
+
+        showEntry();
 
     }
 
@@ -153,5 +188,98 @@ public class KDSUIDlgInputSumStationFilterEntry  extends KDSUIDialogBase  implem
 
     }
 
+    public void onColorsClicked()
+    {
+
+        KDSBGFG bf = new KDSBGFG();
+        SumStationFilterEntry entry = mEntryOriginal;
+        if (mEntryEdit != null)
+            entry = mEntryEdit;
+        if (entry!=null && entry.isColorValid()) {
+            bf.setBG(entry.getBG());
+            bf.setFG(entry.getFG());
+        }
+        else
+        {
+            bf.setBG(Color.WHITE);
+            bf.setFG(Color.BLACK);
+        }
+
+        KDSUIBGFGPickerDialog dlg = new KDSUIBGFGPickerDialog(this.getView().getContext(), bf, this );
+        dlg.show();
+    }
+
+    public void onCancel(KDSUIBGFGPickerDialog dialog)
+    {
+
+    }
+
+    public void onOk(KDSUIBGFGPickerDialog dialog, KDSBGFG ff)
+    {
+        if (mEntryEdit == null)
+            mEntryEdit = new SumStationFilterEntry();
+        mEntryEdit.setBG(ff.getBG());
+        mEntryEdit.setFG(ff.getFG());
+        showEntry();
+    }
+
+    private void showEntry()
+    {
+        SumStationFilterEntry entry = mEntryOriginal;
+        if (mEntryEdit != null)
+            entry = mEntryEdit;
+        if (entry == null) return;
+        int bg = entry.getBG();
+        int fg = entry.getFG();
+        if (!entry.isColorValid())
+        {
+
+            bg = Color.TRANSPARENT;// mOldBG;
+            fg = mOldFG;
+
+        }
+
+        TextView t = ((TextView)this.getView().findViewById(R.id.txtText));
+        t.setBackgroundColor(bg);
+        t.setTextColor(fg);
+        t.setText(entry.getDescription());
+
+        t = ((TextView)this.getView().findViewById(R.id.txtDisplay));
+        t.setBackgroundColor(bg);
+        t.setTextColor(fg);
+        t.setText(entry.getDisplayText());
+
+        if (entry.getEntryType() == SumStationEntry.EntryType.Item) {
+            ((RadioButton) this.getView().findViewById(R.id.rbItem)).setChecked(true);
+            ((RadioButton) this.getView().findViewById(R.id.rbCondiment)).setChecked(false);
+        }
+        else
+        {
+            ((RadioButton) this.getView().findViewById(R.id.rbItem)).setChecked(false);
+            ((RadioButton) this.getView().findViewById(R.id.rbCondiment)).setChecked(true);
+        }
+
+    }
+
+    public void onDefaultColorsClicked()
+    {
+        if (mEntryEdit != null) {
+            mEntryEdit.setBG(0);
+            mEntryEdit.setFG(0);
+            showEntry();
+        }
+    }
+
+    private int getViewBG(TextView v)
+    {
+
+        //int bg =((ColorDrawable)v.getBackground()).getColor();
+        //return bg;
+        return 0;
+    }
+    private int getTextColor(TextView v)
+    {
+        return v.getCurrentTextColor();
+    }
 
 }
