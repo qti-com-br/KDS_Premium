@@ -28,7 +28,7 @@ public class KDSLog {
 
     //only log NCR-Colibri information.
     //It is for debug NCR issue!!!
-    public static boolean ONLY_ORDER_LOG = false;
+    public static boolean ORDER_EVENT_LOG = false;
     /**
      * VERBOSE 类型调试信息，verbose啰嗦的意思
      DEBUG 类型调试信息, debug调试信息
@@ -90,8 +90,6 @@ public class KDSLog {
     }
     static private boolean logIt(int nOsLogType)
     {
-        if (ONLY_ORDER_LOG)
-            return false;
         switch (m_logLevel)
         {
             case None:
@@ -373,7 +371,7 @@ public class KDSLog {
     }
     static final long MAX_LOG_SIZE = 50*1024*1024; //50M.
     //static final long MAX_LOG_SIZE = 5*1024; //5K.
-    private static File createSelfLogFile()
+    private static File createSelfLogFile(String filePathName)
     {
         do
         {
@@ -411,7 +409,8 @@ public class KDSLog {
             //String strDateTimeFileName =getDateForFileName(new Date()) ;//new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             //strDateTimeFileName = getAppName() + "_" +strDateTimeFileName;
             //File fileLogFilePath = new File(m_strLogFolderPath, strDateTimeFileName+ ".log");
-            File fileLogFilePath = new File(getLogFileName(new Date()));//m_strLogFolderPath, strDateTimeFileName+ ".log");
+            //File fileLogFilePath = new File(getLogFileName(new Date()));//m_strLogFolderPath, strDateTimeFileName+ ".log");
+            File fileLogFilePath = new File(filePathName);//m_strLogFolderPath, strDateTimeFileName+ ".log");
             // 如果日志文件不存在，则创建它
             if (true != fileLogFilePath.exists()) {
                 try {
@@ -467,7 +466,7 @@ public class KDSLog {
     private static void  log2File(int nOsLogType, String tag, String strMsg )
     {
 
-        File fileLogFilePath = createSelfLogFile();
+        File fileLogFilePath = createSelfLogFile(getLogFileName(new Date()));
         log2File(fileLogFilePath,nOsLogType, tag, strMsg);
 
 //        FileWriter objFilerWriter = null;
@@ -702,17 +701,33 @@ public class KDSLog {
     }
 
     public static int order(String tag, String msg) {
-        if (!ONLY_ORDER_LOG)
+        if (!ORDER_EVENT_LOG)
             return 0;
-        log2File(Log.DEBUG,tag, msg);
+        log2OrderFile(Log.DEBUG,tag, msg);
         return Log.d(tag, msg);
 
     }
     public static int order(String tag, String msg, Throwable tr) {
-        if (!ONLY_ORDER_LOG)
+        if (!ORDER_EVENT_LOG)
             return 0;
-        log2File(Log.DEBUG,tag, msg+"\n" + tr.toString());
+        log2OrderFile(Log.DEBUG,tag, msg+"\n" + tr.toString());
         return Log.d(tag, msg, tr);
+
+    }
+
+    private static String getOrderEventLogFileName(Date dt)
+    {
+        String strSaveLogPath =getLogDir();
+        String strDateTimeFileName =getDateForFileName(dt);
+        strDateTimeFileName = getAppName() + "_OrdersEvents_" +strDateTimeFileName;
+        return strSaveLogPath + "/" + strDateTimeFileName+".log";
+    }
+
+    private static void  log2OrderFile(int nOsLogType, String tag, String strMsg )
+    {
+
+        File fileLogFilePath = createSelfLogFile(getOrderEventLogFileName(new Date()));
+        log2File(fileLogFilePath,nOsLogType, tag, strMsg);
 
     }
 }

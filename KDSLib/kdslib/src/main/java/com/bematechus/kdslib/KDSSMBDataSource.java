@@ -96,8 +96,8 @@ public class KDSSMBDataSource implements Runnable {
      */
     public void stop()
     {
-        if (!KDSLog.ONLY_ORDER_LOG)
-            KDSLog.e(TAG, KDSLog._FUNCLINE_() +  "enter");
+
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +  "enter");
         if (m_thread != null) {
             KDSLog.e(TAG, KDSLog._FUNCLINE_() +  "suspend thread");
             m_bThreadSuspend = true;
@@ -130,8 +130,8 @@ public class KDSSMBDataSource implements Runnable {
         }
 
         m_uploadRunnable = null;
-        if (!KDSLog.ONLY_ORDER_LOG)
-            KDSLog.e(TAG, KDSLog._FUNCLINE_() +  "exit");
+
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() +  "exit");
 
     }
 

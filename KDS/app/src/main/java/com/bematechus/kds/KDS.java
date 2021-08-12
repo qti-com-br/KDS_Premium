@@ -3130,7 +3130,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 break;
             }
             case KDSDataOrder. TRANSTYPE_ADD: {
-                KDSLog.order(TAG, "Order ID:[" + order.getOrderName() + "] New" );
+                KDSLog.order("", "Order ID:[" + order.getOrderName() + "] New" );
 
                 if (order.getItems().getCount() <= 0) return nItemsCount;
                 //KDSStationFunc.orderAdd(this, order, true, true);
@@ -3232,7 +3232,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             }
             break;
             case KDSDataOrder. TRANSTYPE_DELETE:{
-                KDSLog.order(TAG, "Order ID:[" + order.getOrderName() + "] Void" );
+                KDSLog.order("", "Order ID:[" + order.getOrderName() + "] Void" );
                 //delete order by xml command
                 ArrayList<KDSDataOrder> canceledOrders = m_users.orderCancel(order);
                 this.getCurrentDB().clearExpiredBumpedOrders( getSettings().getBumpReservedCount());
@@ -3245,7 +3245,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 break;
             }
             case KDSDataOrder. TRANSTYPE_MODIFY:{
-                KDSLog.order(TAG, "Order ID:[" + order.getOrderName() + "] Modify" );
+                KDSLog.order("", "Order ID:[" + order.getOrderName() + "] Modify" );
                 //KDSStationFunc.orderInfoModify(this, order);
                 m_users.orderInfoModify(order, false);
                 schedule_process_update_to_be_prepare_qty(true);
@@ -3263,7 +3263,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case KDSDataOrder.TRANSTYPE_UPDATE_ORDER:
             {//use new data to update existed order,
                 //This transtype is new in android.
-                KDSLog.order(TAG, "Order ID:[" + order.getOrderName() + "] Update" );
+                KDSLog.order("", "Order ID:[" + order.getOrderName() + "] Update" );
                 if (order.getItems().getCount()<=0) return nItemsCount;
 
                 //TimeDog t = new TimeDog();
@@ -5191,7 +5191,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         m_activationHTTP.postOrderRequest(order, iosState, fromOperation);
 
-        KDSLog.order(TAG, "Order ID:[" + order.getOrderName() + "] Sent to the Backoffice. State=" + iosState.toString() );
+        KDSLog.order("", "Order ID:[" + order.getOrderName() + "] Sent to the Backoffice. State=" + iosState.toString() );
 
         return true;
 
