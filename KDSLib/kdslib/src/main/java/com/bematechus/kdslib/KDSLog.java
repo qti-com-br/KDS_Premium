@@ -26,6 +26,9 @@ public class KDSLog {
     static final String DEFAULT_LOG_FOLDER = "kdsdata/log";
     static ArrayList<Exception> m_arLoggedException = new ArrayList<>();
 
+    //only log NCR-Colibri information.
+    //It is for debug NCR issue!!!
+    public static boolean ONLY_ORDER_LOG = false;
     /**
      * VERBOSE 类型调试信息，verbose啰嗦的意思
      DEBUG 类型调试信息, debug调试信息
@@ -87,6 +90,8 @@ public class KDSLog {
     }
     static private boolean logIt(int nOsLogType)
     {
+        if (ONLY_ORDER_LOG)
+            return false;
         switch (m_logLevel)
         {
             case None:
@@ -696,4 +701,18 @@ public class KDSLog {
         }
     }
 
+    public static int order(String tag, String msg) {
+        if (!ONLY_ORDER_LOG)
+            return 0;
+        log2File(Log.DEBUG,tag, msg);
+        return Log.d(tag, msg);
+
+    }
+    public static int order(String tag, String msg, Throwable tr) {
+        if (!ONLY_ORDER_LOG)
+            return 0;
+        log2File(Log.DEBUG,tag, msg+"\n" + tr.toString());
+        return Log.d(tag, msg, tr);
+
+    }
 }

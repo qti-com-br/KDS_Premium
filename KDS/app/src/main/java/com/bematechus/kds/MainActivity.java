@@ -474,7 +474,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         KDSLog.setLogLevel(KDSSettings.loadLogLevel(this.getApplicationContext()));
-
+        //for debug NCR issues!!!!
+        KDSLog.ONLY_ORDER_LOG = true;
+        //
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Enter");
         //test. Create an unhandled exception.
 //        KDSDataOrder wrongOrder = null;
@@ -2529,6 +2531,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             //td.debug_print_Duration("bumpOrder");
             if (order == null) return;
         //}
+        KDSLog.order(TAG, "Order ID: [" + order.getOrderName() + "] Bumped" );
         if (isFixedSingleScreenView())
 //        if (getKDS().isQueueStation() || getKDS().isQueueExpo())
 //        {
