@@ -236,26 +236,37 @@ public class KDSViewSumStation //extends KDSView
 
     }
 
-    final int MAX_PANELS = 10;
+    final int DOUBLE_LINES_MIN_PANELS = 6;
 
     private Rect getBinPanelRect(Rect screenDataRect, int nPanelIndex) {
         int w = 0;
         int h = 0;
         int nrow = 0;
-        if (mMaxPanels != MAX_PANELS) {
+        int nrowIndex = nPanelIndex;
+        if (mMaxPanels < DOUBLE_LINES_MIN_PANELS) {
             w = screenDataRect.width() / mMaxPanels;
             h = screenDataRect.height();
         } else {
-            w = screenDataRect.width() / (mMaxPanels / 2);
+            int n = mMaxPanels/2;
+            if (mMaxPanels%2 !=0)
+                n ++;
+            w = screenDataRect.width() / n;//(mMaxPanels / 2);
             h = screenDataRect.height() / 2;
-            nrow = nPanelIndex / (MAX_PANELS / 2);
-            nPanelIndex %= (MAX_PANELS / 2);
+            nrow = nPanelIndex / n;//(MAX_PANELS / 2);
+            //nPanelIndex %= n;//(MAX_PANELS / 2);
+            nrowIndex %= n;//(MAX_PANELS / 2);
         }
 
 
-        int x = screenDataRect.left + nPanelIndex * w;
+        int x = screenDataRect.left + nrowIndex * w;
         int y = screenDataRect.top + nrow * h;
-        Rect rt = new Rect(x, y, x + w, y + h);
+        int hh = h;
+        int ww = w;
+//        if (mMaxPanels%2 !=0) {
+//            if (nPanelIndex == (mMaxPanels-1))
+//            ww += w; //last double width
+//        }
+        Rect rt = new Rect(x, y, x + ww, y + hh);
         return rt;
     }
 
