@@ -2889,7 +2889,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             return order;
         //KKPP1-152
         if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||
-                order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
+                //order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||//If the order is not existed, modify will change to new.
+                                                                            //So, we should check expo settings in below code.
                 order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER)
             return order;
 
