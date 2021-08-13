@@ -2391,8 +2391,10 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         assignSmartTimeToOrder(order, xmlData);
         assignItemsPrintable(order, xmlData);
 
+        boolean bAllAssignedStation = false;
         if (isAllItemsAssignedStation(order))
         {
+            bAllAssignedStation = true;
             //String toStationWithScreen = this.getRouterDB().itemGetToStationWithScreen(category, description,strDefaultStationID);// m_strDefaultToStation);
             //assignSmartTimeToOrder(order, xmlData);
             //checkAssignStationsActive(order, xmlData);
@@ -2430,13 +2432,13 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         }
         else {
             if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||  //KPP1-152
-                    order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY ||
+                    ( (order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY) && (!bAllAssignedStation)) ||
                     order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER) {
                 writeToAllStations(xmlOrder);
             }
             else {
                 ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
-                ar.addAll(getAllAcceptAnyItemsStations());
+                ar.addAll(getAllAcceptAnyItemsStations(ar));
                 ArrayList<String> arToStations = RouterAck.getSendToStations(ar);//it will remove repeated stations.
                 //send order xml data to necessary stations, for 24 stations lost certain prep issue
                 //if (!KDSConst._DEBUG) //heap size issue in this function
@@ -4195,4 +4197,63 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         return msg;
     }
 
+    /**
+     * REturn expo type stations that relate to given stations.
+     * @param arPrepStations
+     * @return
+     */
+    private ArrayList<KDSToStation> getAllAcceptAnyItemsStations(ArrayList<KDSToStation> arPrepStations)
+    {
+        int ncount = m_stationsConnection.getRelations().getRelationsSettings().size();
+
+        ArrayList<KDSToStation> ar = new ArrayList<>();
+
+
+        for (int i=0; i< ncount; i++) {
+            KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
+            if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Queue_Expo ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.TableTracker ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Runner ||
+                    stationRelation.getFunction() == KDSRouterSettings.StationFunc.Summary
+            )
+            {
+                if (stationRelation.getFunction() == SettingsBase.StationFunc.Expeditor)
+                {//workload: prep and workload all with expo, we don't sen order to expo.
+                    //let the prep to handle this order.
+                    if (isExpoInPrepWithWorkload(stationRelation.getID()))
+                        continue;
+                }
+
+                String expoTypeStationID = stationRelation.getID();
+                ArrayList<KDSStationIP> prepStations = m_stationsConnection.getRelations().getPrepStationsWhoUseMeAsExpo(expoTypeStationID);
+                if (prepStationIsInArray(arPrepStations, prepStations)) {
+
+                    KDSToStation toStation = new KDSToStation();
+                    toStation.setPrimaryStation(stationRelation.getID());
+                    ar.add(toStation);
+                }
+            }
+
+        }
+        return ar;
+
+    }
+
+    private boolean prepStationIsInArray(ArrayList<KDSToStation> arPrepStations,
+                                         ArrayList<KDSStationIP> prepStations)
+    {
+        for (int i=0; i< arPrepStations.size(); i++)
+        {
+            KDSToStation toStation = arPrepStations.get(i);
+            for (int j=0; j< prepStations.size(); j++)
+            {
+                KDSStationIP stationIP = prepStations.get(j);
+                if (stationIP.getID().equals(toStation.getPrimaryStation()) ||
+                        stationIP.getID().equals(toStation.getSlaveStation()))
+                    return true;
+            }
+        }
+        return false;
+    }
 }
