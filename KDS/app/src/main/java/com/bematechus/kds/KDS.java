@@ -2598,6 +2598,16 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 onPrepSyncInputMessageWithQueue(this, command, xmlData, fromStationID);
             }
             break;
+            case Station_Order_Parked:
+            {
+                onSyncPrepOrderParked(this, command, xmlData, fromStationID);
+            }
+            break;
+            case Station_Order_Unpark:
+            {
+                onSyncPrepOrderUnparked(this, command, xmlData, fromStationID);
+            }
+            break;
 
 
         }
@@ -6011,4 +6021,103 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
         this.refreshView();
     }
+    Handler m_kdsEventsHandler =  new Handler()
+    {
+        public void handleMessage(Message msg) {
+            if (msg.what ==1) {
+                ArrayList<Object> ar = (ArrayList<Object>) msg.obj;
+                int n = msg.arg1;
+                KDSEventType evt = KDSEventType.values()[n];
+                for (int i = 0; i < m_arKdsEventsReceiver.size(); i++) {
+
+                    m_arKdsEventsReceiver.get(i).onKDSEvent(evt, ar);
+                }
+            }
+        }
+    };
+
+    private boolean isBinStation()
+    {
+        if (this.getStationFunction() == SettingsBase.StationFunc.Summary)
+        {
+            int n = (this.getSettings().getInt(KDSSettings.ID.SumStn_mode));
+            KDSSettings.SumStationMode mode = KDSSettings.SumStationMode.values()[n];
+            if (mode == KDSSettings.SumStationMode.Bin)
+                return true;
+        }
+        return false;
+    }
+    private void onSyncPrepOrderParked(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
+    {
+
+        if (!isBinStation()) return;
+
+        String orderName = command.getParam("P0", "");
+
+        KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        if (order == null) {
+            return;
+        }
+
+
+
+        String orderGuid = order.getGUID();
+        ArrayList<Object> arParams = new ArrayList<>();
+        arParams.add(orderGuid);
+        Message m = new Message();
+        m.what = 1;
+        m.arg1 = KDSEventType.Prep_park_order.ordinal();
+        m.obj = arParams;
+        m_kdsEventsHandler.sendMessage(m);
+
+
+
+    }
+
+    private void onSyncPrepOrderUnparked(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
+    {
+        if (!isBinStation()) return;
+        String orderName = command.getParam("P0", "");
+
+        KDSDataOrder order = this.getUsers().getOrderByName(orderName);
+        if (order == null) {
+            order = this.getUsers().getUserA().getParkedOrders().getOrderByName(orderName);
+            if (order == null)
+            {
+                if (this.isMultpleUsersMode())
+                {
+                    order = this.getUsers().getUserB().getParkedOrders().getOrderByName(orderName);
+                }
+            }
+            if (order == null)
+                return;
+        }
+
+
+        String orderGuid = order.getGUID();
+        ArrayList<Object> arParams = new ArrayList<>();
+        arParams.add(orderGuid);
+        Message m = new Message();
+        m.what = 1;
+        m.arg1 = KDSEventType.Prep_unpark_order.ordinal();
+        m.obj = arParams;
+        m_kdsEventsHandler.sendMessage(m);
+    }
+
+    public void syncPrepOrderParked(String orderName )
+    {
+        String strXml = KDSXMLParserCommand.createSyncOrderParked(this.getStationID(), this.getLocalIpAddress(),
+                "", orderName);
+        this.getStationsConnections().writeToExps(this.getStationID(), strXml);
+
+    }
+
+    public void syncPrepOrderUnparked(String orderName )
+    {
+        String strXml = KDSXMLParserCommand.createSyncOrderUnparked(this.getStationID(), this.getLocalIpAddress(),
+                "", orderName);
+        this.getStationsConnections().writeToExps(this.getStationID(), strXml);
+
+    }
+
 }

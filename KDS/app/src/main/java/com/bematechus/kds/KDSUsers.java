@@ -335,11 +335,13 @@ public class KDSUsers {
         if (getUserA() != null) {
 
             getUserA().getOrders().clear();
+            getUserA().getParkedOrders().clear();
 
         }
         if (getUserB() != null)
         {
             getUserB().getOrders().clear();
+            getUserB().getParkedOrders().clear();
 
         }
     }

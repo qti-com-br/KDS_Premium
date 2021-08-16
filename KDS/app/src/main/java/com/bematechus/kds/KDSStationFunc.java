@@ -543,16 +543,16 @@ public class KDSStationFunc {
         return true;
 
     }
-    static public boolean orderUnpark(KDSUser kdsuser, String orderGuid)
+    static public KDSDataOrder orderUnpark(KDSUser kdsuser, String orderGuid)
     {
         KDSDataOrder order =  kdsuser.getParkedOrders().getOrderByGUID(orderGuid);
-        if (order == null) return false;
+        if (order == null) return order;
         kdsuser.getParkedOrders().removeComponent(order);
         kdsuser.getOrders().addComponent(order);
 
         kdsuser.getCurrentDB().orderSetParked(order.getGUID(), false);
         order.setParked(false);
-        return true;
+        return order;
     }
 
     static public void itemCondimentsModify(KDSUser kdsuser, KDSDataOrder orderExisted, KDSDataOrder orderReceived, KDSDataItem itemExisted, KDSDataItem itemReceived)

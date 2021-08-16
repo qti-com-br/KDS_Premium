@@ -3228,8 +3228,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Enter");
         if (!isKDSValid()) return ;
-        KDSStationFunc.orderUnpark(getKDS().getUsers().getUser(userID), orderGuid);
+
+        KDSDataOrder order = KDSStationFunc.orderUnpark(getKDS().getUsers().getUser(userID), orderGuid);
         refreshWithNewDbData();
+        if (order != null)
+        {
+            getKDS().syncPrepOrderUnparked(order.getOrderName());
+        }
         String guid = getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
         this.onSetFocusToOrder(guid);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
@@ -3740,9 +3745,30 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         if (!isKDSValid()) return ;
         if (isSummaryStationMode()) return;
         String orderGuid = getSelectedOrderGuid(userID);
+        orderPark(userID, orderGuid);
+
+//        if (orderGuid.isEmpty()) return;
+//        KDSUser user = getKDS().getUsers().getUser(userID);
+//
+//        KDSDataOrder order = user.getOrders().getOrderByGUID(orderGuid);
+//        if (order == null) return;
+//        //get next for focus
+//        String nextGuid =getNextOrderGuidToFocus(userID, orderGuid);// getKDS().getUsers().getUser(userID).getOrders().getNextOrderGUID(orderGuid);
+//        if (nextGuid.isEmpty())
+//            nextGuid =getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
+//
+//
+//        KDSStationFunc.orderPark(user, order);
+//        setSelectedOrderGuid(userID, nextGuid);
+//        setSelectedItemGuid(userID, "");
+//        user.refreshView();
+        KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+    public void orderPark(KDSUser.USER userID, String orderGuid)
+    {
         if (orderGuid.isEmpty()) return;
         KDSUser user = getKDS().getUsers().getUser(userID);
-
         KDSDataOrder order = user.getOrders().getOrderByGUID(orderGuid);
         if (order == null) return;
         //get next for focus
@@ -3755,6 +3781,9 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         setSelectedOrderGuid(userID, nextGuid);
         setSelectedItemGuid(userID, "");
         user.refreshView();
+
+        getKDS().syncPrepOrderParked(order.getOrderName());
+
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
 
@@ -3770,6 +3799,11 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         intent.putExtra("screen", userID.ordinal());// getKDS().getScreen());
         startActivityForResult(intent, KDSConst.SHOW_UNPARK_DLG);//SHOW_PREFERENCES);
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
+    }
+
+    public void orderUnpark(KDSUser.USER userID, String orderGuid)
+    {
+        unparkOrder(userID, orderGuid);
     }
 
     private boolean m_bShowingMenu = false;
@@ -7976,6 +8010,25 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case Refresh_pos_message:
             {
                 mPosMessageView.refreshView(getKDS().getPOSMessages());
+            }
+            break;
+            case Prep_park_order:
+            {
+                String orderGuid = (String) arParams.get(0);
+
+                orderPark(KDSUser.USER.USER_A, orderGuid);
+                if (getKDS().isMultpleUsersMode())
+                    orderPark(KDSUser.USER.USER_B, orderGuid);
+
+            }
+            break;
+            case Prep_unpark_order:
+            {
+                String orderGuid = (String) arParams.get(0);
+
+                orderUnpark(KDSUser.USER.USER_A, orderGuid);
+                if (getKDS().isMultpleUsersMode())
+                    orderUnpark(KDSUser.USER.USER_B, orderGuid);
             }
             break;
             default:

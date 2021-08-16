@@ -36,6 +36,8 @@ public class KDSBase {
         Runner_LineItems_Show_New_Category,
         Refresh_pos_message,
         Network_state,
+        Prep_park_order,
+        Prep_unpark_order,
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);
