@@ -1716,8 +1716,14 @@ public class KDSDBCurrent extends KDSDBBase {
         //20160712 CHANGED, add qtychanged field.
         sql = String.format( "select a.description, sum(a.qty+ifnull(a.qtychanged,0)) as s from items as a, orders as b where LocalBumped=0 and hiden=0 and b.parked<>1 and b.bumped<>1 and a.orderguid=b.guid and screen=%d group by description order by s DESC",
                             nUser);
-        if (bSummaryStation)
-            sql = "select description, sum(qty+ifnull(qtychanged,0)) as s from items where LocalBumped=0 and hiden=0 and bumpedstations='' group by description order by s DESC";
+        if (bSummaryStation) {
+            //sql = "select description, sum(qty+ifnull(qtychanged,0)) as s from items where LocalBumped=0 and hiden=0 and bumpedstations='' group by description order by s DESC";
+            sql = "select description, sum(qty+ifnull(qtychanged,0)) as s" +
+                    " from items" +
+                    " where LocalBumped=0 and hiden=0 and bumpedstations='' and (items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked<>1))" +
+                    " group by description order by s DESC";
+
+        }
             //sql = String.format( "select a.description, sum(a.qty+ifnull(a.qtychanged,0)) as s from items as a, orders as b where LocalBumped=0 and hiden=0 and b.parked<>1 and b.bumped<>1 and a.orderguid=b.guid and screen=%d and a.bumpedstations='' group by description order by s DESC",
 //                    nUser);
 
@@ -3958,8 +3964,9 @@ update the schedule item ready qty
             sql = String.format("select condiments.description,sum(ifnull(condiments.qty,1)*(items.qty+ifnull(items.qtychanged,0))) as q,count(condiments.description) as samecount " +
                             "from condiments,items " +
                             "where condiments.itemguid=items.guid and items.localbumped=0 and items.bumpedstations='' and items.marked=0 "+//and condiments.itemguid in (select items.guid from items where items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked=0 and screen=%d)) " +
-                            "group by condiments.description " +
-                            "order by condiments.description %s ",
+                            " and (items.orderguid in (select orders.guid from orders where orders.bumped=0 and orders.parked<>1))" +
+                            " group by condiments.description " +
+                            " order by condiments.description %s ",
                             bAscend?"asc":"desc");
 
         ArrayList<KDSSummaryItem> ar = new ArrayList<>();

@@ -2411,6 +2411,27 @@ public class KDSStationsConnection {
             }
         }
     }
+
+    public boolean writeToSummary(String myStationID, String strXml)
+    {
+        int ncount =m_stationsRelations.getQueueStations().size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationIP station =  m_stationsRelations.getQueueStations().get(i);
+            if (station.getID().equals(myStationID)) continue;
+            writeDataToStationOrItsBackup(station, strXml);
+        }
+
+        ncount =m_stationsRelations.getQueueExpoStations().size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationIP station =  m_stationsRelations.getQueueExpoStations().get(i);
+            if (station.getID().equals(myStationID)) continue;
+            writeDataToStationOrItsBackup(station, strXml);
+        }
+
+        return true;
+    }
 }
 
 

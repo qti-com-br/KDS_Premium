@@ -730,4 +730,23 @@ public class KDSXMLParserCommand {
                 strStationID, ipAddress, macAddress, ar);
 
     }
+
+    static public String createSyncOrderParked(String strStationID, String ipAddress, String macAddress, String orderName)
+    {
+        java.util.ArrayList ar = new java.util.ArrayList();
+        ar.add(orderName);
+
+        return createShortCommandXmlString(KDSCommand.Station_Order_Parked.ordinal(),
+                strStationID, ipAddress, macAddress, ar);
+
+    }
+
+    static public String createSyncOrderUnparked(String strStationID, String ipAddress, String macAddress, String orderName)
+    {
+        java.util.ArrayList ar = new java.util.ArrayList();
+        ar.add(orderName);
+        return createShortCommandXmlString(KDSCommand.Station_Order_Unpark.ordinal(),
+                strStationID, ipAddress, macAddress, ar);
+
+    }
 }
