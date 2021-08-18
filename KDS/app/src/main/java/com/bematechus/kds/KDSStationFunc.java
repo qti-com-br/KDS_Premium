@@ -1318,6 +1318,7 @@ public class KDSStationFunc {
         {
 
             case Prep:
+            case Summary://otherwise, the orders will never removed.
                 return KDSStationNormal.normal_sync_order_bumped(kds, command);
 
             case Expeditor:
@@ -1325,7 +1326,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
-            case Summary:
+            //case Summary:
                 String s = KDSStationExpeditor.exp_sync_order_bumped(kds, command, arChangedItems);
                 return s;
 
@@ -1710,6 +1711,7 @@ public class KDSStationFunc {
         {
 
             case Prep:
+            case Summary:
                 KDSStationNormal.normal_sync_order_unbumped(kds,command);
                 break;
             case Expeditor:
@@ -1717,7 +1719,7 @@ public class KDSStationFunc {
             case TableTracker:
             case Queue_Expo:
             case Runner:
-            case Summary:
+            //case Summary:
                 KDSStationExpeditor.exp_sync_order_unbumped(kds, command);
                 break;
             case Mirror:

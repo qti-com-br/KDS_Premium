@@ -3237,6 +3237,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         String guid = getFirstOrderGuidToFocus(userID);// getKDS().getUsers().getUser(userID).getOrders().getFirstOrderGuid();
         this.onSetFocusToOrder(guid);
+        refreshView();
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
 
     }
@@ -4630,6 +4631,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 // TimeDog t = new TimeDog();
                 this.getUserUI(userID).getLayout().showOrders(orders);
             }
+            refreshParkedCount(userID);
         }
         else {
             //if (this.getUserUI(userID).getLayout() != null) {

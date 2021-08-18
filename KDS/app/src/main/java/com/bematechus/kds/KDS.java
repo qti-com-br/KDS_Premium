@@ -2321,33 +2321,42 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 }
                 break;
             case Station_Bump_Order://in thread
+            {
                 //Please notice the xmldata just contains the order/item id.
                 checkLostFocusAfterSyncBumpOrderName(command, xmlData);
                 //kpp1-407, save my orginal order
                 KDSDataOrder receivedOrder = parseReceivedOrder(command);
                 KDSDataOrder existedOrder = null;
-                if (receivedOrder != null)
-                {
+                if (receivedOrder != null) {
                     existedOrder = this.getUsers().getOrderByName(receivedOrder.getOrderName());
 
                 }
                 //
                 ArrayList<KDSDataItem> arChangedItems = new ArrayList<>(); //retrieve changed items.
-                orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this,command, xmlData, arChangedItems);
+                orderGuid = KDSStationFunc.doSyncCommandOrderBumped(this, command, xmlData, arChangedItems);
                 if (!orderGuid.isEmpty()) {
                     schedule_process_update_after_receive_new_order();
                     sortOrderForMoveFinishedToFront();
                     checkSMS(orderGuid, false); //2.1.10
                 }
-                if (arChangedItems.size() >0) //just expo save data to this array
+                if (arChangedItems.size() > 0) //just expo save data to this array
                 {//kpp1-62, kpp1-74
                     syncWebBackofficeExpoItemBumpsPreparationTime(orderGuid, arChangedItems, Activation.ItemJobFromOperations.Expo_sync_prep_bump_order);
                 }
 
                 //kpp1-407
-                mirrorStationSyncWebDatabase(code,command, existedOrder, arChangedItems);
+                mirrorStationSyncWebDatabase(code, command, existedOrder, arChangedItems);
+                //comment this code, as unbump can not been sync.
+//                if (this.isSummaryStation())
+//                {//If we don't remove it, the same ID order can not come in.
 
-                break;
+//                    if (existedOrder.isAllItemsFinishedForSumStation())
+//                    {
+//                        getUsers().orderRemove(existedOrder);
+//                    }
+//                }
+            }
+            break;
             case Station_Unbump_Order:
                 KDSStationFunc.doSyncCommandOrderUnbumped(this,command, xmlData);
                 schedule_process_update_to_be_prepare_qty(true);
@@ -6036,21 +6045,22 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         }
     };
 
-    private boolean isBinStation()
-    {
-        if (this.getStationFunction() == SettingsBase.StationFunc.Summary)
-        {
-            int n = (this.getSettings().getInt(KDSSettings.ID.SumStn_mode));
-            KDSSettings.SumStationMode mode = KDSSettings.SumStationMode.values()[n];
-            if (mode == KDSSettings.SumStationMode.Bin)
-                return true;
-        }
-        return false;
-    }
+//    private boolean isBinStation()
+//    {
+//        isExpoTypeStation()
+//        if (this.getStationFunction() == SettingsBase.StationFunc.Summary)
+//        {
+//            int n = (this.getSettings().getInt(KDSSettings.ID.SumStn_mode));
+//            KDSSettings.SumStationMode mode = KDSSettings.SumStationMode.values()[n];
+//            if (mode == KDSSettings.SumStationMode.Bin)
+//                return true;
+//        }
+//        return false;
+//    }
     private void onSyncPrepOrderParked(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
     {
 
-        if (!isBinStation()) return;
+        if (!isExpoTypeStation()) return;
 
         String orderName = command.getParam("P0", "");
 
@@ -6076,7 +6086,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
     private void onSyncPrepOrderUnparked(KDS kds, KDSXMLParserCommand command, String strOrinalData, String fromStationID)
     {
-        if (!isBinStation()) return;
+        if (!isExpoTypeStation()) return;
         String orderName = command.getParam("P0", "");
 
         KDSDataOrder order = this.getUsers().getOrderByName(orderName);
