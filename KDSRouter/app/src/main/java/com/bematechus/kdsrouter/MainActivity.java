@@ -266,6 +266,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Log.i(TAG, ">>>>>>Enter mainactivity oncreate");
         KDSLog.e(TAG, KDSLog._FUNCLINE_()+"enter, ip=" + KDSSocketManager.getLocalIpAddress() );
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //for debug NCR issues!!!!
+        KDSLog.ORDER_EVENT_LOG = true;
 
         m_activation.setEventsReceiver(this);
         Activation.setGlobalEventsReceiver(this); //for clear db after logout,KW-155
