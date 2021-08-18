@@ -1974,6 +1974,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         }
         KDSLog.d(TAG, "Receive order $" + order.getOrderName());
 
+
         if (order.getTransType() == KDSDataOrder.TRANSTYPE_ASK_STATUS) {
 
             doAskOrderState(objSource, order, xmlData);
@@ -2431,10 +2432,24 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
 
         }
         else {
+            //log
+            String info = "";
+            if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE)
+                info = "Delete";
+            else if (order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY)
+                info = "Modify";
+            else if (order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER)
+                info = "Update";
+            else
+                info = "New";
+            KDSLog.order("", "Order ID ["+order.getOrderName() + "] " + info);
+
             if (order.getTransType() == KDSDataOrder.TRANSTYPE_DELETE ||  //KPP1-152
                     ( (order.getTransType() == KDSDataOrder.TRANSTYPE_MODIFY) && (!bAllAssignedStation)) ||
                     order.getTransType() == KDSDataOrder.TRANSTYPE_UPDATE_ORDER) {
-                writeToAllStations(xmlOrder);
+
+                writeToAllStationsWithOrderLog(xmlOrder, order.getOrderName());
+
             }
             else {
                 ArrayList<KDSToStation> ar = KDSDataOrder.getOrderTargetStations(order);
@@ -2442,7 +2457,8 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
                 ArrayList<String> arToStations = RouterAck.getSendToStations(ar);//it will remove repeated stations.
                 //send order xml data to necessary stations, for 24 stations lost certain prep issue
                 //if (!KDSConst._DEBUG) //heap size issue in this function
-                writeToAllStations(xmlOrder, arToStations);
+                //writeToAllStations(xmlOrder, arToStations);
+                writeToAllStationsWithOrderLog(xmlOrder,order.getOrderName(), arToStations);
                 //writeToAllStations(xmlOrder);
             }
         }
@@ -4256,4 +4272,72 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         }
         return false;
     }
+
+    public void writeToAllStationsWithOrderLog(String xmlData,String orderName)
+    {
+        int ncount = m_stationsConnection.getRelations().getRelationsSettings().size();
+        for (int i=0; i< ncount; i++)
+        {
+            KDSStationsRelation stationRelation = m_stationsConnection.getRelations().getRelationsSettings().get(i);
+            //kpp1-426, double qty issue.
+            if (stationRelation.getFunction() == SettingsBase.StationFunc.Backup)
+                continue;
+            //write to the expo stations too!!!! 20160222
+            //Just let expo receive item through the <kdsstation> tag
+            //if (stationRelation.getFunction() == KDSRouterSettings.StationFunc.Expeditor)
+            //    continue;
+            //String stationID = stationRelation.getID();
+
+            KDSStationIP station = stationRelation.getStationIP();
+            //in relations settings, the station port is 3001 for communication of each other.
+            //So, I have to change its port before send data.
+            station.setPort(getSettings().getString(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort));
+
+            KDSLog.d(TAG, "Write to KDSStation #" +station.getID() + ",ip=" +station.getIP() + ", port="+station.getPort() +",length="+xmlData.length());
+
+            String info = String.format("Order ID [%s] Sent to KDS Station ID [%s] IP=[%s]", orderName, station.getID(), station.getIP());
+
+            KDSLog.order("",info );
+
+            //if (m_stationsConnection.findActivedStationByID(stationID) != null)
+            m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData);
+        }
+
+    }
+
+    public void writeToAllStationsWithOrderLog(String xmlData,String orderName, ArrayList<String> toStations)
+    {
+        int ncount = toStations.size();// m_stationsConnection.getRelations().getRelationsSettings().size();
+
+        for (int i=0; i< ncount; i++)
+        {
+            String stationID = toStations.get(i);//stationRelation.getID();
+            KDSStationIP station  = null;
+            station = m_stationsConnection.getRelations().findStationInRelationshipByID(stationID);
+            if (station == null)
+            {
+                station = m_stationsConnection.findActivedStationByID(stationID);
+            }
+            if (station == null)
+            {
+                String s = String.format("Order ID [%s] target station [%s] is not existed", orderName, stationID);
+                KDSLog.order("",s);
+
+                //kpp1-387
+                //save it. Station is not existed in table, and it is not online.
+                // Just save its data, maybe this station will come back soon.
+                m_stationsConnection.writeGhostStionDataToBuffer(stationID, xmlData, MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
+            }
+            else {
+                station.setPort(getSettings().getString(KDSRouterSettings.ID.KDSRouter_Connect_Station_IPPort));
+                KDSLog.d(TAG, "Write to KDSStation #" + station.getID() + ",ip=" + station.getIP() + ", port=" + station.getPort() + ",length=" + xmlData.length());
+                m_stationsConnection.writeDataToStationOrItsBackup(station, xmlData, MAX_BUFFER_DATA_COUNT_FOR_WAITING_CONNECTION);
+                String info = String.format("Order ID [%s] Sent to KDS Station ID [%s] IP=[%s]", orderName, station.getID(), station.getIP());
+                KDSLog.order("",info );
+            }
+
+        }
+
+    }
+
 }
