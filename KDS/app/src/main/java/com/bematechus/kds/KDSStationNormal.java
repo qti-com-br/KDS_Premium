@@ -154,8 +154,10 @@ public class KDSStationNormal extends KDSStationFunc {
             return;
         KDSDataOrder orderReceived =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
 
+
         if (orderReceived == null)
             return;
+        orderReceived.recreateGUID();
         if (orderReceived.getOrderType().equals(KDSDataOrder.ORDER_TYPE_SCHEDULE) )
         {
             ScheduleProcessOrder scheduleOrder = ScheduleProcessOrder.createFromOrder(orderReceived);

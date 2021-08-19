@@ -2283,6 +2283,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             case Broadcast_All_Configurations:
                 break;
             case Station_Add_New_Order: //in thread
+            {
                 //Just for coke 24 stations. As they use smb data source, we don't need this.
                 //And, it can cause expo stack issue.
                 if (doNotHandleThisCommand(xmlData))
@@ -2295,11 +2296,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSDataOrder order = KDSStationFunc.doSyncCommandOrderNew(this, command, xmlData, ordersExisted, ordersChanged);
                 setFocusAfterReceiveOrder();
                 schedule_process_update_after_receive_new_order();
+                //
+                //syncOrderToWebDatabase(order, ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+
                 //if order is not null, it is expo station returned.
                 if (order != null)//kpp1-333
                 {
                     if (getStationFunction() == KDSSettings.StationFunc.Expeditor ||
-                        getStationFunction() == KDSSettings.StationFunc.Queue_Expo ||
+                            getStationFunction() == KDSSettings.StationFunc.Queue_Expo ||
                             getStationFunction() == KDSSettings.StationFunc.Runner) {
                         if (getSettings().getBoolean(KDSSettings.ID.Printer_Enabled)) {
                             KDSPrinter.HowToPrintOrder howtoprint = KDSPrinter.HowToPrintOrder.values()[(getSettings().getInt(KDSSettings.ID.Printer_howtoprint))];
@@ -2318,8 +2322,15 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                             }
                         }
                     }
+                    for (int i = 0; i < ordersChanged.size(); i++) {
+                        if (ordersChanged.get(i) != null)
+                            syncOrderToWebDatabase(ordersChanged.get(i), ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);
+
+                    }
                 }
-                break;
+
+            }
+            break;
             case Station_Bump_Order://in thread
             {
                 //Please notice the xmldata just contains the order/item id.

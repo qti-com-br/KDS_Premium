@@ -1492,6 +1492,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
         if (order == null)
             return null;
+        order.recreateGUID();
         ordersExisted.add( (kds.getUsers().getOrderByName(order.getOrderName()) != null));
 
 
@@ -1758,8 +1759,6 @@ public class KDSStationExpeditor extends KDSStationNormal {
      * @param kds
      * @param db
      * @param orders
-     * @param fromStationID
-     * @param fromIP
      * @param order
      * @return
      *  changed order guid.
