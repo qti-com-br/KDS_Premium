@@ -2322,6 +2322,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                             }
                         }
                     }
+                    //kp-152 Report not showing for expo. They use same guid. Fix it.
                     for (int i = 0; i < ordersChanged.size(); i++) {
                         if (ordersChanged.get(i) != null)
                             syncOrderToWebDatabase(ordersChanged.get(i), ActivationRequest.iOSOrderState.New, ActivationRequest.SyncDataFromOperation.New);

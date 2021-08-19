@@ -157,7 +157,7 @@ public class KDSStationNormal extends KDSStationFunc {
 
         if (orderReceived == null)
             return;
-        orderReceived.recreateGUID();
+        orderReceived.recreateGUID();//kp-152 Report not showing for expo. They use same guid. Fix it.
         if (orderReceived.getOrderType().equals(KDSDataOrder.ORDER_TYPE_SCHEDULE) )
         {
             ScheduleProcessOrder scheduleOrder = ScheduleProcessOrder.createFromOrder(orderReceived);
