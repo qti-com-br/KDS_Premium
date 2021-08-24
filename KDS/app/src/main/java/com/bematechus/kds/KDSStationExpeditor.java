@@ -1492,7 +1492,7 @@ public class KDSStationExpeditor extends KDSStationNormal {
 
         if (order == null)
             return null;
-        order.recreateGUID(); //kp-152 Report not showing for expo. They use same guid. Fix it.
+        //order.recreateGUID(); //kp-152 Report not showing for expo. They use same guid. Fix it.
         ordersExisted.add( (kds.getUsers().getOrderByName(order.getOrderName()) != null));
 
 

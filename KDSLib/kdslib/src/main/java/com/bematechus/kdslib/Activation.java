@@ -332,6 +332,7 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
         }
         else if (request.m_httpResponseCode == ActivationHttp.HTTP_Exception)
         {//activatioinhttp code error/exception
+            // Local network exceptions.
             if (request.getCommand() == ActivationRequest.COMMAND.Sync_orders ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_items ||
                     request.getCommand() == ActivationRequest.COMMAND.Sync_condiments ||
@@ -1943,6 +1944,11 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
     public void onSyncDataResponseError(ActivationHttp http, ActivationRequest request)
     {
         System.out.println(request.m_httpResponseCode);
+        //prepare for next try
+        //kp-152
+        request.resetFailedTime();
+        addRetryRequest(request);
+
         if (m_receiver != null)
         {
             Object obj = request.getTag();
