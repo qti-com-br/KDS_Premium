@@ -3293,6 +3293,11 @@ get the total qty of all found items
     public String recreateGUID()
     {
         m_strGUID = KDSUtil.createNewGUID();
+        //kp-160 update all items with new order guid, otherwise all items lost.
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            m_items.getDataItem(i).setOrderGUID(m_strGUID);
+        }
         return m_strGUID;
     }
 }
