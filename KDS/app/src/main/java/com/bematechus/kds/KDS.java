@@ -3070,7 +3070,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         if (this.isMultpleUsersMode())
             setFocusAfterReceiveOrder(KDSUser.USER.USER_B);
         //td.debug_print_Duration("setFocusAfterReceiveOrder duration");
-
+        for (int i = 0; i< m_arKdsEventsReceiver.size(); i++)
+        {
+            m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.On_receive_new_order_to_sort, null);
+        }
     }
 
     /**
@@ -3097,6 +3100,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             //setFocusToOrder(KDSConst.RESET_ORDERS_LAYOUT);
 
         }
+
 
     }
 
@@ -3182,7 +3186,14 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 ///
                 ArrayList<KDSDataOrder> ordersAdded = m_users.users_orderAdd(order, xmlData,true, bDeliverToExpo, bRefreshView);//////
                 //kpp1-310 Rush orders creating previous page
-                checkRushOrderReceivedThenChangeFirstShowingOrder(ordersAdded);
+                if (!checkRushOrderReceivedThenChangeFirstShowingOrder(ordersAdded) )
+                {
+//                    for (int i = 0; i< m_arKdsEventsReceiver.size(); i++)
+//                    {
+//                        m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.On_receive_new_order, null);
+//                    }
+                }
+
                 //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts
                 for (int i = 0; i < ordersAdded.size(); i++) {
@@ -5521,12 +5532,12 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      *  index 0: order add to user A
      *  index 1: order add to user B
      */
-    private void checkRushOrderReceivedThenChangeFirstShowingOrder(ArrayList<KDSDataOrder> arOrdersAdded)
+    private boolean checkRushOrderReceivedThenChangeFirstShowingOrder(ArrayList<KDSDataOrder> arOrdersAdded)
     {
         if (!getSettings().getBoolean(KDSSettings.ID.Orders_sort_rush_front))
-            return;
+            return false;
 
-        if (arOrdersAdded.size()<=0) return;
+        if (arOrdersAdded.size()<=0) return false;
 
         for (int i=0; i< arOrdersAdded.size(); i++)
         {
@@ -5544,6 +5555,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 }
             }
         }
+        return true;
     }
 
             /**
