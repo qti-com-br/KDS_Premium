@@ -38,6 +38,7 @@ public class KDSBase {
         Network_state,
         Prep_park_order,
         Prep_unpark_order,
+        On_receive_new_order_to_sort, //for reset first showing order, prevent move order to previous page.
     }
     public interface KDSEvents {
         void onStationConnected(String ip, KDSStationConnection conn);

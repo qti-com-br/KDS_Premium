@@ -8033,6 +8033,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                     orderUnpark(KDSUser.USER.USER_B, orderGuid);
             }
             break;
+            case On_receive_new_order_to_sort:
+            {
+                onReceiveNewOrder();
+
+            }
+            break;
             default:
             {
                 break;
@@ -8614,6 +8620,39 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     }
 
+    /**
+     * don't do UI works here.
+     */
+    private void onReceiveNewOrder()
+    {
+        boolean bMoveRushFront = getSettings().getBoolean(KDSSettings.ID.Orders_sort_rush_front);
+        KDSConst.OrderSortBy sortBy = this.getKDS().getUsers().getUserA().getOrders().getSortBy();
+        KDSConst.SortSequence sortSequence = this.getKDS().getUsers().getUserA().getOrders().getSortSequence();
+        switch (sortBy)
+        {
 
+            case Unknown:
+            case Order_Number:
+            case Items_Count:
+            case Preparation_Time:
+                break;
+            case Waiting_Time:
+            {
+                if (sortSequence == KDSConst.SortSequence.Ascend)
+                {
+                    getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(bMoveRushFront);
+                    if (this.getKDS().isMultpleUsersMode())
+                    {
+                        getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(bMoveRushFront);
+                    }
+                }
+            }
+            break;
+            default:
+                break;
+        }
+
+
+    }
 }
 
