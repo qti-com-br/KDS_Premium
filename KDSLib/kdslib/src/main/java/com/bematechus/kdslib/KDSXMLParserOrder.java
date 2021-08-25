@@ -194,7 +194,7 @@ public class KDSXMLParserOrder {
             break;
             case  DBXML_ELEMENT_GUID:
             {
-                order.setGUID(strVal);
+                //order.setGUID(strVal);
             }
             break;
             case  DBXML_ELEMENT_TERMINAL:
@@ -518,7 +518,7 @@ public class KDSXMLParserOrder {
             break;
             case  DBXML_ELEMENT_GUID:
             {
-                item.setGUID(strVal);
+                //item.setGUID(strVal);
 
             }
             break;

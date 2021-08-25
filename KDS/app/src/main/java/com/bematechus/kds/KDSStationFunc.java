@@ -1742,7 +1742,7 @@ public class KDSStationFunc {
             return null;
         KDSDataOrder order =(KDSDataOrder) KDSXMLParser.parseXml(kds.getStationID(), strXml);
         //
-        order.recreateGUID(); //KP-131, transfer in order need new guid, don't use that from original station.
+        //order.recreateGUID(); //KP-131, transfer in order need new guid, don't use that from original station.
 
         KDSUser.USER userID = KDSUser.USER.values()[ order.getScreen()];
         if (order == null)
