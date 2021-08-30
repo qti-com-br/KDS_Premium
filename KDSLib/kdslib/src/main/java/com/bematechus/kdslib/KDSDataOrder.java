@@ -3300,4 +3300,17 @@ get the total qty of all found items
         }
         return m_strGUID;
     }
+
+    public float getMaxPreparationTime()
+    {
+        float nMax = 0;
+        for (int i=0; i< m_items.getCount(); i++)
+        {
+            float flt = m_items.getDataItem(i).getTotalPrepTime();
+            if (flt > nMax)
+                nMax = flt;
+        }
+        return nMax;
+
+    }
 }
