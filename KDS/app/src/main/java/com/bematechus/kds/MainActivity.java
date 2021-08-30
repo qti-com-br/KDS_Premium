@@ -8640,10 +8640,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             {
                 if (sortSequence == KDSConst.SortSequence.Ascend)
                 {
-                    getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(bMoveRushFront);
+                    //getUserUI(KDSUser.USER.USER_A).getLayout().adjustFocusOrderLayoutFirstShowingOrder(bMoveRushFront);
+                    getUserUI(KDSUser.USER.USER_A).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID("");//.adjustFocusOrderLayoutFirstShowingOrder(bMoveRushFront);
                     if (this.getKDS().isMultpleUsersMode())
                     {
-                        getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(bMoveRushFront);
+                        //getUserUI(KDSUser.USER.USER_B).getLayout().adjustFocusOrderLayoutFirstShowingOrder(bMoveRushFront);
+                        getUserUI(KDSUser.USER.USER_B).getLayout().getEnv().getStateValues().setFirstShowingOrderGUID("");
                     }
                 }
             }
