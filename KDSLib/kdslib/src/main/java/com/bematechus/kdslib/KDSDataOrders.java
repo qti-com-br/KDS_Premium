@@ -581,7 +581,7 @@ public class KDSDataOrders extends KDSDataArray {
         }
         else if (sortBy == KDSConst.OrderSortBy.Preparation_Time)
         {
-            //TODO
+            sortOrdersPreparationTime(arOrders, sortSequence);
         }
     }
     
@@ -1152,4 +1152,51 @@ public class KDSDataOrders extends KDSDataArray {
 
     }
 
+
+    private void sortOrdersPreparationTime(Vector arOrders, KDSConst.SortSequence sortSequence)
+    {
+        if (sortSequence ==KDSConst.SortSequence.Ascend) {
+            Collections.sort(arOrders, new Comparator() {
+                        @Override
+                        public int compare(Object o1, Object o2) {
+                            KDSDataOrder c1 = (KDSDataOrder) o1;
+                            KDSDataOrder c2 = (KDSDataOrder) o2;
+
+                            float count1 = c1.getMaxPreparationTime();
+                            float count2 = c2.getMaxPreparationTime();
+
+                            int nresult = 0;//name1.compareTo( name2 ) ;
+                            if (count1 > count2)
+                                nresult = 1;
+                            else if (count1 < count2)
+                                nresult = -1;
+                            return nresult;
+                        }
+                    }
+            );
+        }
+        else
+        {
+            Collections.sort(arOrders, new Comparator() {
+                        @Override
+                        public int compare(Object o1, Object o2) {
+                            KDSDataOrder c1 = (KDSDataOrder) o1;
+                            KDSDataOrder c2 = (KDSDataOrder) o2;
+
+                            float count1 = c1.getMaxPreparationTime();
+
+                            float count2 = c2.getMaxPreparationTime();
+
+                            int nresult = 0;//name1.compareTo( name2 ) ;
+                            if (count1 > count2)
+                                nresult = 1;
+                            else if (count1 < count2)
+                                nresult = -1;
+
+                            return (-1) * nresult;
+                        }
+                    }
+            );
+        }
+    }
 }
