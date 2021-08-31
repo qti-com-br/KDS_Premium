@@ -1351,10 +1351,12 @@ public class KDSStationFunc {
         switch (kds.getStationFunction())
         {
 
-            case Prep:
+            case Prep: {
                 KDSStationNormal.normal_sync_order_bumped(kds, command);//kpp1-202.
-
-                break;
+                //kp-162 Queue-Order not removed when bumped from expo
+                kds.getStationsConnections().writeToQueue(kds.getStationID(), strOrinalData);
+            }
+            break;
             case Queue:
             case Queue_Expo: {
                 if (kds.getSettings().getBoolean(KDSSettings.ID.Queue_only_auto_bump))
