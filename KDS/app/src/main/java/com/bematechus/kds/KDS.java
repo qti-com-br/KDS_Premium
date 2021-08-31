@@ -2482,6 +2482,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 KDSDataOrder myOrder =  this.getUsers().getOrderByName(bumpedOrder.getOrderName());
                 //
                 KDSStationFunc.doSyncCommandExpoOrderBumped(this, command, xmlData);
+
                 //NCR URGENT
                 if (myOrder != null)
                 {
