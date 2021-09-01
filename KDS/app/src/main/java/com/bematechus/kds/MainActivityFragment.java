@@ -169,8 +169,8 @@ public class MainActivityFragment extends Fragment {
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_Training))
             addButton(KDSTouchPadButton.TouchPadID.Training, R.string.touchpad_training,R.drawable.training_video,R.drawable.training_video_us);
 
-        if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_page))
-            addButton(KDSTouchPadButton.TouchPadID.Page, R.string.touchpad_page, R.drawable.guest_paging, R.drawable.guest_paging_us);
+        //if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_page))
+        //    addButton(KDSTouchPadButton.TouchPadID.Page, R.string.touchpad_page, R.drawable.guest_paging, R.drawable.guest_paging_us);
 
         if (kds.getSettings().getBoolean(KDSSettings.ID.Touch_test))
             addButton(KDSTouchPadButton.TouchPadID.Test, R.string.touchpad_test, R.drawable.testing, R.drawable.testing_us );

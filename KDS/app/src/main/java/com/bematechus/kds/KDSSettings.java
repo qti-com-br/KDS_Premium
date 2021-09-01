@@ -647,6 +647,8 @@ public class KDSSettings extends SettingsBase {
 
        SumStn_mode, //summary station display mode. Summary or Bin.
        Bin_panel_transparency,
+       Bumpbar_page_next, //kp-164, support bumpbar page next/prev
+       Bumpbar_page_prev,
     }
     /*
      * >>>>>>>>>>>>>> IMPORTANT <<<<<<<<<<<<<<<<<<<<<<<
@@ -1526,6 +1528,9 @@ public class KDSSettings extends SettingsBase {
         init_option(ID.Printer_print_unprintable, "bool_printer_print_unprintable", false);
         init_option(ID.SumStn_mode, "string_sumstn_mode", "0");
         init_option(ID.Bin_panel_transparency, "string_sumstn_panel_transparency", "80");
+
+        init_option(ID.Bumpbar_page_next, "string_bumpbar_page_next", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_DPAD_RIGHT, false, true, false));
+        init_option(ID.Bumpbar_page_prev, "string_bumpbar_page_prev", KDSBumpBarKeyFunc.makeKeysString(KeyEvent.KEYCODE_DPAD_LEFT, false, true, false));
 
     }
 

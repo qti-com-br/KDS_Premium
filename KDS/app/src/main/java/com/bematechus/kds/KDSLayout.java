@@ -1643,6 +1643,11 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
     }
     public boolean focusOrder(String orderGuid)
     {
+//        KDSLog.i(TAG, "focus order guid=" + orderGuid);
+//        if (orderGuid.equals("6c7962ef515640ffae5877f38215bd7a"))
+//        {
+//            KDSLog.i(TAG, "focus order erro guid=" + orderGuid);
+//        }
         if (m_orders == null) return false;
         if (orderGuid.equals(KDSConst.RESET_ORDERS_LAYOUT))
         {//try best to show previous orders

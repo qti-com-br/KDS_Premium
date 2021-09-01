@@ -56,6 +56,9 @@ public class KDSBumpBarFunctions {
                 KDSSettings.ID.Bumpbar_Clean, //kpp1-339
                 KDSSettings.ID.Bumpbar_move, //kp-78, move order feature.
                 KDSSettings.ID.Bumpbar_inputmsg,
+
+                KDSSettings.ID.Bumpbar_page_next,
+                KDSSettings.ID.Bumpbar_page_prev,
                 //Add new function here !!!!!!!
 
                 KDSSettings.ID.Bumpbar_Switch_User, //must keep this at last position
