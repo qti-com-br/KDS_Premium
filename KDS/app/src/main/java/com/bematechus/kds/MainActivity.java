@@ -4986,6 +4986,8 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public boolean checkFocusVisibleInOrdersModeView()
     {
+        if (!m_kbdEventTimeDog.is_timeout(300))
+            return true;
         if (getGuiMode() != GUI_MODE.KDS)
             return true;
         if (!getUserUI(getFocusedUserID()).getLayout().isFocusOrderVisible()) {
@@ -5070,9 +5072,17 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         }
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "Exit");
     }
-
+    //prevent event happen continue in short time.
+    TimeDog m_kbdEventTimeDog = new TimeDog();
+//    final int EVENT_INTERVAL = 300;//ms
     private void doKbdEvent(KDSSettings.ID evID) {
         KDSLog.i(TAG,KDSLog._FUNCLINE_() + "EventID=" +evID.toString());
+        if (evID != KDSSettings.ID.NULL)
+        {
+//            if (!m_kbdEventTimeDog.is_timeout(EVENT_INTERVAL))
+//                return;
+            m_kbdEventTimeDog.reset();
+        }
         SettingsBase.StationFunc funcView = getSettings().getFuncView(); //current use what view to show orders.
 
         //kp-93 Move- other actions can be performed while moving orders.
@@ -5433,6 +5443,16 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             case Bumpbar_inputmsg:
             {
                 opInputMessage(getFocusedUserID());
+            }
+            break;
+            case Bumpbar_page_next:
+            {
+                opNextPage(getFocusedUserID());
+            }
+            break;
+            case Bumpbar_page_prev:
+            {
+                opPrevPage(getFocusedUserID());
             }
             break;
             default:

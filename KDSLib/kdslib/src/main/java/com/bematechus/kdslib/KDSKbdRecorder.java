@@ -144,6 +144,10 @@ public class KDSKbdRecorder {
     }
 
 
+    public boolean isWaitingAllKeysUp()
+    {
+        return m_bWaitForAllKeysUp;
+    }
 
 
 

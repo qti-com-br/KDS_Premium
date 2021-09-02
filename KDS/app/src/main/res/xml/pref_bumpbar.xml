@@ -55,6 +55,26 @@
         android:positiveButtonText="ok"
         android:negativeButtonText="cancel"
         />
+
+    <!-- [ctrl] + [right]     page next  -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/touchpad_next_page"
+        android:key="bumpbar_page_next"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="22,0,1,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+    <!-- [ctrl] + [left] page prev -->
+    <com.bematechus.kds.KDSPreferenceKeySelection
+        android:title="@string/touchpad_prev_page"
+        android:key="bumpbar_page_prev"
+        android:dialogMessage="bumpbar_type"
+        android:dialogTitle="21,0,1,0"
+        android:positiveButtonText="ok"
+        android:negativeButtonText="cancel"
+        />
+
         <!-- key up -->
     <com.bematechus.kds.KDSPreferenceKeySelection
         android:title="@string/focus_up"
@@ -176,14 +196,14 @@
             android:negativeButtonText="cancel"
             />
         <!-- ctrl+8-->
-        <com.bematechus.kds.KDSPreferenceKeySelection
-            android:title="@string/page"
-            android:key="bumpbar_func_page"
-            android:dialogMessage="bumpbar_type"
-            android:dialogTitle="15,0,1,0"
-            android:positiveButtonText="ok"
-            android:negativeButtonText="cancel"
-            />
+<!--        <com.bematechus.kds.KDSPreferenceKeySelection-->
+<!--            android:title="@string/page"-->
+<!--            android:key="bumpbar_func_page"-->
+<!--            android:dialogMessage="bumpbar_type"-->
+<!--            android:dialogTitle="15,0,1,0"-->
+<!--            android:positiveButtonText="ok"-->
+<!--            android:negativeButtonText="cancel"-->
+<!--            />-->
         <!-- ctrl+9-->
         <com.bematechus.kds.KDSPreferenceKeySelection
             android:title="@string/more"
