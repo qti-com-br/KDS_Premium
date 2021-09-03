@@ -3,6 +3,7 @@ package com.bematechus.kdslib;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -342,7 +343,7 @@ public class KDSSocketManager implements Runnable {
     }
 
     static public long m_nLostNetworkCount = 0; // use it to limit the network sensitive.
-    static public boolean isNetworkActived(Context context) {
+    static public boolean isNetworkActived2(Context context) {
 
         if (isWebsocketActived()) //KP-119 add this condition. getActiveNetworkInfo() seems not stable.
             return true;
@@ -649,5 +650,61 @@ public class KDSSocketManager implements Runnable {
         return (!tm.is_timeout(WEBSOCKET_TIMEOUT));
     }
 
+    static public boolean isNetworkActived(Context context) {
 
+        if (isWebsocketActived()) //KP-119 add this condition. getActiveNetworkInfo() seems not stable.
+            return true;
+
+        String service = Context.CONNECTIVITY_SERVICE;
+        ConnectivityManager cm = (ConnectivityManager) (context.getSystemService(service));
+        NetworkInfo[] networkInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo info: networkInfo)
+        {
+            int ntype = info.getType();
+            switch (ntype)
+            {
+                case ConnectivityManager.TYPE_ETHERNET:
+                case ConnectivityManager.TYPE_WIFI:
+                {
+                    if (info.isConnectedOrConnecting())
+                    {
+                        m_nLostNetworkCount = 0;
+                        return true;
+                    }
+                }
+                break;
+                default:
+                    break;
+
+            }
+
+
+        }
+        m_nLostNetworkCount ++;
+
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "No active wifi/ethernet network");
+        return false;
+
+//        NetworkInfo ni = cm.getActiveNetworkInfo();
+//        // showMsg(ni.toString());
+//
+//        if (ni != null && ni.isConnectedOrConnecting()) {
+//            m_nLostNetworkCount = 0;
+//            return true;
+//        }
+//        //log the error message.
+//        if (ni == null)
+//        {
+//            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "ni==null");
+//        }
+//        else
+//        {
+//            if (!ni.isConnectedOrConnecting())
+//                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "isConnectedOrConnecting()=false");
+//            else
+//                KDSLog.e(TAG, KDSLog._FUNCLINE_() + ni.toString());
+//        }
+//        m_nLostNetworkCount ++;
+//        return false;
+    }
 }
