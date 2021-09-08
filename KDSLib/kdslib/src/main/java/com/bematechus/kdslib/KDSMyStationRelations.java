@@ -865,4 +865,22 @@ public class KDSMyStationRelations {
 
     }
 
+    public ArrayList<KDSStationIP> getSummaryStations()
+    {
+        ArrayList<KDSStationIP> arReturn = new ArrayList<>();
+
+        ArrayList<KDSStationIP> expo = getExpStations();
+
+        for (int i=0; i< expo.size(); i++)
+        {
+
+            KDSStationIP expoStation = expo.get(i);
+            SettingsBase.StationFunc func =  getStationFunctionForBackoffice(expoStation.getID());
+            if (func == SettingsBase.StationFunc.Summary)
+                arReturn.add(expoStation);
+
+        }
+        return arReturn;
+    }
+
 }

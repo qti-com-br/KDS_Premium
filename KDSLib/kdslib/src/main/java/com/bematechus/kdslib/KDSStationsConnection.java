@@ -2414,18 +2414,12 @@ public class KDSStationsConnection {
 
     public boolean writeToSummary(String myStationID, String strXml)
     {
-        int ncount =m_stationsRelations.getQueueStations().size();
-        for (int i=0; i< ncount; i++)
-        {
-            KDSStationIP station =  m_stationsRelations.getQueueStations().get(i);
-            if (station.getID().equals(myStationID)) continue;
-            writeDataToStationOrItsBackup(station, strXml);
-        }
+        ArrayList<KDSStationIP> arSummary = m_stationsRelations.getSummaryStations();
 
-        ncount =m_stationsRelations.getQueueExpoStations().size();
+        int ncount = arSummary.size();
         for (int i=0; i< ncount; i++)
         {
-            KDSStationIP station =  m_stationsRelations.getQueueExpoStations().get(i);
+            KDSStationIP station =  arSummary.get(i);
             if (station.getID().equals(myStationID)) continue;
             writeDataToStationOrItsBackup(station, strXml);
         }
