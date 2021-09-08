@@ -1355,6 +1355,7 @@ public class KDSStationFunc {
                 KDSStationNormal.normal_sync_order_bumped(kds, command);//kpp1-202.
                 //kp-162 Queue-Order not removed when bumped from expo
                 kds.getStationsConnections().writeToQueue(kds.getStationID(), strOrinalData);
+                kds.getStationsConnections().writeToSummary(kds.getStationID(), strOrinalData);
             }
             break;
             case Queue:
