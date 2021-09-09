@@ -719,8 +719,13 @@ public class KDSStationFunc {
             orderExisted = kdsuser.getOrders().getOrderByGUID(orderguid);
         }
         else {
-            if (order.getOrderName().isEmpty())
+            if (order.getOrderName().isEmpty()) {
                 orderExisted = kdsuser.getOrders().getOrderByGUID(order.getGUID());
+                if (orderExisted == null)
+                {
+                    orderExisted = kdsuser.getOrders().getOrderByGUID(order.getKDSGuid());
+                }
+            }
             else
                 orderExisted = kdsuser.getOrders().getOrderByName(order.getOrderName());
         }
