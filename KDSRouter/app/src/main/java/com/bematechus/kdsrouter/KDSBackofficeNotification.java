@@ -6,6 +6,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.bematechus.kdslib.Activation;
+import com.bematechus.kdslib.KDSApplication;
 import com.bematechus.kdslib.KDSConst;
 import com.bematechus.kdslib.KDSDataCondiment;
 import com.bematechus.kdslib.KDSDataItem;
@@ -28,6 +29,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -534,6 +537,8 @@ public class KDSBackofficeNotification extends Handler{
             KDSDataOrder order = new KDSDataOrder();
 
             order.setGUID(json.getString("guid"));
+
+
             order.setOrderName(json.getString("external_id"));
             order.setDestination(json.getString("destination"));
             order.setToTable(json.getString("guest_table"));
@@ -572,13 +577,17 @@ public class KDSBackofficeNotification extends Handler{
         return null;
     }
 
+    //API GUID,map to : order name
+    //static HashMap<String, APIOrder> mApiOrderGuidNameMap = new HashMap<>();
+    
+    
     /**
      * @param evt
      * @param strData
      *  It can contain multiple orders in it.
      * @return
      */
-    public static KDSDataOrders parseApiJson(String evt, String strData)
+    public static KDSDataOrders parseApiJson(KDSDBRouter db, String evt, String strData)
     {
         try {
             KDSDataOrders orders = new KDSDataOrders();
@@ -592,20 +601,26 @@ public class KDSBackofficeNotification extends Handler{
                 {
 
                     KDSDataOrder order = parseJsonOrderCreate(strData);
-                    if (order != null)
+                    if (order != null) {
                         orders.addOrderWithoutSort(order);
+                        db.addApiOrder(order.getGUID(), order.getOrderName(), getOrderItemsTargetStations(order));
+                        //mApiOrderGuidNameMap.put(order.getGUID(), new APIOrder(order.getOrderName()));
+                    }
                 }
                 break;
                 case API_EVENT_ORDER_UPDATED:
                 {
                     KDSDataOrder order = parseJsonOrderUpdate(strData);
-                    if (order != null)
+                    appendOrderName(db, order);
+                    if (order != null) {
                         orders.addOrderWithoutSort(order);
+                    }
                 }
                 break;
                 case API_EVENT_ORDER_VOIDED:
                 {
                     KDSDataOrder order = parseJsonOrderVoid(strData);
+                    appendOrderName(db, order);
                     if (order != null)
                         orders.addOrderWithoutSort(order);
                 }
@@ -625,7 +640,8 @@ public class KDSBackofficeNotification extends Handler{
                     }
                     if (jsons.length() >0)
                         orders.addOrderWithoutSort(order);
-
+                    appendOrderName(db, order);
+                    db.apiItemAdd(order.getGUID(), getOrderItemsTargetStations(order));
                 }
                 break;
                 case API_EVENT_ITEM_UPDATED:
@@ -636,9 +652,17 @@ public class KDSBackofficeNotification extends Handler{
                     KDSDataOrder order = new KDSDataOrder();
                     order.setGUID(orderGuid);
                     order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
+                    ArrayList<String> ar = db.apiItemGetNameAndToStations(orderGuid, item.getGUID());
+                    if (ar.size() >1) {
+                        item.setItemName(ar.get(0));
+                        item.setToStationsString(ar.get(1));
+
+                    }
+
 
                     order.getItems().addComponent(item);
                     orders.addOrderWithoutSort(order);
+                    appendOrderName(db, order);
                 }
                 break;
                 case API_EVENT_ITEM_VOIDED:
@@ -649,9 +673,15 @@ public class KDSBackofficeNotification extends Handler{
                     KDSDataOrder order = new KDSDataOrder();
                     order.setGUID(orderGuid);
                     order.setTransType(KDSDataOrder.TRANSTYPE_MODIFY);
+                    ArrayList<String> ar = db.apiItemGetNameAndToStations(orderGuid, item.getGUID());
+                    if (ar.size() >1) {
+                        item.setItemName(ar.get(0));
+                        item.setToStationsString(ar.get(1));
 
+                    }
                     order.getItems().addComponent(item);
                     orders.addOrderWithoutSort(order);
+                    appendOrderName(db, order);
                 }
                 break;
                 default:
@@ -1634,5 +1664,67 @@ public class KDSBackofficeNotification extends Handler{
         TimeDog td = new TimeDog(m_dateHeartbeat);
 
         return td.is_timeout(TIMEOUT_HEARTBEAT_LOST);
+    }
+
+//    static public String findApiOrderName(String apiOrderGuid)
+//    {
+//        clearExpiredApiOrder();
+//
+//        APIOrder order = mApiOrderGuidNameMap.get(apiOrderGuid);
+//        if (order == null)
+//            return "";
+//        return order.mName;
+//    }
+//    static final long TIMEOUT = 28800000; //8 hours
+//    static public void clearExpiredApiOrder()
+//    {
+//
+//        long currentTime = System.currentTimeMillis();
+//        ArrayList<String> ar = new ArrayList<>();
+//
+//        for (String key : mApiOrderGuidNameMap.keySet()) {
+//            long l = currentTime - mApiOrderGuidNameMap.get(key).mDate.getTime();
+//            if (l > TIMEOUT)
+//                ar.add(key);
+//        }
+//
+//        for (int i=0; i< ar.size(); i++)
+//        {
+//            mApiOrderGuidNameMap.remove(ar.get(i));
+//        }
+//    }
+    static public void appendOrderName(KDSDBRouter db,  KDSDataOrder orderApi)
+    {
+        if (orderApi == null) return;
+        String orderName = db.getApiOrderName(orderApi.getGUID());
+        if (!orderName.isEmpty())
+            orderApi.setOrderName(orderName);
+        db.apiOrderClearExpired();
+    }
+
+    /**
+     *
+     * @param apiOrder
+     * @return
+     *  item_api_guid, item_id,stations\n
+     *  item_api_guid, item_id,stations\n
+     */
+    static public String getOrderItemsTargetStations(KDSDataOrder apiOrder)
+    {
+        String s = "";
+
+        for (int i=0; i< apiOrder.getItems().getCount(); i++)
+        {
+            KDSDataItem item = apiOrder.getItems().getItem(i);
+            String toStations = item.getToStations().getString();
+            if (!s.isEmpty())
+                s += "\n";
+            s += item.getGUID() + ";";
+            s += item.getItemName() + ";";
+            s += toStations;
+
+
+        }
+        return s;
     }
 }

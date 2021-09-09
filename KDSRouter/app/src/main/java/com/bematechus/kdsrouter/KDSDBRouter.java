@@ -14,6 +14,7 @@ import com.bematechus.kdslib.KDSLog;
 import com.bematechus.kdslib.KDSUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -27,8 +28,9 @@ public class KDSDBRouter extends KDSDBBase {
      * 9: add firedtime in schedule table
      * 10: add category in scheduleitems table.
      * 11: add modifiers table.
+     * 12: add apiorders table.
      */
-    static public final int DB_VERSION = 11; //
+    static public final int DB_VERSION = 13; //
 
     static public final String DB_NAME = "router.db";
     static private final String TAG = "KDSRouterDB"; //2015-12-29
@@ -53,6 +55,7 @@ public class KDSDBRouter extends KDSDBBase {
                 Table_Schedule_Fields,
                 Table_ScheduleItems_Fields,
                 Table_Modifiers,
+                Table_API_ORDERS,
 
         };
         exeBatchSql(db, ar);
@@ -171,6 +174,7 @@ public class KDSDBRouter extends KDSDBBase {
         changeTableName(db, "offlineorders", "offlineorders1");
         changeTableName(db, "schedule", "schedule1");
         changeTableName(db, "scheduleitems", "scheduleitems1");
+        changeTableName(db, "modifiers", "modifiers1");
 
         onCreate(db);
 
@@ -189,6 +193,7 @@ public class KDSDBRouter extends KDSDBBase {
         copyData(db, "offlineorders", "offlineorders1");
         copyData(db, "schedule", "schedule1");
         copyData(db, "scheduleitems", "scheduleitems1");
+        copyData(db, "modifiers", "modifiers1");
 
         clearOldData(db);
     }
@@ -203,6 +208,7 @@ public class KDSDBRouter extends KDSDBBase {
         dropTable(db, "offlineorders1"); //
         dropTable(db, "schedule1"); //
         dropTable(db, "scheduleitems1"); //
+        dropTable(db, "modifiers1"); //
     }
 
 
@@ -1566,6 +1572,94 @@ public class KDSDBRouter extends KDSDBBase {
         return (bCategoryPrintable?bPrintable:bCategoryPrintable);
     }
 
+    /**
+     *
+     * @param apiGuid
+     * @param orderName
+     * @param itemsToStations
+     *  apiguid, itemid, tostations\n
+     *  apiguid, itemid, tostations\n
+     * @return
+     */
+    public boolean addApiOrder(String apiGuid, String orderName, String itemsToStations)
+    {
+
+        String sql = String.format("insert into apiorders(apiguid,ordername, r0) values('%s','%s', '%s')", apiGuid, orderName, itemsToStations);
+        return this.executeDML(sql);
+    }
+
+    public boolean apiItemAdd(String apiGuid, String itemsToStations)
+    {
+        String sql = "select r0 from apiorders where apiguid='" + apiGuid + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        String s = "";
+        if (c.moveToNext()) {
+            s  =  getString(c,0);
+            c.close();
+        }
+        if (!s.isEmpty())
+            s += "\n";
+        s += itemsToStations;
+
+        sql = String.format("update apiorders set r0='%s'",s);
+        return this.executeDML(sql);
+    }
+
+    public ArrayList<String> apiItemGetNameAndToStations(String apiOrderGuid, String apiItemGuid)
+    {
+        String sql = "select r0 from apiorders where apiguid='" + apiOrderGuid + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        String s = "";
+        if (c.moveToNext()) {
+            s  =  getString(c,0);
+            c.close();
+        }
+        ArrayList<String> ar = new ArrayList<>();
+        if (s.isEmpty())
+            return ar;
+
+        ArrayList<String> arItems = KDSUtil.spliteString(s, "\n");
+        for (int i=0; i< arItems.size(); i++)
+        {
+            String item = arItems.get(i);
+            if (item.isEmpty()) continue;
+            ArrayList<String> itemInfo = KDSUtil.spliteString(item, ";");
+            if (itemInfo.size()>1)
+            {
+                if (itemInfo.get(0).equals(apiItemGuid))
+                {
+                    ar.add(itemInfo.get(1));
+                    ar.add(itemInfo.get(2));
+                }
+            }
+        }
+        return ar;
+    }
+
+    public String getApiOrderName(String apiGuid)
+    {
+
+        String sql = "select ordername from apiorders where apiguid='" + apiGuid + "'";
+        Cursor c = getDB().rawQuery(sql, null);
+        String s = "";
+        if (c.moveToNext()) {
+            s  =  getString(c,0);
+            c.close();
+        }
+
+        return s;
+    }
+
+    public void apiOrderClearExpired()
+    {
+        Calendar d = Calendar.getInstance();
+        d.add(Calendar.HOUR_OF_DAY, -8);
+        String s = KDSUtil.convertDateToString(d.getTime());
+        String sql = "delete from apiorders where dbtimestamp<'" + s + "'";
+        this.executeDML(sql);
+
+    }
+
     /***************************************************************************
      * SQL definitions
      */
@@ -1747,5 +1841,21 @@ public class KDSDBRouter extends KDSDBBase {
             +"r8 text(16),"
             +"r9 text(16) ,"
             + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime'))) ";// )";
+
+    public static final String Table_API_ORDERS = "Create table apiorders ("
+            + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + "apiguid text(16),"
+            + "ordername text(16),"
+            +"r0 text(16),"
+            +"r1 text(16),"
+            +"r2 text(16),"
+            +"r3 text(16),"
+            +"r4 text(16) ,"
+            +"r5 text(16),"
+            +"r6 text(16),"
+            +"r7 text(16),"
+            +"r8 text(16),"
+            +"r9 text(16) ,"
+            + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime')) )";
 
 }

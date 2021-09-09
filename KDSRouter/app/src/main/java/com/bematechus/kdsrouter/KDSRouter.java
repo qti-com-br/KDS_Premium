@@ -3041,6 +3041,7 @@ public class KDSRouter extends KDSBase implements KDSSocketEventReceiver,
         boolean bAutoAddItem = getSettings().getBoolean(KDSRouterSettings.ID.Item_auto_add);
 
         int ncount = order.getItems().getCount();
+        if (ncount <=0) return false;
         for (int i=ncount-1; i>=0; i--)
         {
             KDSDataItem item = order.getItems().getItem(i);

@@ -1804,7 +1804,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     private void receiveBackofficeOrders(String evt, String strData)
     {
-        KDSDataOrders orders =  KDSBackofficeNotification.parseApiJson(evt, strData);
+        KDSDataOrders orders =  KDSBackofficeNotification.parseApiJson(this.getKDSRouter().getRouterDB(), evt, strData);
         if (orders == null) return;
         getKDSRouter().onFCMReceivedOrders(orders);
         //Rev.: kpp1-397, add time difference.
