@@ -6021,6 +6021,8 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
      * KP-137
      * send the input message to its queue stations.
      * In queue, it has option to show this message.
+     * KP-147. Sync data with the expo stations too.
+     *
      * @param orderName
      * @param inputMessage
      */
@@ -6029,14 +6031,16 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         String strXml = KDSXMLParserCommand.createSyncInputMessageWithQueue(this.getStationID(), this.getLocalIpAddress(),
                 "", orderName, inputMessage);
         this.getStationsConnections().writeToQueue(this.getStationID(), strXml);
-
+        //KP-147 Input message-not shared between stations
+        this.getStationsConnections().writeToExps(this.getStationID(), strXml);
     }
 
     /**
      *
      * After prep input message, it will send message to queue,
      * Queue station will enter this function.
-     *
+     * rev.
+     *  The expo station will get this command too.
      * @param kds
      * @param command
      * @param strOrinalData
