@@ -2505,6 +2505,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 else {
                     KDSStationFunc.doSyncCommandExpoItemBumped(this, command, xmlData);
                 }
+
             }
             break;
             case Expo_Unbump_Item:
@@ -5816,6 +5817,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         }
         //kpp1-407
         mirrorStationSyncWebDatabase(code,command, orderExisted, arChangedItem);
+        //kp-159
+        getStationsConnections().writeToSummary(getStationID(), xmlData);
+
     }
 
     /**
@@ -5829,7 +5833,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //kpp1-407, save my orginal order
         String orderName = command.getParam("P0", "");
         KDSDataOrder myOrder = this.getUsers().getOrderByName(orderName);
-        ;
+
 
         //
         ArrayList<KDSDataItem> arUnbumpItems = new ArrayList<>();
@@ -5840,6 +5844,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         checkSMS(orderGuid, false); //2.1.10
         //kpp1-407
         mirrorStationSyncWebDatabase(code, command, myOrder, arUnbumpItems);
+
+        //kp-159
+        getStationsConnections().writeToSummary(getStationID(), xmlData);
 
     }
 
