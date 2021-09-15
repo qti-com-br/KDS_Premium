@@ -12,6 +12,7 @@ import com.bematechus.kdslib.KDSStationsRelation;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.KDSXMLParserOrder;
+import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
@@ -483,7 +484,8 @@ public class KDSStationExpeditor extends KDSStationNormal {
         else if (kds.isExpeditorStation() ||kds.isRunnerStation() || kds.isSummaryStation()) //kpp1-286
         {
             //mirror do same work, kpp1-286
-            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+//            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID)
+            //comment above code in KP-159
             {
                 if (itemA != null) {
                     if (!exp_item_bumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA))
@@ -1325,7 +1327,12 @@ public class KDSStationExpeditor extends KDSStationNormal {
         else if (kds.isExpeditorStation() || kds.isRunnerStation() || kds.isSummaryStation()) //kpp1-286
         {
             //mirror do same work, kpp1-286
-            if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            //if ( kds.getStationsConnections().getRelations().isMyMirrorStation(fromStationID))
+            //KP-159 comment it.
+//
+//            KP-159
+//
+//            Bin Management - Bumped item not updating item count
             {
                 if (itemA != null)
                     exp_item_unbumped_in_other_expo_station(kds, kds.getCurrentDB(), kds.getUsers().getUserA().getOrders(), fromStationID, fromIP, orderA, itemA);
