@@ -1878,10 +1878,14 @@ print order data to  buffer, socket will send this buffer to serial port
 
     public void printOrder(KDSDataOrder order)
     {
+        //kp-169
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + ">>>>>> Print order ID=" + order.getOrderName());
+
         if (!isEnabled()) return;
 
         if(m_nPortType == PrinterPortType.USB) {
-            
+            //kp-169
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + " -- USB Printer");
            // if(Printer.status == Printer.PRINTER_STATUS.OK) { //Here, it has bug. If usb printer is offline, order will lost.
             String sOrder = "";
             synchronized (m_printerData) { //run in main thread
@@ -1896,6 +1900,8 @@ print order data to  buffer, socket will send this buffer to serial port
                 m_printerData.clear();
             }
             //UsbPrinterThread.start(sOrder);//use thread to print data.
+            //kp-169
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "--Data: " + sOrder);
             UsbPrinterThread.start(this, sOrder);//use thread to print data.
 
 //            Thread thread = new Thread() {
