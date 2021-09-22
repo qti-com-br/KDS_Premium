@@ -239,6 +239,7 @@ public class KDSPrinter {
     }
     public void setTemplate(String strTemplate)
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "setTemplete:  --- " + strTemplate );
         if (m_arLinesTags != null)
             m_arLinesTags.clear();
         m_arLinesTags = parseTemplate(strTemplate);
@@ -1901,6 +1902,7 @@ print order data to  buffer, socket will send this buffer to serial port
                 m_printerData.clear();
                 // Format order to print
                 printOrderToBuffer(order);
+                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "m_printerData.size=" + KDSUtil.convertIntToString(m_printerData.size()));
                 //for (int i = 0; i < m_printerData.size() - 2; i++) {
                 for (int i = 0; i < m_printerData.size()-1 ; i++) {//don't contains last "end_order" char.
                     sOrder += m_printerData.get(i);
@@ -2249,7 +2251,9 @@ print order data to  buffer, socket will send this buffer to serial port
         int len = m_printerData.size();
         int msz = MAX_PRINT_LINES;
 
-        if (len >= msz) return;
+        if (len >= msz) {
+            return;
+        }
 
         KDSDataOrder printOrder = new KDSDataOrder();
         order.copyTo(printOrder);
@@ -2264,7 +2268,10 @@ print order data to  buffer, socket will send this buffer to serial port
 
         rebuild_order_for_printable_options(printOrder);
         KDSDataItems items  = printOrder.getItems();
-        if (items.getCount() <=0) return; //don't print empty order
+        if (items.getCount() <=0) {
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + "items.count=0");
+            return; //don't print empty order
+        }
 
         //ArrayList<String> arPrint = new ArrayList<String>();
 
@@ -2765,9 +2772,11 @@ print order data to  buffer, socket will send this buffer to serial port
 
     private void printDataToList(PrintOrderState state, KDSDataOrder printOrder, int nStartLineNumber, int lines)
     {
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "lines = " + KDSUtil.convertIntToString(lines));
         ArrayList<String> arPrint = new ArrayList<>();
 
         printerOrderWithTemplete(state ,printOrder, nStartLineNumber, lines, arPrint);
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + "printdatatolist->arPrint.size=" + KDSUtil.convertIntToString(arPrint.size()));
 
         //synchronized (m_locker)
         {
