@@ -1880,7 +1880,16 @@ print order data to  buffer, socket will send this buffer to serial port
     {
         //kp-169
         KDSLog.e(TAG, KDSLog._FUNCLINE_() + ">>>>>> Print order ID=" + order.getOrderName());
+        KDSLog.e(TAG, KDSLog._FUNCLINE_() + ">>>>>> Orginal items count = " + KDSUtil.convertIntToString(order.getItems().getCount()));
+        //
+        for (int i=0; i< order.getItems().getCount(); i++)
+        {
+            String s = order.getItems().getDataItem(i).getDescription();
+            s += ", Printable=" + KDSUtil.convertBoolToString( order.getItems().getDataItem(i).getPrintable());
+            KDSLog.e(TAG, KDSLog._FUNCLINE_() + s);
 
+        }
+        //
         if (!isEnabled()) return;
 
         if(m_nPortType == PrinterPortType.USB) {
