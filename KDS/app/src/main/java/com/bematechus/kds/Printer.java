@@ -21,6 +21,8 @@ import com.bematechus.bemaLibrary.BemaPrinter;
 //import com.bematechus.bemaLibrary.CodePageCommand;
 import com.bematechus.bemaLibrary.CodePageCommand;
 import com.bematechus.bemaUtils.CommunicationException;
+import com.bematechus.kdslib.KDSLog;
+import com.bematechus.kdslib.KDSUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -190,11 +192,35 @@ public class Printer extends Activity {
         return false;
     }
 
+    //kp-169
+    public static String bytesDebugInfo(byte[] data)
+    {
+        String s = "";
+        String prn = "";
+        for (int i=0; i< data.length; i++)
+        {
+            s += String.format("%02x " , data[i]);
+            if (Character.isLetterOrDigit((char)data[i]) || Character.isAlphabetic(data[i])
+                || Character.isSpaceChar(data[i])
+                || Character.isWhitespace(data[i]))
+                prn += ((char)data[i]);
+
+        }
+
+        return prn + " >>>> " + s;
+
+
+    }
     public static boolean write(byte[] data, String fun) {
         int result = -999;
+
         if(mConnection != null) {
+            //kp-169
+            KDSLog.e("##Printer", KDSLog._FUNCLINE_() + "--bulkTransfer data:" + bytesDebugInfo(data));
+
             result = mConnection.bulkTransfer(mEndpoint, data, data.length, TIMEOUT);
         }
+        KDSLog.e("##Printer",fun + " -> data: " + data.length + "result: " + result);
         Log.d("##Printer",fun + " -> data: " + data.length + "result: " + result);
         return result == data.length;
     }
@@ -211,6 +237,7 @@ public class Printer extends Activity {
      */
     public static boolean printerOrder(String data, KDSPrinter kdsPrinter)
     {
+        KDSLog.e("Printer", KDSLog._FUNCLINE_() + "--To printer data: " + data);
         setCodePage(kdsPrinter.getCodePage());
 
         String willPrint = "";

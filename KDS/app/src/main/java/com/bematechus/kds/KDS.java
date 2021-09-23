@@ -3185,6 +3185,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                         }
                     }
                 }
+                // printer debug
+                //KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Before add to db: items count=" + KDSUtil.convertIntToString(order.getItems().getCount()));
+
+
                 ///
                 ArrayList<KDSDataOrder> ordersAdded = m_users.users_orderAdd(order, xmlData,true, bDeliverToExpo, bRefreshView);//////
                 //kpp1-310 Rush orders creating previous page
@@ -3195,6 +3199,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //                        m_arKdsEventsReceiver.get(i).onKDSEvent(KDSEventType.On_receive_new_order, null);
 //                    }
                 }
+                //printer debug.
+//                for (int i = 0; i < ordersAdded.size(); i++) {
+//                    KDSLog.e(TAG, KDSLog._FUNCLINE_() + "After add to db: items count=" + KDSUtil.convertIntToString(ordersAdded.get(i).getItems().getCount()));
+//                }
 
                 //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts

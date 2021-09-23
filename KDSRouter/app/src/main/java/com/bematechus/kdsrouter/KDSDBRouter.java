@@ -1514,7 +1514,7 @@ public class KDSDBRouter extends KDSDBBase {
         s = KDSUtil.fixSqliteSingleQuotationIssue(s);
         String sql = "select printable from Category where description='" + s + "'";
         Cursor c = getDB().rawQuery(sql, null);
-        int n = 0;
+        int n = 1; //kp-169, default should been true.
         if (c.moveToNext()) {
             n  =  getInt(c,0);
 
@@ -1554,7 +1554,7 @@ public class KDSDBRouter extends KDSDBBase {
         String guid = itemGetGuidFromDescription(category, itemDescription);
 
         String sql = "";
-        int n = 0;
+        int n = 1; //kp-169, default should be true value.
         //check item
         if (!guid.isEmpty()) {
             sql = "select printable from items where guid='" + guid + "'";
