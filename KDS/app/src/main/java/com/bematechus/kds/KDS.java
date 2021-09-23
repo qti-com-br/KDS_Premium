@@ -3186,7 +3186,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                     }
                 }
                 // printer debug
-                KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Before add to db: items count=" + KDSUtil.convertIntToString(order.getItems().getCount()));
+                //KDSLog.e(TAG, KDSLog._FUNCLINE_() + "Before add to db: items count=" + KDSUtil.convertIntToString(order.getItems().getCount()));
 
 
                 ///
@@ -3200,9 +3200,9 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //                    }
                 }
                 //printer debug.
-                for (int i = 0; i < ordersAdded.size(); i++) {
-                    KDSLog.e(TAG, KDSLog._FUNCLINE_() + "After add to db: items count=" + KDSUtil.convertIntToString(ordersAdded.get(i).getItems().getCount()));
-                }
+//                for (int i = 0; i < ordersAdded.size(); i++) {
+//                    KDSLog.e(TAG, KDSLog._FUNCLINE_() + "After add to db: items count=" + KDSUtil.convertIntToString(ordersAdded.get(i).getItems().getCount()));
+//                }
 
                 //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts
