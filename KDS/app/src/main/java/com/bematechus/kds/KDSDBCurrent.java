@@ -3,6 +3,8 @@ package com.bematechus.kds;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import com.bematechus.kdslib.PrepSorts;
 import com.bematechus.kdslib.ScheduleProcessOrder;
 import com.bematechus.kdslib.TimeDog;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -436,6 +439,10 @@ public class KDSDBCurrent extends KDSDBBase {
 
         KDSDataOrder c = orderGetInfo(sf);
         orderLoadData(c);
+        //kp-171 course time.
+        //long n = loadCourseStartTime(c.getGUID());
+        //c.setCourseStartTime(n);
+
         return c;
 
     }
@@ -711,6 +718,7 @@ public class KDSDBCurrent extends KDSDBBase {
             bTransactionByMe = startTransaction();
 
             executeDML(sql);
+            //saveCourseStartTime(order.getGUID(), order.getCourseStartTime());//kp-171
             KDSDataMessages messages = order.getOrderMessages();
             messagesAdd(messages);
 
@@ -989,7 +997,7 @@ public class KDSDBCurrent extends KDSDBBase {
 //
 //        updateDbTimeStamp();
 //
-//        prep_remove(guid);
+//        smart_remove(guid);
 //
 //        return true;
     }
@@ -1274,7 +1282,7 @@ public class KDSDBCurrent extends KDSDBBase {
             schedule_order_update_not_ready_qty((ScheduleProcessOrder) order);
         }
 
-        order.prep_set_sorts( prep_get_sort_items(order.getGUID()));
+        order.smart_set_sorts( smart_get_sort_items(order.getGUID()));
 
         return true;
     }
@@ -1960,7 +1968,7 @@ public class KDSDBCurrent extends KDSDBBase {
             float fltQty = getFloat(c,2);
             String itemName = getString(c,3);
             String orderGuid = getString(c,4);
-            PrepSorts prepItems = this.prep_get_sort_items(orderGuid);
+            PrepSorts prepItems = this.smart_get_sort_items(orderGuid);
 
             if (!prepItems.is_cooking_time(itemName, dtStart, fltOrderDelay))
                 sumItem.setSmartHidenQty(fltQty + sumItem.getSmartHidenQty());
@@ -3324,7 +3332,7 @@ update the schedule item ready qty
      *  Above notice revmoed: Save item/category delay independently.
      * @param order
      */
-    public void prep_add_order_items(KDSDataOrder order)
+    public void smart_add_order_items(KDSDataOrder order)
     {
         int ncount = order.getItems().getCount();
         boolean b = this.startTransaction();
@@ -3348,10 +3356,10 @@ update the schedule item ready qty
         }
         this.finishTransaction(b);
 
-        PrepSorts prepSorts = prep_get_sort_items(order.getGUID());
-        prep_save_sort_result(prepSorts);
+        PrepSorts prepSorts = smart_get_sort_items(order.getGUID());
+        smart_save_sort_result(prepSorts);
 
-        order.prep_set_sorts(prepSorts);
+        order.smart_set_sorts(prepSorts);
 
         //
 
@@ -3396,62 +3404,75 @@ update the schedule item ready qty
 
         //ArrayList<String> arWillShowingCategory = smartItems.runnerGetAllSameCatDelayCategories(smartMaxItem.CategoryDelay);
 
-        runnerSetLastShowingCatDelay(orderguid, smartMaxItem.CategoryDelay);
+        runnerSetLastShowingCatDelay(orderguid, smartMaxItem.CategoryDelay, 0);
         //
-        smartItems.runnerSetLastShowingCatDelay( smartMaxItem.CategoryDelay);
+        smartItems.runnerSetLastShowingCatDelay( smartMaxItem.CategoryDelay, 0);
     }
 
-    public void prep_set_real_started_time(String orderGuid, String itemName, float seconds)
+    public void smart_set_real_started_time(String orderGuid, String itemName, float seconds)
     {
         String sql = String.format("update prepsort set RealStartTime=%d where orderguid='%s' and itemname='%s'", (int)seconds, orderGuid, itemName);
         this.executeDML(sql);
     }
-    public void prep_set_item_finished(String orderGuid, String itemName, boolean bFinished)
+
+    /**
+     * kp-171 changes:
+     *  r2: save finished time, ms.
+     * @param orderGuid
+     * @param itemName
+     * @param bFinished
+     * @param dtOrderStart
+     */
+    public void smart_set_item_finished(String orderGuid, String itemName, boolean bFinished, Date dtOrderStart)
     {
-        String sql = String.format("update prepsort set finished=%d where orderguid='%s' and itemname='%s'", bFinished?1:0, orderGuid, itemName);
+        TimeDog td = new TimeDog(dtOrderStart);
+        long ms = td.duration();
+        if (!bFinished)
+            ms = 0;
+        String sql = String.format("update prepsort set finished=%d, r2=%d where orderguid='%s' and itemname='%s'", bFinished?1:0, ms, orderGuid, itemName);
         this.executeDML(sql);
     }
 
-    public PrepSorts prep_get_sort_items2(String orderGuid)
+//    public PrepSorts prep_get_sort_items2(String orderGuid)
+//    {
+//        String sql = "";
+//
+//        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
+//
+//
+//        PrepSorts prep = new PrepSorts();
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        while (c.moveToNext())
+//        {
+//            PrepSorts.PrepItem item = new PrepSorts.PrepItem();
+//            item.orderguid = getString(c,0);
+//            item.ItemName = getString(c,1);
+//            item.Category = getString(c,2);
+//            item.PrepTime = getFloat(c,3);
+//            item.MaxItemName = getString(c,4);
+//            //item.WaitSecsToStart = c.getInt(5);
+//            item.finished = (getInt(c,5)==1);
+//            item.RealStartTime = getInt(c,6);
+//            item.ItemDelay = getFloat(c,7);
+//            item.CategoryDelay = getFloat(c,8);
+//
+//            prep.add(item);
+//
+//        }
+//        c.close();
+//        prep.sort();
+//        //kpp1-456
+//        //prep.runnerSetShowingCategory(smartCategoryGetShowingCategories(orderGuid));
+//        prep.runnerSetLastShowingCatDelay(runnerGetLastShowingCatDelay(orderGuid));
+//        return prep;
+//    }
+
+    public PrepSorts smart_get_sort_items(String orderGuid)
     {
         String sql = "";
 
-        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0 from prepsort where orderguid='" + orderGuid +"'";
-
-
-        PrepSorts prep = new PrepSorts();
-        Cursor c = getDB().rawQuery(sql, null);
-
-        while (c.moveToNext())
-        {
-            PrepSorts.PrepItem item = new PrepSorts.PrepItem();
-            item.orderguid = getString(c,0);
-            item.ItemName = getString(c,1);
-            item.Category = getString(c,2);
-            item.PrepTime = getFloat(c,3);
-            item.MaxItemName = getString(c,4);
-            //item.WaitSecsToStart = c.getInt(5);
-            item.finished = (getInt(c,5)==1);
-            item.RealStartTime = getInt(c,6);
-            item.ItemDelay = getFloat(c,7);
-            item.CategoryDelay = getFloat(c,8);
-
-            prep.add(item);
-
-        }
-        c.close();
-        prep.sort();
-        //kpp1-456
-        //prep.runnerSetShowingCategory(smartCategoryGetShowingCategories(orderGuid));
-        prep.runnerSetLastShowingCatDelay(runnerGetLastShowingCatDelay(orderGuid));
-        return prep;
-    }
-
-    public PrepSorts prep_get_sort_items(String orderGuid)
-    {
-        String sql = "";
-
-        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0,r1 from prepsort where orderguid='" + orderGuid +"'";
+        sql = "select orderguid,ItemName,Category,PrepTime,MaxItemName,finished,RealStartTime,ItemDelay,r0,r1,r2,r3 from prepsort where orderguid='" + orderGuid +"'";
 
 
         PrepSorts prep = new PrepSorts();
@@ -3471,17 +3492,20 @@ update the schedule item ready qty
             item.ItemDelay = getFloat(c,7);
             item.CategoryDelay = getFloat(c,8);
             item.ItemStartedManually = (getInt(c, 9) == 1);
+            item.mFinishedTime = getInt(c, 10);
+            item.mItemStartManuallyTime = getInt(c, 11);
             prep.add(item);
 
         }
         c.close();
         prep.sort();
         //kpp1-456
-        prep.runnerSetLastShowingCatDelay(smartRunnerGetCatDelay(orderGuid));
+        PointF pt = smartRunnerGetCatDelay(orderGuid);
+        prep.runnerSetLastShowingCatDelay(pt.x, (long)(pt.y));
         return prep;
     }
 
-    public boolean prep_save_sort_result(PrepSorts sorts)
+    public boolean smart_save_sort_result(PrepSorts sorts)
     {
         if (sorts.count() <=0) return true;
         PrepSorts.PrepItem item = sorts.m_arItems.get(0);
@@ -3501,7 +3525,7 @@ update the schedule item ready qty
 
     }
 
-    public void prep_remove(String orderGuid)
+    public void smart_remove(String orderGuid)
     {
         String sql = String.format("delete from prepsort where orderguid='%s'", orderGuid);
         this.executeDML(sql);
@@ -3752,7 +3776,7 @@ update the schedule item ready qty
 
         updateDbTimeStamp();
 
-        prep_remove(guid);
+        smart_remove(guid);
 
         return true;
     }
@@ -4091,25 +4115,51 @@ update the schedule item ready qty
         return arRemovedOrders.size();
     }
 
-    public float smartRunnerGetCatDelay(String orderGuid)
+    /**
+     *
+     * @param orderGuid
+     * @return
+     *  x: catdeley value.
+     *  y: start time ms value.
+     */
+    public PointF smartRunnerGetCatDelay(String orderGuid)
     {
-        String sql = String.format("select trackerid from orders where guid='%s'", orderGuid);
+        String sql = String.format("select trackerid, r10 from orders where guid='%s'", orderGuid);
         //ArrayList<String> ar = new ArrayList<>();
 
         Cursor c = getDB().rawQuery(sql, null);
 
         String s = "";
-
+        long startTime = 0;
 
         while (c.moveToNext()) {
             s = c.getString(0);
+            startTime = c.getLong(1);
         }
         c.close();
-        if (s.isEmpty()) return 0;
-        return KDSUtil.convertStringToFloat(s, 0);
+        PointF pt = new PointF();
+
+        if (s.isEmpty()) {
+            pt.x = 0;
+            pt.y = 0;
+            return pt;
+        }
+        float flt = KDSUtil.convertStringToFloat(s, 0);
+        pt.x = flt;
+        pt.y = startTime;
+        return pt;
+
 
     }
-    public void runnerSetLastShowingCatDelay(String orderGuid, float fltCatDelay)
+
+    /**
+     *
+     * @param orderGuid
+     * @param fltCatDelay
+     * @param startTime
+     *  When start this catdelay. ms from order started.
+     */
+    public void runnerSetLastShowingCatDelay(String orderGuid, float fltCatDelay, long startTime)
     {
         //ArrayList<String> ar = smartCategoryGetShowingCategories(orderGuid);
         //boolean bChanged = false;
@@ -4122,7 +4172,7 @@ update the schedule item ready qty
 //        if (!bChanged) return;
 
         String s = KDSUtil.convertFloatToString(fltCatDelay);
-        String sql = String.format("update orders set trackerid='%s' where guid='%s'", s, orderGuid);
+        String sql = String.format("update orders set trackerid='%s', r10=%d where guid='%s'", s, startTime, orderGuid);
         this.executeDML(sql);
 
     }
@@ -4135,7 +4185,7 @@ update the schedule item ready qty
      * @param guidReceivedOrder
      * @param orderExisted
      */
-    public void prep_change_modify_order_guid_to_existed_guid(String guidReceivedOrder, KDSDataOrder orderExisted)
+    public void smart_change_modify_order_guid_to_existed_guid(String guidReceivedOrder, KDSDataOrder orderExisted)
     {
 
         String sql = String.format( "update prepsort set orderguid='%s' where orderguid='%s'", orderExisted.getGUID(),
@@ -4143,10 +4193,10 @@ update the schedule item ready qty
 
 
         this.executeDML(sql);
-        PrepSorts prepSorts = prep_get_sort_items(orderExisted.getGUID());
-        prep_save_sort_result(prepSorts);
+        PrepSorts prepSorts = smart_get_sort_items(orderExisted.getGUID());
+        smart_save_sort_result(prepSorts);
 
-        orderExisted.prep_set_sorts(prepSorts);
+        orderExisted.smart_set_sorts(prepSorts);
 
         //
 
@@ -4175,9 +4225,20 @@ update the schedule item ready qty
         return msg;
     }
 
-    public void smart_set_item_started(String orderGuid, String itemName, boolean bStarted)
+    /**
+     * use r1 to save runner manual started item state.
+     * kp-171 changes:
+     * r3: save start time.
+     * @param orderGuid
+     * @param itemName
+     * @param bStarted
+     */
+    public void smart_set_item_started(String orderGuid, String itemName, boolean bStarted, Date dtOrderStart)
     {
-        String sql = String.format("update prepsort set r1=%d where orderguid='%s' and itemname='%s'", bStarted?1:0, orderGuid, itemName);
+        TimeDog td = new TimeDog(dtOrderStart);
+        long ms = td.duration();
+
+        String sql = String.format("update prepsort set r1=%d,r3=%d where orderguid='%s' and itemname='%s'", bStarted?1:0,ms, orderGuid, itemName);
         this.executeDML(sql);
     }
 
@@ -4266,6 +4327,38 @@ update the schedule item ready qty
         return arColors;
     }
 
+    /**
+     * KP-171, save course start time.
+     * @param nms
+     *  //how long ms from order started.
+     */
+//    public void saveCourseStartTime(String orderGuid, long nms)
+//    {
+//        String sql =String.format("update orders set r9=%d where guid='%s'", nms, orderGuid);
+//        this.executeDML(sql);
+//
+//    }
+
+    /**
+     *
+     * @param orderGuid
+     * @return
+     */
+//    public long loadCourseStartTime(String orderGuid)
+//    {
+//        String sql = String.format("select r9 from orders where guid='%s", orderGuid);
+//        Cursor c = getDB().rawQuery(sql, null);
+//
+//        if (c.moveToNext()) {
+//            long n = getInt(c, 0);
+//            return n;
+//
+//        }
+//        else
+//        {
+//            return 0;
+//        }
+//    }
 
     /***************************************************************************
      * SQL definitions
@@ -4307,7 +4400,7 @@ update the schedule item ready qty
             +"r6 text(16)," //kdsguid, identify same order in whole KDS.
             +"r7 text(16)," //kp-48, Allergen xml tags. <HeaderFooterMessage>
             +"r8 text(16)," //kp-103, auto unpark order date value
-            +"r9 text(16),"
+            +"r9 text(16)," //Removed kp-171, couse time. Save start time here.
             + "DBTimeStamp TimeStamp NOT NULL DEFAULT (datetime('now','localtime')),"
             + "QueueMsg text(256), "// )";
             + "TrackerID text(16)," //As TT was removed, I use this to do kpp1-456, "Runner" station. Save showing cateogry name.
@@ -4315,7 +4408,7 @@ update the schedule item ready qty
             + "CookState int default 0,"
             + "SosReady int default 0, "
             + "inputmsg text(16)," //kp-114 add fields
-            + "r10 text(16),"
+            + "r10 text(16)," //kp-171, new catdelay start time.
             + "r11 text(16),"
             + "r12 text(16),"
             + "r13 text(16),"
@@ -4484,12 +4577,12 @@ update the schedule item ready qty
             "PrepTime float," +
             "ItemDelay float," +
             "MaxItemName text(256)," + //the maxitem name
-            "finished int," + //identify if this item finihsed
+            "finished int," + //identify if this item finished
             "RealStartTime int," +//the real time that this item start to cook. (seconds from order started).
             "r0 text(20)," + //Save category delay here.
             "r1 text(20), " + //kp-121, runner start it manually.
-            "r2 text(20)," +
-            "r3 text(20), " +
+            "r2 text(20)," + //finished time. kp-171
+            "r3 text(20), " + // runner start it time. kp-171
             "r4 text(20) )";
 
 

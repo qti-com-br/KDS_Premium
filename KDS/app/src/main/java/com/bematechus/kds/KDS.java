@@ -2123,7 +2123,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         //if (this.getSettings().getBoolean(KDSSettings.ID.Prep_mode_enabled))
         //if (bPrepEnabled)
           if (bSmartEnabled)
-            this.getCurrentDB().prep_add_order_items(order); //keep full order items for preparation time mode.
+            this.getCurrentDB().smart_add_order_items(order); //keep full order items for preparation time mode.
 //
         //tacker is removed.
 //        if (isTrackerStation() || isTrackerView())
@@ -2159,7 +2159,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 
             nAcceptItemsCount = doOrderFilter(objSource, order, xmlData, bForceAcceptThisOrder,false, bRefreshView);
             if (bSmartEnabled)
-                this.getCurrentDB().smart_runner_category_init(order, order.prep_get_sorts());
+                this.getCurrentDB().smart_runner_category_init(order, order.smart_get_sorts());
             if (bRefreshView)
                 schedule_process_update_after_receive_new_order();
 
@@ -3207,7 +3207,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
                 //t.debug_print_Duration("orderAdd");
                 //set the preparation time mode sorts
                 for (int i = 0; i < ordersAdded.size(); i++) {
-                    ordersAdded.get(i).prep_set_sorts(order.prep_get_sorts());
+                    ordersAdded.get(i).smart_set_sorts(order.smart_get_sorts());
                     //send sms
                     if (i == 0) {
 
@@ -4447,24 +4447,24 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         {
             String itemName = ar.get(i);
             if (bBumped)
-                prep_other_station_item_bumped(orderName, itemName);
+                smart_other_station_item_bumped(orderName, itemName);
             else
-                prep_other_station_item_unbumped(orderName, itemName);
+                smart_other_station_item_unbumped(orderName, itemName);
         }
     }
 
-    public void prep_other_station_item_bumped(String orderName,String itemName)
+    public void smart_other_station_item_bumped(String orderName,String itemName)
     {
-        getUsers().getUser(KDSUser.USER.USER_A).prep_other_station_item_bumped(orderName, itemName);
+        getUsers().getUser(KDSUser.USER.USER_A).smart_other_station_item_bumped(orderName, itemName);
         if (isMultpleUsersMode())
-            getUsers().getUser(KDSUser.USER.USER_B).prep_other_station_item_bumped(orderName, itemName);
+            getUsers().getUser(KDSUser.USER.USER_B).smart_other_station_item_bumped(orderName, itemName);
     }
 
-    public void prep_other_station_item_unbumped(String orderName,String itemName)
+    public void smart_other_station_item_unbumped(String orderName,String itemName)
     {
-        getUsers().getUser(KDSUser.USER.USER_A).prep_other_station_item_unbumped(orderName, itemName);
+        getUsers().getUser(KDSUser.USER.USER_A).smart_other_station_item_unbumped(orderName, itemName);
         if (isMultpleUsersMode())
-            getUsers().getUser(KDSUser.USER.USER_B).prep_other_station_item_unbumped(orderName, itemName);
+            getUsers().getUser(KDSUser.USER.USER_B).smart_other_station_item_unbumped(orderName, itemName);
     }
 
     public int getOpenedOrderSourceIpPort()
@@ -5735,7 +5735,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //        if (order == null) return; //kp-43 Prep stations crashing
 //        String guid = order.getGUID();
 //        this.getCurrentDB().smartRunnerCategoryAddShowingCategory(guid, category);
-//        order.prep_get_sorts().runnerSetShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
+//        order.smart_get_sorts().runnerSetShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
 //
 //        //set the focus the just showing category.
 //        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
@@ -5759,7 +5759,7 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
 //        String guid = order.getGUID();
 //        //this.getCurrentDB().smartRunnerCategoryAddShowingCategory(guid, category);
 //        this.getCurrentDB().smartRunnerCategoryAddShowingCategories(guid,arCategories );
-//        order.prep_get_sorts().runnerSetShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
+//        order.smart_get_sorts().runnerSetShowingCategory(this.getCurrentDB().smartCategoryGetShowingCategories(guid));
 //
 //        //set the focus the just showing category.
 //        for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
@@ -5790,8 +5790,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
         if (order == null) return; //kp-43 Prep stations crashing
         String guid = order.getGUID();
         //this.getCurrentDB().smartRunnerCategoryAddShowingCategory(guid, category);
-        this.getCurrentDB().runnerSetLastShowingCatDelay(guid, KDSUtil.convertStringToFloat(lastCatDelay,0));// CategoryAddShowingCategories(guid,arCategories );
-        order.prep_get_sorts().runnerSetLastShowingCatDelay(KDSUtil.convertStringToFloat(lastCatDelay,0));
+        TimeDog td = new TimeDog(order.getStartTime());
+        long ms = td.duration();
+        this.getCurrentDB().runnerSetLastShowingCatDelay(guid, KDSUtil.convertStringToFloat(lastCatDelay,0), ms);// CategoryAddShowingCategories(guid,arCategories );
+        order.smart_get_sorts().runnerSetLastShowingCatDelay(KDSUtil.convertStringToFloat(lastCatDelay,0), ms);
 
         //set the focus the just showing category.
         for (int i=0; i< m_arKdsEventsReceiver.size(); i++)
@@ -5947,10 +5949,10 @@ public class KDS extends KDSBase implements KDSSocketEventReceiver,
             if (order.getItems().getItemByName(itemName) == null)
                 continue;
 
-            PrepSorts.PrepItem smartItem = order.prep_get_sorts().findItem(itemName);
+            PrepSorts.PrepItem smartItem = order.smart_get_sorts().findItem(itemName);
             if (smartItem!= null) {
                 smartItem.ItemStartedManually = true;
-                this.getCurrentDB().smart_set_item_started(guid, itemName, true);
+                this.getCurrentDB().smart_set_item_started(guid, itemName, true, order.getStartTime());
             }
         }
         //set the focus the just showing category.

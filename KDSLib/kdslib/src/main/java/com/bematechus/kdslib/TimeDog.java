@@ -68,4 +68,12 @@ public class TimeDog {
         return (int)l;
 
     }
+    public long duration()
+    {
+        Date dtNow = new Date(System.currentTimeMillis());
+        long msNow = dtNow.getTime();
+        long msStart = m_dtStart.getTime();
+        long ms = msNow - msStart ;
+        return ms;
+    }
 }

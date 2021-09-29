@@ -3900,7 +3900,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //KDSDataOrder order = KDSDataOrder.createTestSmartOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
        // KDSDataOrder order = KDSDataOrder.createTestPrepOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
         //preparation, 20180104
-        getKDS().getCurrentDB().prep_add_order_items(order);
+        getKDS().getCurrentDB().smart_add_order_items(order);
 
 
         getKDS().doOrderFilter(null, order, "",false,true, true);
@@ -7138,7 +7138,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         //KDSDataOrder order = KDSDataOrder.createTestSmartOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
         // KDSDataOrder order = KDSDataOrder.createTestPrepOrder(strOrderName, nItems, getKDS().getStationID()); // rows = (i+2) * 6  +3 +titlerows;
         //preparation, 20180104
-        getKDS().getCurrentDB().prep_add_order_items(order);
+        getKDS().getCurrentDB().smart_add_order_items(order);
 
         getKDS().getUsers().getUserA().getOrders().addComponent(order);
 
@@ -8361,7 +8361,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             KDSDataItem item = order.getItems().getItem(i);
             String itemName = item.getItemName();
 
-            if ( order.prep_get_sorts().is_cooking_time(itemName, order.getStartTime(), order.getOrderDelay()))
+            if ( order.smart_get_sorts().is_cooking_time(itemName, order.getStartTime(), order.getOrderDelay()))
             {
                 if (!item.getLocalBumped()) {
                     itemBump(userID, orderGuid, item.getGUID());

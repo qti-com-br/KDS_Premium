@@ -1285,12 +1285,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
 
                 int bg = this.getEnv().getSettings().getInt(KDSSettings.ID.Panels_BG);//
                 int fg = Color.LTGRAY;//GRAY;
-                dressedOrder.prepOrderGrayColorShowing(bg,fg);
+                dressedOrder.smartOrderGrayColorShowing(bg,fg);
 
             }
             else if (m == KDSSettings.SmartOrderShowing.Hide)
             {
-                dressedOrder.prepOrderHideShowing();
+                dressedOrder.smartOrderHideShowing();
                 //kp-87, hide order.
                 if (dressedOrder.getItems().getCount() ==0 ||
                     dressedOrder.getItems().getItem(0) instanceof KDSDataMoreIndicator)
