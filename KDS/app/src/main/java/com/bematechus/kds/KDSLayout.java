@@ -363,6 +363,21 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
                 return 0; //don't show it.
         }
 
+        // KP-170. Hide order if all items invisible - order window remaining
+        if (getEnv().getSettings().getBoolean(KDSSettings.ID.Smart_Order_Enabled))
+        {
+
+            if (getEnv().getSettings().getBoolean(KDSSettings.ID.Smartorder_hide_order))
+            {
+                if (getEnv().getSettings().getBoolean(KDSSettings.ID.Runner_hide_finished_category))
+                if (dressedOrder.isAllItemsFinished())
+                    return 0;
+            }
+
+        }
+
+
+
         KDSSettings.LayoutFormat layoutFormat = getEnv().getSettingLayoutFormat();
 
         //this.getEnv().getSettings().getBoolean()
@@ -1303,10 +1318,12 @@ public class KDSLayout implements KDSView.KDSViewEventsInterface, LineItemViewer
             {
                 if (this.getEnv().getSettings().getBoolean(KDSSettings.ID.Runner_hide_finished_category)) {
                     dressedOrder.smartRunnerHideFinishedSameCatDelayItems();
-                    //check if focused item wwas hiden.
+                    //check if focused item was hidden.
                     String focusedItemGuid =  this.getEnv().getStateValues().getFocusedItemGUID();
-                    if (dressedOrder.getItems().getItemByGUID(focusedItemGuid) == null)
-                        this.getEnv().getStateValues().setFocusedItemGUID("");
+                    if (!focusedItemGuid.isEmpty()) {
+                        if (dressedOrder.getItems().getItemByGUID(focusedItemGuid) == null)
+                            this.getEnv().getStateValues().setFocusedItemGUID("");
+                    }
                 }
             }
 
