@@ -1178,9 +1178,14 @@ public class PrepSorts {
      * This is for showing course time.
      * @return
      */
-    public long runner_mode_course_start_time(KDSDataOrder order )
+    public long course_start_time_in_runner_mode(KDSDataOrder order )
     {
         float flt = mRunnerLastShowingCatDelay;
+        //check if this order hold this catdelay
+
+        if (!isOrderContainCatDelay(order, flt))
+            return 0;
+
         if (isAllSameCatDelayFinished(order, flt))
             return 0;
         return mRunnerLastShowingCatDelayStartMs;
@@ -1194,7 +1199,7 @@ public class PrepSorts {
 
 
     /**
-     * kp-171
+     * kp-171 course time feature.
      * @param order
      * @return
      *  ms
@@ -1205,10 +1210,10 @@ public class PrepSorts {
 
         if (mode == SmartMode.Category_Runner) {
 
-            return runner_mode_course_start_time(order);
+            return course_start_time_in_runner_mode(order);
 
         }
-        float orderDelay = order.getOrderDelay();
+        //float orderDelay = order.getOrderDelay();
         ArrayList<Float> arCatDelays = getAllCatDelayValues();
 
         float firstNotFinishedCatDelayValue = -1;
@@ -1227,6 +1232,11 @@ public class PrepSorts {
 
         if (firstNotFinishedCatDelayValue == -1)
             return 0;
+
+        //this order don't hold this catdelay. Don't show course time.
+        if (!isOrderContainCatDelay(order, firstNotFinishedCatDelayValue))
+            return 0;
+
         //2. get all same catdelay items
         ArrayList<PrepItem> arNotFinishedSameCatDelay = getAllSameCatDelayItems(firstNotFinishedCatDelayValue);
         ArrayList<PrepItem> arFinishedSameCatDelay = new ArrayList<>();
@@ -1317,9 +1327,15 @@ public class PrepSorts {
         {
             PrepItem item = m_arItems.get(i);
             if (item.CategoryDelay!= delay) continue;
-            KDSDataItem itemData = order.getItems().getItemByName(item.ItemName);
-            if (!itemData.getLocalBumped())
-                return false;
+            if (!item.finished) {
+                KDSDataItem itemData = order.getItems().getItemByName(item.ItemName);
+                if (itemData != null) {
+                    if (!itemData.getLocalBumped())
+                        return false;
+                }
+                else
+                    return false;
+            }
 
 
         }
@@ -1360,6 +1376,24 @@ public class PrepSorts {
         return false;
     }
 
+    /**
+     * kp-171
+     * @param order
+     * @param catDelay
+     * @return
+     */
+    private boolean isOrderContainCatDelay(KDSDataOrder order, float catDelay) {
+        boolean bOrderContainCurrentCatDelay = false;
+        for (int i = 0; i < order.getItems().getCount(); i++) {
+            KDSDataItem item = order.getItems().getItem(i);
+            PrepItem smartItem = this.findItem(item.getItemName());
+            if (smartItem != null) {
+                if (smartItem.CategoryDelay == catDelay)
+                    bOrderContainCurrentCatDelay = true;
+            }
+        }
+        return bOrderContainCurrentCatDelay;
+    }
 
 //    public boolean runnerAddShowingCatDelay(String catDelay)
 //    {
