@@ -63,7 +63,7 @@ public class LineItemSmart {
                     continue;
                 if (showingMethod == KDSSettings.SmartOrderShowing.Hide)
                 {//hidden item showing, hide un-cooking item.
-                    if (!order.prep_get_sorts().is_cooking_time(item.getItemName(), order.getStartTime(), order.getOrderDelay())) {
+                    if (!order.smart_get_sorts().is_cooking_time(item.getItemName(), order.getStartTime(), order.getOrderDelay())) {
                         m_bHiddenExisted = true;
                         continue;
                     }
@@ -86,7 +86,7 @@ public class LineItemSmart {
     {
         KDSDataOrder order = pair.m_order;
         KDSDataItem item = pair.m_item;
-        return order.prep_get_sorts().item_start_cook_time(item.getItemName(), order.getStartTime(), order.getOrderDelay());
+        return order.smart_get_sorts().item_start_cook_time(item.getItemName(), order.getStartTime(), order.getOrderDelay());
     }
 
     private void sortItems(ArrayList<OrderItemPair> arSmart)
@@ -143,7 +143,7 @@ public class LineItemSmart {
                     continue;
                 if (showingMethod == KDSSettings.SmartOrderShowing.Hide)
                 {//hidden item showing, hide un-cooking item.
-                    if (!order.prep_get_sorts().is_cooking_time(item.getItemName(), order.getStartTime(), order.getOrderDelay())) {
+                    if (!order.smart_get_sorts().is_cooking_time(item.getItemName(), order.getStartTime(), order.getOrderDelay())) {
                         m_bHiddenExisted = true;
                         continue;
                     }

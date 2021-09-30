@@ -285,7 +285,7 @@ public class KDSLayoutOrder extends KDSDataOrder {
 
     }
 
-    public boolean prepOrderGrayColorShowing(int grayBG, int grayFG)
+    public boolean smartOrderGrayColorShowing(int grayBG, int grayFG)
     {
         int ncount = this.getItems().getCount();
 
@@ -293,7 +293,7 @@ public class KDSLayoutOrder extends KDSDataOrder {
         for (int i=0; i< ncount; i++)
         {
             KDSDataItem item = this.getItems().getItem(i);
-            if (!prepItemIsTimeToCook(item))
+            if (!smartItemIsTimeToCook(item))
             {
                 smartItemGray(item, grayBG,grayFG); //use smart function
             }
@@ -311,7 +311,7 @@ public class KDSLayoutOrder extends KDSDataOrder {
 
     }
 
-    public boolean prepOrderHideShowing()
+    public boolean smartOrderHideShowing()
     {
         int ncount = this.getItems().getCount();
 
@@ -320,7 +320,7 @@ public class KDSLayoutOrder extends KDSDataOrder {
         for (int i=0; i< ncount; i++)
         {
             KDSDataItem item = this.getItems().getItem(i);
-            if (!prepItemIsTimeToCook(item))
+            if (!smartItemIsTimeToCook(item))
             {
                 arWillHide.add(item);
             }
@@ -534,8 +534,8 @@ public class KDSLayoutOrder extends KDSDataOrder {
 
     private boolean isAllSameCatDelayItemsFinished(float catDelay)
     {
-        ArrayList<PrepSorts.PrepItem> allSameCatDelayItems = prep_get_sorts().runnerGetAllSameCatDelayItems(catDelay);
-        boolean bFinihsed = this.prep_get_sorts().allSameCatDelayItemsFinished(allSameCatDelayItems);
+        ArrayList<PrepSorts.PrepItem> allSameCatDelayItems = smart_get_sorts().runnerGetAllSameCatDelayItems(catDelay);
+        boolean bFinihsed = this.smart_get_sorts().allSameCatDelayItemsFinished(allSameCatDelayItems);
         if (bFinihsed)//Other station bumped it, but we need to check if local bumped too.
         {//check if local bumped. This is for Runner station.
             for (int i=0; i< allSameCatDelayItems.size(); i++)

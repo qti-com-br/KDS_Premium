@@ -369,22 +369,22 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             {
 
                 Date dt = order.getStartTime();
+                return formatTimeDuration(dt);
 
-
-                Date dtNow = new Date(System.currentTimeMillis());
-                long l = dtNow.getTime() - dt.getTime();
-                long day=l/(24*60*60*1000);
-                long hour=(l/(60*60*1000)-day*24);
-                long min=((l/(60*1000))-day*24*60-hour*60);
-                long sec=(l/1000-day*24*60*60-hour*60*60-min*60);
-                long hours = hour + day * 24;
-
-
-                if (hours <=0)
-                    return String.format("%02d:%02d", min, Math.abs(sec));
-
-                else
-                    return String.format("%d:%02d:%02d",hours, Math.abs(min), Math.abs(sec));
+//                Date dtNow = new Date(System.currentTimeMillis());
+//                long l = dtNow.getTime() - dt.getTime();
+//                long day=l/(24*60*60*1000);
+//                long hour=(l/(60*60*1000)-day*24);
+//                long min=((l/(60*1000))-day*24*60-hour*60);
+//                long sec=(l/1000-day*24*60*60-hour*60*60-min*60);
+//                long hours = hour + day * 24;
+//
+//
+//                if (hours <=0)
+//                    return String.format("%02d:%02d", min, Math.abs(sec));
+//
+//                else
+//                    return String.format("%d:%02d:%02d",hours, Math.abs(min), Math.abs(sec));
 
             }
 
@@ -443,6 +443,19 @@ public class KDSLayoutCell extends KDSViewBlockCell {
             case InputMsg:
             {
                 return order.getInputMessage();
+            }
+            case CourseTime:
+            {
+                long ms = order.smart_get_sorts().course_start_time(order);
+                if (ms >0)
+                {
+                    long n = order.getStartTime().getTime();
+                    n += ms;
+                    Date dt = new Date(n);
+                    return formatTimeDuration(dt);
+
+                }
+                return "";
             }
             default:
                 return "";
@@ -2195,6 +2208,29 @@ public class KDSLayoutCell extends KDSViewBlockCell {
         int nMin = (nBlockCol+1) * block.getColTotalRows();
         return (nIndex == nMin-1);
 
+    }
+
+    /**
+     * KP-171
+     * @param startTime
+     * @return
+     */
+    static private String formatTimeDuration(Date startTime)
+    {
+        Date dtNow = new Date(System.currentTimeMillis());
+        long l = dtNow.getTime() - startTime.getTime();
+        long day=l/(24*60*60*1000);
+        long hour=(l/(60*60*1000)-day*24);
+        long min=((l/(60*1000))-day*24*60-hour*60);
+        long sec=(l/1000-day*24*60*60-hour*60*60-min*60);
+        long hours = hour + day * 24;
+
+
+        if (hours <=0)
+            return String.format("%02d:%02d", min, Math.abs(sec));
+
+        else
+            return String.format("%d:%02d:%02d",hours, Math.abs(min), Math.abs(sec));
     }
 
 }

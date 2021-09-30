@@ -690,7 +690,7 @@ public class LineItemViewer {
                     int nDelaySeconds =  order.prepItemGetStartTime(item);
 
                     dt = new Date( dt.getTime() + nDelaySeconds *1000);
-                    if (order.prepItemIsTimeToCook(item))
+                    if (order.smartItemIsTimeToCook(item))
                         return cell.setText(KDSDataOrder.makeDurationString(dt));
                     else
                         return cell.setText("");
@@ -1921,7 +1921,7 @@ public class LineItemViewer {
             if (order == null) return;
             KDSDataItem item = order.getItems().getItemByGUIDNoLocker(m_strItemGuid);//kpp1-322, Maybe, there is one conflicts here.
             if (item == null) return;
-            if (order.prep_get_sorts().is_cooking_time( item.getItemName(), order.getStartTime(), order.getOrderDelay()))
+            if (order.smart_get_sorts().is_cooking_time( item.getItemName(), order.getStartTime(), order.getOrderDelay()))
             {
                 this.m_fontRow.copyFrom(m_gridTop.m_fontDefault);
             }

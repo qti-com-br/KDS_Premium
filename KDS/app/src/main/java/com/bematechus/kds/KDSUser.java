@@ -7,6 +7,7 @@ import com.bematechus.kdslib.KDSDataOrders;
 import com.bematechus.kdslib.KDSUtil;
 import com.bematechus.kdslib.KDSXMLParserCommand;
 import com.bematechus.kdslib.PrepSorts;
+import com.bematechus.kdslib.TimeDog;
 
 import java.util.ArrayList;
 
@@ -219,7 +220,7 @@ public class KDSUser {
 ////        String lastCategory = "";
 ////        if (getKDS().isRunnerStation())
 ////        {
-////            PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+////            PrepSorts.PrepItem prepItem = order.smart_get_sorts().findItem(itemName);
 ////            lastCategory = prepItem.Category;
 ////        }
 //        PrepSorts.PrepItem maxItem = PrepSorts.prep_other_station_item_bumped(order, itemName);
@@ -232,17 +233,17 @@ public class KDSUser {
 //        if (getKDS().isRunnerStation()) //I am a Runner
 //        {
 //            String categoryDescription = maxItem.Category;
-//            if (!order.prep_get_sorts().runnerCategoryIsShowing(categoryDescription))
+//            if (!order.smart_get_sorts().runnerCategoryIsShowing(categoryDescription))
 //            {
-//                String lastCategory = order.prep_get_sorts().runnerGetLastShowingCategory();
-//                ArrayList<String> allSameCatDelayCategories = order.prep_get_sorts().runnerGetAllSameCatDelayCategories(lastCategory);
+//                String lastCategory = order.smart_get_sorts().runnerGetLastShowingCategory();
+//                ArrayList<String> allSameCatDelayCategories = order.smart_get_sorts().runnerGetAllSameCatDelayCategories(lastCategory);
 //                boolean bFitFinishedCondition = false;
 //                if (getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
 //                { //the remote prep station must bump item first
 ////                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(lastCategory) &&
 ////                                                order.smartCategoryItemsRemoteFinished(lastCategory) );
 //                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(allSameCatDelayCategories) &&
-//                                            order.prep_get_sorts().allCategoriesItemsFinished(allSameCatDelayCategories));
+//                                            order.smart_get_sorts().allCategoriesItemsFinished(allSameCatDelayCategories));
 //                                                //order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
 //                }
 //                else
@@ -251,15 +252,15 @@ public class KDSUser {
 //                    //bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(allSameCatDelayCategories) ||
 //                    //                        order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
 //                    //check smart items, as local order was not updated when this function called.
-//                    bFitFinishedCondition = order.prep_get_sorts().allCategoriesItemsFinished(allSameCatDelayCategories);
+//                    bFitFinishedCondition = order.smart_get_sorts().allCategoriesItemsFinished(allSameCatDelayCategories);
 //                }
 //                if (lastCategory.isEmpty() || bFitFinishedCondition )
 //                {
-//                    //order.prep_get_sorts().runnerGetShowingCategory().add(categoryDescription);
-//                    allSameCatDelayCategories = order.prep_get_sorts().runnerGetAllSameCatDelayCategories(categoryDescription);
+//                    //order.smart_get_sorts().runnerGetShowingCategory().add(categoryDescription);
+//                    allSameCatDelayCategories = order.smart_get_sorts().runnerGetAllSameCatDelayCategories(categoryDescription);
 //
-//                    //order.prep_get_sorts().runnerAddShowingCategory(categoryDescription);
-//                    order.prep_get_sorts().runnerAddShowingCategories(allSameCatDelayCategories);
+//                    //order.smart_get_sorts().runnerAddShowingCategory(categoryDescription);
+//                    order.smart_get_sorts().runnerAddShowingCategories(allSameCatDelayCategories);
 //                    //getCurrentDB().smartRunnerCategoryAddShowingCategory(order.getGUID(), categoryDescription);
 //                    getCurrentDB().smartRunnerCategoryAddShowingCategories(order.getGUID(), allSameCatDelayCategories);
 //                    //KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(), KDSXMLParserCommand.KDSCommand.Runner_show_category, order, null, categoryDescription);
@@ -272,12 +273,12 @@ public class KDSUser {
 //        }
 //
 //
-////        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+////        PrepSorts.PrepItem prepItem = order.smart_get_sorts().findItem(itemName);
 ////        if (prepItem == null) return;
 ////        prepItem.setFinished(true);//, order.getDurationSeconds());
 ////        if (prepItem.PrepTime >0 || prepItem.ItemDelay >0) { //kpp1-322, add this condition
-////            if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName)) {
-////                PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
+////            if (order.smart_get_sorts().isMaxCategoryTimeItem(itemName)) {
+////                PrepSorts.PrepItem maxItem = order.smart_get_sorts().sort();
 ////                if (maxItem != null) {
 ////                    maxItem.RealStartTime = order.getDurationSeconds() + (int)(maxItem.ItemDelay * 60); //kpp1-417, make delay time must been done.
 ////                    getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
@@ -289,36 +290,37 @@ public class KDSUser {
 //
 //    }
 
-    public void prep_other_station_item_bumped(String orderName,String itemName)
+    public void smart_other_station_item_bumped(String orderName,String itemName)
     {
 
 
         KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return;
-        PrepSorts.PrepItem maxItem = PrepSorts.prep_other_station_item_bumped(order, itemName);
+        PrepSorts.PrepItem maxItem = PrepSorts.smart_other_station_item_bumped(order, itemName);
         if (maxItem != null) {
-            getCurrentDB().prep_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
+            getCurrentDB().smart_set_real_started_time(order.getGUID(), maxItem.ItemName, maxItem.RealStartTime);
         }
-        getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, true);
+        getCurrentDB().smart_set_item_finished(order.getGUID(), itemName, true, order.getStartTime());
+
         if (maxItem == null) return ; //kp-90
         //kp1-25, notify runner's child, a new category started.
         if (getKDS().isRunnerStation()) //I am a Runner
         {
             //String categoryDescription = maxItem.Category;
-            //if (!order.prep_get_sorts().runnerCategoryIsShowing(categoryDescription))
-            if (!order.prep_get_sorts().runnerIsShowingCatDelay(maxItem.CategoryDelay))
+            //if (!order.smart_get_sorts().runnerCategoryIsShowing(categoryDescription))
+            if (!order.smart_get_sorts().runnerIsShowingCatDelay(maxItem.CategoryDelay))
             {
-                //String lastCatDelay = order.prep_get_sorts().runnerGetLastShowingCatDelay();
+                //String lastCatDelay = order.smart_get_sorts().runnerGetLastShowingCatDelay();
                 //float fltLastCatDelay = KDSUtil.convertStringToFloat(lastCatDelay, 0);
-                float fltLastCatDelay = order.prep_get_sorts().runnerGetLastShowingCatDelay();
-                ArrayList<PrepSorts.PrepItem> allSameCatDelayItems = order.prep_get_sorts().runnerGetAllSameCatDelayItems(fltLastCatDelay);
+                float fltLastCatDelay = order.smart_get_sorts().runnerGetLastShowingCatDelay();
+                ArrayList<PrepSorts.PrepItem> allSameCatDelayItems = order.smart_get_sorts().runnerGetAllSameCatDelayItems(fltLastCatDelay);
                 boolean bFitFinishedCondition = false;
                 if (getKDS().getSettings().getBoolean(KDSSettings.ID.Runner_confirm_bump))
                 { //the remote prep station must bump item first
 //                    bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(lastCategory) &&
 //                                                order.smartCategoryItemsRemoteFinished(lastCategory) );
                     bFitFinishedCondition = (order.smartRunnerSameCatDelayItemsLocalFinished(allSameCatDelayItems) &&
-                            order.prep_get_sorts().allSameCatDelayItemsFinished(allSameCatDelayItems));
+                            order.smart_get_sorts().allSameCatDelayItemsFinished(allSameCatDelayItems));
                     //order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
                 }
                 else
@@ -327,20 +329,22 @@ public class KDSUser {
                     //bFitFinishedCondition = (order.smartCategoryItemsLocalFinished(allSameCatDelayCategories) ||
                     //                        order.smartCategoryItemsRemoteFinished(allSameCatDelayCategories) );
                     //check smart items, as local order was not updated when this function called.
-                    bFitFinishedCondition = order.prep_get_sorts().allSameCatDelayItemsFinished(allSameCatDelayItems);
+                    bFitFinishedCondition = order.smart_get_sorts().allSameCatDelayItemsFinished(allSameCatDelayItems);
                 }
                 //if (lastCatDelay.isEmpty() || bFitFinishedCondition )
                 if ( bFitFinishedCondition )
                 {
-                    //order.prep_get_sorts().runnerGetShowingCategory().add(categoryDescription);
+                    //order.smart_get_sorts().runnerGetShowingCategory().add(categoryDescription);
                     float nextCatDelay = maxItem.CategoryDelay;
 
-                    //allSameCatDelayCategories = order.prep_get_sorts().runnerGetAllSameCatDelayCategories(categoryDescription);
+                    //allSameCatDelayCategories = order.smart_get_sorts().runnerGetAllSameCatDelayCategories(categoryDescription);
 
-                    //order.prep_get_sorts().runnerAddShowingCategory(categoryDescription);
-                    order.prep_get_sorts().runnerSetLastShowingCatDelay(nextCatDelay);
+                    //order.smart_get_sorts().runnerAddShowingCategory(categoryDescription);
+                    TimeDog td = new TimeDog(order.getStartTime());
+                    long ms = td.duration();
+                    order.smart_get_sorts().runnerSetLastShowingCatDelay(nextCatDelay, ms);
                     //getCurrentDB().smartRunnerCategoryAddShowingCategory(order.getGUID(), categoryDescription);
-                    getCurrentDB().runnerSetLastShowingCatDelay(order.getGUID(), nextCatDelay);
+                    getCurrentDB().runnerSetLastShowingCatDelay(order.getGUID(), nextCatDelay, ms);
                     //KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(), KDSXMLParserCommand.KDSCommand.Runner_show_category, order, null, categoryDescription);
                     KDSStationFunc.sync_with_stations_use_me_as_expo(getKDS(),
                             KDSXMLParserCommand.KDSCommand.Runner_show_category,
@@ -374,26 +378,26 @@ public class KDSUser {
      * @param orderName
      * @param itemName
      */
-    public void prep_other_station_item_unbumped(String orderName,String itemName)
+    public void smart_other_station_item_unbumped(String orderName,String itemName)
     {
         KDSDataOrder order = m_ordersDynamic.getOrderByName(orderName);
         if (order == null) return;
-        ArrayList<PrepSorts.PrepItem> ar = PrepSorts.prep_other_station_item_unbumped(order, itemName);
+        ArrayList<PrepSorts.PrepItem> ar = PrepSorts.smart_other_station_item_unbumped(order, itemName);
         if (ar != null) {
             for (int i = 0; i < ar.size(); i++) {
-                getCurrentDB().prep_set_real_started_time(order.getGUID(), ar.get(i).ItemName, 0);
+                getCurrentDB().smart_set_real_started_time(order.getGUID(), ar.get(i).ItemName, 0);
             }
         }
-        getCurrentDB().prep_set_item_finished(order.getGUID(), itemName, false);
+        getCurrentDB().smart_set_item_finished(order.getGUID(), itemName, false, order.getStartTime());
 
-//        PrepSorts.PrepItem prepItem = order.prep_get_sorts().findItem(itemName);
+//        PrepSorts.PrepItem prepItem = order.smart_get_sorts().findItem(itemName);
 //        if (prepItem == null) return;
 //        prepItem.setFinished(false);//.finished = false;
-//        //if (order.prep_get_sorts().isMaxCategoryTimeItem(itemName))
-//        PrepSorts.PrepItem maxItem = order.prep_get_sorts().sort();
+//        //if (order.smart_get_sorts().isMaxCategoryTimeItem(itemName))
+//        PrepSorts.PrepItem maxItem = order.smart_get_sorts().sort();
 //        if (maxItem != null && maxItem == prepItem)
 //        {//we just restore old max item
-//            ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().reset_real_start_time(maxItem);
+//            ArrayList<PrepSorts.PrepItem> ar = order.smart_get_sorts().reset_real_start_time(maxItem);
 //            for (int i=0; i< ar.size(); i++)
 //            {
 //                getCurrentDB().prep_set_real_started_time(order.getGUID(), ar.get(i).ItemName, 0);
@@ -436,7 +440,7 @@ public class KDSUser {
         KDSDataItem item = null;
         if (itemGuid.isEmpty())
         {
-            PrepSorts.PrepItem smartNextItem = order.prep_get_sorts().sort();
+            PrepSorts.PrepItem smartNextItem = order.smart_get_sorts().sort();
             if (smartNextItem != null)
             {
                 item = order.getItems().getItemByName(smartNextItem.ItemName);
@@ -450,18 +454,18 @@ public class KDSUser {
         }
         String itemName = item.getItemName();
 
-        PrepSorts.PrepItem smartItem = order.prep_get_sorts().findItem(itemName);
+        PrepSorts.PrepItem smartItem = order.smart_get_sorts().findItem(itemName);
         if (smartItem.ItemStartedManually)
             return false;
         String startedItemNames = "";
         if (itemGuid.isEmpty()) {
             //start next group
-            ArrayList<PrepSorts.PrepItem> ar = order.prep_get_sorts().runnerGetAllSameCatDelayItems(smartItem.CategoryDelay);
+            ArrayList<PrepSorts.PrepItem> ar = order.smart_get_sorts().runnerGetAllSameCatDelayItems(smartItem.CategoryDelay);
 
             for (int i = 0; i < ar.size(); i++) {
                 smartItem = ar.get(i);
                 smartItem.ItemStartedManually = true;
-                this.getKDS().getCurrentDB().smart_set_item_started(orderGuid, smartItem.ItemName, true);
+                this.getKDS().getCurrentDB().smart_set_item_started(orderGuid, smartItem.ItemName, true, order.getStartTime());
                 if (!startedItemNames.isEmpty())
                     startedItemNames += ",";
                 startedItemNames += smartItem.ItemName;

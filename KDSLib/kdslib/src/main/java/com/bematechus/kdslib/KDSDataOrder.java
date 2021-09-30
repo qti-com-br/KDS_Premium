@@ -173,6 +173,9 @@ public class KDSDataOrder extends KDSData {
 
     String m_strInputMessage = ""; //kp-114, Input a number in Order
 
+    //KP-171, course time.
+    //long m_courseStartMs = 0; //when course time started after order start time. Unit MS.
+
     /***************************************************************************/
     
     public KDSDataOrder()
@@ -525,6 +528,7 @@ public class KDSDataOrder extends KDSData {
         obj.m_kdsGUID = m_kdsGUID;
         obj.mHeaderFooterMessage = mHeaderFooterMessage;
         obj.m_strInputMessage = m_strInputMessage;//kp-114
+        //obj.m_courseStartMs = m_courseStartMs;//kp-171
 
     }
     /***************************************************************************
@@ -1952,7 +1956,7 @@ public class KDSDataOrder extends KDSData {
      * @param item
      * @return
      */
-    public boolean prepItemIsTimeToCook(KDSDataItem item)
+    public boolean smartItemIsTimeToCook(KDSDataItem item)
     {
         //float fltItemDelay = item.getItemDelay();
         float fltOrderDelay = this.getOrderDelay();
@@ -2392,12 +2396,12 @@ get the total qty of all found items
         }
     }
 
-    public PrepSorts prep_get_sorts()
+    public PrepSorts smart_get_sorts()
     {
         return m_prepSorts;
     }
 
-    public void prep_set_sorts(PrepSorts sorts)
+    public void smart_set_sorts(PrepSorts sorts)
     {
         m_prepSorts = sorts;
     }
@@ -3313,4 +3317,24 @@ get the total qty of all found items
         return nMax;
 
     }
+
+    /**
+     * KP-171 course time
+     * @param nms
+     */
+//    public void setCourseStartTime(long nms)
+//    {
+//        m_courseStartMs = nms;
+//    }
+
+    /**
+     * KP-171 course time
+     *
+     * @return
+     */
+//    public long getCourseStartTime()
+//    {
+//        return m_courseStartMs;
+//    }
+
 }

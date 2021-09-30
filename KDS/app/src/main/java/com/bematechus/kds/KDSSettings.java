@@ -25,9 +25,12 @@ import com.bematechus.kdslib.SettingsBase;
 import com.bematechus.kdslib.ThemeUtil;
 import com.bematechus.kdslib.TimeDog;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -685,6 +688,7 @@ public class KDSSettings extends SettingsBase {
         HeaderFooterMessage,
         CustomerName,
         InputMsg,
+        CourseTime, //kp-171
     }
 
     public enum ComponentFocusedMethod
@@ -3166,5 +3170,52 @@ public class KDSSettings extends SettingsBase {
        setPrefValue(editor, key, val);
        m_mapSettings.put(id, val);
 
+   }
+
+  /**
+   * kp-171
+   * check order caption/footer, if there is "course time", enabled.
+   *
+   * @return
+   */
+   public boolean isCourseTimeEnabled()
+   {
+      List arHeader0 = Arrays.asList(
+              ID.Order_Title0_Content_Left,
+              ID.Order_Title0_Content_Center,
+              ID.Order_Title0_Content_Right
+              );
+      List arHeader1 = Arrays.asList(
+              ID.Order_Title1_Content_Left,
+              ID.Order_Title1_Content_Center,
+              ID.Order_Title1_Content_Right
+              );
+      List arFooter = Arrays.asList(
+              ID.Order_Footer_Content_Left,
+              ID.Order_Footer_Content_Center,
+              ID.Order_Footer_Content_Right
+      );
+
+
+      ArrayList<KDSSettings.ID> arCheck = new ArrayList<>();
+      arCheck.addAll(arHeader0);
+      SharedPreferences pre = PreferenceManager.getDefaultSharedPreferences(KDSApplication.getContext());
+      boolean bEnableCaption2 = pre.getBoolean("caption_enable_caption2", false);
+      if (bEnableCaption2)
+        arCheck.addAll(arHeader1);
+      boolean bEnableFooter = pre.getBoolean("footer_enable", false);
+      if (bEnableFooter)
+        arCheck.addAll(arFooter);
+
+      for (int i=0; i< arCheck.size(); i++)
+      {
+         KDSSettings.ID id = arCheck.get(i);
+         int n = this.getInt(id);
+         TitleContents t = TitleContents.values()[n];
+         if (t == TitleContents.CourseTime)
+          return true;
+      }
+
+      return false;
    }
 }

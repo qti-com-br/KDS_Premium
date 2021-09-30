@@ -337,6 +337,7 @@
         <item>Header or footer message</item>
         <item>Customer name</item>
         <item>Input message</item>
+        <item>Course time</item>
     </string-array>
 
     <string name="pref_kds_caption_enable_cap2">启用订单头第二行</string>
