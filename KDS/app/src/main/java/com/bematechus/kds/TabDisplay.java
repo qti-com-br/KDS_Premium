@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -351,10 +352,31 @@ public class TabDisplay {
 
     }
 
+    public TabButtonData getCurrent()
+    {
+        return ((MyAdapter) m_lstTab.getAdapter()).getCurrent();
+    }
     public void setFocus(TabButtonData data)
     {
         ((MyAdapter) m_lstTab.getAdapter()).setSelected(data);
 
+    }
+
+    public void setDefaultToFirst()
+    {
+        if (m_arData.size() >0)
+        {
+            m_eventsReceiver.onTabClicked(m_arData.get(0));
+            ((MyAdapter)m_lstTab.getAdapter()).setSelected(m_arData.get(0));
+            changeDisplayMode(m_arData.get(0));
+
+        }
+
+    }
+
+    public void resetCurrent()
+    {
+        ((MyAdapter) m_lstTab.getAdapter()).setSelected(null);
     }
 
     public static class TabButtonData
@@ -498,6 +520,10 @@ public class TabDisplay {
 
         public  void setSelected(TabDisplay.TabButtonData data)
         {
+//            if (data != null)
+//                Log.e("#TabDisplay" , data.toSaveString());
+//            else
+//                Log.e("#TabDisplay",  "selected NULL");
             if (m_selected != data) {
                 m_selected = data;
                 this.notifyDataSetChanged();
@@ -529,6 +555,18 @@ public class TabDisplay {
                 return null;
         }
 
+        public TabButtonData getCurrent()
+        {
+            int n = getSelectedIndex();
+            if (n<0 ||
+                n >=m_listData.size())
+                return null;
+            if (m_listData.size() >0)
+                return m_listData.get(n);
+            else
+                return null;
+
+        }
 
         public View getView(int position, View convertView, ViewGroup parent) {
             //ViewHolder holder = null;
@@ -543,7 +581,10 @@ public class TabDisplay {
             t.setPadding(25, 0, 25, 0);
             t.setText(r.getShowingText());
 
-            if (r == m_selected) {
+            if (m_selected!= null && r.toSaveString().equals(m_selected.toSaveString())
+                && r.getStringParam().equals(m_selected.getStringParam())) {
+                //kp-176, the m_selected sometimes save wrong memory address. So, use value to compare.
+                m_selected = r;
                 t.setBackgroundColor(changeAlpha(Color.WHITE, 24));
                 t.setTextColor(m_bgfg.getFG());
             }

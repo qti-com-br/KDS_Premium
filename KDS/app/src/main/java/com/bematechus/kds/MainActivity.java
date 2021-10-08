@@ -644,6 +644,12 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
             doActivation(bSilent, false, "");
         }
         forceAgreementAgreed();
+
+        if (getSettings().getBoolean(KDSSettings.ID.Tab_Enabled))
+        {
+            m_tabDisplay.setDefaultToFirst();
+        }
+
         KDSLog.i(TAG, KDSLog._FUNCLINE_()+"Exit");
 
     }
@@ -4018,16 +4024,55 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
         SettingsBase.StationFunc funcView = getSettings().getFuncView();
 
-        if (key.equals("tabdisp_enabled"))
+//        //if (key.equals("tabdisp_enabled"))
+//        if (key.equals(PreferenceFragmentTabDisplay.TABDISP_KEY_ENABLE)
+//            ||key.equals(PreferenceFragmentTabDisplay.TABDISP_KEY_BUTTONS) //kp-176
+//            ||key.equals(PreferenceFragmentTabDisplay.TABDISP_KEY_DEST) //kp-176
+//            )
+//        {
+//            if (key.equals(PreferenceFragmentTabDisplay.TABDISP_KEY_ENABLE)) {
+//                boolean b = prefs.getBoolean(key, false);
+//                if (!b) {
+//                    TabDisplay.TabButtonData btnData = new TabDisplay.TabButtonData("", KDSSettings.TabFunction.MAX_COUNT);
+//
+//                    onTabClicked(btnData);
+//                   // m_tabDisplay.resetCurrent();
+//                }
+//            }
+//
+//            if (getSettings().getBoolean(KDSSettings.ID.Tab_Enabled))// prefs.getBoolean(PreferenceFragmentTabDisplay.TABDISP_KEY_ENABLE, false))
+//            {
+////                //if (m_tabDisplay.getCurrent() == null)
+//                m_tabDisplay.setDefaultToFirst();
+//            }
+//
+//
+//        }
+
+        if (key.equals(PreferenceFragmentTabDisplay.TABDISP_KEY_ENABLE))
         {
             boolean b = prefs.getBoolean(key, false);
-            if (!b)
-            {
+            if (!b) {
                 TabDisplay.TabButtonData btnData = new TabDisplay.TabButtonData("", KDSSettings.TabFunction.MAX_COUNT);
 
                 onTabClicked(btnData);
+                m_tabDisplay.resetCurrent();
+
+            }
+            else
+            {
+                m_tabDisplay.setDefaultToFirst();
             }
         }
+
+        if (key.equals(PreferenceFragmentTabDisplay.TABDISP_KEY_BUTTONS)
+                ||key.equals(PreferenceFragmentTabDisplay.TABDISP_KEY_DEST)
+            ) //kp-176)
+        {
+            if (getSettings().getBoolean(KDSSettings.ID.Tab_Enabled))
+                m_tabDisplay.setDefaultToFirst();
+        }
+
 
 
 
@@ -6619,6 +6664,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
      */
     public void onTabClicked(TabDisplay.TabButtonData btnData)
     {
+        if (btnData == null) return;
         init_user_screen_gui_variables();
 
         updateUISettings();
