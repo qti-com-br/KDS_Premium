@@ -4656,6 +4656,7 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     public void onRefreshView(int  nUserID, KDSDataOrders orders, KDS.RefreshViewParam nParam) {
 
+        checkTabDisplayDestinationFilter(); //kp-176
 
         KDSUser.USER userID = KDSUser.USER.values()[nUserID];
 
@@ -8720,6 +8721,29 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 break;
         }
 
+
+    }
+
+    /**
+     * kp-176 , do filter when tab display enabled.
+     */
+    private void checkTabDisplayDestinationFilter()
+    {
+        if (!getSettings().getBoolean(KDSSettings.ID.Tab_Enabled))
+            return;
+        if (m_tabDisplay.getCurrent() == null) return;
+
+
+        TabDisplay.TabButtonData data = m_tabDisplay.getCurrent();
+        if (data.getFunc() == KDSSettings.TabFunction.Destination)
+        {
+            String strDest = data.getStringParam();
+            if (strDest.isEmpty())
+                return;
+            getKDS().getUsers().getUser(KDSUser.USER.USER_A).tabDisplayDestinationFilter(strDest);
+            if (getKDS().isMultpleUsersMode())
+                getKDS().getUsers().getUser(KDSUser.USER.USER_B).tabDisplayDestinationFilter(strDest);
+        }
 
     }
 }
