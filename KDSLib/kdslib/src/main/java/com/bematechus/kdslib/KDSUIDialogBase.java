@@ -1,14 +1,48 @@
 package com.bematechus.kdslib;
 
+import static com.bematechus.kdslib.ActivationRequest.API_URL;
+import static com.bematechus.kdslib.ActivationRequest.DB_URL;
+import static com.bematechus.kdslib.ActivationRequest.REQ;
+import static com.bematechus.kdslib.ActivationRequest.TOK;
+import static com.bematechus.kdslib.ActivationRequest.TOKEN;
+import static com.bematechus.kdslib.ActivationRequest.getJsonObj;
+import static com.bematechus.kdslib.ActivationRequest.requestGetSettings;
+import static com.bematechus.kdslib.HttpBase.HttpRequestBase.POST;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.InputFilter;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -444,6 +478,151 @@ public class KDSUIDialogBase {
 
     }
 
+    public  void createSettingsDialog( final Context context,Object objTag, String strTitle,
+                                       String strInfo, boolean noCancel,
+                                       KDSDialogBaseListener listener, String xml)
+    {
+        String finalXml = xml == null ? "" : xml;
+
+        this.listener = listener;
+        setTag(objTag);
+        final EditText input = new EditText(context);
+        InputFilter[] charlimiter = new InputFilter[1];
+        charlimiter[0] = new InputFilter.LengthFilter(191);
+        input.setFilters(charlimiter);
+        input.setGravity(Gravity.CENTER);
+
+        String strInfo1 = "Do you want to export settings to web or backoffice";
+        String strOK = makeOKButtonText(context);// makeButtonText2(context, R.string.ok, KDSSettings.ID.Bumpbar_OK);
+        String strCancel = makeCancelButtonText(context);// makeButtonText2(context, R.string.cancel, KDSSettings.ID.Bumpbar_Cancel);
+
+        // Add a checkbox list.
+        String[] options = {strInfo, strInfo1};
+        boolean[] checkedItems = {false, false};
+
+        // Set up the alert builder.
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(strTitle);
+        builder.setView(input);
+        builder.setMultiChoiceItems(options, checkedItems,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        // The user checked or unchecked a box
+                        if (checkedItems[0]) {
+                            Toast.makeText(context, "Selected to send backup data"
+                                    , Toast.LENGTH_SHORT).show();
+                            if (checkedItems[1])
+                                Toast.makeText(context, "Selected to send backup data and current settings name"
+                                        , Toast.LENGTH_LONG).show();
+                        } else if (checkedItems[1]) {
+                            Toast.makeText(context, "Please Enter a Name for this Setting"
+                                    , Toast.LENGTH_LONG).show();
+                        }else {
+                            Toast.makeText(context, "Please select an option"
+                                    , Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+        // Add OK button.
+        builder.setPositiveButton(strOK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (KDSUIDialogBase.this.listener != null) {
+                            if (checkedItems[0]) {
+                                KDSUIDialogBase.this.listener.onKDSDialogOK(KDSUIDialogBase.this,
+                                        getResult());
+                            }
+                            if (checkedItems[1]) {
+                                String settsXml = input.getText().toString();
+                                sendSettingsXml(settsXml, finalXml);
+                                Toast.makeText(context, "Sending configuration data: "+ settsXml
+                                        , Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    }
+                }
+        );
+        // Add Cancel button.
+        builder.setNegativeButton(strCancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (KDSUIDialogBase.this.listener != null)
+                    KDSUIDialogBase.this.listener.onKDSDialogCancel(KDSUIDialogBase.this);
+            }
+        });
+
+        dialog = builder
+                .create();
+        if (noCancel) {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+        }
+        init_dialog_events(dialog);
+    }
+
+    // Send settings to web or backoffice.
+    public void sendSettingsXml(String settsXml, String xml) {
+        try {
+            JSONArray reqArray = new JSONArray();
+
+            JSONObject tok = new JSONObject();
+            tok.put(TOK, TOKEN);
+
+            String store_guid = Activation.getStoreGuid();
+
+            JSONObject payload = new JSONObject();
+            payload.put(REQ,"SETTINGS_XML");
+            payload.put("store_guid", store_guid);
+            payload.put("name", settsXml);
+            payload.put("xml", xml);
+
+            reqArray.put(tok);
+            reqArray.put(payload);
+
+            String reqString = reqArray.toString(4);
+            Log.d("JAY 01", "reqString: "+ reqString);
+
+            new Thread() { public void run() {
+                sendNewSettingsXml(reqString, store_guid);
+            }}.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendNewSettingsXml(String reqString, String store_guid){
+
+        try {
+            Log.d("JAY 01", "API_URL: "+ "http://10.0.0.2:8000/api/settings_xml/"+store_guid+"/new");
+            InputStream is;
+            URL _url = new URL("http://10.0.2.2:8000/api/settings_xml/"+store_guid+"/new");
+            HttpURLConnection urlConn =(HttpURLConnection)_url.openConnection();
+            urlConn.setRequestMethod(POST);
+            urlConn.setRequestProperty("Content-Type", "applicaiton/json; charset=utf-8");
+            urlConn.setRequestProperty("Accept", "applicaiton/json");
+            urlConn.setDoOutput(true);
+            urlConn.connect();
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(urlConn.getOutputStream()));
+            writer.write(reqString);
+            writer.flush();
+            writer.close();
+
+            if(urlConn.getResponseCode() == HttpURLConnection.HTTP_OK){
+                is = urlConn.getInputStream();// is is inputstream
+            } else {
+                is = urlConn.getErrorStream();
+            }
+            Log.d("JAY 01", "is: "+ is);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public AlertDialog create2ButtonsDialog(Context context)
     {

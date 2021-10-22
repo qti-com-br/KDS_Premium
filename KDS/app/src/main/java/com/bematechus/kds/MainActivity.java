@@ -1384,11 +1384,14 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
                 info += getBackupFolderFullPathName();
                 info += " ?";
 
+                String xml = KDSGlobalVariables.getKDS().getSettings().outputXmlText(getApplicationContext());
+
+
                 KDSUIDialogBase d = new KDSUIDialogBase();
-                d.createOkCancelDialog(this,
+                d.createSettingsDialog(this,
                         Confirm_Dialog.Export_Data,
                         this.getString(R.string.confirm),
-                        info, false, this);
+                        info, false, this,xml);
                 d.show();
 
             } else if (id == R.id.action_import) {

@@ -55,6 +55,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
     static final String REQ_CLEANING_RESPONSE =  "STORE_CLEAN_RESPONSE";
     static final String REQ_GET_ORDERS =  "GET_ORDERS";
     static final String REQ_GET_SERVER_TIME =  "GET_SERVER_TIME";
+    static final String REQ_SETTINGS_XML =  "SETTINGS_XML";
     /**
      *
      * Management
@@ -120,6 +121,7 @@ public class ActivationRequest extends HttpBase.HttpRequestBase {
         Get_orders,
         Get_server_time,
 		Hardware,
+        Settings_xml,
     }
 
     public enum ErrorType

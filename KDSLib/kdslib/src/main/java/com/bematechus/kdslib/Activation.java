@@ -319,7 +319,8 @@ public class Activation implements ActivationHttp.HttpEvent , Runnable {
                 case Get_server_time:
                     onActivationResponseServerTime(http, request);
                     break;
-
+                case Settings_xml:
+                    break;
 				case Hardware:
 					if (isResponseError(request.m_result)) {
 						Log.e("HW", "Error " + request.m_result);
